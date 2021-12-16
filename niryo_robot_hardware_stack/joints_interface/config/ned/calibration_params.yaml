@@ -1,0 +1,19 @@
+calibration_timeout: 30
+
+calibration_file:  "/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt"
+
+calibration_params:
+    stepper_1:
+        id: 1
+        direction: 1
+        delay: 200
+
+    stepper_2:
+        id: 2
+        direction: 1
+        delay: 1000
+
+    stepper_3:
+        id: 3
+        direction: -1
+        delay: 1000

@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="true"/>
+    <arg name="simu_conveyor" default="false"/>
+
+    <!-- use can_driver config -->
+    <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        <arg name="simu_conveyor" default="$(arg simu_conveyor)"/>
+    </include>
+
+    <node pkg="can_driver" type="can_driver_node" name="can_driver" output="screen" />
+</launch>

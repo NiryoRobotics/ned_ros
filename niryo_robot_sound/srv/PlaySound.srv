@@ -1,0 +1,10 @@
+string sound_name
+
+float64 start_time_sec
+float64 end_time_sec  #if 0 or if end_time_sec>sound_duration the entire sound will be played
+
+bool wait_end
+
+---
+int32 status
+string message

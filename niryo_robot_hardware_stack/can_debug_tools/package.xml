@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>can_debug_tools</name>
+  <version>4.0.0</version>
+  <description>Ned's CAN debug tools</description>
+  <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
+  <license>GPLv3</license>
+  <author>Clement Cocquempot</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>mcp_can_rpi</build_depend>
+
+  <build_export_depend>mcp_can_rpi</build_export_depend>
+
+  <exec_depend>mcp_can_rpi</exec_depend>
+
+  <test_depend>code_coverage</test_depend>
+  <test_depend>roslint</test_depend>
+</package>

@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  <arg name="hardware_version" default="ned"/>
+  <arg name="simulation_mode" default="false"/>
+
+  <arg name="config_dir" value="$(arg hardware_version)" unless="$(arg simulation_mode)" />
+  <arg name="config_dir" value="$(arg hardware_version)/simulation" if="$(arg simulation_mode)" />
+
+  <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
+  <arg name="load_robot_description" default="false"/>
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+
+  <!-- Load universal robot description format (URDF) -->
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro  '$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro'"/>
+
+  <!-- The semantic description that corresponds to the URDF -->
+  <param name="$(arg robot_description)_semantic" textfile="$(find niryo_moveit_config_w_gripper1)/config/$(arg hardware_version)/niryo_$(arg hardware_version).srdf" />
+
+  <!-- Load updated joint limits (override information from URDF) -->
+  <group ns="$(arg robot_description)_planning">
+    <rosparam command="load" file="$(find niryo_moveit_config_w_gripper1)/config/$(arg config_dir)/joint_limits.yaml"/>
+  </group>
+
+  <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
+  <group ns="$(arg robot_description)_kinematics">
+    <rosparam command="load" file="$(find niryo_moveit_config_w_gripper1)/config/kinematics.yaml"/>
+  </group>
+
+</launch>

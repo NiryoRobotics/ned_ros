@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-15 14:39+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/low_level/joints_interface.rst:2
+msgid "Joints Interface"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:4
+msgid "This package handles packages related to the robot's joints controller."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:5
+msgid "It provides an interface to :wiki_ros:`ros_control`."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:8
+msgid "Joints interface node"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:14
+msgid "The ROS Node is made to:"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:10
+msgid ""
+"Interface robot's motors to joint trajectory controller, from "
+":wiki_ros:`ros_control` package."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:11
+msgid ""
+"Create a controller manager, from :wiki_ros:`controller_manager` package,"
+" provides the infrastructure to load, unload, start and stop controllers."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:12
+msgid "Interface with motors calibration."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:13
+msgid "Initialize motors parameters."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:17
+msgid "Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:19
+msgid "Joint Interface's Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:25
+#: ../../source/stack/low_level/joints_interface.rst:62
+#: ../../source/stack/low_level/joints_interface.rst:78
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:26
+#: ../../source/stack/low_level/joints_interface.rst:64
+#: ../../source/stack/low_level/joints_interface.rst:80
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:27
+msgid "``ros_control_loop_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Controls loop frequency."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Default: '100.0'"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:30
+msgid "``publish_learning_mode_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Publishes rate for learning mode state."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Default: '2.0'"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:33
+msgid "``calibration_timeout``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Waiting time between 2 commands during the calibration process."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Default: '30'"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:36
+msgid "``calibration_file``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "File directory where is saved motors calibration value."
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid ""
+"Default: "
+"'/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:42
+msgid "Dependencies"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:44
+msgid ":wiki_ros:`hardware_interface <hardware_interface>`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:45
+msgid ":wiki_ros:`controller_manager <controller_manager>`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:46
+msgid ":doc:`ttl_driver`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:47
+msgid ":doc:`can_driver`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:48
+msgid ":doc:`../high_level/niryo_robot_msgs`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:51
+msgid "Services, Topics and Messages"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:54
+msgid "Published topics"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:56
+msgid "Joint Interface's Published Topics"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:63
+#: ../../source/stack/low_level/joints_interface.rst:79
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:65
+msgid "``/niryo_robot/learning_mode/state``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:66
+msgid ":std_msgs:`Bool`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:67
+msgid "Learning mode state"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:70
+msgid "Services"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:72
+msgid "Joint Interface Package Services"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:81
+msgid "``/niryo_robot/joints_interface/calibrate_motors``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:82
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:83
+msgid ""
+"Starst motors calibration - value can be 1 for auto calibration, 2 for "
+"manual"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:84
+msgid "``/niryo_robot/joints_interface/request_new_calibration``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:85
+#: ../../source/stack/low_level/joints_interface.rst:88
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:86
+msgid "Unsets motors calibration"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:87
+msgid "``niryo_robot/learning_mode/activate``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:89
+msgid "Either activates or deactivates learning mode"
+msgstr ""
+
+#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../ros/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../stack/high_level/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../stack/high_level/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+

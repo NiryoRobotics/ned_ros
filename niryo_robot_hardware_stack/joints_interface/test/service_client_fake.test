@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <include file="$(find joints_interface)/launch/joints_interface.launch" >
+        <arg name="hardware_version" value="ned2" />
+        <arg name="simulation_mode" value="true" />
+        <arg name="can_enabled" value="false" />
+        <arg name="ttl_enabled" value="true" />
+    </include>
+
+    <test test-name="joints_interface_integration_tests" pkg="joints_interface" type="joints_interface_integration_tests"  /> 
+
+</launch>

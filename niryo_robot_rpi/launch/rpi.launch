@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false" />
+
+    <arg name="script_name" value="fake_rpi_node.py" if="$(arg simulation_mode)" />
+    <arg name="script_name" value="rpi_node.py" unless="$(arg simulation_mode)" />
+    
+    <include file="$(find niryo_robot_rpi)/launch/rpi_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
+    <node name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="$(arg script_name)" output="screen">
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
+        <param name="log_level" type="string" value="$(arg log_level)"/>
+    </node>
+
+</launch>

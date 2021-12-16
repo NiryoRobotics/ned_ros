@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Libs
 import rospy
 from tf2_ros import Buffer, TransformListener, StaticTransformBroadcaster

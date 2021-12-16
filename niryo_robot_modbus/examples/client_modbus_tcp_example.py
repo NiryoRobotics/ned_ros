@@ -5,6 +5,7 @@
 from pymodbus.client.sync import ModbusTcpClient
 import time
 
+
 def number_to_raw_data(val):
     if val < 0:
         val = (1 << 15) - val

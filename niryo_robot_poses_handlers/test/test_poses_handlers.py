@@ -211,7 +211,7 @@ class TestServiceWorkspace(TestPoseHandlerAbstract):
         for p in list_poses_raw:
             point = Point(*p[0])
             rpy = RPY(*p[1])
-            list_poses.append(RobotState(point, rpy, Quaternion()))
+            list_poses.append(RobotState(position=point, rpy=rpy, orientation=Quaternion()))
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE
         req.workspace.name = name

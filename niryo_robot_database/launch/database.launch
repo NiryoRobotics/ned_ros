@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="log_level" default="INFO" />
+    <arg name="database_path" default="~/.config/niryo"/>
+    <arg name="hardware_version" default="ned"/>
+
+    <include file="$(find niryo_robot_database)/launch/database_base.launch.xml"> 
+        <arg name="database_path" value="$(arg database_path)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
+    <node name="niryo_robot_database" pkg="niryo_robot_database" type="database_node.py" output="screen">
+        <param name="log_level" value="$(arg log_level)" />
+    </node>
+</launch>

@@ -1,26 +1,35 @@
-<package>
-    <name>niryo_robot_vision</name>
-    <version>3.2.0</version>
-    <description>Niryo vision package</description>
-    <author email="r.lux@niryo.com">Remi Lux</author>
-    <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
-    <license>GPLv3</license>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>niryo_robot_vision</name>
+  <version>4.0.0</version>
+  <description>Niryo vision package</description>
+  <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
+  <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Remi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
 
-    <build_depend>niryo_robot_msgs</build_depend>
-    <build_depend>sensor_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
 
-    <run_depend>niryo_robot_msgs</run_depend>
-    <run_depend>rosbridge_server</run_depend>
-    <run_depend>message_runtime</run_depend>
-    <run_depend>sensor_msgs</run_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
-    <!-- Python Dependencies -->
-    <run_depend>python-numpy</run_depend>
-    <run_depend>python-opencv</run_depend>
-    <run_depend>python-yaml</run_depend>
-    <run_depend>python-imaging</run_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python-opencv</exec_depend>
+  <exec_depend>python-yaml</exec_depend>
+  <exec_depend>python-imaging</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

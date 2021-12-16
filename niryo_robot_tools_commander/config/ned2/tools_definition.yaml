@@ -1,0 +1,109 @@
+# Important note:
+# All the values finishing with "_hold_torque" have been computed so the
+# DXL-320 motor won't become too hot.
+# If you increase those values you may destroy (burn) the motor after a few minutes.
+
+tool_list:
+  - name: "No Tool Selected"
+    type: "no_tool"
+    id: -1
+    specs:
+      [ ]
+    available_commands:
+      [ ]
+    transformation:
+      translation: [0.0, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 1"
+    type: "gripper"
+    id: 11
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 2200
+      open_hold_torque: 500
+      open_max_torque: 1200
+      close_position: 900
+      close_hold_torque: -1200
+      close_max_torque: -1400
+      open_speed: 300
+      close_speed: 300
+      torque_limit:
+        min: -1400
+        max: 1400
+    transformation:
+      translation: [0.085, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 2"
+    type: "gripper"
+    id: 12
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 2380
+      open_hold_torque: 500
+      open_max_torque: 1000
+      close_position: 1350
+      close_hold_torque: -500
+      close_max_torque: -1000
+      open_speed: 300
+      close_speed: 300
+      torque_limit:
+        min: -1000
+        max: 1000
+    transformation:
+      translation: [0.110, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 3"
+    type: "gripper"
+    id: 13
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 2840
+      open_hold_torque: 500
+      open_max_torque: 1000
+      close_position: 1859
+      close_hold_torque: -500
+      close_max_torque: -1000
+      torque_limit:
+        min: -1000
+        max: 1000
+    transformation:
+      translation: [0.114, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Electromagnet 1"
+    type: "electromagnet"
+    id: 30
+    available_commands:
+      - activate_digital_io
+      - deactivate_digital_io
+      - setup_digital_io
+    specs:
+      [ ]
+    transformation:
+      translation: [0.026, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Vacuum Pump 1"
+    type: "vacuum_pump"
+    id: 31
+    available_commands:
+      - pull_air_vacuum_pump
+      - push_air_vacuum_pump
+    specs:
+      pull_air_position: 0
+      pull_air_max_torque: 1200
+      pull_air_hold_torque: 800
+      push_air_position: 1900
+      push_air_max_torque: -1000
+      torque_limit:
+        min: -1000
+        max: 1000
+    transformation:
+      translation: [0.036, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+
+

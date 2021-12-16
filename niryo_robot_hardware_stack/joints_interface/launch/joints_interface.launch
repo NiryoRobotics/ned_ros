@@ -1,27 +1,49 @@
-<launch>
-  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro"/>
-  <arg name="hardware_version" value="ned"/>
+<?xml version="1.0"?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  
+  <!-- Arguments -->
+  <arg name="can_enabled" default="true" />
+  <arg name="ttl_enabled" default="true" />
+  <arg name="hardware_version" default="ned"/>
+  <arg name="simulation_mode" default="true"/>
 
-  <node pkg="joints_interface" type="joints_interface_node" name="joints_interface" output="screen"> 
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
-    <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
-    <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"/>
-    <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load"/>
-    <rosparam file="$(find stepper_driver)/config/default.yaml" command="load"/>
-    <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
-    <rosparam file="$(find joints_interface)/config/default.yaml" command="load"/>
-    <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load"/>
-    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
-    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load"/>
-  </node>
-
-  <!-- spawn controllers -->
-  <rosparam command="load" file="$(find joints_interface)/config/niryo_ned_controllers.yaml" />
-
+  <!-- Launch controllers -->
+  <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-      args="joint_state_controller niryo_robot_follow_joint_trajectory_controller --shutdown-timeout 1"/>
+          args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
   <!-- robot state publisher -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />  
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
   
+  <!-- use can_driver config -->
+  <group if="$(arg can_enabled)" >
+      <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+          <arg name="hardware_version" value="$(arg hardware_version)" />
+          <arg name="simulation_mode" value="$(arg simulation_mode)" />
+      </include>
+  </group>
+  
+  <!--use ttl_driver config -->
+  <group if="$(arg ttl_enabled)" >
+      <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+          <arg name="hardware_version" value="$(arg hardware_version)" />
+          <arg name="simulation_mode" value="$(arg simulation_mode)" />
+      </include>
+  </group>
+
+  <!--use joints_interface config -->
+  <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+    <arg name="hardware_version" value="$(arg hardware_version)" />
+    <arg name="simulation_mode" value="$(arg simulation_mode)" />
+  </include>
+
+  <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />
+
+  <node pkg="joints_interface" type="joints_interface_node" name="joints_interface" output="screen" >
+    <param name="hardware_version" value="$(arg hardware_version)" />
+  </node>
+
 </launch>

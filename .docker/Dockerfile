@@ -19,6 +19,14 @@ RUN if [ "$(arch)" = "x86_64" ]; then export SKIPPED_ROS_KEYS="python-rpi.gpio";
     && rosdep update && rosdep install --rosdistro ${ROS_DISTRO} --from-paths ${FOLDER_DEPENDENCIES_NAME} --ignore-src --default-yes --skip-keys "${SKIPPED_ROS_KEYS}" \
     && rm -rf /var/lib/apt/lists/*
 
+# Install additionnal dependencies
+RUN apt update \
+    && apt install -y ros-${ROS_DISTRO}-rosdoc-lite \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clean tmp dependencies folder
+RUN rm -rf ${FOLDER_DEPENDENCIES_NAME}
+
 COPY .docker/install_wiringpi.sh /opt/install_wiringpi.sh
 
 RUN if [ "$(arch)" = "aarch64" ]; then /opt/install_wiringpi.sh; fi

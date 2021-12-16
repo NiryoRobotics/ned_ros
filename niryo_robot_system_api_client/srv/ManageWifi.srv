@@ -1,0 +1,9 @@
+int8 HOTSPOT = 0
+int8 RESTART = 1
+int8 DEACTIVATE = 2
+int8 RECONNECT = 3
+
+int8 cmd
+---
+int32 status
+string message

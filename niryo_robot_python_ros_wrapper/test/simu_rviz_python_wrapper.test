@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="conveyor" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="gripper_n_camera" default="false"/>
+
+    <include file="$(find niryo_robot_bringup)/launch/desktop_rviz_simulation.launch">
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    <test test-name="python_ros_wrapper" pkg="niryo_robot_python_ros_wrapper" type="test_python_ros_wrapper.py" time-limit="180.0">
+        <param name="conveyor" value="$(arg conveyor)"/>
+        <param name="gripper_n_camera" value="$(arg gripper_n_camera)"/>
+        <param name="hardware_version" value="ned"/>
+        <param name="simulation_mode" type="bool" value="true"/>
+    </test>
+</launch>

@@ -6,9 +6,9 @@ Ned ROS documentation
 #####################################
 
 | This documentation contains everything you need to understand Ned's
- functioning & how to control it through ROS.
+ functioning and how to control it through ROS.
 | It is made as well for users who are
- using the "physic" robot as those who want to use a virtual version.
+ using the "physical" robot as for those who want to use a virtual version.
 
 .. list-table::
    :header-rows: 0
@@ -30,9 +30,10 @@ Preamble
 **************
 
 Before diving into the software documentation, you can learn more about the robot development
-in the :doc:`Overwiew <source/overview>` section.
+in the :doc:`Overwiew <source/stack/overview>` section.
 
-Also, if you want to use a simulated version of Ned, browse the :doc:`Simulation <source/simulation>` section.
+Then, you should check the :doc:`source/installation/getting_started` section to setup your environment and try out the stack by yourself. If you 
+don't have a real robot at your disposal, you can still simulate it via the :doc:`source/simulation` section.
 
 ****************************
 Ned Control via ROS
@@ -47,12 +48,12 @@ ROS Direct control
    To control the robot directly with ROS, you will need either to be connected in SSH
    to the physic robot, or to use the simulation.
 
-ROS is the most direct way to control the robot. It allows:
+ROS is the most direct way to control the robot. It allows you to:
 
-- to send command via the terminal in order to call services, trigger action, ...
-- to write a entire Python/C++ node in a script to realize a full process.
+- Send command via the terminal in order to call services, trigger action, ...
+- Write an entire Python/C++ node to realize a full process.
 
-See :doc:`ROS <source/ros>` section to see all Topic & Services available.
+See :doc:`ROS <source/stack/high_level>` section to see all Topic & Services available.
 
 Python ROS Wrapper
 ---------------------------------
@@ -87,10 +88,22 @@ Learn more on this :doc:`section <source/more>`.
 .. toctree::
    :hidden:
    :maxdepth: 2
+   :caption: Installation
+
+   source/installation/getting_started
+   source/installation/ubuntu_16
+   source/installation/ubuntu_18
+   source/installation/wsl
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
    :caption: Packages
 
-   source/ros
-   source/stack_hardware
+   source/stack/overview
+   source/stack/high_level
+   source/stack/low_level
+   source/stack/third_parties
    source/ros_wrapper
 
 .. toctree::

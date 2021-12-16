@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  <arg name="hardware_version" default="ned"/>
+  <arg name="simulation_mode" default="false" />
+
+  <!-- This argument must specify the list of .cfg files to process for benchmarking -->
+  <arg name="cfg" />
+  
+  <!-- Load URDF -->
+  <include file="$(find niryo_moveit_config_standalone)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+    <arg name="hardware_version" value="$(arg hardware_version)" />
+    <arg name="simulation_mode" value="$(arg simulation_mode)" />
+  </include>
+  <!-- Start the database -->
+  <include file="$(find niryo_moveit_config_standalone)/launch/warehouse.launch">
+    <arg name="moveit_warehouse_database_path" value="moveit_ompl_benchmark_warehouse"/>
+  </include>  
+  <!-- Start Benchmark Executable -->
+  <node name="$(anon moveit_benchmark)" pkg="moveit_ros_benchmarks" type="moveit_run_benchmark" args="$(arg cfg) --benchmark-planners" respawn="false" output="screen">
+    <rosparam command="load" file="$(find niryo_moveit_config_standalone)/config/kinematics.yaml"/>
+    <rosparam command="load" file="$(find niryo_moveit_config_standalone)/config/ompl_planning.yaml"/>
+  </node>
+
+</launch>

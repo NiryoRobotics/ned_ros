@@ -1,0 +1,9 @@
+string name
+
+int8 OUTPUT = 0
+int8 INPUT = 1
+int8 mode
+
+---
+int32 status
+string message

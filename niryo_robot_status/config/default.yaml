@@ -1,0 +1,42 @@
+check_nodes_frequency: 0.2
+
+node_logs:
+ - '/niryo_robot_hardware_interface'
+ - '/move_group'
+ - '/controller_spawner'
+ - '/niryo_robot_programs_manager'
+ - '/niryo_robot_modbus'
+ - '/niryo_robot_rpi'
+ - '/niryo_robot_user_interface'
+ - '/niryo_robot_poses_handlers'
+ - '/niryo_robot_tools_commander'
+ - '/niryo_robot_arm_commander'
+
+initialisation_params:
+ - "/niryo_robot_arm_commander/initialized"
+ - "/niryo_robot_poses_handlers/initialized"
+ - "/niryo_robot_programs_manager/initialized"
+ - "/niryo_robot_tools_commander/initialized"
+ - "/niryo_robot_user_interface/initialized"
+
+vital_nodes_common:
+ - "/controller_spawner"
+ - "/move_group"
+ - "/niryo_robot_arm_commander"
+ - "/niryo_robot_hardware_interface"
+ - "/niryo_robot_modbus"
+ - "/niryo_robot_poses_handlers"
+ - "/niryo_robot_programs_manager"
+ - "/niryo_robot_rpi"
+ - "/niryo_robot_status"
+ - "/niryo_robot_tools_commander"
+ - "/niryo_robot_user_interface"
+ - "/robot_state_publisher"
+ - "/rosapi"
+ - "/rosbridge_websocket"
+ - "/rosout"
+ - "/tf2_web_republisher"
+
+vital_nodes_real:
+ - "/niryo_robot_system_api_client"
+ - "/niryo_robot_vision"

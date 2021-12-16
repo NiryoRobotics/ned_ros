@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  
+  <!-- Arguments -->
+  <arg name="hardware_version" default="ned" />
+  <arg name="simulation_mode" default="false" />
+
+  <arg name="config_dir" value="$(arg hardware_version)" unless="$(arg simulation_mode)" />
+  <arg name="config_dir" value="$(arg hardware_version)/simulation" if="$(arg simulation_mode)" />
+
+  <group ns="joints_interface">
+    <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
+    <rosparam file="$(find joints_interface)/config/$(arg config_dir)/dynamixels_params.yaml" command="load" />
+    <rosparam file="$(find joints_interface)/config/$(arg config_dir)/steppers_params.yaml" command="load" />  
+    <rosparam file="$(find joints_interface)/config/$(arg config_dir)/joints_params.yaml" command="load" />
+    <rosparam file="$(find joints_interface)/config/$(arg config_dir)/calibration_params.yaml" command="load" />
+    <param name="simulation_mode" value="$(arg simulation_mode)"/>
+  </group>
+
+</launch>

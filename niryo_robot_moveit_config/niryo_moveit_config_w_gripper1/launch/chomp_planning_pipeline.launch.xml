@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+   <!-- CHOMP Plugin for MoveIt! -->
+   <arg name="planning_plugin" value="chomp_interface/CHOMPPlanner" />
+   <arg name="start_state_max_bounds_error" value="0.1" />
+
+   <param name="planning_plugin" value="$(arg planning_plugin)" />
+   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
+
+   <rosparam command="load" file="$(find niryo_moveit_config_w_gripper1)/config/chomp_planning.yaml" />
+</launch>

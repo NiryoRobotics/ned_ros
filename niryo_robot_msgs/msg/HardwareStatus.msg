@@ -1,10 +1,10 @@
 std_msgs/Header header
 
 # Raspberry Pi board
-int32 rpi_temperature 
+int32 rpi_temperature
 
-# Robot version : 1 Ned (only one until needed modification)
-int32 hardware_version
+# Ned, One, ....
+string hardware_version
 
 # Motors
 bool connection_up

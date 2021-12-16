@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
+
 import rospkg
 
 import yaml
@@ -37,7 +39,10 @@ class VisionNode:
         rospy.logdebug("Vision Node - Entering in Init")
         # -- ROS
         self.__path_package = rospkg.RosPack().get_path('niryo_robot_vision')
-        self.__simulation_mode = rospy.get_param('~simulation_mode')
+        self.__simulation_mode = rospy.get_param("~simulation_mode")
+        self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
+
+        rospy.logdebug("VisionNode.init - debug_compression_quality: {}".format(self.__debug_compression_quality))
 
         # PUBLISHERS
         self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream',
@@ -62,7 +67,6 @@ class VisionNode:
         rospy.Service('~take_picture', TakePicture,
                       self.__callback_take_picture)
 
-        self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
         rospy.Service('~debug_markers', DebugMarkers,
                       self.__callback_debug_markers)
         rospy.Service('~debug_colors', DebugColorDetection,
@@ -71,7 +75,8 @@ class VisionNode:
         # -- VIDEO STREAM
         rospy.logdebug("Vision Node - Creating Video Stream object")
         cls_ = GazeboStream if self.__simulation_mode else WebcamStream
-        self.__video_stream = cls_(self.__calibration_object, self.__publisher_compressed_stream)
+        self.__video_stream = cls_(self.__calibration_object, self.__publisher_compressed_stream,
+                                   rospy.get_param("~flip_img"))
         rospy.logdebug("Vision Node - Video Stream Created")
 
         self.__video_stream.start()
@@ -83,13 +88,14 @@ class VisionNode:
 
     def __generate_calib_object_from_setup(self):
         calibration_object_name = rospy.get_param("~obj_calib_name")
+        rospy.logdebug("VisionNode.init - obj_calib_name: {}".format(calibration_object_name))
 
         path_yaml = os.path.join(self.__path_package, "config/{}.yaml".format(calibration_object_name))
         if not os.path.isfile(path_yaml):
             rospy.logwarn("Vision Node - Intrinsics file '{}' does not exist".format(calibration_object_name))
             return CalibrationObject.set_empty()
         with open(path_yaml, "r") as input_file:
-            yaml_file = yaml.load(input_file)
+            yaml_file = yaml.safe_load(input_file)
         return CalibrationObject.set_from_yaml(yaml_file)
 
     @staticmethod
@@ -119,13 +125,10 @@ class VisionNode:
         obj_type = ObjectType[req.obj_type]
         obj_color = ColorHSV[req.obj_color]
         workspace_ratio = req.workspace_ratio
-        ret_image = req.ret_image
-
-        # Creating ObjectDetector, an object for object detection
         self.__object_detector = ObjectDetector(
             obj_type=obj_type, obj_color=obj_color,
             workspace_ratio=workspace_ratio,
-            ret_image_bool=ret_image,
+            ret_image_bool=req.ret_image,
         )
 
         # Launching pipeline
@@ -176,7 +179,14 @@ class VisionNode:
 
 
 if __name__ == '__main__':
+    # we need to layun
     rospy.init_node('niryo_robot_vision', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         vision_node = VisionNode()
         rospy.spin()
