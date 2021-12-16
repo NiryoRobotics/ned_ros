@@ -6,7 +6,6 @@ import rospy
 import threading
 import random
 
-
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
 BLACK = [0, 0, 0]
@@ -51,6 +50,8 @@ def french_flag_moving():
         for i in range(len(colors)):
             n.led_ring.custom(colors[i:] + colors[:i])
             rate.sleep()
+            if not run_flag:
+                return
 
 
 def start_run_flag():
@@ -78,6 +79,17 @@ def open_gripper():
     except Exception:
         pass
 
+
+def random_sounds():
+    random_sounds = ["connected.wav", "start2b.wav", "start4abis.wav", "start4a.wav", "connected3.wav",
+                     "connected2.wav"]
+    while not rospy.is_shutdown():
+        n.sounds.play(random_sounds[random.randint(0, len(random_sounds))], wait_end=False)
+        rospy.sleep(random.randint(5, 15))
+
+
+t_sound = threading.Thread(target=random_sounds)
+t_sound.start()
 
 print "--- Prepare traj --"
 
@@ -203,7 +215,6 @@ while True:
         n.execute_moveit_robot_trajectory(traj1)
         n.move_pose(*[0.179, 0.001, 0.264, 2.532, 1.532, 2.618])
 
-
         print("Spiral")
         n.led_ring.snake(BLUE)
         n.move_pose(0.3, 0, 0.3, 0, 0, 0)
@@ -253,6 +264,7 @@ while True:
         threading.Timer(5, close_gripper).start()
         threading.Timer(6, open_gripper).start()
         n.execute_moveit_robot_trajectory(traj3)
+        stop_flag()
 
         print("Pick and place")
         n.led_ring.snake(CYAN)
