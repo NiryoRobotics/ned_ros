@@ -29,6 +29,6 @@ INSERT INTO settings VALUES (
 ), (
     lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
     'test_report_done',
-    '',
-    'str'
+    'False',
+    'bool'
 );

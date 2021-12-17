@@ -512,17 +512,18 @@ class TestFunctions(object):
 
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
+    robot = NiryoRosWrapper()
+    robot.system_api_client.set_ethernet_auto()
+    # TODO: maybe sleep to wait eth0 changes
     print("----- START -----")
     test = TestProduction()
     test.run()
     print("----- END -----")
     test.print_report()
     test.send_report()
+    robot.system_api_client.set_ethernet_static()
 
-    # This is to avoid deactivating the sharing each time we run this script
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--set_sharing_allowed', action='store_true')
-    args = parser.parse_args()
-    if args.set_sharing_allowed:
+    if test.get_report()['success']:
         set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
         set_setting('sharing_allowed', 'False', 'bool')
+        set_setting('test_report_done', 'True', 'bool')
