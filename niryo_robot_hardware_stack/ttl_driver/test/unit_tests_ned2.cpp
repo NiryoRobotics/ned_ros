@@ -537,6 +537,7 @@ class TtlManagerTestSuite : public ::testing::Test
     {
         // need reset calibration to get calibration status after the calibration
         ttl_drv->resetCalibration();
+        ttl_drv->startCalibration();
 
         auto state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
         auto steps = static_cast<uint32_t>(state_motor_3->getPosition() + 10 * state_motor_3->getDirection());
@@ -577,7 +578,7 @@ class TtlManagerTestSuite : public ::testing::Test
                                                                         id))), COMM_SUCCESS);
         }
 
-        // waite calibration finish
+        // wait calibration finish
         double timeout = 0.0;
         while (ttl_drv->getCalibrationStatus() != common::model::EStepperCalibrationStatus::OK)
         {
@@ -602,6 +603,10 @@ std::shared_ptr<ttl_driver::TtlManager> TtlManagerTestSuite::ttl_drv;
 /************** Tests of ttl manager ******************/
 /******************************************************/
 
+TEST_F(TtlManagerTestSuite, calibrationStatus)
+{
+    ASSERT_EQ(ttl_drv->getCalibrationStatus(), common::model::EStepperCalibrationStatus::OK);
+}
 // Test driver received cmd
 
 TEST_F(TtlManagerTestSuite, testSingleCmds)
@@ -743,7 +748,6 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           std::initializer_list<uint32_t>{new_pos_7});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_6)), COMM_SUCCESS);
     ros::Duration(4.0).sleep();
-    ASSERT_EQ(ttl_drv->getCalibrationStatus(), common::model::EStepperCalibrationStatus::OK);
 
     ttl_drv->readJointsStatus();
 
