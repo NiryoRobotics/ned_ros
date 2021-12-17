@@ -532,6 +532,13 @@ class TtlManagerTestSuite : public ::testing::Test
         {
             ASSERT_TRUE(startCalibration());
         }
+
+        state_motor_2 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(2));
+        state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
+        state_motor_4 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(4));
+        state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
+        state_motor_6 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(6));
+        state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
     }
     static bool startCalibration()
     {
@@ -595,13 +602,35 @@ class TtlManagerTestSuite : public ::testing::Test
     }
 
     static std::shared_ptr<ttl_driver::TtlManager> ttl_drv;
+    static std::shared_ptr<common::model::JointState> state_motor_2;
+    static std::shared_ptr<common::model::JointState> state_motor_3;
+    static std::shared_ptr<common::model::JointState> state_motor_4;
+    static std::shared_ptr<common::model::JointState> state_motor_5;
+    static std::shared_ptr<common::model::JointState> state_motor_6;
+    static std::shared_ptr<common::model::JointState> state_motor_7;
 };
 
 std::shared_ptr<ttl_driver::TtlManager> TtlManagerTestSuite::ttl_drv;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_2;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_3;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_4;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_5;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_6;
+std::shared_ptr<common::model::JointState> TtlManagerTestSuite::state_motor_7;
 
 /******************************************************/
 /************** Tests of ttl manager ******************/
 /******************************************************/
+
+TEST_F(TtlManagerTestSuite, initializeJoints)
+{
+    EXPECT_NE(state_motor_2, nullptr);
+    EXPECT_NE(state_motor_3, nullptr);
+    EXPECT_NE(state_motor_4, nullptr);
+    EXPECT_NE(state_motor_5, nullptr);
+    EXPECT_NE(state_motor_6, nullptr);
+    EXPECT_NE(state_motor_7, nullptr);
+}
 
 TEST_F(TtlManagerTestSuite, calibrationStatus)
 {
@@ -680,20 +709,6 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_6_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readJointsStatus();
-    auto state_motor_2 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(2));
-    assert(state_motor_2);
-    auto state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
-    assert(state_motor_3);
-    auto state_motor_4 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(4));
-    assert(state_motor_4);
-    auto state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
-    assert(state_motor_5);
-    auto state_motor_6 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(6));
-    assert(state_motor_6);
-    auto state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
-    assert(state_motor_7);
-
     auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(state_motor_2->getHomePosition()));
     auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(state_motor_3->getHomePosition()));
     auto new_pos_4 = static_cast<uint32_t>(state_motor_4->to_motor_pos(state_motor_4->getHomePosition()));
@@ -762,15 +777,11 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
 
 TEST_F(TtlManagerTestSuite, testSyncCmds)
 {
-    common::model::EHardwareType dxl_type;
-
-    dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
-
     // sync cmd
     auto dynamixel_cmd_1 = std::make_unique<common::model::DxlSyncCmd>(
                                                               common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-    dynamixel_cmd_1->addMotorParam(dxl_type, 5, 1);
-    dynamixel_cmd_1->addMotorParam(dxl_type, 6, 1);
+    dynamixel_cmd_1->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
+    dynamixel_cmd_1->addMotorParam(state_motor_6->getHardwareType(), 6, 1);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_1)), COMM_SUCCESS);
     ros::Duration(0.1).sleep();
@@ -778,35 +789,22 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
     // redondant id
     auto dynamixel_cmd_3 = std::make_unique<common::model::DxlSyncCmd>(
                                                               common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-    dynamixel_cmd_3->addMotorParam(dxl_type, 5, 1);
-    dynamixel_cmd_3->addMotorParam(dxl_type, 5, 1);
+    dynamixel_cmd_3->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
+    dynamixel_cmd_3->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
 
     EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_3)), COMM_SUCCESS);
 
     // wrong cmd type
     auto dynamixel_cmd_4 = std::make_unique<common::model::DxlSyncCmd>(
                                                               common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
-    dynamixel_cmd_4->addMotorParam(dxl_type, 5, 1);
-    dynamixel_cmd_4->addMotorParam(dxl_type, 6, 1);
+    dynamixel_cmd_4->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
+    dynamixel_cmd_4->addMotorParam(state_motor_6->getHardwareType(), 6, 1);
 
     EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_4)), COMM_SUCCESS);
 }
 
 TEST_F(TtlManagerTestSuite, testSyncControlCmds)
 {
-    auto state_motor_2 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(2));
-    assert(state_motor_2);
-    auto state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
-    assert(state_motor_3);
-    auto state_motor_4 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(4));
-    assert(state_motor_4);
-    auto state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
-    assert(state_motor_5);
-    auto state_motor_6 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(6));
-    assert(state_motor_6);
-    auto state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
-    assert(state_motor_7);
-
     // sync cmd
     auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
     cmd_1_torque->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
@@ -851,29 +849,16 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
 
     ttl_drv->readJointsStatus();
 
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_5->getPosition()), new_pos_5);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_6->getPosition()), new_pos_6);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_7->getPosition()), new_pos_7);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_4->getPosition()), new_pos_4);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_2->getPosition()), new_pos_2);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_3->getPosition()), new_pos_3);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_5->getPosition()), new_pos_5, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_6->getPosition()), new_pos_6, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_7->getPosition()), new_pos_7, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_4->getPosition()), new_pos_4, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_2->getPosition()), new_pos_2, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_3->getPosition()), new_pos_3, 2);
 }
 
 TEST_F(TtlManagerTestSuite, testSyncControlCmdsReturnHome)
 {
-    auto state_motor_2 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(2));
-    assert(state_motor_2);
-    auto state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
-    assert(state_motor_3);
-    auto state_motor_4 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(4));
-    assert(state_motor_4);
-    auto state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
-    assert(state_motor_5);
-    auto state_motor_6 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(6));
-    assert(state_motor_6);
-    auto state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
-    assert(state_motor_7);
-
     // sync cmd
     auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
     cmd_1_torque->addMotorParam(state_motor_5->getHardwareType(), 5, 1);
@@ -916,12 +901,12 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmdsReturnHome)
 
     ttl_drv->readJointsStatus();
 
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_5->getPosition()), new_pos_5);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_6->getPosition()), new_pos_6);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_7->getPosition()), new_pos_7);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_4->getPosition()), new_pos_4);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_2->getPosition()), new_pos_2);
-    EXPECT_EQ(static_cast<uint32_t>(state_motor_3->getPosition()), new_pos_3);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_5->getPosition()), new_pos_5, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_6->getPosition()), new_pos_6, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_7->getPosition()), new_pos_7, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_4->getPosition()), new_pos_4, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_2->getPosition()), new_pos_2, 2);
+    EXPECT_NEAR(static_cast<uint32_t>(state_motor_3->getPosition()), new_pos_3, 2);
 }
 
 // Test driver scan motors

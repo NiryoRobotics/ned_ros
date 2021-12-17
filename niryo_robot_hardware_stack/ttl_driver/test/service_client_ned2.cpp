@@ -143,7 +143,7 @@ TEST(TESTSuite, ReadPIDValue)
 
     bool res{false};
     // try 3 times to read value
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
         client.call(srv);
         if (srv.response.status == niryo_robot_msgs::CommandStatus::SUCCESS)
