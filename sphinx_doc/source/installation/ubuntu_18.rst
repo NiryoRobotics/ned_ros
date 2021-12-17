@@ -17,7 +17,10 @@ Prerequisites
 The Niryo ROS Stack runs on top of ROS Melodic or Kinetic (deprecated). This version of ROS is strongly dependent of Ubuntu 18.04 version,
 thus, this OS is currently the only official supported OS.
 
-Be sure to have an up to date system before continuing.
+Be sure to have an up to date system before continuing ::
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo apt-get dist-upgrade
 
 Ubuntu packages
 *******************

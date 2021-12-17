@@ -83,7 +83,7 @@ User mode
 ^^^^^^^^^^^^^^^^^^^
 
 Several animations are implemented to allow the user different ways to control the Led Ring. Refer to the following
-table. The node receives commands through the service ``/niryo_robot_led_ring/user_service`` (see :ref:`Services - Led Ring` section)
+table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`Services - Led Ring` section)
 
 .. todo:: put this table with gifs also in the Ned 2 user documentation
 
@@ -270,7 +270,7 @@ The ROS node implements one service, designed for the user to control the Led Ri
    *  - Name
       - Message type
       - Description
-   *  - ``user_service``
+   *  - ``set_user_animation``
       - :ref:`LedUser<LedUser (Service)>`
       - | Allow user to control the Led Ring, with implemented animations. A new request
         | will **interrupt** the previous one, if still playing. Depending on the ``wait`` boolean field

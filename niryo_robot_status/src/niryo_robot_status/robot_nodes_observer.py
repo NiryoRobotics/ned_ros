@@ -47,7 +47,8 @@ class RobotNodesObserver(object):
 
         self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
                                        pywrapper_node in alive_nodes}
-        missing_nodes = [vital_node for vital_node in self.__vital_nodes if vital_node not in alive_nodes]
+        missing_nodes = [vital_node for vital_node in self.__vital_nodes
+                         if vital_node not in alive_nodes or not rosnode.rosnode_ping(vital_node, 1)]
 
         self.__are_vital_nodes_alive = not bool(missing_nodes)
         self.__missing_vital_nodes = missing_nodes
