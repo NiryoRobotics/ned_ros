@@ -228,6 +228,8 @@ int main(int argc, char **argv)
     nh = std::make_unique<ros::NodeHandle>("~");
 
     nh->getParam("simulation_mode", simulation_mode);
+    
+    ros::Duration(2.0).sleep();
 
     return RUN_ALL_TESTS();
 }
