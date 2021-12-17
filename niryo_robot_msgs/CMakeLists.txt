@@ -27,6 +27,7 @@ add_service_files(
   GetBool.srv
   GetInt.srv
   GetNameDescriptionList.srv
+  GetString.srv
   GetStringList.srv
   Ping.srv
   SetBool.srv

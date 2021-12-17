@@ -27,6 +27,8 @@ msgid "Niryo_robot_user_interface"
 msgstr "Niryo_robot_user_interface"
 
 #: ../../source/ros/niryo_robot_user_interface.rst:4
+
+
 msgid ""
 "This packages handle high-level user interface commands coming TCP requests "
 "and also system-related features like I/Os, LED and fans."

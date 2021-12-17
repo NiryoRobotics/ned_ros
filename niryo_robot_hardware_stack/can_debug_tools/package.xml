@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>can_debug_tools</name>
-  <version>3.2.0</version>
+  <version>4.0.0</version>
   <description>Ned's CAN debug tools</description>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
   <license>GPLv3</license>

@@ -16,12 +16,13 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
-  CATKIN_PROFILE_NAME: debug
+  CATKIN_PROFILE_NAME: gitlab_ci
   
 
 stages:
   - build
   - documentation
+  - build_tests
   - test
   - upload
   - release_gitlab
@@ -36,16 +37,13 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     # Create whole path folders
     - mkdir -p ${NIRYO_HOME_FOLDER}/src
     # moving everything in src folder
-    - shopt -s extglob # Allow to use regex
+    - shopt -s extglob dotglob # Allow to use regex and move all files including ".XXXX" looking files
     - mv !(src) ${NIRYO_HOME_FOLDER}/src/
     ######################################
     - cd ${NIRYO_HOME_FOLDER}
-    # quick fix to add install space and allow documentation generation (should be done in docker image instead)
-    - catkin config --profile ${CATKIN_PROFILE_NAME} --install
-    - catkin config --profile ${CATKIN_PROFILE_NAME} --cmake-args -DHARDWARE_VERSION=ned2 -DCATKIN_ENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
+    - cp -r src/.gitlab_resources/.catkin_tools .
     # we need to first build the packages before building tests
-    - catkin build --profile ${CATKIN_PROFILE_NAME}
-    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
+    - catkin build --profile ${CATKIN_PROFILE_NAME}    
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -109,15 +107,37 @@ build_doc_job:
     - mv ${previous_path}/install .
     - mv ${previous_path}/build .
     - mv ${previous_path}/devel .
+    - cp -r src/.gitlab_resources/.catkin_tools .
     ################# Quickfix end ###############
     - source install/${CATKIN_PROFILE_NAME}/setup.bash
+  # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
+
+catkin_compile_tests:
+  stage: build_tests
+  dependencies:
+    - catkin_make_amd
+  script:
+    # Do stuff to move source properly for catkin_make
+    - !reference [.abstract_move_source_tricks_job, script]
+    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
+  # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
+  after_script:
+    - mv ${NIRYO_HOME_FOLDER}/* .
+  artifacts:
+    paths:
+      - devel
+      - src
+      - build
+      - install
+  retry:
+    max: 1
 
 test_job:
   stage: test
   dependencies: 
-    - catkin_make_amd
+    - catkin_compile_tests
   artifacts:
     when: always
     paths:
@@ -139,8 +159,6 @@ test_job:
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
     - catkin run_tests -j1
-  after_script:
-    - !reference [.abstract_move_source_tricks_job, after_script]
 
 roslint_job:
   stage: test
@@ -165,20 +183,35 @@ catkin_lint_job:
 code_coverage_cpp_job:
   stage: test
   dependencies:
-    - catkin_make_amd
-  ## TO DELETE
-  needs:
-    - catkin_make_amd
-  ## ------------
-  tags:
-    - local_corentin
+    - catkin_compile_tests
   variables:
-    SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
+    BUILD_CODE_COVERAGE_SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
+    GENERATE_CODE_COVERAGE_SCRIPT_PATH: development-tools/Code_Analysis/gen_report_code_coverage.sh
+    COBERTURA_OUTPUT_FILENAME: cobertura.xml
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
+    # Build and generate reports
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
-    - ./${SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
+    - ./${BUILD_CODE_COVERAGE_SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
+    - ./${GENERATE_CODE_COVERAGE_SCRIPT_PATH} -s false -p build
+    # Retrieve codecov software and upload code coverage to codecov.io
+    - cd src
+    - curl -Os https://uploader.codecov.io/latest/linux/codecov
+    - chmod +x codecov
+    - ./codecov -t ${CODECOV_TOKEN} -s ../build/${CATKIN_PROFILE_NAME} -C ${CI_COMMIT_SHA} -B ${CI_COMMIT_REF_NAME}
+    # Generate parsable files by gitlab
+    - cd ..
+    - ./src/.gitlab_resources/create_code_coverage_for_gitlab.sh -p "./build" -o ${COBERTURA_OUTPUT_FILENAME}
+  after_script:
+    - mv ${NIRYO_HOME_FOLDER}/* .
+  artifacts:
+    paths:
+      - build/report
+    reports:
+      cobertura: ${COBERTURA_OUTPUT_FILENAME}
+  # URL: https://docs.gitlab.com/ee/ci/yaml/#coverage
+  coverage: '/lines\.+: (\d+.\d+\%)/'
 
 ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
 include:

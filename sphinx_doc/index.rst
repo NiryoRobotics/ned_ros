@@ -114,3 +114,9 @@ Learn more on this :doc:`section <source/more>`.
    source/tcp_server
    source/modbus_tcp_server
    source/more
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Changelog
+   source/changelog
