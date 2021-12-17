@@ -39,6 +39,7 @@ find_package(catkin REQUIRED
       niryo_robot_msgs
       roscpp
       tools_interface
+      common
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -73,6 +74,7 @@ catkin_package(
         niryo_robot_msgs
         roscpp
         tools_interface
+        common
 )
 
 ###########

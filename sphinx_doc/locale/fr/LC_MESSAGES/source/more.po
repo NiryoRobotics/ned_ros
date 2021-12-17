@@ -47,7 +47,8 @@ msgid ""
 msgstr ""
 "Si vous voulez aller plus loin, peut-être expérimenter votre propre "
 "traitement d'image, multi_robot, IA (Intelligence artificielle)... Vous "
-"pouvez regarder :ref:`source/more:PyNiryo` pour avoir plus d'informations."
+"pouvez regarder :ref:`source/more:PyNiryo` pour avoir plus "
+"d'informations."
 
 #: ../../source/more.rst:10
 msgid "Blockly"
@@ -62,6 +63,8 @@ msgid "PyNiryo"
 msgstr "PyNiryo"
 
 #: ../../source/more.rst:16
+
+
 msgid ""
 "As explained in the page :ref:`source/tcp_server:Use Ned's TCP server`, a "
 "TCP Server is running on Ned, which allows it to receive commands from any "

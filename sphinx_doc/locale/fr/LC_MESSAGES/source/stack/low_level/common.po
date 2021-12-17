@@ -11,77 +11,90 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"POT-Creation-Date: 2021-12-15 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/common.rst:2
 msgid "Common"
-msgstr ""
+msgstr "Common"
 
 #: ../../source/stack/low_level/common.rst:4
 msgid ""
-"The Common package defines the common software components of the low "
-"level stack. It is split into a model part and a utility part :"
+"The Common package defines the common software components of the low level "
+"stack. It is split into a model part and a utility part :"
 msgstr ""
+"Le package Common définie les composants logiciels communs de la stack bas "
+"niveau. Il est séparé en une partie modèle et une partie utilitaire :"
 
 #: ../../source/stack/low_level/common.rst:5
 msgid ""
 "- The 'model' subpackage defines the model tree needed to keep a virtual "
 "state of the robot up to date at any time."
 msgstr ""
+"- Le sous-package 'model' définie la structure de modèle nécessaire pour "
+"garder un état virtuel du robot à jour à tout moment."
 
 #: ../../source/stack/low_level/common.rst:6
 msgid "- The 'util' subpackage defines cpp interfaces and useful functions"
 msgstr ""
+"- Le sous-package 'util' définie les interfaces cpp et les fonction utiles"
 
 #: ../../source/stack/low_level/common.rst:9
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
 #: ../../source/stack/low_level/common.rst:10
 msgid "The model subpackage is comprised of:"
-msgstr ""
+msgstr "Le sous-package model est compris de :"
 
 #: ../../source/stack/low_level/common.rst:15
 msgid "States"
-msgstr ""
+msgstr "States"
 
 #: ../../source/stack/low_level/common.rst:16
 msgid ""
 "Classes to represent the virtual state of each hardware component at any "
-"moment. The hierarchy allows powerful polymorphism so that we can "
-"interpret each component differently based on the information we need to "
-"obtain."
+"moment. The hierarchy allows powerful polymorphism so that we can interpret "
+"each component differently based on the information we need to obtain."
 msgstr ""
+"Classes représentant l'état virtuel de chaque composant matériel à tout "
+"moment. La hiérarchie permet de mettre en place un polymorphisme efficace "
+"afin de pouvoir interprétet chaque composant différemment en fonction des "
+"informations que l'on souhaite obtenir."
 
 #: ../../source/stack/low_level/common.rst:24
 msgid "Abstract Hardware State inheritance graph"
-msgstr ""
+msgstr "Graphe d'héritage de Abstract Hardware State"
 
 #: ../../source/stack/low_level/common.rst:27
 msgid "Enums"
-msgstr ""
+msgstr "Enums"
 
 #: ../../source/stack/low_level/common.rst:28
 msgid ""
 "Enhanced enums, to keep trace of various enumeration and be able to have "
 "useful utilities attached to them (like conversion in string)."
 msgstr ""
+"Enums améliorés, pour garder une trace des multiples énumérations et dotées "
+"de méthodes utilitaires pratiques (comme la conversion en chaine de "
+"caractère par exemple)."
 
 #: ../../source/stack/low_level/common.rst:35
 msgid "Hardware Type Enum inheritance graph"
-msgstr ""
+msgstr "Graphe d'héritage de Hardware Type Enum"
 
 #: ../../source/stack/low_level/common.rst:38
-#: ../../source/stack/low_level/common.rst:50
 msgid "Commands"
-msgstr ""
+msgstr "Commandes"
 
 #: ../../source/stack/low_level/common.rst:39
 msgid ""
@@ -89,91 +102,103 @@ msgid ""
 "dynamixels. They are needed in queues in the ttl_driver and can_driver "
 "packages."
 msgstr ""
+"Classes représentant les commandes simple et synchrones, pour les steppers "
+"et les dynamixels. Elles sont nécessaires pour leur utilisation au sein des "
+"queues de commandes des packages ttl_driver et can_driver."
+
+#: ../../source/stack/low_level/common.rst:50
+msgid "Commands graphs"
+msgstr "Graph des Commandes"
 
 #: ../../source/stack/low_level/common.rst:55
 msgid "|picSingle|"
-msgstr ""
+msgstr "|picSingle|"
 
 #: ../../source/stack/low_level/common.rst:55
 msgid "|picSync|"
-msgstr ""
+msgstr "|picSync|"
 
 #: ../../source/stack/low_level/common.rst:57
 msgid "Single Cmd"
-msgstr ""
+msgstr "Single Cmd"
 
 #: ../../source/stack/low_level/common.rst:57
 msgid "Sync Cmd"
-msgstr ""
+msgstr "Sync Cmd"
 
 #: ../../source/stack/low_level/common.rst:60
 msgid ""
-"Each type of command is an alias to specified versions of two base "
-"template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
+"Each type of command is an alias to specified versions of two base template "
+"classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
 msgstr ""
+"Chaque type de commande est un alias de versions spécialisées des deux "
+"classes template de base : AbstractSynchronizeMotorCmd et "
+"AbstractSingleMotorCmd"
 
 #: ../../source/stack/low_level/common.rst:63
 msgid "Util"
-msgstr ""
+msgstr "Util"
 
 #: ../../source/stack/low_level/common.rst:64
 msgid "The util subpackage is comprised of:"
-msgstr ""
+msgstr "Le sous-package util est compris de :"
 
 #: ../../source/stack/low_level/common.rst:66
-msgid "Cpp interfaces, used globally in the stack for polymorphism for instance"
+msgid ""
+"Cpp interfaces, used globally in the stack for polymorphism for instance"
 msgstr ""
+"Interfaces Cpp, utilisées globalement dans la stack pour du polymorphisme "
+"par exemple"
 
 #: ../../source/stack/low_level/common.rst:67
 msgid "Utility functions usable globally in the stack"
-msgstr ""
+msgstr "Des fonctions utilitaires, utilisées globalement dans la stack"
 
 #: ../../source/stack/low_level/common.rst:70
 msgid "Dependencies"
-msgstr ""
+msgstr "Dépendances"
 
 #: ../../source/stack/low_level/common.rst:71
 msgid ""
-"This package does not depend on any package. This package is a dependency"
-" of the following packages :"
+"This package does not depend on any package. This package is a dependency of "
+"the following packages :"
 msgstr ""
+"Ce package ne dépend d'aucun autre package. Ce package est une dépendance "
+"des packages suivants :"
 
 #: ../../source/stack/low_level/common.rst:74
 msgid "can_driver"
-msgstr ""
+msgstr "can_driver"
 
 #: ../../source/stack/low_level/common.rst:75
 msgid "conveyor_interface"
-msgstr ""
+msgstr "conveyor_interface"
 
 #: ../../source/stack/low_level/common.rst:76
 msgid "cpu_interface"
-msgstr ""
+msgstr "cpu_interface"
 
 #: ../../source/stack/low_level/common.rst:77
 msgid "end_effector_interface"
-msgstr ""
+msgstr "end_effector_interface"
 
 #: ../../source/stack/low_level/common.rst:78
 msgid "joints_interface"
-msgstr ""
+msgstr "joints_interface"
 
 #: ../../source/stack/low_level/common.rst:79
 msgid "niryo_robot_hardware_interface"
-msgstr ""
+msgstr "niryo_robot_hardware_interface"
 
 #: ../../source/stack/low_level/common.rst:80
 msgid "tools_interface"
-msgstr ""
+msgstr "tools_interface"
 
 #: ../../source/stack/low_level/common.rst:81
 msgid "ttl_driver"
-msgstr ""
+msgstr "ttl_driver"
 
 #~ msgid "Parameters"
-#~ msgstr ""
-
-#~ msgid "Dependencies"
 #~ msgstr ""
 
 #~ msgid "Add Description of package here."
@@ -208,4 +233,3 @@ msgstr ""
 
 #~ msgid "Services & Messages files - common"
 #~ msgstr ""
-

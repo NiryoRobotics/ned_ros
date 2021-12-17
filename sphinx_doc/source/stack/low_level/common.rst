@@ -47,7 +47,7 @@ Classes representing single and synchronize commands, for steppers and dynamixel
    :alt: ISynchronizeMotorCmd inheritance graph
    :width: 200px
    
-.. table:: Commands
+.. table:: Commands graphs
    :widths: auto
    :align: center
 
