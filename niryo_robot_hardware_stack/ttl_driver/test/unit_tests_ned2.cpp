@@ -689,7 +689,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(state_motor_5->getHomePosition()));
     auto new_pos_6 = static_cast<uint32_t>(state_motor_6->to_motor_pos(state_motor_6->getHomePosition()));
     auto new_pos_7 = static_cast<uint32_t>(state_motor_7->to_motor_pos(state_motor_7->getHomePosition()));
-    ROS_ERROR("TEST id 2 home position %d", state_motor_2->getHomePosition());
+    ROS_ERROR("TEST id 2 home position %lf", state_motor_2->getHomePosition());
 
     // single control cmd for stepper ttl id 2
     auto cmd_1 = std::make_unique<common::model::StepperTtlSingleCmd>(
