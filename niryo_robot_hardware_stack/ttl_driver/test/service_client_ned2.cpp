@@ -141,9 +141,20 @@ TEST(TESTSuite, ReadPIDValue)
 
     srv.request.id =  5;
 
-    client.call(srv);
+    bool res{false};
+    // try 3 times to read value
+    for (int i = 0; i < 3; i++)
+    {
+        client.call(srv);
+        if (srv.response.status == niryo_robot_msgs::CommandStatus::SUCCESS)
+        {
+            res = true;
+            break;
+        }
+        ros::Duration(0.5);
+    }
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+    ASSERT_TRUE(res);
     EXPECT_EQ(srv.response.pos_p_gain, 1024);
     EXPECT_EQ(srv.response.pos_i_gain, 3642);
     EXPECT_EQ(srv.response.pos_d_gain, 11200);
@@ -206,9 +217,20 @@ TEST(TESTSuite, ReadVelocityProfile)
 
     srv.request.id =  2;
 
-    client.call(srv);
+    bool res{false};
+    // try 3 times to read value
+    for (int i = 0; i < 3; i++)
+    {
+        client.call(srv);
+        if (srv.response.status == niryo_robot_msgs::CommandStatus::SUCCESS)
+        {
+            res = true;
+            break;
+        }
+        ros::Duration(0.5);
+    }
+    ASSERT_TRUE(res);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
     EXPECT_EQ(srv.response.v_start, 0U);
     EXPECT_EQ(srv.response.a_1, 1260U);
     EXPECT_EQ(srv.response.v_1, 500U);

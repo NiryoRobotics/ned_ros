@@ -513,7 +513,6 @@ class TtlManagerTestSuite : public ::testing::Test
     {
         ros::NodeHandle nh("ttl_driver");
         ros::NodeHandle nh_private("~");
-        nh_private.getParam("hardware_version", hw_version);
 
         ttl_drv = std::make_shared<ttl_driver::TtlManager>(nh);
 
@@ -588,12 +587,10 @@ class TtlManagerTestSuite : public ::testing::Test
         return true;
     }
 
-    static std::string hw_version;
     static std::shared_ptr<ttl_driver::TtlManager> ttl_drv;
 };
 
 std::shared_ptr<ttl_driver::TtlManager> TtlManagerTestSuite::ttl_drv;
-std::string TtlManagerTestSuite::hw_version;
 
 /******************************************************/
 /************** Tests of ttl manager ******************/
@@ -692,6 +689,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(state_motor_5->getHomePosition()));
     auto new_pos_6 = static_cast<uint32_t>(state_motor_6->to_motor_pos(state_motor_6->getHomePosition()));
     auto new_pos_7 = static_cast<uint32_t>(state_motor_7->to_motor_pos(state_motor_7->getHomePosition()));
+    ROS_ERROR("TEST id 2 home position %d", state_motor_2->getHomePosition());
 
     // single control cmd for stepper ttl id 2
     auto cmd_1 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -882,8 +880,6 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmdsReturnHome)
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
-
-    ttl_drv->readJointsStatus();
 
     auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(state_motor_2->getHomePosition()));
     auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(state_motor_3->getHomePosition()));
