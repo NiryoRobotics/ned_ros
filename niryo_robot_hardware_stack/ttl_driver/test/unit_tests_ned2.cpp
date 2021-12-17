@@ -699,7 +699,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           2,
                                                                           std::initializer_list<uint32_t>{new_pos_2});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_1)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
 
     // single control cmd for stepper ttl id 3
     auto cmd_2 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -707,7 +707,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           3,
                                                                           std::initializer_list<uint32_t>{new_pos_3});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_2)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
 
     // single control cmd for stepper ttl id 4
     auto cmd_3 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -715,7 +715,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           4,
                                                                           std::initializer_list<uint32_t>{new_pos_4});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
 
     // single control cmd for dxl ttl id 5
      auto cmd_4 = std::make_unique<common::model::DxlSingleCmd>(
@@ -723,7 +723,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           5,
                                                                           std::initializer_list<uint32_t>{new_pos_5});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_4)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
 
     // single control cmd for dxl ttl id 6
      auto cmd_5 = std::make_unique<common::model::DxlSingleCmd>(
@@ -731,7 +731,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           6,
                                                                           std::initializer_list<uint32_t>{new_pos_6});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_5)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
     
     // single control cmd for dxl ttl id 7
      auto cmd_6 = std::make_unique<common::model::DxlSingleCmd>(
@@ -739,7 +739,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           7,
                                                                           std::initializer_list<uint32_t>{new_pos_7});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_6)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(4.0).sleep();
 
     ttl_drv->readJointsStatus();
 
@@ -765,7 +765,7 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
     dynamixel_cmd_1->addMotorParam(dxl_type, 6, 1);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_1)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.1).sleep();
 
     // redondant id
     auto dynamixel_cmd_3 = std::make_unique<common::model::DxlSyncCmd>(
@@ -831,7 +831,7 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
     cmd_1->addMotorParam(state_motor_7->getHardwareType(), 7, new_pos_7);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.2).sleep();
 
     auto cmd_2 = std::make_unique<common::model::StepperTtlSyncCmd>(common::model::EStepperCommandType::CMD_TYPE_POSITION);
     cmd_2->addMotorParam(state_motor_2->getHardwareType(), 2, new_pos_2);
@@ -839,7 +839,7 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
     cmd_2->addMotorParam(state_motor_4->getHardwareType(), 4, new_pos_4);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(4.0).sleep();
 
     ttl_drv->readJointsStatus();
 
@@ -898,7 +898,7 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmdsReturnHome)
     cmd_1->addMotorParam(state_motor_7->getHardwareType(), 7, new_pos_7);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(0.2).sleep();
 
     auto cmd_2 = std::make_unique<common::model::StepperTtlSyncCmd>(common::model::EStepperCommandType::CMD_TYPE_POSITION);
     cmd_2->addMotorParam(state_motor_2->getHardwareType(), 2, new_pos_2);
@@ -906,7 +906,7 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmdsReturnHome)
     cmd_2->addMotorParam(state_motor_4->getHardwareType(), 4, new_pos_4);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2)), COMM_SUCCESS);
-    ros::Duration(0.5).sleep();
+    ros::Duration(4.0).sleep();
 
     ttl_drv->readJointsStatus();
 

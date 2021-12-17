@@ -1154,7 +1154,7 @@ int TtlManager::setLeds(int led)
     }
     else
     {
-        ROS_INFO("Set leds failed. It is maybe that this service is not support for this product");
+        ROS_DEBUG("Set leds failed. It is maybe that this service is not support for this product");
         ret = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
