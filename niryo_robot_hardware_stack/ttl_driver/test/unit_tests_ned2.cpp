@@ -740,6 +740,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           std::initializer_list<uint32_t>{new_pos_7});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_6)), COMM_SUCCESS);
     ros::Duration(4.0).sleep();
+    ASSERT_EQ(ttl_drv->getCalibrationStatus(), common::model::EStepperCalibrationStatus::OK);
 
     ttl_drv->readJointsStatus();
 
