@@ -535,6 +535,9 @@ class TtlManagerTestSuite : public ::testing::Test
     }
     static bool startCalibration()
     {
+        // need reset calibration to get calibration status after the calibration
+        ttl_drv->resetCalibration();
+
         auto state_motor_3 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(3));
         auto steps = static_cast<uint32_t>(state_motor_3->getPosition() + 10 * state_motor_3->getDirection());
         int res = ttl_drv->writeSingleCommand(std::make_unique<common::model::StepperTtlSingleCmd>(common::model::StepperTtlSingleCmd(
