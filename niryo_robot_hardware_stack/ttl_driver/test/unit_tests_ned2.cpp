@@ -366,6 +366,9 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 stepperState->setLimitPositionMin(limit_position_min);
                 stepperState->setMotorRatio(motor_ratio);
                 stepperState->setVelocityProfile(profile);
+                
+                // update ratio used to convert rad to pos motor
+                stepperState->updateMultiplierRatio();
 
                 if (eBusProto == EBusProtocol::TTL)
                 {
@@ -689,7 +692,6 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(state_motor_5->getHomePosition()));
     auto new_pos_6 = static_cast<uint32_t>(state_motor_6->to_motor_pos(state_motor_6->getHomePosition()));
     auto new_pos_7 = static_cast<uint32_t>(state_motor_7->to_motor_pos(state_motor_7->getHomePosition()));
-    ROS_ERROR("TEST id 2 home position %lf", state_motor_2->getHomePosition());
 
     // single control cmd for stepper ttl id 2
     auto cmd_1 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -816,12 +818,12 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
 
     ttl_drv->readJointsStatus();
 
-    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(2.382));
-    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(-0.181));
-    auto new_pos_4 = static_cast<uint32_t>(state_motor_4->to_motor_pos(0.09));
-    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(1.378));
-    auto new_pos_6 = static_cast<uint32_t>(state_motor_6->to_motor_pos(1.216));
-    auto new_pos_7 = static_cast<uint32_t>(state_motor_7->to_motor_pos(1.602));
+    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(0.995));
+    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(0.06));
+    auto new_pos_4 = static_cast<uint32_t>(state_motor_4->to_motor_pos(-0.44));
+    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(0.956));
+    auto new_pos_6 = static_cast<uint32_t>(state_motor_6->to_motor_pos(0.602));
+    auto new_pos_7 = static_cast<uint32_t>(state_motor_7->to_motor_pos(0.884));
 
     auto cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_POSITION);
     cmd_1->addMotorParam(state_motor_5->getHardwareType(), 5, new_pos_5);
@@ -926,6 +928,7 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "ttl_driver_unit_tests");
+    ros::start();
 
     std::string hardware_version;
 

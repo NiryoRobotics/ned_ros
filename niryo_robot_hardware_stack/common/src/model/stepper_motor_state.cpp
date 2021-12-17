@@ -139,7 +139,7 @@ int StepperMotorState::to_motor_pos(double rad_pos)
         rad_pos = _limit_position_max;
     else if (rad_pos < _limit_position_min)
         rad_pos = _limit_position_min;
-    ROS_ERROR("TEST rad_pos %lf, _offset_position %lf, ratio %lf", rad_pos, _offset_position, _pos_multiplier_ratio);
+
     int result =  static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 
     return result;
