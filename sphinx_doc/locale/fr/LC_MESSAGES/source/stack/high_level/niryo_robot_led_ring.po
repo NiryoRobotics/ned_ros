@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 14:52+0100\n"
+"POT-Creation-Date: 2021-12-20 15:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -244,8 +244,9 @@ msgstr ""
 msgid ""
 "Several animations are implemented to allow the user different ways to "
 "control the Led Ring. Refer to the following table. The node receives "
-"commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see "
-":ref:`Services - Led Ring` section)"
+"commands through the service ``/niryo_robot_led_ring/set_user_animation``"
+" (see :ref:`source/stack/high_level/niryo_robot_led_ring:Services - Led "
+"Ring` section)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:88
@@ -689,7 +690,9 @@ msgid "``set_user_animation``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:274
-msgid ":ref:`LedUser<LedUser (Service)>`"
+msgid ""
+":ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -729,7 +732,9 @@ msgid "``led_ring_status``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:294
-msgid ":ref:`LedRingStatus<LedRingStatus (Message)>`"
+msgid ""
+":ref:`LedRingStatus<source/stack/high_level/niryo_robot_led_ring:LedRingStatus"
+" (Message)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -761,7 +766,9 @@ msgid "``led_ring_current_state``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:300
-msgid ":ref:`LedRingCurrentState<LedRingCurrentState (Message)>`"
+msgid ""
+":ref:`LedRingCurrentState<source/stack/high_level/niryo_robot_led_ring:LedRingCurrentState"
+" (Message)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -817,7 +824,8 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:324
 msgid ""
 "Retrieves the current robot status, and control Led accordingly (see "
-":ref:`Robot status mode` section)"
+":ref:`source/stack/high_level/niryo_robot_led_ring:Robot status mode` "
+"section)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:326
@@ -872,5 +880,30 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Several animations are implemented to "
+#~ "allow the user different ways to "
+#~ "control the Led Ring. Refer to the"
+#~ " following table. The node receives "
+#~ "commands through the service "
+#~ "``/niryo_robot_led_ring/set_user_animation`` (see "
+#~ ":ref:`Services - Led Ring` section)"
+#~ msgstr ""
+
+#~ msgid ":ref:`LedUser<LedUser (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LedRingStatus<LedRingStatus (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LedRingCurrentState<LedRingCurrentState (Message)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Retrieves the current robot status, and"
+#~ " control Led accordingly (see :ref:`Robot"
+#~ " status mode` section)"
 #~ msgstr ""
 
