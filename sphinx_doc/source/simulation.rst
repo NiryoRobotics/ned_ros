@@ -60,7 +60,7 @@ You can access it by using the commands:
 
     roslaunch niryo_robot_bringup niryo_ned2_simulation.launch
 
-**TODO**
+.. todo:: ??
 
 Without physics - Visualization
 --------------------------------------
@@ -99,7 +99,7 @@ To run it: ::
 
     Rviz opening, with the robot ready to be controlled with ROS!
 
-    **TODO add parameters**
+    .. todo::  add parameters
 
 With physics - Simulation
 --------------------------------------
