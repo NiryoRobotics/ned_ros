@@ -16,8 +16,8 @@ steppers:
         offset_position: -2.966
         # home position (rad)
         home_position: 0.0
-        limit_position_min: -2.966  # joint limit min
-        limit_position_max: 2.966   # joint limit max
+        limit_position_min: -2.949  # joint limit min
+        limit_position_max: 2.948   # joint limit max
         # assembly direction (1 or -1)
         direction: 1
         # rule is a_max = a_1 * 3

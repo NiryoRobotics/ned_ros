@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import rospy
 
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
+from enum import Enum
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ShiftPose, PinMode, PinState, PinID, \
+    ToolID, ConveyorID, ConveyorDirection, CommandEnum
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from .communication_functions import dict_to_packet
 
@@ -633,12 +635,21 @@ class CommandInterpreter:
     @check_nb_args(0)
     def __get_digital_io_state(self):
         digital_io_state_array = self.__niryo_robot.get_digital_io_state()
+
         data_answer = []
-        for counter in range(0, len(digital_io_state_array.pins)):
-            data_answer.append([digital_io_state_array.pins[counter],
-                                digital_io_state_array.names[counter],
-                                digital_io_state_array.modes[counter],
-                                digital_io_state_array.states[counter]])
+        data_answer += [[di.name, PinMode.INPUT, int(di.value), ] for di in digital_io_state_array.digital_inputs]
+        data_answer += [[do.name, PinMode.OUTPUT, int(do.value), ] for do in digital_io_state_array.digital_outputs]
+        data_answer.sort(key=lambda x: x[0])
+        return self.__send_answer(*data_answer)
+
+    @check_nb_args(0)
+    def __get_analog_io_state(self):
+        analog_io_state_array = self.__niryo_robot.get_analog_io_state()
+
+        data_answer = []
+        data_answer += [[ai.name, PinMode.INPUT, ai.value, ] for ai in analog_io_state_array.analog_inputs]
+        data_answer += [[ao.name, PinMode.OUTPUT, ao.value, ] for ao in analog_io_state_array.analog_outputs]
+        data_answer.sort(key=lambda x: x[0])
         return self.__send_answer(*data_answer)
 
     @check_nb_args(2)
@@ -651,6 +662,11 @@ class CommandInterpreter:
     def __analog_read(self, pin_string):
         analog_state = self.__niryo_robot.analog_read(pin_string)
         return self.__send_answer(analog_state)
+
+    @check_nb_args(0)
+    def __custom_button_state(self):
+        is_pressed = self.__niryo_robot.custom_button.is_pressed()
+        return self.__send_answer(is_pressed)
 
     # - Conveyor
     @check_nb_args(0)
@@ -800,7 +816,7 @@ class CommandInterpreter:
     def __led_ring_solid(self, color, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__niryo_robot.led_ring_solid(color, wait)
+        self.__niryo_robot.led_ring.solid(color, wait)
         return self.__send_answer()
 
     @check_nb_args(1)
@@ -813,18 +829,18 @@ class CommandInterpreter:
     def __led_ring_flash(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.flashing(color, period, iterations, wait)
         return self.__send_answer()
 
-    @check_nb_args(3)
+    @check_nb_args(4)
     def __led_ring_alternate(self, color_list, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         for index, color in enumerate(color_list):
             color = self.__check_color_led_ring(color)
             color_list[index] = color
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__niryo_robot.led_ring.alternate(color_list, period, iterations, wait)
         return self.__send_answer()
 
@@ -832,8 +848,9 @@ class CommandInterpreter:
     def __led_ring_chase(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
+
         self.__niryo_robot.led_ring.chase(color, period, iterations, wait)
         return self.__send_answer()
 
@@ -841,14 +858,14 @@ class CommandInterpreter:
     def __led_ring_wipe(self, color, period, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__niryo_robot.led_ring.wipe(color, period, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
     def __led_ring_rainbow(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow(period, iterations, wait)
         return self.__send_answer()
@@ -856,7 +873,7 @@ class CommandInterpreter:
     @check_nb_args(3)
     def __led_ring_rainbow_cycle(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow_cycle(period, iterations, wait)
         return self.__send_answer()
@@ -864,7 +881,7 @@ class CommandInterpreter:
     @check_nb_args(3)
     def __led_ring_rainbow_chase(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow_chase(period, iterations, wait)
         return self.__send_answer()
@@ -873,7 +890,7 @@ class CommandInterpreter:
     def __led_ring_go_up(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.go_up(color, period, iterations, wait)
         return self.__send_answer()
@@ -882,7 +899,7 @@ class CommandInterpreter:
     def __led_ring_go_up_down(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.go_up_down(color, period, iterations, wait)
         return self.__send_answer()
@@ -891,7 +908,7 @@ class CommandInterpreter:
     def __led_ring_breath(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.breath(color, period, iterations, wait)
         return self.__send_answer()
@@ -900,7 +917,7 @@ class CommandInterpreter:
     def __led_ring_snake(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(period, float)
+        self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.snake(color, period, iterations, wait)
         return self.__send_answer()
@@ -932,7 +949,9 @@ class CommandInterpreter:
     # - Sound
     @check_nb_args(4)
     def __play_sound(self, sound_name, wait_end, start_time_sec, end_time_sec):
-        return self.__send_answer(self.__niryo_robot.sound.play(sound_name, wait_end, start_time_sec, end_time_sec))
+        return self.__send_answer(self.__niryo_robot.sound.play(sound_name,
+                                                                self.__boolean_string_dict_converter[wait_end],
+                                                                start_time_sec, end_time_sec))
 
     @check_nb_args(1)
     def __set_volume(self, sound_volume):
@@ -952,4 +971,5 @@ class CommandInterpreter:
 
     @check_nb_args(2)
     def __say(self, text, language):
-        return self.__send_answer(self.__niryo_robot.sound.say(text, language))
+        success, message = self.__niryo_robot.sound.say(text, language)
+        return self.__send_answer(-1 if success else 1, message)
