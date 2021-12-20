@@ -1,4 +1,4 @@
 Ubuntu 16 Installation
 =========================================
 
-.. todo:: 
+.. todo:: whole ubuntu 16 install
