@@ -106,18 +106,24 @@ Vision
 Sound
 ^^^^^^^^^^^^^
 
-.. autoclass:: NiryoRosWrapper
-    :members: play_sound, stop_sound, set_volume,
+.. automodule:: niryo_robot_sound.api.sound_ros_wrapper
+   :members: SoundRosWrapper
+
+.. autoclass:: SoundRosWrapper
+    :members: play, stop, set_volume,
               import_sound, delete_sound
     :member-order: bysource
 
 Led Ring
 ^^^^^^^^^^^^^
 
-.. autoclass:: NiryoRosWrapper
-    :members: led_ring_solid, led_ring_turn_off, led_ring_flash, led_ring_alternate, 
-                led_ring_chase, led_ring_wipe, led_ring_rainbow, led_ring_rainbow_cycle,
-                led_ring_rainbow_chase, led_ring_go_up, led_ring_go_up_down
+.. automodule:: niryo_robot_led_ring.api.led_ring_ros_wrapper
+   :members: LedRingRosWrapper
+
+.. autoclass:: LedRingRosWrapper
+    :members: solid, turn_off, flashing, alternate, 
+                chase, wipe, rainbow, rainbow_cycle,
+                rainbow_chase, go_up, go_up_down
     :member-order: bysource
 
 Enums
