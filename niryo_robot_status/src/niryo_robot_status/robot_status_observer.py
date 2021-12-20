@@ -44,7 +44,8 @@ class RobotStatusObserver(object):
             "niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold", 75)
 
         # # - Publisher
-        # self.__ping_pyniryo_publisher = rospy.Publisher('/niryo_robot_pyniryo2/ping', Empty, latch=False, queue_size=10)
+        # self.__ping_pyniryo_publisher = rospy.Publisher('
+        #                               /niryo_robot_pyniryo2/ping', Empty, latch=False, queue_size=10)
 
         # - Services
         # self.__pong_pniryo_service = rospy.Service('/niryo_robot_pyniryo2/pong',
@@ -150,7 +151,7 @@ class RobotStatusObserver(object):
 
     def __callback_rosbridge_connected_clients(self, msg):
         last_pyniryo2_ping = self.pyniryo2_ping
-        self.pyniryo2_ping  = len(msg.clients) > 0
+        self.pyniryo2_ping = len(msg.clients) > 0
         # last_pyniryo2_ping = self.pyniryo2_ping
         #
         # if len(msg.clients) == 0:
@@ -168,7 +169,7 @@ class RobotStatusObserver(object):
         #         self.pyniryo2_ping = False
         #
         # print self.pyniryo2_ping
-        #print (last_pyniryo2_ping, self.pyniryo2_ping)
+        # print (last_pyniryo2_ping, self.pyniryo2_ping)
         if last_pyniryo2_ping != self.pyniryo2_ping:
             self.__robot_status_handler.advertise_new_state()
 

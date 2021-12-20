@@ -165,7 +165,7 @@ TEST_P(DXLIdentityMotorTest, identityFromMotorPos)
     if (dxlState.to_rad_pos(test_pos) > dxlState.getLimitPositionMax() ||
         dxlState.to_rad_pos(test_pos) < dxlState.getLimitPositionMin())
     {
-        EXPECT_TRUE(true);   
+        EXPECT_TRUE(true);
     }
     else
         EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
@@ -238,7 +238,7 @@ class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, 
 TEST_P(StepperIdentityRadTest, identityFromRad)
 {
     double pos_rad = std::get<0>(GetParam());
-    double pos_last = stepperState.to_rad_pos(stepperState.to_motor_pos(pos_rad)); 
+    double pos_last = stepperState.to_rad_pos(stepperState.to_motor_pos(pos_rad));
     if (pos_rad > stepperState.getLimitPositionMax())
         EXPECT_NEAR(pos_last, stepperState.getLimitPositionMax(), precision);
     else if (pos_rad < stepperState.getLimitPositionMin())

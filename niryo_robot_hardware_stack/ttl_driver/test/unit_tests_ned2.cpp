@@ -109,7 +109,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_min", limit_position_min);
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_max", limit_position_max);
                 robot_hwnh.getParam(currentStepperNamespace + "/motor_ratio", motor_ratio);
-                    
+
                 // acceleration and velocity profiles
                 common::model::VelocityProfile profile{};
                 int data{};
@@ -366,7 +366,7 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 stepperState->setLimitPositionMin(limit_position_min);
                 stepperState->setMotorRatio(motor_ratio);
                 stepperState->setVelocityProfile(profile);
-                
+
                 // update ratio used to convert rad to pos motor
                 stepperState->updateMultiplierRatio();
 
@@ -673,7 +673,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto cmd_1_torque = std::make_unique<common::model::StepperTtlSingleCmd>(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                              2,
                                                                              std::initializer_list<uint32_t>{1});
-                                                         
+
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
@@ -689,7 +689,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                              std::initializer_list<uint32_t>{1});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
-    
+
 
     auto cmd_4_torque = std::make_unique<common::model::DxlSingleCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE,
                                                                        5,
@@ -755,7 +755,7 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
                                                                           std::initializer_list<uint32_t>{new_pos_6});
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_5)), COMM_SUCCESS);
     ros::Duration(0.1).sleep();
-    
+
     // single control cmd for dxl ttl id 7
      auto cmd_6 = std::make_unique<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_POSITION,
