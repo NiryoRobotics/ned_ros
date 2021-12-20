@@ -9,7 +9,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from tools_interface.srv import PingDxlTool
 from tools_interface.srv import ToolCommand
 from niryo_robot_rpi.srv import SetDigitalIO
-from niryo_robot_rpi.srv import SetIOMode
+from niryo_robot_rpi.srv import SetIOMode, SetIOModeRequest
 
 
 class ToolRosCommandInterface:
@@ -107,7 +107,7 @@ class ToolRosCommandInterface:
             return CommandStatus.SUCCESS, "Success"
 
         try:
-            resp = self.__service_setup_digital_output_tool(gpio_name, SetDigitalIO.Request.OUTPUT)  # set output
+            resp = self.__service_setup_digital_output_tool(gpio_name, SetIOModeRequest.OUTPUT)  # set output
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to get digital output setup")

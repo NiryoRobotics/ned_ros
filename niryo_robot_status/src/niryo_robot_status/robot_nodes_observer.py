@@ -1,7 +1,9 @@
 import rospy
 import rosnode
+from threading import Thread
 
 from niryo_robot_msgs.srv import Ping, PingResponse
+from std_msgs.msg import Bool
 
 
 class RobotNodesObserver(object):
@@ -29,6 +31,11 @@ class RobotNodesObserver(object):
         self.__advertise_python_ros_wrapper = rospy.Service('~ping_ros_wrapper', Ping,
                                                             self.__callback_python_ros_wrapper_node)
 
+        self.__handle_pyniryo_connection_loop = Thread(target=self.check_pyniryo_connection_loop)
+        self.pyniryo_connected = False
+        self.__pyniryo_node_ping_time = rospy.Time(0)
+        self.__pyniryo_nodes_sub = rospy.Subscriber('/ping_pyniryo', Bool, self.__callback_pyniryo_nodes)
+
     def __callback_python_ros_wrapper_node(self, req):
         if req.name not in ['/niryo_robot_user_interface', '']:
             if req.state:
@@ -37,6 +44,21 @@ class RobotNodesObserver(object):
                 self.__python_wrapper_nodes.remove(req.name)
             self.__robot_status_handler.advertise_new_state()
         return PingResponse()
+
+    def __callback_pyniryo_nodes(self, _msg):
+        self.__pyniryo_node_ping_time = rospy.Time.now()
+        if not self.pyniryo_connected:
+            self.pyniryo_connected = True
+            self.__robot_status_handler.advertise_new_state()
+            self.__handle_pyniryo_connection_loop = Thread(target=self.check_pyniryo_connection_loop)
+            self.__handle_pyniryo_connection_loop.start()
+
+    def check_pyniryo_connection_loop(self):
+        loop_rate = rospy.Rate(2)
+        while not rospy.is_shutdown() and self.pyniryo_connected:
+            loop_rate.sleep()
+            self.pyniryo_connected = (rospy.Time.now() - self.__pyniryo_node_ping_time).to_sec() < 0.5
+        self.__robot_status_handler.advertise_new_state()
 
     @property
     def check_user_node(self):
@@ -47,6 +69,7 @@ class RobotNodesObserver(object):
 
         self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
                                        pywrapper_node in alive_nodes}
+
         missing_nodes = [vital_node for vital_node in self.__vital_nodes
                          if vital_node not in alive_nodes or not rosnode.rosnode_ping(vital_node, 1)]
 
