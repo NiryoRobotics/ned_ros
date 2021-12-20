@@ -304,16 +304,15 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
+    _robot->setCommandToCurrentPosition();
     // set pos and command equal
     if (_hardware_version == "ned2")
     {
-        _robot->setCommandToCurrentPosition();
         _robot->write(ros::Time::now(), ros::Duration(0.0));
         _lock_write_cnt = 100;
     }
     else if (_hardware_version == "ned" || _hardware_version == "one")
     {
-        _robot->setCommandToCurrentPosition();
         _cm->update(ros::Time::now(), ros::Duration(0.0), true);
         _robot->synchronizeMotors(true);
     }
