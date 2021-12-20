@@ -25,12 +25,12 @@ steppers:
         #         v_max = v_1 * 3
         #         d_max = a_max + 200
         v_start: 0
-        a_1: 1260
+        a_1: 2520
         v_1: 500
-        a_max: 2500
-        v_max: 1500
-        d_max: 2500
-        d_1: 1228
+        a_max: 5000
+        v_max: 2000
+        d_max: 5000
+        d_1: 2520
         v_stop: 20
 
     stepper_2:
@@ -46,12 +46,12 @@ steppers:
         #         v_max = v_1 * 3
         #         d_max = a_max + 100
         v_start: 0
-        a_1: 860
+        a_1: 1720
         v_1: 300
-        a_max: 1400
+        a_max: 2800
         v_max: 1000
-        d_max: 1400
-        d_1: 860
+        d_max: 2800
+        d_1: 1720
         v_stop: 20
         
     stepper_3:
@@ -67,10 +67,10 @@ steppers:
         #         v_max = v_1 * 3
         #         d_max = a_max + 100
         v_start: 0
-        a_1: 915
+        a_1: 1830
         v_1: 400
-        a_max: 1700
-        v_max: 1200
-        d_max: 1700
-        d_1: 983
+        a_max: 3400
+        v_max: 1400
+        d_max: 3400
+        d_1: 1830
         v_stop: 20
