@@ -941,13 +941,40 @@ inline int DxlDriver<XL320Reg>::syncReadVelocity(const std::vector<uint8_t> &id_
 template<>
 inline int DxlDriver<XL320Reg>::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
 {
+    int res = COMM_TX_FAIL;
+
+    if(id_list.empty())
+        return res;
+
     data_array_list.clear();
 
+    // read torque enable on first id
+    typename XL320Reg::TYPE_TORQUE_ENABLE torque;
+    read<typename XL320Reg::TYPE_TORQUE_ENABLE>(XL320Reg::ADDR_TORQUE_ENABLE, id_list.at(0), torque);
+
     std::vector<std::array<typename XL320Reg::TYPE_PRESENT_POSITION, 2> > raw_data;
-    int res = syncReadConsecutiveBytes<typename XL320Reg::TYPE_PRESENT_POSITION, 2>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data);
-    // invert data
-    for (auto const& a : raw_data)
-        data_array_list.emplace_back(std::array<uint32_t, 2>{a.at(1), a.at(0)});
+    // if torque on, read position and velocity
+    if (torque)
+    {
+        res = syncReadConsecutiveBytes<typename XL320Reg::TYPE_PRESENT_POSITION, 2>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data);
+        if (res == COMM_SUCCESS)
+        {
+            for (auto const& a : raw_data)
+                data_array_list.emplace_back(std::array<uint32_t, 2>{((a.at(1) > 1023U) ? 0U : a.at(1)), a.at(0)});   // in joint mode, vel is not bigger than 1023 
+        }
+    }
+    else  //else read position only
+    {
+        std::vector<uint32_t> position_list;
+        res = syncReadPosition(id_list, position_list);
+        if (res == COMM_SUCCESS)
+        {
+            for (auto p : position_list)
+                data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+
+        }
+    }
+
     return res;
 }
 
