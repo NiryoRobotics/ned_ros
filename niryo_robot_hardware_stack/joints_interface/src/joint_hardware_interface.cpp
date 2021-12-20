@@ -556,6 +556,9 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
         // reboot not available for CAN
     }
 
+    // reset learning mode correctly
+    activateLearningMode(!torque_on);
+
     return res;
 }
 
