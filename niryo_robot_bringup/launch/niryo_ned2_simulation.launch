@@ -10,7 +10,7 @@
     <arg name="simu_conveyor" default="true"/>
     <arg name="vision_enabled" default="true"/>
     <arg name="gazebo" default="false"/>
-    <arg name="no_summary" default="true"/>
+    <arg name="no_summary" default="false"/>
 
     <group if="$(arg no_summary)">
         <node pkg="niryo_robot_bringup" type="timed_launch.sh"
