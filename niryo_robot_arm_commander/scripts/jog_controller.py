@@ -242,7 +242,6 @@ class JogController:
         if shift_mode != self._shift_mode:
             self._reset_last_pub()
             self._shift_mode = shift_mode
-            rospy.logwarn("new")
 
         shift_command = list(msg.shift_values)
         if shift_mode == JogShiftRequest.POSE_SHIFT:
