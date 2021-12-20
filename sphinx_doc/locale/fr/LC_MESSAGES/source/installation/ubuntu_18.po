@@ -310,7 +310,7 @@ msgid ""
 msgstr ""
 "Il est nécessaire de lancer cette commande à chaque fois que vous lancez "
 "un nouveau terminal. Si vous voulez l'appliquer à chaque ouverture d'un "
-"terminal, vous pouvez ajouter cette ligne à votre fichier **.bashrc : ::"
+"terminal, vous pouvez ajouter cette ligne à votre fichier **.bashrc** : ::"
 
 #: ../../source/installation/ubuntu_18.rst:153
 msgid "Installation is now finished!"
