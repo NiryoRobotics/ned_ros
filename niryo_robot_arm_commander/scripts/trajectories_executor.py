@@ -151,7 +151,8 @@ class TrajectoriesExecutor:
                     CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
             # TODO(Thuc) test ned and one without reset controller hear
-            # self.__reset_controller()
+            if self.__hardware_version == 'ned' or self.__hardware_version == 'one':
+                self.__reset_controller()
             rospy.loginfo("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
 
