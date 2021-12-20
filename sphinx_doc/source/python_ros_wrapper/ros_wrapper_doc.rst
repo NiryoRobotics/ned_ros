@@ -121,7 +121,7 @@ Led Ring
    :members: LedRingRosWrapper
 
 .. autoclass:: LedRingRosWrapper
-    :members: solid, turn_off, flash, alternate, 
+    :members: solid, turn_off, flashing, alternate, 
                 chase, wipe, rainbow, rainbow_cycle,
                 rainbow_chase, go_up, go_up_down
     :member-order: bysource
