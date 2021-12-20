@@ -340,6 +340,7 @@ Dependencies
 - :doc:`ttl_driver`
 - :doc:`can_driver`
 - :doc:`../high_level/niryo_robot_msgs`
+- :msgs_index:`control_msgs`
 
 Services, Topics and Messages
 -------------------------------------------------
