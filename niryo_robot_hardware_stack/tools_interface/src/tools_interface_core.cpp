@@ -93,12 +93,17 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
  */
 bool ToolsInterfaceCore::rebootHardware(bool torque_on)
 {
-    // reboot
-    bool res = _ttl_interface->rebootHardware(_toolState);
+    bool res = true;
+    if (_toolState && _toolState->isValid())
+    {
+        // reboot
+        bool res = _ttl_interface->rebootHardware(_toolState);
 
-    // re init
-    if (res)
-        initHardware(torque_on);
+        // re init
+        if (res)
+            initHardware(torque_on);
+    }
+    // else no tool, return ok
 
     return res;
 }
