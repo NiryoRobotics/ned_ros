@@ -45,18 +45,22 @@ Without physics - No Visualization
 --------------------------------------
 
 This mode is mainly for simulation and tests purpose, bringing you in the closest state as possible to
-a real robot control. It is available for all currently supported architectures. You can access it by using the command: ::
+a real robot control. It is available for all currently supported architectures.
+You can access it by using the commands:
 
-One simulation:
-    `roslaunch niryo_robot_bringup niryo_one_simulation.launch`
+- One simulation:  ::
 
-Ned simulation:
-    `roslaunch niryo_robot_bringup niryo_ned_simulation.launch`
+    roslaunch niryo_robot_bringup niryo_one_simulation.launch
 
-Ned2 simulation:
-    `roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`
+- Ned simulation:  ::
 
-TODO
+    roslaunch niryo_robot_bringup niryo_ned_simulation.launch
+
+- Ned2 simulation: ::
+
+    roslaunch niryo_robot_bringup niryo_ned2_simulation.launch
+
+**TODO**
 
 Without physics - Visualization
 --------------------------------------
