@@ -5,8 +5,8 @@ import rospy
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
-from niryo_action_client import NiryoActionClient
-from niryo_topic_value import NiryoTopicValue
+from niryo_robot_python_ros_wrapper.niryo_action_client import NiryoActionClient
+from niryo_robot_python_ros_wrapper.niryo_topic_value import NiryoTopicValue
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
