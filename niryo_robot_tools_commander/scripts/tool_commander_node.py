@@ -176,10 +176,7 @@ class ToolCommander:
         self.__current_tool.set_as_non_active()
 
         # 5. Return success or error
-        if success:
-            self.__action_server.set_succeeded(
-                self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
-        else:
+        if not success:
             rospy.loginfo("Tool Commander - error : {}".format(message))
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
 
@@ -200,6 +197,9 @@ class ToolCommander:
             else:
                 self.__action_server.set_succeeded(
                     self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
+        else:
+            self.__action_server.set_succeeded(
+                self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
 
     def __callback_update_tool(self, _req):
         state, id_ = self.update_tool()
