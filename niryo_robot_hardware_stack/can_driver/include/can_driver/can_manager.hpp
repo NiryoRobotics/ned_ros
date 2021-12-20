@@ -97,6 +97,7 @@ public:
     void resetCalibration() override;
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    void setCalibrationStatus(const common::model::EStepperCalibrationStatus status);
 
     // getters
     int32_t getPosition(const common::model::JointState &motor_state) const;
@@ -200,6 +201,16 @@ common::model::EStepperCalibrationStatus
 CanManager::getCalibrationStatus() const
 {
     return _calibration_status;
+}
+
+/**
+ * @brief CanManager::setCalibrationStatus
+ * @return
+ */
+inline
+void CanManager::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
+{
+    _calibration_status = status;
 }
 
 /**

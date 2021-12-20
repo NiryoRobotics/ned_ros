@@ -237,6 +237,7 @@ class CommandEnum(Enum):
     GET_HARDWARE_STATUS = 154
     ANALOG_WRITE = 155
     ANALOG_READ = 156
+    GET_ANALOG_IO_STATE = 157
 
     # - Conveyor
     SET_CONVEYOR = 180

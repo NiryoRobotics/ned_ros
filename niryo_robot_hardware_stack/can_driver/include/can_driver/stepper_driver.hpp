@@ -23,7 +23,7 @@
 #include <memory>
 #include <set>
 #include <vector>
-
+#include <ros/ros.h>
 #include "abstract_stepper_driver.hpp"
 
 #include "mcp_can_rpi/mcp_can_rpi.h"

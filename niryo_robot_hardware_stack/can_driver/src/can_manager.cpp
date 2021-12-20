@@ -647,7 +647,8 @@ void CanManager::resetCalibration()
     _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
     for (auto &s : _state_map)
     {
-        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER ||
+                         s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
             !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
             std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::UNINITIALIZED, 0);
     }

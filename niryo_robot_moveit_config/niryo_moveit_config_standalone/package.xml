@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_moveit_config_standalone</name>
-  <version>3.2.0</version>
+  <version>4.0.0</version>
   <description>
      An automatically generated package with all the configuration and launch files for using Ned with the MoveIt! Motion Planning Framework
   </description>

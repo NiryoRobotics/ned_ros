@@ -18,11 +18,11 @@ Install WSL2 [3]_
 
 1. Enable Windows Subsystem for Linux on your machine (in a powershell terminal)
 ::
-    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
 2. Update WSL to use version 2 (in a powershell terminal)
 ::
-    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
 3. You then need to restart your machine to finish the WSL install and the upgrade to WSL2.
 
@@ -35,7 +35,7 @@ Install WSL2 [3]_
 5. Install an Ubuntu 18.04 distribution using the Windows Store
 
 
-.. figure:: ../../images/wsl/windows_store.png
+.. figure:: ../../images/installation/windows_store.png
    :alt: Windows Store
    :height: 400px
    :align: center
@@ -60,15 +60,15 @@ https://sourceforge.net/projects/vcxsrv/
 - Check "Disable access control"
 
 
-.. image:: ../../images/wsl/vcxsrv_1.png
+.. image:: ../../images/installation/vcxsrv_1.png
    :alt: VcXsrv installation wizard - 1
    :width: 30%
 
-.. image:: ../../images/wsl/vcxsrv_2.png
+.. image:: ../../images/installation/vcxsrv_2.png
    :alt: VcXsrv installation wizard - 2
    :width: 30%
 
-.. image:: ../../images/wsl/vcxsrv_3.png
+.. image:: ../../images/installation/vcxsrv_3.png
    :alt: VcXsrv installation wizard - 3
    :width: 30%
 

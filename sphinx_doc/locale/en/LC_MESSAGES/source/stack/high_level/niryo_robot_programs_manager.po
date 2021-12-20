@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -262,4 +261,164 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:143
 msgid "ProgramList (Message)"
 msgstr ""
+
+#~ msgid "Niryo Robot Programs Manager Package"
+#~ msgstr ""
+
+#~ msgid "Programs Manager Node"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node is made of several"
+#~ " services to deal with the storage"
+#~ " and running of programs"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call are not available from the "
+#~ "Python ROS Wrapper, as it made to"
+#~ " run its programs with the Python "
+#~ "ROS Wrapper"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Parameters - Programs Manager"
+#~ msgstr ""
+
+#~ msgid "Services - Programs Manager"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "All these services are available as "
+#~ "soon as the node is started "
+#~ "whereas on standalone mode or not"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Programs Manager"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - Programs Manager"
+#~ msgstr ""
+
+#~ msgid ":ref:`ExecuteProgram<ExecuteProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgram<GetProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramList<GetProgramList (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageProgram<ManageProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetProgramAutorun<SetProgramAutorun (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot programs manager package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_commander "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <niryo_robot_commander>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call are not available from the "
+#~ "Python ROS Wrapper, as it made to"
+#~ " run its programs with the Python "
+#~ "ROS Wrapper."
+#~ msgstr ""
+
+#~ msgid "Execute a program"
+#~ msgstr ""
+
+#~ msgid "Execute autorun program"
+#~ msgstr ""
+
+#~ msgid "Retrieve saved program"
+#~ msgstr ""
+
+#~ msgid "Get autorun settings"
+#~ msgstr ""
+
+#~ msgid "Get saved programs' name"
+#~ msgstr ""
+
+#~ msgid "Save and Delete programs"
+#~ msgstr ""
+
+#~ msgid "Set autorun settings"
+#~ msgstr ""
+
+#~ msgid "Stop the current running program"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun"
+#~ " (Service)>`"
+#~ msgstr ""
 

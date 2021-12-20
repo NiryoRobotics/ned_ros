@@ -124,6 +124,7 @@ extlinks = {
     'tf2': ('http://docs.ros.org/' + ros_distro + '/api/tf2_ros/html/c++/classtf2__ros_1_1%s.html', ''),
     'msgs_index': ('http://docs.ros.org/' + ros_distro + '/api/%s/html/index-msg.html', ''),
     'moveit_msgs': ('http://docs.ros.org/' + ros_distro + '/api/moveit_msgs/html/msg/%s.html', 'moveit_msgs/'),
+    'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 10:58+0100\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,46 +21,60 @@ msgstr ""
 
 #: ../../source/ros_wrapper.rst:2
 msgid "Control with Python ROS Wrapper"
-msgstr ""
+msgstr "Contrôle avec Python ROS Wrapper"
 
 #: ../../source/ros_wrapper.rst:9
 msgid "Python Logo"
-msgstr ""
+msgstr "Logo Python"
 
 #: ../../source/ros_wrapper.rst:11
 msgid ""
 "In order to control Ned more easily than calling each topics & services "
 "one by one, a Python ROS Wrapper has been built on top of ROS."
 msgstr ""
+"Pour contrôler le Ned plus simplement qu'en appelant chaque topic et "
+"service l'un après l'autre, une API python d'encapsulation de ROS, "
+"appelée dans la suite Python ROS Wrapper, a été construite au dessus de "
+"ROS."
 
 #: ../../source/ros_wrapper.rst:14
 msgid ""
 "For instance, a script realizing a moveJ via Python ROS Wrapper will look"
 " like: ::"
 msgstr ""
+"Par exemple, un script réalisant un moveJ via Python ROS Wrapper "
+"ressemblera a : ::"
 
 #: ../../source/ros_wrapper.rst:20
 msgid "What this code is doing in a hidden way:"
-msgstr ""
+msgstr "Ce que fait ce code en arrière plan :"
 
 #: ../../source/ros_wrapper.rst:22
+#, fuzzy
 msgid ""
 "It generates a :ref:`RobotMove Action "
-"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set it"
-" as a joint command with the corresponding joints value."
+"Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove "
+"(Action)>` and set it as a joint command with the corresponding joints "
+"value."
 msgstr ""
+"Il génère un :ref:`RobotMove Action "
+"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` et le "
+"définit comme une command de joint avec les valeurs de joints "
+"correspondantes."
 
 #: ../../source/ros_wrapper.rst:24
 msgid "Sends goal to the Commander Action Server."
-msgstr ""
+msgstr "Envoie un but au Commander Action Server."
 
 #: ../../source/ros_wrapper.rst:25
 msgid "Waits for the Commander Action Server to set Action as finished."
 msgstr ""
+"Attend que le Commander Action Server définisse l'Action comme "
+"\"finished\"."
 
 #: ../../source/ros_wrapper.rst:26
 msgid "Checks if action finished with a success."
-msgstr ""
+msgstr "Vérifie si l'action s'est terminée avec succès."
 
 #: ../../source/ros_wrapper.rst:29
 msgid ""
@@ -68,6 +82,9 @@ msgid ""
 "Wrapper to control Ned, as well as a complete documentation of the "
 "functions available in the Ned Python ROS Wrapper."
 msgstr ""
+"Dans cette section, vous trouverez quelques exemple d'utilisation de "
+"Python ROS Wrapper pour contrôler le Ned, ainsi qu'une documentation "
+"complète des fonctions présente dans Ned Python ROS Wrapper."
 
 #: ../../source/ros_wrapper.rst:34
 msgid ""
@@ -76,10 +93,15 @@ msgid ""
 "If you do not want that, and run code directly from your computer you can"
 " use the python Package :ref:`source/more:PyNiryo`."
 msgstr ""
+"Le Python ROS Wrapper force l'utilisateur à écrire son code directement "
+"dans le robot, ou a minima, copier le code sur le robot via une commande "
+"en terminal. Si vous nous souhaitez pas faire cela, et lancer directement"
+" le code depuis votre ordinateur, vous pouvez utiliser le package Python "
+":ref:`source/more:PyNiryo`."
 
 #: ../../source/ros_wrapper.rst:40
 msgid "Section Contents:"
-msgstr ""
+msgstr "Section Contenus :"
 
 #~ msgid "Python ROS Wrapper Documentation"
 #~ msgstr ""

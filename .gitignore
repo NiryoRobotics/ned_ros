@@ -32,5 +32,11 @@ docker/
 _singlehtml/
 generated_pdfs/
 
+# catkin tools
+.gitlab_resources/.catkin_tools/profiles/*/packages
+.gitlab_resources/.catkin_tools/profiles/*/devel_collisions.txt
+.gitlab_resources/.catkin_tools/profiles/*/build.yaml
 
 .style.yapf
+
+sphinx_doc/tr.log

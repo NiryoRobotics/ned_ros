@@ -41,6 +41,6 @@ dynamixels:
         limit_position_max: 2.6179
         limit_position_min: -2.6179
         position_P_gain: 51
-        position_I_gain: 30
+        position_I_gain: 13
         position_D_gain: 0
 

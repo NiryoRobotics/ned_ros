@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 12:47+0100\n"
+"POT-Creation-Date: 2021-12-15 14:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,50 +169,63 @@ msgid "Scans and sets for a tool plugged"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:75
-msgid "``niryo_robot/tools/tool_command``"
+msgid "``niryo_robot/tools/open_gripper``"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:76
+#: ../../source/stack/low_level/tools_interface.rst:79
+#: ../../source/stack/low_level/tools_interface.rst:82
+#: ../../source/stack/low_level/tools_interface.rst:85
 msgid ""
 ":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand"
 " (Service)>`"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:77
-msgid "Send a command to the tool (Open or close)"
+msgid "Opens the gripper"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:78
 msgid "``niryo_robot/tools/close_gripper``"
 msgstr ""
 
-#: ../../source/stack/low_level/tools_interface.rst:79
-msgid ""
-":ref:`tools_interface/CloseGripper<source/stack/low_level/tools_interface:CloseGripper"
-" (Service)>`"
-msgstr ""
-
 #: ../../source/stack/low_level/tools_interface.rst:80
-msgid "Closes a gripper tool"
+msgid "Closes the gripper"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:81
-msgid "``niryo_robot/tools/reboot``"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:82
-msgid ":std_srvs:`Trigger`"
+msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:83
-msgid "Reboots the motor of the equipped tool"
+msgid "Pulls air with the vacuum pump"
+msgstr ""
+
+#: ../../source/stack/low_level/tools_interface.rst:84
+msgid "``niryo_robot/tools/push_air_vacuum_pump``"
+msgstr ""
+
+#: ../../source/stack/low_level/tools_interface.rst:86
+msgid "Pushes air with the vacuum pump"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:87
-msgid "PingDxlTool (Service)"
+msgid "``niryo_robot/tools/reboot``"
+msgstr ""
+
+#: ../../source/stack/low_level/tools_interface.rst:88
+msgid ":std_srvs:`Trigger`"
+msgstr ""
+
+#: ../../source/stack/low_level/tools_interface.rst:89
+msgid "Reboots the motor of the equipped tool"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:93
+msgid "PingDxlTool (Service)"
+msgstr ""
+
+#: ../../source/stack/low_level/tools_interface.rst:99
 msgid "ToolCommand (Service)"
 msgstr ""
 
@@ -287,5 +300,19 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "CloseGripper (Service)"
+#~ msgstr ""
+
+#~ msgid "``niryo_robot/tools/tool_command``"
+#~ msgstr ""
+
+#~ msgid "Send a command to the tool (Open or close)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`tools_interface/CloseGripper<source/stack/low_level/tools_interface:CloseGripper"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid "Closes a gripper tool"
 #~ msgstr ""
 

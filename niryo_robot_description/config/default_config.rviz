@@ -136,6 +136,8 @@ Visualization Manager:
           Value: false
         shoulder_link:
           Value: false
+        target_pose:
+          Value: false
         tool_link:
           Value: false
         world:

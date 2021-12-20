@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-16 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,145 +24,438 @@ msgstr ""
 msgid "December release - Hardware Stack refinement"
 msgstr ""
 
-#: ../../source/changelog.rst:5 ../../source/changelog.rst:14
-msgid "Features"
+#: ../../source/changelog.rst:5
+msgid "Requirements"
 msgstr ""
 
 #: ../../source/changelog.rst:7
-msgid "TODO"
+msgid "Ubuntu packages"
+msgstr ""
+
+#: ../../source/changelog.rst:8
+msgid "sqlite3"
+msgstr ""
+
+#: ../../source/changelog.rst:9
+msgid "ffmpeg"
+msgstr ""
+
+#: ../../source/changelog.rst:10
+msgid "build-essential"
 msgstr ""
 
 #: ../../source/changelog.rst:11
-msgid "September release - New features batch"
+msgid "catkin"
+msgstr ""
+
+#: ../../source/changelog.rst:12
+msgid "python-catkin-pkg"
+msgstr ""
+
+#: ../../source/changelog.rst:13
+msgid "python-pymodbus"
+msgstr ""
+
+#: ../../source/changelog.rst:14
+msgid "python-rosdistro"
+msgstr ""
+
+#: ../../source/changelog.rst:15
+msgid "python-rospkg"
+msgstr ""
+
+#: ../../source/changelog.rst:16
+msgid "python-rosdep-modules"
 msgstr ""
 
 #: ../../source/changelog.rst:17
-msgid "Tool commander package"
+msgid "python-rosinstall python-rosinstall-generator"
+msgstr ""
+
+#: ../../source/changelog.rst:18
+msgid "python-wstool"
 msgstr ""
 
 #: ../../source/changelog.rst:19
-msgid "TCP service settings"
+msgid "ros-melodic-moveit"
+msgstr ""
+
+#: ../../source/changelog.rst:20
+msgid "ros-melodic-control"
 msgstr ""
 
 #: ../../source/changelog.rst:21
-msgid "TCP.msg"
+msgid "ros-melodic-controllers"
+msgstr ""
+
+#: ../../source/changelog.rst:22
+msgid "ros-melodic-tf2-web-republisher"
 msgstr ""
 
 #: ../../source/changelog.rst:23
-msgid "SetTCP.srv"
+msgid "ros-melodic-rosbridge-server"
+msgstr ""
+
+#: ../../source/changelog.rst:24
+msgid "ros-melodic-joint-state-publisher-gui"
 msgstr ""
 
 #: ../../source/changelog.rst:27
-msgid "Arm commander package"
+msgid "Python libraries"
 msgstr ""
 
 #: ../../source/changelog.rst:29
-msgid "New movements available in ArmMoveCommand.msg"
+msgid "See src/requirements_ned2.txt file"
 msgstr ""
 
-#: ../../source/changelog.rst:31 ../../source/changelog.rst:45
-msgid "linear pose"
-msgstr ""
-
-#: ../../source/changelog.rst:33 ../../source/changelog.rst:51
-msgid "shift linear pose"
+#: ../../source/changelog.rst:32
+msgid "Packages"
 msgstr ""
 
 #: ../../source/changelog.rst:35
-msgid "trajectory"
+msgid "New packages"
+msgstr ""
+
+#: ../../source/changelog.rst:36
+msgid "niryo_robot_database"
+msgstr ""
+
+#: ../../source/changelog.rst:37
+msgid "niryo_robot_led_ring"
+msgstr ""
+
+#: ../../source/changelog.rst:38
+msgid "niryo_robot_metrics"
 msgstr ""
 
 #: ../../source/changelog.rst:39
-msgid "Python ROS Wrapper package"
+msgid "niryo_robot_reports"
+msgstr ""
+
+#: ../../source/changelog.rst:40
+msgid "niryo_robot_sound"
 msgstr ""
 
 #: ../../source/changelog.rst:41
-msgid "New movement functions available"
+msgid "niryo_robot_status"
+msgstr ""
+
+#: ../../source/changelog.rst:42
+msgid "niryo_robot_hardware_stack/can_debug_tools"
 msgstr ""
 
 #: ../../source/changelog.rst:43
-msgid "move linear pose"
+msgid "niryo_robot_hardware_stack/common"
 msgstr ""
 
-#: ../../source/changelog.rst:47
-msgid "jog pose shift"
+#: ../../source/changelog.rst:44
+msgid "niryo_robot_hardware_stack/end_effector_interface"
+msgstr ""
+
+#: ../../source/changelog.rst:45
+msgid "niryo_robot_hardware_stack/serial"
+msgstr ""
+
+#: ../../source/changelog.rst:48
+msgid "Renamed packages"
 msgstr ""
 
 #: ../../source/changelog.rst:49
-msgid "jog joints shift"
+msgid "niryo_ned_moveit_config_standalone becomes niryo_moveit_config_standalone"
+msgstr ""
+
+#: ../../source/changelog.rst:50
+msgid "niryo_ned_moveit_config_w_gripper1 becomes niryo_moveit_config_w_gripper1"
+msgstr ""
+
+#: ../../source/changelog.rst:51
+msgid ""
+"niryo_robot_hardware_stack/stepper_driver becomes "
+"niryo_robot_hardware_stack/can_driver"
+msgstr ""
+
+#: ../../source/changelog.rst:52
+msgid ""
+"niryo_robot_hardware_stack/dynamixel_driver becomes "
+"niryo_robot_hardware_stack/ttl_driver"
 msgstr ""
 
 #: ../../source/changelog.rst:53
-msgid "execute trajectory from pose"
+msgid ""
+"niryo_robot_hardware_stack/niryo_robot_debug becomes "
+"niryo_robot_hardware_stack/ttl_debug_tools"
 msgstr ""
 
-#: ../../source/changelog.rst:55
-msgid "New TCP functions available"
+#: ../../source/changelog.rst:56
+msgid "Removed packages"
 msgstr ""
 
 #: ../../source/changelog.rst:57
-msgid "set_tcp"
+msgid "niryo_robot_serial_number"
+msgstr ""
+
+#: ../../source/changelog.rst:58
+msgid "niryo_robot_unit_tests"
 msgstr ""
 
 #: ../../source/changelog.rst:59
-msgid "enable_tcp"
+msgid "niryo_robot_hardware_stack/fake_interface"
 msgstr ""
 
-#: ../../source/changelog.rst:61
-msgid "reset_tcp"
+#: ../../source/changelog.rst:62
+msgid "Cleaning and Refactoring"
 msgstr ""
 
 #: ../../source/changelog.rst:63
-msgid "New camera settings functions available"
+msgid "roslint compliant"
+msgstr ""
+
+#: ../../source/changelog.rst:64
+msgid "catkin lint compliant for most part"
 msgstr ""
 
 #: ../../source/changelog.rst:65
-msgid "set_brightness"
+msgid "add xsd validation for launch files and package.xml files"
+msgstr ""
+
+#: ../../source/changelog.rst:66
+msgid "updated packages format to version 3"
 msgstr ""
 
 #: ../../source/changelog.rst:67
-msgid "set_contrast"
+msgid "updated c++ version to c++14"
+msgstr ""
+
+#: ../../source/changelog.rst:68
+msgid "clang and clazy compliance improvement"
 msgstr ""
 
 #: ../../source/changelog.rst:69
-msgid "set_saturation"
+msgid "rosdoc_lite set up in all packages"
+msgstr ""
+
+#: ../../source/changelog.rst:70
+msgid "catkin_tools compliant"
+msgstr ""
+
+#: ../../source/changelog.rst:71
+msgid "install space working"
 msgstr ""
 
 #: ../../source/changelog.rst:72
-msgid "Improvements"
+msgid "sphinx_doc restructuration"
+msgstr ""
+
+#: ../../source/changelog.rst:73
+msgid "add hardware_version discrimination between ned, one and ned2"
 msgstr ""
 
 #: ../../source/changelog.rst:74
-msgid "Refactoring Tool Commander and Robot Commander packages."
+msgid "add ned2 configuration files in all packages"
 msgstr ""
 
-#: ../../source/changelog.rst:76
-msgid "Remove Robot Commander package"
+#: ../../source/changelog.rst:77
+msgid "Features (for Ned and One only)"
 msgstr ""
 
 #: ../../source/changelog.rst:78
+msgid "add VERSION file at root"
+msgstr ""
+
+#: ../../source/changelog.rst:79
+msgid "add CHANGELOG.rst in every package (using catkin_generate_changelog tool)"
+msgstr ""
+
+#: ../../source/changelog.rst:80
+msgid "update PID values for Dynamixels"
+msgstr ""
+
+#: ../../source/changelog.rst:81
+msgid "Replace fake interface by mock drivers for steppers and Dynamixels"
+msgstr ""
+
+#: ../../source/changelog.rst:82
+msgid "Add compatibility for TTL conveyor belts (upcoming)"
+msgstr ""
+
+#: ../../source/changelog.rst:83
+msgid "Add Ned2 features (upcoming)"
+msgstr ""
+
+#: ../../source/changelog.rst:84
+msgid "niryo_robot_bringup refactoring"
+msgstr ""
+
+#: ../../source/changelog.rst:85
+msgid "improve control loops for ttl_driver and joints interface"
+msgstr ""
+
+#: ../../source/changelog.rst:86
+msgid "new trajectories (spiral, circular)"
+msgstr ""
+
+#: ../../source/changelog.rst:87
+msgid "Save and replay waypointed trajectories"
+msgstr ""
+
+#: ../../source/changelog.rst:90
+msgid "Know issues (for Ned and One only)"
+msgstr ""
+
+#: ../../source/changelog.rst:91
+msgid "No known issues detected"
+msgstr ""
+
+#: ../../source/changelog.rst:94
+msgid "Limitations"
+msgstr ""
+
+#: ../../source/changelog.rst:95
+msgid "Calibration deactivated on Simulated Ned and One"
+msgstr ""
+
+#: ../../source/changelog.rst:96
+msgid "Not officially supporting Ned2 hardware version"
+msgstr ""
+
+#: ../../source/changelog.rst:100
+msgid "September release - New features batch"
+msgstr ""
+
+#: ../../source/changelog.rst:103
+msgid "Features"
+msgstr ""
+
+#: ../../source/changelog.rst:106
+msgid "Tool commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:108
+msgid "TCP service settings"
+msgstr ""
+
+#: ../../source/changelog.rst:110
+msgid "TCP.msg"
+msgstr ""
+
+#: ../../source/changelog.rst:112
+msgid "SetTCP.srv"
+msgstr ""
+
+#: ../../source/changelog.rst:116
+msgid "Arm commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:118
+msgid "New movements available in ArmMoveCommand.msg"
+msgstr ""
+
+#: ../../source/changelog.rst:120 ../../source/changelog.rst:134
+msgid "linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:122 ../../source/changelog.rst:140
+msgid "shift linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:124
+msgid "trajectory"
+msgstr ""
+
+#: ../../source/changelog.rst:128
+msgid "Python ROS Wrapper package"
+msgstr ""
+
+#: ../../source/changelog.rst:130
+msgid "New movement functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:132
+msgid "move linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:136
+msgid "jog pose shift"
+msgstr ""
+
+#: ../../source/changelog.rst:138
+msgid "jog joints shift"
+msgstr ""
+
+#: ../../source/changelog.rst:142
+msgid "execute trajectory from pose"
+msgstr ""
+
+#: ../../source/changelog.rst:144
+msgid "New TCP functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:146
+msgid "set_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:148
+msgid "enable_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:150
+msgid "reset_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:152
+msgid "New camera settings functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:154
+msgid "set_brightness"
+msgstr ""
+
+#: ../../source/changelog.rst:156
+msgid "set_contrast"
+msgstr ""
+
+#: ../../source/changelog.rst:158
+msgid "set_saturation"
+msgstr ""
+
+#: ../../source/changelog.rst:161
+msgid "Improvements"
+msgstr ""
+
+#: ../../source/changelog.rst:163
+msgid "Refactoring Tool Commander and Robot Commander packages."
+msgstr ""
+
+#: ../../source/changelog.rst:165
+msgid "Remove Robot Commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:167
 msgid ""
 "Reorder Robot Commander package between Tool Commander and Arm Commander "
 "packages."
 msgstr ""
 
-#: ../../source/changelog.rst:80
+#: ../../source/changelog.rst:169
 msgid "Self collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:82
+#: ../../source/changelog.rst:171
 msgid "Add self-collision detection via MoveIt."
 msgstr ""
 
-#: ../../source/changelog.rst:84
+#: ../../source/changelog.rst:173
 msgid "Collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:86
+#: ../../source/changelog.rst:175
 msgid "Collision detection improvement on each joints."
 msgstr ""
 
-#: ../../source/changelog.rst:88
+#: ../../source/changelog.rst:177
 msgid "Learning mode activation in case of a collision."
 msgstr ""
+
+#~ msgid "TODO"
+#~ msgstr ""
 

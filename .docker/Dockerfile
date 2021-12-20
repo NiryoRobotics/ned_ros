@@ -35,8 +35,6 @@ ENV JOB_NUMBER=4
 
 COPY .docker/docker_ros_entrypoint.sh /opt/docker_ros_entrypoint.sh
 
-COPY .gitlab_resources/.catkin_tools/ /home/niryo/catkin_ws/.catkin_tools/
-
 # Rosbridge suite
 EXPOSE 9090
 

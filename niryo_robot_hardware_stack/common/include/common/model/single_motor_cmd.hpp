@@ -321,7 +321,7 @@ bool StepperSingleCmd::isValid() const
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return (_param_list.size() == 4);
         case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-            return (_param_list.size() == 4);
+            return (_param_list.size() == 2);
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
             return (_param_list.size() == 3);
         default:
