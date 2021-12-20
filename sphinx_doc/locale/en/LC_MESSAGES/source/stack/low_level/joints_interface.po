@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 17:11+0100\n"
+"POT-Creation-Date: 2021-12-20 17:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,9 +77,9 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:69
 #: ../../source/stack/low_level/joints_interface.rst:150
 #: ../../source/stack/low_level/joints_interface.rst:233
-#: ../../source/stack/low_level/joints_interface.rst:357
-#: ../../source/stack/low_level/joints_interface.rst:373
-#: ../../source/stack/low_level/joints_interface.rst:389
+#: ../../source/stack/low_level/joints_interface.rst:358
+#: ../../source/stack/low_level/joints_interface.rst:374
+#: ../../source/stack/low_level/joints_interface.rst:390
 msgid "Name"
 msgstr ""
 
@@ -88,10 +88,10 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:70
 #: ../../source/stack/low_level/joints_interface.rst:151
 #: ../../source/stack/low_level/joints_interface.rst:234
-#: ../../source/stack/low_level/joints_interface.rst:359
-#: ../../source/stack/low_level/joints_interface.rst:375
-#: ../../source/stack/low_level/joints_interface.rst:391
-#: ../../source/stack/low_level/joints_interface.rst:419
+#: ../../source/stack/low_level/joints_interface.rst:360
+#: ../../source/stack/low_level/joints_interface.rst:376
+#: ../../source/stack/low_level/joints_interface.rst:392
+#: ../../source/stack/low_level/joints_interface.rst:420
 msgid "Description"
 msgstr ""
 
@@ -691,225 +691,229 @@ msgstr ""
 msgid ":doc:`../high_level/niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:346
+#: ../../source/stack/low_level/joints_interface.rst:344
+msgid ":msgs_index:`control_msgs`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:347
 msgid "Services, Topics and Messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:349
+#: ../../source/stack/low_level/joints_interface.rst:350
 msgid "Subscribed topics"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:351
-#: ../../source/stack/low_level/joints_interface.rst:367
+#: ../../source/stack/low_level/joints_interface.rst:352
+#: ../../source/stack/low_level/joints_interface.rst:368
 msgid "Joints Interface's Published Topics"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:358
-#: ../../source/stack/low_level/joints_interface.rst:374
-#: ../../source/stack/low_level/joints_interface.rst:390
+#: ../../source/stack/low_level/joints_interface.rst:359
+#: ../../source/stack/low_level/joints_interface.rst:375
+#: ../../source/stack/low_level/joints_interface.rst:391
 msgid "Message Type"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:360
+#: ../../source/stack/low_level/joints_interface.rst:361
 msgid "``niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:361
+#: ../../source/stack/low_level/joints_interface.rst:362
 msgid ":control_msgs:`FollowJointTrajectoryActionResult`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:362
+#: ../../source/stack/low_level/joints_interface.rst:363
 msgid "Trajectory results from controller"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:365
+#: ../../source/stack/low_level/joints_interface.rst:366
 msgid "Published topics"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:376
+#: ../../source/stack/low_level/joints_interface.rst:377
 msgid "``/niryo_robot/learning_mode/state``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:377
+#: ../../source/stack/low_level/joints_interface.rst:378
 msgid ":std_msgs:`Bool`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:378
+#: ../../source/stack/low_level/joints_interface.rst:379
 msgid "Learning mode state"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:381
+#: ../../source/stack/low_level/joints_interface.rst:382
 msgid "Services"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:383
+#: ../../source/stack/low_level/joints_interface.rst:384
 msgid "Joints Interface Package Services"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:392
+#: ../../source/stack/low_level/joints_interface.rst:393
 msgid "``/niryo_robot/joints_interface/calibrate_motors``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:393
+#: ../../source/stack/low_level/joints_interface.rst:394
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:394
+#: ../../source/stack/low_level/joints_interface.rst:395
 msgid ""
 "Start motors calibration - value can be 1 for auto calibration, 2 for "
 "manual"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:395
+#: ../../source/stack/low_level/joints_interface.rst:396
 msgid "``/niryo_robot/joints_interface/request_new_calibration``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:396
-#: ../../source/stack/low_level/joints_interface.rst:399
-#: ../../source/stack/low_level/joints_interface.rst:402
+#: ../../source/stack/low_level/joints_interface.rst:397
+#: ../../source/stack/low_level/joints_interface.rst:400
+#: ../../source/stack/low_level/joints_interface.rst:403
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:397
+#: ../../source/stack/low_level/joints_interface.rst:398
 msgid ""
 "Reset motor calibration state to \"uncalibrated\". This will allow the "
 "user to ask a new calibration."
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:398
+#: ../../source/stack/low_level/joints_interface.rst:399
 msgid "``niryo_robot/learning_mode/activate``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:400
+#: ../../source/stack/low_level/joints_interface.rst:401
 msgid ""
 "Change learning mode (Free Motion) state. When learning mode is "
 "activated, torques are disabled and the joints can move freely."
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:401
+#: ../../source/stack/low_level/joints_interface.rst:402
 msgid "``niryo_robot/joints_interface/steppers_reset_controller``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:403
+#: ../../source/stack/low_level/joints_interface.rst:404
 msgid "Resets the controller"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:408
+#: ../../source/stack/low_level/joints_interface.rst:409
 msgid "Errors and warning messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:411
+#: ../../source/stack/low_level/joints_interface.rst:412
 msgid "List of Errors and warning messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:417
+#: ../../source/stack/low_level/joints_interface.rst:418
 msgid "Type"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:418
+#: ../../source/stack/low_level/joints_interface.rst:419
 msgid "Message"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:420
-#: ../../source/stack/low_level/joints_interface.rst:423
-#: ../../source/stack/low_level/joints_interface.rst:426
-#: ../../source/stack/low_level/joints_interface.rst:429
-#: ../../source/stack/low_level/joints_interface.rst:432
+#: ../../source/stack/low_level/joints_interface.rst:421
+#: ../../source/stack/low_level/joints_interface.rst:424
+#: ../../source/stack/low_level/joints_interface.rst:427
+#: ../../source/stack/low_level/joints_interface.rst:430
+#: ../../source/stack/low_level/joints_interface.rst:433
 msgid "Error"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:421
+#: ../../source/stack/low_level/joints_interface.rst:422
 msgid "JointHardwareInterface::init - Fail to add joint, return :"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:422
+#: ../../source/stack/low_level/joints_interface.rst:423
 msgid "The joint is not correctly initialized"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:424
+#: ../../source/stack/low_level/joints_interface.rst:425
 msgid "JointHardwareInterface::init - stepper state init failed"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:425
+#: ../../source/stack/low_level/joints_interface.rst:426
 msgid "The stepper state parameters are not correctly retrieved"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:427
+#: ../../source/stack/low_level/joints_interface.rst:428
 msgid "JointHardwareInterface::init - dxl state init failed"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:428
+#: ../../source/stack/low_level/joints_interface.rst:429
 msgid "The dynamixel state parameters are not correctly retrieved"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:430
+#: ../../source/stack/low_level/joints_interface.rst:431
 msgid ""
 "JointHardwareInterface::init - Dynamixel motors are not available on CAN "
 "Bus"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:431
+#: ../../source/stack/low_level/joints_interface.rst:432
 msgid ""
 "The robot wrongly tries to initialize a dynamixel motor for the CAN bus "
 "(works only on TTL)"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:433
+#: ../../source/stack/low_level/joints_interface.rst:434
 msgid "JointHardwareInterface::init - Fail to reboot motor id"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:434
+#: ../../source/stack/low_level/joints_interface.rst:435
 msgid "The motor failed to reboot. Try rebooting it again"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:435
-#: ../../source/stack/low_level/joints_interface.rst:438
-#: ../../source/stack/low_level/joints_interface.rst:441
-#: ../../source/stack/low_level/joints_interface.rst:444
+#: ../../source/stack/low_level/joints_interface.rst:436
+#: ../../source/stack/low_level/joints_interface.rst:439
+#: ../../source/stack/low_level/joints_interface.rst:442
+#: ../../source/stack/low_level/joints_interface.rst:445
 msgid "WARNING"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:436
+#: ../../source/stack/low_level/joints_interface.rst:437
 #, python-format
 msgid ""
 "JointHardwareInterface::init - initialize stepper joint failure, return "
 "%d. Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:437
+#: ../../source/stack/low_level/joints_interface.rst:438
 msgid "Failed to initialize a stepper. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:439
+#: ../../source/stack/low_level/joints_interface.rst:440
 #, python-format
 msgid ""
 "JointHardwareInterface::init - add stepper joint failure, return %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:440
+#: ../../source/stack/low_level/joints_interface.rst:441
 msgid "Failed to add a stepper joint. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:442
+#: ../../source/stack/low_level/joints_interface.rst:443
 #, python-format
 msgid ""
 "JointHardwareInterface::init - init dxl joint failure, return : %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:443
+#: ../../source/stack/low_level/joints_interface.rst:444
 msgid "Failed to initialize a dynamixel joint. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:445
+#: ../../source/stack/low_level/joints_interface.rst:446
 #, python-format
 msgid ""
 "JointHardwareInterface::init - add dxl joint failure, return : %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:446
+#: ../../source/stack/low_level/joints_interface.rst:447
 msgid "Failed to add a dynamixel joint. Will try again up to 3 times"
 msgstr ""
 
