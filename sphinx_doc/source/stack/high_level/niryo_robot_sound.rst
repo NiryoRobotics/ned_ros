@@ -104,3 +104,7 @@ TextToSpeech (Service)
 
 .. literalinclude:: ../../../../niryo_robot_sound/srv/TextToSpeech.srv
    :language: rostype
+
+.. |namespace| replace:: /niryo_robot_sound/
+.. |namespace_emphasize| replace:: ``/niryo_robot_sound/``
+.. |package_path| replace:: ../../../../niryo_robot_sound
