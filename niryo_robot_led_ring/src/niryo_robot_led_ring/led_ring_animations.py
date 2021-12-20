@@ -29,7 +29,7 @@ class LedRingAnimations:
         self.LED_DMA = rospy.get_param('~led_dma')  # DMA channel to use for generating signal (try 10)
         # Set to 0 for darkest and 255 for brightest
         self.LED_BRIGHTNESS = rospy.get_param('~led_brightness')
-         # True to invert the signal (when using NPN transistor level shift)
+        # True to invert the signal (when using NPN transistor level shift)
         self.LED_INVERT = rospy.get_param('~led_invert')
         self.LED_CHANNEL = rospy.get_param('~led_channel')
         self.__led_offset = rospy.get_param("~led_offset")
