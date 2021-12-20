@@ -2,7 +2,7 @@
 fake_params:
     dynamixels:
         id: [2, 3, 6]
-        position: [2048, 2048, 2048]
+        position: [1995, 2048, 1707]
         velocity: [0, 0, 0]
         temperature: [50, 52, 54]
         voltage: [50, 50, 50]
