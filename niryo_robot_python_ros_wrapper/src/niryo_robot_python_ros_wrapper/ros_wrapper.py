@@ -85,6 +85,11 @@ class NiryoRosWrapper:
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
+        # Software
+        self.__software_version_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/software_version',
+                                                      SoftwareVersion,
+                                                      queue_size=1)
+
         # - Action server
         # Robot action
         self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action', RobotMoveAction,
@@ -1943,6 +1948,17 @@ class NiryoRosWrapper:
         if with_desc:
             return result.name_list, result.description_list
         return result.name_list
+
+    # - Software
+
+    def get_software_version(self):
+        """
+        Get the robot software version
+
+        :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
+        :rtype: (str, str, list[str], list[str])
+        """
+        return self.__software_version_ntv.value
 
     @property
     def system_api_client(self):
