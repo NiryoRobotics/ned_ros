@@ -82,7 +82,7 @@ class RobotStatusHandler(object):
         return self.__robot_nodes_observer.check_user_node or \
                self.__robot_status_observer.program_is_running or \
                self.__robot_status_observer.is_tcp_client_connected or \
-               self.__robot_status_observer.pyniryo2_ping
+               self.__robot_nodes_observer.pyniryo_connected
 
     def advertise_new_state(self):
         if self.__robot_status_pub is not None:

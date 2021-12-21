@@ -358,7 +358,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         message += "Tools Interface, ";
     }
 
-    if (_end_effector_interface && _end_effector_interface->rebootHardware())
+    if (_end_effector_interface && !_end_effector_interface->rebootHardware())
     {
         ret++;
         message += "End Effector Panel Interface, ";

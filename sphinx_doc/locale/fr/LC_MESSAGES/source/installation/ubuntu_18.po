@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-16 12:21+0100\n"
+"POT-Creation-Date: 2021-12-20 15:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,6 +149,10 @@ msgstr ""
 msgid "Install ROS dependencies"
 msgstr "Installer les dépendances de ROS"
 
+#: ../../source/installation/ubuntu_18.rst:75
+msgid "Install ROS"
+msgstr "Installer ROS"
+
 #: ../../source/installation/ubuntu_18.rst:77
 msgid ""
 "You firstly need to install ROS Melodic. To do so, follow the ROS official "
@@ -160,6 +164,10 @@ msgstr ""
 "<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ et choisissez l'option "
 "**Desktop-Full Install**."
 
+#: ../../source/installation/ubuntu_18.rst:82
+msgid "Install additional packages"
+msgstr "Installet les paquets additionnels"
+
 #: ../../source/installation/ubuntu_18.rst:83
 msgid ""
 "To ensure the functioning of all Ned's packages, you need to install several "
@@ -167,6 +175,10 @@ msgid ""
 msgstr ""
 "Pour assurer le fonctionnement de tous les paquets du Ned, vous devez "
 "installer quelques paquets supplémentaires :"
+
+#: ../../source/installation/ubuntu_18.rst:87
+msgid "Method 1: Quick installation via ROSDep"
+msgstr "Méthode 1 : Installation rapide via ROSDep"
 
 #: ../../source/installation/ubuntu_18.rst:88
 msgid ""
@@ -177,6 +189,10 @@ msgstr ""
 "Pour chaque package, les dépendances requises sont listées dans leur fichier "
 "*package.xml* respectifs, ce qui permet l'installation de chacun d'entre eux "
 "via la commande *rosdep* : ::"
+
+#: ../../source/installation/ubuntu_18.rst:96
+msgid "Method 2: Full installation"
+msgstr "Méthode 2 : Installation Complète"
 
 #: ../../source/installation/ubuntu_18.rst:98
 msgid "ROS packages needed are:"
@@ -291,7 +307,7 @@ msgid ""
 msgstr ""
 "Il est nécessaire de lancer cette commande à chaque fois que vous lancez un "
 "nouveau terminal. Si vous voulez l'appliquer à chaque ouverture d'un "
-"terminal, vous pouvez ajouter cette ligne à votre fichier **.bashrc : ::"
+"terminal, vous pouvez ajouter cette ligne à votre fichier **.bashrc** : ::"
 
 #: ../../source/installation/ubuntu_18.rst:153
 msgid "Installation is now finished!"
@@ -303,15 +319,3 @@ msgstr "L'installation est maintenant terminée !"
 #~ msgstr ""
 #~ "Afin de faire tourner la simulation sur votre ordinateur, vous devez "
 #~ "installer ROS et quelques paquets supplémentaires."
-
-#~ msgid "Install ROS"
-#~ msgstr "Installer ROS"
-
-#~ msgid "Install additional packages"
-#~ msgstr "Installet les paquets additionnels"
-
-#~ msgid "Method 1: Quick installation via ROSDep"
-#~ msgstr "Méthode 1 : Installation rapide via ROSDep"
-
-#~ msgid "Method 2: Full installation"
-#~ msgstr "Méthode 2 : Installation Complète"

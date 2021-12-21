@@ -6,8 +6,8 @@ dynamixels:
         home_position: 0.0
         direction: 1
         # assembly direction (1 or -1)
-        limit_position_max: 2.093
-        limit_position_min: -2.093
+        limit_position_max: 2.089
+        limit_position_min: -2.089
         position_P_gain: 1292
         position_I_gain: 163
         position_D_gain: 0
@@ -22,7 +22,7 @@ dynamixels:
         offset_position: 3.1415
         home_position: 0.0
         direction: -1
-        limit_position_max: 1.919
+        limit_position_max: 1.049
         limit_position_min: -1.919
         position_P_gain: 1292
         position_I_gain: 13
@@ -35,11 +35,11 @@ dynamixels:
         velocity_profile: 150
 
     dxl_3:
-        offset_position: -2.6179
+        offset_position: -2.62
         home_position: 0.0
         direction: 1
-        limit_position_max: 2.6179
-        limit_position_min: -2.6179
+        limit_position_max: 2.53
+        limit_position_min: -2.52
         position_P_gain: 51
         position_I_gain: 13
         position_D_gain: 0

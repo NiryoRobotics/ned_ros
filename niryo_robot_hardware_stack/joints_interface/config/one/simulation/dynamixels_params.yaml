@@ -1,33 +1,35 @@
 dynamixels:
     dxl_1:
-        offset_position: -3.1415
+        offset_position: -3.06
         home_position: 0.0
         direction: 1
-        limit_position_max: 2.093
-        limit_position_min: -2.093
+        limit_position_max: 3.053
+        limit_position_min: -3.049
         position_P_gain: 640
         position_I_gain: 0
         position_D_gain: 4000
+        acceleration_profile: 0  # profile acc and vel used by dxl motors
+        velocity_profile: 0
 
     dxl_2:
         offset_position: 3.1415
         home_position: 0.0
         direction: -1
         limit_position_max: 1.919
-        limit_position_min: -1.919
+        limit_position_min: -1.744
         position_P_gain: 640
         position_I_gain: 0
         position_D_gain: 4000
+        acceleration_profile: 0  # profile acc and vel used by dxl motors
+        velocity_profile: 0
 
     dxl_3:
-        offset_position: -3.1415
+        offset_position: -2.6179
         home_position: 0.0
         direction: 1
-        limit_position_max: 2.53
-        limit_position_min: -2.53
-        position_P_gain: 32
-        position_I_gain: 0
-        position_D_gain: 0
-
-
+        limit_position_max: 2.529
+        limit_position_min: -2.529
+        position_P_gain: 84
+        position_I_gain: 9
+        position_D_gain: 5
 

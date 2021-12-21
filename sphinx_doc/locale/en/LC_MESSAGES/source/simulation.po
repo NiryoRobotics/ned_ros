@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 15:00+0100\n"
+"POT-Creation-Date: 2021-12-20 15:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,168 +97,160 @@ msgid ""
 "This mode is mainly for simulation and tests purpose, bringing you in the"
 " closest state as possible to a real robot control. It is available for "
 "all currently supported architectures. You can access it by using the "
-"command: ::"
+"commands:"
 msgstr ""
 
 #: ../../source/simulation.rst:51
-msgid "One simulation:"
+msgid "One simulation:  ::"
 msgstr ""
 
-#: ../../source/simulation.rst:51
-msgid "`roslaunch niryo_robot_bringup niryo_one_simulation.launch`"
-msgstr ""
-
-#: ../../source/simulation.rst:54
-msgid "Ned simulation:"
-msgstr ""
-
-#: ../../source/simulation.rst:54
-msgid "`roslaunch niryo_robot_bringup niryo_ned_simulation.launch`"
-msgstr ""
-
-#: ../../source/simulation.rst:57
-msgid "Ned2 simulation:"
-msgstr ""
-
-#: ../../source/simulation.rst:57
-msgid "`roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`"
+#: ../../source/simulation.rst:55
+msgid "Ned simulation:  ::"
 msgstr ""
 
 #: ../../source/simulation.rst:59
-msgid "TODO"
+msgid "Ned2 simulation: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:62
+#: ../../source/simulation.rst:63 ../../source/simulation.rst:102
+msgid "Todo"
+msgstr ""
+
+#: ../../source/simulation.rst:63
+msgid "??"
+msgstr ""
+
+#: ../../source/simulation.rst:66
 msgid "Without physics - Visualization"
 msgstr ""
 
-#: ../../source/simulation.rst:64
+#: ../../source/simulation.rst:68
 msgid "The visualization happens with Rviz which is a powerful tool."
 msgstr ""
 
-#: ../../source/simulation.rst:67
+#: ../../source/simulation.rst:71
 msgid "Control with trackbar"
 msgstr ""
 
-#: ../../source/simulation.rst:69
+#: ../../source/simulation.rst:73
 msgid ""
 "This visualization allows an easy first control of the robot, and helps "
 "to understand joints disposal. You can access it by using the command: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:74
+#: ../../source/simulation.rst:78
 msgid ""
 "Rviz should open with a window containing 6 trackbars. Each of these "
 "trackbars allows to control the corresponding joint."
 msgstr ""
 
-#: ../../source/simulation.rst:80
+#: ../../source/simulation.rst:84
 msgid "Example of trackbars use."
 msgstr ""
 
-#: ../../source/simulation.rst:83
+#: ../../source/simulation.rst:87
 msgid "Control with ROS"
 msgstr ""
 
-#: ../../source/simulation.rst:86
+#: ../../source/simulation.rst:90
 msgid ""
 "Not only Rviz can display the robot, it can also be linked with ROS "
 "controllers to show robot's actions from ROS commands!"
 msgstr ""
 
-#: ../../source/simulation.rst:87
+#: ../../source/simulation.rst:91
 msgid ""
 "This method can help you debugging ROS topics, services and also, API "
 "scripts."
 msgstr ""
 
-#: ../../source/simulation.rst:89 ../../source/simulation.rst:120
+#: ../../source/simulation.rst:93 ../../source/simulation.rst:124
 msgid "To run it: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:96
+#: ../../source/simulation.rst:100
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:98
-msgid "**TODO add parameters**"
+#: ../../source/simulation.rst:102
+msgid "add parameters"
 msgstr ""
 
-#: ../../source/simulation.rst:101
+#: ../../source/simulation.rst:105
 msgid "With physics - Simulation"
 msgstr ""
 
-#: ../../source/simulation.rst:103
+#: ../../source/simulation.rst:107
 msgid ""
 "For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
 msgstr ""
 
-#: ../../source/simulation.rst:106
+#: ../../source/simulation.rst:110
 msgid "Collision."
 msgstr ""
 
-#: ../../source/simulation.rst:107
+#: ../../source/simulation.rst:111
 msgid ""
 "World creation → An virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 
-#: ../../source/simulation.rst:108
+#: ../../source/simulation.rst:112
 msgid "Gripper & Camera using."
 msgstr ""
 
-#: ../../source/simulation.rst:110
+#: ../../source/simulation.rst:114
 msgid ""
 "The Niryo Gripper 1 has been replicated in Gazebo. The Camera is also "
 "implemented."
 msgstr ""
 
-#: ../../source/simulation.rst:114
+#: ../../source/simulation.rst:118
 msgid ""
 "Gazebo also generates camera distortion, which brings the simulation even"
 " closer from the reality!"
 msgstr ""
 
-#: ../../source/simulation.rst:117
+#: ../../source/simulation.rst:121
 msgid "Launch simulation"
 msgstr ""
 
-#: ../../source/simulation.rst:118
+#: ../../source/simulation.rst:122
 msgid "A specific world has been created to use Ned in Gazebo with 2 workspaces."
 msgstr ""
 
-#: ../../source/simulation.rst:127
+#: ../../source/simulation.rst:131
 msgid "Gazebo view, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:130
+#: ../../source/simulation.rst:134
 msgid ""
 "You can edit Gazebo world to do your own! It's placed in the folder "
 "*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 
-#: ../../source/simulation.rst:134
+#: ../../source/simulation.rst:138
 msgid "Simulation option"
 msgstr ""
 
-#: ../../source/simulation.rst:136
+#: ../../source/simulation.rst:140
 msgid ""
 "The user can disable 3 things by adding the specific string to the "
 "command line:"
 msgstr ""
 
-#: ../../source/simulation.rst:138
+#: ../../source/simulation.rst:142
 msgid "the Gazebo graphical interface: `gui:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:139
+#: ../../source/simulation.rst:143
 msgid ""
 "the Camera & the Gripper - Vision & Gripper wise functions won't be "
 "usable: `gripper_n_camera:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:143
+#: ../../source/simulation.rst:147
 msgid ""
 "Gazebo can be very slow. If your tests do not need Gripper and Camera, "
 "consider using Rviz to alleviate your CPU."
@@ -764,5 +756,39 @@ msgstr ""
 #~ "you will have : voltage, temperature,"
 #~ " error state (always 0), ping (always"
 #~ " true), end effector state (immutable)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This mode is mainly for simulation "
+#~ "and tests purpose, bringing you in "
+#~ "the closest state as possible to a"
+#~ " real robot control. It is available"
+#~ " for all currently supported architectures."
+#~ " You can access it by using the"
+#~ " command: ::"
+#~ msgstr ""
+
+#~ msgid "One simulation:"
+#~ msgstr ""
+
+#~ msgid "`roslaunch niryo_robot_bringup niryo_one_simulation.launch`"
+#~ msgstr ""
+
+#~ msgid "Ned simulation:"
+#~ msgstr ""
+
+#~ msgid "`roslaunch niryo_robot_bringup niryo_ned_simulation.launch`"
+#~ msgstr ""
+
+#~ msgid "Ned2 simulation:"
+#~ msgstr ""
+
+#~ msgid "`roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`"
+#~ msgstr ""
+
+#~ msgid "TODO"
+#~ msgstr ""
+
+#~ msgid "**TODO add parameters**"
 #~ msgstr ""
 

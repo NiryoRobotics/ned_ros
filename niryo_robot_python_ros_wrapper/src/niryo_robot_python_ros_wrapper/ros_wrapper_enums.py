@@ -238,6 +238,7 @@ class CommandEnum(Enum):
     ANALOG_WRITE = 155
     ANALOG_READ = 156
     GET_ANALOG_IO_STATE = 157
+    CUSTOM_BUTTON_STATE = 158
 
     # - Conveyor
     SET_CONVEYOR = 180
