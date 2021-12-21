@@ -9,17 +9,15 @@ import rospkg
 from sqlite3 import OperationalError
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
-from niryo_robot_database.Metrics import Metrics, UnknownMetricException
 from niryo_robot_database.Settings import Settings, UnknownSettingsException
 from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_database.msg import Metric, FilePath as FilePathMsg
+from niryo_robot_database.msg import FilePath as FilePathMsg, Setting as SettingMsg
 
 # srv
-from niryo_robot_database.srv import (GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType,
-                                      RmFilePath)
+from niryo_robot_database.srv import SetSettings, GetSettings, AddFilePath, GetAllByType, RmFilePath
 
 
 class DatabaseNode:
@@ -40,13 +38,7 @@ class DatabaseNode:
         sqlite_dao = SQLiteDAO(db_path)
 
         self.__settings = Settings(sqlite_dao)
-        self.__metrics = Metrics(sqlite_dao)
         self.__file_paths = FilePath(sqlite_dao)
-
-        rospy.Service(
-            '~metrics/get_all', GetAllMetrics, self.__callback_get_all_metrics
-        )
-        rospy.Service('~metrics/set', SetMetric, self.__callback_set_metric)
 
         rospy.Service(
             '~settings/set', SetSettings, self.__callback_set_settings
@@ -66,27 +58,12 @@ class DatabaseNode:
             self.__callback_get_all_by_type,
         )
 
+        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg)
+
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.logdebug("Database Node - Node Started")
-
-    def __callback_get_all_metrics(self, _req):
-        try:
-            metrics = [
-                Metric(x['id'], x['name'], x['value'], x['update_date'])
-                for x in self.__metrics.get_all()
-            ]
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, metrics
-
-    def __callback_set_metric(self, req):
-        try:
-            self.__metrics.set(req.name, req.value)
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, 'Metric successfully set'
 
     def __callback_set_settings(self, req):
         try:
@@ -95,6 +72,8 @@ class DatabaseNode:
             return CommandStatus.DATABASE_SETTINGS_TYPE_MISMATCH, e.__str__()
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
+
+        self.__setting_update_publisher.publish(req.name, req.value, req.type)
         return CommandStatus.SUCCESS, 'Settings successfully set'
 
     def __callback_get_settings(self, req):

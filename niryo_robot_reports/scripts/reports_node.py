@@ -10,6 +10,7 @@ from DailyReportHandler import DailyReportHandler
 from TestReportHandler import TestReportHandler
 
 # msg
+from niryo_robot_database.msg import Setting
 from niryo_robot_msgs.msg import CommandStatus
 
 # srv
@@ -28,16 +29,23 @@ class ReportsNode:
         cloud_domain = rospy.get_param('~cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
         get_api_key_response = self.__get_setting('api_key')
+        get_sharing_allowed_response = self.__get_setting('sharing_allowed')
 
-        if get_serial_number_response.status != get_api_key_response.status != 200:
+        if get_serial_number_response.status != get_api_key_response.status != CommandStatus.SUCCESS:
             rospy.logerr('Unable to fetch either the serial number or the api key')
 
+        if get_sharing_allowed_response.status != CommandStatus.SUCCESS:
+            rospy.logwarn('Unable to fetch sharing allowed')
+            get_sharing_allowed_response.value = False
+
         self.__cloud_api = CloudAPI(
-            cloud_domain, get_serial_number_response.value,
-            get_api_key_response.value
+            cloud_domain,
+            get_serial_number_response.value,
+            get_api_key_response.value,
+            get_sharing_allowed_response.value,
         )
 
-        get_report_path_response = get_setting('reports_path')
+        get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
             rospy.logerr(
                 'Unable to retrieve the reports directory path from the database'
@@ -64,6 +72,8 @@ class ReportsNode:
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
+        rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)
+
         rospy.logdebug("Reports Node - Node Started")
 
     def __check_connection_callback(self, req):
@@ -76,20 +86,19 @@ class ReportsNode:
 
         return CommandStatus.SUCCESS, success
 
+    def __setting_update_callback(self, req):
+        if req.name == 'serial_number':
+            self.__cloud_api.set_serial_number(req.value)
+        elif req.name == 'api_key':
+            self.__cloud_api.set_api_key(req.value)
+        elif req.name == 'sharing_allowed':
+            self.__cloud_api.set_sharing_allowed(req.value == 'True')
+
 
 if __name__ == "__main__":
     rospy.init_node(
         'niryo_robot_reports', anonymous=False, log_level=rospy.INFO
     )
-
-    rospy.wait_for_service('/niryo_robot_database/settings/get')
-    get_setting = rospy.ServiceProxy(
-        '/niryo_robot_database/settings/get', GetSettings
-    )
-    sharing_allowed_response = get_setting('sharing_allowed')
-    if sharing_allowed_response.status != CommandStatus.SUCCESS or sharing_allowed_response.value == 'False':
-        rospy.logwarn('Sharing not allowed, the niryo_robot_reports won\'t start')
-        exit()
 
     try:
         node = ReportsNode()

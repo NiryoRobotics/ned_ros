@@ -3,9 +3,6 @@ import rospy
 # - Services
 from niryo_robot_reports.srv import CheckConnection
 
-# Command Status
-from niryo_robot_msgs.msg import CommandStatus
-
 
 class ReportsRosWrapperException(Exception):
     pass
