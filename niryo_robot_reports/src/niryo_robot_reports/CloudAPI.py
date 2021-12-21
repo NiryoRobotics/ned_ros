@@ -30,13 +30,19 @@ class CloudAPI:
 
     def ping(self):
         route = '/ping'
-        response = requests.get(self.__url + route, headers=self.__headers)
+        try:
+            response = requests.get(self.__url + route, headers=self.__headers)
+        except requests.ConnectionError:
+            return False
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         return response.status_code == 200
 
     def send(self, payload):
-        response = requests.post(
-            self.__url, headers=self.__headers, json=payload
-        )
+        try:
+            response = requests.post(
+                self.__url, headers=self.__headers, json=payload
+            )
+        except requests.ConnectionError:
+            return False
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         return response.status_code == 200
