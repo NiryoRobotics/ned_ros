@@ -12,7 +12,7 @@
     <!-- launch the ttl_driver_node node using ttl_driver_node executable from ttl_driver package -->
     <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
         <arg name="hardware_version" value="$(arg hardware_version)" />
-        <arg name="simulation_mode" value="$(arg simulation)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
     </include>
     
     <test test-name="ttl_driver_unit_tests" pkg="ttl_driver" type="ttl_driver_unit_tests" time-limit="1000.0" >

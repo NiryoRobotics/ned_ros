@@ -47,6 +47,8 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EC
             dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                     std::get<1>(GetParam()), 1);
             dxlState.setOffsetPosition(std::get<2>(GetParam()));
+            dxlState.setLimitPositionMin(-2.0);
+            dxlState.setLimitPositionMax(2.0);
 
             // define precision according to smallest motor step in radian
             // we divide by two because we are looking for the closest integer
@@ -71,6 +73,8 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareTyp
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                 std::get<1>(GetParam()), 1);
+        dxlState.setLimitPositionMax(2.0);
+        dxlState.setLimitPositionMin(-2.0);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
 
         // define precision according to smallest motor step in radian
@@ -95,6 +99,8 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareT
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                 std::get<1>(GetParam()), 1);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
+        dxlState.setLimitPositionMin(-2.0);
+        dxlState.setLimitPositionMax(2.0);
 
         // define precision according to smallest motor step in radian
         // we divide by two because we are looking for the closest integer
@@ -142,18 +148,28 @@ TEST_P(DXLIdentityRadTest, identityFromRad)
 {
     // check combinations is identity
     double test_rad = std::get<3>(GetParam());
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
-                test_rad, precision)
-        << "to_rad_pos o to_motor_pos is not identity";
+    if (test_rad > dxlState.getLimitPositionMax())
+        EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)), dxlState.getLimitPositionMax(), precision);
+    else if (test_rad < dxlState.getLimitPositionMin())
+        EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)), dxlState.getLimitPositionMin(), precision);
+    else
+        EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
+                    test_rad, precision)
+            << "to_rad_pos o to_motor_pos is not identity";
 }
 
 TEST_P(DXLIdentityMotorTest, identityFromMotorPos)
 {
     // check combinations is identity
     int test_pos = std::get<3>(GetParam());
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
-              << "to_motor_pos o to_rad_pos is not identity";
+    if (dxlState.to_rad_pos(test_pos) > dxlState.getLimitPositionMax() ||
+        dxlState.to_rad_pos(test_pos) < dxlState.getLimitPositionMin())
+    {
+        EXPECT_TRUE(true);
+    }
+    else
+        EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
+                    << "to_motor_pos o to_rad_pos is not identity";
 }
 
 INSTANTIATE_TEST_CASE_P(CommonTests,
@@ -207,6 +223,8 @@ class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, 
             stepperState = common::model::StepperMotorState(EHardwareType::STEPPER, common::model::EComponentType::JOINT, common::model::EBusProtocol::CAN, 1);
             stepperState.setGearRatio(std::get<1>(GetParam()));
             stepperState.setDirection(std::get<2>(GetParam()));
+            stepperState.setLimitPositionMax(3.0);
+            stepperState.setLimitPositionMin(-3.0);
 
             ASSERT_TRUE(stepperState.isValid());
             ASSERT_FALSE(stepperState.isConveyor());
@@ -214,14 +232,19 @@ class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, 
         }
 
         common::model::StepperMotorState stepperState;
-        double precision = 0.0001;
+        double precision = 0.001;
 };
 
 TEST_P(StepperIdentityRadTest, identityFromRad)
 {
     double pos_rad = std::get<0>(GetParam());
-    EXPECT_NEAR(stepperState.to_rad_pos(stepperState.to_motor_pos(pos_rad)),
-                pos_rad, precision) << "to_rad_pos o to_motor_pos is not identity";
+    double pos_last = stepperState.to_rad_pos(stepperState.to_motor_pos(pos_rad));
+    if (pos_rad > stepperState.getLimitPositionMax())
+        EXPECT_NEAR(pos_last, stepperState.getLimitPositionMax(), precision);
+    else if (pos_rad < stepperState.getLimitPositionMin())
+        EXPECT_NEAR(pos_last, stepperState.getLimitPositionMin(), precision);
+    else
+        EXPECT_NEAR(pos_last, pos_rad, precision) << "to_rad_pos o to_motor_pos is not identity";
 }
 
 INSTANTIATE_TEST_CASE_P(IdentityRadTest,
@@ -243,6 +266,8 @@ class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, d
             stepperState = common::model::StepperMotorState(EHardwareType::STEPPER, EComponentType::JOINT, common::model::EBusProtocol::CAN, 1);
             stepperState.setGearRatio(std::get<1>(GetParam()));
             stepperState.setDirection(std::get<2>(GetParam()));
+            stepperState.setLimitPositionMin(-3.0);
+            stepperState.setLimitPositionMax(3.0);
 
             ASSERT_TRUE(stepperState.isValid());
             ASSERT_FALSE(stepperState.isConveyor());
@@ -250,14 +275,18 @@ class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, d
         }
 
         common::model::StepperMotorState stepperState;
-        double precision = 0.0001;
+        double precision = 0.001;
 };
 
 TEST_P(StepperIdentityMotorTest, identityFromRad)
 {
     int pos = std::get<0>(GetParam());
-    EXPECT_NEAR(stepperState.to_motor_pos(stepperState.to_rad_pos(pos)),
-                pos, precision) << "to_motor_pos o to_rad_pos is not identity";
+    if (stepperState.to_rad_pos(pos) > stepperState.getLimitPositionMax() ||
+        stepperState.to_rad_pos(pos) < stepperState.getLimitPositionMin())
+        EXPECT_TRUE(true);
+    else
+        EXPECT_NEAR(stepperState.to_motor_pos(stepperState.to_rad_pos(pos)),
+                    pos, precision) << "to_motor_pos o to_rad_pos is not identity";
 }
 
 INSTANTIATE_TEST_CASE_P(IdentityMotorTest,
