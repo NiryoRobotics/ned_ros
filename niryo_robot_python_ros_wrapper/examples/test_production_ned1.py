@@ -1,6 +1,6 @@
+import time
 import rospy
 import json
-import argparse
 import numpy as np
 from datetime import datetime
 
@@ -344,7 +344,7 @@ if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
     robot.system_api_client.set_ethernet_auto()
-    # TODO: maybe sleep to wait eth0 changes
+    time.sleep(10)
     print("----- START -----")
     test = TestProduction()
     test.run()
