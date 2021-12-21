@@ -16,10 +16,10 @@ The ROS Node is made to:
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Joint Interface's default Parameters 
+Joints Interface's default Parameters 
 *************************************
 
-.. list-table:: default.yaml parametersr
+.. list-table:: *default.yaml* file
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -32,13 +32,13 @@ Joint Interface's default Parameters
          | Default: '100.0'
 
 
-Joint Interface's hardware specific Parameters 
+Joints Interface's hardware specific Parameters 
 **************************************************
 
 These parameters are specific to the hardware version (ned, one or ned2).
-This file comes in a different version for each hardware version, located in a directory of the hardware version name.
+This file comes in a different version for each hardware version. They are located in a directory of the hardware version name.
 
-.. list-table:: joints_params.yaml
+.. list-table:: *joints_params.yaml* file
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -52,7 +52,7 @@ This file comes in a different version for each hardware version, located in a d
          | Default: -1 (invalid id)
       -  All versions
    *  -  ``joint_N/type``
-      -  | Joint N (1, 2, 3, 4, 5 or 6) type ("stepper", "xl320", "xl430", "fakeStepper" or "fakeDxl")
+      -  | Joint N (1, 2, 3, 4, 5 or 6) motor type among: "stepper", "xl320", "xl430", "fakeStepper" or "fakeDxl"
          | Default: ""
       -  All versions
    *  -  ``joint_N/bus``
@@ -60,7 +60,7 @@ This file comes in a different version for each hardware version, located in a d
          | Default: ""
       -  All versions
 
-.. list-table:: calibration_params.yaml
+.. list-table:: *calibration_params.yaml* file
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -76,7 +76,7 @@ This file comes in a different version for each hardware version, located in a d
       -  seconds
       -  All versions
    *  -  ``calibration_file``
-      -  | File directory where is saved motors calibration value.
+      -  | File path where is saved motors calibration value.
          | Default: '/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'
       -  N.A.
       -  All versions
@@ -126,7 +126,7 @@ This file comes in a different version for each hardware version, located in a d
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/stall_threshold``
-      -  | Stepper N (1, 2 or 3) stall threshold for which we detect the end of the joint course
+      -  | Stepper N (1, 2 or 3) stall threshold for which we detect the end of the joint course for the calibration process
          | Default: 0
       -  N.A.
       -  Ned 2 only
@@ -141,7 +141,7 @@ This file comes in a different version for each hardware version, located in a d
       -  milliseconds
       -  All versions
 
-.. list-table:: dynamixels_params.yaml
+.. list-table:: *dynamixels_params.yaml* file
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -152,78 +152,79 @@ This file comes in a different version for each hardware version, located in a d
       -  Unit
       -  Supported Hardware versions
    *  - ``dxl_N/offset_position``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) offset position for the zero position
          | Default: '0.0'
       -  Rad
       -  All versions
    *  - ``dxl_N/home_position``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) home position
          | Default: '0.0'
       -  Rad
       -  All versions
    *  - ``dxl_N/direction``
-      -  | dynamixel N (1, 2 or 3) Description
-         | Default: '0.0'
+      -  | Dynamixel N (1, 2 or 3) direction (1 = ClockWise, -1 = Counter ClockWise)
+         | Default: '1'
       -  N.A.
       -  All versions
    *  - ``dxl_N/limit_position_max``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) maximal position allowed
          | Default: '0.0'
       -  Rad
       -  All versions
    *  - ``dxl_N/limit_position_min``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) minimal position allowed
          | Default: '0.0'
       -  Rad
       -  All versions
    *  - ``dxl_N/position_P_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Proportional gain of the position PID controller 
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/position_I_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Integral gain of the position PID controller 
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/position_D_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Derivative gain of the position PID controller 
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/velocity_P_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Proportional gain of the velocity PID controller 
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/velocity_I_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Integral gain of the velocity PID controller 
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/FF1_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Feed Forward velocity Gain
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/FF2_gain``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) Feed Forward acceleration Gain
          | Default: '0.0'
       -  N.A.
       -  All versions
    *  - ``dxl_N/acceleration_profile``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) acceleration profile parameter [*]_
          | Default: '0.0'
       -  RPM²
       -  All versions
    *  - ``dxl_N/velocity_profile``
-      -  | dynamixel N (1, 2 or 3) Description
+      -  | Dynamixel N (1, 2 or 3) velocity profile parameter
          | Default: '0.0'
       -  RPM
       -  All versions
 
+.. [*] refer to the dedicated motor `reference documentation <https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-profile>`_.
 
-.. list-table:: steppers_params.yaml
+.. list-table:: *steppers_params.yaml* file
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -249,27 +250,27 @@ This file comes in a different version for each hardware version, located in a d
       -  N.A.
       -  Ned and One only
    *  -  ``stepper_N/motor_ratio``
-      -  | Stepper N (1, 2 or 3) motor ratio
+      -  | Stepper N (1, 2 or 3) motor ratio for conversion into radian
          | Default: 1
       -  N.A.
       -  Ned 2 only
    *  -  ``stepper_N/offset_position``
-      -  | Stepper N (1, 2 or 3) offset position (in rad) to position limit min
+      -  | Stepper N (1, 2 or 3) offset position to position limit min
          | Default: 0
       -  Rad
       -  All versions
    *  -  ``stepper_N/home_position``
-      -  | Stepper N (1, 2 or 3) Home position (in rad) of the motor
+      -  | Stepper N (1, 2 or 3) Home position of the motor
          | Default: 0
       -  Rad
       -  All versions
    *  -  ``stepper_N/limit_position_min``
-      -  | Stepper N (1, 2 or 3) position (in rad) limit min of the motor
+      -  | Stepper N (1, 2 or 3) position limit min of the motor
          | Default: 0
       -  Rad
       -  All versions
    *  -  ``stepper_N/limit_position_max``
-      -  | Stepper N (1, 2 or 3) position (in rad) limit max of the motor
+      -  | Stepper N (1, 2 or 3) position limit max of the motor
          | Default: 0
       -  Rad
       -  All versions
@@ -279,42 +280,42 @@ This file comes in a different version for each hardware version, located in a d
       -  N.A.
       -  All versions
    *  -  ``stepper_N/v_start``
-      -  | Stepper N (1, 2 or 3) starting velocity (0.001 RPM.min-1) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) starting velocity for the acceleration profile
          | Default: 1
       -  RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_1``
-      -  | Stepper N (1, 2 or 3) first acceleration (RPM.min-2) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) first acceleration for the acceleration profile
          | Default: 0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_1``
-      -  | Stepper N (1, 2 or 3) first velocity (0.001 RPM.min-1) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) first velocity for the acceleration profile
          | Default: 0
       -  RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_max``
-      -  | Stepper N (1, 2 or 3) max acceleration (RPM.min-2) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) max acceleration for the acceleration profile
          | Default: 6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_max``
-      -  | Stepper N (1, 2 or 3) max velocity (0.001 RPM.min-1) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) max velocity for the acceleration profile
          | Default: 6
       -  RPM
       -  Ned 2 only
    *  -  ``stepper_N/d_max``
-      -  | Stepper N (1, 2 or 3) max deceleration (RPM.min-2) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) max deceleration for the acceleration profile
          | Default: 6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/d_1``
-      -  | Stepper N (1, 2 or 3) last deceleration (RPM.min-2) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) last deceleration for the acceleration profile
          | Default: 0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_stop``
-      -  | Stepper N (1, 2 or 3) stop velocity (0.001 RPM.min-1) for the acceleration profile
+      -  | Stepper N (1, 2 or 3) stop velocity for the acceleration profile
          | Default: 2
       -  RPM
       -  Ned 2 only
@@ -324,8 +325,8 @@ This file comes in a different version for each hardware version, located in a d
       -  N.A.
       -  Ned 2 only
 
-The velocity profile for the steppers (in calibration_params.yaml and steppers_params.yaml) can be defined for TTL steppers only (thus for Ned2 only)
-It is defined according to the following graph :
+The velocity profiles for the steppers (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL steppers only (thus for Ned2 only).
+They are defined according to the following graph :
 
 .. figure:: ../../../images/stack/low_level/steppers_velocity_profiles.png
    :alt: TTL steppers velocity profiles
@@ -348,7 +349,7 @@ Services, Topics and Messages
 Subscribed topics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Joint Interface's Published Topics
+.. list-table:: Joints Interface's Published Topics
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -364,7 +365,7 @@ Subscribed topics
 Published topics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Joint Interface's Published Topics
+.. list-table:: Joints Interface's Published Topics
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -380,7 +381,7 @@ Published topics
 Services
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Joint Interface Package Services
+.. list-table:: Joints Interface Package Services
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -391,13 +392,13 @@ Services
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Starst motors calibration - value can be 1 for auto calibration, 2 for manual
+      -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Unsets motors calibration
+      -  Reset motor calibration state to "uncalibrated". This will allow the user to ask a new calibration.
    *  -  ``niryo_robot/learning_mode/activate``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Either activates or deactivates learning mode
+      -  Change learning mode (Free Motion) state. When learning mode is activated, torques are disabled and the joints can move freely.
    *  -  ``niryo_robot/joints_interface/steppers_reset_controller``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Resets the controller
