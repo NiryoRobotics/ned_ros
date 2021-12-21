@@ -617,7 +617,7 @@ msgstr "``dxl_N/acceleration_profile``"
 
 #: ../../source/stack/low_level/joints_interface.rst
 msgid "Dynamixel N (1, 2 or 3) acceleration profile parameter [*]_"
-msgstr "Paramètrage du profil d'accélération du moteur Dynamixel N (1, 2 ou 3)"
+msgstr "Paramètrage du profil d'accélération du moteur Dynamixel N (1, 2 ou 3) [*]_"
 
 #: ../../source/stack/low_level/joints_interface.rst:219
 msgid "``dxl_N/velocity_profile``"
