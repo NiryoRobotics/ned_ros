@@ -7,6 +7,7 @@ class CloudAPI:
 
     __DAILY_PATH = '/daily-reports'
     __TEST_PATH = '/test-reports'
+    __ALERT_PATH = '/alert-report'
 
     def __init__(self, domain, serial_number, api_key, https=False):
         self.__base_url = '{}://{}'.format('https' if https else 'http', domain)
@@ -25,6 +26,11 @@ class CloudAPI:
     @property
     def test_report(self):
         self.__url = self.__base_url + self.__TEST_PATH
+        return self
+
+    @property
+    def alert_report(self):
+        self.__url = self.__base_url + self.__ALERT_PATH
         return self
 
     def ping(self):
