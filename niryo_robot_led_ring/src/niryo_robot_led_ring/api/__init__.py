@@ -1,1 +1,1 @@
-from led_ring_ros_wrapper import LedRingRosWrapper
+from .led_ring_ros_wrapper import LedRingRosWrapper

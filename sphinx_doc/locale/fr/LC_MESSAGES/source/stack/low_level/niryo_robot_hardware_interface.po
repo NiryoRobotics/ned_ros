@@ -11,229 +11,239 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 14:39+0100\n"
+"POT-Creation-Date: 2021-12-16 12:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:2
 msgid "Niryo Robot Hardware Interface"
-msgstr ""
+msgstr "Niryo Robot Hardware Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:4
 msgid "This package handles packages related to the robot's hardware."
 msgstr ""
+"Ce package gère les packages en lien avec les composants matériels du robot."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:5
 msgid "It launches hardware interface nodes, motors communication and driver."
 msgstr ""
+"Il lance les nodes des interfaces matérielles, des communications moteurs et "
+"des drivers."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:12
 msgid "Global overview of hardware stack packages organization."
-msgstr ""
+msgstr "Aperçu global de l'organisation des packages de la stack hardware."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:15
 msgid "Hardware interface node"
-msgstr ""
+msgstr "Hardware interface node"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:22
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:23
 msgid "The ROS Node is made to launch hardware interface and communication:"
 msgstr ""
+"Ce noeud ROS est conçu pour lancer les interfaces materielles et les "
+"communications suivantes :"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:17
-msgid "Conveyor Belt interface"
-msgstr ""
+msgid "Conveyor Interface"
+msgstr "Conveyor Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:18
-msgid "Joints interface"
-msgstr ""
+msgid "Joints Interface"
+msgstr "Joints Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:19
-msgid "Tools interface"
-msgstr ""
+msgid "Tools Interface"
+msgstr "Tools Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:20
-msgid "Fake interface"
-msgstr ""
+msgid "Cpu Interface"
+msgstr "Cpu Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:21
-msgid "Dynamixel driver"
-msgstr ""
+msgid "End Effector Interface (Ned2 only)"
+msgstr "End Effector Interface (Ned2 seulement)"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:22
-msgid "Stepper driver"
-msgstr ""
+msgid "Can Driver (Ned and One Only)"
+msgstr "Can Driver (Ned et One seulement)"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:24
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:23
+msgid "Ttl Driver"
+msgstr "Ttl Driver"
+
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:25
 msgid "The namespace used is: |namespace_emphasize|."
-msgstr ""
+msgstr "Le namespace utilisé est: |namespace_emphasize|."
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:27
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:28
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:29
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:30
 msgid "Hardware Interface's Parameters"
-msgstr ""
-
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:35
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:67
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:86
-msgid "Name"
-msgstr ""
+msgstr "Paramètres de l'Interface Hardware Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:36
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:69
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:88
-msgid "Description"
-msgstr ""
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:68
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:87
+msgid "Name"
+msgstr "Nom"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:37
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:70
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:89
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:38
 msgid "``publish_hw_status_frequency``"
-msgstr ""
+msgstr "``publish_hw_status_frequency``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Publishes rate for hardware status."
-msgstr ""
+msgstr "Fréquence de publication des status materiels."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Default : '2.0'"
-msgstr ""
+msgstr "Défaut : '2.0'"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:40
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:41
 msgid "``publish_software_version_frequency``"
-msgstr ""
+msgstr "``publish_software_version_frequency``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Publishes rate for software status."
-msgstr ""
+msgstr "Fréquence de publication des status logiciels."
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:45
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:46
 msgid "Dependencies"
-msgstr ""
-
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:47
-msgid ":doc:`tools_interface`"
-msgstr ""
+msgstr "Dépendances"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:48
-msgid ":doc:`joints_interface`"
-msgstr ""
+msgid ":doc:`tools_interface`"
+msgstr ":doc:`tools_interface`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:49
-msgid ":doc:`conveyor_interface`"
-msgstr ""
+msgid ":doc:`joints_interface`"
+msgstr ":doc:`joints_interface`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:50
-msgid ":doc:`cpu_interface`"
-msgstr ""
+msgid ":doc:`conveyor_interface`"
+msgstr ":doc:`conveyor_interface`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:51
+msgid ":doc:`cpu_interface`"
+msgstr ":doc:`cpu_interface`"
+
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:52
 msgid ":doc:`../high_level/niryo_robot_msgs`"
-msgstr ""
+msgstr ":doc:`../high_level/niryo_robot_msgs`"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:56
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:57
 msgid "Services, Topics and Messages"
-msgstr ""
+msgstr "Services, Topics et Messages"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:59
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:60
 msgid "Published topics"
-msgstr ""
+msgstr "Topics publiés"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:61
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:62
 msgid "Hardware Interface's Published Topics"
-msgstr ""
+msgstr "Topics publiés de l'interface Hardware Interface"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:68
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:87
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:69
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:88
 msgid "Message Type"
-msgstr ""
-
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:70
-msgid "``hardware_status``"
-msgstr ""
+msgstr "Type de message"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:71
-msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
-msgstr ""
+msgid "``hardware_status``"
+msgstr "``hardware_status``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:72
-msgid "Motors, bus, joints and CPU status"
+msgid ""
+":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
 msgstr ""
+":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:73
-msgid "``software_version``"
-msgstr ""
+msgid "Motors, bus, joints and CPU status"
+msgstr "Moteurs, bus, joints et status des processeurs"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:74
-msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
-msgstr ""
+msgid "``software_version``"
+msgstr "``software_version``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:75
-msgid "Raspberry and stepper software version"
+msgid ""
+":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
 msgstr ""
+":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:78
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:76
+msgid ""
+"Software version of the Raspberry PI and every hardware components (motors, "
+"end effector, conveyors and tools)"
+msgstr ""
+"Version logicielle de la Raspberry Pi et de chaque composant materiel "
+"(moteurs, end effector, convoyeurs et outils)"
+
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:79
 msgid "Services"
-msgstr ""
+msgstr "Services"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:80
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:81
 msgid "Hardware Interface Package Services"
-msgstr ""
-
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:89
-msgid "``launch_motors_report``"
-msgstr ""
+msgstr "Services du package Hardware Interface"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:90
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:93
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:96
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
-msgstr ""
+msgid "``launch_motors_report``"
+msgstr "``launch_motors_report``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:91
-msgid "Starts motors report"
-msgstr ""
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:94
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:97
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:92
-msgid "``reboot_motors``"
-msgstr ""
+msgid "Starts motors report"
+msgstr "Lance l'outil de diagnostique des moteurs"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:94
-msgid "Reboots motors"
-msgstr ""
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:93
+msgid "``reboot_motors``"
+msgstr "``reboot_motors``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:95
+msgid "Reboots motors"
+msgstr "Redémarre les moteurs"
+
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:96
 msgid "``stop_motors_report``"
-msgstr ""
+msgstr "``stop_motors_report``"
 
-#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:97
+#: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:98
 msgid "Stops motors report"
-msgstr ""
-
-#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
-#~ msgstr ""
-
-#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
-#~ msgstr ""
+msgstr "Arrête l'outil de diagnostique des moteurs"
 
 #~ msgid ":doc:`../../ros/niryo_robot_msgs`"
 #~ msgstr ""
 
-#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../ros/niryo_robot_msgs:HardwareStatus>`"
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../ros/niryo_robot_msgs:HardwareStatus>`"
 #~ msgstr ""
 
-#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../ros/niryo_robot_msgs:SoftwareVersion>`"
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../ros/niryo_robot_msgs:SoftwareVersion>`"
 #~ msgstr ""
 
 #~ msgid ":ref:`source/stack/../ros/niryo_robot_msgs:Trigger`"
@@ -242,12 +252,34 @@ msgstr ""
 #~ msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
 #~ msgstr ""
 
-#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../stack/high_level/niryo_robot_msgs:HardwareStatus>`"
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../stack/high_level/niryo_robot_msgs:HardwareStatus>`"
 #~ msgstr ""
 
-#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
 #~ msgstr ""
 
 #~ msgid ":ref:`source/stack/../stack/high_level/niryo_robot_msgs:Trigger`"
 #~ msgstr ""
 
+#~ msgid "Conveyor Belt interface"
+#~ msgstr ""
+
+#~ msgid "Joints interface"
+#~ msgstr ""
+
+#~ msgid "Tools interface"
+#~ msgstr ""
+
+#~ msgid "Fake interface"
+#~ msgstr ""
+
+#~ msgid "Dynamixel driver"
+#~ msgstr ""
+
+#~ msgid "Stepper driver"
+#~ msgstr ""
+
+#~ msgid "Raspberry and stepper software version"
+#~ msgstr "Version de la Raspberry Pi et des moteurs"

@@ -201,7 +201,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
-                        ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
+                        ROS_ERROR("JointHardwareInterface::init - Dynamixel motors are not available on CAN Bus");
                     else if (EBusProtocol::TTL == eBusProto)
                         result = _ttl_interface->addJoint(dxlState);
 
@@ -549,7 +549,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
             }
             else
             {
-                ROS_ERROR("Fail to reboot motor id %d", jState->getId());
+                ROS_ERROR("JointHardwareInterface::init - Fail to reboot motor id %d", jState->getId());
                 res = false;
             }
         }

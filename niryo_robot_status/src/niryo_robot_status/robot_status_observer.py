@@ -110,6 +110,9 @@ class RobotStatusObserver(object):
         msg.temperatures = []
         msg.voltages = []
 
+        # Todo remove this shit
+        msg.error_message = ""
+
         if self.hardware_status != msg:
             self.hardware_status = msg
             self.rpi_overheating = rpi_overheating
