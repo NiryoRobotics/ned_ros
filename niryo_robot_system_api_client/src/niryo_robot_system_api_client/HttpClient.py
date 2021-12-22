@@ -115,7 +115,7 @@ class HttpClient:
         return True, response
 
     def setup_ethernet(self, profile, ip="", mask="", gateway="", dns=""):
-        status_code, response = self.__post('/setEthernetProfile',
+        status_code, response = self.__post('/ethernetProfile',
                                             {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
 
         if not status_code:

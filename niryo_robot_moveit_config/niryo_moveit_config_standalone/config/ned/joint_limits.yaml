@@ -10,12 +10,12 @@ joint_limits:
     max_acceleration: 2.2
   joint_2:
     has_velocity_limits: true
-    max_velocity: 2.0
+    max_velocity: 1.6
     has_acceleration_limits: true
     max_acceleration: 1.5
   joint_3:
     has_velocity_limits: true
-    max_velocity: 2.5
+    max_velocity: 1.7
     has_acceleration_limits: true
     max_acceleration: 1.6
   joint_4:

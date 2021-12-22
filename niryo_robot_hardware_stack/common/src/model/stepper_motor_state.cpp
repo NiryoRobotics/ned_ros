@@ -25,6 +25,7 @@
 #include <string>
 #include <tuple>
 #include <utility>
+#include <ros/ros.h>
 
 #include "ros/time.h"
 
@@ -138,6 +139,7 @@ int StepperMotorState::to_motor_pos(double rad_pos)
         rad_pos = _limit_position_max;
     else if (rad_pos < _limit_position_min)
         rad_pos = _limit_position_min;
+
     int result =  static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 
     return result;
