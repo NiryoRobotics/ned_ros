@@ -905,25 +905,25 @@ uint8_t TtlManager::readSteppersStatus()
                             if (stepperState && !stepperState->isConveyor())
                             {
                                 stepperState->setCalibration(status, 1);
-                            }
 
-                            // get max status of all motors (to retrieve potential errors)
-                            // carefull to those possible cases :
-                            // 1, 1, 1
-                            // 1, 2, 1
-                            // 0, 2, 2
-                            // 2, 0, 2
+                                // get max status of all motors (to retrieve potential errors)
+                                // carefull to those possible cases :
+                                // 1, 1, 1
+                                // 1, 2, 1
+                                // 0, 2, 2
+                                // 2, 0, 2
 
-                            // if 0, uninitialized, else, take max
-                            // we need to keep the status unconverted to have the correct order
-                            if (0 != max_status && homing_status_list.at(i) > max_status)
-                                max_status = homing_status_list.at(i);
+                                // if 0, uninitialized, else, take max
+                                // we need to keep the status unconverted to have the correct order
+                                if (0 != max_status && homing_status_list.at(i) > max_status)
+                                    max_status = homing_status_list.at(i);
 
-                            // if one status is in progress or uinitialized, we are really in progress
-                            if ((0 == homing_status_list.at(i)) ||
-                                EStepperCalibrationStatus::IN_PROGRESS == status)
-                            {
-                                still_in_progress = true;
+                                // if one status is in progress or uinitialized, we are really in progress
+                                if ((0 == homing_status_list.at(i)) ||
+                                    EStepperCalibrationStatus::IN_PROGRESS == status)
+                                {
+                                    still_in_progress = true;
+                                }
                             }
                         }
                     }  // for homing_status_list
