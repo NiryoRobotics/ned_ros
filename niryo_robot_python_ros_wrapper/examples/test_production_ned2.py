@@ -514,7 +514,6 @@ if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
     robot.system_api_client.set_ethernet_auto()
-    # TODO: maybe sleep to wait eth0 changes
     print("----- START -----")
     test = TestProduction()
     test.run()
