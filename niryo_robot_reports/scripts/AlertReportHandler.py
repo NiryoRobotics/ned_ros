@@ -24,7 +24,7 @@ class MetricChecker:
     def __str__(self):
         return '{} {} with value {}'.format(
             self.metric_name,
-            'succeed' if self.__success else 'failed',
+            'succeeded' if self.__success else 'failed',
             self.__value
         )
 
