@@ -2,7 +2,7 @@ import requests
 import rospy
 
 
-class CloudAPI:
+class CloudAPI(object):
 
     __DAILY_PATH = '/daily-reports'
     __TEST_PATH = '/test-reports'
@@ -17,13 +17,6 @@ class CloudAPI:
             'serialNumber': serial_number,
             'apiKey': api_key
         }
-
-    def with_sharing_allowed(self, f):
-        def wrapper(*args, **kwargs):
-            if self.__sharing_allowed:
-                return True
-            return f(*args, **kwargs)
-        return wrapper
 
     def set_serial_number(self, value):
         self.__headers['serialNumber'] = value
@@ -49,8 +42,10 @@ class CloudAPI:
         self.__url = self.__base_url + self.__ALERT_PATH
         return self
 
-    @with_sharing_allowed
     def ping(self):
+        if not self.__sharing_allowed:
+            return True
+
         route = '/ping'
         try:
             response = requests.get(self.__url + route, headers=self.__headers)
@@ -60,8 +55,9 @@ class CloudAPI:
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         return response.status_code == 200
 
-    @with_sharing_allowed
     def send(self, payload):
+        if not self.__sharing_allowed:
+            return True
         try:
             response = requests.post(
                 self.__url, headers=self.__headers, json=payload
