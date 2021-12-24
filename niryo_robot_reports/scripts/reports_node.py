@@ -64,8 +64,9 @@ class ReportsNode:
         rm_report_db = rospy.ServiceProxy(
             '/niryo_robot_database/file_paths/rm', RmFilePath
         )
-
-        AlertReportHandler(cloud_api)
+        DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        AlertReportHandler(self.__cloud_api)
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
 
