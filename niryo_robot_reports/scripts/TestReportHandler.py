@@ -29,7 +29,7 @@ class TestReportHandler:
             rospy.logerr('Malformed json: ' + str(e))
             return
         parsed_json['date'] = datetime.now().isoformat()
-        success = self.__cloud_api.test_report.send(parsed_json)
+        success = self.__cloud_api.test_reports.send(parsed_json)
         rospy.logdebug('send result: ' + str(success))
         if not success:
             report_name = 'test_{}.json'.format(parsed_json['date'])
@@ -46,7 +46,7 @@ class TestReportHandler:
             for report in test_reports_response.filepaths:
                 report_handler = TestReport(report.path)
                 rospy.loginfo('Sending the test report of {}'.format(report_handler.content['date']))
-                success = self.__cloud_api.test_report.send(report_handler.content)
+                success = self.__cloud_api.test_reports.send(report_handler.content)
                 if success:
                     report_handler.delete()
                     self.__rm_report_db(report.id)

@@ -85,6 +85,11 @@ class NiryoRosWrapper:
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
+        # Software
+        self.__software_version_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/software_version',
+                                                      SoftwareVersion,
+                                                      queue_size=1)
+
         # - Action server
         # Robot action
         self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action', RobotMoveAction,
@@ -96,6 +101,14 @@ class NiryoRosWrapper:
         # Tool action
         self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction,
                                                    ToolGoal)
+
+        # database
+        from niryo_robot_database.api import DatabaseRosWrapper
+        self.__database = DatabaseRosWrapper(self.__service_timeout)
+
+        # system_api_client
+        from niryo_robot_system_api_client.api import SystemApiClientRosWrapper
+        self.__system_api_client = SystemApiClientRosWrapper(self.__service_timeout)
 
         if self.__hardware_version == 'ned2':
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
@@ -1936,6 +1949,28 @@ class NiryoRosWrapper:
             return result.name_list, result.description_list
         return result.name_list
 
+    # - Software
+
+    def get_software_version(self):
+        """
+        Get the robot software version
+
+        :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
+        :rtype: (str, str, list[str], list[str])
+        """
+        value = self.__software_version_ntv.wait_for_message()
+        return value
+
+    @property
+    def system_api_client(self):
+        return self.__system_api_client
+
+    # - Ned
+
+    @property
+    def database(self):
+        return self.__database
+
     # - Ned 2
 
     @property
@@ -1949,35 +1984,3 @@ class NiryoRosWrapper:
     @property
     def custom_button(self):
         return self.__custom_button
-
-    def set_database_setting(self, name, value):
-        """
-        Set a setting in the database
-
-        :param name: the name of a setting
-        :type name: str
-        :param value: the value of the setting
-        :type value: object
-        """
-        from niryo_robot_database.srv import SetSettings
-        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, str(value), type(value).__name__)
-
-    def get_database_setting(self, name):
-        """
-        Retrieve a setting from the database
-
-        :param name: the name of the setting
-        :type name: str
-        :return: the value of the setting
-        :rtype: object
-        """
-        from pydoc import locate
-        from niryo_robot_database.srv import GetSettings
-        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings, name)
-        if result.status == CommandStatus.DATABASE_SETTINGS_UNKNOWN:
-            return None
-        if result.type != 'bool':
-            casted_type = locate(result.type)(result.value)
-        else:
-            casted_type = result.value in ['True', 'true']
-        return casted_type
