@@ -1,4 +1,6 @@
 # coding=utf-8
+import time
+
 from enum import Enum
 from threading import Event
 from datetime import datetime
@@ -13,8 +15,7 @@ class CheckFrequencies(Enum):
     HIGH = 1
 
     FREQUENCIES = {
-        VERY_LOW: None,
-        LOW: 600,
+        LOW: None,
         NORMAL: 5,
         HIGH: 1,
     }
@@ -57,7 +58,10 @@ class AlertReportHandler:
             ],
         }
 
-        for metric_checker in self.__metrics[CheckFrequencies.VERY_LOW]:
+        self.check_by_frequency(CheckFrequencies.VERY_LOW)
+
+    def check_by_frequency(self, frequency):
+        for metric_checker in self.__metrics[frequency]:
             success = metric_checker.test()
             if success:
                 continue
@@ -68,7 +72,7 @@ class AlertReportHandler:
             })
 
     def quit(self):
-        self.__stop_watch
+        self.__stop_watch.set()
 
     def run(self):
         clock_frequency = 1
@@ -83,3 +87,4 @@ class AlertReportHandler:
                 if counter == frequency:
                     for test in self.__metrics[frequency]:
                         print(test.metric_name)
+            time.sleep(clock_frequency)

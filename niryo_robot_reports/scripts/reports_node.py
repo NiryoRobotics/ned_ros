@@ -8,6 +8,7 @@ from distutils.dir_util import mkpath
 from niryo_robot_reports.CloudAPI import CloudAPI
 from DailyReportHandler import DailyReportHandler
 from TestReportHandler import TestReportHandler
+from AlertReportHandler import AlertReportHandler
 
 # msg
 from niryo_robot_database.msg import Setting
@@ -64,8 +65,7 @@ class ReportsNode:
             '/niryo_robot_database/file_paths/rm', RmFilePath
         )
 
-        DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        AlertReportHandler(cloud_api)
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
 
