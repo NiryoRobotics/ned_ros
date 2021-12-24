@@ -1152,6 +1152,11 @@ int TtlManager::setLeds(int led)
                 ROS_WARN("TtlManager::setLeds - Failed to write LED");
         }
     }
+    else
+    {
+        ROS_DEBUG("Set leds failed. It is maybe that this service is not support for this product");
+        ret = niryo_robot_msgs::CommandStatus::SUCCESS;
+    }
 
     return ret;
 }

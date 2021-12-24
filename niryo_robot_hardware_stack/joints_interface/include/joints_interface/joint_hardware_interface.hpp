@@ -92,6 +92,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         std::map<uint8_t, std::string> _map_dxl_name;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_state_list;
+        std::string _hardware_version;
 };
 
 /**

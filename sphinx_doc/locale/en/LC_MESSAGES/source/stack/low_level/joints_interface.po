@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-16 15:03+0100\n"
+"POT-Creation-Date: 2021-12-20 17:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,21 +65,21 @@ msgid "Parameters"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:20
-msgid "Joint Interface's default Parameters"
+msgid "Joints Interface's default Parameters"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:22
-msgid "default.yaml parametersr"
+msgid "*default.yaml* file"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:28
 #: ../../source/stack/low_level/joints_interface.rst:47
 #: ../../source/stack/low_level/joints_interface.rst:69
 #: ../../source/stack/low_level/joints_interface.rst:150
-#: ../../source/stack/low_level/joints_interface.rst:232
-#: ../../source/stack/low_level/joints_interface.rst:356
-#: ../../source/stack/low_level/joints_interface.rst:372
-#: ../../source/stack/low_level/joints_interface.rst:388
+#: ../../source/stack/low_level/joints_interface.rst:233
+#: ../../source/stack/low_level/joints_interface.rst:358
+#: ../../source/stack/low_level/joints_interface.rst:374
+#: ../../source/stack/low_level/joints_interface.rst:390
 msgid "Name"
 msgstr ""
 
@@ -87,11 +87,11 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:48
 #: ../../source/stack/low_level/joints_interface.rst:70
 #: ../../source/stack/low_level/joints_interface.rst:151
-#: ../../source/stack/low_level/joints_interface.rst:233
-#: ../../source/stack/low_level/joints_interface.rst:358
-#: ../../source/stack/low_level/joints_interface.rst:374
-#: ../../source/stack/low_level/joints_interface.rst:390
-#: ../../source/stack/low_level/joints_interface.rst:418
+#: ../../source/stack/low_level/joints_interface.rst:234
+#: ../../source/stack/low_level/joints_interface.rst:360
+#: ../../source/stack/low_level/joints_interface.rst:376
+#: ../../source/stack/low_level/joints_interface.rst:392
+#: ../../source/stack/low_level/joints_interface.rst:420
 msgid "Description"
 msgstr ""
 
@@ -108,24 +108,24 @@ msgid "Default: '100.0'"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:36
-msgid "Joint Interface's hardware specific Parameters"
+msgid "Joints Interface's hardware specific Parameters"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:38
 msgid ""
 "These parameters are specific to the hardware version (ned, one or ned2)."
-" This file comes in a different version for each hardware version, "
-"located in a directory of the hardware version name."
+" This file comes in a different version for each hardware version. They "
+"are located in a directory of the hardware version name."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:41
-msgid "joints_params.yaml"
+msgid "*joints_params.yaml* file"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:49
 #: ../../source/stack/low_level/joints_interface.rst:72
 #: ../../source/stack/low_level/joints_interface.rst:153
-#: ../../source/stack/low_level/joints_interface.rst:235
+#: ../../source/stack/low_level/joints_interface.rst:236
 msgid "Supported Hardware versions"
 msgstr ""
 
@@ -163,12 +163,12 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:213
 #: ../../source/stack/low_level/joints_interface.rst:218
 #: ../../source/stack/low_level/joints_interface.rst:223
-#: ../../source/stack/low_level/joints_interface.rst:240
-#: ../../source/stack/low_level/joints_interface.rst:260
-#: ../../source/stack/low_level/joints_interface.rst:265
-#: ../../source/stack/low_level/joints_interface.rst:270
-#: ../../source/stack/low_level/joints_interface.rst:275
-#: ../../source/stack/low_level/joints_interface.rst:280
+#: ../../source/stack/low_level/joints_interface.rst:241
+#: ../../source/stack/low_level/joints_interface.rst:261
+#: ../../source/stack/low_level/joints_interface.rst:266
+#: ../../source/stack/low_level/joints_interface.rst:271
+#: ../../source/stack/low_level/joints_interface.rst:276
+#: ../../source/stack/low_level/joints_interface.rst:281
 msgid "All versions"
 msgstr ""
 
@@ -178,8 +178,8 @@ msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
 msgid ""
-"Joint N (1, 2, 3, 4, 5 or 6) type (\"stepper\", \"xl320\", \"xl430\", "
-"\"fakeStepper\" or \"fakeDxl\")"
+"Joint N (1, 2, 3, 4, 5 or 6) motor type among: \"stepper\", \"xl320\", "
+"\"xl430\", \"fakeStepper\" or \"fakeDxl\""
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
@@ -195,12 +195,12 @@ msgid "Joint N (1, 2, 3, 4, 5 or 6) bus (\"ttl\" or \"can\")"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:63
-msgid "calibration_params.yaml"
+msgid "*calibration_params.yaml* file"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:71
 #: ../../source/stack/low_level/joints_interface.rst:152
-#: ../../source/stack/low_level/joints_interface.rst:234
+#: ../../source/stack/low_level/joints_interface.rst:235
 msgid "Unit"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgid "``calibration_file``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "File directory where is saved motors calibration value."
+msgid "File path where is saved motors calibration value."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
@@ -246,17 +246,17 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:202
 #: ../../source/stack/low_level/joints_interface.rst:207
 #: ../../source/stack/low_level/joints_interface.rst:212
-#: ../../source/stack/low_level/joints_interface.rst:239
-#: ../../source/stack/low_level/joints_interface.rst:244
-#: ../../source/stack/low_level/joints_interface.rst:249
-#: ../../source/stack/low_level/joints_interface.rst:254
-#: ../../source/stack/low_level/joints_interface.rst:279
-#: ../../source/stack/low_level/joints_interface.rst:324
+#: ../../source/stack/low_level/joints_interface.rst:240
+#: ../../source/stack/low_level/joints_interface.rst:245
+#: ../../source/stack/low_level/joints_interface.rst:250
+#: ../../source/stack/low_level/joints_interface.rst:255
+#: ../../source/stack/low_level/joints_interface.rst:280
+#: ../../source/stack/low_level/joints_interface.rst:325
 msgid "N.A."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:83
-#: ../../source/stack/low_level/joints_interface.rst:236
+#: ../../source/stack/low_level/joints_interface.rst:237
 msgid "``stepper_N/id``"
 msgstr ""
 
@@ -265,7 +265,7 @@ msgid "Stepper N (1, 2 or 3) id"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:88
-#: ../../source/stack/low_level/joints_interface.rst:281
+#: ../../source/stack/low_level/joints_interface.rst:282
 msgid "``stepper_N/v_start``"
 msgstr ""
 
@@ -293,21 +293,21 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:122
 #: ../../source/stack/low_level/joints_interface.rst:127
 #: ../../source/stack/low_level/joints_interface.rst:132
-#: ../../source/stack/low_level/joints_interface.rst:255
-#: ../../source/stack/low_level/joints_interface.rst:285
-#: ../../source/stack/low_level/joints_interface.rst:290
-#: ../../source/stack/low_level/joints_interface.rst:295
-#: ../../source/stack/low_level/joints_interface.rst:300
-#: ../../source/stack/low_level/joints_interface.rst:305
-#: ../../source/stack/low_level/joints_interface.rst:310
-#: ../../source/stack/low_level/joints_interface.rst:315
-#: ../../source/stack/low_level/joints_interface.rst:320
-#: ../../source/stack/low_level/joints_interface.rst:325
+#: ../../source/stack/low_level/joints_interface.rst:256
+#: ../../source/stack/low_level/joints_interface.rst:286
+#: ../../source/stack/low_level/joints_interface.rst:291
+#: ../../source/stack/low_level/joints_interface.rst:296
+#: ../../source/stack/low_level/joints_interface.rst:301
+#: ../../source/stack/low_level/joints_interface.rst:306
+#: ../../source/stack/low_level/joints_interface.rst:311
+#: ../../source/stack/low_level/joints_interface.rst:316
+#: ../../source/stack/low_level/joints_interface.rst:321
+#: ../../source/stack/low_level/joints_interface.rst:326
 msgid "Ned 2 only"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:93
-#: ../../source/stack/low_level/joints_interface.rst:286
+#: ../../source/stack/low_level/joints_interface.rst:287
 msgid "``stepper_N/a_1``"
 msgstr ""
 
@@ -324,15 +324,15 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:116
 #: ../../source/stack/low_level/joints_interface.rst:121
 #: ../../source/stack/low_level/joints_interface.rst:217
-#: ../../source/stack/low_level/joints_interface.rst:289
-#: ../../source/stack/low_level/joints_interface.rst:299
-#: ../../source/stack/low_level/joints_interface.rst:309
-#: ../../source/stack/low_level/joints_interface.rst:314
+#: ../../source/stack/low_level/joints_interface.rst:290
+#: ../../source/stack/low_level/joints_interface.rst:300
+#: ../../source/stack/low_level/joints_interface.rst:310
+#: ../../source/stack/low_level/joints_interface.rst:315
 msgid "RPM²"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:98
-#: ../../source/stack/low_level/joints_interface.rst:291
+#: ../../source/stack/low_level/joints_interface.rst:292
 msgid "``stepper_N/v_1``"
 msgstr ""
 
@@ -341,7 +341,7 @@ msgid "Stepper N (1, 2 or 3) first velocity for the acceleration profile"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:103
-#: ../../source/stack/low_level/joints_interface.rst:296
+#: ../../source/stack/low_level/joints_interface.rst:297
 msgid "``stepper_N/a_max``"
 msgstr ""
 
@@ -354,7 +354,7 @@ msgid "Default: 6000"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:108
-#: ../../source/stack/low_level/joints_interface.rst:301
+#: ../../source/stack/low_level/joints_interface.rst:302
 msgid "``stepper_N/v_max``"
 msgstr ""
 
@@ -367,7 +367,7 @@ msgid "Default: 6"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:113
-#: ../../source/stack/low_level/joints_interface.rst:306
+#: ../../source/stack/low_level/joints_interface.rst:307
 msgid "``stepper_N/d_max``"
 msgstr ""
 
@@ -376,7 +376,7 @@ msgid "Stepper N (1, 2 or 3) max deceleration for the acceleration profile"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:118
-#: ../../source/stack/low_level/joints_interface.rst:311
+#: ../../source/stack/low_level/joints_interface.rst:312
 msgid "``stepper_N/d_1``"
 msgstr ""
 
@@ -385,7 +385,7 @@ msgid "Stepper N (1, 2 or 3) last deceleration for the acceleration profile"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:123
-#: ../../source/stack/low_level/joints_interface.rst:316
+#: ../../source/stack/low_level/joints_interface.rst:317
 msgid "``stepper_N/v_stop``"
 msgstr ""
 
@@ -398,18 +398,18 @@ msgid "Default: 2"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:128
-#: ../../source/stack/low_level/joints_interface.rst:321
+#: ../../source/stack/low_level/joints_interface.rst:322
 msgid "``stepper_N/stall_threshold``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
 msgid ""
 "Stepper N (1, 2 or 3) stall threshold for which we detect the end of the "
-"joint course"
+"joint course for the calibration process"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:133
-#: ../../source/stack/low_level/joints_interface.rst:276
+#: ../../source/stack/low_level/joints_interface.rst:277
 msgid "``stepper_N/direction``"
 msgstr ""
 
@@ -432,7 +432,7 @@ msgid "milliseconds"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:144
-msgid "dynamixels_params.yaml"
+msgid "*dynamixels_params.yaml* file"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:154
@@ -440,7 +440,7 @@ msgid "``dxl_N/offset_position``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "dynamixel N (1, 2 or 3) Description"
+msgid "Dynamixel N (1, 2 or 3) offset position for the zero position"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
@@ -451,10 +451,10 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:162
 #: ../../source/stack/low_level/joints_interface.rst:172
 #: ../../source/stack/low_level/joints_interface.rst:177
-#: ../../source/stack/low_level/joints_interface.rst:259
-#: ../../source/stack/low_level/joints_interface.rst:264
-#: ../../source/stack/low_level/joints_interface.rst:269
-#: ../../source/stack/low_level/joints_interface.rst:274
+#: ../../source/stack/low_level/joints_interface.rst:260
+#: ../../source/stack/low_level/joints_interface.rst:265
+#: ../../source/stack/low_level/joints_interface.rst:270
+#: ../../source/stack/low_level/joints_interface.rst:275
 msgid "Rad"
 msgstr ""
 
@@ -462,67 +462,130 @@ msgstr ""
 msgid "``dxl_N/home_position``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) home position"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:164
 msgid "``dxl_N/direction``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) direction (1 = ClockWise, -1 = Counter ClockWise)"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Default: '1'"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:169
 msgid "``dxl_N/limit_position_max``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) maximal position allowed"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:174
 msgid "``dxl_N/limit_position_min``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) minimal position allowed"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:179
 msgid "``dxl_N/position_P_gain``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Proportional gain of the position PID controller"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:184
 msgid "``dxl_N/position_I_gain``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Integral gain of the position PID controller"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:189
 msgid "``dxl_N/position_D_gain``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Derivative gain of the position PID controller"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:194
 msgid "``dxl_N/velocity_P_gain``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Proportional gain of the velocity PID controller"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:199
 msgid "``dxl_N/velocity_I_gain``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Integral gain of the velocity PID controller"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:204
 msgid "``dxl_N/FF1_gain``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Feed Forward velocity Gain"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:209
 msgid "``dxl_N/FF2_gain``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) Feed Forward acceleration Gain"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:214
 msgid "``dxl_N/acceleration_profile``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) acceleration profile parameter [*]_"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:219
 msgid "``dxl_N/velocity_profile``"
 msgstr ""
 
+#: ../../source/stack/low_level/joints_interface.rst
+msgid "Dynamixel N (1, 2 or 3) velocity profile parameter"
+msgstr ""
+
 #: ../../source/stack/low_level/joints_interface.rst:222
-#: ../../source/stack/low_level/joints_interface.rst:284
-#: ../../source/stack/low_level/joints_interface.rst:294
-#: ../../source/stack/low_level/joints_interface.rst:304
-#: ../../source/stack/low_level/joints_interface.rst:319
+#: ../../source/stack/low_level/joints_interface.rst:285
+#: ../../source/stack/low_level/joints_interface.rst:295
+#: ../../source/stack/low_level/joints_interface.rst:305
+#: ../../source/stack/low_level/joints_interface.rst:320
 msgid "RPM"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:226
-msgid "steppers_params.yaml"
+#: ../../source/stack/low_level/joints_interface.rst:225
+msgid ""
+"refer to the dedicated motor `reference documentation "
+"<https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-"
+"profile>`_."
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:241
+#: ../../source/stack/low_level/joints_interface.rst:227
+msgid "*steppers_params.yaml* file"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:242
 msgid "``stepper_N/gear_ratio``"
 msgstr ""
 
@@ -530,12 +593,12 @@ msgstr ""
 msgid "Stepper N (1, 2 or 3) gear ratio"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:245
-#: ../../source/stack/low_level/joints_interface.rst:250
+#: ../../source/stack/low_level/joints_interface.rst:246
+#: ../../source/stack/low_level/joints_interface.rst:251
 msgid "Ned and One only"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:246
+#: ../../source/stack/low_level/joints_interface.rst:247
 msgid "``stepper_N/max_effort``"
 msgstr ""
 
@@ -543,44 +606,44 @@ msgstr ""
 msgid "Stepper N (1, 2 or 3) max effort"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:251
+#: ../../source/stack/low_level/joints_interface.rst:252
 msgid "``stepper_N/motor_ratio``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "Stepper N (1, 2 or 3) motor ratio"
+msgid "Stepper N (1, 2 or 3) motor ratio for conversion into radian"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:256
+#: ../../source/stack/low_level/joints_interface.rst:257
 msgid "``stepper_N/offset_position``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "Stepper N (1, 2 or 3) offset position (in rad) to position limit min"
+msgid "Stepper N (1, 2 or 3) offset position to position limit min"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:261
+#: ../../source/stack/low_level/joints_interface.rst:262
 msgid "``stepper_N/home_position``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "Stepper N (1, 2 or 3) Home position (in rad) of the motor"
+msgid "Stepper N (1, 2 or 3) Home position of the motor"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:266
+#: ../../source/stack/low_level/joints_interface.rst:267
 msgid "``stepper_N/limit_position_min``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "Stepper N (1, 2 or 3) position (in rad) limit min of the motor"
+msgid "Stepper N (1, 2 or 3) position limit min of the motor"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:271
+#: ../../source/stack/low_level/joints_interface.rst:272
 msgid "``stepper_N/limit_position_max``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
-msgid "Stepper N (1, 2 or 3) position (in rad) limit max of the motor"
+msgid "Stepper N (1, 2 or 3) position limit max of the motor"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
@@ -589,302 +652,268 @@ msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
 msgid ""
-"Stepper N (1, 2 or 3) starting velocity (0.001 RPM.min-1) for the "
-"acceleration profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) first acceleration (RPM.min-2) for the acceleration"
-" profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) first velocity (0.001 RPM.min-1) for the "
-"acceleration profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) max acceleration (RPM.min-2) for the acceleration "
-"profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) max velocity (0.001 RPM.min-1) for the acceleration"
-" profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) max deceleration (RPM.min-2) for the acceleration "
-"profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) last deceleration (RPM.min-2) for the acceleration "
-"profile"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst
-msgid ""
-"Stepper N (1, 2 or 3) stop velocity (0.001 RPM.min-1) for the "
-"acceleration profile"
+"Stepper N (1, 2 or 3) stall threshold for which we detect the end of the "
+"joint course"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst
 msgid "Default:"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:327
+#: ../../source/stack/low_level/joints_interface.rst:328
 msgid ""
-"The velocity profile for the steppers (in calibration_params.yaml and "
-"steppers_params.yaml) can be defined for TTL steppers only (thus for Ned2"
-" only) It is defined according to the following graph :"
+"The velocity profiles for the steppers (in *calibration_params.yaml* and "
+"*steppers_params.yaml* files) can be defined for TTL steppers only (thus "
+"for Ned2 only). They are defined according to the following graph :"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:336
+#: ../../source/stack/low_level/joints_interface.rst:337
 msgid "Dependencies"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:338
+#: ../../source/stack/low_level/joints_interface.rst:339
 msgid ":wiki_ros:`hardware_interface <hardware_interface>`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:339
+#: ../../source/stack/low_level/joints_interface.rst:340
 msgid ":wiki_ros:`controller_manager <controller_manager>`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:340
+#: ../../source/stack/low_level/joints_interface.rst:341
 msgid ":doc:`ttl_driver`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:341
+#: ../../source/stack/low_level/joints_interface.rst:342
 msgid ":doc:`can_driver`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:342
+#: ../../source/stack/low_level/joints_interface.rst:343
 msgid ":doc:`../high_level/niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:345
+#: ../../source/stack/low_level/joints_interface.rst:344
+msgid ":msgs_index:`control_msgs`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:347
 msgid "Services, Topics and Messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:348
+#: ../../source/stack/low_level/joints_interface.rst:350
 msgid "Subscribed topics"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:350
-#: ../../source/stack/low_level/joints_interface.rst:366
-msgid "Joint Interface's Published Topics"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst:357
-#: ../../source/stack/low_level/joints_interface.rst:373
-#: ../../source/stack/low_level/joints_interface.rst:389
-msgid "Message Type"
+#: ../../source/stack/low_level/joints_interface.rst:352
+#: ../../source/stack/low_level/joints_interface.rst:368
+msgid "Joints Interface's Published Topics"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:359
-msgid "``niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result``"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst:360
-msgid ":control_msgs:`FollowJointTrajectoryActionResult`"
+#: ../../source/stack/low_level/joints_interface.rst:375
+#: ../../source/stack/low_level/joints_interface.rst:391
+msgid "Message Type"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:361
+msgid "``niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:362
+msgid ":control_msgs:`FollowJointTrajectoryActionResult`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:363
 msgid "Trajectory results from controller"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:364
+#: ../../source/stack/low_level/joints_interface.rst:366
 msgid "Published topics"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:375
+#: ../../source/stack/low_level/joints_interface.rst:377
 msgid "``/niryo_robot/learning_mode/state``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:376
+#: ../../source/stack/low_level/joints_interface.rst:378
 msgid ":std_msgs:`Bool`"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:377
+#: ../../source/stack/low_level/joints_interface.rst:379
 msgid "Learning mode state"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:380
+#: ../../source/stack/low_level/joints_interface.rst:382
 msgid "Services"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:382
-msgid "Joint Interface Package Services"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst:391
-msgid "``/niryo_robot/joints_interface/calibrate_motors``"
-msgstr ""
-
-#: ../../source/stack/low_level/joints_interface.rst:392
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+#: ../../source/stack/low_level/joints_interface.rst:384
+msgid "Joints Interface Package Services"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:393
-msgid ""
-"Starst motors calibration - value can be 1 for auto calibration, 2 for "
-"manual"
+msgid "``/niryo_robot/joints_interface/calibrate_motors``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:394
-msgid "``/niryo_robot/joints_interface/request_new_calibration``"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:395
-#: ../../source/stack/low_level/joints_interface.rst:398
-#: ../../source/stack/low_level/joints_interface.rst:401
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgid ""
+"Start motors calibration - value can be 1 for auto calibration, 2 for "
+"manual"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:396
-msgid "Unsets motors calibration"
+msgid "``/niryo_robot/joints_interface/request_new_calibration``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:397
-msgid "``niryo_robot/learning_mode/activate``"
+#: ../../source/stack/low_level/joints_interface.rst:400
+#: ../../source/stack/low_level/joints_interface.rst:403
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:398
+msgid ""
+"Reset motor calibration state to \"uncalibrated\". This will allow the "
+"user to ask a new calibration."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:399
-msgid "Either activates or deactivates learning mode"
+msgid "``niryo_robot/learning_mode/activate``"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:400
-msgid "``niryo_robot/joints_interface/steppers_reset_controller``"
+#: ../../source/stack/low_level/joints_interface.rst:401
+msgid ""
+"Change learning mode (Free Motion) state. When learning mode is "
+"activated, torques are disabled and the joints can move freely."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:402
+msgid "``niryo_robot/joints_interface/steppers_reset_controller``"
+msgstr ""
+
+#: ../../source/stack/low_level/joints_interface.rst:404
 msgid "Resets the controller"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:407
+#: ../../source/stack/low_level/joints_interface.rst:409
 msgid "Errors and warning messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:410
+#: ../../source/stack/low_level/joints_interface.rst:412
 msgid "List of Errors and warning messages"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:416
+#: ../../source/stack/low_level/joints_interface.rst:418
 msgid "Type"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:417
+#: ../../source/stack/low_level/joints_interface.rst:419
 msgid "Message"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:419
-#: ../../source/stack/low_level/joints_interface.rst:422
-#: ../../source/stack/low_level/joints_interface.rst:425
-#: ../../source/stack/low_level/joints_interface.rst:428
-#: ../../source/stack/low_level/joints_interface.rst:431
+#: ../../source/stack/low_level/joints_interface.rst:421
+#: ../../source/stack/low_level/joints_interface.rst:424
+#: ../../source/stack/low_level/joints_interface.rst:427
+#: ../../source/stack/low_level/joints_interface.rst:430
+#: ../../source/stack/low_level/joints_interface.rst:433
 msgid "Error"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:420
+#: ../../source/stack/low_level/joints_interface.rst:422
 msgid "JointHardwareInterface::init - Fail to add joint, return :"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:421
+#: ../../source/stack/low_level/joints_interface.rst:423
 msgid "The joint is not correctly initialized"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:423
+#: ../../source/stack/low_level/joints_interface.rst:425
 msgid "JointHardwareInterface::init - stepper state init failed"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:424
+#: ../../source/stack/low_level/joints_interface.rst:426
 msgid "The stepper state parameters are not correctly retrieved"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:426
+#: ../../source/stack/low_level/joints_interface.rst:428
 msgid "JointHardwareInterface::init - dxl state init failed"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:427
+#: ../../source/stack/low_level/joints_interface.rst:429
 msgid "The dynamixel state parameters are not correctly retrieved"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:429
+#: ../../source/stack/low_level/joints_interface.rst:431
 msgid ""
 "JointHardwareInterface::init - Dynamixel motors are not available on CAN "
 "Bus"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:430
+#: ../../source/stack/low_level/joints_interface.rst:432
 msgid ""
 "The robot wrongly tries to initialize a dynamixel motor for the CAN bus "
 "(works only on TTL)"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:432
+#: ../../source/stack/low_level/joints_interface.rst:434
 msgid "JointHardwareInterface::init - Fail to reboot motor id"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:433
+#: ../../source/stack/low_level/joints_interface.rst:435
 msgid "The motor failed to reboot. Try rebooting it again"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:434
-#: ../../source/stack/low_level/joints_interface.rst:437
-#: ../../source/stack/low_level/joints_interface.rst:440
-#: ../../source/stack/low_level/joints_interface.rst:443
+#: ../../source/stack/low_level/joints_interface.rst:436
+#: ../../source/stack/low_level/joints_interface.rst:439
+#: ../../source/stack/low_level/joints_interface.rst:442
+#: ../../source/stack/low_level/joints_interface.rst:445
 msgid "WARNING"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:435
+#: ../../source/stack/low_level/joints_interface.rst:437
 #, python-format
 msgid ""
 "JointHardwareInterface::init - initialize stepper joint failure, return "
 "%d. Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:436
+#: ../../source/stack/low_level/joints_interface.rst:438
 msgid "Failed to initialize a stepper. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:438
+#: ../../source/stack/low_level/joints_interface.rst:440
 #, python-format
 msgid ""
 "JointHardwareInterface::init - add stepper joint failure, return %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:439
+#: ../../source/stack/low_level/joints_interface.rst:441
 msgid "Failed to add a stepper joint. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:441
+#: ../../source/stack/low_level/joints_interface.rst:443
 #, python-format
 msgid ""
 "JointHardwareInterface::init - init dxl joint failure, return : %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:442
+#: ../../source/stack/low_level/joints_interface.rst:444
 msgid "Failed to initialize a dynamixel joint. Will try again up to 3 times"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:444
+#: ../../source/stack/low_level/joints_interface.rst:446
 #, python-format
 msgid ""
 "JointHardwareInterface::init - add dxl joint failure, return : %d. "
 "Retrying"
 msgstr ""
 
-#: ../../source/stack/low_level/joints_interface.rst:445
+#: ../../source/stack/low_level/joints_interface.rst:447
 msgid "Failed to add a dynamixel joint. Will try again up to 3 times"
 msgstr ""
 
@@ -1053,5 +1082,149 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Default:"
+#~ msgstr ""
+
+#~ msgid "Joint Interface's default Parameters"
+#~ msgstr ""
+
+#~ msgid "default.yaml parametersr"
+#~ msgstr ""
+
+#~ msgid "Joint Interface's hardware specific Parameters"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "These parameters are specific to the "
+#~ "hardware version (ned, one or ned2). "
+#~ "This file comes in a different "
+#~ "version for each hardware version, "
+#~ "located in a directory of the "
+#~ "hardware version name."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Joint N (1, 2, 3, 4, 5 or"
+#~ " 6) type (\"stepper\", \"xl320\", "
+#~ "\"xl430\", \"fakeStepper\" or \"fakeDxl\")"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) Description"
+#~ msgstr ""
+
+#~ msgid "Joint Interface's Published Topics"
+#~ msgstr ""
+
+#~ msgid "Joint Interface Package Services"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) offset position for the zero position"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) home position"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "dynamixel N (1, 2 or 3) direction"
+#~ " (1 = ClockWise, -1 = Counter "
+#~ "ClockWise)"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) maximal position allowed"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) minimal position allowed"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) P gain for position"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) I gain for position"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) D gain for position"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) P gain for velocity"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) I gain for velocity"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) Feed Forward gain 1"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) Feed Forward gain 2"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) acceleration profile parameter [*]_"
+#~ msgstr ""
+
+#~ msgid "dynamixel N (1, 2 or 3) velocity profile parameter"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) P gain for position"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) I gain for position"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) D gain for position"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) P gain for velocity"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) I gain for velocity"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) Feed Forward gain 1"
+#~ msgstr ""
+
+#~ msgid "Dynamixel N (1, 2 or 3) Feed Forward gain 2"
+#~ msgstr ""
+
+#~ msgid "default.yaml parameters"
+#~ msgstr ""
+
+#~ msgid "joints_params.yaml"
+#~ msgstr ""
+
+#~ msgid "calibration_params.yaml"
+#~ msgstr ""
+
+#~ msgid "dynamixels_params.yaml"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The velocity profile for the steppers"
+#~ " (in calibration_params.yaml and "
+#~ "steppers_params.yaml) can be defined for "
+#~ "TTL steppers only (thus for Ned2 "
+#~ "only) It is defined according to "
+#~ "the following graph :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The velocity profile for the steppers"
+#~ " (in *calibration_params.yaml* and "
+#~ "*steppers_params.yaml* files) can be defined"
+#~ " for TTL steppers only (thus for "
+#~ "Ned2 only) It is defined according "
+#~ "to the following graph :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Starst motors calibration - value can"
+#~ " be 1 for auto calibration, 2 "
+#~ "for manual"
+#~ msgstr ""
+
+#~ msgid "Unsets motors calibration"
+#~ msgstr ""
+
+#~ msgid "Either activates or deactivates learning mode"
+#~ msgstr ""
+
+#~ msgid "Unset motors calibration"
 #~ msgstr ""
 
