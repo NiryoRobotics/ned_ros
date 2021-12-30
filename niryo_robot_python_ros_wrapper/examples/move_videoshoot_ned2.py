@@ -2,6 +2,7 @@
 
 # To use the API, copy these 4 lines on each Python file you create
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
+from niryo_robot_arm_commander.msg import PausePlanExecution
 import rospy
 import threading
 import random
@@ -15,6 +16,14 @@ PINK = [255, 0, 255]
 RED = [255, 0, 0]
 CYAN = [0, 255, 255]
 
+state = PausePlanExecution.STANDBY
+
+
+def callback_pause_movement(msg):
+    global state
+    state = msg.state
+
+rospy.Subscriber('/niryo_robot_rpi/pause_state', PausePlanExecution, callback_pause_movement)
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
 print "--- Start"
 
@@ -83,8 +92,10 @@ def open_gripper():
 def random_sounds():
     random_sounds = ["connected.wav", "start2b.wav", "start4abis.wav", "start4a.wav", "connected3.wav",
                      "connected2.wav"]
-    while not rospy.is_shutdown():
-        n.sounds.play(random_sounds[random.randint(0, len(random_sounds))], wait_end=False)
+    global state
+    while not (rospy.is_shutdown() or state == PausePlanExecution.CANCEL):
+        if not (state == PausePlanExecution.PAUSE):
+            n.sound.play(random_sounds[random.randint(0, len(random_sounds) - 1)], wait_end=False)
         rospy.sleep(random.randint(5, 15))
 
 
