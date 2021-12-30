@@ -718,7 +718,17 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint16_t>& data_list)
 template<typename reg_type>
 int DxlDriver<reg_type>::writeControlMode(uint8_t id, uint8_t control_mode)
 {
-    return write<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, control_mode);
+    int res = COMM_TX_ERROR;
+    uint8_t torque{0};
+    res = read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque);
+    if (res == COMM_SUCCESS)
+    {
+        if (torque == 0)
+        {
+            return write<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, control_mode);
+        }
+    }
+    return res;
 }
 
 /**
