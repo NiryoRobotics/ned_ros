@@ -861,7 +861,10 @@ uint8_t TtlManager::readSteppersStatus()
         // we want to check calibration (done at startup and when calibration is started)
         if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() &&  _ids_map.count(hw_type))
         {
-            vector<uint8_t> ids_list = _ids_map.at(hw_type);
+            vector<uint8_t> id_list = _ids_map.at(hw_type);
+            vector<uint8_t> stepper_id_list;
+            std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list), [this](uint8_t id){
+                                    return _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR;});
 
             /* Truth Table
              * still_in_progress | state | new state
@@ -877,9 +880,9 @@ uint8_t TtlManager::readSteppersStatus()
 
             // ***********  calibration status, only if initialized
             std::vector<uint8_t> homing_status_list;
-            if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(ids_list, homing_status_list))
+            if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(stepper_id_list, homing_status_list))
             {
-                if (ids_list.size() == homing_status_list.size())
+                if (stepper_id_list.size() == homing_status_list.size())
                 {
                     // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
                     int max_status = -1;
@@ -893,7 +896,7 @@ uint8_t TtlManager::readSteppersStatus()
                     // set states accordingly
                     for (size_t i = 0; i < homing_status_list.size(); ++i)
                     {
-                        uint8_t id = ids_list.at(i);
+                        uint8_t id = stepper_id_list.at(i);
                         ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
 
                         if (_state_map.count(id))
@@ -953,7 +956,7 @@ uint8_t TtlManager::readSteppersStatus()
                 {
                     ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
                                 "vector mistmatch (id_list size %d, homing_status_list size %d)",
-                                static_cast<int>(ids_list.size()), static_cast<int>(homing_status_list.size()));
+                                static_cast<int>(stepper_id_list.size()), static_cast<int>(homing_status_list.size()));
 
                     hw_errors_increment++;
                 }

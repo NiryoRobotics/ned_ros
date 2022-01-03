@@ -328,6 +328,7 @@ while True:
 
     except NiryoRosWrapperException as e:
         print e
+        break
         # handle exception here
         # you can also make a try/except for each command separately
 
