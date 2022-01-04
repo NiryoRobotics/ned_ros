@@ -3,16 +3,28 @@ Tools Interface
 
 | This package handles Niryo's tools.
 
-Tools interface node
---------------------------
+Tools interface node (For Development and Debugging)
+-----------------------------------------------------
 The ROS Node is made to:
- - Set and control tools for better usage.
+ - Initialize Tool Interface with configuration parameters.
+ - Start ROS stuffs like services, topics.
+
+Tools Interface Core
+--------------------------
+
+It is instantiated in :doc:`niryo_robot_hardware_interface` package.
+
+It has been conceived to:
+ - Initialize the Tool Interface.
+ - Provide services for setting and controlling tools.
  - Publish tool connection state.
 
-Parameters
+It belongs to the ROS namespace: |namespace_emphasize|.
+
+Tool Interface's default Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Tools Interface's Parameters 
+.. list-table:: default.yaml
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -21,22 +33,48 @@ Parameters
    *  -  Name
       -  Description
    *  -  ``check_tool_connection_frequency``
-      -  | Publishes and controls rate for tools connection state.
+      -  | The frequency where tool interface check and publish the state of the tool connected,
+         | or remove tool if it is disconnected.
          | Default: '2.0'
+
+Tool Interface's hardware specific Parameters 
+**************************************************
+
+These parameters are specific to the hardware version (ned, one or ned2).
+This file comes in a different version for each hardware version, located in a directory of the hardware version name.
+
+.. list-table:: tools_params.yaml
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  -  Name
+      -  Description
+      -  Supported Hardware versions
    *  -  ``id_list``
-      -  | List of tools id
-         | Default: '[11,12,13,14,31]'
-   *  -  ``motor_type_list``
+      -  | List of default IDs of each tool supported By Niryo
+         | Default: '[11,12,13,30,31]'
+      -  All Versions
+   *  -  ``type_list``
       -  | List of motor tools type 
-         | Default: '["xl320","xl320","xl320","xl320","xl320"]'
+         | Default: 'xl320' for NED and ONE
+         | Default: 'xl330' for NED2
+         | Default: 'fakeDxl' for simulation
+      -  All Versions
+   *  -  ``name_list``
+      -  | List of tools's name corresponds to id list and type list above
+         | Default: '["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump", "Electromagnet"]'
+      -  All Versions
+   
 
 Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :msgs_index:`std_srvs`
 - :msgs_index:`std_msgs`
 - :msgs_index:`std_srvs`
 - :doc:`ttl_driver`
+- :doc:`common`
 
 Services, Topics and Messages
 -------------------------------------------------
@@ -101,3 +139,8 @@ ToolCommand (Service)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/tools_interface/srv/ToolCommand.srv
    :language: rostype
 
+
+.. |namespace_cpp| replace:: tools_interface
+.. |namespace| replace:: /tools_interface/
+.. |namespace_emphasize| replace:: ``/tools_interface/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/tools_interface

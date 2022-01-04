@@ -23,7 +23,7 @@ Be sure to have an up to date system before continuing ::
     sudo apt-get dist-upgrade
 
 Ubuntu packages
-*******************
+************************************************
 
 The Niryo ROS Stack needs the following packages in order to run correctly: 
 
@@ -37,7 +37,7 @@ The Niryo ROS Stack needs the following packages in order to run correctly:
 
 
 Python environment
-*******************
+************************************************
 
 The python environment is installed using the requirements_ned2.txt file ::
 
@@ -49,7 +49,7 @@ The python environment is installed using the requirements_ned2.txt file ::
 
 
 ROS set up
-*******************
+************************************************
 
 .. note::
     All terminal command listed are for Ubuntu users.
@@ -72,14 +72,14 @@ Install ROS dependencies
 ------------------------------------
 
 Install ROS
-^^^^^^^^^^^^^
+************************************************
 
 You firstly need to install ROS Melodic. To do so, follow the ROS official tutorial
 `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the
 **Desktop-Full Install**.
 
 Install additional packages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+************************************************
 To ensure the functioning of all Ned's packages, you need to
 install several more packages:
 

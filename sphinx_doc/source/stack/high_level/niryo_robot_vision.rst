@@ -19,7 +19,7 @@ edited in the config file:
  - For "standard" Node: *niryo_robot_vision/config/video_server_setup.yaml*
  - For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

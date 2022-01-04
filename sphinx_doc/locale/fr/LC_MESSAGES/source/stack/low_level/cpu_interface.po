@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-23 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,40 +28,83 @@ msgid "CPU Interface"
 msgstr "CPU Interface"
 
 #: ../../source/stack/low_level/cpu_interface.rst:4
-msgid "This package provides an interface for CPU monitoring"
+msgid "This package provides an interface for CPU temperature monitoring."
 msgstr ""
-"Ce package procure une interface pour la surveillance des processeurs de la "
-"raspberry"
-
-#: ../../source/stack/low_level/cpu_interface.rst:7
-msgid "CPU Interface Node"
-msgstr "CPU Interface Node"
+"Ce package procure une interface pour la surveillance de la température des "
+"processeurs du système."
 
 #: ../../source/stack/low_level/cpu_interface.rst:9
-msgid "The ROS Node is made to:"
-msgstr "Le node ROS est conçu pour :"
+msgid "CPU Interface Node (For development and debugging purpose only)"
+msgstr "CPU Interface Node (pour le développement et le debuggage seulement)"
 
-#: ../../source/stack/low_level/cpu_interface.rst:9
-msgid "monitor CPU temperature."
-msgstr "monitorer la température des processeurs"
+#: ../../source/stack/low_level/cpu_interface.rst:10
+msgid ""
+"This ROS Node has been conceived to launch the cpu interface in an isolated "
+"way."
+msgstr ""
+"Ce noeud ROS a été conçu pour lancer l'interface cpu interfaec de manière "
+"isolée."
 
-#: ../../source/stack/low_level/cpu_interface.rst:12
+#: ../../source/stack/low_level/cpu_interface.rst:13
+msgid "CPU Interface Core"
+msgstr "CPU Interface Core"
+
+#: ../../source/stack/low_level/cpu_interface.rst:14
+msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
+msgstr ""
+"Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
+
+#: ../../source/stack/low_level/cpu_interface.rst:16
+msgid ""
+"It has been made to monitor CPU temperature of the raspberry pi and "
+"automatically shutdown the raspberry pi if it reaches a critical threshold. "
+"Two thresholds can be defined via parameters : a warning threshold and a "
+"shutdown threshold."
+msgstr ""
+"Il a été conçu pour surveiller la température des processeurs et arrêter "
+"automatiquement la raspberry pi si celle-ci atteint un seuil critique. Deux "
+"seuils peuvent être définis via des paramètres : un seuil d'alerte et un "
+"seuil d'arrêt."
+
+#: ../../source/stack/low_level/cpu_interface.rst:19
+msgid ""
+"The CPU temperature is read from the Ubuntu system file "
+"*/sys/class/thermal/thermal_zone0/temp*."
+msgstr ""
+"La température des processeurs est lue depuis le fichier système d'Ubuntu "
+"*/sys/class/thermal/thermal_zone0/temp*."
+
+#: ../../source/stack/low_level/cpu_interface.rst:21
+msgid ""
+"In simulation, the CPU temperature of the computer running the simulation is "
+"used, but the threshold are deactivated (no shutdown in case of high "
+"temperature)."
+msgstr ""
+"En simulation, la température des processeurs de l'ordinateur faisant "
+"tourner la simulation est utilisées, mais les seuils sont désactivés (pas "
+"d'arrêt en cas de température trop élevée)."
+
+#: ../../source/stack/low_level/cpu_interface.rst:23
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr "Il appartient au namespace ROS : |namespace_emphasize|."
+
+#: ../../source/stack/low_level/cpu_interface.rst:26
 msgid "Parameters"
 msgstr "Paramètres"
 
-#: ../../source/stack/low_level/cpu_interface.rst:14
+#: ../../source/stack/low_level/cpu_interface.rst:28
 msgid "CPU Interface's Parameters"
 msgstr "Paramètres de l'interface"
 
-#: ../../source/stack/low_level/cpu_interface.rst:20
+#: ../../source/stack/low_level/cpu_interface.rst:34
 msgid "Name"
 msgstr "Nom"
 
-#: ../../source/stack/low_level/cpu_interface.rst:21
+#: ../../source/stack/low_level/cpu_interface.rst:35
 msgid "Description"
 msgstr "Description"
 
-#: ../../source/stack/low_level/cpu_interface.rst:22
+#: ../../source/stack/low_level/cpu_interface.rst:36
 msgid "``read_rpi_diagnostics_frequency``"
 msgstr "``read_rpi_diagnostics_frequency``"
 
@@ -73,7 +116,7 @@ msgstr "Fréquence de publication de la température des processeurs"
 msgid "Default: '0.25'"
 msgstr "Défaut : '0.25'"
 
-#: ../../source/stack/low_level/cpu_interface.rst:25
+#: ../../source/stack/low_level/cpu_interface.rst:39
 msgid "``temperature_warn_threshold``"
 msgstr "``temperature_warn_threshold``"
 
@@ -87,7 +130,7 @@ msgstr ""
 msgid "Default: '75'"
 msgstr "Défaut : '75'"
 
-#: ../../source/stack/low_level/cpu_interface.rst:28
+#: ../../source/stack/low_level/cpu_interface.rst:42
 msgid "``temperature_shutdown_threshold``"
 msgstr "``temperature_shutdown_threshold``"
 
@@ -100,10 +143,24 @@ msgstr ""
 msgid "Default: '85'"
 msgstr "Défaut : '85'"
 
-#: ../../source/stack/low_level/cpu_interface.rst:34
+#: ../../source/stack/low_level/cpu_interface.rst:48
 msgid "Dependencies"
 msgstr "Dépendances"
 
-#: ../../source/stack/low_level/cpu_interface.rst:38
+#: ../../source/stack/low_level/cpu_interface.rst:49
+msgid ":doc:`common`"
+msgstr ":doc:`common`"
+
+#: ../../source/stack/low_level/cpu_interface.rst:53
 msgid "Services, Topics and Messages"
 msgstr "Services, Topics et Messages"
+
+#: ../../source/stack/low_level/cpu_interface.rst:54
+msgid "None"
+msgstr "Aucun"
+
+#~ msgid "The ROS Node is made to:"
+#~ msgstr "Le node ROS est conçu pour :"
+
+#~ msgid "monitor CPU temperature."
+#~ msgstr "monitorer la température des processeurs"

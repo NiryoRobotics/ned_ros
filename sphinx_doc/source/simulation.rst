@@ -45,23 +45,72 @@ Without physics - No Visualization
 --------------------------------------
 
 This mode is mainly for simulation and tests purpose, bringing you in the closest state as possible to
-a real robot control. It is available for all currently supported architectures. You can access it by using the command: ::
+a real robot control. It is available for all currently supported architectures.
+You can access it by using the commands:
 
-One simulation:
-    `roslaunch niryo_robot_bringup niryo_one_simulation.launch`
+- One simulation: ::
 
-Ned simulation:
-    `roslaunch niryo_robot_bringup niryo_ned_simulation.launch`
+    roslaunch niryo_robot_bringup niryo_one_simulation.launch
 
-Ned2 simulation:
-    `roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`
+- Ned simulation: ::
 
-TODO
+    roslaunch niryo_robot_bringup niryo_ned_simulation.launch
 
-Without physics - Visualization
+- Ned2 simulation: ::
+
+    roslaunch niryo_robot_bringup niryo_ned2_simulation.launch
+
+
+This mode is useful if your CPU capacity is limited or if you don't have X server available.
+
+Options
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+This mode is the more flexible one, as it provides all the possible options to customize the simulation.
+For the other simulation modes (with RViz and Gazebo) we will just force some of these parameters to specific values.
+
+
+.. list-table:: Simulation without visualization Options
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Name
+      - Default Value 
+      - Description
+   *  - log_level
+      - INFO
+      - Log level to display for ROS loggers
+   *  - ttl_enabled
+      - true
+      - Enable or disable the TTL bus usage. This feature is used for debug mainly and can lead to an unstable stack.
+   *  - can_enabled
+      - true
+      - Enable or disable the CAN bus usage. This feature is used for debug mainly and can lead to an unstable stack.
+   *  - debug
+      - false
+      - Launch in debug mode. For development and debug only.
+   *  - conf_location
+      - version.txt
+      - Location of the version.txt file. A path to the file is required.
+   *  - simu_gripper
+      - true
+      - Simulate the presence of a gripper id 11 on the bus
+   *  - simu_conveyor
+      - true
+      - Simulate the presence of a conveyor (CAN for One and Ned, TTL for Ned2, based on configuration files) on the bus
+   *  - vision_enabled
+      - true
+      - Enable the Vision Kit
+   *  - gazebo
+      - false
+      - Enable gazebo specific parameters (However it does not launch gazebo, use gazebo specific launch file for that)
+
+Without physics - RViz Visualization
 --------------------------------------
 
-The visualization happens with Rviz which is a powerful tool.
+A simple visualization of the robot is possible via a tool called Rviz. 
+This application will simulate the robot with its correct geometry and positions but without physics to avoid using too much CPU.
 
 Control with trackbar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -82,22 +131,54 @@ the corresponding joint.
 Control with ROS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| Not only Rviz can display the robot, it can also be linked with ROS controllers to show robot's actions
+| Not only `RViz <http://wiki.ros.org/rviz>`_ can display the robot, it can also be linked with ROS controllers to show robot's actions
  from ROS commands!
-| This method can help you debugging ROS topics, services and also, API scripts.
+| This method can help you debug ROS topics, services and also, API scripts.
 
 To run it: ::
 
     roslaunch niryo_robot_bringup desktop_rviz_simulation.launch
 
 .. figure:: ../images/visu_rviz_ros.jpg
-    :alt: Ned on Rviz
+    :alt: Ned on RViz
 
     Rviz opening, with the robot ready to be controlled with ROS!
 
-    **TODO add parameters**
+RViz Visualization options
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With physics - Simulation
+.. list-table:: Table of RViz launch Options
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Name
+      - Default Value 
+      - Description
+   *  - log_level
+      - INFO
+      - Log level to display for ROS loggers
+   *  - hardware_version
+      - ned
+      - Use the parameters dedicated to this specific hardware_version. Possible values are "one", "ned" and "ned2"
+   *  - debug
+      - false
+      - Launch in debug mode. For development and debug only.
+   *  - gui
+      - true
+      - Enable the gui visualization
+   *  - conf_location
+      - version.txt
+      - Location of the version.txt file. A path to the file is required.
+   *  - simu_gripper
+      - false
+      - Simulate the presence of a gripper id 11 on the bus (Visualisation of the tool will not be visible, whatever the value of this parameter)
+   *  - simu_conveyor
+      - false
+      - Simulate the presence of a conveyor (Visualisation of the conveyor will not be visible, whatever the value of this parameter)
+
+With physics - Gazebo Simulation
 --------------------------------------
 
 For the simulation, Ned uses Gazebo, a well known tool among the ROS community.
@@ -113,7 +194,7 @@ The Camera is also implemented.
 .. note::
     Gazebo also generates camera distortion, which brings the simulation even closer from the reality!
 
-Launch simulation
+Launch Gazebo simulation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 A specific world has been created to use Ned in Gazebo with 2 workspaces.
 
@@ -130,7 +211,7 @@ To run it: ::
     You can edit Gazebo world to do your own! It's placed in the folder *worlds* of the package
     niryo_robot_gazebo.
 
-Simulation option
+Gazebo Simulation options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The user can disable 3 things by adding the specific string to the command line:
@@ -142,3 +223,34 @@ The user can disable 3 things by adding the specific string to the command line:
 .. hint::
     Gazebo can be very slow. If your tests do not need Gripper and Camera, consider using Rviz
     to alleviate your CPU.
+
+.. list-table:: Table of Gazebo launch Options
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Name
+      - Default Value 
+      - Description
+   *  - log_level
+      - INFO
+      - Log level to display for ROS loggers
+   *  - hardware_version
+      - ned
+      - Use the parameters dedicated to this specific hardware_version. Possible values are "one", "ned" and "ned2"
+   *  - debug
+      - false
+      - Launch in debug mode. For development and debug only.
+   *  - gui
+      - true
+      - Enable the gui visualization
+   *  - conf_location
+      - version.txt
+      - Location of the version.txt file. A path to the file is required.
+   *  - gripper_n_camera
+      - true
+      - Simulate the presence of a gripper id 11 and a camera on the bus 
+   *  - simu_conveyor
+      - true
+      - Simulate the presence of a conveyor (Visualisation of the conveyor will not be visible, whatever the value of this parameter)

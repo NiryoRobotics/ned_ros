@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,8 +34,8 @@ msgstr ""
 "cibles :"
 
 #: ../../source/installation/getting_started.rst:6
-msgid "Raspberry pi 3"
-msgstr "Raspberry pi 3"
+msgid "Raspberry pi 3 (deprecated, not supported anymore)"
+msgstr "Raspberry pi 3 (déprécié, n'est plus supporté)"
 
 #: ../../source/installation/getting_started.rst:7
 msgid "Raspberry pi 4"
@@ -47,15 +47,12 @@ msgstr "Ordinateur de bureau"
 
 #: ../../source/installation/getting_started.rst:10
 msgid ""
-"As the stack is based on ROS melodic or kinetic, you need to be on a system "
-"based on Ubuntu. We currently support the following versions:"
+"As the stack is based on ROS melodic or kinetic (deprecated), you need to be "
+"on a system based on Ubuntu. We currently support the following versions:"
 msgstr ""
-"Comme la stack est basée sur ROS melodic ou kinetic, vous devez être sur un "
-"système basé sur Ubuntu. Nous supportons actuellement les version suivantes :"
-
-#: ../../source/installation/getting_started.rst:12
-msgid "Ubuntu 16.04 :doc:`ubuntu_16`"
-msgstr "Ubuntu 16.04 :doc:`ubuntu_16`"
+"Comme la stack est basée sur ROS melodic ou kinetic (déprécié), vous devez "
+"être sur un système basé sur Ubuntu. Nous supportons actuellement les "
+"version suivantes :"
 
 #: ../../source/installation/getting_started.rst:13
 msgid "Ubuntu 18.04 :doc:`ubuntu_18`"
@@ -64,3 +61,9 @@ msgstr "Ubuntu 18.04 :doc:`ubuntu_18`"
 #: ../../source/installation/getting_started.rst:14
 msgid "Windows Subsystem for Linux 2 (WSL 2) - Ubuntu 18.04 :doc:`wsl`"
 msgstr "Windows Subsystème pour Linux 2 (WSL 2) - Ubuntu 18.04 :doc:`wsl`"
+
+#~ msgid "Raspberry pi 3"
+#~ msgstr "Raspberry pi 3"
+
+#~ msgid "Ubuntu 16.04 :doc:`ubuntu_16`"
+#~ msgstr "Ubuntu 16.04 :doc:`ubuntu_16`"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-21 16:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,10 +25,78 @@ msgid "CAN Debug Tools"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:4
-msgid "Parameters"
+msgid ""
+"This package offers scripts to debug with Hardware and setup CAN devices."
+" It provides some main functions like setup the CAN bus and dump data on "
+"bus."
 msgstr ""
 
-#: ../../source/stack/low_level/can_debug_tools.rst:7
-msgid "Dependencies"
+#: ../../source/stack/low_level/can_debug_tools.rst:8
+msgid "Niryo robot - CAN debug tools"
 msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:9
+msgid ""
+"It provides service to dump data on CAN bus. This script can be launched "
+"via:  ::"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:15
+msgid "Parameters - CAN debug tools"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:16
+msgid "**--help / -h:** Print help message"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:17
+msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:18
+msgid "**--channel / -c [Channel]:** Set channel SPI (0 by default)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:19
+msgid "**--gpio / -g:** GPIO Interrupt for CAN (25 by default)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:20
+msgid ""
+"**--freq / -f:** frequency of control loop to check data (100Hz by "
+"default)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:21
+msgid "**--dump:** run dump service to dump and show all data found on bus"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:26
+msgid "When you dump data on CAN bus, the result is a table including:"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:24
+msgid "Number of data's package"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:25
+msgid "Status of package"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:26
+msgid "Control byte"
+msgstr ""
+
+#: ../../source/stack/low_level/can_debug_tools.rst:27
+msgid "Data in 8 bytes"
+msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "Dependencies"
+#~ msgstr ""
+
+#~ msgid "Parameters - Ttl debug tools"
+#~ msgstr ""
 

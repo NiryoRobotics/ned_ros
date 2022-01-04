@@ -11,267 +11,363 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 14:44+0100\n"
+"POT-Creation-Date: 2021-12-23 15:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/tools_interface.rst:2
 msgid "Tools Interface"
-msgstr ""
+msgstr "Tools Interface"
 
 #: ../../source/stack/low_level/tools_interface.rst:4
 msgid "This package handles Niryo's tools."
-msgstr ""
+msgstr "Ce package est dédié à la gestion des outils Niryo."
 
 #: ../../source/stack/low_level/tools_interface.rst:7
-msgid "Tools interface node"
-msgstr ""
+msgid "Tools interface node (For Development and Debugging)"
+msgstr "Node Tools Interface (Pour le développement et le debuguage)"
 
 #: ../../source/stack/low_level/tools_interface.rst:10
 msgid "The ROS Node is made to:"
-msgstr ""
+msgstr "Ce noeud ROS est conçu pour :"
 
 #: ../../source/stack/low_level/tools_interface.rst:9
-#, fuzzy
-msgid "Set and control tools for better usage."
-msgstr "Mise en place et controle des outils."
+msgid "Initialize Tool Interface with configuration parameters."
+msgstr ""
+"Initialiser l'interface Tool Interface avec les paramètres de configuration."
 
 #: ../../source/stack/low_level/tools_interface.rst:10
-msgid "Publish tool connection state."
-msgstr ""
+msgid "Start ROS stuffs like services, topics."
+msgstr "Démarrer les services et topics ROS."
 
 #: ../../source/stack/low_level/tools_interface.rst:13
-msgid "Parameters"
-msgstr ""
+msgid "Tools Interface Core"
+msgstr "Tools Interface Core"
 
 #: ../../source/stack/low_level/tools_interface.rst:15
-msgid "Tools Interface's Parameters"
+msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr ""
+"Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
 
-#: ../../source/stack/low_level/tools_interface.rst:21
-#: ../../source/stack/low_level/tools_interface.rst:53
-#: ../../source/stack/low_level/tools_interface.rst:69
-msgid "Name"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:20
+msgid "It has been conceived to:"
+msgstr "Il a été conçu pour :"
+
+#: ../../source/stack/low_level/tools_interface.rst:18
+msgid "Initialize the Tool Interface."
+msgstr "Initialise Tool Interface."
+
+#: ../../source/stack/low_level/tools_interface.rst:19
+msgid "Provide services for setting and controlling tools."
+msgstr "Procure les services pour configurer et controller les outils."
+
+#: ../../source/stack/low_level/tools_interface.rst:20
+msgid "Publish tool connection state."
+msgstr "Publier l'état de connexion des outils."
 
 #: ../../source/stack/low_level/tools_interface.rst:22
-#: ../../source/stack/low_level/tools_interface.rst:55
-#: ../../source/stack/low_level/tools_interface.rst:71
-msgid "Description"
-msgstr ""
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr "Il appartient au namespace ROS : |namespace_emphasize|."
 
-#: ../../source/stack/low_level/tools_interface.rst:23
+#: ../../source/stack/low_level/tools_interface.rst:25
+msgid "Tool Interface's default Parameters"
+msgstr "Paramètres par défaut de Tool Interface"
+
+#: ../../source/stack/low_level/tools_interface.rst:27
+msgid "default.yaml"
+msgstr "default.yaml"
+
+#: ../../source/stack/low_level/tools_interface.rst:33
+#: ../../source/stack/low_level/tools_interface.rst:52
+#: ../../source/stack/low_level/tools_interface.rst:91
+#: ../../source/stack/low_level/tools_interface.rst:107
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack/low_level/tools_interface.rst:34
+#: ../../source/stack/low_level/tools_interface.rst:53
+#: ../../source/stack/low_level/tools_interface.rst:93
+#: ../../source/stack/low_level/tools_interface.rst:109
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack/low_level/tools_interface.rst:35
 msgid "``check_tool_connection_frequency``"
-msgstr ""
+msgstr "``check_tool_connection_frequency``"
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "Publishes and controls rate for tools connection state."
+msgid ""
+"The frequency where tool interface check and publish the state of the tool "
+"connected,"
 msgstr ""
+"Fréquence de vérification et de publication de l'état de l'outil connecté,"
+
+#: ../../source/stack/low_level/tools_interface.rst
+msgid "or remove tool if it is disconnected."
+msgstr "ou enlève l'outil si il est déconnecté."
 
 #: ../../source/stack/low_level/tools_interface.rst
 msgid "Default: '2.0'"
-msgstr ""
+msgstr "Défaut: '2.0'"
 
-#: ../../source/stack/low_level/tools_interface.rst:26
+#: ../../source/stack/low_level/tools_interface.rst:41
+msgid "Tool Interface's hardware specific Parameters"
+msgstr "Paramètres spécifiques à la version matérielle du robot"
+
+#: ../../source/stack/low_level/tools_interface.rst:43
+msgid ""
+"These parameters are specific to the hardware version (ned, one or ned2). "
+"This file comes in a different version for each hardware version, located in "
+"a directory of the hardware version name."
+msgstr ""
+"Ces paramètres sont spécifiques à la version matérielle (ned, one ou ned2). "
+"Ces fichiers sont présents en versions différentes pour chaque version "
+"matérielle. Ils sont situés dans un dossier du nom de la version matérielle."
+
+#: ../../source/stack/low_level/tools_interface.rst:46
+msgid "tools_params.yaml"
+msgstr "tools_params.yaml"
+
+#: ../../source/stack/low_level/tools_interface.rst:54
+msgid "Supported Hardware versions"
+msgstr "Versions Matérielles supportées"
+
+#: ../../source/stack/low_level/tools_interface.rst:55
 msgid "``id_list``"
-msgstr ""
+msgstr "``id_list``"
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "List of tools id"
-msgstr ""
+msgid "List of default IDs of each tool supported By Niryo"
+msgstr "Liste des Ids par défaut de chaque outil supporté par Niryo"
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "Default: '[11,12,13,14,31]'"
-msgstr ""
+msgid "Default: '[11,12,13,30,31]'"
+msgstr "Défaut: '[11,12,13,30,31]'"
 
-#: ../../source/stack/low_level/tools_interface.rst:29
-msgid "``motor_type_list``"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:58
+#: ../../source/stack/low_level/tools_interface.rst:64
+#: ../../source/stack/low_level/tools_interface.rst:68
+msgid "All Versions"
+msgstr "Toutes les versions"
+
+#: ../../source/stack/low_level/tools_interface.rst:59
+msgid "``type_list``"
+msgstr "``type_list``"
 
 #: ../../source/stack/low_level/tools_interface.rst
 msgid "List of motor tools type"
-msgstr ""
+msgstr "Liste des types de moteurs pour les outils"
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "Default: '[\"xl320\",\"xl320\",\"xl320\",\"xl320\",\"xl320\"]'"
-msgstr ""
+msgid "Default: 'xl320' for NED and ONE"
+msgstr "Défaut: 'xl320' pour le NED et le ONE"
 
-#: ../../source/stack/low_level/tools_interface.rst:34
-msgid "Dependencies"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst
+msgid "Default: 'xl330' for NED2"
+msgstr "Défaut: 'xl330' pour le NED2"
 
-#: ../../source/stack/low_level/tools_interface.rst:36
-#: ../../source/stack/low_level/tools_interface.rst:38
-msgid ":msgs_index:`std_srvs`"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst
+msgid "Default: 'fakeDxl' for simulation"
+msgstr "Défaut: 'fakeDxl' pour la simulation"
 
-#: ../../source/stack/low_level/tools_interface.rst:37
-msgid ":msgs_index:`std_msgs`"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:65
+msgid "``name_list``"
+msgstr "``name_list``"
 
-#: ../../source/stack/low_level/tools_interface.rst:39
-msgid ":doc:`ttl_driver`"
+#: ../../source/stack/low_level/tools_interface.rst
+msgid "List of tools's name corresponds to id list and type list above"
 msgstr ""
+"Liste des noms d'outils correspondant à la liste des ids et des types "
+"ci-dessus"
 
-#: ../../source/stack/low_level/tools_interface.rst:42
-msgid "Services, Topics and Messages"
+#: ../../source/stack/low_level/tools_interface.rst
+msgid ""
+"Default: '[\"Standard Gripper\", \"Large Gripper\", \"Adaptive Gripper\", "
+"\"Vacuum Pump\", \"Electromagnet\"]'"
 msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:45
-msgid "Published topics"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:47
-msgid "Tools Interface's Published Topics"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:54
-#: ../../source/stack/low_level/tools_interface.rst:70
-msgid "Message Type"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:56
-msgid "``/niryo_robot_hardware/tools/current_id``"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:57
-msgid ":std_msgs:`Int32`"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:58
-msgid "Current tool ID"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:61
-msgid "Services"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:63
-msgid "Tool Interface Package Services"
-msgstr ""
+"Défaut: '[\"Standard Gripper\", \"Large Gripper\", \"Adaptive Gripper\", "
+"\"Vacuum Pump\", \"Electromagnet\"]'"
 
 #: ../../source/stack/low_level/tools_interface.rst:72
-msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:73
-msgid ""
-":ref:`tools_interface/PingDxlTool<source/stack/low_level/tools_interface:PingDxlTool"
-" (Service)>`"
-msgstr ""
+msgid "Dependencies"
+msgstr "Dépendances"
 
 #: ../../source/stack/low_level/tools_interface.rst:74
-msgid "Scans and sets for a tool plugged"
-msgstr ""
+msgid ":msgs_index:`std_msgs`"
+msgstr ":msgs_index:`std_msgs`"
 
 #: ../../source/stack/low_level/tools_interface.rst:75
-msgid "``niryo_robot/tools/open_gripper``"
-msgstr ""
+msgid ":msgs_index:`std_srvs`"
+msgstr ":msgs_index:`std_srvs`"
 
 #: ../../source/stack/low_level/tools_interface.rst:76
-#: ../../source/stack/low_level/tools_interface.rst:79
-#: ../../source/stack/low_level/tools_interface.rst:82
-#: ../../source/stack/low_level/tools_interface.rst:85
-msgid ""
-":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand"
-" (Service)>`"
-msgstr ""
+msgid ":doc:`ttl_driver`"
+msgstr ":doc:`ttl_driver`"
 
 #: ../../source/stack/low_level/tools_interface.rst:77
-msgid "Opens the gripper"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:78
-msgid "``niryo_robot/tools/close_gripper``"
-msgstr ""
+msgid ":doc:`common`"
+msgstr ":doc:`common`"
 
 #: ../../source/stack/low_level/tools_interface.rst:80
-msgid "Closes the gripper"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:81
-msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
-msgstr ""
+msgid "Services, Topics and Messages"
+msgstr "Services, Topics et Messages"
 
 #: ../../source/stack/low_level/tools_interface.rst:83
-msgid "Pulls air with the vacuum pump"
-msgstr ""
+msgid "Published topics"
+msgstr "Topics publiés"
 
-#: ../../source/stack/low_level/tools_interface.rst:84
-msgid "``niryo_robot/tools/push_air_vacuum_pump``"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:85
+msgid "Tools Interface's Published Topics"
+msgstr "Topics publiés de Tool Interface"
 
-#: ../../source/stack/low_level/tools_interface.rst:86
-msgid "Pushes air with the vacuum pump"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:92
+#: ../../source/stack/low_level/tools_interface.rst:108
+msgid "Message Type"
+msgstr "Type de message"
 
-#: ../../source/stack/low_level/tools_interface.rst:87
-msgid "``niryo_robot/tools/reboot``"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:94
+msgid "``/niryo_robot_hardware/tools/current_id``"
+msgstr "``/niryo_robot_hardware/tools/current_id``"
 
-#: ../../source/stack/low_level/tools_interface.rst:88
-msgid ":std_srvs:`Trigger`"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:95
+msgid ":std_msgs:`Int32`"
+msgstr ":std_msgs:`Int32`"
 
-#: ../../source/stack/low_level/tools_interface.rst:89
-msgid "Reboots the motor of the equipped tool"
-msgstr ""
-
-#: ../../source/stack/low_level/tools_interface.rst:93
-msgid "PingDxlTool (Service)"
-msgstr ""
+#: ../../source/stack/low_level/tools_interface.rst:96
+msgid "Current tool ID"
+msgstr "Identifiant de l'outil actuel"
 
 #: ../../source/stack/low_level/tools_interface.rst:99
-msgid "ToolCommand (Service)"
+msgid "Services"
+msgstr "Services"
+
+#: ../../source/stack/low_level/tools_interface.rst:101
+msgid "Tool Interface Package Services"
+msgstr "Services du package Tool Interface"
+
+#: ../../source/stack/low_level/tools_interface.rst:110
+msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
+msgstr "``niryo_robot/tools/ping_and_set_dxl_tool``"
+
+#: ../../source/stack/low_level/tools_interface.rst:111
+msgid ""
+":ref:`tools_interface/PingDxlTool<source/stack/low_level/tools_interface:PingDxlTool "
+"(Service)>`"
 msgstr ""
+":ref:`tools_interface/PingDxlTool<source/stack/low_level/tools_interface:PingDxlTool "
+"(Service)>`"
+
+#: ../../source/stack/low_level/tools_interface.rst:112
+msgid "Scans and sets for a tool plugged"
+msgstr "Scanne et configure un outil connecté"
+
+#: ../../source/stack/low_level/tools_interface.rst:113
+msgid "``niryo_robot/tools/open_gripper``"
+msgstr "``niryo_robot/tools/open_gripper``"
+
+#: ../../source/stack/low_level/tools_interface.rst:114
+#: ../../source/stack/low_level/tools_interface.rst:117
+#: ../../source/stack/low_level/tools_interface.rst:120
+#: ../../source/stack/low_level/tools_interface.rst:123
+msgid ""
+":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand "
+"(Service)>`"
+msgstr ""
+":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand "
+"(Service)>`"
+
+#: ../../source/stack/low_level/tools_interface.rst:115
+msgid "Opens the gripper"
+msgstr "Ouvre la pince"
+
+#: ../../source/stack/low_level/tools_interface.rst:116
+msgid "``niryo_robot/tools/close_gripper``"
+msgstr "``niryo_robot/tools/close_gripper``"
+
+#: ../../source/stack/low_level/tools_interface.rst:118
+msgid "Closes the gripper"
+msgstr "Ferme la pince"
+
+#: ../../source/stack/low_level/tools_interface.rst:119
+msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
+msgstr "``niryo_robot/tools/pull_air_vacuum_pump``"
+
+#: ../../source/stack/low_level/tools_interface.rst:121
+msgid "Pulls air with the vacuum pump"
+msgstr "Aspire l'air avec la pompe à vide"
+
+#: ../../source/stack/low_level/tools_interface.rst:122
+msgid "``niryo_robot/tools/push_air_vacuum_pump``"
+msgstr "``niryo_robot/tools/push_air_vacuum_pump``"
+
+#: ../../source/stack/low_level/tools_interface.rst:124
+msgid "Pushes air with the vacuum pump"
+msgstr "Souffle de l'air avec la pompe à vide"
+
+#: ../../source/stack/low_level/tools_interface.rst:125
+msgid "``niryo_robot/tools/reboot``"
+msgstr "``niryo_robot/tools/reboot``"
+
+#: ../../source/stack/low_level/tools_interface.rst:126
+msgid ":std_srvs:`Trigger`"
+msgstr ":std_srvs:`Trigger`"
+
+#: ../../source/stack/low_level/tools_interface.rst:127
+msgid "Reboots the motor of the equipped tool"
+msgstr "Redémarre le moteur de l'outil équipé"
+
+#: ../../source/stack/low_level/tools_interface.rst:131
+msgid "PingDxlTool (Service)"
+msgstr "PingDxlTool (Service)"
+
+#: ../../source/stack/low_level/tools_interface.rst:137
+msgid "ToolCommand (Service)"
+msgstr "ToolCommand (Service)"
 
 #~ msgid ""
-#~ ":ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
+#~ ":ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/PullAirVacuumPump<source/stack/low_level/tools_interface:PullAirVacuumPump"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/PullAirVacuumPump<source/stack/low_level/tools_interface:PullAirVacuumPump "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Pulls vacuum pump tool"
 #~ msgstr ""
 
-#~ msgid "``niryo_robot/tools/push_air_vacuum_pump``"
-#~ msgstr ""
-
 #~ msgid ""
-#~ ":ref:`tools_interface/PushAirVacuumPump<source/stack/low_level/tools_interface:PushAirVacuumPump"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/PushAirVacuumPump<source/stack/low_level/tools_interface:PushAirVacuumPump "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Pushes vacuum pump tool"
@@ -283,12 +379,9 @@ msgstr ""
 #~ msgid "PushAirVacuumPump (Service)"
 #~ msgstr ""
 
-#~ msgid "``niryo_robot/tools/open_gripper``"
-#~ msgstr ""
-
 #~ msgid ""
-#~ ":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:OpenGripper"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:OpenGripper "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Opens a gripper tool"
@@ -307,10 +400,36 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`tools_interface/CloseGripper<source/stack/low_level/tools_interface:CloseGripper"
-#~ " (Service)>`"
+#~ ":ref:`tools_interface/CloseGripper<source/stack/low_level/tools_interface:CloseGripper "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Closes a gripper tool"
 #~ msgstr ""
 
+#~ msgid "Tools interface node"
+#~ msgstr ""
+
+#~ msgid "Set and control tools for better usage."
+#~ msgstr "Mise en place et controle des outils."
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "Tools Interface's Parameters"
+#~ msgstr ""
+
+#~ msgid "Publishes and controls rate for tools connection state."
+#~ msgstr ""
+
+#~ msgid "List of tools id"
+#~ msgstr ""
+
+#~ msgid "Default: '[11,12,13,14,31]'"
+#~ msgstr ""
+
+#~ msgid "``motor_type_list``"
+#~ msgstr ""
+
+#~ msgid "Default: '[\"xl320\",\"xl320\",\"xl320\",\"xl320\",\"xl320\"]'"
+#~ msgstr ""

@@ -59,14 +59,16 @@
         <child link="shoulder_link" />
 		<origin xyz="0 0 ${distance_origin_shoulder_z}" rpy="0 0 0" />
 		<axis xyz="0 0 1" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_shoulder_rotation}" upper="${limit_up_shoulder_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_shoulder_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_shoulder_rotation - safety_pos_margin) * deg_to_rad}" />
 	</joint>
 
 	<joint name="joint_2" type="revolute">
         <parent link="shoulder_link" />
         <child link="arm_link" />
         <origin xyz="0 0 ${distance_shoulder_arm_z}" rpy="${PI/2} ${-PI/2} 0" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_arm_rotation}" upper="${limit_up_arm_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_arm_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_arm_rotation - safety_pos_margin) * deg_to_rad}" />
 		<axis xyz="0 0 1" />
 	</joint>
 
@@ -74,7 +76,8 @@
         <parent link="arm_link" />
         <child link="elbow_link" />
         <origin xyz="${distance_arm_elbow_x} ${distance_arm_elbow_y} 0" rpy="0 0 ${-PI/2}" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_elbow_rotation}" upper="${limit_up_elbow_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_elbow_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_elbow_rotation - safety_pos_margin) * deg_to_rad}" />
 		<axis xyz="0 0 1" />	
 	</joint>
 
@@ -82,7 +85,8 @@
         <parent link="elbow_link" />
         <child link="forearm_link" />
         <origin xyz="${distance_elbow_forearm_x} ${distance_elbow_forearm_y} 0" rpy="0 ${PI/2} 0" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_forearm_rotation}" upper="${limit_up_forearm_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_forearm_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_forearm_rotation - safety_pos_margin) * deg_to_rad}" />
 		<axis xyz="0 0 1" />
 	</joint>
 
@@ -90,7 +94,8 @@
         <parent link="forearm_link" />
         <child link="wrist_link" />
 		<origin xyz="0 0 ${distance_forearm_wrist_z}" rpy="0 ${-PI/2} 0" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_wrist_rotation}" upper="${limit_up_wrist_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_wrist_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_wrist_rotation - safety_pos_margin) * deg_to_rad}" />
 		<axis xyz="0 0 1" />
 	</joint>
 
@@ -98,7 +103,8 @@
         <parent link="wrist_link" />
         <child link="hand_link" />
         <origin xyz="${distance_wrist_hand_x} ${distance_wrist_hand_y} 0" rpy="0 ${PI/2} 0" />
-		<limit effort="1" velocity="1.0" lower="${limit_low_hand_rotation}" upper="${limit_up_hand_rotation}" />
+		<limit effort="1" velocity="1.0" lower="${(limit_low_hand_rotation + safety_pos_margin) * deg_to_rad}"
+               upper="${(limit_up_hand_rotation - safety_pos_margin) * deg_to_rad}" />
 		<axis xyz="0 0 1" />
 	</joint>
 

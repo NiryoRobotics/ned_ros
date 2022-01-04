@@ -85,8 +85,15 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
  */
 bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
+    bool torque_status{false};
+
+    robot_hwnh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
+    if (_hardware_version == "ned2")
+        torque_status = true;
+    else if (_hardware_version == "ned" || _hardware_version == "one")
+        torque_status = false;
+
     size_t nb_joints = 0;
-    bool torque_status = true;
 
     // retrieve nb joints with checking that the config param exists for both name and id
     while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&

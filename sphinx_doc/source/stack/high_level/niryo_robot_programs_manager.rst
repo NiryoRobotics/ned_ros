@@ -14,7 +14,7 @@ programs.
 Calls are not available from the Python ROS Wrapper, as it made to run its programs
 with the Python ROS Wrapper.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

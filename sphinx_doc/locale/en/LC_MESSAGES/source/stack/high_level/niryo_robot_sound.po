@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 14:54+0100\n"
+"POT-Creation-Date: 2021-12-23 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:11
-msgid "The namespace used is: |namespace_emphasize|"
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:14
@@ -51,17 +51,17 @@ msgid "Sound Package's Publishers"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:22
-#: ../../source/stack/high_level/niryo_robot_sound.rst:44
+#: ../../source/stack/high_level/niryo_robot_sound.rst:46
 msgid "Name"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:23
-#: ../../source/stack/high_level/niryo_robot_sound.rst:45
+#: ../../source/stack/high_level/niryo_robot_sound.rst:47
 msgid "Message Type"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:24
-#: ../../source/stack/high_level/niryo_robot_sound.rst:46
+#: ../../source/stack/high_level/niryo_robot_sound.rst:48
 msgid "Description"
 msgstr ""
 
@@ -96,122 +96,144 @@ msgid "``/niryo_robot_sound/get_user_sounds``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:32
-msgid ":ref:`SoundUser<SoundUser (Message)>`"
+msgid ""
+":ref:`SoundUser<source/stack/high_level/niryo_robot_sound:SoundUser "
+"(Message)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:33
 msgid "Publish the sound (and their duration) on the robot"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:36
-msgid "Services - Sound"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:35
+msgid "Todo"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_sound.rst:35
+msgid ""
+"Update message name because they were renamed in ROS but not in the .rst "
+"files"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:38
+msgid "Services - Sound"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_sound.rst:40
 msgid "Sound Services"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:47
+#: ../../source/stack/high_level/niryo_robot_sound.rst:49
 msgid "``/niryo_robot_sound/play_sound_state``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:48
-msgid ":ref:`SoundStateCommand<SoundStateCommand (Service)>`"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:49
-msgid "Play a sound corresponding to a state of the robot"
-msgstr ""
-
 #: ../../source/stack/high_level/niryo_robot_sound.rst:50
-msgid "``/niryo_robot_sound/play_sound_user``"
+msgid ""
+":ref:`SoundStateCommand<source/stack/high_level/niryo_robot_sound:SoundStateCommand"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:51
-msgid ":ref:`SoundUserCommand<SoundUserCommand (Service)>`"
+msgid "Play a sound corresponding to a state of the robot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:52
-msgid "Play a sound imported on the robot from the user"
+msgid "``/niryo_robot_sound/play_sound_user``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:53
-msgid "``/niryo_robot_sound/stop_sound``"
+msgid ""
+":ref:`SoundUserCommand<source/stack/high_level/niryo_robot_sound:SoundUserCommand"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:54
-msgid ":ref:`StopSound<StopSound (Service)>`"
+msgid "Play a sound imported on the robot from the user"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:55
-msgid "Stop a sound being played"
+msgid "``/niryo_robot_sound/stop_sound``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:56
-msgid "``/niryo_robot_sound/delete_sound_user``"
+msgid ""
+":ref:`StopSound<source/stack/high_level/niryo_robot_sound:StopSound "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:57
-msgid ":ref:`DeleteSound<DeleteSound (Service)>`"
+msgid "Stop a sound being played"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:58
-msgid "Delete a sound imported by the user on the robot"
+msgid "``/niryo_robot_sound/delete_sound_user``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:59
-msgid "``/niryo_robot_sound/set_volume``"
+msgid ""
+":ref:`DeleteSound<source/stack/high_level/niryo_robot_sound:DeleteSound "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:60
-msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
+msgid "Delete a sound imported by the user on the robot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:61
-msgid "Set the volume of the robot"
+msgid "``/niryo_robot_sound/set_volume``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:62
-msgid "``/niryo_robot_sound/send_sound``"
+msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:63
-msgid ":ref:`SendUserSound<SendUserSound (Service)>`"
+msgid "Set the volume of the robot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:64
+msgid "``/niryo_robot_sound/send_sound``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_sound.rst:65
+msgid ""
+":ref:`SendUserSound<source/stack/high_level/niryo_robot_sound:SendUserSound"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_sound.rst:66
 msgid "Import a sound on the robot"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:67
+#: ../../source/stack/high_level/niryo_robot_sound.rst:69
 msgid "Dependencies - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:69
+#: ../../source/stack/high_level/niryo_robot_sound.rst:71
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:70
+#: ../../source/stack/high_level/niryo_robot_sound.rst:72
 msgid ""
 ":ref:`niryo_robot_msgs "
 "<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:71
+#: ../../source/stack/high_level/niryo_robot_sound.rst:73
 msgid ""
 ":ref:`niryo_robot_status "
 "<source/stack/high_level/niryo_robot_status:Niryo_robot_status>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:74
+#: ../../source/stack/high_level/niryo_robot_sound.rst:76
 msgid "Services & Messages files - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:77
+#: ../../source/stack/high_level/niryo_robot_sound.rst:79
 msgid "SoundList (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:83
+#: ../../source/stack/high_level/niryo_robot_sound.rst:85
 msgid "SoundObject (Message)"
 msgstr ""
 
@@ -270,5 +292,26 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`SetInt<SetInt>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SoundUser<SoundUser (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SoundStateCommand<SoundStateCommand (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SoundUserCommand<SoundUserCommand (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`StopSound<StopSound (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`DeleteSound<DeleteSound (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SendUserSound<SendUserSound (Service)>`"
+#~ msgstr ""
+
+#~ msgid "The namespace used is: |namespace_emphasize|"
 #~ msgstr ""
 

@@ -9,8 +9,6 @@ Model
 --------------------------
 The model subpackage is comprised of:
 
-
-
 States
 **************************
 Classes to represent the virtual state of each hardware component at any moment. 
@@ -79,3 +77,7 @@ This package is a dependency of the following packages :
 * niryo_robot_hardware_interface
 * tools_interface
 * ttl_driver
+
+
+.. |namespace_cpp| replace:: common
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/can_driver

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-16 12:21+0100\n"
+"POT-Creation-Date: 2021-12-20 15:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,6 +126,10 @@ msgstr ""
 msgid "Install ROS dependencies"
 msgstr ""
 
+#: ../../source/installation/ubuntu_18.rst:75
+msgid "Install ROS"
+msgstr ""
+
 #: ../../source/installation/ubuntu_18.rst:77
 msgid ""
 "You firstly need to install ROS Melodic. To do so, follow the ROS "
@@ -134,10 +138,18 @@ msgid ""
 "**Desktop-Full Install**."
 msgstr ""
 
+#: ../../source/installation/ubuntu_18.rst:82
+msgid "Install additional packages"
+msgstr ""
+
 #: ../../source/installation/ubuntu_18.rst:83
 msgid ""
 "To ensure the functioning of all Ned's packages, you need to install "
 "several more packages:"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:87
+msgid "Method 1: Quick installation via ROSDep"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:88
@@ -145,6 +157,10 @@ msgid ""
 "For each packages, we have referenced all the dependencies in their "
 "respective *package.xml* file, which allow to install each dependency via"
 " *rosdep* command: ::"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:96
+msgid "Method 2: Full installation"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:98
