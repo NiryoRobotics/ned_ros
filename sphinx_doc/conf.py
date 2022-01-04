@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
 # Kindda hack the import to import shared config file
 sys.path.append(os.path.abspath('.'))
 from front_end.config import shared_conf
+from front_end.config import base_conf
 
 # -- Project information -----------------------------------------------------
 
@@ -23,16 +24,7 @@ release = u'v3.2.0'
 
 # -- General configuration ---------------------------------------------------
 
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks',
-    'sphinx.ext.todo',
-    'sphinx_togglebutton'
-]
+extensions = base_conf.extensions
 
 StandaloneHTMLBuilder.supported_image_types = [
     'image/svg+xml',
