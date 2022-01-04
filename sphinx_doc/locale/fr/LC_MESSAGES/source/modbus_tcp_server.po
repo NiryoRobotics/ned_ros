@@ -15,9 +15,12 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Language: en_US\n"
+"X-Source-Language: C\n"
 
 #: ../../source/modbus_tcp_server.rst:2
 msgid "Use the Modbus TCP server"
@@ -88,8 +91,8 @@ msgid ""
 "Each datastore has a different set of functionalities. Note that each "
 "datastore contains a completely different set of data."
 msgstr ""
-"Chaque type de données a un ensemble différent de fonctionnalités. Il est"
-" important de noter que chaque type de données contient un ensemble de "
+"Chaque type de données a un ensemble différent de fonctionnalités. Il est "
+"important de noter que chaque type de données contient un ensemble de "
 "données complètement différent."
 
 #: ../../source/modbus_tcp_server.rst:24
@@ -106,8 +109,8 @@ msgstr "Chaque adresse contient une valeur de 1bit."
 
 #: ../../source/modbus_tcp_server.rst:30
 msgid ""
-"READ/WRITE (the stored values correspond to the last given command, not "
-"the current robot state)."
+"READ/WRITE (the stored values correspond to the last given command, not the "
+"current robot state)."
 msgstr ""
 "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
 "donnée, non pas à l'état actuel du robot)."
@@ -211,14 +214,14 @@ msgstr "0x02: READ_DISCRETE_INPUTS"
 
 #: ../../source/modbus_tcp_server.rst:89
 msgid ""
-"This datastore can be used to read Digital I/O mode and state of the "
-"robot. See :ref:`source/modbus_tcp_server:Coil` above for digital I/O "
-"number mapping."
+"This datastore can be used to read Digital I/O mode and state of the robot. "
+"See :ref:`source/modbus_tcp_server:Coil` above for digital I/O number "
+"mapping."
 msgstr ""
-"Ce type de données peut être utilisé pour lire le mode d'E/S numériques "
-"et l'état du robot. Se référer à la section "
-":ref:`source/modbus_tcp_server:Coil` ci-dessus pour le mappage des "
-"numéros d'E/S numériques."
+"Ce type de données peut être utilisé pour lire le mode d'E/S numériques et "
+"l'état du robot. Se référer à la section "
+":ref:`source/modbus_tcp_server:Coil` ci-dessus pour le mappage des numéros "
+"d'E/S numériques."
 
 #: ../../source/modbus_tcp_server.rst:92
 msgid "Holding register"
@@ -230,8 +233,8 @@ msgstr "Chaque adresse contient une valeur de 16bits."
 
 #: ../../source/modbus_tcp_server.rst:95
 msgid ""
-"READ/WRITE (the stored values correspond to the last given command, not "
-"the current robot state)"
+"READ/WRITE (the stored values correspond to the last given command, not the "
+"current robot state)"
 msgstr ""
 "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
 "donnée, non pas à l'état actuel du robot)."
@@ -357,11 +360,11 @@ msgstr "160"
 
 #: ../../source/modbus_tcp_server.rst:133
 msgid ""
-"Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
-"0: NONE)"
+"Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, 0: "
+"NONE)"
 msgstr ""
-"Vision - Couleur de l'objet trouvé (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
-"0: NONE)"
+"Vision - Couleur de l'objet trouvé (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, 0: "
+"NONE)"
 
 #: ../../source/modbus_tcp_server.rst:136
 #: ../../source/modbus_tcp_server.rst:230
@@ -428,8 +431,8 @@ msgstr "500"
 
 #: ../../source/modbus_tcp_server.rst:151
 msgid ""
-"Updates the tool id according to the gripper plugged (gripper 1: 11, "
-"gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
+"Updates the tool id according to the gripper plugged (gripper 1: 11, gripper "
+"2: 12, gripper 3: 13, vaccum pump: 31)"
 msgstr ""
 "Met à jour l'ID du tool équipé en fonction de l'outil branché au robot "
 "(gripper 1: 11, gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
@@ -479,17 +482,19 @@ msgid "520"
 msgstr "520"
 
 #: ../../source/modbus_tcp_server.rst:163
-msgid "Enables a Conveyor Belt newly connected [on success: store its ID at 152]"
+msgid ""
+"Enables a Conveyor Belt newly connected [on success: store its ID at 152]"
 msgstr ""
-"Active un Convoyeur récemment connecté [en cas de succès : enregistrer "
-"son ID à 152]"
+"Active un Convoyeur récemment connecté [en cas de succès : enregistrer son "
+"ID à 152]"
 
 #: ../../source/modbus_tcp_server.rst:164
 msgid "521"
 msgstr "521"
 
 #: ../../source/modbus_tcp_server.rst:165
-msgid "Detaches / disables Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid ""
+"Detaches / disables Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr "Détache / désactive le Convoyeur avec l'ID du Convoyeur donné à 525"
 
 #: ../../source/modbus_tcp_server.rst:166
@@ -538,7 +543,8 @@ msgstr "600"
 
 #: ../../source/modbus_tcp_server.rst:177
 msgid "TCP - Enables or disables the TCP function (Tool Center Point)."
-msgstr "PCO - Active ou désactive la fonction de PCO (Point Central de l'Outil)."
+msgstr ""
+"PCO - Active ou désactive la fonction de PCO (Point Central de l'Outil)."
 
 #: ../../source/modbus_tcp_server.rst:178
 msgid "601"
@@ -558,11 +564,11 @@ msgstr "610"
 
 #: ../../source/modbus_tcp_server.rst:181
 msgid ""
-"Vision - Gets target pose from relative pose, with stored relative pose "
-"and height_offset"
+"Vision - Gets target pose from relative pose, with stored relative pose and "
+"height_offset"
 msgstr ""
-"Vision - Récupére la 'target_pose' avec le nom du workspace enregistré, "
-"sa hauteur, la forme et la couleur enregistrées"
+"Vision - Récupére la 'target_pose' avec le nom du workspace enregistré, sa "
+"hauteur, la forme et la couleur enregistrées"
 
 #: ../../source/modbus_tcp_server.rst:182
 msgid "611"
@@ -570,11 +576,11 @@ msgstr "611"
 
 #: ../../source/modbus_tcp_server.rst:183
 msgid ""
-"Vision - Gets target pose from camera, with stored workspace name, height"
-" offset, shape and color"
+"Vision - Gets target pose from camera, with stored workspace name, height "
+"offset, shape and color"
 msgstr ""
-"Vision - Obtient la pose avec le nom du workspace enregistré, sa hauteur,"
-" la forme et la couleur enregistrées"
+"Vision - Obtient la pose avec le nom du workspace enregistré, sa hauteur, la "
+"forme et la couleur enregistrées"
 
 #: ../../source/modbus_tcp_server.rst:184
 msgid "612"
@@ -582,8 +588,8 @@ msgstr "612"
 
 #: ../../source/modbus_tcp_server.rst:185
 msgid ""
-"Vision - Vision pick, with stored workspace name, height offset, shape "
-"and color"
+"Vision - Vision pick, with stored workspace name, height offset, shape and "
+"color"
 msgstr ""
 "Vision - Vision pick avec le nom du workspace enregistré, sa hauteur, la "
 "forme et la couleur enregistrées"
@@ -594,11 +600,11 @@ msgstr "613"
 
 #: ../../source/modbus_tcp_server.rst:187
 msgid ""
-"Vision - Moves to object, with stored workspace name, height offset, "
-"shape and color"
+"Vision - Moves to object, with stored workspace name, height offset, shape "
+"and color"
 msgstr ""
-"Vision - Déplacement jusque l'objet avec le nom du workspace enregistré, "
-"sa hauteur, la forme et la couleur enregistrées"
+"Vision - Déplacement jusque l'objet avec le nom du workspace enregistré, sa "
+"hauteur, la forme et la couleur enregistrées"
 
 #: ../../source/modbus_tcp_server.rst:188
 msgid "614"
@@ -607,8 +613,8 @@ msgstr "614"
 #: ../../source/modbus_tcp_server.rst:189
 msgid "Vision - Detects object, with stored workspace name, shape and color"
 msgstr ""
-"Vision - Détecte l'objet avec le nom du workspace enregistré, sa hauteur,"
-" la forme et la couleur enregistrées"
+"Vision - Détecte l'objet avec le nom du workspace enregistré, sa hauteur, la "
+"forme et la couleur enregistrées"
 
 #: ../../source/modbus_tcp_server.rst:190
 msgid "620"
@@ -648,11 +654,10 @@ msgstr "624"
 
 #: ../../source/modbus_tcp_server.rst:199
 msgid ""
-"Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
-"TRIANGLE)"
+"Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: TRIANGLE)"
 msgstr ""
-"Vision - Enregistre la forme demandée (-1: TOUTES, 1: CERCLE, 2: CARRÉ 3:"
-" TRIANGLE)"
+"Vision - Enregistre la forme demandée (-1: TOUTES, 1: CERCLE, 2: CARRÉ 3: "
+"TRIANGLE)"
 
 #: ../../source/modbus_tcp_server.rst:200
 msgid "625"
@@ -661,8 +666,8 @@ msgstr "625"
 #: ../../source/modbus_tcp_server.rst:201
 msgid "Vision - Stores requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
 msgstr ""
-"Vision - Enregistre la couleur demandée (-1: TOUTES, 1: BLEU, 2: ROUGE 3:"
-" VERT)"
+"Vision - Enregistre la couleur demandée (-1: TOUTES, 1: BLEU, 2: ROUGE 3: "
+"VERT)"
 
 #: ../../source/modbus_tcp_server.rst:202
 msgid "626 - max 641"
@@ -670,12 +675,11 @@ msgstr "626 - max 641"
 
 #: ../../source/modbus_tcp_server.rst:203
 msgid ""
-"Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
-" examples on how to store a workspace name from a client)"
+"Vision - Stores workspace's name, as a string encoded in 16 bits hex (see "
+"examples on how to store a workspace name from a client)"
 msgstr ""
-"Vision - Enregistre le nom du worspace, comme une string encodée en 16 "
-"bits hex (voir l'exemple sur comment stocker le nom du workspace depuis "
-"un client)"
+"Vision - Enregistre le nom du worspace, comme une string encodée en 16 bits "
+"hex (voir l'exemple sur comment stocker le nom du workspace depuis un client)"
 
 #: ../../source/modbus_tcp_server.rst:206
 msgid "Input Register"
@@ -838,7 +842,8 @@ msgid "Dependencies - Modbus TCP Server"
 msgstr "Les dépendances - Serveur Modbus TCP"
 
 #: ../../source/modbus_tcp_server.rst:272
-msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+msgid ""
+"`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
 msgstr ""
 "Il a été construit au-dessus de la `librairie Pymodbus "
 "<https://pymodbus.readthedocs.io/en/latest/index.html>`_"
@@ -872,12 +877,12 @@ msgstr ":msgs_index:`std_msgs`"
 
 #~ msgid "Enable a Conveyor newly connected [on success: store it's ID at 152]"
 #~ msgstr ""
-#~ "Activer un Convoyeur récemment connecté "
-#~ "[en cas de succès : enregistrer "
+#~ "Activer un Convoyeur récemment connecté [en cas de succès : enregistrer "
 #~ "son ID à 152]"
 
 #~ msgid "Detach / disable Conveyor with the conveyor ID given at 525"
-#~ msgstr "Détacher / désactiver le Convoyeur avec l’ID du Convoyeur donné à 525"
+#~ msgstr ""
+#~ "Détacher / désactiver le Convoyeur avec l’ID du Convoyeur donné à 525"
 
 #~ msgid "Control Conveyor with the conveyor ID given at 525"
 #~ msgstr "Contrôler le Convoyeur avec l’ID du Convoyeur donné à 525"
@@ -906,8 +911,8 @@ msgstr ":msgs_index:`std_msgs`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
-#~ "Robot Messages Package>`"
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+#~ "Package>`"
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs>`"
@@ -923,9 +928,8 @@ msgstr ":msgs_index:`std_msgs`"
 #~ msgstr "Ouvrir le gripper avec un identifiant donné"
 
 #~ msgid ""
-#~ "Vision - Move to object, with "
-#~ "stored workspace name, height offset, "
-#~ "shape and color"
+#~ "Vision - Move to object, with stored workspace name, height offset, shape "
+#~ "and color"
 #~ msgstr ""
 
 #~ msgid "Vision - Detect object, with stored workspace name, shape and color"
@@ -944,8 +948,7 @@ msgstr ":msgs_index:`std_msgs`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Vision - Store requested shape (-1: "
-#~ "ANY, 1: CIRCLE, 2: SQUARE, 3: "
+#~ "Vision - Store requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 #~ "TRIANGLE)"
 #~ msgstr ""
 
@@ -953,9 +956,6 @@ msgstr ":msgs_index:`std_msgs`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Vision - Store workspace's name, as "
-#~ "a string encoded in 16 bits hex"
-#~ " (see examples on how to store "
-#~ "a workspace name from a client)"
+#~ "Vision - Store workspace's name, as a string encoded in 16 bits hex (see "
+#~ "examples on how to store a workspace name from a client)"
 #~ msgstr ""
-

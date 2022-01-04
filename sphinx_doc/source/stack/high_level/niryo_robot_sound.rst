@@ -8,7 +8,7 @@ Sound Node
 --------------------------
 The ROS Node is made of services to play, stop, import and delete a sound on the robot. It is also possible to set the volume of the robot. 
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Publisher - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

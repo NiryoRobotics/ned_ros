@@ -14,7 +14,7 @@ Description - Poses handlers
 The ROS Node is made of several services to deal with transforms, workspace, grips and
 trajectories.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Workspaces
 """""""""""""

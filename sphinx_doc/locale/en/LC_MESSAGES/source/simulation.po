@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 15:17+0000\n"
+"POT-Creation-Date: 2021-12-23 14:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,159 +101,351 @@ msgid ""
 msgstr ""
 
 #: ../../source/simulation.rst:51
-msgid "One simulation:  ::"
+msgid "One simulation: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:55
-msgid "Ned simulation:  ::"
+msgid "Ned simulation: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:59
 msgid "Ned2 simulation: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:63 ../../source/simulation.rst:102
-msgid "Todo"
+#: ../../source/simulation.rst:64
+msgid ""
+"This mode is useful if your CPU capacity is limited or if you don't have "
+"X server available."
 msgstr ""
 
-#: ../../source/simulation.rst:63
-msgid "??"
-msgstr ""
-
-#: ../../source/simulation.rst:66
-msgid "Without physics - Visualization"
+#: ../../source/simulation.rst:67
+msgid "Options"
 msgstr ""
 
 #: ../../source/simulation.rst:68
-msgid "The visualization happens with Rviz which is a powerful tool."
+msgid ""
+"This mode is the more flexible one, as it provides all the possible "
+"options to customize the simulation. For the other simulation modes (with"
+" RViz and Gazebo) we will just force some of these parameters to specific"
+" values."
 msgstr ""
 
-#: ../../source/simulation.rst:71
+#: ../../source/simulation.rst:72
+msgid "Simulation without visualization Options"
+msgstr ""
+
+#: ../../source/simulation.rst:78 ../../source/simulation.rst:156
+#: ../../source/simulation.rst:233
+msgid "Name"
+msgstr ""
+
+#: ../../source/simulation.rst:79 ../../source/simulation.rst:157
+#: ../../source/simulation.rst:234
+msgid "Default Value"
+msgstr ""
+
+#: ../../source/simulation.rst:80 ../../source/simulation.rst:158
+#: ../../source/simulation.rst:235
+msgid "Description"
+msgstr ""
+
+#: ../../source/simulation.rst:81 ../../source/simulation.rst:159
+#: ../../source/simulation.rst:236
+msgid "log_level"
+msgstr ""
+
+#: ../../source/simulation.rst:82 ../../source/simulation.rst:160
+#: ../../source/simulation.rst:237
+msgid "INFO"
+msgstr ""
+
+#: ../../source/simulation.rst:83 ../../source/simulation.rst:161
+#: ../../source/simulation.rst:238
+msgid "Log level to display for ROS loggers"
+msgstr ""
+
+#: ../../source/simulation.rst:84
+msgid "ttl_enabled"
+msgstr ""
+
+#: ../../source/simulation.rst:85 ../../source/simulation.rst:88
+#: ../../source/simulation.rst:97 ../../source/simulation.rst:100
+#: ../../source/simulation.rst:103 ../../source/simulation.rst:169
+#: ../../source/simulation.rst:246 ../../source/simulation.rst:252
+#: ../../source/simulation.rst:255
+msgid "true"
+msgstr ""
+
+#: ../../source/simulation.rst:86
+msgid ""
+"Enable or disable the TTL bus usage. This feature is used for debug "
+"mainly and can lead to an unstable stack."
+msgstr ""
+
+#: ../../source/simulation.rst:87
+msgid "can_enabled"
+msgstr ""
+
+#: ../../source/simulation.rst:89
+msgid ""
+"Enable or disable the CAN bus usage. This feature is used for debug "
+"mainly and can lead to an unstable stack."
+msgstr ""
+
+#: ../../source/simulation.rst:90 ../../source/simulation.rst:165
+#: ../../source/simulation.rst:242
+msgid "debug"
+msgstr ""
+
+#: ../../source/simulation.rst:91 ../../source/simulation.rst:106
+#: ../../source/simulation.rst:166 ../../source/simulation.rst:175
+#: ../../source/simulation.rst:178 ../../source/simulation.rst:243
+msgid "false"
+msgstr ""
+
+#: ../../source/simulation.rst:92 ../../source/simulation.rst:167
+#: ../../source/simulation.rst:244
+msgid "Launch in debug mode. For development and debug only."
+msgstr ""
+
+#: ../../source/simulation.rst:93 ../../source/simulation.rst:171
+#: ../../source/simulation.rst:248
+msgid "conf_location"
+msgstr ""
+
+#: ../../source/simulation.rst:94 ../../source/simulation.rst:172
+#: ../../source/simulation.rst:249
+msgid "version.txt"
+msgstr ""
+
+#: ../../source/simulation.rst:95 ../../source/simulation.rst:173
+#: ../../source/simulation.rst:250
+msgid "Location of the version.txt file. A path to the file is required."
+msgstr ""
+
+#: ../../source/simulation.rst:96 ../../source/simulation.rst:174
+msgid "simu_gripper"
+msgstr ""
+
+#: ../../source/simulation.rst:98
+msgid "Simulate the presence of a gripper id 11 on the bus"
+msgstr ""
+
+#: ../../source/simulation.rst:99 ../../source/simulation.rst:177
+#: ../../source/simulation.rst:254
+msgid "simu_conveyor"
+msgstr ""
+
+#: ../../source/simulation.rst:101
+msgid ""
+"Simulate the presence of a conveyor (CAN for One and Ned, TTL for Ned2, "
+"based on configuration files) on the bus"
+msgstr ""
+
+#: ../../source/simulation.rst:102
+msgid "vision_enabled"
+msgstr ""
+
+#: ../../source/simulation.rst:104
+msgid "Enable the Vision Kit"
+msgstr ""
+
+#: ../../source/simulation.rst:105
+msgid "gazebo"
+msgstr ""
+
+#: ../../source/simulation.rst:107
+msgid ""
+"Enable gazebo specific parameters (However it does not launch gazebo, use"
+" gazebo specific launch file for that)"
+msgstr ""
+
+#: ../../source/simulation.rst:110
+msgid "Without physics - RViz Visualization"
+msgstr ""
+
+#: ../../source/simulation.rst:112
+msgid ""
+"A simple visualization of the robot is possible via a tool called Rviz. "
+"This application will simulate the robot with its correct geometry and "
+"positions but without physics to avoid using too much CPU."
+msgstr ""
+
+#: ../../source/simulation.rst:116
 msgid "Control with trackbar"
 msgstr ""
 
-#: ../../source/simulation.rst:73
+#: ../../source/simulation.rst:118
 msgid ""
 "This visualization allows an easy first control of the robot, and helps "
 "to understand joints disposal. You can access it by using the command: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:78
+#: ../../source/simulation.rst:123
 msgid ""
 "Rviz should open with a window containing 6 trackbars. Each of these "
 "trackbars allows to control the corresponding joint."
 msgstr ""
 
-#: ../../source/simulation.rst:84
+#: ../../source/simulation.rst:129
 msgid "Example of trackbars use."
 msgstr ""
 
-#: ../../source/simulation.rst:87
+#: ../../source/simulation.rst:132
 msgid "Control with ROS"
 msgstr ""
 
-#: ../../source/simulation.rst:90
+#: ../../source/simulation.rst:135
 msgid ""
-"Not only Rviz can display the robot, it can also be linked with ROS "
-"controllers to show robot's actions from ROS commands!"
+"Not only `RViz <http://wiki.ros.org/rviz>`_ can display the robot, it can"
+" also be linked with ROS controllers to show robot's actions from ROS "
+"commands!"
 msgstr ""
 
-#: ../../source/simulation.rst:91
-msgid ""
-"This method can help you debugging ROS topics, services and also, API "
-"scripts."
+#: ../../source/simulation.rst:136
+msgid "This method can help you debug ROS topics, services and also, API scripts."
 msgstr ""
 
-#: ../../source/simulation.rst:93 ../../source/simulation.rst:124
+#: ../../source/simulation.rst:138 ../../source/simulation.rst:201
 msgid "To run it: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:100
+#: ../../source/simulation.rst:145
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:102
-msgid "add parameters"
+#: ../../source/simulation.rst:148
+msgid "RViz Visualization options"
 msgstr ""
 
-#: ../../source/simulation.rst:105
-msgid "With physics - Simulation"
+#: ../../source/simulation.rst:150
+msgid "Table of RViz launch Options"
 msgstr ""
 
-#: ../../source/simulation.rst:107
+#: ../../source/simulation.rst:162 ../../source/simulation.rst:239
+msgid "hardware_version"
+msgstr ""
+
+#: ../../source/simulation.rst:163 ../../source/simulation.rst:240
+msgid "ned"
+msgstr ""
+
+#: ../../source/simulation.rst:164 ../../source/simulation.rst:241
+msgid ""
+"Use the parameters dedicated to this specific hardware_version. Possible "
+"values are \"one\", \"ned\" and \"ned2\""
+msgstr ""
+
+#: ../../source/simulation.rst:168 ../../source/simulation.rst:245
+msgid "gui"
+msgstr ""
+
+#: ../../source/simulation.rst:170 ../../source/simulation.rst:247
+msgid "Enable the gui visualization"
+msgstr ""
+
+#: ../../source/simulation.rst:176
+msgid ""
+"Simulate the presence of a gripper id 11 on the bus (Visualisation of the"
+" tool will not be visible, whatever the value of this parameter)"
+msgstr ""
+
+#: ../../source/simulation.rst:179 ../../source/simulation.rst:256
+msgid ""
+"Simulate the presence of a conveyor (Visualisation of the conveyor will "
+"not be visible, whatever the value of this parameter)"
+msgstr ""
+
+#: ../../source/simulation.rst:182
+msgid "With physics - Gazebo Simulation"
+msgstr ""
+
+#: ../../source/simulation.rst:184
 msgid ""
 "For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
 msgstr ""
 
-#: ../../source/simulation.rst:110
+#: ../../source/simulation.rst:187
 msgid "Collision."
 msgstr ""
 
-#: ../../source/simulation.rst:111
+#: ../../source/simulation.rst:188
 msgid ""
 "World creation → An virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 
-#: ../../source/simulation.rst:112
+#: ../../source/simulation.rst:189
 msgid "Gripper & Camera using."
 msgstr ""
 
-#: ../../source/simulation.rst:114
+#: ../../source/simulation.rst:191
 msgid ""
 "The Niryo Gripper 1 has been replicated in Gazebo. The Camera is also "
 "implemented."
 msgstr ""
 
-#: ../../source/simulation.rst:118
+#: ../../source/simulation.rst:195
 msgid ""
 "Gazebo also generates camera distortion, which brings the simulation even"
 " closer from the reality!"
 msgstr ""
 
-#: ../../source/simulation.rst:121
-msgid "Launch simulation"
+#: ../../source/simulation.rst:198
+msgid "Launch Gazebo simulation"
 msgstr ""
 
-#: ../../source/simulation.rst:122
+#: ../../source/simulation.rst:199
 msgid "A specific world has been created to use Ned in Gazebo with 2 workspaces."
 msgstr ""
 
-#: ../../source/simulation.rst:131
+#: ../../source/simulation.rst:208
 msgid "Gazebo view, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:134
+#: ../../source/simulation.rst:211
 msgid ""
 "You can edit Gazebo world to do your own! It's placed in the folder "
 "*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 
-#: ../../source/simulation.rst:138
-msgid "Simulation option"
+#: ../../source/simulation.rst:215
+msgid "Gazebo Simulation options"
 msgstr ""
 
-#: ../../source/simulation.rst:140
+#: ../../source/simulation.rst:217
 msgid ""
 "The user can disable 3 things by adding the specific string to the "
 "command line:"
 msgstr ""
 
-#: ../../source/simulation.rst:142
+#: ../../source/simulation.rst:219
 msgid "the Gazebo graphical interface: `gui:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:143
+#: ../../source/simulation.rst:220
 msgid ""
 "the Camera & the Gripper - Vision & Gripper wise functions won't be "
 "usable: `gripper_n_camera:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:147
+#: ../../source/simulation.rst:224
 msgid ""
 "Gazebo can be very slow. If your tests do not need Gripper and Camera, "
 "consider using Rviz to alleviate your CPU."
+msgstr ""
+
+#: ../../source/simulation.rst:227
+msgid "Table of Gazebo launch Options"
+msgstr ""
+
+#: ../../source/simulation.rst:251
+msgid "gripper_n_camera"
+msgstr ""
+
+#: ../../source/simulation.rst:253
+msgid "Simulate the presence of a gripper id 11 and a camera on the bus"
 msgstr ""
 
 #~ msgid "Use Niryo Robot through Simulation"
@@ -790,5 +982,72 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "**TODO add parameters**"
+#~ msgstr ""
+
+#~ msgid "??"
+#~ msgstr ""
+
+#~ msgid "The visualization happens with Rviz which is a powerful tool."
+#~ msgstr ""
+
+#~ msgid "One simulation:  ::"
+#~ msgstr ""
+
+#~ msgid "Ned simulation:  ::"
+#~ msgstr ""
+
+#~ msgid "Without physics - Visualization"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Not only Rviz can display the "
+#~ "robot, it can also be linked with"
+#~ " ROS controllers to show robot's "
+#~ "actions from ROS commands!"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This method can help you debugging "
+#~ "ROS topics, services and also, API "
+#~ "scripts."
+#~ msgstr ""
+
+#~ msgid "Todo"
+#~ msgstr ""
+
+#~ msgid "add parameters"
+#~ msgstr ""
+
+#~ msgid "With physics - Simulation"
+#~ msgstr ""
+
+#~ msgid "Launch simulation"
+#~ msgstr ""
+
+#~ msgid "Simulation option"
+#~ msgstr ""
+
+#~ msgid "RViz Simulation options"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Not only :ref:`RViz<http://wiki.ros.org/rviz>`_ can"
+#~ " display the robot, it can also "
+#~ "be linked with ROS controllers to "
+#~ "show robot's actions from ROS commands!"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Not only :ref:`RViz <http://wiki.ros.org/rviz>`_ "
+#~ "can display the robot, it can also"
+#~ " be linked with ROS controllers to"
+#~ " show robot's actions from ROS "
+#~ "commands!"
+#~ msgstr ""
+
+#~ msgid "RViz Visualization Options"
+#~ msgstr ""
+
+#~ msgid "Gazebo Simulation Options"
 #~ msgstr ""
 

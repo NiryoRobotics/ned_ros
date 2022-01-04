@@ -11,9 +11,11 @@ Niryo Robot Hardware Interface
 
    Global overview of hardware stack packages organization.
 
-Hardware interface node
+Hardware interface Node
 --------------------------
-The ROS Node is made to launch hardware interface and communication:
+
+This node has been conceived to instantiate all the interfaces we need to have a fully functional robot. 
+Among those interfaces we have:
  - Conveyor Interface
  - Joints Interface
  - Tools Interface
@@ -22,7 +24,7 @@ The ROS Node is made to launch hardware interface and communication:
  - Can Driver (Ned and One Only)
  - Ttl Driver
 
-The namespace used is: |namespace_emphasize|.
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -96,3 +98,9 @@ Services
    *  -  ``stop_motors_report``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Stops motors report
+
+
+.. |namespace_cpp| replace:: niryo_robot_hardware_interface
+.. |namespace| replace:: /niryo_robot_hardware_interface/
+.. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/niryo_robot_hardware_interface

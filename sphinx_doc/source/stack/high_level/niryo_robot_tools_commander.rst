@@ -12,7 +12,7 @@ Tools Commander node
 --------------------------
 The ROS Node is made of services to equip tool, an action server for tool command and topics for the current tool or the tool state.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Action server - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

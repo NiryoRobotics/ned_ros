@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-16 12:06+0100\n"
+"POT-Creation-Date: 2021-12-23 15:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,7 +105,7 @@ msgid "Python libraries"
 msgstr ""
 
 #: ../../source/changelog.rst:29
-msgid "See src/requirements_ned2.txt file"
+msgid "See *src/requirements_ned2.txt* file"
 msgstr ""
 
 #: ../../source/changelog.rst:32
@@ -254,48 +254,48 @@ msgstr ""
 msgid "add ned2 configuration files in all packages"
 msgstr ""
 
-#: ../../source/changelog.rst:77
-msgid "Features (for Ned and One only)"
+#: ../../source/changelog.rst:75
+msgid "niryo_robot_arm_commmander refactoring"
 msgstr ""
 
-#: ../../source/changelog.rst:78
-msgid "add VERSION file at root"
+#: ../../source/changelog.rst:76
+msgid "niryo_robot_python_ros_wrapper refactoring"
 msgstr ""
 
 #: ../../source/changelog.rst:79
-msgid "add CHANGELOG.rst in every package (using catkin_generate_changelog tool)"
+msgid "Features (for Ned and One only)"
 msgstr ""
 
 #: ../../source/changelog.rst:80
-msgid "update PID values for Dynamixels"
+msgid "add VERSION file at root"
 msgstr ""
 
 #: ../../source/changelog.rst:81
-msgid "Replace fake interface by mock drivers for steppers and Dynamixels"
+msgid "add CHANGELOG.rst in every package (using catkin_generate_changelog tool)"
 msgstr ""
 
 #: ../../source/changelog.rst:82
-msgid "Add compatibility for TTL conveyor belts (upcoming)"
+msgid "update PID values for Dynamixels"
 msgstr ""
 
 #: ../../source/changelog.rst:83
-msgid "Add Ned2 features (upcoming)"
+msgid "Replace fake interface by mock drivers for steppers and Dynamixels"
 msgstr ""
 
 #: ../../source/changelog.rst:84
-msgid "niryo_robot_bringup refactoring"
+msgid "Add compatibility for TTL conveyor belts (upcoming)"
 msgstr ""
 
 #: ../../source/changelog.rst:85
-msgid "improve control loops for ttl_driver and joints interface"
+msgid "Add Ned2 features (upcoming)"
 msgstr ""
 
 #: ../../source/changelog.rst:86
-msgid "new trajectories (spiral, circular)"
+msgid "niryo_robot_bringup refactoring"
 msgstr ""
 
 #: ../../source/changelog.rst:87
-msgid "Save and replay waypointed trajectories"
+msgid "improve control loops for ttl_driver and joints interface"
 msgstr ""
 
 #: ../../source/changelog.rst:90
@@ -318,144 +318,189 @@ msgstr ""
 msgid "Not officially supporting Ned2 hardware version"
 msgstr ""
 
+#: ../../source/changelog.rst:97
+msgid "Hotspot mode is always on by default on reboot for the Niryo One"
+msgstr ""
+
 #: ../../source/changelog.rst:100
-msgid "September release - New features batch"
+msgid "Niryo Studio"
 msgstr ""
 
 #: ../../source/changelog.rst:103
-msgid "Features"
+msgid "New features"
+msgstr ""
+
+#: ../../source/changelog.rst:105
+msgid "Network settings (DHCP / Static IP)"
 msgstr ""
 
 #: ../../source/changelog.rst:106
-msgid "Tool commander package"
+msgid "Hardware detection One / Ned / Ned2"
+msgstr ""
+
+#: ../../source/changelog.rst:107
+msgid "Display TCP Speed"
 msgstr ""
 
 #: ../../source/changelog.rst:108
-msgid "TCP service settings"
+msgid "Blockly - Dynamic blocks (Saved pose, workspace)"
 msgstr ""
 
-#: ../../source/changelog.rst:110
-msgid "TCP.msg"
+#: ../../source/changelog.rst:111
+msgid "Bugs fix"
 msgstr ""
 
 #: ../../source/changelog.rst:112
-msgid "SetTCP.srv"
+msgid "Blockly - Conversion RAD / DEG in block"
 msgstr ""
 
 #: ../../source/changelog.rst:116
-msgid "Arm commander package"
+msgid "September release - New features batch"
 msgstr ""
 
-#: ../../source/changelog.rst:118
-msgid "New movements available in ArmMoveCommand.msg"
+#: ../../source/changelog.rst:119
+msgid "Features"
 msgstr ""
 
-#: ../../source/changelog.rst:120 ../../source/changelog.rst:134
-msgid "linear pose"
-msgstr ""
-
-#: ../../source/changelog.rst:122 ../../source/changelog.rst:140
-msgid "shift linear pose"
+#: ../../source/changelog.rst:122
+msgid "Tool commander package"
 msgstr ""
 
 #: ../../source/changelog.rst:124
-msgid "trajectory"
+msgid "TCP service settings"
+msgstr ""
+
+#: ../../source/changelog.rst:126
+msgid "TCP.msg"
 msgstr ""
 
 #: ../../source/changelog.rst:128
-msgid "Python ROS Wrapper package"
-msgstr ""
-
-#: ../../source/changelog.rst:130
-msgid "New movement functions available"
+msgid "SetTCP.srv"
 msgstr ""
 
 #: ../../source/changelog.rst:132
-msgid "move linear pose"
+msgid "Arm commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:136
-msgid "jog pose shift"
+#: ../../source/changelog.rst:134
+msgid "New movements available in ArmMoveCommand.msg"
 msgstr ""
 
-#: ../../source/changelog.rst:138
-msgid "jog joints shift"
+#: ../../source/changelog.rst:136 ../../source/changelog.rst:150
+msgid "linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:142
-msgid "execute trajectory from pose"
+#: ../../source/changelog.rst:138 ../../source/changelog.rst:156
+msgid "shift linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:140
+msgid "trajectory"
 msgstr ""
 
 #: ../../source/changelog.rst:144
-msgid "New TCP functions available"
+msgid "Python ROS Wrapper package"
 msgstr ""
 
 #: ../../source/changelog.rst:146
-msgid "set_tcp"
+msgid "New movement functions available"
 msgstr ""
 
 #: ../../source/changelog.rst:148
-msgid "enable_tcp"
-msgstr ""
-
-#: ../../source/changelog.rst:150
-msgid "reset_tcp"
+msgid "move linear pose"
 msgstr ""
 
 #: ../../source/changelog.rst:152
-msgid "New camera settings functions available"
+msgid "jog pose shift"
 msgstr ""
 
 #: ../../source/changelog.rst:154
-msgid "set_brightness"
-msgstr ""
-
-#: ../../source/changelog.rst:156
-msgid "set_contrast"
+msgid "jog joints shift"
 msgstr ""
 
 #: ../../source/changelog.rst:158
+msgid "execute trajectory from pose"
+msgstr ""
+
+#: ../../source/changelog.rst:160
+msgid "New TCP functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:162
+msgid "set_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:164
+msgid "enable_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:166
+msgid "reset_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:168
+msgid "New camera settings functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:170
+msgid "set_brightness"
+msgstr ""
+
+#: ../../source/changelog.rst:172
+msgid "set_contrast"
+msgstr ""
+
+#: ../../source/changelog.rst:174
 msgid "set_saturation"
 msgstr ""
 
-#: ../../source/changelog.rst:161
+#: ../../source/changelog.rst:177
 msgid "Improvements"
 msgstr ""
 
-#: ../../source/changelog.rst:163
+#: ../../source/changelog.rst:179
 msgid "Refactoring Tool Commander and Robot Commander packages."
 msgstr ""
 
-#: ../../source/changelog.rst:165
+#: ../../source/changelog.rst:181
 msgid "Remove Robot Commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:167
+#: ../../source/changelog.rst:183
 msgid ""
 "Reorder Robot Commander package between Tool Commander and Arm Commander "
 "packages."
 msgstr ""
 
-#: ../../source/changelog.rst:169
+#: ../../source/changelog.rst:185
 msgid "Self collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:171
+#: ../../source/changelog.rst:187
 msgid "Add self-collision detection via MoveIt."
 msgstr ""
 
-#: ../../source/changelog.rst:173
+#: ../../source/changelog.rst:189
 msgid "Collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:175
+#: ../../source/changelog.rst:191
 msgid "Collision detection improvement on each joints."
 msgstr ""
 
-#: ../../source/changelog.rst:177
+#: ../../source/changelog.rst:193
 msgid "Learning mode activation in case of a collision."
 msgstr ""
 
 #~ msgid "TODO"
+#~ msgstr ""
+
+#~ msgid "See src/requirements_ned2.txt file"
+#~ msgstr ""
+
+#~ msgid "new trajectories (spiral, circular)"
+#~ msgstr ""
+
+#~ msgid "Save and replay waypointed trajectories"
 #~ msgstr ""
 
