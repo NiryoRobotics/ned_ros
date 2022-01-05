@@ -57,8 +57,9 @@ class AlertReportHandler:
         self.__psutil_wrapper = PsutilWrapper()
         self.__metrics = {
             CheckFrequencies.LOW: [
-                MetricChecker(self.__psutil_wrapper.get_rom_usage, lambda x: x < 90)
+                MetricChecker(self.__psutil_wrapper.get_rom_usage, lambda x: x < 90),
             ],
+            CheckFrequencies.NORMAL: [],
             CheckFrequencies.HIGH: [
                 MetricChecker(self.__psutil_wrapper.get_cpu_usage, lambda x: x < 80),
                 MetricChecker(self.__psutil_wrapper.get_cpu_temperature, lambda x: x < 50),
@@ -77,11 +78,10 @@ class AlertReportHandler:
             self.__send_report(metric_checker)
 
     def __send_report(self, metric_checker):
-        print(metric_checker)
         self.__cloud_api.alert_report.send({
             'metric': metric_checker.metric_name,
             'value': metric_checker.value,
-            'date': datetime.now()
+            'date': datetime.now().isoformat()
         })
 
     def __run(self):
@@ -98,7 +98,6 @@ class AlertReportHandler:
                 if counter == frequency.value:
                     frequencies_counter[frequency] = 0
                     for test in self.__metrics[frequency]:
-                        print(test)
                         if not test.test():
                             self.__send_report(test)
             time.sleep(clock_frequency)

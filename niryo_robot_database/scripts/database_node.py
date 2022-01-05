@@ -58,7 +58,7 @@ class DatabaseNode:
             self.__callback_get_all_by_type,
         )
 
-        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg)
+        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
