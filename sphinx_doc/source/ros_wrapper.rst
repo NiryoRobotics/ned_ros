@@ -19,7 +19,7 @@ For instance, a script realizing a moveJ via Python ROS Wrapper will look like: 
 
 What this code is doing in a hidden way:
 
- - It generates a :ref:`RobotMove Action Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove (Action)>` and set
+ - It generates a :ref:`RobotMove Action Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove (Action)>` and sets
    it as a joint command with the corresponding joints value.
  - Sends goal to the Commander Action Server.
  - Waits for the Commander Action Server to set Action as finished.

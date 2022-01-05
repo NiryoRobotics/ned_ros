@@ -9,7 +9,7 @@ Beforehand
 To realize the following examples, you need to have
 create a workspace.
 
-As the examples start always the same, there is the code you need to
+As the examples always start the same way, there is the code you need to
 add at the beginning of all of them: ::
 
     #!/usr/bin/env python
@@ -40,8 +40,10 @@ add at the beginning of all of them: ::
 
 .. toggle::
 
-    .. image:: ../../../images/stack/high_level/vision_example.*
+    .. image:: ../../../images/stack/high_level/vision_example.
        :align: center
+
+.. todo:: le toggle ne semble pas fonctionner 
 
 Simple Vision pick
 -------------------------------

@@ -128,3 +128,5 @@ Enums
     :undoc-members:
     :exclude-members: CommandEnum
     :member-order: bysource
+
+.. todo:: ici je ne vois pas les fonctions
