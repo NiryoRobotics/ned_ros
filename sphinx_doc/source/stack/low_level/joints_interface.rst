@@ -8,7 +8,7 @@ Joints interface node
 --------------------------
 The ROS Node is made to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
- - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
+ - Create a controller manager, from :wiki_ros:`controller_manager` package, that provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
@@ -35,7 +35,7 @@ Joint Interface's default Parameters
 Joint Interface's hardware specific Parameters 
 **************************************************
 
-These parameters are specific to the hardware version (ned, one or ned2).
+These parameters are specific to the hardware version (Ned, Niryo One or Ned2).
 This file comes in a different version for each hardware version, located in a directory of the hardware version name.
 
 .. list-table:: joints_params.yaml
@@ -324,7 +324,8 @@ This file comes in a different version for each hardware version, located in a d
       -  N.A.
       -  Ned 2 only
 
-The velocity profile for the steppers (in calibration_params.yaml and steppers_params.yaml) can be defined for TTL steppers only (thus for Ned2 only)
+The velocity profile for the steppers (in calibration_params.yaml and steppers_params.yaml) can be defined for TTL steppers only (thus for Ned2 only).
+
 It is defined according to the following graph :
 
 .. figure:: ../../../images/stack/low_level/steppers_velocity_profiles.png

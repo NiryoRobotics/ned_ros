@@ -6,7 +6,7 @@ Niryo Robot Hardware Interface
 
 .. figure:: ../../../images/stack/low_level/hardware_stack_nodes.png
    :alt: Hardware Stack Nodes
-   :height: 500px
+   :height: 300px
    :align: center
 
    Global overview of hardware stack packages organization.

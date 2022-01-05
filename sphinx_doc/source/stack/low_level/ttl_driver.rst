@@ -2,8 +2,8 @@ TTL Driver
 =====================================
 
 | This package handles motors which communicate via the protocol TTL.
-| This package is based on the DXL SDK.
-| It provides an interface to :wiki_ros:`dynamixel_sdk`.
+
+| This package is based on the DXL SDK. It provides an interface to :wiki_ros:`dynamixel_sdk`.
 
 TTL Driver Node (For Development and Debugging)
 --------------------------------------------------
@@ -41,7 +41,7 @@ Parameters - TTL Driver
       -  | Reading frequency.
          | Default: '300.0'
    *  -  ``ttl_hardware_read_status_frequency``
-      -  | Reads Ttl's device status frequency.
+      -  | Reads TTL's device status frequency.
          | Default: '0.7'
    *  -  ``ttl_hardware_read_end_effector_frequency``
       -  | Reads End Effector's status frequency.
@@ -67,13 +67,13 @@ Services - TTL Driver
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Control dynmixel LED
+      -  Control dynamixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
       -  :ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue (Service)>`
-      -  Send a custom command to Ttl device
+      -  Send a custom command to TTL device
    *  -  ``niryo_robot/ttl_driver/read_custom_value``
       -  :ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue (Service)>`
-      -  Read a custom command to Ttl device
+      -  Read a custom command to TTL device
    *  -  ``niryo_robot/ttl_driver/read_pid_value``
       -  :ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue (Service)>`
       -  Read the PID of dxl motors

@@ -13,7 +13,7 @@ The model subpackage is comprised of:
 
 States
 **************************
-Classes to represent the virtual state of each hardware component at any moment. 
+Classes, to represent the virtual state of each hardware component at any moment. 
 The hierarchy allows powerful polymorphism so that we can interpret each component differently based on the information we need to obtain. 
 
 .. figure:: ../../../images/stack/low_level/classcommon_1_1model_1_1AbstractHardwareState__inherit__graph.png
@@ -69,7 +69,7 @@ The util subpackage is comprised of:
 Dependencies
 --------------------------
 This package does not depend on any package.
-This package is a dependency of the following packages :
+This package is a dependency of the following packages:
 
 * can_driver
 * conveyor_interface

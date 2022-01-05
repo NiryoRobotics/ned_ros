@@ -12,17 +12,17 @@ This script can be launched via:  ::
 
 Parameters - Ttl debug tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    - **--help / -h:** Print help message
-    - **--baudrate / -b [Number]:** Baudrate (1000000 by default)
-    - **--port / -p [Number]:** Set port
+    - **--help / -h:** Prints help message
+    - **--baudrate / -b [Number]:** Baudrates (1000000 by default)
+    - **--port / -p [Number]:** Sets port
     - **--id / -i [Number]:** Dxl motor ID (0 by default)
-    - **--scan:** Scan all Dxl motors on the bus
-    - **--ping:** Ping specific ID
-    - **--set-register [Number] [Number] [Number]:** Set a value to a register, parameters are in the order: register address / value / size (in bytes) of the value
+    - **--scan:** Scans all Dxl motors on the bus
+    - **--ping:** Pings specific ID
+    - **--set-register [Number] [Number] [Number]:** Sets a value to a register, parameters are in the order: register address / value / size (in bytes) of the value
 
 Services, Topics and Messages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+.. todo:: pas de services et topics et tout ? 
 
 
 Scripts
@@ -37,7 +37,7 @@ This script can be launched via:  ::
 Parameters - Send custom value
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     - **--id [Number]:** Motor ID
-    - **--address [Number]:** Register address to modify
+    - **--address [Number]:** Registers address to modify
     - **--value [Number]:** Value to store at the register address given
     - **--size [Number]:** Size in bytes of the value given
 
@@ -50,6 +50,6 @@ This script can be launched via:  ::
 Parameters - Read custom value
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     - **--id [Number]:** Motor ID
-    - **--address [Number]:** Register address to modify
+    - **--address [Number]:** Registers address to modify
     - **--value [Number]:** Value to store at the register address given
     - **--size [Number]:** Size in bytes of the value given

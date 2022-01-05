@@ -2,11 +2,11 @@ Conveyor Interface
 ===========================================
 
 | This package handles Niryo's Conveyors. 
+
+
 | It allows you to control up to two Conveyors at the same time.
-| Two version of the conveyor exist : The Conveyor Belt 1, communicating via a CAN bus, and the Conveyor Belt 2, 
-| communicating via a TTL bus.
-| Both of them are directly compatible for the Ned and One. For the Ned 2 Robot, you will need to change the stepper card 
-| of the CAN Conveyor Belt to be able to use it on a TTL port (there is no CAN port on Ned 2).
+
+| Two version of the conveyor exist : The Conveyor Belt, communicating via a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. Both of them are directly compatible for the Ned and One. For Ned2, you will need to change the stepper card of the CAN Conveyor Belt to be able to use it on a TTL port (there is no CAN port on Ned2).
 
 Conveyor Interface node (For development and debugging purpose only) 
 ------------------------------------------------------------------------
@@ -17,11 +17,12 @@ This ROS Node has been conceived to:
 Conveyor Interface core
 ----------------------------
 It is integrated to :doc:`niryo_robot_hardware_interface` package.
+
 Its purpose is to:
-- Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
-- Initialize conveyor motors parameters.
-- Handle the requests from services to set, control or remove the conveyors.
-- Publish conveyor states.
+   - Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
+   - Initialize conveyor motors parameters.
+   - Handle the requests from services to set, control or remove the conveyors.
+   - Publish conveyor states.
 
 The namespace used is: |namespace_emphasize|
 

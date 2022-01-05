@@ -1,7 +1,7 @@
 CAN Driver
 ===================================
 
-| This package provides an interface between high level ROS packages and motors on CAN bus
+| This package provides an interface between high level ROS packages and motors on CAN bus;
 
 CAN Driver Node
 --------------------------
