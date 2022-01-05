@@ -46,22 +46,22 @@ Services - Sound
       -  Description
    *  -  ``/niryo_robot_sound/play_sound_state``
       -  :ref:`SoundStateCommand<SoundStateCommand (Service)>`
-      -  Play a sound corresponding to a state of the robot
+      -  Plays a sound corresponding to a state of the robot
    *  -  ``/niryo_robot_sound/play_sound_user``
       -  :ref:`SoundUserCommand<SoundUserCommand (Service)>`
-      -  Play a sound imported on the robot from the user
+      -  Plays a sound imported on the robot from the user
    *  -  ``/niryo_robot_sound/stop_sound``
       -  :ref:`StopSound<StopSound (Service)>`
-      -  Stop a sound being played
+      -  Stops a sound being played
    *  -  ``/niryo_robot_sound/delete_sound_user``
       -  :ref:`DeleteSound<DeleteSound (Service)>`
-      -  Delete a sound imported by the user on the robot
+      -  Deletes a sound imported by the user on the robot
    *  -  ``/niryo_robot_sound/set_volume``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Set the volume of the robot
+      -  Sets the volume of the robot
    *  -  ``/niryo_robot_sound/send_sound``
       -  :ref:`SendUserSound<SendUserSound (Service)>`
-      -  Import a sound on the robot
+      -  Imports a sound on the robot
    
 Dependencies - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
