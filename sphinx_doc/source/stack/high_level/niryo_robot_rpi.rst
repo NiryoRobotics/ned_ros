@@ -14,7 +14,7 @@ The ROS Node manages the following components:
 - Led: sets the LED color.
 - ROS log: can remove all previous logs on startup to prevent a lack of disk space in the long run (SD cards do not have infinite storage).
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 **Note that this package should not be used when you are using Ned ROS stack on your computer in simulation mode. Executes actions when the button is pressed.**
 

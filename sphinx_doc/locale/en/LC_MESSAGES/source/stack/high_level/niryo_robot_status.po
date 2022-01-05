@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 14:52+0100\n"
+"POT-Creation-Date: 2021-12-23 14:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,14 @@ msgstr ""
 msgid "Niryo_robot_status"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:4
-msgid "This package"
+#: ../../source/stack/high_level/niryo_robot_status.rst:5
+msgid "Todo"
 msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:5
+msgid "write doc"
+msgstr ""
+
+#~ msgid "This package"
+#~ msgstr ""
 

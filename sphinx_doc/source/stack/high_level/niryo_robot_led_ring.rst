@@ -171,7 +171,7 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
 
 .. note:: When displaying the robot status, the Led Ring commander uses those methods, with the defaults parameters defined below.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - Led Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
