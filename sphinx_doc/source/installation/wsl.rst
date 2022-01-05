@@ -24,7 +24,9 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 ::
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
-3. You then need to restart your machine to finish the WSL install and the upgrade to WSL2.
+.. todo:: bizarres les affichages encore non ? 
+
+3. You then need to restart your machine to finish the WSL installation and the upgrade to WSL2.
 
 4. Set default version of WSL to 2 (in a powershell terminal)
 
@@ -42,15 +44,16 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
    Ubuntu 18.04 in the Windows Store
 
-6. Launch the app. The first time, it asks you to finish the initialization of the OS
-Your Ubuntu OS is now ready. You can continue the build of the stack using the tutorial
+6. Launch the app. The first time, it asks you to finish the initialization of the OS.
+
+Your Ubuntu OS is now ready. You can continue the build of the stack using the tutorial.
 
 
 Setting up GUI forwarding
 --------------------------
 
 WSL does not come with an X server. Thus, you will not be able to launch any graphical windows for now. 
-But we can change this by using a Windows X server and forward the GUI to it using GUI forwarding
+But we can change this by using a Windows X server and forward the GUI to it using GUI forwarding.
 
 Many X servers exist for Windows 10. We tested VcXsrc, and it correctly does the job.
 https://sourceforge.net/projects/vcxsrv/
@@ -78,9 +81,9 @@ https://sourceforge.net/projects/vcxsrv/
 
     export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 
-You can add this to your bashrc file
+You can add this to your bashrc file.
 
-3. You can check that your forwarding works by using simple X11 apps for example :
+3. You can check that your forwarding works by using simple X11 apps for example:
 
 .. code::
 
@@ -88,15 +91,17 @@ You can add this to your bashrc file
     sudo apt install x11-apps
     xcalc
 
-4. Install ROS melodic (see instructions here)
+4. Install ROS Melodic (see instructions here)
 
-5. Try launching rviz
+5. Try launching Rviz
 
 .. code::
 
     roscore & rosrun rviz rviz
 
-6. You should now be able to launch any simulation of the One, Ned or Ned2 using rviz or gazebo
+6. You should now be able to launch any simulation of the One, Ned or Ned2 using Rviz or Gazebo
+
+.. todo:: on a ici la toute première occurence du Ned2, qui n'avait jamais été mentionné avant. C'est normal de ne pas l'avoir eu avant ?
 
 Troubleshooting
 ----------------
@@ -104,8 +109,8 @@ Troubleshooting
 **Error: Can't open display: 192.168.1.44:0.0**
 Your DISPLAY variable does not match the address of your XServer.
 Try :
-- Check that you correctly launched your XServer with the required options (Disable access control is essential)
-- Check that the ip you gave is correct (you need the address in /etc/resolv.conf to have it work)
+    - Check that you correctly launched your XServer with the required options (Disable access control is essential)
+    - Check that the IP you gave is correct (you need the address in /etc/resolv.conf to have it work)
 
 **OpenGL issues**
 Some people have said that they run into issues with OpenGL applications like Rviz. 
