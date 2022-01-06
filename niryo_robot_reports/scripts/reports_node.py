@@ -14,6 +14,7 @@ from AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 # msg
 from niryo_robot_database.msg import Setting
 from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_reports.msg import Service
 
 # srv
 from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
@@ -81,10 +82,14 @@ class ReportsNode:
         rospy.logdebug("Reports Node - Node Started")
 
     def __check_connection_callback(self, req):
-        if req.service == 'test_reports':
+        if req.service == Service.TEST_REPORTS:
             success = self.__cloud_api.test_reports.ping()
-        elif req.service == 'daily_reports':
+        elif req.service == Service.DAILY_REPORTS:
             success = self.__cloud_api.daily_reports.ping()
+        elif req.service == Service.ALERT_REPORTS:
+            success = self.__cloud_api.alert_reports.ping()
+        elif req.service == Service.AUTO_DIAGNOSIS_REPORTS:
+            success = self.__cloud_api.auto_diagnosis_reports.ping()
         else:
             return CommandStatus.REPORTS_SERVICE_UNREACHABLE, False
 

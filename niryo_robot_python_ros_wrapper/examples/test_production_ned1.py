@@ -5,8 +5,9 @@ import numpy as np
 from datetime import datetime
 
 from std_msgs.msg import String
-from niryo_robot_database.srv import SetSettings
+from niryo_robot_reports.msg import Service
 
+from niryo_robot_database.srv import SetSettings
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
@@ -178,7 +179,7 @@ class TestFunctions(object):
 
     def test_cloud_connection(self, report):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
-        result = check_connection_service('test_reports')
+        result = check_connection_service(Service.TEST_REPORTS)
         if result.status < 0:
             error_str = "Service test_report doesn't exists"
             report.append(error_str)

@@ -7,6 +7,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
+add_message_files(
+  FILES
+  Service.msg
+)
+
 add_service_files(
   DIRECTORY srv
   FILES

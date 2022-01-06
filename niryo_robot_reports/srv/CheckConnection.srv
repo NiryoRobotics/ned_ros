@@ -1,4 +1,4 @@
-string service
+Service service
 ---
 int32 status
 bool result
