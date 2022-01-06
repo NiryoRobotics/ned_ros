@@ -10,8 +10,11 @@ The ROS Node manages the following components:
 
 - Physical top button: executes actions when the button is pressed.
 - Digital I/O panel: gets commands and sends the current state of digital I/Os. Also controls tools like the Electromagnet.
+- Analog I/O panel: gets commands and sends the current state of analog I/Os.
+- End Effector I/O panel: gets commands and sends the current state of the digital I/Os of the end effector panel on Ned2. Also controls tools like the Electromagnet.".
 - Robot fans.
 - Led: sets the LED color.
+- Shutdown Manager: shutdown or reboot the Raspberry.
 - ROS log: can remove all previous logs on startup to prevent a lack of disk space in the long run (SD cards do not have infinite storage).
 
 It belongs to the ROS namespace: |namespace_emphasize|.
@@ -40,13 +43,16 @@ Publisher - Raspberry Pi
       -  :std_msgs:`std_msgs/Bool<Bool>`
       -  Publish the button state (true if pressed)
    *  -  ``digital_io_state``
-      -  :ref:`DigitalIOState<source/stack/high_level/niryo_robot_rpi:DigitalIOState (Service)>`
-      -  Publish the I/Os state by giving for each it's pin / name / mode / state
+      -  :ref:`DigitalIOState<source/stack/high_level/niryo_robot_rpi:DigitalIOState (Topic)>`
+      -  Publish the digital I/Os state by giving for each it's pin / name / mode / state
+   *  -  ``analog_io_state``
+      -  :ref:`AnalogIOState<source/stack/high_level/niryo_robot_rpi:AnalogIOState (Topic)>`
+      -  Publish the analog I/Os state by giving for each it's pin / name / mode / state
    *  -  ``/niryo_robot/rpi/led_state``
       -  :std_msgs:`std_msgs/Int8<Int8>`
       -  Publish the current led color
    *  -  ``ros_log_status``
-      -  :ref:`LogStatus<source/stack/high_level/niryo_robot_rpi:LogStatus (Service)>`
+      -  :ref:`LogStatus<source/stack/high_level/niryo_robot_rpi:LogStatus (Topic)>`
       -  Publish the current log status (log size / available disk / boolean if should delete ros log on startup)
 
 Services - Raspberry Pi
@@ -67,15 +73,21 @@ Services - Raspberry Pi
    *  -  ``/niryo_robot/rpi/change_button_mode``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
       -  Change top button mode (autorun program, blockly, nothing, ...)
+   *  -  ``get_analog_io``
+      -  :ref:`GetAnalogIO<source/stack/high_level/niryo_robot_rpi:GetAnalogIO (Service)>`
+      -  Get analog IO state list
    *  -  ``get_digital_io``
       -  :ref:`GetDigitalIO<source/stack/high_level/niryo_robot_rpi:GetDigitalIO (Service)>`
       -  Get digital IO state list
+   *  -  ``set_analog_io``
+      -  :ref:`SetAnalogIO<source/stack/high_level/niryo_robot_rpi:SetAnalogIO (Service)>`
+      -  Set a analog IO to the given value
+   *  -  ``set_digital_io``
+      -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetDigitalIO (Service)>`
+      -  Set a digital IO to the given value
    *  -  ``set_digital_io_mode``
-      -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetDigitalIO (Service)>`
-      -  Set a digital IO to the mode given
-   *  -  ``set_digital_io_state``
-      -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetDigitalIO (Service)>`
-      -  Set a digital IO to the state given
+      -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetIOMode (Service)>`
+      -  Set a digital IO to the given mode
    *  -  ``set_led_state``
       -  :ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
       -  Set led state
@@ -98,7 +110,7 @@ Dependencies - Raspberry Pi
 - :doc:`niryo_robot_msgs`
 - :doc:`niryo_robot_arm_commander`
 
-Services & Messages files - Raspberry Pi
+Services files - Raspberry Pi
 ----------------------------------------------
 
 ChangeMotorConfig (Service)
@@ -107,6 +119,11 @@ ChangeMotorConfig (Service)
 .. literalinclude:: ../../../../niryo_robot_rpi/srv/ChangeMotorConfig.srv
    :language: rostype
 
+GetAnalogIO (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/srv/GetAnalogIO.srv
+   :language: rostype
 
 GetDigitalIO (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -126,13 +143,54 @@ SetDigitalIO (Service)
 .. literalinclude:: ../../../../niryo_robot_rpi/srv/SetDigitalIO.srv
    :language: rostype
 
-DigitalIOState (Service)
+SetAnalogIO (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/srv/SetAnalogIO.srv
+   :language: rostype
+
+SetIOMode (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/srv/SetIOMode.srv
+   :language: rostype
+
+SetPullup (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/srv/SetPullup.srv
+   :language: rostype
+
+Messages files - Raspberry Pi
+----------------------------------------------
+
+
+AnalogIO
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/msg/AnalogIO.msg
+   :language: rostype
+
+AnalogIOState (Topic)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/msg/AnalogIOState.msg
+   :language: rostype
+
+DigitalIO
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_rpi/msg/DigitalIO.msg
+   :language: rostype
+
+DigitalIOState (Topic)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_rpi/msg/DigitalIOState.msg
    :language: rostype
 
-LogStatus (Service)
+
+LogStatus (Topic)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_rpi/msg/LogStatus.msg

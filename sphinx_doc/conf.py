@@ -4,7 +4,9 @@ from sphinx.builders.html import StandaloneHTMLBuilder
 import os
 
 # Import ROS Wrapper
-sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
+sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/niryo_robot_python_ros_wrapper/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_led_ring/api/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_sound/api/'))
 
 # Kindda hack the import to import shared config file
 sys.path.append(os.path.abspath('.'))
@@ -122,6 +124,7 @@ extlinks = {
     'visualization_msgs': ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
+    'visualization_msgs': ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',

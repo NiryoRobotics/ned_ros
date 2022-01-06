@@ -1,7 +1,7 @@
 {
   "name": "default_Calibration_Tip", 
   "transform": {
-    "header_frame_id": "object_base", 
+    "header_frame_id": "object_base",
     "translation": [
       0.026,
       0.0, 

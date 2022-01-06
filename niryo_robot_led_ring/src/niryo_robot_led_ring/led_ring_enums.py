@@ -1,5 +1,5 @@
 
-from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCurrentState
+from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 
 # Message
 from niryo_robot_status.msg import RobotStatus
