@@ -14,7 +14,7 @@ class PsutilWrapper(GenericWrapper):
         self._data['ram_usage'] = self.get_ram_usage()
         self._data['rom_usage'] = self.get_rom_usage()
         for iface, iface_data in self.get_net_metrics().items():
-            for key, value in iface_data:
+            for key, value in iface_data.items():
                 self._data['{}_{}'.format(iface, key)] = value
 
     @staticmethod
