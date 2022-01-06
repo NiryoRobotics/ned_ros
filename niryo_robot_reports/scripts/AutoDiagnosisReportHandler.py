@@ -39,9 +39,9 @@ class AutoDiagnosisReportHandler:
             report = {'details': 'Unable to retrieve the details'}
 
         rospy.logdebug('Fetching metrics...')
-        report['metrics'] = {}
-        report['metrics'].update(TuptimeWrapper.get_data())
-        report['metrics'].update(PsutilWrapper.get_data())
+        report['metrics'] = []
+        report['metrics'] += [{'name': x, 'value': y} for x, y in PsutilWrapper.get_data().items()]
+        report['metrics'] += [{'name': x, 'value': y} for x, y in TuptimeWrapper.get_data().items()]
 
         report['date'] = datetime.now().isoformat()
         success = self.__cloud_api.auto_diagnosis.send(report)
