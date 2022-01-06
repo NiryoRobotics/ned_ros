@@ -39,12 +39,12 @@ class CloudAPI(object):
         return self
 
     @property
-    def alert_report(self):
+    def alert_reports(self):
         self.__url = self.__base_url + self.__ALERT_PATH
         return self
 
     @property
-    def auto_diagnosis_report(self):
+    def auto_diagnosis_reports(self):
         self.__url = self.__base_url + self.__AUTO_DIAGNOSIS_PATH
         return self
 

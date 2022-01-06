@@ -44,7 +44,7 @@ class AutoDiagnosisReportHandler:
         report['metrics'] += [{'name': x, 'value': y} for x, y in TuptimeWrapper.get_data().items()]
 
         report['date'] = datetime.now().isoformat()
-        success = self.__cloud_api.auto_diagnosis.send(report)
+        success = self.__cloud_api.auto_diagnosis_reports.send(report)
 
         rospy.logdebug(report)
 
