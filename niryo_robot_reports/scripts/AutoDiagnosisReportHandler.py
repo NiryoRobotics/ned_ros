@@ -23,7 +23,7 @@ class AutoDiagnosisReportHandler:
 
         rospy.Service('~run_auto_diagnosis', RunAutoDiagnosis, self.__run_auto_diagnosis_callback)
 
-    def __run_auto_diagnosis_callback(self):
+    def __run_auto_diagnosis_callback(self, _req):
         req = ExecuteProgramRequest()
         req.execute_from_string = False
         req.name = 'auto_diagnosis'
