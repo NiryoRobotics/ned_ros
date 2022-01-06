@@ -7,3 +7,4 @@ niryo_robot_programs_manager/ProgramLanguage language
 ---
 int16 status
 string message
+string output
