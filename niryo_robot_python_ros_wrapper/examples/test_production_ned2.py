@@ -178,7 +178,7 @@ class TestFunctions(object):
             error_str = "Service test_report doesn't exists"
             report.append(error_str)
             raise TestFailure("Service test_report doesn't exists")
-        if result.success is False:
+        if result.result is False:
             error_str = "Service test_reports didnt respond"
             report.append(error_str)
             raise TestFailure(error_str)
