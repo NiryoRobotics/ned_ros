@@ -9,13 +9,13 @@ class PsutilWrapper(GenericWrapper):
     __WIFI_IFACE = 'wlan0'
 
     def _fetch_datas(self):
-        self._data['cpu'] = {
-            'usage': self.get_cpu_usage(),
-            'temperature': self.get_cpu_temperature()
-        }
-        self._data['ram'] = {'usage': self.get_ram_usage()}
-        self._data['rom'] = {'usage': self.get_rom_usage()}
-        self._data['net'] = self.get_net_metrics()
+        self._data['cpu_usage'] = self.get_cpu_usage()
+        self._data['cpu_temperature'] = self.get_cpu_temperature()
+        self._data['ram_usage'] = self.get_ram_usage()
+        self._data['rom_usage'] = self.get_rom_usage()
+        for iface, iface_data in self.get_net_metrics().items():
+            for key, value in iface_data:
+                self._data['{}_{}'.format(iface, key)] = value
 
     @staticmethod
     def get_cpu_usage():
