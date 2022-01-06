@@ -86,7 +86,7 @@
         <child link="forearm_link" />
         <origin xyz="${distance_elbow_forearm_x} ${distance_elbow_forearm_y} 0" rpy="0 ${PI/2} 0" />
 		<limit effort="1" velocity="1.0" lower="${(limit_low_forearm_rotation + safety_pos_margin) * deg_to_rad}"
-               upper="${(limit_up_forearm_rotation - safety_pos_margin) * deg_to_rad}" />
+               upper="${(limit_up_forearm_rotation - safety_pos_margin) * deg_to_rad }" />
 		<axis xyz="0 0 1" />
 	</joint>
 
@@ -95,7 +95,7 @@
         <child link="wrist_link" />
 		<origin xyz="0 0 ${distance_forearm_wrist_z}" rpy="0 ${-PI/2} 0" />
 		<limit effort="1" velocity="1.0" lower="${(limit_low_wrist_rotation + safety_pos_margin) * deg_to_rad}"
-               upper="${(limit_up_wrist_rotation - safety_pos_margin) * deg_to_rad}" />
+               upper="${(limit_up_wrist_rotation - safety_pos_margin) * deg_to_rad }" />
 		<axis xyz="0 0 1" />
 	</joint>
 

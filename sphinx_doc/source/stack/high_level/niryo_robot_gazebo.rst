@@ -27,6 +27,6 @@ you have to change the parameter **world_name** in the file
 You can take a look at the Gazebo world by launching it without robot by precising
 the world name in the arg *world_name*: ::
 
- roslaunch niryo_robot_gazebo niryo_gazebo_world.launch world_name:=niryo_cube_world
+ roslaunch niryo_robot_gazebo niryo_gazebo_world.launch world_name:=niryo_cube_world hardware_version:=ned  # one, ned2
 
 

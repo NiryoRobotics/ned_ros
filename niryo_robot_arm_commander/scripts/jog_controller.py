@@ -31,8 +31,8 @@ from control_msgs.msg import JointTrajectoryControllerState
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from moveit_msgs.msg import Constraints
 
+from niryo_robot_arm_commander.msg import CommandJog
 from niryo_robot_msgs.msg import RobotState
-from niryo_robot_msgs.msg import CommandJog
 from niryo_robot_msgs.msg import RPY
 
 # Services

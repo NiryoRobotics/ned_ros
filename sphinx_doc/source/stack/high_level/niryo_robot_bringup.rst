@@ -15,15 +15,35 @@ Launch files are placed in the *launch* folder. Only files with **.launch** exte
 On RaspberryPI
 -------------------------
 
+One
+^^^^^^^^^^^^^^^^^^
+
+| The file **niryo_one_robot.launch** allows to launch ROS on a Raspberry Pi 3.
+| This file is automatically launched when Niryo One boots (Niryo One RPi3B image).
+
+Command to launch Niryo One's ROS Stack::
+
+ roslaunch niryo_robot_bringup niryo_none_robot.launch
+
 Ned
 ^^^^^^^^^^^^^^^^^^
 
 | The file **niryo_ned_robot.launch** allows to launch ROS on a Raspberry Pi 4.
 | This file is automatically launched when Ned boots (Ned RPi4B image).
 
-Command to launch Ned's ROS Stack:
+Command to launch Ned's ROS Stack::
 
  roslaunch niryo_robot_bringup niryo_ned_robot.launch
+
+Ned2
+^^^^^^^^^^^^^^^^^^
+
+| The file **niryo_ned2_robot.launch** allows to launch ROS on a Raspberry Pi 4.
+| This file is automatically launched when Ned2 boots (Ned2 RPi4B image).
+
+Command to launch Ned2's ROS Stack::
+
+ roslaunch niryo_robot_bringup niryo_ned2_robot.launch
 
 On Desktop (Simulation)
 -------------------------
@@ -50,6 +70,10 @@ To disable camera & gripper: ::
 
  roslaunch niryo_robot_bringup desktop_gazebo_simulation.launch gripper_n_camera:=false
 
+To run it with a specific hardware version, use the command: ::
+
+ roslaunch niryo_robot_bringup desktop_gazebo_simulation.launch hardware_version:=ned  # one, ned2
+
 Rviz simulation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -59,7 +83,17 @@ To run it, use the command: ::
 
  roslaunch niryo_robot_bringup desktop_rviz_simulation.launch
 
+To run it with a specific hardware version, use the command: ::
+
+ roslaunch niryo_robot_bringup desktop_rviz_simulation.launch hardware_version:=ned  # one, ned2
+
 Notes - Ned Bringup
 ------------------------------
+
 *niryo_robot_base* files setup many rosparams,
 these files should be launched before any other package.
+
+The following files are used to configure the robot logs:
+ * *desktop_gazebo_simulation_trace.conf*
+ * *desktop_rviz_simulation_trace.conf*
+ * *niryo_robot_trace.conf*
