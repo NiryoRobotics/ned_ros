@@ -1,0 +1,4 @@
+string service
+---
+int32 status
+string result

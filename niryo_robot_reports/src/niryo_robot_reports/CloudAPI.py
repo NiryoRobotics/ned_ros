@@ -7,7 +7,7 @@ class CloudAPI(object):
     __DAILY_PATH = '/daily-reports'
     __TEST_PATH = '/test-reports'
     __ALERT_PATH = '/alert-reports'
-    __AUTO_DIAGNOSIS = '/auto-diagnosis-reports'
+    __AUTO_DIAGNOSIS_PATH = '/auto-diagnosis-reports'
 
     def __init__(self, domain, serial_number, api_key, sharing_allowed, https=False):
         self.__base_url = '{}://{}'.format('https' if https else 'http', domain)
@@ -41,6 +41,11 @@ class CloudAPI(object):
     @property
     def alert_report(self):
         self.__url = self.__base_url + self.__ALERT_PATH
+        return self
+
+    @property
+    def auto_diagnosis_report(self):
+        self.__url = self.__base_url + self.__AUTO_DIAGNOSIS_PATH
         return self
 
     def ping(self):

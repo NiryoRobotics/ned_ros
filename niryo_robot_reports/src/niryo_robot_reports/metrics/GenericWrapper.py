@@ -7,9 +7,11 @@ class GenericWrapper:
     def __init__(self):
         self._data = {}
 
-    def get_data(self):
-        self._fetch_datas()
-        return self._data
+    @classmethod
+    def get_data(cls):
+        inst = cls()
+        inst._fetch_datas()
+        return inst._data
 
     @abstractmethod
     def _fetch_datas(self):
