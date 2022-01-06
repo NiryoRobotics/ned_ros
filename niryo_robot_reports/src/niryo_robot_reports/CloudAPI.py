@@ -6,7 +6,8 @@ class CloudAPI(object):
 
     __DAILY_PATH = '/daily-reports'
     __TEST_PATH = '/test-reports'
-    __ALERT_PATH = '/alert-report'
+    __ALERT_PATH = '/alert-reports'
+    __AUTO_DIAGNOSIS = '/auto-diagnosis-reports'
 
     def __init__(self, domain, serial_number, api_key, sharing_allowed, https=False):
         self.__base_url = '{}://{}'.format('https' if https else 'http', domain)

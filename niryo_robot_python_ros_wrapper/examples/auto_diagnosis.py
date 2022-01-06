@@ -511,8 +511,7 @@ class TestFunctions(object):
 
 
 if __name__ == '__main__':
-    rospy.init_node('niryo_auto_diagnostic_ros_wrapper')
-    robot = NiryoRosWrapper()
+    rospy.init_node('niryo_auto_diagnosis_ros_wrapper')
     print("----- START -----")
     test = TestProduction()
     test.run()
