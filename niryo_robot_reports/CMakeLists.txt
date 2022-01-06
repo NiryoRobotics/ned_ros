@@ -11,6 +11,7 @@ add_service_files(
   DIRECTORY srv
   FILES
   CheckConnection.srv
+  RunAutoDiagnosis.srv
 )
 
 # enable python module support

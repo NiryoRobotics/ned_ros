@@ -8,7 +8,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # srv
 from niryo_robot_programs_manager.srv import ExecuteProgram, ExecuteProgramRequest
-from niryo_robot_reports.srv import RunAutodiagnosis
+from niryo_robot_reports.srv import RunAutoDiagnosis
 
 from niryo_robot_reports.metrics.TuptimeWrapper import TuptimeWrapper
 from niryo_robot_reports.metrics.PsutilWrapper import PsutilWrapper
@@ -21,9 +21,9 @@ class AutoDiagnosisReportHandler:
         self.__execute_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/execute_program',
                                                             ExecuteProgram)
 
-        rospy.Service('~run_autodiagnosis', RunAutodiagnosis, self.__run_autodiagnostic_callback)
+        rospy.Service('~run_auto_diagnosis', RunAutoDiagnosis, self.__run_auto_diagnosis_callback)
 
-    def __run_autodiagnosis_callback(self):
+    def __run_auto_diagnosis_callback(self):
         req = ExecuteProgramRequest()
         req.execute_from_string = False
         req.name = 'auto_diagnosis'
