@@ -13,6 +13,7 @@ from niryo_robot_reports.srv import RunAutoDiagnosis
 from niryo_robot_reports.metrics.TuptimeWrapper import TuptimeWrapper
 from niryo_robot_reports.metrics.PsutilWrapper import PsutilWrapper
 
+
 class AutoDiagnosisReportHandler:
     def __init__(self, cloud_api):
         self.__cloud_api = cloud_api
