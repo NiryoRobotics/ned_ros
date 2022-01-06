@@ -907,7 +907,7 @@ msgstr "Section Contenus :"
 #~ msgstr "nom de l'espace de travail. Max 30 charactères"
 
 #~ msgid "Sound"
-#~ msgstr ""
+#~ msgstr "Son"
 
 #~ msgid ""
 #~ "Call service to play_sound according to"

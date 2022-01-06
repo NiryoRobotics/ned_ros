@@ -1,17 +1,17 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# Copyright (C) 2022, Niryo All rights reserved. No part of this document
 # may be reproduced or transmitted in any form or by any means without prior
 # written consent of Niryo SAS
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 17:17+0000\n"
+"POT-Creation-Date: 2022-01-03 15:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,21 +20,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:2
-msgid "Niryo_robot_status"
+#: ../../source/installation/ubuntu_16.rst:2
+msgid "Ubuntu 16 Installation"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:5
-msgid "Todo"
+#: ../../source/installation/ubuntu_16.rst:4
+msgid "TODO"
 msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_status.rst:5
-msgid "write doc"
-msgstr ""
-
-#~ msgid "This package"
-#~ msgstr ""
-
-#~ msgid "Coming soon"
-#~ msgstr ""
 

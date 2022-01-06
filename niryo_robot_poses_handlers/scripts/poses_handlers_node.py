@@ -51,20 +51,16 @@ class PoseHandlerNode:
         rospy.Subscriber('/niryo_robot_tools_commander/tcp', TCP, self.__callback_tcp)
 
         self.__tool_id = 0
-        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,  self.__callback_tool_id)
+        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32, self.__callback_tool_id)
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
 
         self.__ws_manager = WorkspaceManager(ws_dir)
-        rospy.Service('~manage_workspace', ManageWorkspace,
-                      self.__callback_manage_workspace)
-        rospy.Service('~get_workspace_ratio', GetWorkspaceRatio,
-                      self.__callback_workspace_ratio)
-        rospy.Service('~get_workspace_list', GetNameDescriptionList,
-                      self.__callback_workspace_list)
-        rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses,
-                      self.__callback_get_workspace_poses)
+        rospy.Service('~manage_workspace', ManageWorkspace, self.__callback_manage_workspace)
+        rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
+        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
+        rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
 
         if rospy.has_param('~gazebo_workspaces'):
             for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
@@ -80,8 +76,7 @@ class PoseHandlerNode:
 
         grip_dir = rospy.get_param("~grip_dir")
         self.__grip_manager = GripManager(grip_dir, self.__tool_id_gripname_dict.values())
-        rospy.Service('~get_target_pose', GetTargetPose,
-                      self.__callback_target_pose)
+        rospy.Service('~get_target_pose', GetTargetPose, self.__callback_target_pose)
 
         # Transform Handlers
         self.__transform_handler = PosesTransformHandler(self.__grip_manager)
@@ -93,22 +88,16 @@ class PoseHandlerNode:
         poses_dir = rospy.get_param("~poses_dir")
         self.__pos_manager = PoseManager(poses_dir)
 
-        rospy.Service('~manage_pose', ManagePose,
-                      self.__callback_manage_pose)
-        rospy.Service('~get_pose', GetPose,
-                      self.__callback_get_pose)
-        rospy.Service('~get_pose_list', GetNameDescriptionList,
-                      self.__callback_get_position_list)
+        rospy.Service('~manage_pose', ManagePose, self.__callback_manage_pose)
+        rospy.Service('~get_pose', GetPose, self.__callback_get_pose)
+        rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_position_list)
 
         # Trajectories
         trajectories_dir = rospy.get_param("~trajectories_dir")
         self.traj_manager = TrajectoryManager(trajectories_dir)
-        rospy.Service('~manage_trajectory', ManageTrajectory,
-                      self.__callback_manage_trajectory)
-        rospy.Service('~get_trajectory', GetTrajectory,
-                      self.__callback_get_trajectory)
-        rospy.Service('~get_trajectory_list', GetNameDescriptionList,
-                      self.__callback_get_trajectory_list)
+        rospy.Service('~manage_trajectory', ManageTrajectory, self.__callback_manage_trajectory)
+        rospy.Service('~get_trajectory', GetTrajectory, self.__callback_get_trajectory)
+        rospy.Service('~get_trajectory_list', GetNameDescriptionList, self.__callback_get_trajectory_list)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -275,9 +264,9 @@ class PoseHandlerNode:
         robot_poses_raw = []
 
         for pose in robot_poses:
-            rospy.logdebug("Robot point\n{}".format(pose.position))
+            rospy.loginfo("Robot point\n{}".format(pose.position))
             point = self.__transform_handler.get_calibration_tip_position(pose)
-            rospy.logdebug("Tip point\n{}".format(point))
+            rospy.loginfo("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
             pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
