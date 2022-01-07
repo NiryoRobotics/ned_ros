@@ -50,7 +50,6 @@ class MetricChecker:
 class AlertReportHandler:
     def __init__(self, cloud_api):
         self.__cloud_api = cloud_api
-        self.__stop_watch = Event()
         self.__watch = Thread(target=self.__run)
         self.__watch.setDaemon(True)
 
@@ -78,7 +77,7 @@ class AlertReportHandler:
             self.__send_report(metric_checker)
 
     def __send_report(self, metric_checker):
-        self.__cloud_api.alert_report.send({
+        self.__cloud_api.alert_reports.send({
             'metric': metric_checker.metric_name,
             'value': metric_checker.value,
             'date': datetime.now().isoformat()
