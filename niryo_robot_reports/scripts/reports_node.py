@@ -82,13 +82,14 @@ class ReportsNode:
         rospy.logdebug("Reports Node - Node Started")
 
     def __check_connection_callback(self, req):
-        if req.service == Service.TEST_REPORTS:
+        rospy.logdebug('service called: ' + str(req.service))
+        if req.service.to_test == Service.TEST_REPORTS:
             success = self.__cloud_api.test_reports.ping()
-        elif req.service == Service.DAILY_REPORTS:
+        elif req.service.to_test == Service.DAILY_REPORTS:
             success = self.__cloud_api.daily_reports.ping()
-        elif req.service == Service.ALERT_REPORTS:
+        elif req.service.to_test == Service.ALERT_REPORTS:
             success = self.__cloud_api.alert_reports.ping()
-        elif req.service == Service.AUTO_DIAGNOSIS_REPORTS:
+        elif req.service.to_test == Service.AUTO_DIAGNOSIS_REPORTS:
             success = self.__cloud_api.auto_diagnosis_reports.ping()
         else:
             return CommandStatus.REPORTS_SERVICE_UNREACHABLE, False
