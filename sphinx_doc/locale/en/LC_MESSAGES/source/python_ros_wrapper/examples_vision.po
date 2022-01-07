@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,15 +43,23 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:12
 msgid ""
-"As the examples start always the same, there is the code you need to add "
-"at the beginning of all of them: ::"
+"As the examples always start the same way, there is the code you need to "
+"add at the beginning of all of them: ::"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:47
+#: ../../source/python_ros_wrapper/examples_vision.rst:46
+msgid "Todo"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/examples_vision.rst:46
+msgid "le toggle ne semble pas fonctionner"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/examples_vision.rst:49
 msgid "Simple Vision pick"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:48
+#: ../../source/python_ros_wrapper/examples_vision.rst:50
 msgid "This short example shows how to do your first vision pick: ::"
 msgstr ""
 
@@ -101,5 +107,12 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "This short example show how to do your first vision pick: ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As the examples start always the "
+#~ "same, there is the code you need"
+#~ " to add at the beginning of all"
+#~ " of them: ::"
 #~ msgstr ""
 

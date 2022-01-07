@@ -11,35 +11,35 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/third_parties/dynamixel_sdk.rst:2
 msgid "Dynamixel SDK"
 msgstr "SDK Dynamixel"
 
 #: ../../source/stack/third_parties/dynamixel_sdk.rst:4
+#, fuzzy
 msgid ""
-"This package has been forked from the official "
-"[dynamixel_sdk](https://github.com/ROBOTIS-GIT/DynamixelSDK) package."
+"This package has been forked from the `official [dynamixel_sdk] package "
+"<https://github.com/ROBOTIS-GIT/DynamixelSDK/>`_."
 msgstr ""
 "Ce paquet a été forké depuis le paquet officiel "
 "[dynamixel_sdk](https://github.com/ROBOTIS-GIT/DynamixelSDK)."
 
 #: ../../source/stack/third_parties/dynamixel_sdk.rst:6
+#, fuzzy
 msgid ""
-"It has been adapted to work on Ned custom Raspberry Pi 4B shield, using the "
-"[wiringPi](http://wiringpi.com/) library."
+"It has been adapted to work on Ned's custom Raspberry Pi 4B shield, using"
+" the `[wiringPi] library <http://wiringpi.com/>`_."
 msgstr ""
-"Il a été adapté pour fonctionner avec la carte électronique maison (shield) "
-"pour Raspberry Pi 4B, en utilisant la bibliothèque "
+"Il a été adapté pour fonctionner avec la carte électronique maison "
+"(shield) pour Raspberry Pi 4B, en utilisant la bibliothèque "
 "[wiringPi](http://wiringpi.com/)."
+

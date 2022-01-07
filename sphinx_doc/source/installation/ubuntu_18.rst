@@ -17,12 +17,13 @@ Prerequisites
 The Niryo ROS Stack runs on top of ROS Melodic or Kinetic (deprecated). This version of ROS is strongly dependent of Ubuntu 18.04 version,
 thus, this OS is currently the only official supported OS.
 
-Be sure to have an up to date system before continuing ::
+Be sure to have an up to date system before continuing
+
+.. code::
+
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get dist-upgrade
-
-.. todo:: pb d'affichage ?
 
 Ubuntu packages
 ************************************************
@@ -41,15 +42,15 @@ The Niryo ROS Stack needs the following packages in order to run correctly:
 Python environment
 ************************************************
 
-The Python environment is installed using the requirements_ned2.txt file ::
+The Python environment is installed using the requirements_ned2.txt file
 
-    pip install -r src/requirements_ned2.txt
+.. code::
+
+    pip2 install -r src/requirements_ned2.txt
 
 .. note::
-    ROS Melodic is still using Python2 internally. We are aligning our Python version 
-    to it so you need to install the requirements using Python2 pip tool
-
-.. todo:: so you need ? so you can install the requirements using... plutôt non ? 
+    ROS Melodic is still using Python2 internally so are our Python scripts to keep version alignment.
+    You thus need to install the requirements using Python2 pip2 tool
 
 ROS set up
 ************************************************

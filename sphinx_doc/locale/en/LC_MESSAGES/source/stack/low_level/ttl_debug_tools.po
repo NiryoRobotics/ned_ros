@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 12:22+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,7 +79,7 @@ msgid "**--id / -i [ID]:** Device ID (-1 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:28
-msgid "**--ids [IDs]:** the list of TTL devices' ID"
+msgid "**--ids [IDs]:** List of devices IDs"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:29
@@ -92,19 +92,19 @@ msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:31
 msgid ""
-"**--get-register [Addr]:** get a value from a register, parameters is: "
+"**--get-register [Addr]:** Get a value from a register, parameters is: "
 "register address"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:32
 msgid ""
-"**--get-registers [Addr]:** get list of values from multiple devices at a"
+"**--get-registers [Addr]:** Get list of values from multiple devices at a"
 " register address, parameters is: register address"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:33
 msgid ""
-"**--get-size [Size]:** size of data to be read with get-register or get-"
+"**--get-size [Size]:** Size of data to be read with get-register or get-"
 "registers, parameters is: size of data in bytes"
 msgstr ""
 
@@ -123,7 +123,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:36
-msgid "**--calibrate:** Calibrate all steppers TTL. It is used in NED2 only"
+msgid ""
+"**--calibrate:** Calibrate all steppers on the bus. It is used in Ned2 "
+"only"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:39
@@ -377,5 +379,31 @@ msgstr ""
 #~ "and you should first stop the "
 #~ "robot stack (sudo service niryo_robot_ros "
 #~ "stop)"
+#~ msgstr ""
+
+#~ msgid "**--ids [IDs]:** the list of TTL devices' ID"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-register [Addr]:** get a value"
+#~ " from a register, parameters is: "
+#~ "register address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-registers [Addr]:** get list of"
+#~ " values from multiple devices at a"
+#~ " register address, parameters is: register"
+#~ " address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-size [Size]:** size of data "
+#~ "to be read with get-register or"
+#~ " get-registers, parameters is: size "
+#~ "of data in bytes"
+#~ msgstr ""
+
+#~ msgid "**--calibrate:** Calibrate all steppers TTL. It is used in NED2 only"
 #~ msgstr ""
 

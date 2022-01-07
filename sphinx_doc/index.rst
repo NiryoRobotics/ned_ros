@@ -84,7 +84,9 @@ Learn more on this :doc:`section <source/more>`.
    :caption: Introduction
 
    source/overview
+   source/real_robot
    source/simulation
+
 
 .. toctree::
    :hidden:

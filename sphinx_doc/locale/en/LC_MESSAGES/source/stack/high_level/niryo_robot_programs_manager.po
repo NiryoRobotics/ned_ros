@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,8 +41,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:14
 msgid ""
-"Calls are not available from the Python ROS Wrapper, as it made to run "
-"its programs with the Python ROS Wrapper."
+"Calls are not available from the Python ROS Wrapper, as it is made to run"
+" its programs with the Python ROS Wrapper."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:17
@@ -423,5 +423,12 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Calls are not available from the "
+#~ "Python ROS Wrapper, as it made to"
+#~ " run its programs with the Python "
+#~ "ROS Wrapper."
 #~ msgstr ""
 

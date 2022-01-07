@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 17:17+0000\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -193,7 +193,7 @@ msgid ":std_msgs:`std_msgs/Int8<Int8>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:53
-msgid "Publish the current led color"
+msgid "Publish the current LED color"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:54
@@ -232,7 +232,7 @@ msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:72
-msgid "Shutdown the Raspberry Pi"
+msgid "Shutdowns the Raspberry Pi"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:73
@@ -322,7 +322,7 @@ msgid ":ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:93
-msgid "Set led state"
+msgid "Sets LED state"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:94
@@ -336,7 +336,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:96
-msgid "Set the led in blink mode with the color given"
+msgid "Sets the LED in blink mode with the color given"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:97
@@ -344,7 +344,7 @@ msgid "``purge_ros_logs``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:99
-msgid "Purge ROS log"
+msgid "Purges ROS log"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:100
@@ -353,8 +353,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:102
 msgid ""
-"Modify the permanent settings that tells if robot should purge it's ROS "
-"log at each boot"
+"Modifies the permanent settings that tell if the robot should purge it's "
+"ROS log at each boot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:105
@@ -653,5 +653,26 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Publish the current led color"
+#~ msgstr ""
+
+#~ msgid "Shutdown the Raspberry Pi"
+#~ msgstr ""
+
+#~ msgid "Set led state"
+#~ msgstr ""
+
+#~ msgid "Set the led in blink mode with the color given"
+#~ msgstr ""
+
+#~ msgid "Purge ROS log"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Modify the permanent settings that tells"
+#~ " if robot should purge it's ROS "
+#~ "log at each boot"
 #~ msgstr ""
 

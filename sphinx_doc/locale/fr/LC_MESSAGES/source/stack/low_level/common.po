@@ -11,17 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 18:18+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/common.rst:2
 msgid "Common"
@@ -29,11 +26,11 @@ msgstr "Common"
 
 #: ../../source/stack/low_level/common.rst:4
 msgid ""
-"The Common package defines the common software components of the low level "
-"stack. It is split into a model part and a utility part :"
+"The Common package defines the common software components of the low "
+"level stack. It is split into a model part and a utility part :"
 msgstr ""
-"Le package Common définie les composants logiciels communs de la stack bas "
-"niveau. Il est séparé en une partie modèle et une partie utilitaire :"
+"Le package Common définie les composants logiciels communs de la stack "
+"bas niveau. Il est séparé en une partie modèle et une partie utilitaire :"
 
 #: ../../source/stack/low_level/common.rst:5
 msgid ""
@@ -45,8 +42,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/common.rst:6
 msgid "- The 'util' subpackage defines cpp interfaces and useful functions"
-msgstr ""
-"- Le sous-package 'util' définie les interfaces cpp et les fonction utiles"
+msgstr "- Le sous-package 'util' définie les interfaces cpp et les fonction utiles"
 
 #: ../../source/stack/low_level/common.rst:9
 msgid "Model"
@@ -56,145 +52,147 @@ msgstr "Model"
 msgid "The model subpackage is comprised of:"
 msgstr "Le sous-package model est compris de :"
 
-#: ../../source/stack/low_level/common.rst:15
+#: ../../source/stack/low_level/common.rst:13
 msgid "States"
 msgstr "States"
 
-#: ../../source/stack/low_level/common.rst:16
+#: ../../source/stack/low_level/common.rst:14
+#, fuzzy
 msgid ""
-"Classes to represent the virtual state of each hardware component at any "
-"moment. The hierarchy allows powerful polymorphism so that we can interpret "
-"each component differently based on the information we need to obtain."
+"Classes, to represent the virtual state of each hardware component at any"
+" moment. The hierarchy allows powerful polymorphism so that we can "
+"interpret each component differently based on the information we need to "
+"obtain."
 msgstr ""
 "Classes représentant l'état virtuel de chaque composant matériel à tout "
-"moment. La hiérarchie permet de mettre en place un polymorphisme efficace "
-"afin de pouvoir interprétet chaque composant différemment en fonction des "
-"informations que l'on souhaite obtenir."
+"moment. La hiérarchie permet de mettre en place un polymorphisme efficace"
+" afin de pouvoir interprétet chaque composant différemment en fonction "
+"des informations que l'on souhaite obtenir."
 
-#: ../../source/stack/low_level/common.rst:24
+#: ../../source/stack/low_level/common.rst:22
 msgid "Abstract Hardware State inheritance graph"
 msgstr "Graphe d'héritage de Abstract Hardware State"
 
-#: ../../source/stack/low_level/common.rst:27
+#: ../../source/stack/low_level/common.rst:25
 msgid "Enums"
 msgstr "Enums"
 
-#: ../../source/stack/low_level/common.rst:28
+#: ../../source/stack/low_level/common.rst:26
 msgid ""
 "Enhanced enums, to keep trace of various enumeration and be able to have "
 "useful utilities attached to them (like conversion in string)."
 msgstr ""
-"Enums améliorés, pour garder une trace des multiples énumérations et dotées "
-"de méthodes utilitaires pratiques (comme la conversion en chaine de "
-"caractère par exemple)."
+"Enums améliorés, pour garder une trace des multiples énumérations et "
+"dotées de méthodes utilitaires pratiques (comme la conversion en chaine "
+"de caractère par exemple)."
 
-#: ../../source/stack/low_level/common.rst:35
+#: ../../source/stack/low_level/common.rst:33
 msgid "Hardware Type Enum inheritance graph"
 msgstr "Graphe d'héritage de Hardware Type Enum"
 
-#: ../../source/stack/low_level/common.rst:38
+#: ../../source/stack/low_level/common.rst:36
 msgid "Commands"
 msgstr "Commandes"
 
-#: ../../source/stack/low_level/common.rst:39
+#: ../../source/stack/low_level/common.rst:37
 msgid ""
 "Classes representing single and synchronize commands, for steppers and "
 "dynamixels. They are needed in queues in the ttl_driver and can_driver "
 "packages."
 msgstr ""
-"Classes représentant les commandes simple et synchrones, pour les steppers "
-"et les dynamixels. Elles sont nécessaires pour leur utilisation au sein des "
-"queues de commandes des packages ttl_driver et can_driver."
+"Classes représentant les commandes simple et synchrones, pour les "
+"steppers et les dynamixels. Elles sont nécessaires pour leur utilisation "
+"au sein des queues de commandes des packages ttl_driver et can_driver."
 
-#: ../../source/stack/low_level/common.rst:50
+#: ../../source/stack/low_level/common.rst:48
 msgid "Commands graphs"
 msgstr "Graph des Commandes"
 
-#: ../../source/stack/low_level/common.rst:55
+#: ../../source/stack/low_level/common.rst:53
 msgid "|picSingle|"
 msgstr "|picSingle|"
 
-#: ../../source/stack/low_level/common.rst:55
+#: ../../source/stack/low_level/common.rst:53
 msgid "|picSync|"
 msgstr "|picSync|"
 
-#: ../../source/stack/low_level/common.rst:57
+#: ../../source/stack/low_level/common.rst:55
 msgid "Single Cmd"
 msgstr "Single Cmd"
 
-#: ../../source/stack/low_level/common.rst:57
+#: ../../source/stack/low_level/common.rst:55
 msgid "Sync Cmd"
 msgstr "Sync Cmd"
 
-#: ../../source/stack/low_level/common.rst:60
+#: ../../source/stack/low_level/common.rst:58
 msgid ""
-"Each type of command is an alias to specified versions of two base template "
-"classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
+"Each type of command is an alias to specified versions of two base "
+"template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
 msgstr ""
 "Chaque type de commande est un alias de versions spécialisées des deux "
 "classes template de base : AbstractSynchronizeMotorCmd et "
 "AbstractSingleMotorCmd"
 
-#: ../../source/stack/low_level/common.rst:63
+#: ../../source/stack/low_level/common.rst:61
 msgid "Util"
 msgstr "Util"
 
-#: ../../source/stack/low_level/common.rst:64
+#: ../../source/stack/low_level/common.rst:62
 msgid "The util subpackage is comprised of:"
 msgstr "Le sous-package util est compris de :"
 
-#: ../../source/stack/low_level/common.rst:66
-msgid ""
-"Cpp interfaces, used globally in the stack for polymorphism for instance"
+#: ../../source/stack/low_level/common.rst:64
+msgid "Cpp interfaces, used globally in the stack for polymorphism for instance"
 msgstr ""
-"Interfaces Cpp, utilisées globalement dans la stack pour du polymorphisme "
-"par exemple"
+"Interfaces Cpp, utilisées globalement dans la stack pour du polymorphisme"
+" par exemple"
 
-#: ../../source/stack/low_level/common.rst:67
+#: ../../source/stack/low_level/common.rst:65
 msgid "Utility functions usable globally in the stack"
 msgstr "Des fonctions utilitaires, utilisées globalement dans la stack"
 
-#: ../../source/stack/low_level/common.rst:70
+#: ../../source/stack/low_level/common.rst:68
 msgid "Dependencies"
 msgstr "Dépendances"
 
-#: ../../source/stack/low_level/common.rst:71
+#: ../../source/stack/low_level/common.rst:69
+#, fuzzy
 msgid ""
-"This package does not depend on any package. This package is a dependency of "
-"the following packages :"
+"This package does not depend on any package. This package is a dependency"
+" of the following packages:"
 msgstr ""
-"Ce package ne dépend d'aucun autre package. Ce package est une dépendance "
-"des packages suivants :"
+"Ce package ne dépend d'aucun autre package. Ce package est une dépendance"
+" des packages suivants :"
 
-#: ../../source/stack/low_level/common.rst:74
+#: ../../source/stack/low_level/common.rst:72
 msgid "can_driver"
 msgstr "can_driver"
 
-#: ../../source/stack/low_level/common.rst:75
+#: ../../source/stack/low_level/common.rst:73
 msgid "conveyor_interface"
 msgstr "conveyor_interface"
 
-#: ../../source/stack/low_level/common.rst:76
+#: ../../source/stack/low_level/common.rst:74
 msgid "cpu_interface"
 msgstr "cpu_interface"
 
-#: ../../source/stack/low_level/common.rst:77
+#: ../../source/stack/low_level/common.rst:75
 msgid "end_effector_interface"
 msgstr "end_effector_interface"
 
-#: ../../source/stack/low_level/common.rst:78
+#: ../../source/stack/low_level/common.rst:76
 msgid "joints_interface"
 msgstr "joints_interface"
 
-#: ../../source/stack/low_level/common.rst:79
+#: ../../source/stack/low_level/common.rst:77
 msgid "niryo_robot_hardware_interface"
 msgstr "niryo_robot_hardware_interface"
 
-#: ../../source/stack/low_level/common.rst:80
+#: ../../source/stack/low_level/common.rst:78
 msgid "tools_interface"
 msgstr "tools_interface"
 
-#: ../../source/stack/low_level/common.rst:81
+#: ../../source/stack/low_level/common.rst:79
 msgid "ttl_driver"
 msgstr "ttl_driver"
 
@@ -233,3 +231,4 @@ msgstr "ttl_driver"
 
 #~ msgid "Services & Messages files - common"
 #~ msgstr ""
+

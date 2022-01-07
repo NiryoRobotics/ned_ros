@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,319 +68,328 @@ msgid ""
 "When we know the object pose in robot coordinates, we can't directly send"
 " this pose to the robot because we specify the target pose of the "
 "tool_link and not of the actual TCP (tool center point). Therefore we "
-"introduce the notion of grip. Each end effector has its own grip that "
-"specifies where to place the robot with respect to the object. Currently,"
-" the notion of grip is not part of the python/tcp/blockly interface "
-"because it would add an extra layer of complexity that is not really "
-"necessary for the moment. Therefore we have a default grip for all tools "
-"that is selected automatically based on the current tool id. However, "
-"everything is ready if you want to define custom grips, e.g. for custom "
-"tools or for custom grip positions."
+"introduced the notion of grip. Each end effector has its own grip that "
+"specifies where to place the robot with respect to the object."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:39
-msgid "The vision pick loop"
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:33
+msgid ""
+"Currently, the notion of grip is not part of the python/tcp/blockly "
+"interface because it would add an extra layer of complexity that is not "
+"really necessary for the moment."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:36
+msgid ""
+"Therefore we have a default grip for all tools that is selected "
+"automatically based on the current tool id. However, everything is ready "
+"if you want to define custom grips, e.g. for custom tools or for custom "
+"grip positions."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:41
-msgid ""
-"Camera detects object relative to markers and sends   x\\ :sub:`rel`\\, "
-"y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
+msgid "The vision pick loop"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:42
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:43
+msgid ""
+"The camera detects objects relative to markers and sends   x\\ "
+":sub:`rel`\\, y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:44
 msgid ""
 "The object is placed on the workspace, revealing the object pose in robot"
 " coordinates x, y, z, roll, pitch, yaw."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:43
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:45
 msgid ""
 "The grip is applied on the absolute object pose and gives the pose the "
 "robot should move to."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:46
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:48
 msgid "Poses & trajectories"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:48
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:50
 msgid "List of poses"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:51
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:53
 msgid "Parameters - Poses handlers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:52
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:54
 msgid "Poses Handlers' Parameters"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:58
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:78
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:60
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:80
 msgid "Name"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:59
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:80
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:61
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:82
 msgid "Description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:60
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:62
 msgid "``workspace_dir``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:61
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:63
 msgid "Path to the Workspace storage mother folder"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:62
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:64
 msgid "``grip_dir``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:63
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:65
 msgid "Path to the Grip storage mother folder"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:64
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:66
 msgid "``poses_dir``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:65
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:67
 msgid "Path to the Poses storage mother folder"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:66
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:68
 msgid "``trajectories_dir``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:67
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:69
 msgid "Path to the Trajectory storage mother folder"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:70
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:72
 msgid "Services - Poses handlers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:72
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:74
 msgid "Poses Handlers' Services"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:79
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:81
 msgid "Message Type"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:82
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:84
 msgid "``manage_workspace``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:83
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:85
 msgid ""
 ":ref:`ManageWorkspace<source/stack/high_level/niryo_robot_poses_handlers:ManageWorkspace"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:84
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:86
 msgid "Save/Delete a workspace"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:85
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:87
 msgid "``get_workspace_ratio``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:86
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:88
 msgid ""
 ":ref:`GetWorkspaceRatio<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRatio"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:87
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:89
 msgid "Get ratio of a workspace"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:88
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:90
 msgid "``get_workspace_list``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:89
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:106
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:116
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:91
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:108
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:118
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:90
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:92
 msgid "Get list of workspaces name & description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:91
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:93
 msgid "``get_workspace_poses``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:92
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:94
 msgid ""
 ":ref:`GetWorkspaceRobotPoses<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:93
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:95
 msgid "Get workspace's robot poses"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:95
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:97
 msgid "``get_target_pose``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:96
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:98
 msgid ""
 ":ref:`GetTargetPose<source/stack/high_level/niryo_robot_poses_handlers:GetTargetPose"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:97
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:99
 msgid "Get saved programs name"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:99
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:101
 msgid "``manage_pose``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:100
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:102
 msgid ""
 ":ref:`ManagePose<source/stack/high_level/niryo_robot_poses_handlers:ManagePose"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:101
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:103
 msgid "Save/Delete a Pose"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:102
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:104
 msgid "``get_pose``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:103
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:105
 msgid ""
 ":ref:`GetPose<source/stack/high_level/niryo_robot_poses_handlers:GetPose "
 "(Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:104
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:106
 msgid "Get Pose"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:105
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:107
 msgid "``get_pose_list``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:107
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:109
 msgid "Get list of poses name & description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:109
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:111
 msgid "``manage_trajectory``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:110
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:112
 msgid ""
 ":ref:`ManageTrajectory<source/stack/high_level/niryo_robot_poses_handlers:ManageTrajectory"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:111
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:113
 msgid "Save/Delete a Trajectory"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:112
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:114
 msgid "``get_trajectory``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:113
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:115
 msgid ""
 ":ref:`GetTrajectory<source/stack/high_level/niryo_robot_poses_handlers:GetTrajectory"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:114
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:116
 msgid "Get Trajectory"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:115
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:117
 msgid "``get_trajectory_list``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:117
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:119
 msgid "Get list of trajectories name & description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:120
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:122
 msgid "All these services are available as soon as the node is started."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:123
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:125
 msgid "Dependencies - Poses handlers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:125
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:127
 msgid ":msgs_index:`geometry_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:126
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:128
 msgid ":msgs_index:`moveit_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:127
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:129
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:128
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:130
 msgid ":wiki_ros:`tf`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:132
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:134
 msgid "Services & messages files - Poses handlers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:135
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:137
 msgid "GetPose (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:142
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:144
 msgid "GetTargetPose (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:149
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:151
 msgid "GetTrajectory (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:156
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:158
 msgid "GetWorkspaceRatio (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:163
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:165
 msgid "GetWorkspaceRobotPoses (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:170
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:172
 msgid "ManagePose (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:177
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:179
 msgid "ManageTrajectory (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:184
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:186
 msgid "ManageWorkspace (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:191
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:193
 msgid "NiryoPose (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:198
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:200
 msgid "Trajectory (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:205
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:207
 msgid "Workspace (Message)"
 msgstr ""
 
@@ -545,5 +554,36 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "When we know the object pose in"
+#~ " robot coordinates, we can't directly "
+#~ "send this pose to the robot "
+#~ "because we specify the target pose "
+#~ "of the tool_link and not of the"
+#~ " actual TCP (tool center point). "
+#~ "Therefore we introduce the notion of "
+#~ "grip. Each end effector has its "
+#~ "own grip that specifies where to "
+#~ "place the robot with respect to "
+#~ "the object. Currently, the notion of "
+#~ "grip is not part of the "
+#~ "python/tcp/blockly interface because it would"
+#~ " add an extra layer of complexity "
+#~ "that is not really necessary for "
+#~ "the moment. Therefore we have a "
+#~ "default grip for all tools that is"
+#~ " selected automatically based on the "
+#~ "current tool id. However, everything is"
+#~ " ready if you want to define "
+#~ "custom grips, e.g. for custom tools "
+#~ "or for custom grip positions."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Camera detects object relative to "
+#~ "markers and sends   x\\ :sub:`rel`\\, "
+#~ "y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
 #~ msgstr ""
 

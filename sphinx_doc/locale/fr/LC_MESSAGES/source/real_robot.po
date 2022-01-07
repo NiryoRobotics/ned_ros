@@ -1,15 +1,15 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# Copyright (C) 2022, Niryo All rights reserved. No part of this document
 # may be reproduced or transmitted in any form or by any means without prior
 # written consent of Niryo SAS
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation v4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -20,28 +20,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:2
-msgid "Niryo_robot_status"
+#: ../../source/real_robot.rst:3
+msgid "How to use your Niryo Robot"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:4
-msgid "This package"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_status.rst:6
+#: ../../source/real_robot.rst:5
 msgid "Todo"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:6
-msgid "pas terminé"
+#: ../../source/real_robot.rst:5
+msgid ""
+"I think we need a page here to explain how to use a real robot (as we "
+"have a page for simulation)"
 msgstr ""
-
-#~ msgid "This package"
-#~ msgstr ""
-
-#~ msgid "Coming soon"
-#~ msgstr ""
-
-#~ msgid "write doc"
-#~ msgstr ""
 

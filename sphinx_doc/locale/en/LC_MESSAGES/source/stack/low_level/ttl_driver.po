@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:28+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,12 +28,10 @@ msgstr ""
 msgid "This package handles motors which communicate via the protocol TTL."
 msgstr ""
 
-#: ../../source/stack/low_level/ttl_driver.rst:5
-msgid "This package is based on the DXL SDK."
-msgstr ""
-
 #: ../../source/stack/low_level/ttl_driver.rst:6
-msgid "It provides an interface to :wiki_ros:`dynamixel_sdk`."
+msgid ""
+"This package is based on the DXL SDK. It provides an interface to "
+":wiki_ros:`dynamixel_sdk`."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:9
@@ -148,7 +146,7 @@ msgid "``ttl_hardware_read_status_frequency``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Read frequency for Ttl's device'status."
+msgid "Read frequency for device status on the bus."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -232,7 +230,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:85
-msgid "Control dynamixel's LED"
+msgid "Control dynamixel LED"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:86
@@ -571,5 +569,17 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "It belongs to the ROS namespace |namespace_emphasize|."
+#~ msgstr ""
+
+#~ msgid "This package is based on the DXL SDK."
+#~ msgstr ""
+
+#~ msgid "It provides an interface to :wiki_ros:`dynamixel_sdk`."
+#~ msgstr ""
+
+#~ msgid "Read frequency for Ttl's device'status."
+#~ msgstr ""
+
+#~ msgid "Control dynamixel's LED"
 #~ msgstr ""
 

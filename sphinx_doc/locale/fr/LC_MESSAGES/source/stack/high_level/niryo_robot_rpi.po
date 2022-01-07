@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 17:17+0000\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -225,7 +225,8 @@ msgid ":std_msgs:`std_msgs/Int8<Int8>`"
 msgstr ":std_msgs:`std_msgs/Int8<Int8>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:53
-msgid "Publish the current led color"
+#, fuzzy
+msgid "Publish the current LED color"
 msgstr "Publier la couleur actuelle de la led"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:54
@@ -268,7 +269,8 @@ msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:72
-msgid "Shutdown the Raspberry Pi"
+#, fuzzy
+msgid "Shutdowns the Raspberry Pi"
 msgstr "Arrêter le Raspberry Pi"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:73
@@ -371,7 +373,8 @@ msgid ":ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ":ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:93
-msgid "Set led state"
+#, fuzzy
+msgid "Sets LED state"
 msgstr "Définir l'état de la LED"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:94
@@ -387,7 +390,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:96
-msgid "Set the led in blink mode with the color given"
+#, fuzzy
+msgid "Sets the LED in blink mode with the color given"
 msgstr "Régler la LED en mode clignotant avec la couleur donnée"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:97
@@ -395,17 +399,19 @@ msgid "``purge_ros_logs``"
 msgstr "``purge_ros_logs``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:99
-msgid "Purge ROS log"
-msgstr "Purger ROS log"
+#, fuzzy
+msgid "Purges ROS log"
+msgstr "``purge_ros_logs``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:100
 msgid "``set_purge_ros_log_on_startup``"
 msgstr "``set_purge_ros_log_on_startup``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:102
+#, fuzzy
 msgid ""
-"Modify the permanent settings that tells if robot should purge it's ROS "
-"log at each boot"
+"Modifies the permanent settings that tell if the robot should purge it's "
+"ROS log at each boot"
 msgstr ""
 "Modifier les paramètres permanents qui indiquent si le robot doit purger "
 "son ROS log à chaque démarrage"
@@ -625,4 +631,7 @@ msgstr "LogStatus (Topic)"
 
 #~ msgid "DigitalIOState (Service)"
 #~ msgstr "DigitalIOState (Service)"
+
+#~ msgid "Purge ROS log"
+#~ msgstr "Purger ROS log"
 

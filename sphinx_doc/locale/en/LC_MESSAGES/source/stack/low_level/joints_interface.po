@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,8 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:13
 msgid ""
 "Create a controller manager, from :wiki_ros:`controller_manager` package,"
-" provides the infrastructure to load, unload, start and stop controllers."
+" that provides the infrastructure to load, unload, start and stop "
+"controllers."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:14
@@ -121,9 +122,9 @@ msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:42
 msgid ""
-"These parameters are specific to the hardware version (ned, one or ned2)."
-" This file comes in a different version for each hardware version. They "
-"are located in a directory of the hardware version name."
+"These parameters are specific to the hardware version (Ned, Niryo One or "
+"Ned2). This file comes in a different version for each hardware version. "
+"They are located in a directory of the hardware version name."
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:45
@@ -670,9 +671,10 @@ msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:332
 msgid ""
-"The velocity profiles for the steppers (in *calibration_params.yaml* and "
-"*steppers_params.yaml* files) can be defined for TTL steppers only (thus "
-"for Ned2 only). They are defined according to the following graph :"
+"The velocity profiles for the Stepper motors (in "
+"*calibration_params.yaml* and *steppers_params.yaml* files) can be "
+"defined for TTL bus only (thus for Ned2 only). They are defined according"
+" to the following graph :"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:341
@@ -1237,5 +1239,30 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The ROS Node is made to:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Create a controller manager, from "
+#~ ":wiki_ros:`controller_manager` package, provides the"
+#~ " infrastructure to load, unload, start "
+#~ "and stop controllers."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "These parameters are specific to the "
+#~ "hardware version (ned, one or ned2). "
+#~ "This file comes in a different "
+#~ "version for each hardware version. They"
+#~ " are located in a directory of "
+#~ "the hardware version name."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The velocity profiles for the steppers"
+#~ " (in *calibration_params.yaml* and "
+#~ "*steppers_params.yaml* files) can be defined"
+#~ " for TTL steppers only (thus for "
+#~ "Ned2 only). They are defined according"
+#~ " to the following graph :"
 #~ msgstr ""
 

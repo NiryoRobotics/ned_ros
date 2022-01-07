@@ -11,4 +11,4 @@ Python Libraries
     smbus2==0.4.1
     spidev==3.5
 
-.. todo:: cette partie est complète ?
+.. todo:: cette partie est complète ? CC: Non, todo

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,11 +31,11 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:5
-msgid "This package uses the mcp_can_rpi for CAN communication."
+msgid "This package uses the mcp_can_rpi for CAN bus communication."
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:6
-msgid "It is used by only NED and ONE."
+msgid "It is used by only Ned and One."
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:9
@@ -250,5 +250,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "It is integrated in :doc:`niryo_robot_hardware_interface` package to:"
+#~ msgstr ""
+
+#~ msgid "This package uses the mcp_can_rpi for CAN communication."
+#~ msgstr ""
+
+#~ msgid "It is used by only NED and ONE."
 #~ msgstr ""
 

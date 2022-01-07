@@ -11,17 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/can_driver.rst:2
 msgid "CAN Driver"
@@ -32,15 +29,17 @@ msgid ""
 "This package provides an interface between high level ROS packages and "
 "handler of CAN Bus"
 msgstr ""
-"Ce package procure une interface entre les packages ROS haut niveau et le "
-"gestionnaire de bus CAN"
+"Ce package procure une interface entre les packages ROS haut niveau et le"
+" gestionnaire de bus CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:5
-msgid "This package uses the mcp_can_rpi for CAN communication."
+#, fuzzy
+msgid "This package uses the mcp_can_rpi for CAN bus communication."
 msgstr "Ce package utilise la librairie mcp_can_rpi pour la communication CAN."
 
 #: ../../source/stack/low_level/can_driver.rst:6
-msgid "It is used by only NED and ONE."
+#, fuzzy
+msgid "It is used by only Ned and One."
 msgstr "Utilisé uniquement par le NED et le ONE."
 
 #: ../../source/stack/low_level/can_driver.rst:9
@@ -62,7 +61,8 @@ msgstr "CAN Interface Core"
 #: ../../source/stack/low_level/can_driver.rst:15
 msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr ""
-"Il est instancié dans le package :doc:`niryo_robot_hardware_interface` pour."
+"Il est instancié dans le package :doc:`niryo_robot_hardware_interface` "
+"pour."
 
 #: ../../source/stack/low_level/can_driver.rst:21
 msgid "It has been conceived to:"
@@ -70,8 +70,7 @@ msgstr "Il a été conçu pour :"
 
 #: ../../source/stack/low_level/can_driver.rst:18
 msgid "Initialize the CAN Interface and physical bus with the configurations."
-msgstr ""
-"Initialiser l'interface CAN et le bus physique avec les configurations."
+msgstr "Initialiser l'interface CAN et le bus physique avec les configurations."
 
 #: ../../source/stack/low_level/can_driver.rst:19
 msgid "Add, remove and monitor devices on bus."
@@ -97,12 +96,12 @@ msgstr "Paramètres"
 
 #: ../../source/stack/low_level/can_driver.rst:28
 msgid ""
-"Theses configuration parameters are set to work with Niryo's robot. Do not "
-"edit them."
+"Theses configuration parameters are set to work with Niryo's robot. Do "
+"not edit them."
 msgstr ""
-"Ces paramètres de configuration ont été étudiés pour faire fonctionner les "
-"robots de Niryo de manière optiomale. Il est fortement déconseillé de les "
-"éditer."
+"Ces paramètres de configuration ont été étudiés pour faire fonctionner "
+"les robots de Niryo de manière optiomale. Il est fortement déconseillé de"
+" les éditer."
 
 #: ../../source/stack/low_level/can_driver.rst:30
 msgid "CAN Driver's Parameters"
@@ -236,3 +235,4 @@ msgstr "StepperArrayMotorHardwareStatus (Message)"
 
 #~ msgid "Receive stepper motors data."
 #~ msgstr "Recevoir des données des moteurs stepper."
+

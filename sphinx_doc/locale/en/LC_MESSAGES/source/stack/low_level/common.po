@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 18:18+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,128 +48,128 @@ msgstr ""
 msgid "The model subpackage is comprised of:"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:15
+#: ../../source/stack/low_level/common.rst:13
 msgid "States"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:16
+#: ../../source/stack/low_level/common.rst:14
 msgid ""
-"Classes to represent the virtual state of each hardware component at any "
-"moment. The hierarchy allows powerful polymorphism so that we can "
+"Classes, to represent the virtual state of each hardware component at any"
+" moment. The hierarchy allows powerful polymorphism so that we can "
 "interpret each component differently based on the information we need to "
 "obtain."
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:24
+#: ../../source/stack/low_level/common.rst:22
 msgid "Abstract Hardware State inheritance graph"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:27
+#: ../../source/stack/low_level/common.rst:25
 msgid "Enums"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:28
+#: ../../source/stack/low_level/common.rst:26
 msgid ""
 "Enhanced enums, to keep trace of various enumeration and be able to have "
 "useful utilities attached to them (like conversion in string)."
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:35
+#: ../../source/stack/low_level/common.rst:33
 msgid "Hardware Type Enum inheritance graph"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:38
+#: ../../source/stack/low_level/common.rst:36
 msgid "Commands"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:39
+#: ../../source/stack/low_level/common.rst:37
 msgid ""
 "Classes representing single and synchronize commands, for steppers and "
 "dynamixels. They are needed in queues in the ttl_driver and can_driver "
 "packages."
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:50
+#: ../../source/stack/low_level/common.rst:48
 msgid "Commands graphs"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:55
+#: ../../source/stack/low_level/common.rst:53
 msgid "|picSingle|"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:55
+#: ../../source/stack/low_level/common.rst:53
 msgid "|picSync|"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:57
+#: ../../source/stack/low_level/common.rst:55
 msgid "Single Cmd"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:57
+#: ../../source/stack/low_level/common.rst:55
 msgid "Sync Cmd"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:60
+#: ../../source/stack/low_level/common.rst:58
 msgid ""
 "Each type of command is an alias to specified versions of two base "
 "template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:63
+#: ../../source/stack/low_level/common.rst:61
 msgid "Util"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:64
+#: ../../source/stack/low_level/common.rst:62
 msgid "The util subpackage is comprised of:"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:66
+#: ../../source/stack/low_level/common.rst:64
 msgid "Cpp interfaces, used globally in the stack for polymorphism for instance"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:67
+#: ../../source/stack/low_level/common.rst:65
 msgid "Utility functions usable globally in the stack"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:70
+#: ../../source/stack/low_level/common.rst:68
 msgid "Dependencies"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:71
+#: ../../source/stack/low_level/common.rst:69
 msgid ""
 "This package does not depend on any package. This package is a dependency"
-" of the following packages :"
+" of the following packages:"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:74
+#: ../../source/stack/low_level/common.rst:72
 msgid "can_driver"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:75
+#: ../../source/stack/low_level/common.rst:73
 msgid "conveyor_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:76
+#: ../../source/stack/low_level/common.rst:74
 msgid "cpu_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:77
+#: ../../source/stack/low_level/common.rst:75
 msgid "end_effector_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:78
+#: ../../source/stack/low_level/common.rst:76
 msgid "joints_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:79
+#: ../../source/stack/low_level/common.rst:77
 msgid "niryo_robot_hardware_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:80
+#: ../../source/stack/low_level/common.rst:78
 msgid "tools_interface"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:81
+#: ../../source/stack/low_level/common.rst:79
 msgid "ttl_driver"
 msgstr ""
 
@@ -213,5 +213,20 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Commands table"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Classes to represent the virtual state"
+#~ " of each hardware component at any"
+#~ " moment. The hierarchy allows powerful "
+#~ "polymorphism so that we can interpret"
+#~ " each component differently based on "
+#~ "the information we need to obtain."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package does not depend on "
+#~ "any package. This package is a "
+#~ "dependency of the following packages :"
 #~ msgstr ""
 

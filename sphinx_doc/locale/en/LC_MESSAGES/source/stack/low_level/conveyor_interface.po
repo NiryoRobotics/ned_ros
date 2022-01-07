@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,30 +28,17 @@ msgstr ""
 msgid "This package handles Niryo's Conveyors."
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:5
-msgid "It allows you to control up to two Conveyors at the same time."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:6
-msgid ""
-"Two version of the conveyor exist : The Conveyor Belt 1, communicating "
-"via a CAN bus, and the Conveyor Belt 2,"
-msgstr ""
-
 #: ../../source/stack/low_level/conveyor_interface.rst:7
-msgid "communicating via a TTL bus."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:8
-msgid ""
-"Both of them are directly compatible for the Ned and One. For the Ned 2 "
-"Robot, you will need to change the stepper card"
+msgid "It allows you to control up to two Conveyors at the same time."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:9
 msgid ""
-"of the CAN Conveyor Belt to be able to use it on a TTL port (there is no "
-"CAN port on Ned 2)."
+"Two version of the conveyor exist : The Conveyor Belt, communicating via "
+"a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. Both "
+"of them are directly compatible for the Ned and One. For Ned2, you will "
+"need to change the stepper card of the CAN Conveyor Belt to be able to "
+"use it on a TTL port (there is no CAN port on Ned2)."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:12
@@ -80,12 +67,26 @@ msgstr ""
 msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:21
+#: ../../source/stack/low_level/conveyor_interface.rst:25
+msgid "It has been conceived to:"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:22
 msgid ""
-"It has been conceived to: - Interface itself with low level drivers (CAN "
-"or TTL for Ned and One, TTL only for Ned2) - Initialize conveyor motors "
-"parameters. - Handle the requests from services to set, control or remove"
-" the conveyors. - Publish conveyor states."
+"Interface itself with low level drivers (CAN or TTL for Ned and Niryo "
+"One, TTL only for Ned2)"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:23
+msgid "Initialize conveyor motors parameters."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:24
+msgid "Handle the requests from services to set, control or remove the conveyors."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:25
+msgid "Publish conveyor states."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:27
@@ -496,5 +497,40 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Two version of the conveyor exist "
+#~ ": The Conveyor Belt 1, communicating "
+#~ "via a CAN bus, and the Conveyor"
+#~ " Belt 2,"
+#~ msgstr ""
+
+#~ msgid "communicating via a TTL bus."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Both of them are directly compatible "
+#~ "for the Ned and One. For the "
+#~ "Ned 2 Robot, you will need to "
+#~ "change the stepper card"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "of the CAN Conveyor Belt to be "
+#~ "able to use it on a TTL port"
+#~ " (there is no CAN port on Ned"
+#~ " 2)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It has been conceived to: - "
+#~ "Interface itself with low level drivers"
+#~ " (CAN or TTL for Ned and One,"
+#~ " TTL only for Ned2) - Initialize "
+#~ "conveyor motors parameters. - Handle the"
+#~ " requests from services to set, "
+#~ "control or remove the conveyors. - "
+#~ "Publish conveyor states."
 #~ msgstr ""
 
