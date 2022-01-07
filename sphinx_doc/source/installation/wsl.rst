@@ -1,6 +1,12 @@
 Windows Subsystem for Linux installation (experimental)
 ========================================================
 
+
+Microsoft is developping since 2016 a compatibility layer for running Linux binary executables natively on Windows 10. With the version 2 issued in 2019,
+this "hidden Linux kernel" is now mature enough to run complex operations like the full ROS stack [2]_.
+
+Thus you will be able to run simulations for the Ned, Niryo One or Ned2 robots on a Windows machine.
+
 .. note::
     You have to be running Windows 10 version 2004 (Build 19041) or higher for WSL2 to work.
 
@@ -9,22 +15,22 @@ Windows Subsystem for Linux installation (experimental)
 
 The following guide is mainly adapted from this blog post from Jack Kawell, feel free to refer to it for more complete information [1]_
 
-Microsoft is developping since 2016 a compatibility layer for running Linux binary executables natively on Windows 10. With the version 2 issued in 2019,
-this "hidden Linux kernel" is now mature enough to run complex operations like the full ROS stack [2]_.
-
 
 Install WSL2 [3]_
 ------------------
 
 1. Enable Windows Subsystem for Linux on your machine (in a powershell terminal)
-::
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+.. code::
+    
+    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
 2. Update WSL to use version 2 (in a powershell terminal)
-::
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
-.. todo:: bizarres les affichages encore non ? 
+.. code::
+
+    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
 
 3. You then need to restart your machine to finish the WSL installation and the upgrade to WSL2.
 
@@ -101,7 +107,6 @@ You can add this to your bashrc file.
 
 6. You should now be able to launch any simulation of the One, Ned or Ned2 using Rviz or Gazebo
 
-.. todo:: on a ici la toute première occurence du Ned2, qui n'avait jamais été mentionné avant. C'est normal de ne pas l'avoir eu avant ?
 
 Troubleshooting
 ----------------

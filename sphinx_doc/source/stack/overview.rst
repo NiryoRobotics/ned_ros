@@ -16,8 +16,6 @@ in order to understand where are placed each part of the software.
 
    Niryo robot v3 software
 
-.. todo:: l'image ci-dessus est un peu coupée sur la droite c'est dommage
-
 
 .. figure:: ../../images/ros_logo.png
    :alt: ROS Logo
