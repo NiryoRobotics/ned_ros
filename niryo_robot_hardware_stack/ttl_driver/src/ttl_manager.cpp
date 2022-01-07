@@ -571,29 +571,25 @@ bool TtlManager::readJointsStatus()
                 vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
                 // we retrieve all the associated id for the type of the current driver
-                vector<std::array<uint32_t, 2> > data_list{};
+                vector<uint32_t> position_list;
 
                 // retrieve joint status
-                int res = driver->syncReadJointStatus(ids_list, data_list);
+                int res = driver->syncReadPosition(ids_list, position_list);
                 if (COMM_SUCCESS == res)
                 {
-                    if (ids_list.size() == data_list.size())
+                    if (ids_list.size() == position_list.size())
                     {
                         // set motors states accordingly
                         for (size_t i = 0; i < ids_list.size(); ++i)
                         {
                             uint8_t id = ids_list.at(i);
 
-                            int velocity = static_cast<int>((data_list.at(i)).at(0));
-                            int position = static_cast<int>((data_list.at(i)).at(1));
-
                             if (_state_map.count(id))
                             {
                                 auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
                                 if (state)
                                 {
-                                    state->setPosition(position);
-                                    state->setVelocity(velocity);
+                                    state->setPosition(static_cast<int>((position_list.at(i))));
                                 }
                             }
                         }
@@ -603,7 +599,7 @@ bool TtlManager::readJointsStatus()
                         ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
                                     "vector mismatch (id_list size %d, position_list size %d)",
                                     static_cast<int>(ids_list.size()),
-                                    static_cast<int>(data_list.size()));
+                                    static_cast<int>(position_list.size()));
                         hw_errors_increment++;
                     }
                 }
