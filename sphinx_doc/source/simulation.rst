@@ -10,11 +10,13 @@ your computer.
 
     Ned in Gazebo Simulation
 
-In this tutorial, you will learn how to setup simulation on a computer.
+In this tutorial, you will learn how to setup a robot simulation on a computer.
 
 .. note::
     You can use :niryo_studio_simulation:`Niryo Studio with the simulation<>`.
     To do so, you just have to connect Niryo Studio to "Localhost".
+
+..todo:: attention au lien ci-dessus qui ne fonctionne pas
 
 Simulation environment installation
 =========================================
@@ -23,9 +25,7 @@ Simulation environment installation
     The whole ROS Stack is developed and tested on ROS **Melodic** which requires
     **Ubuntu 18.04** to run correctly. The using of another ROS version or OS
     may lead to malfunctions of some packages. Please follow the steps in 
-    :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`.
-
-    to install a working environment.
+    :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation` to install a working environment.
 
 Simulation usage
 =========================================
@@ -37,11 +37,11 @@ Simulation usage
       end effector state (immutable)
 
 | The simulation is a powerful tool allowing to test new programs directly on your computer
- which prevent to transfer new code on the robot.
+ which prevents to transfer new code on the robot.
 | It also helps for developing purpose → no need to transfer code, compile and restart the robot
  which is way slower than doing it on a desktop computer.
 
-Without physics - No Visualization
+Without physics - No visualization
 --------------------------------------
 
 This mode is mainly for simulation and tests purpose, bringing you in the closest state as possible to
@@ -131,7 +131,7 @@ the corresponding joint.
 Control with ROS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| Not only `RViz <http://wiki.ros.org/rviz>`_ can display the robot, it can also be linked with ROS controllers to show robot's actions
+| Not only `Rviz <http://wiki.ros.org/rviz>`_ can display the robot, but it can also be linked with ROS controllers to show the robot's actions
  from ROS commands!
 | This method can help you debug ROS topics, services and also, API scripts.
 
@@ -185,7 +185,7 @@ For the simulation, Ned uses Gazebo, a well known tool among the ROS community.
 It allows:
 
 * Collision.
-* World creation → An virtual environment in which the robot can deal with objects.
+* World creation → A virtual environment in which the robot can deal with objects.
 * Gripper & Camera using.
 
 The Niryo Gripper 1 has been replicated in Gazebo.

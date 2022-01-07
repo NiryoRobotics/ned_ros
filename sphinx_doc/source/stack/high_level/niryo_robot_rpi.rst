@@ -50,7 +50,7 @@ Publisher - Raspberry Pi
       -  Publish the analog I/Os state by giving for each it's pin / name / mode / state
    *  -  ``/niryo_robot/rpi/led_state``
       -  :std_msgs:`std_msgs/Int8<Int8>`
-      -  Publish the current led color
+      -  Publish the current LED color
    *  -  ``ros_log_status``
       -  :ref:`LogStatus<source/stack/high_level/niryo_robot_rpi:LogStatus (Topic)>`
       -  Publish the current log status (log size / available disk / boolean if should delete ros log on startup)
@@ -69,7 +69,7 @@ Services - Raspberry Pi
       -  Description
    *  -  ``shutdown_rpi``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Shutdown the Raspberry Pi
+      -  Shutdowns the Raspberry Pi
    *  -  ``/niryo_robot/rpi/change_button_mode``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
       -  Change top button mode (autorun program, blockly, nothing, ...)
@@ -90,16 +90,16 @@ Services - Raspberry Pi
       -  Set a digital IO to the given mode
    *  -  ``set_led_state``
       -  :ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Set led state
+      -  Sets LED state
    *  -  ``set_led_custom_blinker``
       -  :ref:`LedBlinker<source/stack/high_level/niryo_robot_rpi:LedBlinker (Service)>`
-      -  Set the led in blink mode with the color given
+      -  Sets the LED in blink mode with the color given
    *  -  ``purge_ros_logs``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Purge ROS log
+      -  Purges ROS log
    *  -  ``set_purge_ros_log_on_startup``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Modify the permanent settings that tells if robot should purge it's ROS log at each boot
+      -  Modifies the permanent settings that tell if the robot should purge it's ROS log at each boot
 
 Dependencies - Raspberry Pi
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

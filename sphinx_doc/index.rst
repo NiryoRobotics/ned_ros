@@ -7,6 +7,7 @@ Ned ROS documentation
 
 | This documentation contains everything you need to understand Ned's
  functioning and how to control it through ROS.
+
 | It is made as well for users who are
  using the "physical" robot as for those who want to use a virtual version.
 
@@ -29,8 +30,8 @@ Ned ROS documentation
 Preamble
 **************
 
-Before diving into the software documentation, you can learn more about the robot development
-in the :doc:`Overwiew <source/stack/overview>` section.
+Before diving into the software's documentation, you can learn more about the robot development
+in the :doc:`Overview <source/stack/overview>` section.
 
 Then, you should check the :doc:`source/installation/getting_started` section to setup your environment and try out the stack by yourself. If you 
 don't have a real robot at your disposal, you can still simulate it via the :doc:`source/simulation` section.
@@ -46,11 +47,11 @@ ROS Direct control
 
 .. important::
    To control the robot directly with ROS, you will need either to be connected in SSH
-   to the physic robot, or to use the simulation.
+   to the physical robot, or to use the simulation.
 
 ROS is the most direct way to control the robot. It allows you to:
 
-- Send command via the terminal in order to call services, trigger action, ...
+- Send commands via the terminal in order to call services, trigger actions, ...
 - Write an entire Python/C++ node to realize a full process.
 
 See :doc:`ROS <source/stack/high_level>` section to see all Topic & Services available.
@@ -59,7 +60,7 @@ Python ROS Wrapper
 ---------------------------------
 .. important::
    To use Python ROS Wrapper, you will need either to be connected in SSH
-   to the physic robot, or to use the simulation.
+   to the physical robot, or to use the simulation.
 
 The Python ROS Wrapper is built on top of ROS to allow a faster development than ROS.
 Programs are run directly on the robot which allows to trigger them with the robot's button
@@ -72,7 +73,7 @@ More ways
 ---------------------------------
 
 Other methods are available to control the robot allowing the user
-to code and run programs outside his terminal.
+to code and run programs outside its terminal.
 
 Learn more on this :doc:`section <source/more>`.
 

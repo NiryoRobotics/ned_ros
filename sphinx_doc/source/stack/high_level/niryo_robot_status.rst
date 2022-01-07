@@ -1,5 +1,6 @@
 Niryo_robot_status
 ===========================================================
 
+This package 
 
-.. todo:: write doc
+.. todo:: pas terminé 

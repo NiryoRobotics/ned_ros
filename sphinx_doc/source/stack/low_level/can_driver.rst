@@ -2,8 +2,8 @@ CAN Driver
 ===================================
 
 | This package provides an interface between high level ROS packages and handler of CAN Bus
-| This package uses the mcp_can_rpi for CAN communication.
-| It is used by only NED and ONE.
+| This package uses the mcp_can_rpi for CAN bus communication.
+| It is used by only Ned and One.
 
 CAN Driver Node (For only the development and debugging propose)
 -------------------------------------------------------------------

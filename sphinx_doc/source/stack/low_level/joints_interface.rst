@@ -10,7 +10,7 @@ It is instantiated in :doc:`niryo_robot_hardware_interface` package.
 
 It has been conceived to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
- - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
+ - Create a controller manager, from :wiki_ros:`controller_manager` package, that provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
@@ -39,7 +39,7 @@ Joints Interface's default Parameters
 Joints Interface's hardware specific Parameters 
 **************************************************
 
-These parameters are specific to the hardware version (ned, one or ned2).
+These parameters are specific to the hardware version (Ned, Niryo One or Ned2).
 This file comes in a different version for each hardware version. They are located in a directory of the hardware version name.
 
 .. list-table:: *joints_params.yaml* file
@@ -329,7 +329,7 @@ This file comes in a different version for each hardware version. They are locat
       -  N.A.
       -  Ned 2 only
 
-The velocity profiles for the steppers (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL steppers only (thus for Ned2 only).
+The velocity profiles for the Stepper motors (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL bus only (thus for Ned2 only).
 They are defined according to the following graph :
 
 .. figure:: ../../../images/stack/low_level/steppers_velocity_profiles.png

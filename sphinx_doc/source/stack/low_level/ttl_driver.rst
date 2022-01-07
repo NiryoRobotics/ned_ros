@@ -2,8 +2,8 @@ TTL Driver
 =====================================
 
 | This package handles motors which communicate via the protocol TTL.
-| This package is based on the DXL SDK.
-| It provides an interface to :wiki_ros:`dynamixel_sdk`.
+
+| This package is based on the DXL SDK. It provides an interface to :wiki_ros:`dynamixel_sdk`.
 
 TTL Driver Node (For only the development and debugging propose)
 -------------------------------------------------------------------
@@ -48,7 +48,7 @@ Parameters - TTL Driver
       -  | Read frequency on the bus.
          | Default: '120.0'
    *  -  ``ttl_hardware_read_status_frequency``
-      -  | Read frequency for Ttl's device'status.
+      -  | Read frequency for device status on the bus.
          | Default: '0.7'
    *  -  ``ttl_hardware_read_end_effector_frequency``
       -  | Read frequency for End Effector's status.
@@ -82,7 +82,7 @@ Services - TTL Driver
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Control dynamixel's LED
+      -  Control dynamixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
       -  :ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue (Service)>`
       -  Write data at a custom register address of a given TTL device

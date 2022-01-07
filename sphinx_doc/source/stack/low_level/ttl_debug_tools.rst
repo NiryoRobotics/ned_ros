@@ -25,15 +25,15 @@ Parameters - Ttl debug tools
     - **--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)
     - **--port / -p [Port]:** Set port
     - **--id / -i [ID]:** Device ID (-1 by default)
-    - **--ids [IDs]:** the list of TTL devices' ID
+    - **--ids [IDs]:** List of devices IDs
     - **--scan:** Scan all devices on the bus
     - **--ping:** Ping specific ID
-    - **--get-register [Addr]:** get a value from a register, parameters is: register address
-    - **--get-registers [Addr]:** get list of values from multiple devices at a register address, parameters is: register address
-    - **--get-size [Size]:** size of data to be read with get-register or get-registers, parameters is: size of data in bytes
+    - **--get-register [Addr]:** Get a value from a register, parameters is: register address
+    - **--get-registers [Addr]:** Get list of values from multiple devices at a register address, parameters is: register address
+    - **--get-size [Size]:** Size of data to be read with get-register or get-registers, parameters is: size of data in bytes
     - **--set-register [Addr] [Value] [Size]:** Set a value to a register, parameters are in the order: register address / value / size (in bytes) of the data
     - **--set-registers [Addr] [Values] [Size]:** Set values to a register on multiple devices, parameters are in the order: register address / list of values / size (in bytes) of the data
-    - **--calibrate:** Calibrate all steppers TTL. It is used in NED2 only
+    - **--calibrate:** Calibrate all steppers on the bus. It is used in Ned2 only
 
 Scripts
 ------------------------------------
