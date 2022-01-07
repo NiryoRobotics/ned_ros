@@ -163,14 +163,14 @@ class TestFunctions(object):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
         result = check_connection_service(Service.AUTO_DIAGNOSIS_REPORTS)
         if result.status < 0:
-            error_str = "Service test_report doesn't exists"
+            error_str = "Service auto_diagnosis_reports doesn't exists"
             report.append(error_str)
-            raise TestFailure("Service test_report doesn't exists")
+            raise TestFailure("Service auto_diagnosis_reports doesn't exists")
         if result.result is False:
-            error_str = "test_reports api didnt respond"
+            error_str = "auto_diagnosis_reports api didnt respond"
             report.append(error_str)
             raise TestFailure(error_str)
-        report.append('Service test_reports successfully reached')
+        report.append('Service auto_diagnosis_reports successfully reached')
 
     def test_robot_status(self, report):
         try:
