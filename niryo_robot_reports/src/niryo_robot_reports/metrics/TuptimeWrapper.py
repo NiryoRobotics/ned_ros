@@ -37,7 +37,7 @@ class TuptimeWrapper(GenericWrapper):
                     'unit': 'seconds',
                 })
             elif key == 'current_uptime':
-                self._data[key] = int(row[0])
+                self._data[key] = int(float(row[0]))
                 self._data.append({
                     'name': key,
                     'value': int(row[0]),
