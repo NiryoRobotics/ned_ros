@@ -179,7 +179,7 @@ class TestFunctions(object):
 
     def test_cloud_connection(self, report):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
-        result = check_connection_service(Service.TEST_REPORTS)
+        result = check_connection_service(Service(Service.TEST_REPORTS))
         if result.status < 0:
             error_str = "Service test_report doesn't exists"
             report.append(error_str)

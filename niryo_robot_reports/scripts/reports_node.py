@@ -82,7 +82,7 @@ class ReportsNode:
         rospy.logdebug("Reports Node - Node Started")
 
     def __check_connection_callback(self, req):
-        rospy.logdebug('service called: ' + str(req.service))
+        rospy.logdebug('service called: ' + str(req.service.to_test))
         if req.service.to_test == Service.TEST_REPORTS:
             success = self.__cloud_api.test_reports.ping()
         elif req.service.to_test == Service.DAILY_REPORTS:
