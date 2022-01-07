@@ -32,7 +32,7 @@ class AutoDiagnosisReportHandler:
         req.language.used = ProgramLanguage.PYTHON2
         rospy.logdebug('Executing the auto-diagnosis script...')
         res = self.__execute_program_service(req)
-        serialized_json = res.output[res.output.index('{')].rstrip()
+        serialized_json = res.output[res.output.index('{')::].rstrip()
         try:
             report = json.loads(serialized_json)
         except ValueError:
