@@ -41,6 +41,10 @@
             <arg name="simulation_mode" value="false"/>
         </include>
     </group>
+    
+    <include file="$(find niryo_robot_reports)/launch/reports.launch">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
 
 </launch>
  
