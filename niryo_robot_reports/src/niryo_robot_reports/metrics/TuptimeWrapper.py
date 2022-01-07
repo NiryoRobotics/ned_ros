@@ -18,7 +18,7 @@ class TuptimeWrapper(GenericWrapper):
                     'value': row[0],
                     'unit': None,
                 })
-            elif key in ['average_downtime', 'average_uptime', 'system_life']:
+            elif key in ['average_downtime', 'average_uptime', 'system_life', 'current_uptime']:
                 self._data.append({
                     'name': key,
                     'value': int(float(row[0])),
@@ -34,11 +34,5 @@ class TuptimeWrapper(GenericWrapper):
                 self._data.append({
                     'name': key,
                     'value': int(float(row[2])),
-                    'unit': 'seconds',
-                })
-            elif key == 'current_uptime':
-                self._data.append({
-                    'name': key,
-                    'value': int(float(row[0])),
                     'unit': 'seconds',
                 })
