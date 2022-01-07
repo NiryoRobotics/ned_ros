@@ -1,21 +1,43 @@
+# coding=utf-8
 import psutil
 
 from GenericWrapper import GenericWrapper
 
 
 class PsutilWrapper(GenericWrapper):
-
     __ETH_IFACE = 'eth0'
     __WIFI_IFACE = 'wlan0'
 
     def _fetch_datas(self):
-        self._data['cpu_usage'] = self.get_cpu_usage()
-        self._data['cpu_temperature'] = self.get_cpu_temperature()
-        self._data['ram_usage'] = self.get_ram_usage()
-        self._data['rom_usage'] = self.get_rom_usage()
+        self._data += [
+            {
+                'name': 'cpu_usage',
+                'value': self.get_cpu_usage(),
+                'unit': '%',
+            },
+            {
+                'name': 'cpu_temperature',
+                'value': self.get_cpu_temperature(),
+                'unit': '°C',
+            },
+            {
+                'name': 'ram_usage',
+                'value': self.get_ram_usage(),
+                'unit': '%',
+            },
+            {
+                'name': 'rom_usage',
+                'value': self.get_rom_usage(),
+                'unit': '%',
+            },
+        ]
         for iface, iface_data in self.get_net_metrics().items():
             for key, value in iface_data.items():
-                self._data['{}_{}'.format(iface, key)] = value
+                self._data.append({
+                    'name': '{}_{}'.format(iface, key),
+                    'value': value,
+                    'unit': None
+                })
 
     @staticmethod
     def get_cpu_usage():

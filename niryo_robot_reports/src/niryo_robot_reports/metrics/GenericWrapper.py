@@ -5,7 +5,7 @@ class GenericWrapper:
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        self._data = {}
+        self._data = []
 
     @classmethod
     def get_data(cls):
