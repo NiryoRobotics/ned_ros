@@ -15,10 +15,10 @@ class TuptimeWrapper(GenericWrapper):
             if key == 'system_startups':
                 self._data[key] = row[0]
             elif key in ['average_downtime', 'average_uptime', 'system_life']:
-                self._data[key] = int(row[0])
+                self._data[key] = int(float(row[0]))
             elif key == 'system_shutdowns':
                 self._data[key] = int(row[0]) + int(row[3])
             elif key in ['system_downtime', 'system_uptime']:
-                self._data[key] = int(row[1])
+                self._data[key] = int(float(row[2]))
             elif key == 'current_uptime':
-                self._data[key] = int(row[0])
+                self._data[key] = int(float(row[0]))
