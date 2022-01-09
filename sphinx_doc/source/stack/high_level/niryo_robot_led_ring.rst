@@ -1,7 +1,7 @@
-Niryo robot Led Ring package
+Niryo robot Led Ring
 ========================================
 
-| This package is the one managing the Led Ring of Ned.
+| This package is the one managing the Led Ring of Ned2.
 | It is composed of one node, receiving commands and the current robot status, and publishing Led Ring states.
 | The Led Ring is composed of 30 WS2811 RGB Leds, controlled by the package with the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-python>`_.
 
@@ -10,7 +10,7 @@ Led Ring node
 --------------------------
 The ROS Node is made to manage the Led Ring state, and to publish its currents status and state
 on ROS topics.
-It uses a class implementing several animation (11 for now), allowing to control the Led Ring or to
+It uses a class implementing several animation, allowing to control the Led Ring or to
 display the current robot status. The Led Ring is also implemented in Rviz.
 
 The Led Ring can either be:
@@ -26,7 +26,7 @@ Robot status mode
 
 When displaying the **robot status**, the Led Ring has several states which represent different modes and error status. 
 Refer to the following table. The node subscribes to the ROS topic ``/niryo_robot_status/robot_status``, published by
-the package niryo_robot_status.
+the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`.
 
 .. list-table::
    :header-rows: 1
@@ -42,7 +42,7 @@ the package niryo_robot_status.
       - N/A
    *  - Blue :ref:`Chase <Chase>`
       - Calibration is needed
-      - Press the ~Custom~ button, or launch a calibration
+      - Press the *Custom* button, or launch a calibration
    *  - Blue :ref:`Snake <Snake>`
       - Calibration in progress
       - N/A
@@ -98,91 +98,49 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
    :align: center
 
    *  - Animation
-      - Parameters
       - Appearance
       - Gif
 
    *  - _`None`
-      - N/A (No parameters)
       - Leds are turned off
       -
    *  - _`Solid`
-      - color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
       - Set the whole Led Ring to the same color at once
       -
    *  - _`Flashing`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
-      - | Flashes a color according to a frequency ("freq"). if 
-        | iterations is null, flashes endlessly
+      - | Flashes a color according to a frequency
       -
    *  - _`Alternate`
-      - | colors_list (list of :std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
-      - | The different colors are alternated one after the other, each displayed during
-        | "wait_ms" millisecondes. If iterations is 0, alternates indefinitely.
+      - | The different colors are alternated one after the other.
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/alternate.gif
    *  - _`Chase`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
-      - | Movie theater light style chase animation. Each step lasts for "wait_ms" millisecondes.
-        | If iterations is 0, do it indefinitely.
+      - | Movie theater light style chase animation.
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/chase.gif
    *  - _`Color Wipe`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-      - | Wipe a color across the Led Ring, lighting a Led at each step (of duration "wait_ms").
+      - | Wipe a color across the Led Ring.
         | Similar to go_up, but Leds are not turned off at the end.
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/color_wipe.gif
    *  - _`Rainbow`
-      - | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Draws rainbow that fades across all Leds at once.
-        | If iterations is 0, do it indefinitely
       -  .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow.gif
    *  - _`Rainbow cycle`
-      - | period (pattern duration in seconds, int)
-        | iterations (int)
-      - | Draw rainbow that uniformly distributes itself across all Leds
-        | If iterations is 0, do it indefinitely.
+      - | Draw rainbow that uniformly distributes itself across all Leds.
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_cycle.gif
    *  - _`Rainbow chase`
-      - | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Rainbow chase animation.
-        | If iterations is 0, do it indefinitely. One iteration corresponds
-        | to one full rainbow fading accross Leds, unlike the chase method
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_chase.gif
    *  - _`Go up`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Leds turn on like a loading circle until lighting up the whole Led Ring.
-        | and are then all turned off at the same time. If iterations is 0, do it indefinitely
+        | and are then all turned off at the same time.
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/goup.gif
    *  - _`Go up and down`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Like go_up, but Leds are turned off the same way they are turned on.
-        | If iterations is 0, do it indefinitely
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
    *  - _`Breath`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Variation of light intensity to imitate breathing.
-        | If iterations is 0, do it indefinitely
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
    *  - _`Snake`
-      - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
-        | period (pattern duration in seconds, int)
-        | iterations (int)
       - | Luminous snake that turns around the LED Ring.
-        | If iterations is 0, do it indefinitely
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
 
 
@@ -282,7 +240,7 @@ Another configuration file, the `led_ring_params.yaml`, sets the default paramet
       - Rviz led ring markers publish rate in simulation mode
       - 20
    *  - ``led_ring_markers_publish_rate``
-      - Rviz led ring markers publish rate on a ral robot
+      - Rviz led ring markers publish rate on a real robot
       - 5
 
 
@@ -350,7 +308,7 @@ Subscribers - Led Ring
       - Message type
       - Description
    *  - ``/niryo_robot_status/robot_status``
-      - niryo_robot_status/RobotStatus
+      - :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`
       - Retrieves the current robot status, and control Led accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
    *  - ``/niryo_robot/blockly/save_current_point``
       - :std_msgs:`std_msgs/Int32<Int32>`
