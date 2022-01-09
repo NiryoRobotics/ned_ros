@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-06 13:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,9 +100,7 @@ msgid "``execute_program``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:47
-msgid ""
-":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram"
-" (Service)>`"
+msgid ":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:48
@@ -127,9 +125,7 @@ msgid "``get_program``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:53
-msgid ""
-":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram"
-" (Service)>`"
+msgid ":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:54
@@ -141,9 +137,7 @@ msgid "``get_program_autorun_infos``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:56
-msgid ""
-":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos"
-" (Service)>`"
+msgid ":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:57
@@ -155,9 +149,7 @@ msgid "``get_program_list``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:59
-msgid ""
-":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList"
-" (Service)>`"
+msgid ":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:60
@@ -169,9 +161,7 @@ msgid "``manage_program``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:62
-msgid ""
-":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram"
-" (Service)>`"
+msgid ":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:63
@@ -183,9 +173,7 @@ msgid "``set_program_autorun``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:65
-msgid ""
-":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun"
-" (Service)>`"
+msgid ":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:66
@@ -223,43 +211,51 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:84
-msgid "Services & messages files - Programs manager"
+msgid "Services files - Programs manager"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:87
-msgid "ExecuteProgram (Service)"
+msgid "ExecuteProgram"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:94
-msgid "GetProgram (Service)"
+msgid "GetProgram"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:101
-msgid "GetProgramAutorunInfos (Service)"
+msgid "GetProgramAutorunInfos"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:108
-msgid "GetProgramList (Service)"
+msgid "GetProgramList"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:115
-msgid "ManageProgram (Service)"
+msgid "ManageProgram"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:122
-msgid "SetProgramAutorun (Service)"
+msgid "SetProgramAutorun"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:129
-msgid "ProgramLanguage (Message)"
+msgid "Messages files - Programs manager"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:136
-msgid "ProgramLanguageList (Message)"
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:132
+msgid "ProgramIsRunning"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:143
-msgid "ProgramList (Message)"
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:139
+msgid "ProgramLanguage"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:146
+msgid "ProgramLanguageList"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:153
+msgid "ProgramList"
 msgstr ""
 
 #~ msgid "Niryo Robot Programs Manager Package"
@@ -423,5 +419,65 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid "Services & messages files - Programs manager"
+#~ msgstr ""
+
+#~ msgid "ExecuteProgram (Service)"
+#~ msgstr ""
+
+#~ msgid "GetProgram (Service)"
+#~ msgstr ""
+
+#~ msgid "GetProgramAutorunInfos (Service)"
+#~ msgstr ""
+
+#~ msgid "GetProgramList (Service)"
+#~ msgstr ""
+
+#~ msgid "ManageProgram (Service)"
+#~ msgstr ""
+
+#~ msgid "SetProgramAutorun (Service)"
+#~ msgstr ""
+
+#~ msgid "ProgramLanguage (Message)"
+#~ msgstr ""
+
+#~ msgid "ProgramLanguageList (Message)"
+#~ msgstr ""
+
+#~ msgid "ProgramList (Message)"
 #~ msgstr ""
 

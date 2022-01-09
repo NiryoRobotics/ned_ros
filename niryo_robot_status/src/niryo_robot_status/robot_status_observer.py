@@ -110,7 +110,7 @@ class RobotStatusObserver(object):
         msg.temperatures = []
         msg.voltages = []
 
-        # Todo remove this shit
+        # Todo remove this
         msg.error_message = ""
 
         if self.hardware_status != msg:

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 17:17+0000\n"
+"POT-Creation-Date: 2022-01-07 10:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,16 +25,479 @@ msgid "Niryo_robot_status"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:5
-msgid "Todo"
+msgid "Robot status Node"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_status.rst:5
-msgid "write doc"
+#: ../../source/stack/high_level/niryo_robot_status.rst:7
+msgid ""
+"The ROS Node is  listens to the topics of the robot to deduce the current"
+" state of the robot. It manages the status of the robot, the status of "
+"the logs and informs about the overheating of the raspberry pi and the "
+"out of limit joints."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:10
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:13
+msgid "Niryo Robot Status Table"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:19
+#: ../../source/stack/high_level/niryo_robot_status.rst:102
+#: ../../source/stack/high_level/niryo_robot_status.rst:121
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:20
+#: ../../source/stack/high_level/niryo_robot_status.rst:105
+#: ../../source/stack/high_level/niryo_robot_status.rst:123
+#: ../../source/stack/high_level/niryo_robot_status.rst:139
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:21
+msgid "Troubleshoot"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:22
+msgid "``SHUTDOWN``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:23
+msgid "The robot is being shut down"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:25
+msgid "``FATAL_ERROR``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:26
+msgid "ROS crash"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:27
+msgid "Please restart the robot"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:28
+msgid "``MOTOR_ERROR``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:29
+msgid "Motor voltage error, overheating, overload"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "Check the error code on Niryo Studio."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "Restart the robot and check the wiring."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "If the problem persists, contact customer service"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:33
+msgid "``COLLISION``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:34
+msgid "Arm collision detected"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:35
+msgid "Restart your movement or switch to learning mode to remove this error."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:36
+msgid "``USER_PROGRAM_ERROR``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:37
+#: ../../source/stack/high_level/niryo_robot_status.rst:75
+msgid "User program error"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:38
+msgid "Launch a movement or switch to learning mode to remove this error."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:39
+msgid "``UNKNOWN``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:40
+msgid "Node not initialized"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:42
+msgid "``BOOTING``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:43
+msgid "ROS a and the Raspberry are booting up"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "If the startup seems to timeout, restart the robot electrically."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "If the problem persists, update the robot with ssh,"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "or change the SD card or contact customer service."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:47
+msgid "``UPDATE``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:48
+msgid "Robot update in progress"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:49
+msgid "Just wait and be patient :)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:50
+msgid "``CALIBRATION_NEEDED``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:51
+msgid "New calibration requested"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:52
+msgid "Run a new calibration before processing any movement."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:53
+msgid "``CALIBRATION_IN_PROGRESS``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:54
+msgid "Calibration in progress"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "If the calibration fails or takes longer than 30 seconds."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "The status will return to ``CALIBRATION_NEED.``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:57
+msgid "``LEARNING_MODE``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:58
+msgid "Free motion enabled, the torques are disabled"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:60
+msgid "``STANDBY``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "Free motion disabled, the torques are enabled"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "and no user program is running"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:64
+msgid "``MOVING``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "A single motion or jog is being processed"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:68
+msgid "``RUNNING_AUTONOMOUS``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:69
+msgid "A user program is running and the torques are enabled"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:71
+msgid "``RUNNING_DEBUG``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:72
+msgid "A debug procedure is running"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:73
+msgid "A short press on the top button cancels it."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:74
+msgid "``PAUSE``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "A short press on the top button resumes the program,"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "a long press (on Ned2) or a double press (on Ned and One)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "cancels the program execution."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst
+msgid "After 30 seconds, the program stops automatically."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:80
+msgid "``LEARNING_MODE_AUTONOMOUS``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:81
+msgid "A user program is running and the torques are disabled"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:90
+msgid "Niryo Robot Status Diagram"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:94
+msgid "Publisher - Robot Status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:96
+msgid "Robot Status Package's Publishers"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:103
+#: ../../source/stack/high_level/niryo_robot_status.rst:122
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:104
+msgid "Latch Mode"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:106
+msgid "``/niryo_robot_status/robot_status``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:107
+msgid ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:108
+msgid "``True``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:109
+msgid "Publish the robot, log, overheating and out of bounds status."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:113
+msgid "Services - Robot Status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:115
+msgid "Robot Status Services"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:124
+msgid "``/niryo_robot_status/advertise_shutdown``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:125
+msgid ":ref:`Trigger<source/stack/high_level/niryo_robot_msgs:Trigger>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:126
+msgid "Notify of a shutdown request"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:129
+msgid "Subscribers - Robot Status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:131
+msgid "Robot Status Package subscribers"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:137
+msgid "Topic name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:138
+msgid "Message type"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:140
+msgid "``/niryo_robot_hardware_interface/hardware_status``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:141
+msgid ":ref:`HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:142
+msgid "Detection of a motor or end effector panel error, raspberry overheating"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:143
+msgid "``niryo_robot_rpi/pause_state``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:144
+msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:145
+msgid "Detection of the pause state"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:146
+msgid "``/niryo_robot_arm_commander/is_active``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:147
+#: ../../source/stack/high_level/niryo_robot_status.rst:150
+#: ../../source/stack/high_level/niryo_robot_status.rst:153
+#: ../../source/stack/high_level/niryo_robot_status.rst:159
+#: ../../source/stack/high_level/niryo_robot_status.rst:162
+#: ../../source/stack/high_level/niryo_robot_status.rst:165
+#: ../../source/stack/high_level/niryo_robot_status.rst:171
+msgid ":std_msgs:`std_msgs/Bool<Bool>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:148
+msgid "Detection of a motion"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:149
+msgid "``/niryo_robot_arm_commander/is_debug_motor_active``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:151
+msgid "Detection of a debug procedure"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:152
+msgid "``/niryo_robot/jog_interface/is_enabled``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:154
+msgid "Detection of a jog motion"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:155
+msgid "``/niryo_robot_programs_manager/program_is_running``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:156
+msgid ":ref:`ProgramIsRunning<source/stack/high_level/niryo_robot_programs_manager:ProgramIsRunning>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:157
+msgid "Detection of a user program"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:158
+msgid "``/niryo_robot_user_interface/is_client_connected``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:160
+msgid "Detection of a pyniryo user"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:161
+msgid "``/niryo_robot/learning_mode/state``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:163
+msgid "Detection of the free motion mode"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:164
+msgid "``/niryo_robot_arm_commander/collision_detected``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:166
+msgid "Detection of collision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:167
+msgid "``/joint_states``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:168
+msgid ":std_msgs:`sensor_msgs/JointState<JointState>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:169
+msgid "Get the joint state in order to detect an out of bounds"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:170
+msgid "``/ping_pyniryo``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:172
+msgid "Detection of a pyniryo2 user"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:176
+msgid "Dependencies - Robot Status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:178
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:179
+msgid ":msgs_index:`sensor_msgs`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:180
+msgid ""
+":ref:`niryo_robot_msgs "
+"<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:181
+msgid ""
+":ref:`niryo_robot_programs_manager "
+"<source/stack/high_level/niryo_robot_programs_manager:Niryo_robot_programs_manager>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:182
+msgid ""
+":ref:`niryo_robot_arm_commander "
+"<source/stack/high_level/niryo_robot_arm_commander:Niryo_robot_arm_commander>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:185
+msgid "Messages files - Robot Status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_status.rst:188
+msgid "RobotStatus"
 msgstr ""
 
 #~ msgid "This package"
 #~ msgstr ""
 
-#~ msgid "Coming soon"
+#~ msgid "A single motion or jod is being processed"
 #~ msgstr ""
 

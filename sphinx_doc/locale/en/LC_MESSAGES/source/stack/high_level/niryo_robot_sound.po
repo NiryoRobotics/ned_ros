@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 17:17+0000\n"
+"POT-Creation-Date: 2022-01-07 10:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:2
-msgid "Niryo robot Sound package"
+msgid "Niryo_robot_sound"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:4
@@ -397,7 +397,7 @@ msgid "``/niryo_robot_status/robot_status``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:151
-msgid "niryo_robot_status/RobotStatus"
+msgid ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:152
@@ -532,7 +532,7 @@ msgid "Returns"
 msgstr ""
 
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:6
-#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:7
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:8
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:12
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say:14
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume:6
@@ -599,22 +599,13 @@ msgid ""
 "NiryoRosWrapperException"
 msgstr ""
 
-#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:4 of
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:4
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:4 of
 msgid "name of the sound which needs to be deleted"
 msgstr ""
 
-#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:4 of
-msgid ""
-"name of the sound which needs to be deleted, encoded data from the sound "
-"(wav or mp3), encoded data from the sound file (wav or mp3)"
-msgstr ""
-
-#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound of
-msgid "type"
-msgstr ""
-
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:6 of
-msgid "string: String, String containing the encoded data of the sound file"
+msgid "String containing the encoded data of the sound file (wav or mp3)"
 msgstr ""
 
 #: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration:1
@@ -755,5 +746,33 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Niryo robot Sound package"
+#~ msgstr ""
+
+#~ msgid "niryo_robot_status/RobotStatus"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "name of the sound which needs to"
+#~ " be deleted, encoded data from the"
+#~ " sound (wav or mp3), encoded data "
+#~ "from the sound file (wav or mp3)"
+#~ msgstr ""
+
+#~ msgid "string: String, String containing the encoded data of the sound file"
+#~ msgstr ""
+
+#~ msgid "sound_name: str"
+#~ msgstr ""
+
+#~ msgid "Niryo robot Sound"
+#~ msgstr ""
+
+#~ msgid "type"
+#~ msgstr ""
+
+#~ msgid "sound_data: str"
 #~ msgstr ""
 
