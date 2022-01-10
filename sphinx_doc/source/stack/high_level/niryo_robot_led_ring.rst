@@ -336,7 +336,7 @@ Services files - Led Ring
 LEDUser (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_led_ring/srv/LEDUser.srv
+.. literalinclude:: ../../../../niryo_robot_led_ring/srv/LedUser.srv
    :language: rostype
 
 SetLedColor (Service)
@@ -358,7 +358,7 @@ LedRingAnimation (Message)
 LEDRingCurrentState (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_led_ring/msg/LEDRingCurrentState.msg
+.. literalinclude:: ../../../../niryo_robot_led_ring/msg/LedRingCurrentState.msg
    :language: rostype
 
 LedRingStatus (Message)
