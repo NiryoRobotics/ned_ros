@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-10 13:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -907,7 +907,7 @@ msgid "Services files - Led Ring"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:337
-msgid "LEDUser (Service)"
+msgid "LedUser (Service)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:343
@@ -923,7 +923,7 @@ msgid "LedRingAnimation (Message)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:359
-msgid "LEDRingCurrentState (Message)"
+msgid "LedRingCurrentState (Message)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:365
@@ -1704,5 +1704,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "LedRingCurrentState (Message)"
+#~ msgstr ""
+
+#~ msgid "LEDUser (Service)"
+#~ msgstr ""
+
+#~ msgid "LEDRingCurrentState (Message)"
 #~ msgstr ""
 

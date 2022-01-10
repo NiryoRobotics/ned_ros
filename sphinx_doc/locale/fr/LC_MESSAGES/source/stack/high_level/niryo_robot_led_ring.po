@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-10 13:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,6 @@ msgstr ""
 "actuel du robot. L'anneau Led est également implémenté dans ``Rviz``. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:17
-
 msgid "The LED Ring can either be:"
 msgstr "L'anneau Led peut être : "
 
@@ -1003,8 +1002,8 @@ msgid "Services files - Led Ring"
 msgstr "Fichiers de service - Anneau LED "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:337
-msgid "LEDUser (Service)"
-msgstr "LEDUser (Service) "
+msgid "LedUser (Service)"
+msgstr "LedUser (Service) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:343
 msgid "SetLedColor (Service)"
@@ -1019,8 +1018,8 @@ msgid "LedRingAnimation (Message)"
 msgstr "LedRingAnimation (Message) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:359
-msgid "LEDRingCurrentState (Message)"
-msgstr "LEDRingCurrentState (Message) "
+msgid "LedRingCurrentState (Message)"
+msgstr "LedRingCurrentState (Message) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:365
 msgid "LedRingStatus (Message)"

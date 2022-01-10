@@ -333,7 +333,7 @@ Dependencies - LED Ring
 Services files - Led Ring
 ------------------------------------------------------
 
-LEDUser (Service)
+LedUser (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_led_ring/srv/LedUser.srv
@@ -355,7 +355,7 @@ LedRingAnimation (Message)
 .. literalinclude:: ../../../../niryo_robot_led_ring/msg/LedRingAnimation.msg
    :language: rostype
 
-LEDRingCurrentState (Message)
+LedRingCurrentState (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_led_ring/msg/LedRingCurrentState.msg
