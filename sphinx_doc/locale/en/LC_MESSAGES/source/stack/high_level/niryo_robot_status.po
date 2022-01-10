@@ -501,6 +501,3 @@ msgstr ""
 #~ msgid "A single motion or jod is being processed"
 #~ msgstr ""
 
-#~ msgid "write doc"
-#~ msgstr ""
-

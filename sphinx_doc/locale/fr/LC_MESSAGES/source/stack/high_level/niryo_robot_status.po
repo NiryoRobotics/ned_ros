@@ -116,7 +116,7 @@ msgstr "Collision de bras détectée"
 msgid "Restart your movement or switch to learning mode to remove this error."
 msgstr ""
 "Redémarrez votre mouvement ou passez |br| en mode apprentissage "
-"poursupprimer cette erreur."
+"pour supprimer cette erreur."
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:36
 msgid "``USER_PROGRAM_ERROR``"

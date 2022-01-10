@@ -21,17 +21,14 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:2
-#, fuzzy
 msgid "Niryo robot LED Ring package"
 msgstr "Anneau Led Robot Niryo "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:4
-#, fuzzy
 msgid "This package is the one managing the LED Ring of Ned2."
 msgstr "Ce package permet de contrôler l'anneau LED du Ned2."
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:6
-#, fuzzy
 msgid ""
 "It is composed of one node, receiving commands and the current robot "
 "status, and publishing LED Ring states."
@@ -51,12 +48,10 @@ msgstr ""
 "ws281x-\"python>`_."
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:11
-#, fuzzy
 msgid "LED Ring node"
 msgstr "Nœud de l'anneau LED "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:12
-#, fuzzy
 msgid ""
 "The ROS Node is made to manage the LED Ring state, and to publish its "
 "currents status and state on ROS topics. It uses a class implementing "

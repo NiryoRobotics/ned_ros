@@ -162,7 +162,6 @@ msgstr "``robot_action``"
 msgid ":ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove>`"
 msgstr ""
 
-
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:59
 msgid "Command the arm and tools through an action server"
 msgstr "Commandez le bras et les outils via un serveur d'action"
@@ -219,7 +218,6 @@ msgstr "``/niryo_robot/kinematics/forward``"
 msgid ":ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK>`"
 msgstr ""
 
-
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:84
 msgid "Compute a Forward Kinematic"
 msgstr "Calculer une cinématique avant"
@@ -263,7 +261,6 @@ msgstr "Message pour changer de pose"
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:103
 msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
 msgstr ""
-
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:105
 msgid "Pause movement execution"
