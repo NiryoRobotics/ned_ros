@@ -43,8 +43,6 @@ add at the beginning of all of them: ::
     .. image:: ../../images/stack/high_level/vision_example.*
        :align: center
 
-.. todo:: le toggle ne semble pas fonctionner 
-
 Simple Vision pick
 -------------------------------
 This short example shows how to do your first vision pick: ::
