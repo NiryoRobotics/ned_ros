@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-10 16:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,10 +25,39 @@ msgid "Python Libraries"
 msgstr ""
 
 #: ../../source/stack/third_parties/python.rst:4
-msgid ""
-"rpi_ws281x==4.3.0 Adafruit-GPIO==1.0.3 Adafruit-PureIO==1.0.1 Adafruit-"
-"BBIO==1.0.9 Adafruit-ADS1x15==1.0.2 board==1.0 smbus==1.1.post2 "
-"smbus2==0.4.1 spidev==3.5"
+msgid "rpi_ws281x==4.3.0"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:5
+msgid "Adafruit-GPIO==1.0.3"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:6
+msgid "Adafruit-PureIO==1.0.1"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:7
+msgid "Adafruit-BBIO==1.0.9"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:8
+msgid "Adafruit-ADS1x15==1.0.2"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:9
+msgid "board==1.0"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:10
+msgid "smbus==1.1.post2"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:11
+msgid "smbus2==0.4.1"
+msgstr ""
+
+#: ../../source/stack/third_parties/python.rst:12
+msgid "spidev==3.5"
 msgstr ""
 
 #: ../../source/stack/third_parties/python.rst:14
@@ -40,5 +69,12 @@ msgid "cette partie est complète ? CC: Non, todo"
 msgstr ""
 
 #~ msgid "cette partie est complète ?"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "rpi_ws281x==4.3.0 Adafruit-GPIO==1.0.3 Adafruit-"
+#~ "PureIO==1.0.1 Adafruit-BBIO==1.0.9 Adafruit-"
+#~ "ADS1x15==1.0.2 board==1.0 smbus==1.1.post2 "
+#~ "smbus2==0.4.1 spidev==3.5"
 #~ msgstr ""
 
