@@ -699,6 +699,8 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
+    // protect bus with mutex because of readFirmware version in addHardwareComponent
+    lock_guard<mutex> lck(_control_loop_mutex);
     return _ttl_manager->addHardwareComponent(jointState);
 }
 
@@ -1130,7 +1132,7 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
     uint16_t ff1_gain{0};
     uint16_t ff2_gain{0};
 
-
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->readMotorPID(id, pos_p_gain, pos_i_gain, pos_d_gain,
                                                    vel_p_gain, vel_i_gain, ff1_gain, ff2_gain))
     {
@@ -1205,6 +1207,7 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
     uint32_t v_stop{2};
 
 
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->readVelocityProfile(id, v_start, a_1, v_1,
                                                           a_max, v_max, d_max, d_1, v_stop))
     {
