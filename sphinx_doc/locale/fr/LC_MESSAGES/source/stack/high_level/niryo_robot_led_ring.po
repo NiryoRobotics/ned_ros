@@ -37,7 +37,6 @@ msgstr ""
 "robot, et publiant les états de l'anneau Led. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:7
-#, fuzzy
 msgid ""
 "The LED Ring is composed of 30 WS2811 RGB LEDs, controlled by the package"
 " with the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-"
@@ -65,14 +64,13 @@ msgstr ""
 "actuel du robot. L'anneau Led est également implémenté dans ``Rviz``. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:17
-#, fuzzy
+
 msgid "The LED Ring can either be:"
 msgstr "L'anneau Led peut être : "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:19
-#, fuzzy
 msgid "in **ROBOT STATUS** mode : the LED is displaying the status of the robot."
-msgstr "en mode **ROBOT STATUS** : la Led affiche l'état du robot. "
+msgstr "en mode **ROBOT STATUS** : la LED affiche l'état du robot. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:24
 msgid "in **USER** mode"
@@ -219,7 +217,6 @@ msgid "Program paused"
 msgstr "Programme suspendu "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:67
-#, fuzzy
 msgid "Long press on the TOP button to cancel the program, short press to resume"
 msgstr ""
 "Appui long sur le bouton sur haut du robot pour annuler le programme, "
@@ -321,7 +318,6 @@ msgstr ""
 "Ring>`) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:96
-#, fuzzy
 msgid ""
 "Ned must be in autonomous mode in order to allow the user to control the "
 "LED Ring."
@@ -472,9 +468,8 @@ msgid "It belongs to the ROS namespace: |namespace_emphasize|."
 msgstr "Il appartient à l'espace de noms ROS : |namespace_emphasize|. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:157
-#, fuzzy
 msgid "Parameters - LED Ring"
-msgstr "Paramètres - Anneau Led "
+msgstr "Paramètres - Anneau LED"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:159
 msgid ""
@@ -509,7 +504,6 @@ msgid "``led_count``"
 msgstr "``led_count`` "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:173
-#, fuzzy
 msgid "Number of LED pixels in the LED Ring"
 msgstr "Nombre de pixels LED dans l'anneau LED "
 
@@ -562,10 +556,9 @@ msgid "``led_brightness``"
 msgstr "``led_luminosité`` "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:186
-#, fuzzy
 msgid "LEDs brightness. Set to 0 for darkest and 255 for brightest"
 msgstr ""
-"Luminosité des leds. Réglé sur 0 pour le plus sombre et 255 pour le plus "
+"Luminosité des LEDs. Réglé sur 0 pour le plus sombre et 255 pour le plus "
 "clair "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:187
@@ -599,7 +592,6 @@ msgid "0"
 msgstr "0 "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:195
-#, fuzzy
 msgid ""
 "Another configuration file, the `led_ring_params.yaml`, sets the default "
 "parameters of LED Ring animations."
@@ -608,7 +600,6 @@ msgstr ""
 " paramètres par défaut des animations de l'anneau LED."
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:197
-#, fuzzy
 msgid "Parameters of the LED Ring animations"
 msgstr "Paramètres des animations de l'anneau LED"
 
@@ -774,7 +765,6 @@ msgid "Rviz led ring markers publish rate on a real robot"
 msgstr "Les marqueurs d'anneau à led Rviz publient le taux sur un robot real "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:252
-#, fuzzy
 msgid "Services - LED Ring"
 msgstr "Services - Anneau Led "
 
@@ -787,9 +777,8 @@ msgstr ""
 "l'anneau LED. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:257
-#, fuzzy
 msgid "LED Ring Package services"
-msgstr "Services de paquet d'anneau de led "
+msgstr "Services du package d'anneau de LED"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:264
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:287
@@ -858,12 +847,10 @@ msgid "Light up a led identified by an ID"
 msgstr "Allume une led identifiée par un identifiant "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:278
-#, fuzzy
 msgid "Publishers - LED Ring"
-msgstr "Publishers - Anneau Led "
+msgstr "Publishers - Anneau LED"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:280
-#, fuzzy
 msgid "LED Ring Package publishers"
 msgstr "Publishers du package d'anneau LED"
 
@@ -936,12 +923,10 @@ msgstr ""
 ":visualization_msgs:`visualization_msgs/Marker<Marker>` de taille 30. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:302
-#, fuzzy
 msgid "Subscribers - LED Ring"
-msgstr "Subscribers - Anneau Led "
+msgstr "Subscribers - Anneau LED"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:305
-#, fuzzy
 msgid "LED Ring Package subscribers"
 msgstr "Subscribers du package anneau LED "
 
@@ -994,9 +979,8 @@ msgid "Catch the Niryo Studio connection to make the LED ring blink."
 msgstr "Récupère la connection Niryo Studio pour faire clignotter l'anneau LED."
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:326
-#, fuzzy
 msgid "Dependencies - LED Ring"
-msgstr "Dépendances - Anneau Led "
+msgstr "Dépendances - Anneau LED"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:328
 msgid ""
@@ -1019,9 +1003,8 @@ msgid "Services files - Led Ring"
 msgstr "Fichiers de service - Anneau LED "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:337
-#, fuzzy
 msgid "LEDUser (Service)"
-msgstr "LedUser (Service) "
+msgstr "LEDUser (Service) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:343
 msgid "SetLedColor (Service)"
@@ -1036,9 +1019,8 @@ msgid "LedRingAnimation (Message)"
 msgstr "LedRingAnimation (Message) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:359
-#, fuzzy
 msgid "LEDRingCurrentState (Message)"
-msgstr "LedRingCurrentState (Message) "
+msgstr "LEDRingCurrentState (Message) "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:365
 msgid "LedRingStatus (Message)"
