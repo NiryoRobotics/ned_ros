@@ -16,6 +16,8 @@ In this tutorial, you will learn how to setup a robot simulation on a computer.
     You can use :niryo_studio_simulation:`Niryo Studio with the simulation<>`.
     To do so, you just have to connect Niryo Studio to "Localhost".
 
+.. todo:: le lien ne fonctionne toujours pas 
+
 Simulation environment installation
 =========================================
 
@@ -123,6 +125,7 @@ the corresponding joint.
 
 .. figure:: ../images/visu_rviz_trackbar.jpg
     :alt: Ned on Rviz
+    :align: center
 
     Example of trackbars use.
 
@@ -139,6 +142,7 @@ To run it: ::
 
 .. figure:: ../images/visu_rviz_ros.jpg
     :alt: Ned on RViz
+    :align: center
 
     Rviz opening, with the robot ready to be controlled with ROS!
 
@@ -202,6 +206,7 @@ To run it: ::
 
 .. figure:: ../images/simulation_gazebo_2.jpg
     :alt: Ned on Gazebo
+    :align: center
 
     Gazebo view, with the robot ready to be controlled with ROS!
 
