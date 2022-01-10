@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-06 13:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,8 +46,8 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:14
 #, fuzzy
 msgid ""
-"Calls are not available from the Python ROS Wrapper, as it is made to run"
-" its programs with the Python ROS Wrapper."
+"Calls are not available from the Python ROS Wrapper, as it made to run "
+"its programs with the Python ROS Wrapper."
 msgstr ""
 "Les appels ne sont pas disponibles à partir du Python ROS Wrapper, car il"
 " a été conçu pour exécuter ses programmes avec le Python ROS Wrapper."
@@ -107,9 +107,8 @@ msgid "``execute_program``"
 msgstr "``execute_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:47
-msgid ""
-":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram>`"
 msgstr ""
 ":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram"
 " (Service)>`"
@@ -136,9 +135,8 @@ msgid "``get_program``"
 msgstr "``get_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:53
-msgid ""
-":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram>`"
 msgstr ""
 ":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram"
 " (Service)>`"
@@ -152,9 +150,8 @@ msgid "``get_program_autorun_infos``"
 msgstr "``get_program_autorun_infos``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:56
-msgid ""
-":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos>`"
 msgstr ""
 ":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos"
 " (Service)>`"
@@ -168,9 +165,8 @@ msgid "``get_program_list``"
 msgstr "``get_program_list``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:59
-msgid ""
-":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList>`"
 msgstr ""
 ":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList"
 " (Service)>`"
@@ -184,9 +180,8 @@ msgid "``manage_program``"
 msgstr "``manage_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:62
-msgid ""
-":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram>`"
 msgstr ""
 ":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram"
 " (Service)>`"
@@ -200,9 +195,8 @@ msgid "``set_program_autorun``"
 msgstr "``set_program_autorun``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:65
-msgid ""
-":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun"
-" (Service)>`"
+#, fuzzy
+msgid ":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun>`"
 msgstr ""
 ":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun"
 " (Service)>`"
@@ -244,44 +238,63 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ":msgs_index:`std_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:84
-msgid "Services & messages files - Programs manager"
-msgstr "Fichiers services et messages -  Programs manager"
+#, fuzzy
+msgid "Services files - Programs manager"
+msgstr "Services - Programs manager"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:87
-msgid "ExecuteProgram (Service)"
-msgstr "ExecuteProgram (Service)"
+#, fuzzy
+msgid "ExecuteProgram"
+msgstr "``execute_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:94
-msgid "GetProgram (Service)"
-msgstr "GetProgram (Service)"
+#, fuzzy
+msgid "GetProgram"
+msgstr "``get_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:101
-msgid "GetProgramAutorunInfos (Service)"
-msgstr "GetProgramAutorunInfos (Service)"
+#, fuzzy
+msgid "GetProgramAutorunInfos"
+msgstr "``get_program_autorun_infos``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:108
-msgid "GetProgramList (Service)"
-msgstr "GetProgramList (Service)"
+#, fuzzy
+msgid "GetProgramList"
+msgstr "``get_program_list``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:115
-msgid "ManageProgram (Service)"
-msgstr "ManageProgram (Service)"
+#, fuzzy
+msgid "ManageProgram"
+msgstr "``manage_program``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:122
-msgid "SetProgramAutorun (Service)"
-msgstr "SetProgramAutorun (Service)"
+#, fuzzy
+msgid "SetProgramAutorun"
+msgstr "``set_program_autorun``"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:129
-msgid "ProgramLanguage (Message)"
+#, fuzzy
+msgid "Messages files - Programs manager"
+msgstr "Fichiers services et messages -  Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:132
+msgid "ProgramIsRunning"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:139
+#, fuzzy
+msgid "ProgramLanguage"
 msgstr "ProgramLanguage (Message)"
 
-#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:136
-msgid "ProgramLanguageList (Message)"
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:146
+#, fuzzy
+msgid "ProgramLanguageList"
 msgstr "ProgramLanguageList (Message)"
 
-#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:143
-msgid "ProgramList (Message)"
-msgstr "ProgramList (Message)"
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:153
+#, fuzzy
+msgid "ProgramList"
+msgstr "``get_program_list``"
 
 #~ msgid "Niryo Robot Programs Manager Package"
 #~ msgstr "Package programs manager du robot Niryo"
@@ -419,4 +432,25 @@ msgstr "ProgramList (Message)"
 #~ ":ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun"
 #~ " (Service)>`"
 #~ msgstr ""
+
+#~ msgid "ExecuteProgram (Service)"
+#~ msgstr "ExecuteProgram (Service)"
+
+#~ msgid "GetProgram (Service)"
+#~ msgstr "GetProgram (Service)"
+
+#~ msgid "GetProgramAutorunInfos (Service)"
+#~ msgstr "GetProgramAutorunInfos (Service)"
+
+#~ msgid "GetProgramList (Service)"
+#~ msgstr "GetProgramList (Service)"
+
+#~ msgid "ManageProgram (Service)"
+#~ msgstr "ManageProgram (Service)"
+
+#~ msgid "SetProgramAutorun (Service)"
+#~ msgstr "SetProgramAutorun (Service)"
+
+#~ msgid "ProgramList (Message)"
+#~ msgstr "ProgramList (Message)"
 

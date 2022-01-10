@@ -1,4 +1,4 @@
-Niryo robot Sound package
+Niryo_robot_sound
 ========================================
 
 This package deals with the sound of the robot.
@@ -148,7 +148,7 @@ Subscribers - Sound
       - Message type
       - Description
    *  - ``/niryo_robot_status/robot_status``
-      - niryo_robot_status/RobotStatus
+      - :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`
       - Retrieves the current robot status, and controls the sound accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
    *  - ``/niryo_studio_connection``
       - :std_msgs:`std_msgs/Empty<Empty>`

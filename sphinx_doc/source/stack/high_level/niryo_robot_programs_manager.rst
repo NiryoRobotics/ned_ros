@@ -44,25 +44,25 @@ Services - Programs manager
       -  Message Type
       -  Description
    *  -  ``execute_program``
-      -  :ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram (Service)>`
+      -  :ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram>`
       -  Executes a program
    *  -  ``execute_program_autorun``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Executes autorun program
    *  -  ``get_program``
-      -  :ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram (Service)>`
+      -  :ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram>`
       -  Retrieves saved program
    *  -  ``get_program_autorun_infos``
-      -  :ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos (Service)>`
+      -  :ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos>`
       -  Gets autorun settings
    *  -  ``get_program_list``
-      -  :ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList (Service)>`
+      -  :ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList>`
       -  Gets saved programs' name
    *  -  ``manage_program``
-      -  :ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram (Service)>`
+      -  :ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram>`
       -  Saves and Deletes programs
    *  -  ``set_program_autorun``
-      -  :ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun (Service)>`
+      -  :ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun>`
       -  Sets autorun settings
    *  -  ``stop_program``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
@@ -80,66 +80,76 @@ Dependencies - Programs manager
 - :msgs_index:`std_msgs`
 
 
-Services & messages files - Programs manager
+Services files - Programs manager
 ----------------------------------------------
 
-ExecuteProgram (Service)
+ExecuteProgram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/ExecuteProgram.srv
    :language: rostype
 
 
-GetProgram (Service)
+GetProgram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/GetProgram.srv
    :language: rostype
 
 
-GetProgramAutorunInfos (Service)
+GetProgramAutorunInfos
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/GetProgramAutorunInfos.srv
    :language: rostype
 
 
-GetProgramList (Service)
+GetProgramList
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/GetProgramList.srv
    :language: rostype
 
 
-ManageProgram (Service)
+ManageProgram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/ManageProgram.srv
    :language: rostype
 
 
-SetProgramAutorun (Service)
+SetProgramAutorun
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/srv/SetProgramAutorun.srv
    :language: rostype
 
 
-ProgramLanguage (Message)
+Messages files - Programs manager
+----------------------------------------------
+
+ProgramIsRunning
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_programs_manager/msg/ProgramIsRunning.msg
+   :language: rostype
+
+
+ProgramLanguage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/msg/ProgramLanguage.msg
    :language: rostype
 
 
-ProgramLanguageList (Message)
+ProgramLanguageList
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/msg/ProgramLanguageList.msg
    :language: rostype
 
 
-ProgramList (Message)
+ProgramList
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_programs_manager/msg/ProgramList.msg

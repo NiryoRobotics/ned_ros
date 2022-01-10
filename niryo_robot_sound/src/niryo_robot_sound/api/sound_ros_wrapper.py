@@ -75,7 +75,7 @@ class SoundRosWrapper(object):
         If failed, raise NiryoRosWrapperException
 
         :param sound_name: Name of the sound to play
-        :type sound_name: string
+        :type sound_name: str
         :param start_time_sec: start the sound from this value in seconds
         :type start_time_sec: float
         :param end_time_sec: end the sound at this value in seconds
@@ -132,7 +132,7 @@ class SoundRosWrapper(object):
         If failed, raise NiryoRosWrapperException
 
         :param sound_name: name of the sound which needs to be deleted
-        :type sound_name: string
+        :type sound_name: str
         :return: status, message
         :rtype: (int, str)
         """
@@ -147,9 +147,10 @@ class SoundRosWrapper(object):
         Delete a sound on the RaspberryPi of the robot.
         If failed, raise NiryoRosWrapperException
 
-        :param sound_name, sound_data: name of the sound which needs to be deleted,
-               encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
-        :type: string: String, String containing the encoded data of the sound file
+        :param sound_name: name of the sound which needs to be deleted
+        :type sound_name: str
+        :param sound_data: String containing the encoded data of the sound file (wav or mp3)
+        :type sound_data: str
         :return: status, message
         :rtype: (int, str)
         """
@@ -169,7 +170,7 @@ class SoundRosWrapper(object):
         raise SoundRosWrapperException if the sound doesn't exists
 
         :param sound_name: name of sound
-        :type sound_name: string
+        :type sound_name: str
         :return: sound duration in seconds
         :rtype: float
         """
