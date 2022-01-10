@@ -113,6 +113,7 @@ Troubleshooting
 
 **Error: Can't open display: 192.168.1.44:0.0**
 Your DISPLAY variable does not match the address of your XServer.
+
 Try :
     - Check that you correctly launched your XServer with the required options (Disable access control is essential)
     - Check that the IP you gave is correct (you need the address in /etc/resolv.conf to have it work)
