@@ -110,6 +110,17 @@ Dependencies - Raspberry Pi
 - :doc:`niryo_robot_msgs`
 - :doc:`niryo_robot_arm_commander`
 
+
+- `Adafruit-GPIO==1.0.3 <https://github.com/adafruit/Adafruit_Python_GPIO>`_
+- `Adafruit-PureIO==1.0.1 <https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.1>`_
+- `Adafruit-BBIO==1.0.9 <https://github.com/adafruit/adafruit-beaglebone-io-python/tree/1.0.9>`_
+- `Adafruit-ADS1x15==1.0.2 <https://github.com/adafruit/Adafruit_Python_ADS1x15>`_
+- `board==1.0 <https://github.com/tjguk/dojo-board>`_
+- `smbus==1.1.post2 <https://i2c.wiki.kernel.org/index.php/I2C_Tools>`_
+- `smbus2==0.4.1 <https://github.com/kplindegaard/smbus2/tree/0.4.1>`_
+- `spidev==3.5 <https://github.com/doceme/py-spidev>`_
+
+
 Services files - Raspberry Pi
 ----------------------------------------------
 

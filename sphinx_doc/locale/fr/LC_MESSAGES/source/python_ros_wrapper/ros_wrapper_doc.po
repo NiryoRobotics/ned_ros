@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-10 18:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,11 +75,15 @@ msgid ""
 "NiryoRosWrapperException"
 msgstr ""
 
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_manual
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory
@@ -202,11 +206,17 @@ msgstr ""
 msgid "status, message"
 msgstr ""
 
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.is_pressed
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_manual
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory
@@ -298,6 +308,8 @@ msgid ""
 " NiryoRosWrapperException"
 msgstr ""
 
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
@@ -1106,6 +1118,7 @@ msgstr ""
 msgid "Manage sound"
 msgstr ""
 
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.led_ring:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.sound:3 of
 msgid "Example: ::"
@@ -1140,7 +1153,73 @@ msgstr ""
 msgid "Custom Button"
 msgstr "Bouton 'Custom'"
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:132
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button:1
+#: of
+msgid "Manage the custom button"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button:10
+#: of
+msgid "CustomButtonRosWrapper API instance"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:1
+#: of
+msgid "Get Button state:"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:3
+#: of
+msgid ""
+"HANDLE_HELD_ACTION = 0 LONG_PUSH_ACTION = 1 SINGLE_PUSH_ACTION = 2 "
+"DOUBLE_PUSH_ACTION = 3 NO_ACTION = 100"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:9
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:3
+#: of
+msgid "int value from EEButtonStatus"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.is_pressed:1
+#: of
+msgid "Button press state"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:1
+#: of
+msgid ""
+"Waits until a specific action occurs and returns true. Returns false if "
+"the timeout is reached."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:6
+#: of
+msgid "True if the action has occurred, false otherwise"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:1
+#: of
+msgid ""
+"Returns the detected action. Returns NO_ACTION if the timeout is reached"
+"  without action."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:4
+#: of
+msgid ""
+"Returns the detected action. Return NO_ACTION if the timeout is reached  "
+"without action"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration:1
+#: of
+msgid ""
+"Waits for the button to be pressed and returns the press time. Returns 0 "
+"if no press is detected after the timeout duration."
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:139
 msgid "Enums"
 msgstr "Enumération"
 
@@ -1158,14 +1237,6 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID:1 of
 msgid "Pins ID"
-msgstr ""
-
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:140
-msgid "Todo"
-msgstr ""
-
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:140
-msgid "ici je ne vois pas les fonctions"
 msgstr ""
 
 #~ msgid ""
@@ -1882,4 +1953,10 @@ msgstr ""
 
 #~ msgid "Pins ID"
 #~ msgstr "ID de la broche"
+
+#~ msgid "Todo"
+#~ msgstr ""
+
+#~ msgid "ici je ne vois pas les fonctions"
+#~ msgstr ""
 

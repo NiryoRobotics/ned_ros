@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-06 13:55+0000\n"
+"POT-Creation-Date: 2022-01-10 17:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -380,62 +380,100 @@ msgid ":doc:`niryo_robot_arm_commander`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:114
-msgid "Services files - Raspberry Pi"
+msgid "`Adafruit-GPIO==1.0.3 <https://github.com/adafruit/Adafruit_Python_GPIO>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:115
+msgid ""
+"`Adafruit-PureIO==1.0.1 "
+"<https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.1>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:116
+msgid ""
+"`Adafruit-BBIO==1.0.9 <https://github.com/adafruit/adafruit-beaglebone-"
+"io-python/tree/1.0.9>`_"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:117
+msgid ""
+"`Adafruit-ADS1x15==1.0.2 "
+"<https://github.com/adafruit/Adafruit_Python_ADS1x15>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:118
+msgid "`board==1.0 <https://github.com/tjguk/dojo-board>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:119
+msgid "`smbus==1.1.post2 <https://i2c.wiki.kernel.org/index.php/I2C_Tools>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:120
+msgid "`smbus2==0.4.1 <https://github.com/kplindegaard/smbus2/tree/0.4.1>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:121
+msgid "`spidev==3.5 <https://github.com/doceme/py-spidev>`_"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:125
+msgid "Services files - Raspberry Pi"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:128
 msgid "ChangeMotorConfig (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:123
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:134
 msgid "GetAnalogIO (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:129
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:140
 msgid "GetDigitalIO (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:135
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:146
 msgid "LedBlinker (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:141
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:152
 msgid "SetDigitalIO (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:147
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:158
 msgid "SetAnalogIO (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:153
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:164
 msgid "SetIOMode (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:159
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:170
 msgid "SetPullup (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:165
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:176
 msgid "Messages files - Raspberry Pi"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:169
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:180
 msgid "AnalogIO"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:175
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:186
 msgid "AnalogIOState (Topic)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:181
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:192
 msgid "DigitalIO"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:187
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:198
 msgid "DigitalIOState (Topic)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_rpi.rst:194
+#: ../../source/stack/high_level/niryo_robot_rpi.rst:205
 msgid "LogStatus (Topic)"
 msgstr ""
 

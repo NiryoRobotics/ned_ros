@@ -128,6 +128,13 @@ Custom Button
     :members: custom_button
     :member-order: bysource
 
+.. automodule:: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper
+   :members: CustomButtonRosWrapper
+
+.. autoclass:: CustomButtonRosWrapper
+    :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
+    :member-order: bysource
+
 Enums
 ------------------------------------
 
@@ -137,4 +144,3 @@ Enums
     :exclude-members: CommandEnum
     :member-order: bysource
 
-.. todo:: ici je ne vois pas les fonctions

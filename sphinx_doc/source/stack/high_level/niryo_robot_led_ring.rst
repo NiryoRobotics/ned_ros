@@ -30,9 +30,7 @@ When displaying the **robot status**, the LED Ring has several states which repr
 Refer to the following table. The node subscribes to the ROS topic ``/niryo_robot_status/robot_status``, published by
 the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`.
 
-.. todo:: add a link to the niryo robot status package once it is documented
-
-.. list-table:: 
+.. list-table::
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -90,6 +88,9 @@ the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotSt
 User mode 
 ^^^^^^^^^^^^^^^^^^^
 
+.. todo:: Remake the GIFs
+
+
 Several animations are implemented to allow the user different ways to control the Led Ring. Refer to the following
 table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`the service section<source/stack/high_level/niryo_robot_led_ring:Services - Led Ring>`)
 
@@ -142,11 +143,10 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
       - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
    *  - _`Breath`
       - | Variation of light intensity to imitate breathing.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
+      -
    *  - _`Snake`
       - | Luminous snake that turns around the LED Ring.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
-
+      -
 
 
 .. note:: When displaying the robot status, the LED Ring commander uses those methods, with the defaults parameters defined below.
@@ -328,6 +328,8 @@ Dependencies - LED Ring
 - :ref:`niryo_robot_msgs <source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`
 - :msgs_index:`std_msgs`
 - :msgs_index:`visualization_msgs`
+
+- `rpi_ws281x==4.3.0 <https://github.com/rpi-ws281x/rpi-ws281x-python/tree/v4.3.0>`_
 
 
 Services files - Led Ring

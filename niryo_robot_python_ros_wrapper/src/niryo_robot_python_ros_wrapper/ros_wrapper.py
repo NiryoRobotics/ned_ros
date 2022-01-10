@@ -1973,6 +1973,19 @@ class NiryoRosWrapper:
 
     @property
     def custom_button(self):
+        """
+        Manage the custom button
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            print(robot.custom_button.state)
+
+        :return: CustomButtonRosWrapper API instance
+        :rtype:  CustomButtonRosWrapper
+        """
         return self.__custom_button
 
     def set_database_setting(self, name, value):
