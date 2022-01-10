@@ -281,7 +281,7 @@ msgstr "Veuillez vérifier l'erreur sur Niryo Studio. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:86
 msgid ":ref:`Solid <Solid>` Red"
-msgstr "Rouge :ref:`fixe <Solide>`"
+msgstr "Rouge :ref:`Fixe <Solid>`"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:87
 msgid "ROS Crash"
