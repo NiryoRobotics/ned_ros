@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,9 @@ msgid "Todo"
 msgstr ""
 
 #: ../../source/stack/third_parties/python.rst:14
-msgid "cette partie est complète ?"
+msgid "cette partie est complète ? CC: Non, todo"
 msgstr ""
+
+#~ msgid "cette partie est complète ?"
+#~ msgstr ""
 

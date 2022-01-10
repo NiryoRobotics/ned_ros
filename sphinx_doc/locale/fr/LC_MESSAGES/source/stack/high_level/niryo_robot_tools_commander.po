@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-06 14:40+0000\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,7 +143,7 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:50
 #, fuzzy
 msgid ""
-"Publish if the TCP (Tool Center Point) is enabled and transformation "
+"Publishes if the TCP (Tool Center Point) is enabled and transformation "
 "between the tool_link and the TCP"
 msgstr ""
 "Publie l'état activé/désactivé du PCO (Point Central de l'Outil) ainsi "
@@ -239,7 +239,7 @@ msgstr "``reset_tcp``"
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:80
 #, fuzzy
 msgid ""
-"Reset the TCP transformation. By default it will be the one of the "
+"Resets the TCP transformation. By default it will be the one of the "
 "equipped tool."
 msgstr "Réinitialiser la transformation du PCO avec celle de l'outil équipé."
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,22 +160,26 @@ msgstr ""
 #: ../../source/installation/wsl.rst:114
 msgid ""
 "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
-"does not match the address of your XServer. Try :"
+"does not match the address of your XServer."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:117
+#: ../../source/installation/wsl.rst:119
+msgid "Try :"
+msgstr ""
+
+#: ../../source/installation/wsl.rst:118
 msgid ""
 "Check that you correctly launched your XServer with the required options "
 "(Disable access control is essential)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:118
+#: ../../source/installation/wsl.rst:119
 msgid ""
 "Check that the IP you gave is correct (you need the address in "
 "/etc/resolv.conf to have it work)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:120
+#: ../../source/installation/wsl.rst:121
 msgid ""
 "**OpenGL issues** Some people have said that they run into issues with "
 "OpenGL applications like Rviz. If you do, try setting the environment "
@@ -183,15 +187,15 @@ msgid ""
 "export LIBGL_ALWAYS_INDIRECT=0 to the end of your .bashrc file)."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:126
+#: ../../source/installation/wsl.rst:127
 msgid "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:128
+#: ../../source/installation/wsl.rst:129
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:130
+#: ../../source/installation/wsl.rst:131
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 msgstr ""
 
@@ -276,5 +280,12 @@ msgstr ""
 #~ "the ip you gave is correct (you"
 #~ " need the address in /etc/resolv.conf "
 #~ "to have it work)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Error: Can't open display: "
+#~ "192.168.1.44:0.0** Your DISPLAY variable does"
+#~ " not match the address of your "
+#~ "XServer. Try :"
 #~ msgstr ""
 
