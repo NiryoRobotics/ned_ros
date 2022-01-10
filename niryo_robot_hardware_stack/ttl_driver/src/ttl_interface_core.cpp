@@ -793,12 +793,12 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
 {
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    // block control loop to avoid control loop called when removing conveyor is not finished yet
-    lock_guard<mutex> lck(_control_loop_mutex);
 
     auto state = getJointState(motor_id);
     if (niryo_robot_msgs::CommandStatus::SUCCESS == changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
+        // block control loop to avoid control loop called when removing conveyor is not finished yet
+        lock_guard<mutex> lck(_control_loop_mutex);
         _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
@@ -814,6 +814,7 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
  */
 int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
 

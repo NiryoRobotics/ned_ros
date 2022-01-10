@@ -26,7 +26,7 @@ Ubuntu packages
 Python libraries
 ***********************************************************
 
-See src/requirements_ned2.txt file
+See *src/requirements_ned2.txt* file
 
 Packages
 -----------------------------------------------------------
@@ -72,6 +72,8 @@ Cleaning and Refactoring
 * sphinx_doc restructuration
 * add hardware_version discrimination between ned, one and ned2
 * add ned2 configuration files in all packages
+* niryo_robot_arm_commmander refactoring
+* niryo_robot_python_ros_wrapper refactoring
 
 Features (for Ned and One only)
 -----------------------------------------------------------
@@ -83,8 +85,6 @@ Features (for Ned and One only)
 * Add Ned2 features (upcoming)
 * niryo_robot_bringup refactoring
 * improve control loops for ttl_driver and joints interface
-* new trajectories (spiral, circular)
-* Save and replay waypointed trajectories
 
 Know issues (for Ned and One only)
 -----------------------------------------------------------
@@ -94,6 +94,22 @@ Limitations
 -----------------------------------------------------------
 * Calibration deactivated on Simulated Ned and One
 * Not officially supporting Ned2 hardware version
+* Hotspot mode is always on by default on reboot for the Niryo One
+
+Niryo Studio
+-----------------------------------------------------------
+
+New features
+***********************************************************
+
+- Network settings (DHCP / Static IP)
+- Hardware detection One / Ned / Ned2
+- Display TCP Speed
+- Blockly - Dynamic blocks (Saved pose, workspace)
+
+Bugs fix
+***********************************************************
+- Blockly - Conversion RAD / DEG in block
 
 
 September release - New features batch

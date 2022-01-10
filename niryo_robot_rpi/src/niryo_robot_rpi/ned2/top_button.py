@@ -126,7 +126,6 @@ class TopButton:
                     self._send_pause_state(PausePlanExecution.CANCEL)
                     rospy.logwarn("Button Manager - Cancel sequence")
                     self._cancel_program_from_program_manager()
-                    activate_learning_mode(True)
 
         # Was pressed and is not anymore (release)
         elif not self.__button_action_done and button_was_pressed:

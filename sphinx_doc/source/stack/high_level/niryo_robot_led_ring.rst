@@ -83,7 +83,7 @@ User mode
 ^^^^^^^^^^^^^^^^^^^
 
 Several animations are implemented to allow the user different ways to control the Led Ring. Refer to the following
-table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`Services - Led Ring` section)
+table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`source/stack/high_level/niryo_robot_led_ring:Services - Led Ring` section)
 
 .. todo:: put this table with gifs also in the Ned 2 user documentation
 
@@ -171,7 +171,7 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
 
 .. note:: When displaying the robot status, the Led Ring commander uses those methods, with the defaults parameters defined below.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - Led Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -271,7 +271,7 @@ The ROS node implements one service, designed for the user to control the Led Ri
       - Message type
       - Description
    *  - ``set_user_animation``
-      - :ref:`LedUser<LedUser (Service)>`
+      - :ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser (Service)>`
       - | Allow user to control the Led Ring, with implemented animations. A new request
         | will **interrupt** the previous one, if still playing. Depending on the ``wait`` boolean field
         | and the ``iterations`` field of the request, the service will either **answer immediately** after
@@ -291,13 +291,13 @@ Publishers - Led Ring
       - Message type
       - Description
    *  - ``led_ring_status``
-      - :ref:`LedRingStatus<LedRingStatus (Message)>`
+      - :ref:`LedRingStatus<source/stack/high_level/niryo_robot_led_ring:LedRingStatus (Message)>`
       - | Publishes the **status** of the Led Ring, providing information on the **current mode** 
         | (displaying robot status or controlled by user if the robot works in AUTONOMOUS mode),
         | the **current animation played** and the animation color (except for rainbow methods, where
         | the animation color is not defined). Publishes every time at least **one field changed**.
    *  - ``led_ring_current_state``
-      - :ref:`LedRingCurrentState<LedRingCurrentState (Message)>`
+      - :ref:`LedRingCurrentState<source/stack/high_level/niryo_robot_led_ring:LedRingCurrentState (Message)>`
       - | Publishes the current **state** of each Led, as a list of colors of size 30. Publishes everytime
         | the state of at least one Led changes.
    *  - ``visualization_marker_array``
@@ -321,7 +321,7 @@ Subscribers - Led Ring
       - Description
    *  - ``/niryo_robot_status/robot_status``
       - niryo_robot_status/RobotStatus
-      - Retrieves the current robot status, and control Led accordingly (see :ref:`Robot status mode` section)
+      - Retrieves the current robot status, and control Led accordingly (see :ref:`source/stack/high_level/niryo_robot_led_ring:Robot status mode` section)
 
 .. todo:: add a link to the robot status message once it is documented.
 

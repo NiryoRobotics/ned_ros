@@ -91,7 +91,6 @@ Learn more on this :doc:`section <source/more>`.
    :caption: Installation
 
    source/installation/getting_started
-   source/installation/ubuntu_16
    source/installation/ubuntu_18
    source/installation/wsl
 
@@ -119,4 +118,5 @@ Learn more on this :doc:`section <source/more>`.
    :hidden:
    :maxdepth: 2
    :caption: Changelog
+
    source/changelog

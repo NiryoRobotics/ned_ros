@@ -17,7 +17,7 @@ All commands are firstly received on the actionlib server which:
  * Validates parameters.
  * Calls required controllers and returns appropriate status and message.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - Commander
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -8,7 +8,7 @@ Sound Node
 --------------------------
 The ROS Node is made of services to play, stop, import and delete a sound on the robot. It is also possible to set the volume of the robot. 
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Publisher - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,8 +29,10 @@ Publisher - Sound
       -  :std_msgs:`std_msgs/Int8<Int8>`
       -  Publish the volume of the robot
    *  -  ``/niryo_robot_sound/get_user_sounds``
-      -  :ref:`SoundUser<SoundUser (Message)>`
+      -  :ref:`SoundUser<source/stack/high_level/niryo_robot_sound:SoundUser (Message)>`
       -  Publish the sound (and their duration) on the robot
+
+.. todo:: Update message name because they were renamed in ROS but not in the .rst files
 
 Services - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -45,22 +47,22 @@ Services - Sound
       -  Message Type
       -  Description
    *  -  ``/niryo_robot_sound/play_sound_state``
-      -  :ref:`SoundStateCommand<SoundStateCommand (Service)>`
+      -  :ref:`SoundStateCommand<source/stack/high_level/niryo_robot_sound:SoundStateCommand (Service)>`
       -  Play a sound corresponding to a state of the robot
    *  -  ``/niryo_robot_sound/play_sound_user``
-      -  :ref:`SoundUserCommand<SoundUserCommand (Service)>`
+      -  :ref:`SoundUserCommand<source/stack/high_level/niryo_robot_sound:SoundUserCommand (Service)>`
       -  Play a sound imported on the robot from the user
    *  -  ``/niryo_robot_sound/stop_sound``
-      -  :ref:`StopSound<StopSound (Service)>`
+      -  :ref:`StopSound<source/stack/high_level/niryo_robot_sound:StopSound (Service)>`
       -  Stop a sound being played
    *  -  ``/niryo_robot_sound/delete_sound_user``
-      -  :ref:`DeleteSound<DeleteSound (Service)>`
+      -  :ref:`DeleteSound<source/stack/high_level/niryo_robot_sound:DeleteSound (Service)>`
       -  Delete a sound imported by the user on the robot
    *  -  ``/niryo_robot_sound/set_volume``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
       -  Set the volume of the robot
    *  -  ``/niryo_robot_sound/send_sound``
-      -  :ref:`SendUserSound<SendUserSound (Service)>`
+      -  :ref:`SendUserSound<source/stack/high_level/niryo_robot_sound:SendUserSound (Service)>`
       -  Import a sound on the robot
    
 Dependencies - Sound
@@ -85,8 +87,6 @@ SoundObject (Message)
 .. literalinclude:: ../../../../niryo_robot_sound/msg/SoundObject.msg
    :language: rostype
 
-
-
 ManageSound (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -104,3 +104,7 @@ TextToSpeech (Service)
 
 .. literalinclude:: ../../../../niryo_robot_sound/srv/TextToSpeech.srv
    :language: rostype
+
+.. |namespace| replace:: /niryo_robot_sound/
+.. |namespace_emphasize| replace:: ``/niryo_robot_sound/``
+.. |package_path| replace:: ../../../../niryo_robot_sound

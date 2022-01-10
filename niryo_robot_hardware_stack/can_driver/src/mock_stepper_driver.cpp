@@ -185,12 +185,12 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
 
         // change control byte to all type of data can be read (circular buffer)
         _current_control_byte_index++;
-        if (_current_control_byte_index >= _control_byte_list.size())
+        if (_current_control_byte_index/3 >= _control_byte_list.size())
         {
             _current_control_byte_index = 0;
         }
 
-        control_byte = _control_byte_list[_current_control_byte_index];
+        control_byte = _control_byte_list[_current_control_byte_index/3];  // 3 times as slow as the id circular buffer
     }
 
     return CAN_OK;

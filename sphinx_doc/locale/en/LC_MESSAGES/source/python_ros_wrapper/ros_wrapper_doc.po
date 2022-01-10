@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-19 15:27+0200\n"
+"POT-Creation-Date: 2021-12-20 17:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,11 +101,11 @@ msgstr ""
 msgid "Sound"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:115
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:118
 msgid "Led Ring"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:124
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:130
 msgid "Enums"
 msgstr ""
 
@@ -701,5 +701,22 @@ msgstr ""
 #~ msgid ""
 #~ "Tools IDs (need to match tools ids"
 #~ " in niryo_robot_tools_commander package)"
+#~ msgstr ""
+
+#~ msgid "If it returns the poses descriptions"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Use /niryo_robot_tools_commander/current_id  topic "
+#~ "to get current tool id"
+#~ msgstr ""
+
+#~ msgid "Default -> 100"
+#~ msgstr ""
+
+#~ msgid "Default -> 20"
+#~ msgstr ""
+
+#~ msgid "The name of the pin"
 #~ msgstr ""
 

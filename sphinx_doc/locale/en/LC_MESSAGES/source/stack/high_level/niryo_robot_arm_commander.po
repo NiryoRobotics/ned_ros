@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"POT-Creation-Date: 2021-12-23 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,7 +72,7 @@ msgid "Calls required controllers and returns appropriate status and message."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:20
-msgid "The namespace used is: |namespace_emphasize|"
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:23
@@ -498,5 +498,8 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`PausePlanExecution<source/ros/niryo_robot_arm_commander:PausePlanExecution"
 #~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid "The namespace used is: |namespace_emphasize|"
 #~ msgstr ""
 
