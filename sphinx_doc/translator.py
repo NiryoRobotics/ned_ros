@@ -5,9 +5,9 @@ translator = Translator()
 
 # translation = translator.translate("Hello", src="en", dest="fr")
 # print(f"{translation.origin} ({translation.src}) --> {translation.text} ({translation.dest})")
-file = 'niryo_robot_led_ring.po'
-file2 = 'niryo_robot_led_ring.po'
-folder_path = "/home/valentinp/catkin_ws/src/sphinx_doc/locale/fr/LC_MESSAGES/source/stack/high_level"
+file = 'api.po'
+file2 = 'api.po'
+folder_path = "/home/niryo/pyniryo/docs/locale/fr/LC_MESSAGES/source/api_doc"
 file_path = os.path.join(folder_path, file)
 output_file_path = os.path.join(folder_path, file2)
 trad_sentence = ""
@@ -51,10 +51,14 @@ with open(file_path, 'r', encoding="utf-8") as source_file:
         elif line.startswith('msgstr'):
             read_trad = False
             if line.startswith('msgstr ""'):
-                print(trad_sentence)
-                translation = translator.translate(trad_sentence, dest="fr").text
-                print(translation)
-                overall_translation += 'msgstr {}\n'.format(split_str(translation))
+                next_line = source_file.readline()
+                if next_line == "\n":
+                    print(trad_sentence)
+                    translation = translator.translate(trad_sentence, dest="fr").text
+                    print(translation)
+                    overall_translation += 'msgstr {}\n\n'.format(split_str(translation))
+                else:
+                    overall_translation += line + next_line
                 continue
 
         elif read_trad:
