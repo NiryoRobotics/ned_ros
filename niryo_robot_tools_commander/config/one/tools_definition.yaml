@@ -113,6 +113,6 @@ tool_list:
       push_air_position: 760
       push_air_max_torque: 1023
     transformation:
-      translation: [0.048, 0.0, -0.01]
+      translation: [0.041, 0.0, -0.01]
       quaternion: [0.0, 0.0, 0.0, 1.0]
 
