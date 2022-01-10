@@ -316,7 +316,6 @@ linkchecker_production_job:
   stage: environment_test
   variables:
     <<: *production_variables
-  rules: *production_rules
   needs:
     - upload_production_job
   allow_failure: true
