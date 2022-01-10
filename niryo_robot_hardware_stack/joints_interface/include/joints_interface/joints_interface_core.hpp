@@ -85,6 +85,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         void startSubscribers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
+        void resetController();
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);

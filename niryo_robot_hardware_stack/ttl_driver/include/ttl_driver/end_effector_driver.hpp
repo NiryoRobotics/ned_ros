@@ -82,6 +82,8 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
 
         int readDigitalInput(uint8_t id, bool& in) override;
         int writeDigitalOutput(uint8_t id, bool out) override;
+
+        int writeCollisionThresh(uint8_t id, int thresh) override;
 };
 
 // definition of methods
@@ -449,6 +451,17 @@ int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
     return write<typename reg_type::TYPE_DIGITAL_OUT>(reg_type::ADDR_DIGITAL_OUT, id, static_cast<uint8_t>(out));
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::writeCollisionThresh
+ * @param id
+ * @param out  1 : true, 0: false
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
+{
+    return write<typename reg_type::TYPE_COLLISION_THRESHOLD>(reg_type::ADDR_COLLISION_THRESHOLD, id, static_cast<uint8_t>(thresh));
+}
 } // ttl_driver
 
 #endif // EndEffectorDriver
