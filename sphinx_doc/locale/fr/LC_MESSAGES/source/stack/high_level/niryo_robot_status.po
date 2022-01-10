@@ -483,31 +483,28 @@ msgid ":msgs_index:`sensor_msgs`"
 msgstr ":msgs_index:`sensor_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:180
-#, fuzzy
 msgid ""
 ":ref:`niryo_robot_msgs "
 "<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 msgstr ""
 ":ref:`niryo_robot_msgs "
-"\"<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`\""
+"<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:181
-#, fuzzy
 msgid ""
 ":ref:`niryo_robot_programs_manager "
 "<source/stack/high_level/niryo_robot_programs_manager:Niryo_robot_programs_manager>`"
 msgstr ""
 ":ref:`niryo_robot_programs_manager "
-"\"<source/stack/high_level/niryo_robot_programs_manager:Niryo_robot_programs_manager>`\""
+"<source/stack/high_level/niryo_robot_programs_manager:Niryo_robot_programs_manager>`"
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:182
-#, fuzzy
 msgid ""
 ":ref:`niryo_robot_arm_commander "
 "<source/stack/high_level/niryo_robot_arm_commander:Niryo_robot_arm_commander>`"
 msgstr ""
 ":ref:`niryo_robot_arm_commander "
-"\"<source/stack/high_level/niryo_robot_arm_commander:Niryo_robot_arm_commander>`\""
+"<source/stack/high_level/niryo_robot_arm_commander:Niryo_robot_arm_commander>`"
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:185
 msgid "Messages files - Robot Status"

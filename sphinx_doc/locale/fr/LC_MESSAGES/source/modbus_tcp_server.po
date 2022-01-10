@@ -832,9 +832,8 @@ msgstr ""
 "<https://pymodbus.readthedocs.io/en/latest/index.html>`_"
 
 #: ../../source/modbus_tcp_server.rst:271
-#, fuzzy
 msgid ":doc:`stack/high_level/niryo_robot_msgs`"
-msgstr ":doc:`ros/niryo_robot_msgs`"
+msgstr ":doc:`stack/high_level/niryo_robot_msgs`"
 
 #: ../../source/modbus_tcp_server.rst:272
 msgid ":msgs_index:`std_msgs`"

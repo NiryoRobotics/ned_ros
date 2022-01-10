@@ -79,12 +79,10 @@ msgid ""
 msgstr ""
 
 #: ../../source/installation/wsl.rst:28
-#, fuzzy
 msgid "Update WSL to use version 2 (in a powershell terminal)"
 msgstr "Mettre la version de WSL par défaut à 2 (dans un terminal powershell)"
 
 #: ../../source/installation/wsl.rst:35
-#, fuzzy
 msgid ""
 "You then need to restart your machine to finish the WSL installation and "
 "the upgrade to WSL2."
@@ -105,7 +103,6 @@ msgid "Ubuntu 18.04 in the Windows Store"
 msgstr "Ubuntu 18.04 sur le Windows Store"
 
 #: ../../source/installation/wsl.rst:53
-#, fuzzy
 msgid ""
 "Launch the app. The first time, it asks you to finish the initialization "
 "of the OS."
@@ -116,7 +113,6 @@ msgstr ""
 "le tutoriel"
 
 #: ../../source/installation/wsl.rst:55
-#, fuzzy
 msgid ""
 "Your Ubuntu OS is now ready. You can continue the build of the stack "
 "using the tutorial."
@@ -131,7 +127,6 @@ msgid "Setting up GUI forwarding"
 msgstr "Mise en place de la redirection d'Interface Graphique"
 
 #: ../../source/installation/wsl.rst:61
-#, fuzzy
 msgid ""
 "WSL does not come with an X server. Thus, you will not be able to launch "
 "any graphical windows for now. But we can change this by using a Windows "
@@ -169,12 +164,10 @@ msgstr ""
 "pour rediriger l'interface graphique"
 
 #: ../../source/installation/wsl.rst:90
-#, fuzzy
 msgid "You can add this to your bashrc file."
 msgstr "Vous pouvez ajouter cette ligne à votre fichier bashrc"
 
 #: ../../source/installation/wsl.rst:92
-#, fuzzy
 msgid ""
 "You can check that your forwarding works by using simple X11 apps for "
 "example:"
@@ -183,17 +176,14 @@ msgstr ""
 "application X11 simple par exemple :"
 
 #: ../../source/installation/wsl.rst:100
-#, fuzzy
 msgid "Install ROS Melodic (see instructions here)"
 msgstr "Installer ROS melodic (voir les instructions ici)"
 
 #: ../../source/installation/wsl.rst:102
-#, fuzzy
 msgid "Try launching Rviz"
 msgstr "Essayer de lancer rviz"
 
 #: ../../source/installation/wsl.rst:108
-#, fuzzy
 msgid ""
 "You should now be able to launch any simulation of the One, Ned or Ned2 "
 "using Rviz or Gazebo"

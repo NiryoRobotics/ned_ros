@@ -20,9 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:2
-#, fuzzy
 msgid "Niryo robot tools commander"
-msgstr "Package Niryo robot Tools Commander"
+msgstr "Package Niryo robot tools commander"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:4
 msgid "Provides functionalities to control end-effectors and accessories for Ned."
@@ -124,7 +123,6 @@ msgid ":std_msgs:`Int32`"
 msgstr ":std_msgs:`Int32`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:47
-#, fuzzy
 msgid "Publishes the current tool ID"
 msgstr "Publier l'ID d'outil actuel"
 
@@ -141,7 +139,6 @@ msgstr ""
 "(Message)>`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:50
-#, fuzzy
 msgid ""
 "Publishes if the TCP (Tool Center Point) is enabled and transformation "
 "between the tool_link and the TCP"
@@ -167,7 +164,6 @@ msgid ":std_srvs:`Trigger`"
 msgstr ":std_srvs:`Trigger`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:66
-#, fuzzy
 msgid ""
 "Pings/scans for a dxl motor flashed with an ID corresponding to a tool "
 "and equip it (if found)"
@@ -184,7 +180,6 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:69
-#, fuzzy
 msgid "Equips the electromagnet with the motor ID given as parameter"
 msgstr "Equiper l'électroaimant avec l'ID moteur donné comme paramètre"
 
@@ -197,7 +192,6 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
-#, fuzzy
 msgid "Enables or disablse the TCP (Tool Center Point) functionality."
 msgstr "Activer ou désactiver le PCO (Point central de l'outil)."
 
@@ -226,7 +220,6 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:77
-#, fuzzy
 msgid ""
 "Activates the TCP (Tool Center Point) functionality and defines a new TCP"
 " transformation."
@@ -237,7 +230,6 @@ msgid "``reset_tcp``"
 msgstr "``reset_tcp``"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:80
-#, fuzzy
 msgid ""
 "Resets the TCP transformation. By default it will be the one of the "
 "equipped tool."

@@ -31,26 +31,23 @@ msgstr ""
 "d'Exploitation cibles :"
 
 #: ../../source/installation/getting_started.rst:6
-#, fuzzy
 msgid "Raspberry Pi 3 (deprecated, not supported anymore)"
-msgstr "Raspberry pi 3 (déprécié, n'est plus supporté)"
+msgstr "Raspberry Pi 3 (déprécié, n'est plus supporté)"
 
 #: ../../source/installation/getting_started.rst:7
-#, fuzzy
 msgid "Raspberry Pi 4"
-msgstr "Raspberry pi 4"
+msgstr "Raspberry Pi 4"
 
 #: ../../source/installation/getting_started.rst:8
 msgid "Desktop"
 msgstr "Ordinateur de bureau"
 
 #: ../../source/installation/getting_started.rst:10
-#, fuzzy
 msgid ""
 "As the stack is based on ROS Melodic or Kinetic (deprecated), you need to"
 " be on an Ubuntu based system."
 msgstr ""
-"Comme la stack est basée sur ROS melodic ou kinetic (déprécié), vous "
+"Comme la stack est basée sur ROS Melodic ou Kinetic (déprécié), vous "
 "devez être sur un système basé sur Ubuntu. Nous supportons actuellement "
 "les version suivantes :"
 

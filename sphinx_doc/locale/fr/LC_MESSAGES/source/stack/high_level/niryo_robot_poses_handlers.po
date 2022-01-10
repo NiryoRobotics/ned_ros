@@ -73,7 +73,6 @@ msgid "Grips"
 msgstr "Outils"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:29
-#, fuzzy
 msgid ""
 "When we know the object pose in robot coordinates, we can't directly send"
 " this pose to the robot because we specify the target pose of the "
@@ -115,7 +114,6 @@ msgid "The vision pick loop"
 msgstr "La boucle de saisie par vision"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:43
-#, fuzzy
 msgid ""
 "The camera detects objects relative to markers and sends   x\\ "
 ":sub:`rel`\\, y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."

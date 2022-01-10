@@ -94,7 +94,6 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`"
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:29
-#, fuzzy
 msgid "several hardware information"
 msgstr "Plusieurs informations sur le matériel"
 
@@ -215,9 +214,8 @@ msgid "Niryo message files"
 msgstr "Fichiers de messages Niryo"
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:77
-#, fuzzy
 msgid "BusState"
-msgstr "État  du bus TTL"
+msgstr "État du bus TTL"
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:83
 msgid "CommandStatus"

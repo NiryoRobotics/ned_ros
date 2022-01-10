@@ -36,7 +36,6 @@ msgid "Ned in Gazebo Simulation"
 msgstr "Ned dans la simulation de Gazebo"
 
 #: ../../source/simulation.rst:13
-#, fuzzy
 msgid ""
 "In this tutorial, you will learn how to setup a robot simulation on a "
 "computer."
@@ -65,7 +64,6 @@ msgid "Simulation environment installation"
 msgstr "Installation de l'environnement de simulation"
 
 #: ../../source/simulation.rst:25
-#, fuzzy
 msgid ""
 "The whole ROS Stack is developed and tested on ROS **Melodic** which "
 "requires **Ubuntu 18.04** to run correctly. The using of another ROS "
@@ -103,7 +101,6 @@ msgstr ""
 "(immuable)"
 
 #: ../../source/simulation.rst:40
-#, fuzzy
 msgid ""
 "The simulation is a powerful tool allowing to test new programs directly "
 "on your computer which prevents to transfer new code on the robot."
@@ -123,7 +120,6 @@ msgstr ""
 "beaucoup plus lent que de le faire sur un ordinateur de bureau."
 
 #: ../../source/simulation.rst:45
-#, fuzzy
 msgid "Without physics - No visualization"
 msgstr "Sans physique - Pas de Visualisation"
 
@@ -361,13 +357,12 @@ msgid "Control with ROS"
 msgstr "Contrôler via ROS"
 
 #: ../../source/simulation.rst:136
-#, fuzzy
 msgid ""
 "Not only `Rviz <http://wiki.ros.org/rviz>`_ can display the robot, but it"
 " can also be linked with ROS controllers to show the robot's actions from"
 " ROS commands!"
 msgstr ""
-"Non seulement `RViz<http://wiki.ros.org/rviz>`_ peut afficher le robot, "
+"Non seulement `RViz <http://wiki.ros.org/rviz>`_ peut afficher le robot, "
 "mais il peut également être lié aux contrôleurs ROS pour afficher les "
 "actions du robot à partir des commandes ROS !"
 
@@ -451,7 +446,6 @@ msgid "Collision."
 msgstr "La collision."
 
 #: ../../source/simulation.rst:190
-#, fuzzy
 msgid ""
 "World creation → A virtual environment in which the robot can deal with "
 "objects."

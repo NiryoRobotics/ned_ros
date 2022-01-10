@@ -50,14 +50,13 @@ msgid "What this code is doing in a hidden way:"
 msgstr "Ce que fait ce code en arrière plan :"
 
 #: ../../source/ros_wrapper.rst:22
-#, fuzzy
 msgid ""
 "It generates a :ref:`RobotMove Action "
 "Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove>` and "
 "set it as a joint command with the corresponding joints value."
 msgstr ""
 "Il génère un :ref:`RobotMove Action "
-"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` et le "
+"Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove>` et le "
 "définit comme une command de joint avec les valeurs de joints "
 "correspondantes."
 

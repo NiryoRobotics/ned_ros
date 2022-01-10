@@ -38,7 +38,6 @@ msgstr ""
 "Conveyor<source/python_ros_wrapper/ros_wrapper_doc:Conveyor Belt>`."
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:9
-#, fuzzy
 msgid "Imports & initialization are not mentionned, but you should not forget it!"
 msgstr ""
 "Les importations et l'initialisation ne sont pas mentionnées, mais il ne "

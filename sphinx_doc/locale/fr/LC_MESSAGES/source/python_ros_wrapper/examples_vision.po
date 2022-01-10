@@ -47,7 +47,6 @@ msgstr ""
 "travail."
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:12
-#, fuzzy
 msgid ""
 "As the examples always start the same way, there is the code you need to "
 "add at the beginning of all of them: ::"

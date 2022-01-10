@@ -25,7 +25,6 @@ msgid "Ubuntu 18 Installation"
 msgstr "Installer sous Ubuntu 18"
 
 #: ../../source/installation/ubuntu_18.rst:4
-#, fuzzy
 msgid ""
 "This guide will explain the steps needed to install the Niryo Robot Stack"
 " on an Ubuntu 18 OS. You can apply these steps to set up a working "
@@ -57,9 +56,8 @@ msgstr ""
 "ainsi cet OS est aujourd'hui le seul système d'exploitation supporté."
 
 #: ../../source/installation/ubuntu_18.rst:20
-#, fuzzy
 msgid "Be sure to have an up to date system before continuing"
-msgstr "Vérifiez que vous avez un système à jour avant de continuer ::"
+msgstr "Vérifiez que vous avez un système à jour avant de continuer"
 
 #: ../../source/installation/ubuntu_18.rst:29
 msgid "Ubuntu packages"
@@ -100,14 +98,11 @@ msgid "Python environment"
 msgstr "Environnement Python"
 
 #: ../../source/installation/ubuntu_18.rst:45
-#, fuzzy
 msgid "The Python environment is installed using the requirements_ned2.txt file"
 msgstr ""
 "L'environnement Python est installé avec le fichier requirements_ned2.txt"
-" ::"
 
 #: ../../source/installation/ubuntu_18.rst:52
-#, fuzzy
 msgid ""
 "ROS Melodic is still using Python2 internally so are our Python scripts "
 "to keep version alignment. You thus need to install the requirements "
@@ -136,7 +131,6 @@ msgstr ""
 "**catkin_ws_niryo_ned** ainsi qu'un sous-dossier **src**: ::"
 
 #: ../../source/installation/ubuntu_18.rst:67
-#, fuzzy
 msgid ""
 "Then go to the folder **catkin_ws_niryo_ned** and clone Ned repository in"
 " the folder **src**. For the future operations, be sure to stay in the "
@@ -155,7 +149,6 @@ msgid "Install ROS"
 msgstr "Installer ROS"
 
 #: ../../source/installation/ubuntu_18.rst:81
-#, fuzzy
 msgid ""
 "You need to install ROS Melodic. To do so, follow the ROS official "
 "tutorial `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
@@ -183,7 +176,6 @@ msgid "Method 1: Quick installation via ROSDep"
 msgstr "Méthode 1 : Installation rapide via ROSDep"
 
 #: ../../source/installation/ubuntu_18.rst:92
-#, fuzzy
 msgid ""
 "For each package, we have referenced all the dependencies in their "
 "respective *package.xml* file, which allows to install each dependency "

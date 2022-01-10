@@ -116,7 +116,6 @@ msgid "Releasing"
 msgstr "Relâcher"
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:94
-#, fuzzy
 msgid ""
 "To release with any tool, you can use the function: "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`."

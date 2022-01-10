@@ -45,14 +45,12 @@ msgid "Hardware interface Node"
 msgstr "Hardware interface Node"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:17
-#, fuzzy
 msgid ""
 "This node has been conceived to instantiate all the interfaces we need to"
 " have a fully functional robot."
 msgstr ""
 "Ce noeud a été conçu pour instancier toutes les interfaces nécessaires "
-"pour avoir un robot complètement fonctionnel. Parmi ces interfaces, il y "
-"a :"
+"pour avoir un robot complètement fonctionnel."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:26
 msgid "Among those interfaces we have:"

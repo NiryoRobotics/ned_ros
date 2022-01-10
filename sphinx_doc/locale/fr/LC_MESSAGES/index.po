@@ -47,7 +47,6 @@ msgid "Preamble"
 msgstr "Introduction"
 
 #: ../../index.rst:33
-#, fuzzy
 msgid ""
 "Before diving into the software's documentation, you can learn more about "
 "the robot development in the :doc:`Overview <source/stack/overview>` section."
@@ -82,7 +81,6 @@ msgid "ROS Direct control"
 msgstr "Contrôle direct du Ned avec ROS"
 
 #: ../../index.rst:49
-#, fuzzy
 msgid ""
 "To control the robot directly with ROS, you will need either to be connected "
 "in SSH to the physical robot, or to use the simulation."
@@ -95,7 +93,6 @@ msgid "ROS is the most direct way to control the robot. It allows you to:"
 msgstr "ROS est le moyen le plus direct de contrôler le robot. Il permet :"
 
 #: ../../index.rst:54
-#, fuzzy
 msgid ""
 "Send commands via the terminal in order to call services, trigger actions, "
 "..."
@@ -122,7 +119,6 @@ msgid "Python ROS Wrapper"
 msgstr "Python ROS Wrapper"
 
 #: ../../index.rst:62
-#, fuzzy
 msgid ""
 "To use Python ROS Wrapper, you will need either to be connected in SSH to "
 "the physical robot, or to use the simulation."

@@ -25,7 +25,6 @@ msgid "Third Parties ROS packages"
 msgstr "Paquet ROS Tierces"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:4
-#, fuzzy
 msgid "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
 msgstr "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
 

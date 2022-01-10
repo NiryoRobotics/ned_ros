@@ -32,7 +32,6 @@ msgstr ""
 "serveur est construit sur le :doc:`Ned Python ROS Wrapper <ros_wrapper>`."
 
 #: ../../source/tcp_server.rst:7
-#, fuzzy
 msgid ""
 "It offers a simple way for developers to create programs for robot and to"
 " control them via remote communication on a computer, on a mobile or any "

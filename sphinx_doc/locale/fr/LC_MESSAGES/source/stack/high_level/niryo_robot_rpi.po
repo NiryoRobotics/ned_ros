@@ -63,7 +63,6 @@ msgstr ""
 "des E/S analogiques."
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:14
-#, fuzzy
 msgid ""
 "End Effector I/O panel: gets commands and sends the current state of the "
 "digital I/Os of the end effector panel on Ned2. Also controls tools like "
@@ -95,7 +94,6 @@ msgstr ""
 "pas un stockage infini)."
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:20
-#, fuzzy
 msgid "It belongs to the ROS namespace: |namespace_emphasize|."
 msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
 
@@ -137,11 +135,8 @@ msgid "``pause_state``"
 msgstr "``pause_state``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:37
-#, fuzzy
 msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
-msgstr ""
-":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution"
-" (Message)>`"
+msgstr ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:38
 msgid "Publish the current execution state launched when button is pressed"
@@ -224,9 +219,8 @@ msgid ":std_msgs:`std_msgs/Int8<Int8>`"
 msgstr ":std_msgs:`std_msgs/Int8<Int8>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:53
-#, fuzzy
 msgid "Publish the current LED color"
-msgstr "Publier la couleur actuelle de la led"
+msgstr "Publier la couleur actuelle de la LED"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:54
 msgid "``ros_log_status``"
@@ -268,7 +262,6 @@ msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:72
-#, fuzzy
 msgid "Shutdowns the Raspberry Pi"
 msgstr "Arrêter le Raspberry Pi"
 
@@ -315,7 +308,6 @@ msgid "Get digital IO state list"
 msgstr "Obtenir la liste des états d'E/S numériques"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:82
-#, fuzzy
 msgid "``set_analog_io``"
 msgstr "``set_analog_io``"
 
@@ -372,7 +364,6 @@ msgid ":ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ":ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:93
-#, fuzzy
 msgid "Sets LED state"
 msgstr "Définir l'état de la LED"
 
@@ -389,7 +380,6 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:96
-#, fuzzy
 msgid "Sets the LED in blink mode with the color given"
 msgstr "Régler la LED en mode clignotant avec la couleur donnée"
 
@@ -398,16 +388,14 @@ msgid "``purge_ros_logs``"
 msgstr "``purge_ros_logs``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:99
-#, fuzzy
 msgid "Purges ROS log"
-msgstr "``purge_ros_logs``"
+msgstr "Purge des logs ROS"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:100
 msgid "``set_purge_ros_log_on_startup``"
 msgstr "``set_purge_ros_log_on_startup``"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:102
-#, fuzzy
 msgid ""
 "Modifies the permanent settings that tell if the robot should purge it's "
 "ROS log at each boot"

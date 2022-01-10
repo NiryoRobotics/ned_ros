@@ -28,7 +28,6 @@ msgid "This package is the one dealing with all commander related stuff."
 msgstr "Ce package est celui qui traite tous les éléments liés aux commandes."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:6
-#, fuzzy
 msgid ""
 "It is composed of only one node, which runs separately the arm commander "
 "and the tool commander."
@@ -45,7 +44,6 @@ msgid "The ROS Node is made to interact with:"
 msgstr "Le nœud ROS est conçu pour interagir avec :"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:12
-#, fuzzy
 msgid "The arm through MoveIt!"
 msgstr "Le bras via MoveIt!"
 
