@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-10 12:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,12 +25,39 @@ msgid "Third Parties ROS packages"
 msgstr "Paquet ROS Tierces"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:4
-msgid "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
-msgstr "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
+msgid "ros_core"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:5
+msgid "moveit"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:6
+msgid "ros_control"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:7
+msgid "roscpp"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:8
+msgid "rosdoc_lite"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:9
+msgid "roslint"
+msgstr ""
+
+#: ../../source/stack/third_parties/ros_requirements.rst:10
+msgid "rostest"
+msgstr ""
 
 #~ msgid "ros_core"
 #~ msgstr ""
 
 #~ msgid "moveit"
 #~ msgstr ""
+
+#~ msgid "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
+#~ msgstr "ros_core moveit ros_control roscpp rosdoc_lite roslint rostest"
 
