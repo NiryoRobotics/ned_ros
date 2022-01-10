@@ -94,11 +94,12 @@ class NiryoEndEffectorPanel:
 
             if msg.action == EEButtonStatus.HANDLE_HELD_ACTION:
                 activate_learning_mode(True)
+                self.__learning_mode_button_state = msg.action
             elif (msg.action == EEButtonStatus.NO_ACTION and
                   self.__learning_mode_button_state == EEButtonStatus.HANDLE_HELD_ACTION):
                 activate_learning_mode(False)
+                self.__learning_mode_button_state = msg.action
 
-            self.__learning_mode_button_state = msg.action
 
     def __callback_save_pos_button_status(self, msg):
         if msg.action in [EEButtonStatus.NO_ACTION]:
