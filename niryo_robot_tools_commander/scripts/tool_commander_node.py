@@ -117,10 +117,11 @@ class ToolCommander:
 
     def __callback_current_tool_motor(self, msg):
         if self.__current_tool is None or self.__current_tool.get_type() != "electromagnet":
-            self.set_tool(self.__available_tools[msg.id if msg.id in self.__available_tools
-                          else self.__dict_tool_str_to_id['No Tool']])
-            self.__motor_type = msg.motor_type
-        self.__tool_id_publisher.publish(self.__current_tool.get_id())
+            tool_id = msg.id if msg.id in self.__available_tools  else self.__dict_tool_str_to_id['No Tool']
+            if self.__current_tool is None or tool_id != self.__current_tool.get_id():
+                self.set_tool(self.__available_tools[tool_id])
+                self.__motor_type = msg.motor_type
+                self.__tool_id_publisher.publish(self.__current_tool.get_id())
 
     # - Callbacks
 

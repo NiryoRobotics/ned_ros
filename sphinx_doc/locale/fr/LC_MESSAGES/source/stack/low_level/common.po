@@ -57,7 +57,6 @@ msgid "States"
 msgstr "States"
 
 #: ../../source/stack/low_level/common.rst:14
-#, fuzzy
 msgid ""
 "Classes, to represent the virtual state of each hardware component at any"
 " moment. The hierarchy allows powerful polymorphism so that we can "
@@ -156,7 +155,6 @@ msgid "Dependencies"
 msgstr "Dépendances"
 
 #: ../../source/stack/low_level/common.rst:69
-#, fuzzy
 msgid ""
 "This package does not depend on any package. This package is a dependency"
 " of the following packages:"

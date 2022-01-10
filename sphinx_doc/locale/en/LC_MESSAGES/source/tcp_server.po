@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -181,6 +181,10 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:86
 msgid "Commands enum for TCP server"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum:1 of
+msgid "Enumeration of all commands used"
 msgstr ""
 
 #~ msgid "Use Ned TCP Server"

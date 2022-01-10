@@ -92,9 +92,8 @@ msgid "**--id / -i [ID]:** Device ID (-1 by default)"
 msgstr "**--id / -i [ID]:** Id du périphérique (-1 par défaut)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:28
-#, fuzzy
 msgid "**--ids [IDs]:** List of devices IDs"
-msgstr "**--ids [IDs]:** liste des ids des périphériques TTL"
+msgstr "**--ids [IDs]:** liste des ids des périphériques"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:29
 msgid "**--scan:** Scan all devices on the bus"
@@ -105,7 +104,6 @@ msgid "**--ping:** Ping specific ID"
 msgstr "**--ping:** Ping un id spécifique"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:31
-#, fuzzy
 msgid ""
 "**--get-register [Addr]:** Get a value from a register, parameters is: "
 "register address"
@@ -114,7 +112,6 @@ msgstr ""
 "paramètre est : addresse du registre"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:32
-#, fuzzy
 msgid ""
 "**--get-registers [Addr]:** Get list of values from multiple devices at a"
 " register address, parameters is: register address"
@@ -124,7 +121,6 @@ msgstr ""
 "registre"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:33
-#, fuzzy
 msgid ""
 "**--get-size [Size]:** Size of data to be read with get-register or get-"
 "registers, parameters is: size of data in bytes"
@@ -153,12 +149,11 @@ msgstr ""
 "du registre / liste des valeurs / taille (en octets) des données"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:36
-#, fuzzy
 msgid ""
 "**--calibrate:** Calibrate all steppers on the bus. It is used in Ned2 "
 "only"
 msgstr ""
-"**--calibrate:** Calibre tous les steppers TTL. Utilisable sur le NED2 "
+"**--calibrate:** Calibre tous les steppers sur le bus. Utilisable sur le NED2 "
 "seulement"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:39

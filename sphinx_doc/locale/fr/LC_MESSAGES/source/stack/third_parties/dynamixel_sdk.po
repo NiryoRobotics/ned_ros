@@ -25,21 +25,20 @@ msgid "Dynamixel SDK"
 msgstr "SDK Dynamixel"
 
 #: ../../source/stack/third_parties/dynamixel_sdk.rst:4
-#, fuzzy
 msgid ""
 "This package has been forked from the `official [dynamixel_sdk] package "
 "<https://github.com/ROBOTIS-GIT/DynamixelSDK/>`_."
 msgstr ""
-"Ce paquet a été forké depuis le paquet officiel "
-"[dynamixel_sdk](https://github.com/ROBOTIS-GIT/DynamixelSDK)."
+"Ce paquet a été forké depuis le "
+"`package [dynamixel_sdk] officiel "
+"<https://github.com/ROBOTIS-GIT/DynamixelSDK/>`_."
 
 #: ../../source/stack/third_parties/dynamixel_sdk.rst:6
-#, fuzzy
 msgid ""
 "It has been adapted to work on Ned's custom Raspberry Pi 4B shield, using"
 " the `[wiringPi] library <http://wiringpi.com/>`_."
 msgstr ""
 "Il a été adapté pour fonctionner avec la carte électronique maison "
-"(shield) pour Raspberry Pi 4B, en utilisant la bibliothèque "
-"[wiringPi](http://wiringpi.com/)."
+"(shield) pour Raspberry Pi 4B, en utilisant la"
+" `bibliothèque [wiringPi] <http://wiringpi.com/>`_."
 

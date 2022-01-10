@@ -224,9 +224,8 @@ msgid "*desktop_rviz_simulation_trace.conf*"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:99
-#, fuzzy
 msgid "*niryo_robot_trace.conf*"
-msgstr "Niryo_robot_bringup"
+msgstr "*niryo_robot_trace.conf*"
 
 #~ msgid "Niryo Robot Bringup Package"
 #~ msgstr "Le package Bringup robot Niryo"

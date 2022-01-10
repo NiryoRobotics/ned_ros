@@ -74,7 +74,7 @@ msgstr "End Effector Interface Core"
 
 #: ../../source/stack/low_level/end_effector_interface.rst:16
 msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
-msgstr "Il est instancié dans le package :doc:niryo_robot_hardware_interface."
+msgstr "Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
 
 #: ../../source/stack/low_level/end_effector_interface.rst:24
 msgid "It has been conceived to:"

@@ -46,9 +46,8 @@ msgstr ""
 #: ../../source/ros_wrapper.rst:22
 msgid ""
 "It generates a :ref:`RobotMove Action "
-"Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove "
-"(Action)>` and sets it as a joint command with the corresponding joints "
-"value."
+"Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove>` and "
+"set it as a joint command with the corresponding joints value."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:24

@@ -15,6 +15,7 @@ Hardware interface Node
 --------------------------
 
 This node has been conceived to instantiate all the interfaces we need to have a fully functional robot. 
+
 Among those interfaces we have:
  - Conveyor Interface
  - Joints Interface
@@ -52,8 +53,6 @@ Dependencies
 - :doc:`conveyor_interface`
 - :doc:`cpu_interface`
 - :doc:`../high_level/niryo_robot_msgs`
-
-.. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``
 
 Services, Topics and Messages
 -------------------------------------------------

@@ -29,11 +29,10 @@ msgid "This package handles motors which communicate via the protocol TTL."
 msgstr "Ce package gère la communication des composants matériels sur le bus TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst:6
-#, fuzzy
 msgid ""
 "This package is based on the DXL SDK. It provides an interface to "
 ":wiki_ros:`dynamixel_sdk`."
-msgstr "Il expose une interface à :wiki_ros:`dynamixel_sdk`."
+msgstr "Ce package est basé sur le SDK de DXL. Il expose une interface à :wiki_ros:`dynamixel_sdk`."
 
 #: ../../source/stack/low_level/ttl_driver.rst:9
 msgid "TTL Driver Node (For only the development and debugging propose)"
@@ -154,7 +153,6 @@ msgid "``ttl_hardware_read_status_frequency``"
 msgstr "``ttl_hardware_read_status_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-#, fuzzy
 msgid "Read frequency for device status on the bus."
 msgstr "Fréquence de lecture pour les status des périphériques TTL."
 
@@ -239,7 +237,6 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:85
-#, fuzzy
 msgid "Control dynamixel LED"
 msgstr "Contrôle les LED des dynamixels"
 

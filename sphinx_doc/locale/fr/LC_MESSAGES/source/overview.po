@@ -32,7 +32,6 @@ msgstr ""
 "de créer une interface entre le matériel et les liaisons de haut niveau."
 
 #: ../../source/overview.rst:7
-#, fuzzy
 msgid ""
 "On the following figure, you can see a global overview of Niryo's robot "
 "software. It will help you understand where are placed each part of the "

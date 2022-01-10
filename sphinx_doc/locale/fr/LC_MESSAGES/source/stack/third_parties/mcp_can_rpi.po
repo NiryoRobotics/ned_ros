@@ -33,16 +33,14 @@ msgstr ""
 "via les GPIOs SPI"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:6
-#, fuzzy
 msgid ""
 "Forked from `[MCP_CAN] library "
 "<https://github.com/coryjfowler/MCP_CAN_lib>`_."
 msgstr ""
-"Forked depuis la bilbliothèque "
-"[MCP_CAN](https://github.com/coryjfowler/MCP_CAN_lib)."
+"Forked depuis `la bibliothèque [MCP_CAN] "
+"<https://github.com/coryjfowler/MCP_CAN_lib>`_."
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:8
-#, fuzzy
 msgid ""
 "The MCP2515 module is a SPI-CAN interface. The MCP_CAN library is using "
 "the SPI protocol on Arduino to program and use this module. It has been "
@@ -52,15 +50,14 @@ msgstr ""
 "Le module MCP2515 est une interface SPi CAN. La bibliothèque MCP_CAN "
 "utilise le protocole SPI sur Arduino pour programmer et utiliser ce "
 "module. Il a été adapté ici pour fonctionner avec les GPIOs de la "
-"Raspberry Pi 4, en utilisant les fonction SPI de la bibliothèque "
-"[wiringPi](http://wiringpi.com/)."
+"Raspberry Pi 4, en utilisant les fonction SPI de la "
+"`bibliothèque [wiringPi] <http://wiringpi.com/>`_."
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:10
 msgid "---"
 msgstr "---"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:12
-#, fuzzy
 msgid ""
 "One of the main difference is that we don't handle SPI Chip Select PIN. "
 "This is already done by the wiringPi library, and all PINs for SPI are "

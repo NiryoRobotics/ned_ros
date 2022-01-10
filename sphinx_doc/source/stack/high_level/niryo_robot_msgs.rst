@@ -73,6 +73,12 @@ Niryo message dependencies
 Niryo message files
 -----------------------------------
 
+BusState
+^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_msgs/msg/BusState.msg
+   :language: rostype
+
 CommandStatus
 ^^^^^^^^^^^^^^^^^^^
 

@@ -33,14 +33,12 @@ msgstr ""
 " gestionnaire de bus CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:5
-#, fuzzy
 msgid "This package uses the mcp_can_rpi for CAN bus communication."
 msgstr "Ce package utilise la librairie mcp_can_rpi pour la communication CAN."
 
 #: ../../source/stack/low_level/can_driver.rst:6
-#, fuzzy
 msgid "It is used by only Ned and One."
-msgstr "Utilisé uniquement par le NED et le ONE."
+msgstr "Utilisé uniquement par le Ned et le One."
 
 #: ../../source/stack/low_level/can_driver.rst:9
 msgid "CAN Driver Node (For only the development and debugging propose)"

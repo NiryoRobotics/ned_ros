@@ -55,7 +55,6 @@ msgstr ""
 "articulations, depuis le package :wiki_ros:`ros_control`."
 
 #: ../../source/stack/low_level/joints_interface.rst:13
-#, fuzzy
 msgid ""
 "Create a controller manager, from :wiki_ros:`controller_manager` package,"
 " that provides the infrastructure to load, unload, start and stop "
@@ -129,7 +128,6 @@ msgid "Joints Interface's hardware specific Parameters"
 msgstr "Paramètres spécifiques à l'interface matérielle de Joints Interface"
 
 #: ../../source/stack/low_level/joints_interface.rst:42
-#, fuzzy
 msgid ""
 "These parameters are specific to the hardware version (Ned, Niryo One or "
 "Ned2). This file comes in a different version for each hardware version. "
@@ -741,7 +739,6 @@ msgid "Default:"
 msgstr "Défaut :"
 
 #: ../../source/stack/low_level/joints_interface.rst:332
-#, fuzzy
 msgid ""
 "The velocity profiles for the Stepper motors (in "
 "*calibration_params.yaml* and *steppers_params.yaml* files) can be "

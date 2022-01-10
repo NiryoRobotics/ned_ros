@@ -1,4 +1,4 @@
-Niryo robot tools commander package
+Niryo robot tools commander
 ========================================
 
 Provides functionalities to control end-effectors and accessories for Ned.

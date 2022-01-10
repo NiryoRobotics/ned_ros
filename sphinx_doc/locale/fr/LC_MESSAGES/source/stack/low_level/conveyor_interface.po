@@ -68,7 +68,6 @@ msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr "Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:25
-#, fuzzy
 msgid "It has been conceived to:"
 msgstr "The Node ROS a été conçu pour :"
 
@@ -79,7 +78,6 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:23
-#, fuzzy
 msgid "Initialize conveyor motors parameters."
 msgstr "Initialiser l'interface du Convoyeur."
 
@@ -88,7 +86,6 @@ msgid "Handle the requests from services to set, control or remove the conveyors
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:25
-#, fuzzy
 msgid "Publish conveyor states."
 msgstr "Fréquence de publication pour les états des convoyeurs."
 

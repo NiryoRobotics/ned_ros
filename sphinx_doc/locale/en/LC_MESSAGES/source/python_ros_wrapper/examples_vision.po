@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,19 +47,11 @@ msgid ""
 "add at the beginning of all of them: ::"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:46
-msgid "Todo"
-msgstr ""
-
-#: ../../source/python_ros_wrapper/examples_vision.rst:46
-msgid "le toggle ne semble pas fonctionner"
-msgstr ""
-
-#: ../../source/python_ros_wrapper/examples_vision.rst:49
+#: ../../source/python_ros_wrapper/examples_vision.rst:47
 msgid "Simple Vision pick"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:50
+#: ../../source/python_ros_wrapper/examples_vision.rst:48
 msgid "This short example shows how to do your first vision pick: ::"
 msgstr ""
 
@@ -114,5 +106,11 @@ msgstr ""
 #~ "same, there is the code you need"
 #~ " to add at the beginning of all"
 #~ " of them: ::"
+#~ msgstr ""
+
+#~ msgid "Todo"
+#~ msgstr ""
+
+#~ msgid "le toggle ne semble pas fonctionner"
 #~ msgstr ""
 

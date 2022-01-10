@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-07 10:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:2
-msgid "Niryo robot Sound package"
+msgid "Niryo_robot_sound"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:4
@@ -397,7 +397,7 @@ msgid "``/niryo_robot_status/robot_status``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:151
-msgid "niryo_robot_status/RobotStatus"
+msgid ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:152
@@ -491,8 +491,138 @@ msgstr ""
 msgid "Play sound"
 msgstr ""
 
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:1 of
+msgid "Play a sound from the robot If failed, raise NiryoRosWrapperException"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume of
+msgid "Parameters"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:4 of
+msgid "Name of the sound to play"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:6 of
+msgid "start the sound from this value in seconds"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:8 of
+msgid "end the sound at this value in seconds"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:10 of
+msgid "wait for the end of the sound before exiting the function"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.sounds
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.stop of
+msgid "Returns"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:6
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:8
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play:12
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say:14
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume:6
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.stop:4 of
+msgid "status, message"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.play
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.sounds
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.stop of
+msgid "Return type"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume:1 of
+msgid ""
+"Set the volume percentage of the robot. If failed, raise "
+"NiryoRosWrapperException"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.set_volume:4 of
+msgid "volume percentage of the sound (0: no sound, 100: max sound)"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.stop:1 of
+msgid "Stop a sound being played. If failed, raise NiryoRosWrapperException"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say:1 of
+msgid ""
+"Use gtts (Google Text To Speech) to interpret a string as sound Languages"
+" available are: - English: 0 - French: 1 - Spanish: 2 - Mandarin: 3 - "
+"Portuguese: 4"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say:10 of
+msgid "text to speek < 100 char"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.say:12 of
+msgid "language of the text"
+msgstr ""
+
 #: ../../source/stack/high_level/niryo_robot_sound.rst:231
 msgid "Sound database"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.sounds:1 of
+msgid "Get sound name list"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.sounds:3 of
+msgid "list of the sounds of the robot"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:1
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:1 of
+msgid ""
+"Delete a sound on the RaspberryPi of the robot. If failed, raise "
+"NiryoRosWrapperException"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.delete_sound:4
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:4 of
+msgid "name of the sound which needs to be deleted"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.import_sound:6 of
+msgid "String containing the encoded data of the sound file (wav or mp3)"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration:1
+#: of
+msgid ""
+"Returns the duration in seconds of a sound stored in the robot database "
+"raise SoundRosWrapperException if the sound doesn't exists"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration:4
+#: of
+msgid "name of sound"
+msgstr ""
+
+#: niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper.get_sound_duration:6
+#: of
+msgid "sound duration in seconds"
 msgstr ""
 
 #~ msgid ":ref:`std_msgs`"
@@ -618,72 +748,10 @@ msgstr ""
 #~ msgid "The namespace used is: |namespace_emphasize|"
 #~ msgstr ""
 
-#~ msgid "Play a sound from the robot If failed, raise NiryoRosWrapperException"
+#~ msgid "Niryo robot Sound package"
 #~ msgstr ""
 
-#~ msgid "Parameters"
-#~ msgstr ""
-
-#~ msgid "Name of the sound to play"
-#~ msgstr ""
-
-#~ msgid "start the sound from this value in seconds"
-#~ msgstr ""
-
-#~ msgid "end the sound at this value in seconds"
-#~ msgstr ""
-
-#~ msgid "wait for the end of the sound before exiting the function"
-#~ msgstr ""
-
-#~ msgid "Returns"
-#~ msgstr ""
-
-#~ msgid "status, message"
-#~ msgstr ""
-
-#~ msgid "Return type"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Set the volume percentage of the "
-#~ "robot. If failed, raise "
-#~ "NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid "volume percentage of the sound (0: no sound, 100: max sound)"
-#~ msgstr ""
-
-#~ msgid "Stop a sound being played. If failed, raise NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Use gtts (Google Text To Speech) "
-#~ "to interpret a string as sound "
-#~ "Languages available are: - English: 0"
-#~ " - French: 1 - Spanish: 2 - "
-#~ "Mandarin: 3 - Portuguese: 4"
-#~ msgstr ""
-
-#~ msgid "text to speek < 100 char"
-#~ msgstr ""
-
-#~ msgid "language of the text"
-#~ msgstr ""
-
-#~ msgid "Get sound name list"
-#~ msgstr ""
-
-#~ msgid "list of the sounds of the robot"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Delete a sound on the RaspberryPi "
-#~ "of the robot. If failed, raise "
-#~ "NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid "name of the sound which needs to be deleted"
+#~ msgid "niryo_robot_status/RobotStatus"
 #~ msgstr ""
 
 #~ msgid ""
@@ -693,22 +761,18 @@ msgstr ""
 #~ "from the sound file (wav or mp3)"
 #~ msgstr ""
 
-#~ msgid "type"
-#~ msgstr ""
-
 #~ msgid "string: String, String containing the encoded data of the sound file"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "Returns the duration in seconds of "
-#~ "a sound stored in the robot "
-#~ "database raise SoundRosWrapperException if the"
-#~ " sound doesn't exists"
+#~ msgid "sound_name: str"
 #~ msgstr ""
 
-#~ msgid "name of sound"
+#~ msgid "Niryo robot Sound"
 #~ msgstr ""
 
-#~ msgid "sound duration in seconds"
+#~ msgid "type"
+#~ msgstr ""
+
+#~ msgid "sound_data: str"
 #~ msgstr ""
 

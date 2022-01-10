@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,12 +79,10 @@ msgid ""
 msgstr ""
 
 #: ../../source/installation/wsl.rst:28
-#, fuzzy
 msgid "Update WSL to use version 2 (in a powershell terminal)"
 msgstr "Mettre la version de WSL par défaut à 2 (dans un terminal powershell)"
 
 #: ../../source/installation/wsl.rst:35
-#, fuzzy
 msgid ""
 "You then need to restart your machine to finish the WSL installation and "
 "the upgrade to WSL2."
@@ -105,7 +103,6 @@ msgid "Ubuntu 18.04 in the Windows Store"
 msgstr "Ubuntu 18.04 sur le Windows Store"
 
 #: ../../source/installation/wsl.rst:53
-#, fuzzy
 msgid ""
 "Launch the app. The first time, it asks you to finish the initialization "
 "of the OS."
@@ -116,7 +113,6 @@ msgstr ""
 "le tutoriel"
 
 #: ../../source/installation/wsl.rst:55
-#, fuzzy
 msgid ""
 "Your Ubuntu OS is now ready. You can continue the build of the stack "
 "using the tutorial."
@@ -131,7 +127,6 @@ msgid "Setting up GUI forwarding"
 msgstr "Mise en place de la redirection d'Interface Graphique"
 
 #: ../../source/installation/wsl.rst:61
-#, fuzzy
 msgid ""
 "WSL does not come with an X server. Thus, you will not be able to launch "
 "any graphical windows for now. But we can change this by using a Windows "
@@ -169,12 +164,10 @@ msgstr ""
 "pour rediriger l'interface graphique"
 
 #: ../../source/installation/wsl.rst:90
-#, fuzzy
 msgid "You can add this to your bashrc file."
 msgstr "Vous pouvez ajouter cette ligne à votre fichier bashrc"
 
 #: ../../source/installation/wsl.rst:92
-#, fuzzy
 msgid ""
 "You can check that your forwarding works by using simple X11 apps for "
 "example:"
@@ -183,17 +176,14 @@ msgstr ""
 "application X11 simple par exemple :"
 
 #: ../../source/installation/wsl.rst:100
-#, fuzzy
 msgid "Install ROS Melodic (see instructions here)"
 msgstr "Installer ROS melodic (voir les instructions ici)"
 
 #: ../../source/installation/wsl.rst:102
-#, fuzzy
 msgid "Try launching Rviz"
 msgstr "Essayer de lancer rviz"
 
 #: ../../source/installation/wsl.rst:108
-#, fuzzy
 msgid ""
 "You should now be able to launch any simulation of the One, Ned or Ned2 "
 "using Rviz or Gazebo"
@@ -208,22 +198,26 @@ msgstr "Dépannage"
 #: ../../source/installation/wsl.rst:114
 msgid ""
 "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
-"does not match the address of your XServer. Try :"
+"does not match the address of your XServer."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:117
+#: ../../source/installation/wsl.rst:119
+msgid "Try :"
+msgstr ""
+
+#: ../../source/installation/wsl.rst:118
 msgid ""
 "Check that you correctly launched your XServer with the required options "
 "(Disable access control is essential)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:118
+#: ../../source/installation/wsl.rst:119
 msgid ""
 "Check that the IP you gave is correct (you need the address in "
 "/etc/resolv.conf to have it work)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:120
+#: ../../source/installation/wsl.rst:121
 msgid ""
 "**OpenGL issues** Some people have said that they run into issues with "
 "OpenGL applications like Rviz. If you do, try setting the environment "
@@ -236,15 +230,15 @@ msgstr ""
 "dans un terminal WSL2 (vous pouvez par exemple ajouter "
 "LIBGL_ALWAYS_INDIRECT=0 à la fin de votre fichier .bashrc)."
 
-#: ../../source/installation/wsl.rst:126
+#: ../../source/installation/wsl.rst:127
 msgid "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 msgstr "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 
-#: ../../source/installation/wsl.rst:128
+#: ../../source/installation/wsl.rst:129
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 msgstr "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 
-#: ../../source/installation/wsl.rst:130
+#: ../../source/installation/wsl.rst:131
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 msgstr "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 
@@ -305,4 +299,11 @@ msgstr "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 #~ " avez indiqué est correcte (vous avez"
 #~ " besoin de l'adresse présente dans "
 #~ "/etc/resolv.conf pour que ça fonctionne)"
+
+#~ msgid ""
+#~ "**Error: Can't open display: "
+#~ "192.168.1.44:0.0** Your DISPLAY variable does"
+#~ " not match the address of your "
+#~ "XServer. Try :"
+#~ msgstr ""
 

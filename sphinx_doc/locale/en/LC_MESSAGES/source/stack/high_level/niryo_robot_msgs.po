@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-06 17:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -212,74 +212,78 @@ msgid "Niryo message files"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:77
-msgid "CommandStatus"
+msgid "BusState"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:83
-msgid "ObjectPose"
+msgid "CommandStatus"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:89
-msgid "RobotState"
+msgid "ObjectPose"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:95
-msgid "RPY"
+msgid "RobotState"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:101
-msgid "HardwareStatus"
+msgid "RPY"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:107
-msgid "SoftwareVersion"
+msgid "HardwareStatus"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:113
+msgid "SoftwareVersion"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:119
 msgid "Niryo Service files"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:116
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:122
 msgid "GetBool"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:122
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:128
 msgid "GetInt"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:128
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:134
 msgid "GetNameDescriptionList"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:134
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:140
 msgid "GetString"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:140
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:146
 msgid "GetStringList"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:146
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:152
 msgid "Ping"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:152
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:158
 msgid "SetBool"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:158
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:164
 msgid "SetFloat"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:164
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:170
 msgid "SetInt"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:170
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:176
 msgid "SetString"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:176
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:182
 msgid "Trigger"
 msgstr ""
 
