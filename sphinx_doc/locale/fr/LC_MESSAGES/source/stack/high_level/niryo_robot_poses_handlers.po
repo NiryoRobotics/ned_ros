@@ -100,6 +100,9 @@ msgid ""
 "interface because it would add an extra layer of complexity that is not "
 "really necessary for the moment."
 msgstr ""
+"Actuellement, la notion de prise ne fait pas partie de l'interface"
+"python / tcp / Blockly car cela nécessiterait une couche de difficultés "
+"supplémentaire qui n'est, pour le moment, pas nécessaire."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:36
 msgid ""
@@ -108,6 +111,10 @@ msgid ""
 "if you want to define custom grips, e.g. for custom tools or for custom "
 "grip positions."
 msgstr ""
+"Toutefois, nous proposons une prise par défaut pour tous les outils qui "
+"sont automatiquement en fonction de l'ID de l'outil. Toutefois, tout est "
+"prêt pour vous permettre de définir votre propre prise sur mesure, pour les"
+" outils personnalisés ou pour des position de saisie particulières."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:41
 msgid "The vision pick loop"

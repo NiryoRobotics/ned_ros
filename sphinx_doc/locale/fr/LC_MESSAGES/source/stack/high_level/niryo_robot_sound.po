@@ -193,7 +193,7 @@ msgstr "Son joué lorsqu'une erreur se produit"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:68
 msgid "error4.2.wav"
-msgstr "erreur4.2.wav"
+msgstr "error4.2.wav"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:69
 msgid "``robot_sounds/turn_on_sound``"
@@ -229,7 +229,7 @@ msgstr "Son joué sur une connexion Niryo Studio"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:77
 msgid "connected3.wav"
-msgstr "connecté3.wav"
+msgstr "connected3.wav"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:78
 msgid "``robot_sounds/robot_ready_sound``"

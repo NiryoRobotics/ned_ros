@@ -75,8 +75,7 @@ msgid ""
 "in **USER** mode: the user can control the LED Ring with the several "
 "methods implemented, through"
 msgstr "En mode **USER** : l'utilisateur peut contrôler"
-" le LED Ring avec les différentes méthodes "
-"mises en œuvre, via :"
+" le LED Ring avec les différentes méthodes mises en œuvre, via :"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:22
 msgid ""

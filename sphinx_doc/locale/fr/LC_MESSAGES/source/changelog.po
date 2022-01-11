@@ -325,7 +325,7 @@ msgstr "Problèmes connus (pour le Ned et le One seulement)"
 
 #: ../../source/changelog.rst:91
 msgid "No known issues detected"
-msgstr "Pas d'erreurs connus détectées"
+msgstr "Pas d'erreurs connues détectées"
 
 #: ../../source/changelog.rst:94
 msgid "Limitations"
@@ -442,7 +442,7 @@ msgstr "jog joints shift"
 
 #: ../../source/changelog.rst:158
 msgid "execute trajectory from pose"
-msgstr "executer une trajectoire depuis une position"
+msgstr "exécuter une trajectoire depuis une position"
 
 #: ../../source/changelog.rst:160
 msgid "New TCP functions available"
