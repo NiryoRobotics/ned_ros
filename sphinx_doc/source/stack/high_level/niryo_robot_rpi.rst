@@ -11,11 +11,11 @@ The ROS Node manages the following components:
 - Physical top button: executes actions when the button is pressed.
 - Digital I/O panel: gets commands and sends the current state of digital I/Os. Also controls tools like the Electromagnet.
 - Analog I/O panel: gets commands and sends the current state of analog I/Os.
-- End Effector I/O panel: gets commands and sends the current state of the digital I/Os of the end effector panel on Ned2. Also controls tools like the Electromagnet.".
+- End Effector I/O panel: gets commands and sends the current state of the digital I/Os of the end effector panel on Ned2. Also controls tools like the Electromagnet.
 - Robot fans.
 - Led: sets the LED color.
 - Shutdown Manager: shutdown or reboot the Raspberry.
-- ROS log: can remove all previous logs on startup to prevent a lack of disk space in the long run (SD cards do not have infinite storage).
+- ROS log: can remove all previous logs on start_up to prevent a lack of disk space in the long run (SD cards do not have infinite storage).
 
 It belongs to the ROS namespace: |namespace_emphasize|.
 
@@ -35,25 +35,25 @@ Publisher - Raspberry Pi
       -  Description
    *  -  ``pause_state``
       -  :ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`
-      -  Publish the current execution state launched when button is pressed
+      -  Publishes the current execution state launched when button is pressed
    *  -  ``/niryo_robot/blockly/save_current_point``
       -  :std_msgs:`std_msgs/Int32<Int32>`
-      -  Publish current point when user is in Blockly page to save block by pressing button
+      -  Publishes current point when user is in Blockly page to save block by pressing button
    *  -  ``/niryo_robot/rpi/is_button_pressed``
       -  :std_msgs:`std_msgs/Bool<Bool>`
-      -  Publish the button state (true if pressed)
+      -  Publishes the button state (true if pressed)
    *  -  ``digital_io_state``
       -  :ref:`DigitalIOState<source/stack/high_level/niryo_robot_rpi:DigitalIOState (Topic)>`
-      -  Publish the digital I/Os state by giving for each it's pin / name / mode / state
+      -  Publishes the digital I/Os state by giving for each it's pin / name / mode / state
    *  -  ``analog_io_state``
       -  :ref:`AnalogIOState<source/stack/high_level/niryo_robot_rpi:AnalogIOState (Topic)>`
-      -  Publish the analog I/Os state by giving for each it's pin / name / mode / state
+      -  Publishes the analog I/Os state by giving for each it's pin / name / mode / state
    *  -  ``/niryo_robot/rpi/led_state``
       -  :std_msgs:`std_msgs/Int8<Int8>`
-      -  Publish the current LED color
+      -  Publishes the current LED color
    *  -  ``ros_log_status``
       -  :ref:`LogStatus<source/stack/high_level/niryo_robot_rpi:LogStatus (Topic)>`
-      -  Publish the current log status (log size / available disk / boolean if should delete ros log on startup)
+      -  Publishes the current log status (log size / available disk / boolean if should delete ros log on startup)
 
 Services - Raspberry Pi
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -72,22 +72,22 @@ Services - Raspberry Pi
       -  Shutdowns the Raspberry Pi
    *  -  ``/niryo_robot/rpi/change_button_mode``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Change top button mode (autorun program, blockly, nothing, ...)
+      -  Changes top button mode (autorun program, blockly, nothing, ...)
    *  -  ``get_analog_io``
       -  :ref:`GetAnalogIO<source/stack/high_level/niryo_robot_rpi:GetAnalogIO (Service)>`
-      -  Get analog IO state list
+      -  Gets analog IO state list
    *  -  ``get_digital_io``
       -  :ref:`GetDigitalIO<source/stack/high_level/niryo_robot_rpi:GetDigitalIO (Service)>`
-      -  Get digital IO state list
+      -  Gets digital IO state list
    *  -  ``set_analog_io``
       -  :ref:`SetAnalogIO<source/stack/high_level/niryo_robot_rpi:SetAnalogIO (Service)>`
-      -  Set a analog IO to the given value
+      -  Sets an analog IO to the given value
    *  -  ``set_digital_io``
       -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetDigitalIO (Service)>`
-      -  Set a digital IO to the given value
+      -  Sets a digital IO to the given value
    *  -  ``set_digital_io_mode``
       -  :ref:`SetDigitalIO<source/stack/high_level/niryo_robot_rpi:SetIOMode (Service)>`
-      -  Set a digital IO to the given mode
+      -  Sets a digital IO to the given mode
    *  -  ``set_led_state``
       -  :ref:`std_msgs/SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
       -  Sets LED state
@@ -99,7 +99,7 @@ Services - Raspberry Pi
       -  Purges ROS log
    *  -  ``set_purge_ros_log_on_startup``
       -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Modifies the permanent settings that tell if the robot should purge it's ROS log at each boot
+      -  Modifies the permanent settings that tell if the robot should purge its ROS log at each boot
 
 Dependencies - Raspberry Pi
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
