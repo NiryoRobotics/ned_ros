@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-20 16:20+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:2
+msgid "Niryo_robot_system_api_client"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:8
+msgid "This packages handle the flask server requests to manage:"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:5
+msgid "Robot name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:6
+msgid "Wifi settings"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:7
+msgid "Ethernet settings"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:11
+msgid "Publisher - System API Client"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:13
+msgid "System API Client Package's Publishers"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:19
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:37
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:20
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:38
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:21
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:39
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:22
+msgid "``/niryo_robot/wifi/status``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:23
+msgid ""
+":ref:`WifiStatus<source/stack/high_level/niryo_robot_system_api_client:WifiStatus"
+" (Message)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:24
+msgid "Publish the current wifi status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:29
+msgid "Services - System API Client"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:31
+msgid "System API Client Services"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:40
+msgid "``/niryo_robot/wifi/set_robot_name``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:41
+msgid ":ref:`SetString<source/stack/high_level/niryo_robot_msgs:SetString>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:42
+msgid "Change the robot name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:43
+msgid "``/niryo_robot/wifi/manage``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:44
+msgid ""
+":ref:`ManageWifi<source/stack/high_level/niryo_robot_system_api_client:ManageWifi"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:45
+msgid "Change the wifi hotspot mode"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:46
+msgid "``/niryo_robot/ethernet/manage``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:47
+msgid ""
+":ref:`ManageEthernet<source/stack/high_level/niryo_robot_system_api_client:ManageEthernet"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:48
+msgid ""
+"Change the ethernet setup (ip address, netmask, gateway, dhcp) based on "
+"nmcli interface."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:52
+msgid "Services files -  System API Client"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:55
+msgid "ManageEthernet (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:61
+msgid "ManageWifi (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:67
+msgid "Messages files - System API Client"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:70
+msgid "WifiStatus (Message)"
+msgstr ""
+

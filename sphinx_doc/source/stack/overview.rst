@@ -11,7 +11,7 @@ in order to understand where are placed each part of the software.
 
 .. figure:: ../../images/stack/ros_stack_global_overview.png
    :alt: Niryo Robot v3 Software
-   :width: 1200px
+   :figwidth: 90%
    :align: center
 
    Niryo robot v3 software

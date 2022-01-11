@@ -16,14 +16,15 @@ This ROS Node has been conceived to:
 
 Conveyor Interface core
 ----------------------------
-It is integrated to :doc:`niryo_robot_hardware_interface` package.
-Its purpose is to:
+It is instantiated in :doc:`niryo_robot_hardware_interface` package.
+
+It has been conceived to:
 - Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
 - Initialize conveyor motors parameters.
 - Handle the requests from services to set, control or remove the conveyors.
 - Publish conveyor states.
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -136,4 +137,9 @@ ConveyorFeedback (Message)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/conveyor_interface/msg/ConveyorFeedback.msg
    :language: rostype
 
+
+.. |namespace_cpp| replace:: conveyor_interface
+.. |namespace| replace:: /niryo_robot/conveyor/
 .. |namespace_emphasize| replace:: ``/niryo_robot/conveyor/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/conveyor_interface
+

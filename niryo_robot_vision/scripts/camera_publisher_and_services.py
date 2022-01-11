@@ -45,12 +45,10 @@ class VisionNode:
         rospy.logdebug("VisionNode.init - debug_compression_quality: {}".format(self.__debug_compression_quality))
 
         # PUBLISHERS
-        self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream',
-                                                             CompressedImage, queue_size=1)
+        self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream', CompressedImage, queue_size=1)
 
         # OBJECT DETECTION
-        rospy.Service('~obj_detection_rel', ObjDetection,
-                      self.__callback_get_obj_relative_pose)
+        rospy.Service('~obj_detection_rel', ObjDetection, self.__callback_get_obj_relative_pose)
 
         # CALIBRATION
         if not self.__simulation_mode:
@@ -58,19 +56,14 @@ class VisionNode:
         else:
             self.__calibration_object = self.__generate_calib_object_from_gazebo_topic()
 
-        self.__camera_intrinsics_publisher = rospy.Publisher(
-            '~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
+        self.__camera_intrinsics_publisher = rospy.Publisher('~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
         self.publish_camera_intrinsics()
         rospy.logdebug("Vision Node - Camera Intrinsics published !")
 
         # Debug features
-        rospy.Service('~take_picture', TakePicture,
-                      self.__callback_take_picture)
-
-        rospy.Service('~debug_markers', DebugMarkers,
-                      self.__callback_debug_markers)
-        rospy.Service('~debug_colors', DebugColorDetection,
-                      self.__callback_debug_color)
+        rospy.Service('~take_picture', TakePicture, self.__callback_take_picture)
+        rospy.Service('~debug_markers', DebugMarkers, self.__callback_debug_markers)
+        rospy.Service('~debug_colors', DebugColorDetection, self.__callback_debug_color)
 
         # -- VIDEO STREAM
         rospy.logdebug("Vision Node - Creating Video Stream object")

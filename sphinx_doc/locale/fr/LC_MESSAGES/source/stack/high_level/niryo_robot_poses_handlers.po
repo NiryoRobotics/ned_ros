@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"POT-Creation-Date: 2021-12-23 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,8 +51,8 @@ msgstr ""
 "transformations, l'espace de travail, les outils et les trajectoires."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:17
-msgid "The namespace used is: |namespace_emphasize|"
-msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr "Il appartient au namespace ROS : |namespace_emphasize|."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:20
 msgid "Workspaces"

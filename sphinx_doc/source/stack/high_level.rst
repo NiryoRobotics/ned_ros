@@ -19,6 +19,7 @@ developed for High Level interfaces.
    ../stack/high_level/niryo_robot_rpi
    ../stack/high_level/niryo_robot_sound
    ../stack/high_level/niryo_robot_status
+   ../stack/high_level/niryo_robot_system_api_client
    ../stack/high_level/niryo_robot_tools_commander
    ../stack/high_level/niryo_robot_user_interface
    ../stack/high_level/niryo_robot_vision

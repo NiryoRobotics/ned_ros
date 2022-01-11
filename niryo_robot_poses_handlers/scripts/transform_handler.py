@@ -136,8 +136,7 @@ class PosesTransformHandler:
             robot_pose.rpy.roll, robot_pose.rpy.pitch, robot_pose.rpy.yaw,
             "base_link", "tool_link"
         )
-        self.__tf_buffer.set_transform(base_link_to_tool_link,
-                                       "default_authority")
+        self.__tf_buffer.set_transform(base_link_to_tool_link, "default_authority")
 
         # Getting calibration tip
         calibration_tip_grip = self.__grip_manager.read("default_Calibration_Tip")
@@ -145,11 +144,8 @@ class PosesTransformHandler:
         tool_link_to_calib_tip.header.frame_id = "tool_link"
         tool_link_to_calib_tip.child_frame_id = "calibration_tip"
 
-        self.__tf_buffer.set_transform(tool_link_to_calib_tip,
-                                       "default_authority")
-
-        base_link_to_calib_tip = self.__tf_buffer.lookup_transform(
-            "base_link", "calibration_tip", rospy.Time(0))
+        self.__tf_buffer.set_transform(tool_link_to_calib_tip, "default_authority")
+        base_link_to_calib_tip = self.__tf_buffer.lookup_transform("base_link", "calibration_tip", rospy.Time(0))
 
         calib_tip_position = base_link_to_calib_tip.transform.translation
         # rospy.loginfo("Base Link -> Tool Link : {}".format(base_link_to_tool_link.transform.translation))

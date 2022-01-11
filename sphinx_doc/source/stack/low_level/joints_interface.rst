@@ -6,12 +6,16 @@ Joints Interface
 
 Joints interface node
 --------------------------
-The ROS Node is made to:
+It is instantiated in :doc:`niryo_robot_hardware_interface` package.
+
+It has been conceived to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
  - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
+
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -445,3 +449,9 @@ Errors and warning messages
    *  -  WARNING
       -  JointHardwareInterface::init - add dxl joint failure, return : %d. Retrying
       -  Failed to add a dynamixel joint. Will try again up to 3 times
+
+
+.. |namespace_cpp| replace:: joints_interface
+.. |namespace| replace:: /joints_interface/
+.. |namespace_emphasize| replace:: ``/joints_interface/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/joints_interface
