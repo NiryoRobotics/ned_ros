@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 17:37+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,7 +57,7 @@ msgstr ""
 msgid ""
 "End Effector I/O panel: gets commands and sends the current state of the "
 "digital I/Os of the end effector panel on Ned2. Also controls tools like "
-"the Electromagnet.\"."
+"the Electromagnet."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:15
@@ -74,7 +74,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:18
 msgid ""
-"ROS log: can remove all previous logs on startup to prevent a lack of "
+"ROS log: can remove all previous logs on start_up to prevent a lack of "
 "disk space in the long run (SD cards do not have infinite storage)."
 msgstr ""
 
@@ -121,7 +121,7 @@ msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commande
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:38
-msgid "Publish the current execution state launched when button is pressed"
+msgid "Publishes the current execution state launched when button is pressed"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:39
@@ -134,7 +134,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:41
 msgid ""
-"Publish current point when user is in Blockly page to save block by "
+"Publishes current point when user is in Blockly page to save block by "
 "pressing button"
 msgstr ""
 
@@ -147,7 +147,7 @@ msgid ":std_msgs:`std_msgs/Bool<Bool>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:44
-msgid "Publish the button state (true if pressed)"
+msgid "Publishes the button state (true if pressed)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:45
@@ -162,8 +162,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:47
 msgid ""
-"Publish the digital I/Os state by giving for each it's pin / name / mode "
-"/ state"
+"Publishes the digital I/Os state by giving for each it's pin / name / "
+"mode / state"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:48
@@ -178,8 +178,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:50
 msgid ""
-"Publish the analog I/Os state by giving for each it's pin / name / mode /"
-" state"
+"Publishes the analog I/Os state by giving for each it's pin / name / mode"
+" / state"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:51
@@ -191,7 +191,7 @@ msgid ":std_msgs:`std_msgs/Int8<Int8>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:53
-msgid "Publish the current LED color"
+msgid "Publishes the current LED color"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:54
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:56
 msgid ""
-"Publish the current log status (log size / available disk / boolean if "
+"Publishes the current log status (log size / available disk / boolean if "
 "should delete ros log on startup)"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgid "``/niryo_robot/rpi/change_button_mode``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:75
-msgid "Change top button mode (autorun program, blockly, nothing, ...)"
+msgid "Changes top button mode (autorun program, blockly, nothing, ...)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:76
@@ -252,7 +252,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:78
-msgid "Get analog IO state list"
+msgid "Gets analog IO state list"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:79
@@ -266,7 +266,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:81
-msgid "Get digital IO state list"
+msgid "Gets digital IO state list"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:82
@@ -280,7 +280,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:84
-msgid "Set a analog IO to the given value"
+msgid "Sets an analog IO to the given value"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:85
@@ -294,7 +294,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:87
-msgid "Set a digital IO to the given value"
+msgid "Sets a digital IO to the given value"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:88
@@ -308,7 +308,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:90
-msgid "Set a digital IO to the given mode"
+msgid "Sets a digital IO to the given mode"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:91
@@ -351,7 +351,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:102
 msgid ""
-"Modifies the permanent settings that tell if the robot should purge it's "
+"Modifies the permanent settings that tell if the robot should purge its "
 "ROS log at each boot"
 msgstr ""
 
@@ -694,5 +694,78 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution"
 #~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "End Effector I/O panel: gets commands"
+#~ " and sends the current state of "
+#~ "the digital I/Os of the end "
+#~ "effector panel on Ned2. Also controls"
+#~ " tools like the Electromagnet.\"."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "ROS log: can remove all previous "
+#~ "logs on startup to prevent a lack"
+#~ " of disk space in the long run"
+#~ " (SD cards do not have infinite "
+#~ "storage)."
+#~ msgstr ""
+
+#~ msgid "Publish the current execution state launched when button is pressed"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish current point when user is "
+#~ "in Blockly page to save block by"
+#~ " pressing button"
+#~ msgstr ""
+
+#~ msgid "Publish the button state (true if pressed)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish the digital I/Os state by "
+#~ "giving for each it's pin / name"
+#~ " / mode / state"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish the analog I/Os state by "
+#~ "giving for each it's pin / name"
+#~ " / mode / state"
+#~ msgstr ""
+
+#~ msgid "Publish the current LED color"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish the current log status (log "
+#~ "size / available disk / boolean if"
+#~ " should delete ros log on startup)"
+#~ msgstr ""
+
+#~ msgid "Change top button mode (autorun program, blockly, nothing, ...)"
+#~ msgstr ""
+
+#~ msgid "Get analog IO state list"
+#~ msgstr ""
+
+#~ msgid "Get digital IO state list"
+#~ msgstr ""
+
+#~ msgid "Set a analog IO to the given value"
+#~ msgstr ""
+
+#~ msgid "Set a digital IO to the given value"
+#~ msgstr ""
+
+#~ msgid "Set a digital IO to the given mode"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Modifies the permanent settings that "
+#~ "tell if the robot should purge "
+#~ "it's ROS log at each boot"
 #~ msgstr ""
 

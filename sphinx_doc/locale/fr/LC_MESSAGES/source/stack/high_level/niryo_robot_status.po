@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 10:00+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,12 @@ msgid "Robot status Node"
 msgstr "Nœud d'état du robot "
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:7
+#, fuzzy
 msgid ""
-"The ROS Node is  listens to the topics of the robot to deduce the current"
-" state of the robot. It manages the status of the robot, the status of "
-"the logs and informs about the overheating of the raspberry pi and the "
-"out of limit joints."
+"The ROS Node is listening to the topics of the robot to deduce the "
+"current state of the robot. It manages the status of the robot, the "
+"status of the logs and informs about the overheating of the Raspberry PI "
+"and the out of limit joints."
 msgstr ""
 "Le nœud ROS est à l'écoute des topics du robot pour en déduirel'état "
 "actuel du robot. Il gère l'état du robot, l'état deslogs et informe de la"
@@ -115,8 +116,8 @@ msgstr "Collision de bras détectée"
 #: ../../source/stack/high_level/niryo_robot_status.rst:35
 msgid "Restart your movement or switch to learning mode to remove this error."
 msgstr ""
-"Redémarrez votre mouvement ou passez |br| en mode apprentissage "
-"pour supprimer cette erreur."
+"Redémarrez votre mouvement ou passez |br| en mode apprentissage pour "
+"supprimer cette erreur."
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:36
 msgid "``USER_PROGRAM_ERROR``"
@@ -158,7 +159,8 @@ msgid "If the problem persists, update the robot with ssh,"
 msgstr "Si le problème persiste, mettez à jour le robot en ssh,"
 
 #: ../../source/stack/high_level/niryo_robot_status.rst
-msgid "or change the SD card or contact customer service."
+#, fuzzy
+msgid "change the SD card or contact customer service."
 msgstr "ou changez la carte SD, ou contactez le service client."
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:47
@@ -516,3 +518,4 @@ msgstr "RobotStatus"
 
 #~ msgid "This package"
 #~ msgstr ""
+

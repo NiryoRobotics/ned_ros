@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 10:00+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -201,7 +201,8 @@ msgid "``robot_sounds/turn_on_sound``"
 msgstr "``robot_sounds/turn_on_sound``"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:70
-msgid "Sound played at start of the robot"
+#, fuzzy
+msgid "Sound played at the start-up of the robot"
 msgstr "Son joué au démarrage du robot"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:71
@@ -278,7 +279,8 @@ msgid ":std_msgs:`std_msgs/String<String>`"
 msgstr ":std_msgs:`std_msgs/String<String>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:100
-msgid "Publish the sound being played"
+#, fuzzy
+msgid "Publisesh the sound being played"
 msgstr "Publier le son en cours de lecture"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:101
@@ -290,7 +292,8 @@ msgid ":std_msgs:`std_msgs/UInt8<UInt8>`"
 msgstr ":std_msgs:`std_msgs/UInt8<UInt8>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:103
-msgid "Publish the volume of the robot"
+#, fuzzy
+msgid "Publishes the volume of the robot"
 msgstr "Publier le volume du robot"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:104
@@ -306,7 +309,8 @@ msgstr ""
 "(Message)>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:106
-msgid "Publish the sounds (and their duration) on the robot"
+#, fuzzy
+msgid "Publishes the sounds (and their duration) on the robot"
 msgstr "Publier les sons (et leur durée) sur le robot"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:110
@@ -330,7 +334,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:123
-msgid "Play a sound from the robot database"
+#, fuzzy
+msgid "Plays a sound from the robot database"
 msgstr "Jouer un son de la base de données du robot"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:124
@@ -342,7 +347,8 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:126
-msgid "Stop the sound being played"
+#, fuzzy
+msgid "Stops the sound being played"
 msgstr "Arrêter le son en cours de lecture"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:127
@@ -354,7 +360,8 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:129
-msgid "Set the volume percentage between 0 and 200%"
+#, fuzzy
+msgid "Sets the volume percentage between 0 and 200%"
 msgstr "Réglez le pourcentage de volume entre 0 et 200%"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:130
@@ -370,7 +377,8 @@ msgstr ""
 " (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:132
-msgid "Pronounce a sentence via GTTS"
+#, fuzzy
+msgid "Pronouncses a sentence via GTTS"
 msgstr "Prononcez une phrase via GTTS"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:133
@@ -386,7 +394,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:135
-msgid "Stop a sound being played"
+#, fuzzy
+msgid "Stops a sound being played"
 msgstr "Arrêter un son en cours de lecture"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:139
@@ -432,7 +441,8 @@ msgid ":std_msgs:`std_msgs/Empty<Empty>`"
 msgstr ":std_msgs:`std_msgs/Empty<Empty>`"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:155
-msgid "Catch the Niryo Studio connection to make a sound."
+#, fuzzy
+msgid "Catches Niryo Studio's connection to make a sound."
 msgstr "Attrapez la connexion Niryo Studio pour faire un son."
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:159
@@ -504,7 +514,10 @@ msgstr ""
 "::"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:212
-msgid "This class allows you to control the sound of the robot via internal API."
+#, fuzzy
+msgid ""
+"This class allows you to control the sound of the robot via the internal "
+"API."
 msgstr "Cette classe permet de contrôler le son du robot via une API interne."
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:214
@@ -666,15 +679,12 @@ msgstr "durée du son en secondes"
 #~ " sound (wav or mp3), encoded data "
 #~ "from the sound file (wav or mp3)"
 #~ msgstr ""
-#~ "nom du son qui doit être importé,"
-#~ " les données du son  sont codée "
-#~ "en (wav ou mp3)"
 
 #~ msgid "Niryo robot Sound"
 #~ msgstr "Niryo Robot Son"
 
 #~ msgid "type"
-#~ msgstr "type"
+#~ msgstr ""
 
 #~ msgid "sound_data: str"
 #~ msgstr "sound_name: str"
@@ -745,16 +755,6 @@ msgstr "durée du son en secondes"
 #~ msgstr ""
 
 #~ msgid "name of the sound which needs to be deleted"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "name of the sound which needs to"
-#~ " be deleted, encoded data from the"
-#~ " sound (wav or mp3), encoded data "
-#~ "from the sound file (wav or mp3)"
-#~ msgstr ""
-
-#~ msgid "type"
 #~ msgstr ""
 
 #~ msgid "string: String, String containing the encoded data of the sound file"

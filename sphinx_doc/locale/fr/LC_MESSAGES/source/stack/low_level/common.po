@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,9 +25,10 @@ msgid "Common"
 msgstr "Common"
 
 #: ../../source/stack/low_level/common.rst:4
+#, fuzzy
 msgid ""
 "The Common package defines the common software components of the low "
-"level stack. It is split into a model part and a utility part :"
+"level stack. It is split into a model part and a utility part:"
 msgstr ""
 "Le package Common définie les composants logiciels communs de la stack "
 "bas niveau. Il est séparé en une partie modèle et une partie utilitaire :"
@@ -124,9 +125,10 @@ msgid "Sync Cmd"
 msgstr "Sync Cmd"
 
 #: ../../source/stack/low_level/common.rst:58
+#, fuzzy
 msgid ""
 "Each type of command is an alias to specified versions of two base "
-"template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
+"template classes: AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
 msgstr ""
 "Chaque type de commande est un alias de versions spécialisées des deux "
 "classes template de base : AbstractSynchronizeMotorCmd et "

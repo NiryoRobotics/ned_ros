@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,7 +126,7 @@ msgid "``ttl_hardware_write_frequency``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Write frequency on the bus."
+msgid "Writes frequency on the bus."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -138,7 +138,7 @@ msgid "``ttl_hardware_read_data_frequency``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Read frequency on the bus."
+msgid "Reads frequency on the bus."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:50
@@ -146,7 +146,7 @@ msgid "``ttl_hardware_read_status_frequency``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Read frequency for device status on the bus."
+msgid "Reads frequency for device status on the bus."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -170,7 +170,7 @@ msgid "``bus_params/Baudrate``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Baudrate of TTL bus"
+msgid "Baudrates of TTL bus"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -230,7 +230,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:85
-msgid "Control dynamixel LED"
+msgid "Controls dynamixel LED"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:86
@@ -244,7 +244,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:88
-msgid "Write data at a custom register address of a given TTL device"
+msgid "Writes data at a custom register address of a given TTL device"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:89
@@ -258,7 +258,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:91
-msgid "Read data at a custom register address of a given TTL device"
+msgid "Reads data at a custom register address of a given TTL device"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:92
@@ -272,7 +272,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:94
-msgid "Read the PID of dxl motors"
+msgid "Reads the PID of dxl motors"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:95
@@ -286,7 +286,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:97
-msgid "Write the PID for dxl motors"
+msgid "Writes the PID for dxl motors"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:98
@@ -300,7 +300,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:100
-msgid "Read velocity Profile for steppers"
+msgid "Reads velocity Profile for steppers"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:101
@@ -314,7 +314,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:103
-msgid "Write velocity Profile for steppers"
+msgid "Writes velocity Profile for steppers"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:107
@@ -581,5 +581,38 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Control dynamixel's LED"
+#~ msgstr ""
+
+#~ msgid "Write frequency on the bus."
+#~ msgstr ""
+
+#~ msgid "Read frequency on the bus."
+#~ msgstr ""
+
+#~ msgid "Read frequency for device status on the bus."
+#~ msgstr ""
+
+#~ msgid "Baudrate of TTL bus"
+#~ msgstr ""
+
+#~ msgid "Control dynamixel LED"
+#~ msgstr ""
+
+#~ msgid "Write data at a custom register address of a given TTL device"
+#~ msgstr ""
+
+#~ msgid "Read data at a custom register address of a given TTL device"
+#~ msgstr ""
+
+#~ msgid "Read the PID of dxl motors"
+#~ msgstr ""
+
+#~ msgid "Write the PID for dxl motors"
+#~ msgstr ""
+
+#~ msgid "Read velocity Profile for steppers"
+#~ msgstr ""
+
+#~ msgid "Write velocity Profile for steppers"
 #~ msgstr ""
 

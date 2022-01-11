@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: ../../source/stack/low_level/common.rst:4
 msgid ""
 "The Common package defines the common software components of the low "
-"level stack. It is split into a model part and a utility part :"
+"level stack. It is split into a model part and a utility part:"
 msgstr ""
 
 #: ../../source/stack/low_level/common.rst:5
@@ -112,7 +112,7 @@ msgstr ""
 #: ../../source/stack/low_level/common.rst:58
 msgid ""
 "Each type of command is an alias to specified versions of two base "
-"template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
+"template classes: AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
 msgstr ""
 
 #: ../../source/stack/low_level/common.rst:61
@@ -228,5 +228,19 @@ msgstr ""
 #~ "This package does not depend on "
 #~ "any package. This package is a "
 #~ "dependency of the following packages :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The Common package defines the common"
+#~ " software components of the low level"
+#~ " stack. It is split into a "
+#~ "model part and a utility part :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Each type of command is an alias"
+#~ " to specified versions of two base"
+#~ " template classes : AbstractSynchronizeMotorCmd"
+#~ " and AbstractSingleMotorCmd"
 #~ msgstr ""
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,9 @@ msgstr "Ce package gère la communication des composants matériels sur le bus T
 msgid ""
 "This package is based on the DXL SDK. It provides an interface to "
 ":wiki_ros:`dynamixel_sdk`."
-msgstr "Ce package est basé sur le SDK de DXL. Il expose une interface à :wiki_ros:`dynamixel_sdk`."
+msgstr ""
+"Ce package est basé sur le SDK de DXL. Il expose une interface à "
+":wiki_ros:`dynamixel_sdk`."
 
 #: ../../source/stack/low_level/ttl_driver.rst:9
 msgid "TTL Driver Node (For only the development and debugging propose)"
@@ -133,7 +135,8 @@ msgid "``ttl_hardware_write_frequency``"
 msgstr "``ttl_hardware_write_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Write frequency on the bus."
+#, fuzzy
+msgid "Writes frequency on the bus."
 msgstr "Fréquence d'écriture sur le bus."
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -145,7 +148,8 @@ msgid "``ttl_hardware_read_data_frequency``"
 msgstr "``ttl_hardware_read_data_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Read frequency on the bus."
+#, fuzzy
+msgid "Reads frequency on the bus."
 msgstr "Fréquence de lecture sur le bus."
 
 #: ../../source/stack/low_level/ttl_driver.rst:50
@@ -153,7 +157,8 @@ msgid "``ttl_hardware_read_status_frequency``"
 msgstr "``ttl_hardware_read_status_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Read frequency for device status on the bus."
+#, fuzzy
+msgid "Reads frequency for device status on the bus."
 msgstr "Fréquence de lecture pour les status des périphériques TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -177,7 +182,8 @@ msgid "``bus_params/Baudrate``"
 msgstr "``bus_params/Baudrate``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Baudrate of TTL bus"
+#, fuzzy
+msgid "Baudrates of TTL bus"
 msgstr "Débit de Baude du bus TTL"
 
 #: ../../source/stack/low_level/ttl_driver.rst
@@ -237,7 +243,8 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:85
-msgid "Control dynamixel LED"
+#, fuzzy
+msgid "Controls dynamixel LED"
 msgstr "Contrôle les LED des dynamixels"
 
 #: ../../source/stack/low_level/ttl_driver.rst:86
@@ -253,7 +260,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:88
-msgid "Write data at a custom register address of a given TTL device"
+#, fuzzy
+msgid "Writes data at a custom register address of a given TTL device"
 msgstr ""
 "Ecrit des données sur une adresse registre choisie d'un périphérique TTL "
 "donné"
@@ -271,7 +279,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:91
-msgid "Read data at a custom register address of a given TTL device"
+#, fuzzy
+msgid "Reads data at a custom register address of a given TTL device"
 msgstr ""
 "Lit des données sur une addresse registre choisie d'un périphérique TTL "
 "donné"
@@ -289,7 +298,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:94
-msgid "Read the PID of dxl motors"
+#, fuzzy
+msgid "Reads the PID of dxl motors"
 msgstr "Lit le PID des moteurs dxl"
 
 #: ../../source/stack/low_level/ttl_driver.rst:95
@@ -305,7 +315,8 @@ msgstr ""
 "(Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:97
-msgid "Write the PID for dxl motors"
+#, fuzzy
+msgid "Writes the PID for dxl motors"
 msgstr "Ecrit le PID des moteurs dxl"
 
 #: ../../source/stack/low_level/ttl_driver.rst:98
@@ -321,7 +332,8 @@ msgstr ""
 " (Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:100
-msgid "Read velocity Profile for steppers"
+#, fuzzy
+msgid "Reads velocity Profile for steppers"
 msgstr "Lit les profiles de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:101
@@ -337,7 +349,8 @@ msgstr ""
 " (Service)>`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:103
-msgid "Write velocity Profile for steppers"
+#, fuzzy
+msgid "Writes velocity Profile for steppers"
 msgstr "Ecrit les profiles de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:107

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,10 +25,11 @@ msgid "TTL Debug Tools"
 msgstr "TTL Debug Tools"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:4
+#, fuzzy
 msgid ""
 "This package is a debugging package to setup and access directly to all "
-"hardware component on the TTL bus. It provides main functions like ping, "
-"scan device and read/write/syncRead/syncWrite operations on devices."
+"hardware components on the TTL bus. It provides main functions like ping,"
+" scan device and read/write/syncRead/syncWrite operations on devices."
 msgstr ""
 "Ce package est un package de débuguage pour configurer et accéder "
 "directement aux composants matériels présents sur le bus TTL. Il expose "
@@ -37,8 +38,9 @@ msgstr ""
 "les périphériques."
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:7
+#, fuzzy
 msgid ""
-"There are two ways to use this package : directly with the compiled "
+"There are two ways to use this package: directly with the compiled "
 "binary, or via :doc:`ttl_driver` services called in dedicated scripts."
 msgstr ""
 "Il y a deux manières d'utiliser ce package : directement avec le binaire "
@@ -76,45 +78,54 @@ msgid "Parameters - Ttl debug tools"
 msgstr "Paramètres - Ttl debug tools"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:24
-msgid "**--help / -h:** Print help message"
+#, fuzzy
+msgid "**--help / -h:** Prints help message"
 msgstr "**--help / -h:** Affiche l'aide"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:25
-msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+#, fuzzy
+msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
 msgstr "**--baudrate / -b [Baudrate]:** débit de Baud (1000000 par défaut)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:26
-msgid "**--port / -p [Port]:** Set port"
+#, fuzzy
+msgid "**--port / -p [Port]:** Sets port"
 msgstr "**--port / -p [Port]:** Indique le port à utiliser"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:27
-msgid "**--id / -i [ID]:** Device ID (-1 by default)"
+#, fuzzy
+msgid "**--id / -i [ID]:** Devices ID (-1 by default)"
 msgstr "**--id / -i [ID]:** Id du périphérique (-1 par défaut)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:28
-msgid "**--ids [IDs]:** List of devices IDs"
+#, fuzzy
+msgid "**--ids [IDs]:** Lists of devices IDs"
 msgstr "**--ids [IDs]:** liste des ids des périphériques"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:29
-msgid "**--scan:** Scan all devices on the bus"
+#, fuzzy
+msgid "**--scan:** Scans all devices on the bus"
 msgstr "**--scan:** Scanne tous les périphériques sur le bus"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:30
-msgid "**--ping:** Ping specific ID"
+#, fuzzy
+msgid "**--ping:** Pings specific ID"
 msgstr "**--ping:** Ping un id spécifique"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:31
+#, fuzzy
 msgid ""
-"**--get-register [Addr]:** Get a value from a register, parameters is: "
+"**--get-register [Addr]:** Gets a value from a register, parameters is: "
 "register address"
 msgstr ""
 "**--get-register [Addr]:** lire une valeur depuis un registre; le "
 "paramètre est : addresse du registre"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:32
+#, fuzzy
 msgid ""
-"**--get-registers [Addr]:** Get list of values from multiple devices at a"
-" register address, parameters is: register address"
+"**--get-registers [Addr]:** Gets list of values from multiple devices at "
+"a register address, parameters is: register address"
 msgstr ""
 "**--get-registers [Addr]:** récupérer la liste des valeurs sur plusieurs "
 "périphériques à une adresse de registre, le paramètre est : addresse du "
@@ -129,8 +140,9 @@ msgstr ""
 "get-registers, le paramètre est : taille des données en octets"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:34
+#, fuzzy
 msgid ""
-"**--set-register [Addr] [Value] [Size]:** Set a value to a register, "
+"**--set-register [Addr] [Value] [Size]:** Sets a value to a register, "
 "parameters are in the order: register address / value / size (in bytes) "
 "of the data"
 msgstr ""
@@ -139,8 +151,9 @@ msgstr ""
 "(en octets) des données"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:35
+#, fuzzy
 msgid ""
-"**--set-registers [Addr] [Values] [Size]:** Set values to a register on "
+"**--set-registers [Addr] [Values] [Size]:** Sets values to a register on "
 "multiple devices, parameters are in the order: register address / list of"
 " values / size (in bytes) of the data"
 msgstr ""
@@ -149,12 +162,13 @@ msgstr ""
 "du registre / liste des valeurs / taille (en octets) des données"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:36
+#, fuzzy
 msgid ""
-"**--calibrate:** Calibrate all steppers on the bus. It is used in Ned2 "
+"**--calibrate:** Calibrates all steppers on the bus. It is used in Ned2 "
 "only"
 msgstr ""
-"**--calibrate:** Calibre tous les steppers sur le bus. Utilisable sur le NED2 "
-"seulement"
+"**--calibrate:** Calibre tous les steppers sur le bus. Utilisable sur le "
+"NED2 seulement"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:39
 msgid "Scripts"
@@ -217,8 +231,8 @@ msgid "**--id [ID]:** Device ID"
 msgstr "**--id [ID]:** id du périphérique"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:56
-#: ../../source/stack/low_level/ttl_debug_tools.rst:70
-msgid "**--address [Addr]:** Register address to modify"
+#, fuzzy
+msgid "**--address [Addr]:** Registers address to modify"
 msgstr "**--address [Addr]:** Adresses registres à modifier"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:57
@@ -245,6 +259,10 @@ msgstr ""
 #: ../../source/stack/low_level/ttl_debug_tools.rst:68
 msgid "Parameters - Read custom value"
 msgstr "paramètres - Read custom value"
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:70
+msgid "**--address [Addr]:** Register address to modify"
+msgstr "**--address [Addr]:** Adresses registres à modifier"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:71
 msgid "**--size [Size]:** Size in bytes of the data to read"
