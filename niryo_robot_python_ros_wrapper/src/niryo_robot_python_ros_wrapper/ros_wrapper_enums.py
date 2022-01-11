@@ -94,7 +94,7 @@ class ConveyorID:
     def __init__(self):
         pass
 
-    # TODO : to adapt to be able to have CAN (id 11 and 12) and TTL (id 9 and 10) conveyor in any possible combination
+    # TODO : to adapt to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) conveyor in any possible combination
     NONE = 0
     ID_1 = 12   # One, Ned
     ID_2 = 13   # One, Ned
