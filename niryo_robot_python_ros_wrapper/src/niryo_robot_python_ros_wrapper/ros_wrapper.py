@@ -926,7 +926,6 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-
         list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
         return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
 
@@ -1940,10 +1939,36 @@ class NiryoRosWrapper:
 
     @property
     def led_ring(self):
+        """
+        Manage the LED ring
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            robot.led_ring.solid(color=[255, 255, 255])
+
+        :return: LedRingRosWrapper API instance
+        :rtype: LedRingRosWrapper
+        """
         return self.__led_ring
 
     @property
     def sound(self):
+        """
+        Manage sound
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            robot.sound.play(sound.sounds[0])
+
+        :return: SoundRosWrapper API instance
+        :rtype: SoundRosWrapper
+        """
         return self.__sound
 
     @property

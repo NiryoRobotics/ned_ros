@@ -106,24 +106,26 @@ Vision
 Sound
 ^^^^^^^^^^^^^
 
-.. automodule:: niryo_robot_sound.api.sound_ros_wrapper
-   :members: SoundRosWrapper
+For more function, please refer to: :ref:`Sound API functions<source/stack/high_level/niryo_robot_sound:Sound API functions>`
 
-.. autoclass:: SoundRosWrapper
-    :members: play, stop, set_volume,
-              import_sound, delete_sound
+.. autoclass:: NiryoRosWrapper
+    :members: sound
     :member-order: bysource
 
 Led Ring
 ^^^^^^^^^^^^^
 
-.. automodule:: niryo_robot_led_ring.api.led_ring_ros_wrapper
-   :members: LedRingRosWrapper
+For more function, please refer to: :ref:`Led Ring API functions<source/stack/high_level/niryo_robot_led_ring:Led Ring API functions>`
 
-.. autoclass:: LedRingRosWrapper
-    :members: solid, turn_off, flashing, alternate, 
-                chase, wipe, rainbow, rainbow_cycle,
-                rainbow_chase, go_up, go_up_down
+.. autoclass:: NiryoRosWrapper
+    :members: led_ring
+    :member-order: bysource
+
+Custom Button
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: custom_button
     :member-order: bysource
 
 Enums

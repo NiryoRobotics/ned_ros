@@ -48,6 +48,12 @@ class SoundRosWrapper(object):
     def hardware_version(self):
         return self.__hardware_version
 
+    def __check_ned_2_version(self):
+        if self.__hardware_version != 'ned2':
+            raise SoundRosWrapperException(
+                "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
+                    CommandStatus.BAD_HARDWARE_VERSION))
+
     @property
     def sounds(self):
         """
@@ -62,14 +68,14 @@ class SoundRosWrapper(object):
         self.__sound_duration = {sound.name: sound.duration for sound in msg.sounds}
         self.__sounds = list(self.__sound_duration.keys())
 
-    @check_ned2_version
+    #    @check_ned2_version
     def play(self, sound_name, wait_end=True, start_time_sec=0, end_time_sec=0):
         """
         Play a sound from the robot
         If failed, raise NiryoRosWrapperException
 
         :param sound_name: Name of the sound to play
-        :type sound_name: string
+        :type sound_name: str
         :param start_time_sec: start the sound from this value in seconds
         :type start_time_sec: float
         :param end_time_sec: end the sound at this value in seconds
@@ -79,6 +85,7 @@ class SoundRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
         result = self.__call_service('/niryo_robot_sound/play',
                                      PlaySound, PlaySoundRequest(sound_name=sound_name,
                                                                  start_time_sec=start_time_sec,
@@ -87,7 +94,7 @@ class SoundRosWrapper(object):
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
-    @check_ned2_version
+    #    @check_ned2_version
     def set_volume(self, sound_volume):
         """
         Set the volume percentage of the robot.
@@ -98,12 +105,13 @@ class SoundRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
         result = self.__call_service('/niryo_robot_sound/set_volume',
                                      SetInt, sound_volume)
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
-    @check_ned2_version
+    #    @check_ned2_version
     def stop(self):
         """
         Stop a sound being played.
@@ -112,37 +120,42 @@ class SoundRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
         result = self.__call_service('/niryo_robot_sound/stop', Trigger)
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
-    @check_ned2_version
+    #    @check_ned2_version
     def delete_sound(self, sound_name):
         """
         Delete a sound on the RaspberryPi of the robot.
         If failed, raise NiryoRosWrapperException
 
         :param sound_name: name of the sound which needs to be deleted
-        :type sound_name: string
+        :type sound_name: str
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
         req = ManageSoundRequest(sound_name=sound_name, action=ManageSoundRequest.DELETE)
         result = self.__call_service('/niryo_robot_sound/manage', ManageSound, req)
         return self.__classic_return_w_check(result)
 
-    @check_ned2_version
+    #    @check_ned2_version
     def import_sound(self, sound_name, sound_data):
         """
         Delete a sound on the RaspberryPi of the robot.
         If failed, raise NiryoRosWrapperException
 
-        :param sound_name, sound_data: name of the sound which needs to be deleted,
-               encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
-        :type: string: String, String containing the encoded data of the sound file
+        :param sound_name: name of the sound which needs to be deleted
+        :type sound_name: str
+        :param sound_data: String containing the encoded data of the sound file (wav or mp3)
+        :type sound_data: str
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
+
         import base64
 
         sound_data_b64 = base64.b64encode(sound_data)
@@ -150,32 +163,33 @@ class SoundRosWrapper(object):
         result = self.__call_service('/niryo_robot_sound/send_sound', ManageSound, req)
         return self.__classic_return_w_check(result)
 
-    @check_ned2_version
+    #    @check_ned2_version
     def get_sound_duration(self, sound_name):
         """
         Returns the duration in seconds of a sound stored in the robot database
         raise SoundRosWrapperException if the sound doesn't exists
 
         :param sound_name: name of sound
-        :type sound_name: string
+        :type sound_name: str
         :return: sound duration in seconds
         :rtype: float
         """
+        self.__check_ned_2_version()
         if sound_name not in self.__sound_duration:
             raise SoundRosWrapperException("Sound name: {} not found".format(sound_name))
 
         return self.__sound_duration[sound_name]
 
-    @check_ned2_version
+    #    @check_ned2_version
     def say(self, text, language=0):
         """
-        Use gtts (Google Text To Speech) to interprete a string as sound
+        Use gtts (Google Text To Speech) to interpret a string as sound
         Languages available are:
-            - English: 0
-            - French: 1
-            - Spanish: 2
-            - Mandarin: 3
-            - Portuguese: 4
+        - English: 0
+        - French: 1
+        - Spanish: 2
+        - Mandarin: 3
+        - Portuguese: 4
 
 
         :param text: text to speek < 100 char
@@ -185,6 +199,7 @@ class SoundRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
+        self.__check_ned_2_version()
         result = self.__call_service('/niryo_robot_sound/text_to_speech', TextToSpeech, text, language)
 
         if not result.success:

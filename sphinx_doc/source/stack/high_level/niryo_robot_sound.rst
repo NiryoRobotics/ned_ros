@@ -1,4 +1,4 @@
-Niryo robot Sound package
+Niryo_robot_sound
 ========================================
 
 This package deals with the sound of the robot.
@@ -8,7 +8,80 @@ Sound Node
 --------------------------
 The ROS Node is made of services to play, stop, import and delete a sound on the robot. It is also possible to set the volume of the robot. 
 
-The namespace used is: |namespace_emphasize|
+It belongs to the ROS namespace: |namespace_emphasize|.
+
+Parameters - Sound
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Here is a list of the different parameters that allow you to adjust the default settings of the robot and the system sounds.
+
+.. list-table:: Parameters of the volume Sound component
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Name
+      - Description
+      - Default value
+
+   *  - ``default_volume``
+      - Default volume on the real robot
+      - 100
+   *  - ``default_volume_simulation``
+      - Default volume in simulation
+      - 10
+   *  - ``min_volume``
+      - Minimum volume of the robot
+      - 0
+   *  - ``max_volume``
+      - Maximum volume of the robot
+      - 200
+   *  - ``volume_file_path``
+      - File where the volume of the real robot set by the user is stored
+      - "~/niryo_robot_saved_files/robot_sound_volume.txt"
+   *  - ``volume_file_path_simulation``
+      - File where the volume in simulation set by the user is stored
+      - "~/.niryo/simulation/robot_sound_volume.txt"
+
+.. list-table:: Parameters of the Sound component
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Name
+      - Description
+      - Default value
+
+   *  - ``path_user_sound``
+      - Default volume on the real robot
+      - "~/niryo_robot_saved_files/niryo_robot_user_sounds"
+   *  - ``path_user_sound_simulation``
+      - Default volume in simulation
+      - "~/.niryo/simulation/niryo_robot_user_sounds"
+   *  - ``path_robot_sound``
+      - Minimum volume of the robot
+      - "niryo_robot_state_sounds"
+   *  - ``robot_sounds/error_sound``
+      - Sound played when an error occurs
+      - error4.2.wav
+   *  - ``robot_sounds/turn_on_sound``
+      - Sound played at start of the robot
+      - start4a.wav
+   *  - ``robot_sounds/turn_off_sound``
+      - Sound played at shutdown
+      - stop.wav
+   *  - ``robot_sounds/connection_sound``
+      - Sound played an Niryo Studio connection
+      - connected3.wav
+   *  - ``robot_sounds/robot_ready_sound``
+      - Sound played when the robot is ready
+      - connected2.wav
+   *  - ``robot_sounds/calibration_sound``
+      - Sound played at start of calibration
+      - calibration.wav
+
 
 Publisher - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -22,17 +95,16 @@ Publisher - Sound
    *  -  Name
       -  Message Type
       -  Description
-   *  -  ``/niryo_robot_sound/sound_user_state``
-      -  :std_msgs:`std_msgs/Bool<Bool>`
-      -  Publish the state of a user sound (True: being played, False: no sound played)
-   *  -  ``/niryo_robot_sound/volume_state``
-      -  :std_msgs:`std_msgs/Int8<Int8>`
+   *  -  ``/niryo_robot_sound/sound``
+      -  :std_msgs:`std_msgs/String<String>`
+      -  Publish the sound being played
+   *  -  ``/niryo_robot_sound/volume``
+      -  :std_msgs:`std_msgs/UInt8<UInt8>`
       -  Publish the volume of the robot
-   *  -  ``/niryo_robot_sound/get_user_sounds``
-      -  :ref:`SoundUser<source/stack/high_level/niryo_robot_sound:SoundUser (Message)>`
-      -  Publish the sound (and their duration) on the robot
+   *  -  ``/niryo_robot_sound/sound_database``
+      -  :ref:`SoundList<source/stack/high_level/niryo_robot_sound:SoundList (Message)>`
+      -  Publish the sounds (and their duration) on the robot
 
-.. todo:: Update message name because they were renamed in ROS but not in the .rst files
 
 Services - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -46,25 +118,43 @@ Services - Sound
    *  -  Name
       -  Message Type
       -  Description
-   *  -  ``/niryo_robot_sound/play_sound_state``
-      -  :ref:`SoundStateCommand<source/stack/high_level/niryo_robot_sound:SoundStateCommand (Service)>`
-      -  Play a sound corresponding to a state of the robot
-   *  -  ``/niryo_robot_sound/play_sound_user``
-      -  :ref:`SoundUserCommand<source/stack/high_level/niryo_robot_sound:SoundUserCommand (Service)>`
-      -  Play a sound imported on the robot from the user
-   *  -  ``/niryo_robot_sound/stop_sound``
-      -  :ref:`StopSound<source/stack/high_level/niryo_robot_sound:StopSound (Service)>`
-      -  Stop a sound being played
-   *  -  ``/niryo_robot_sound/delete_sound_user``
-      -  :ref:`DeleteSound<source/stack/high_level/niryo_robot_sound:DeleteSound (Service)>`
-      -  Delete a sound imported by the user on the robot
+   *  -  ``/niryo_robot_sound/play``
+      -  :ref:`PlaySound<source/stack/high_level/niryo_robot_sound:PlaySound (Service)>`
+      -  Play a sound from the robot database
+   *  -  ``/niryo_robot_sound/stop``
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
+      -  Stop the sound being played
    *  -  ``/niryo_robot_sound/set_volume``
-      -  :ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`
-      -  Set the volume of the robot
-   *  -  ``/niryo_robot_sound/send_sound``
-      -  :ref:`SendUserSound<source/stack/high_level/niryo_robot_sound:SendUserSound (Service)>`
-      -  Import a sound on the robot
-   
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
+      -  Set the volume percentage between 0 and 200%
+   *  -  ``/niryo_robot_sound/text_to_speech``
+      -  :ref:`TextToSpeech<source/stack/high_level/niryo_robot_sound:TextToSpeech (Service)>`
+      -  Pronounce a sentence via GTTS
+   *  -  ``/niryo_robot_sound/manage``
+      -  :ref:`ManageSound<source/stack/high_level/niryo_robot_sound:ManageSound (Service)>`
+      -  Stop a sound being played
+
+
+Subscribers - Sound
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table:: Sound Package subscribers
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - Topic name
+      - Message type
+      - Description
+   *  - ``/niryo_robot_status/robot_status``
+      - :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`
+      - Retrieves the current robot status, and controls the sound accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
+   *  - ``/niryo_studio_connection``
+      - :std_msgs:`std_msgs/Empty<Empty>`
+      - Catch the Niryo Studio connection to make a sound.
+
+
 Dependencies - Sound
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -87,6 +177,7 @@ SoundObject (Message)
 .. literalinclude:: ../../../../niryo_robot_sound/msg/SoundObject.msg
    :language: rostype
 
+
 ManageSound (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -104,6 +195,44 @@ TextToSpeech (Service)
 
 .. literalinclude:: ../../../../niryo_robot_sound/srv/TextToSpeech.srv
    :language: rostype
+
+Sound API functions
+------------------------------------
+
+In order to control the robot more easily than calling each topics & services one by one,
+a Python ROS Wrapper has been built on top of ROS.
+
+For instance, a script playing sound via Python ROS Wrapper will look like: ::
+
+    from niryo_robot_led_ring.api import SoundRosWrapper
+
+    sound = SoundRosWrapper()
+    sound.play(sound.sounds[0])
+
+| This class allows you to control the sound of the robot via internal API.
+
+List of functions subsections:
+
+.. contents::
+   :local:
+   :depth: 1
+
+.. automodule:: niryo_robot_sound.api.sound_ros_wrapper
+   :members: SoundRosWrapper
+
+Play sound
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: SoundRosWrapper
+    :members: play, stop, set_volume, say
+    :member-order: bysource
+
+Sound database
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: SoundRosWrapper
+    :members: sounds, get_sound_duration, delete_sound, import_sound
+    :member-order: bysource
 
 .. |namespace| replace:: /niryo_robot_sound/
 .. |namespace_emphasize| replace:: ``/niryo_robot_sound/``

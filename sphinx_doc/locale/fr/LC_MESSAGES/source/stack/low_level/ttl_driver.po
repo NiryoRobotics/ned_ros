@@ -11,342 +11,382 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 15:00+0100\n"
+"POT-Creation-Date: 2021-12-23 15:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/ttl_driver.rst:2
 msgid "TTL Driver"
-msgstr ""
+msgstr "TTL Driver"
 
 #: ../../source/stack/low_level/ttl_driver.rst:4
 msgid "This package handles motors which communicate via the protocol TTL."
 msgstr ""
+"Ce package gère la communication des composants matériels sur le bus TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst:5
 msgid "This package is based on the DXL SDK."
-msgstr ""
+msgstr "Ce package est basé sur la librairie DXL SDK."
 
 #: ../../source/stack/low_level/ttl_driver.rst:6
 msgid "It provides an interface to :wiki_ros:`dynamixel_sdk`."
-msgstr ""
+msgstr "Il expose une interface à :wiki_ros:`dynamixel_sdk`."
 
 #: ../../source/stack/low_level/ttl_driver.rst:9
-msgid "TTL Driver Node (For Development and Debugging)"
-msgstr ""
+msgid "TTL Driver Node (For only the development and debugging propose)"
+msgstr "TTL Driver Node (seulement pour le développement et le débuguage)"
 
 #: ../../source/stack/low_level/ttl_driver.rst:12
 msgid "The ROS Node is made to:"
-msgstr ""
+msgstr "Le noeud ROS est conçu pour :"
 
 #: ../../source/stack/low_level/ttl_driver.rst:11
 msgid "Initialize TTL Interface."
-msgstr ""
+msgstr "Initialiser l'interface TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst:12
-msgid "Get configuration of motors and add to TTL Interface"
+msgid "Get configuration of motors and add to TTL Interface."
 msgstr ""
+"Récupérer la configuration des composants matériels et les ajouter à "
+"l'interface TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst:15
 msgid "TTL Interface Core"
-msgstr ""
+msgstr "TTL Interface Core"
 
-#: ../../source/stack/low_level/ttl_driver.rst:21
-msgid "It is integrated in :doc:`niryo_robot_hardware_interface` package"
+#: ../../source/stack/low_level/ttl_driver.rst:17
+msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr ""
+"Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
 
-#: ../../source/stack/low_level/ttl_driver.rst:18
-msgid "Initialize the TTL Interface and TTL bus with the configuration."
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:19
-msgid ""
-"Add or remove devices using protocol TTL to the Interface from other "
-"packages."
-msgstr ""
+#: ../../source/stack/low_level/ttl_driver.rst:23
+msgid "It has been conceived to:"
+msgstr "Il a été conçu pour :"
 
 #: ../../source/stack/low_level/ttl_driver.rst:20
-msgid "Start getting data and sending data on the physical bus."
+msgid ""
+"Initialize the TTL Interface (Interface used by other packages) and physical "
+"bus with the configurations."
 msgstr ""
+"Initialiser l'interface TTL (interface utilisée par d'autres packages) et le "
+"bus physique avec les configurations."
 
 #: ../../source/stack/low_level/ttl_driver.rst:21
-msgid "Start ROS stuffs like services, topic."
-msgstr ""
+msgid "Add, remove and monitor devices."
+msgstr "Ajouter, enlever et surveiller les périphériques."
 
-#: ../../source/stack/low_level/ttl_driver.rst:24
+#: ../../source/stack/low_level/ttl_driver.rst:22
+msgid "Start getting data and sending data on the physical bus."
+msgstr "Démarre l'acquisition et l'envoie de données sur le bus physique."
+
+#: ../../source/stack/low_level/ttl_driver.rst:23
+msgid "Start ROS stuffs like services, topics."
+msgstr "Démarre les Services et Topics ROS."
+
+#: ../../source/stack/low_level/ttl_driver.rst:25
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr "Il appartient au namespace ROS : |namespace_emphasize|."
+
+#: ../../source/stack/low_level/ttl_driver.rst:28
 msgid "Parameters - TTL Driver"
-msgstr ""
+msgstr "Paramètres - TTL Driver"
 
-#: ../../source/stack/low_level/ttl_driver.rst:26
-msgid "TTL Driver's Parameters"
+#: ../../source/stack/low_level/ttl_driver.rst:30
+msgid ""
+"These configuration parameters are chosen and tested many times to work "
+"correctly. Please make sure that you understand what you do before editing "
+"these files."
 msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:32
-#: ../../source/stack/low_level/ttl_driver.rst:65
-msgid "Name"
-msgstr ""
+"Ces paramètres de configuration sont choisis et testé de nombreuses fois "
+"pour fonctionner correctement. Assurez-vous de bien comprendre ce que vous "
+"faites avant de changer ces fichiers."
 
 #: ../../source/stack/low_level/ttl_driver.rst:33
-#: ../../source/stack/low_level/ttl_driver.rst:67
-msgid "Description"
-msgstr ""
+msgid "TTL Driver's Parameters"
+msgstr "Paramètres du TTL driver"
 
-#: ../../source/stack/low_level/ttl_driver.rst:34
-msgid "``ttl_hardware_control_loop_frequency``"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst
-msgid "Controls loop frequency."
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst
-msgid "Default: '600.0'"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:37
-msgid "``ttl_hardware_write_frequency``"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst
-msgid "Writing frequency."
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst
-msgid "Default: '200.0'"
-msgstr ""
+#: ../../source/stack/low_level/ttl_driver.rst:39
+#: ../../source/stack/low_level/ttl_driver.rst:80
+msgid "Name"
+msgstr "Nom"
 
 #: ../../source/stack/low_level/ttl_driver.rst:40
+#: ../../source/stack/low_level/ttl_driver.rst:82
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack/low_level/ttl_driver.rst:41
+msgid "``ttl_hardware_control_loop_frequency``"
+msgstr "``ttl_hardware_control_loop_frequency``"
+
+#: ../../source/stack/low_level/ttl_driver.rst
+msgid "Frequency of the bus control loop."
+msgstr "Fréquence de la boucle de contrôle du bus."
+
+#: ../../source/stack/low_level/ttl_driver.rst
+msgid "Default: '240.0'"
+msgstr "Défaut: '240.0'"
+
+#: ../../source/stack/low_level/ttl_driver.rst:44
+msgid "``ttl_hardware_write_frequency``"
+msgstr "``ttl_hardware_write_frequency``"
+
+#: ../../source/stack/low_level/ttl_driver.rst
+msgid "Write frequency on the bus."
+msgstr "Fréquence d'écriture sur le bus."
+
+#: ../../source/stack/low_level/ttl_driver.rst
+msgid "Default: '120.0'"
+msgstr "Défaut: '120.0'"
+
+#: ../../source/stack/low_level/ttl_driver.rst:47
 msgid "``ttl_hardware_read_data_frequency``"
-msgstr ""
+msgstr "``ttl_hardware_read_data_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Reading frequency."
-msgstr ""
+msgid "Read frequency on the bus."
+msgstr "Fréquence de lecture sur le bus."
 
-#: ../../source/stack/low_level/ttl_driver.rst
-msgid "Default: '300.0'"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:43
+#: ../../source/stack/low_level/ttl_driver.rst:50
 msgid "``ttl_hardware_read_status_frequency``"
-msgstr ""
+msgstr "``ttl_hardware_read_status_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Reads Ttl's device status frequency."
-msgstr ""
+msgid "Read frequency for Ttl's device'status."
+msgstr "Fréquence de lecture pour les status des périphériques TTL."
 
 #: ../../source/stack/low_level/ttl_driver.rst
 msgid "Default: '0.7'"
-msgstr ""
+msgstr "Défaut: '0.7'"
 
-#: ../../source/stack/low_level/ttl_driver.rst:46
+#: ../../source/stack/low_level/ttl_driver.rst:53
 msgid "``ttl_hardware_read_end_effector_frequency``"
-msgstr ""
+msgstr "``ttl_hardware_read_end_effector_frequency``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "Reads End Effector's status frequency."
-msgstr ""
+msgid "Read frequency for End Effector's status."
+msgstr "Fréquence de lecture des status du End Effector."
 
 #: ../../source/stack/low_level/ttl_driver.rst
 msgid "Default: '13.0'"
-msgstr ""
+msgstr "Défaut: '13.0'"
 
-#: ../../source/stack/low_level/ttl_driver.rst:49
+#: ../../source/stack/low_level/ttl_driver.rst:56
 msgid "``bus_params/Baudrate``"
-msgstr ""
+msgstr "``bus_params/Baudrate``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
 msgid "Baudrate of TTL bus"
-msgstr ""
+msgstr "Débit de Baude du bus TTL"
 
 #: ../../source/stack/low_level/ttl_driver.rst
 msgid "Default: '1000000'"
-msgstr ""
+msgstr "Défaut: '1000000'"
 
-#: ../../source/stack/low_level/ttl_driver.rst:52
+#: ../../source/stack/low_level/ttl_driver.rst:59
 msgid "``bus_params/uart_device_name``"
-msgstr ""
+msgstr "``bus_params/uart_device_name``"
 
 #: ../../source/stack/low_level/ttl_driver.rst
-msgid "name of uart port using"
-msgstr ""
+msgid "Name of UART port using"
+msgstr "Nom du port UART utilisé"
 
 #: ../../source/stack/low_level/ttl_driver.rst
 msgid "Default: '/dev/ttyAMA0'"
-msgstr ""
+msgstr "Défaut: '/dev/ttyAMA0'"
 
-#: ../../source/stack/low_level/ttl_driver.rst:57
-msgid "Services - TTL Driver"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:59
-msgid "TTL Driver Package Services"
-msgstr ""
+#: ../../source/stack/low_level/ttl_driver.rst:64
+msgid "Dependencies - TTL Driver"
+msgstr "Dépendances - TTL Driver"
 
 #: ../../source/stack/low_level/ttl_driver.rst:66
-msgid "Message Type"
-msgstr ""
+msgid ":wiki_ros:`dynamixel_sdk`"
+msgstr ":wiki_ros:`dynamixel_sdk`"
+
+#: ../../source/stack/low_level/ttl_driver.rst:67
+msgid ":doc:`../high_level/niryo_robot_msgs`"
+msgstr ":doc:`../high_level/niryo_robot_msgs`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:68
-msgid "``niryo_robot/ttl_driver/set_dxl_leds``"
-msgstr ""
+msgid ":doc:`common`"
+msgstr ":doc:`common`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:69
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:70
-msgid "Control dynmixel LED"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:71
-msgid "``niryo_robot/ttl_driver/send_custom_value``"
-msgstr ""
+msgid ":msgs_index:`std_msgs`"
+msgstr ":msgs_index:`std_msgs`"
 
 #: ../../source/stack/low_level/ttl_driver.rst:72
+msgid "Services - TTL Driver"
+msgstr "Services - TTL Driver"
+
+#: ../../source/stack/low_level/ttl_driver.rst:74
+msgid "TTL Driver Package Services"
+msgstr "Services du package TTL Driver"
+
+#: ../../source/stack/low_level/ttl_driver.rst:81
+msgid "Message Type"
+msgstr "Type de message"
+
+#: ../../source/stack/low_level/ttl_driver.rst:83
+msgid "``niryo_robot/ttl_driver/set_dxl_leds``"
+msgstr "``niryo_robot/ttl_driver/set_dxl_leds``"
+
+#: ../../source/stack/low_level/ttl_driver.rst:84
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+
+#: ../../source/stack/low_level/ttl_driver.rst:85
+msgid "Control dynamixel's LED"
+msgstr "Contrôle les LED des dynamixels"
+
+#: ../../source/stack/low_level/ttl_driver.rst:86
+msgid "``niryo_robot/ttl_driver/send_custom_value``"
+msgstr "``niryo_robot/ttl_driver/send_custom_value``"
+
+#: ../../source/stack/low_level/ttl_driver.rst:87
 msgid ""
 ":ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue "
 "(Service)>`"
 msgstr ""
+":ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue "
+"(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:73
-msgid "Send a custom command to Ttl device"
+#: ../../source/stack/low_level/ttl_driver.rst:88
+msgid "Write data at a custom register address of a given TTL device"
 msgstr ""
+"Ecrit des données sur une adresse registre choisie d'un périphérique TTL "
+"donné"
 
-#: ../../source/stack/low_level/ttl_driver.rst:74
+#: ../../source/stack/low_level/ttl_driver.rst:89
 msgid "``niryo_robot/ttl_driver/read_custom_value``"
-msgstr ""
+msgstr "``niryo_robot/ttl_driver/read_custom_value``"
 
-#: ../../source/stack/low_level/ttl_driver.rst:75
+#: ../../source/stack/low_level/ttl_driver.rst:90
 msgid ""
 ":ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue "
 "(Service)>`"
 msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:76
-msgid "Read a custom command to Ttl device"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:77
-msgid "``niryo_robot/ttl_driver/read_pid_value``"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:78
-msgid ""
-":ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue "
+":ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue "
 "(Service)>`"
-msgstr ""
 
-#: ../../source/stack/low_level/ttl_driver.rst:79
+#: ../../source/stack/low_level/ttl_driver.rst:91
+msgid "Read data at a custom register address of a given TTL device"
+msgstr ""
+"Lit des données sur une addresse registre choisie d'un périphérique TTL donné"
+
+#: ../../source/stack/low_level/ttl_driver.rst:92
+msgid "``niryo_robot/ttl_driver/read_pid_value``"
+msgstr "``niryo_robot/ttl_driver/read_pid_value``"
+
+#: ../../source/stack/low_level/ttl_driver.rst:93
+msgid ""
+":ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue (Service)>`"
+msgstr ""
+":ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue (Service)>`"
+
+#: ../../source/stack/low_level/ttl_driver.rst:94
 msgid "Read the PID of dxl motors"
-msgstr ""
+msgstr "Lit le PID des moteurs dxl"
 
-#: ../../source/stack/low_level/ttl_driver.rst:80
+#: ../../source/stack/low_level/ttl_driver.rst:95
 msgid "``niryo_robot/ttl_driver/write_pid_value``"
-msgstr ""
+msgstr "``niryo_robot/ttl_driver/write_pid_value``"
 
-#: ../../source/stack/low_level/ttl_driver.rst:81
+#: ../../source/stack/low_level/ttl_driver.rst:96
 msgid ""
 ":ref:`WritePIDValue<source/stack/low_level/ttl_driver:WritePIDValue "
 "(Service)>`"
 msgstr ""
+":ref:`WritePIDValue<source/stack/low_level/ttl_driver:WritePIDValue "
+"(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:82
+#: ../../source/stack/low_level/ttl_driver.rst:97
 msgid "Write the PID for dxl motors"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:83
-msgid "``niryo_robot/ttl_driver/read_velocity_profile``"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:84
-msgid ""
-":ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile"
-" (Service)>`"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:85
-msgid "Read velocity Profile for steppers"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:86
-msgid "``niryo_robot/ttl_driver/write_velocity_profile``"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:87
-msgid ""
-":ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile"
-" (Service)>`"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:88
-msgid "Write velocity Profile for steppers"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:91
-msgid "Dependencies - TTL Driver"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:93
-msgid ":wiki_ros:`dynamixel_sdk`"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:94
-msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
-msgstr ""
-
-#: ../../source/stack/low_level/ttl_driver.rst:95
-msgid ":msgs_index:`std_msgs`"
-msgstr ""
+msgstr "Ecrit le PID des moteurs dxl"
 
 #: ../../source/stack/low_level/ttl_driver.rst:98
-msgid "Services & Messages files - TTL Driver"
+msgid "``niryo_robot/ttl_driver/read_velocity_profile``"
+msgstr "``niryo_robot/ttl_driver/read_velocity_profile``"
+
+#: ../../source/stack/low_level/ttl_driver.rst:99
+msgid ""
+":ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile "
+"(Service)>`"
 msgstr ""
+":ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile "
+"(Service)>`"
+
+#: ../../source/stack/low_level/ttl_driver.rst:100
+msgid "Read velocity Profile for steppers"
+msgstr "Lit les profiles de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:101
-msgid "SendCustomValue (Service)"
+msgid "``niryo_robot/ttl_driver/write_velocity_profile``"
+msgstr "``niryo_robot/ttl_driver/write_velocity_profile``"
+
+#: ../../source/stack/low_level/ttl_driver.rst:102
+msgid ""
+":ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile "
+"(Service)>`"
 msgstr ""
+":ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile "
+"(Service)>`"
+
+#: ../../source/stack/low_level/ttl_driver.rst:103
+msgid "Write velocity Profile for steppers"
+msgstr "Ecrit les profiles de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:107
+msgid "Services & Messages files - TTL Driver"
+msgstr "Fichiers de Services et Messages - TTL Driver"
+
+#: ../../source/stack/low_level/ttl_driver.rst:110
+msgid "SendCustomValue (Service)"
+msgstr "SendCustomValue (Service)"
+
+#: ../../source/stack/low_level/ttl_driver.rst:116
 msgid "ReadCustomValue (Service)"
-msgstr ""
+msgstr "ReadCustomValue (Service)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:113
+#: ../../source/stack/low_level/ttl_driver.rst:122
 msgid "ReadPIDValue (Service)"
-msgstr ""
+msgstr "ReadPIDValue (Service)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:119
+#: ../../source/stack/low_level/ttl_driver.rst:128
 msgid "WritePIDValue (Service)"
-msgstr ""
+msgstr "WritePIDValue (Service)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:125
+#: ../../source/stack/low_level/ttl_driver.rst:134
 msgid "ReadVelocityProfile (Service)"
-msgstr ""
+msgstr "ReadVelocityProfile (Service)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:131
+#: ../../source/stack/low_level/ttl_driver.rst:140
 msgid "WriteVelocityProfile (Service)"
-msgstr ""
+msgstr "WriteVelocityProfile (Service)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:137
+#: ../../source/stack/low_level/ttl_driver.rst:146
 msgid "MotorHardwareStatus (Message)"
-msgstr ""
+msgstr "MotorHardwareStatus (Message)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:143
+#: ../../source/stack/low_level/ttl_driver.rst:152
 msgid "MotorCommand (Message)"
-msgstr ""
+msgstr "MotorCommand (Message)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:149
+#: ../../source/stack/low_level/ttl_driver.rst:158
 msgid "ArrayMotorHardwareStatus (Message)"
-msgstr ""
+msgstr "ArrayMotorHardwareStatus (Message)"
 
-#: ../../source/stack/low_level/ttl_driver.rst:155
+#: ../../source/stack/low_level/ttl_driver.rst:164
 msgid "CollisionStatus (Message)"
-msgstr ""
+msgstr "CollisionStatus (Message)"
 
 #~ msgid "This package handles communication on TTL bus via dynamixel sdk."
 #~ msgstr ""
@@ -393,9 +433,6 @@ msgstr ""
 #~ msgid "Dependencies"
 #~ msgstr ""
 
-#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
-#~ msgstr ""
-
 #~ msgid "Services, Topics and Messages"
 #~ msgstr ""
 
@@ -406,57 +443,55 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/WriteCustomValue<source/stack_hardware/ttl_driver:WriteCustomValue"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/WriteCustomValue<source/stack_hardware/ttl_driver:WriteCustomValue "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Send a custom command on the TTL bus"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/ReadCustomValue<source/stack_hardware/ttl_driver:ReadCustomValue"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/ReadCustomValue<source/stack_hardware/ttl_driver:ReadCustomValue "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Reads a custom register on the TTL bus"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/WritePIDValue<source/stack_hardware/ttl_driver:WritePIDValue"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/WritePIDValue<source/stack_hardware/ttl_driver:WritePIDValue "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Writes PID values to a dynamixel motor on the TTL Bus"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/ReadPIDValue<source/stack_hardware/ttl_driver:ReadPIDValue"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/ReadPIDValue<source/stack_hardware/ttl_driver:ReadPIDValue "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid "Reads PID values from a dynamixel motor on the TTL Bus"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/WriteVelocityProfile<source/stack_hardware/ttl_driver:WriteVelocityProfile"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/WriteVelocityProfile<source/stack_hardware/ttl_driver:WriteVelocityProfile "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Writes velocity and acceleration profiles "
-#~ "to a stepper motor on the TTL "
+#~ "Writes velocity and acceleration profiles to a stepper motor on the TTL "
 #~ "Bus"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ttl_driver/ReadVelocityProfile<source/stack_hardware/ttl_driver:ReadVelocityProfile"
-#~ " (Service)>`"
+#~ ":ref:`ttl_driver/ReadVelocityProfile<source/stack_hardware/ttl_driver:ReadVelocityProfile "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "Reads velocity and acceleration profiles "
-#~ "from a stepper motor on the TTL"
-#~ " Bus"
+#~ "Reads velocity and acceleration profiles from a stepper motor on the TTL "
+#~ "Bus"
 #~ msgstr ""
 
 #~ msgid "Services files"
@@ -477,3 +512,49 @@ msgstr ""
 #~ msgid "TTL Interface"
 #~ msgstr ""
 
+#~ msgid "TTL Driver Node (For Development and Debugging)"
+#~ msgstr ""
+
+#~ msgid "Get configuration of motors and add to TTL Interface"
+#~ msgstr ""
+
+#~ msgid "It is integrated in :doc:`niryo_robot_hardware_interface` package"
+#~ msgstr ""
+
+#~ msgid "Initialize the TTL Interface and TTL bus with the configuration."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Add or remove devices using protocol TTL to the Interface from other "
+#~ "packages."
+#~ msgstr ""
+
+#~ msgid "Start ROS stuffs like services, topic."
+#~ msgstr ""
+
+#~ msgid "Default: '600.0'"
+#~ msgstr ""
+
+#~ msgid "Default: '200.0'"
+#~ msgstr ""
+
+#~ msgid "Default: '300.0'"
+#~ msgstr ""
+
+#~ msgid "Reads Ttl's device status frequency."
+#~ msgstr ""
+
+#~ msgid "Reads End Effector's status frequency."
+#~ msgstr ""
+
+#~ msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid "Controls loop frequency."
+#~ msgstr "Fréquence de la boucle de contrôle."
+
+#~ msgid "Send a custom command to Ttl device"
+#~ msgstr ""
+
+#~ msgid "Read a custom command to Ttl device"
+#~ msgstr ""
