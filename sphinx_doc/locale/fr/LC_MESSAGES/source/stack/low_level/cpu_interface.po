@@ -62,7 +62,7 @@ msgid ""
 "shutdown threshold."
 msgstr ""
 "Il a été conçu pour surveiller la température des processeurs et arrêter "
-"automatiquement la raspberry pi si celle-ci atteint un seuil critique. Deux "
+"automatiquement la Raspberry Pi si celle-ci atteint un seuil critique. Deux "
 "seuils peuvent être définis via des paramètres : un seuil d'alerte et un "
 "seuil d'arrêt."
 

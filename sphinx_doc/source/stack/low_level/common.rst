@@ -1,7 +1,7 @@
 Common
 =====================================
 
-| The Common package defines the common software components of the low level stack. It is split into a model part and a utility part :
+| The Common package defines the common software components of the low level stack. It is split into a model part and a utility part:
 | - The 'model' subpackage defines the model tree needed to keep a virtual state of the robot up to date at any time.
 | - The 'util' subpackage defines cpp interfaces and useful functions
 
@@ -55,7 +55,7 @@ Classes representing single and synchronize commands, for steppers and dynamixel
     Single Cmd    Sync Cmd
    ============  ===========
 
-Each type of command is an alias to specified versions of two base template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd
+Each type of command is an alias to specified versions of two base template classes: AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd
 
 Util
 --------------------------

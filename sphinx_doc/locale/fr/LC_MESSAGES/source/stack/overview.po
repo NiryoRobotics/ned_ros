@@ -32,7 +32,7 @@ msgid ""
 "Ned is a robot based on Raspberry, Arduino & ROS. It uses ROS to make the "
 "interface between Hardware and high-level bindings."
 msgstr ""
-"Le Ned est un robot basé sur Raspberry pi, Arduino et ROS. Il utilises ROS "
+"Le Ned est un robot basé sur Raspberry Pi, Arduino et ROS. Il utilises ROS "
 "pour faire l'interface entre le materiel et les fonctions de haut niveau."
 
 #: ../../source/stack/overview.rst:8

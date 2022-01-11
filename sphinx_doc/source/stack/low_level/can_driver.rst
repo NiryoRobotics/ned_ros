@@ -1,9 +1,9 @@
 CAN Driver
 ===================================
 
-| This package provides an interface between high level ROS packages and handler of CAN Bus
-| This package uses the mcp_can_rpi for CAN bus communication.
-| It is used by only Ned and One.
+| This package provides an interface between high level ROS packages and handler of CAN Bus. It uses the mcp_can_rpi for CAN bus communication.
+
+| It is used by only Ned and the Niryo One.
 
 CAN Driver Node (For only the development and debugging propose)
 -------------------------------------------------------------------
@@ -25,7 +25,7 @@ It belongs to the ROS namespace: |namespace_emphasize|.
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. note::
-   Theses configuration parameters are set to work with Niryo's robot. Do not edit them.
+   These configuration parameters are set to work with Niryo's robot. Do not edit them.
 
 .. list-table:: CAN Driver's Parameters 
    :header-rows: 1

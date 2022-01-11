@@ -42,19 +42,19 @@ Parameters - TTL Driver
       -  | Frequency of the bus control loop.
          | Default: '240.0'
    *  -  ``ttl_hardware_write_frequency``
-      -  | Write frequency on the bus.
+      -  | Writes frequency on the bus.
          | Default: '120.0'
    *  -  ``ttl_hardware_read_data_frequency``
-      -  | Read frequency on the bus.
+      -  | Reads frequency on the bus.
          | Default: '120.0'
    *  -  ``ttl_hardware_read_status_frequency``
-      -  | Read frequency for device status on the bus.
+      -  | Reads frequency for device status on the bus.
          | Default: '0.7'
    *  -  ``ttl_hardware_read_end_effector_frequency``
       -  | Read frequency for End Effector's status.
          | Default: '13.0'
    *  -  ``bus_params/Baudrate``
-      -  | Baudrate of TTL bus
+      -  | Baudrates of TTL bus
          | Default: '1000000'
    *  -  ``bus_params/uart_device_name``
       -  | Name of UART port using
@@ -82,25 +82,25 @@ Services - TTL Driver
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Control dynamixel LED
+      -  Controls dynamixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
       -  :ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue (Service)>`
-      -  Write data at a custom register address of a given TTL device
+      -  Writes data at a custom register address of a given TTL device
    *  -  ``niryo_robot/ttl_driver/read_custom_value``
       -  :ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue (Service)>`
-      -  Read data at a custom register address of a given TTL device
+      -  Reads data at a custom register address of a given TTL device
    *  -  ``niryo_robot/ttl_driver/read_pid_value``
       -  :ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue (Service)>`
-      -  Read the PID of dxl motors
+      -  Reads the PID of dxl motors
    *  -  ``niryo_robot/ttl_driver/write_pid_value``
       -  :ref:`WritePIDValue<source/stack/low_level/ttl_driver:WritePIDValue (Service)>`
-      -  Write the PID for dxl motors
+      -  Writes the PID for dxl motors
    *  -  ``niryo_robot/ttl_driver/read_velocity_profile``
       -  :ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile (Service)>`
-      -  Read velocity Profile for steppers
+      -  Reads velocity Profile for steppers
    *  -  ``niryo_robot/ttl_driver/write_velocity_profile``
       -  :ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile (Service)>`
-      -  Write velocity Profile for steppers
+      -  Writes velocity Profile for steppers
 
 
 Services & Messages files - TTL Driver

@@ -2,6 +2,7 @@ Joints Interface
 ====================================
 
 | This package handles packages related to the robot's joints controller.
+
 | It provides an interface to :wiki_ros:`ros_control`.
 
 Joints interface node
@@ -233,7 +234,7 @@ This file comes in a different version for each hardware version. They are locat
       -  RPM
       -  All versions
 
-.. [*] refer to the dedicated motor `reference documentation <https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-profile>`_.
+.. [*] refers to the dedicated motor `reference documentation <https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-profile>`_.
 
 .. list-table:: *steppers_params.yaml* file
    :header-rows: 1
@@ -337,7 +338,7 @@ This file comes in a different version for each hardware version. They are locat
       -  Ned 2 only
 
 The velocity profiles for the Stepper motors (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL bus only (thus for Ned2 only).
-They are defined according to the following graph :
+They are defined according to the following graph:
 
 .. figure:: ../../../images/stack/low_level/steppers_velocity_profiles.png
    :alt: TTL steppers velocity profiles
@@ -403,13 +404,13 @@ Services
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
+      -  Starts motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Reset motor calibration state to "uncalibrated". This will allow the user to ask a new calibration.
+      -  Resets motor calibration state to "uncalibrated". This will allow the user to ask a new calibration.
    *  -  ``niryo_robot/learning_mode/activate``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Change learning mode (Free Motion) state. When learning mode is activated, torques are disabled and the joints can move freely.
+      -  Changes learning mode (Free Motion) state. When learning mode is activated, torques are disabled and the joints can move freely.
    *  -  ``niryo_robot/joints_interface/steppers_reset_controller``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Resets the controller

@@ -6,7 +6,9 @@ Conveyor Interface
 
 | It allows you to control up to two Conveyors at the same time.
 
-| Two version of the conveyor exist : The Conveyor Belt, communicating via a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. Both of them are directly compatible for the Ned and One. For Ned2, you will need to change the stepper card of the CAN Conveyor Belt to be able to use it on a TTL port (there is no CAN port on Ned2).
+| Two version of the conveyor exist: The Conveyor Belt, communicating via a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. 
+Both of them are directly compatible for the Ned and One. For Ned2, you will need to change the stepper card of the CAN Conveyor Belt 
+to be able to use it on a TTL port (there is no CAN port on Ned2).
 
 Conveyor Interface node (For development and debugging purpose only) 
 ------------------------------------------------------------------------
@@ -101,7 +103,7 @@ Services
       -  Sends a command to the desired Conveyor
    *  -  ``ping_and_set_conveyor``
       -  :ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor (Service)>`
-      -  Scans and sets a new Conveyor or remove a connected Conveyor
+      -  Scans and sets a new Conveyor or removes a connected Conveyor
 
 Dependencies - Conveyor interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

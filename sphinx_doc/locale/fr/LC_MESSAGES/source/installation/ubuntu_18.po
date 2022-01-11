@@ -34,7 +34,7 @@ msgstr ""
 "Ce guide va dérouler les étapes nécessaires pour installer la stack des "
 "robots Niryo sous Ubuntu 18. Vous pouvez appliquer ces étapes pour mettre"
 " en place un environnement de simulation sur un ordinateur de "
-"développement quelconque, ou bien l'installer sur une raspberry pi en vu "
+"développement quelconque, ou bien l'installer sur une Raspberry Pi en vu "
 "de l'utiliser sur un robot réel."
 
 #: ../../source/installation/ubuntu_18.rst:8

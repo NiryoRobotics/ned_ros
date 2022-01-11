@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Le nœud ROS est à l'écoute des topics du robot pour en déduirel'état "
 "actuel du robot. Il gère l'état du robot, l'état deslogs et informe de la"
-" surchauffe du raspberry pi et du hors limite des articulations."
+" surchauffe du Raspberry Pi et du hors limite des articulations."
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:10
 msgid "It belongs to the ROS namespace: |namespace_emphasize|."
