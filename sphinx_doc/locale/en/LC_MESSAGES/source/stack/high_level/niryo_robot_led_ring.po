@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 13:17+0000\n"
+"POT-Creation-Date: 2022-01-11 13:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,11 +59,13 @@ msgid "The LED Ring can either be:"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:20
-msgid "in **ROBOT STATUS** mode : the LED is displaying the status of the robot."
+msgid "in **ROBOT STATUS** mode: the LED is displaying the status of the robot."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:25
-msgid "in **USER** mode"
+msgid ""
+"in **USER** mode: the user can control the LED Ring with the several "
+"methods implemented, through"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:22
@@ -1852,5 +1854,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Leds turn on like a loading circle, and are turned off the same way."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "in **ROBOT STATUS** mode : the LED"
+#~ " is displaying the status of the "
+#~ "robot."
+#~ msgstr ""
+
+#~ msgid "in **USER** mode"
 #~ msgstr ""
 

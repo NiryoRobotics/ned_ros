@@ -79,11 +79,11 @@ msgstr "Ajouter, enlever et surveiller les périphériques."
 
 #: ../../source/stack/low_level/ttl_driver.rst:22
 msgid "Start getting data and sending data on the physical bus."
-msgstr "Démarre l'acquisition et l'envoie de données sur le bus physique."
+msgstr "Démarrrer l'acquisition et l'envoi de données sur le bus physique."
 
 #: ../../source/stack/low_level/ttl_driver.rst:23
 msgid "Start ROS stuffs like services, topics."
-msgstr "Démarre les Services et Topics ROS."
+msgstr "Démarrrer les Services et Topics ROS."
 
 #: ../../source/stack/low_level/ttl_driver.rst:25
 msgid "It belongs to the ROS namespace: |namespace_emphasize|."
@@ -99,7 +99,7 @@ msgid ""
 "correctly. Please make sure that you understand what you do before "
 "editing these files."
 msgstr ""
-"Ces paramètres de configuration sont choisis et testé de nombreuses fois "
+"Ces paramètres de configuration sont choisis et testés de nombreuses fois "
 "pour fonctionner correctement. Assurez-vous de bien comprendre ce que "
 "vous faites avant de changer ces fichiers."
 
@@ -256,7 +256,7 @@ msgstr ""
 #: ../../source/stack/low_level/ttl_driver.rst:88 
 msgid "Writes data at a custom register address of a given TTL device"
 msgstr ""
-"Ecrit des données sur une adresse registre choisie d'un périphérique TTL "
+"Ecrit des données sur une adresse registre choisi d'un périphérique TTL "
 "donné"
 
 #: ../../source/stack/low_level/ttl_driver.rst:89
@@ -274,7 +274,7 @@ msgstr ""
 #: ../../source/stack/low_level/ttl_driver.rst:91 
 msgid "Reads data at a custom register address of a given TTL device"
 msgstr ""
-"Lit des données sur une addresse registre choisie d'un périphérique TTL "
+"Lit des données sur une addresse registre choisi d'un périphérique TTL "
 "donné"
 
 #: ../../source/stack/low_level/ttl_driver.rst:92
@@ -323,7 +323,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:100 
 msgid "Reads velocity Profile for steppers"
-msgstr "Lit les profiles de vitesse des steppers"
+msgstr "Lit les profils de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:101
 msgid "``niryo_robot/ttl_driver/write_velocity_profile``"
@@ -339,7 +339,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:103 
 msgid "Writes velocity Profile for steppers"
-msgstr "Ecrit les profiles de vitesse des steppers"
+msgstr "Ecrit les profils de vitesse des steppers"
 
 #: ../../source/stack/low_level/ttl_driver.rst:107
 msgid "Services & Messages files - TTL Driver"

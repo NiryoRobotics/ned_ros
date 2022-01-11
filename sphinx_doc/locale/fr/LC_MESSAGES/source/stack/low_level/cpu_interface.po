@@ -38,7 +38,7 @@ msgid ""
 "This ROS Node has been conceived to launch the CPU interface in an "
 "isolated way."
 msgstr ""
-"Ce noeud ROS a été conçu pour lancer l'interface cpu interfaec de manière"
+"Ce noeud ROS a été conçu pour lancer l'interface CPU de manière"
 " isolée."
 
 #: ../../source/stack/low_level/cpu_interface.rst:13

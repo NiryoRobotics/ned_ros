@@ -59,11 +59,11 @@ msgstr "Il a été conçu pour :"
 
 #: ../../source/stack/low_level/tools_interface.rst:18
 msgid "Initialize the Tool Interface."
-msgstr "Initialise Tool Interface."
+msgstr "Initialiser le Tool Interface."
 
 #: ../../source/stack/low_level/tools_interface.rst:19
 msgid "Provide services for setting and controlling tools."
-msgstr "Procure les services pour configurer et controller les outils."
+msgstr "Procurer les services pour configurer et contrôler les outils."
 
 #: ../../source/stack/low_level/tools_interface.rst:20
 msgid "Publish tool connection state."
@@ -123,8 +123,8 @@ msgid ""
 " This file comes in a different version for each hardware version, "
 "located in a directory of the hardware version name."
 msgstr ""
-"Ces paramètres sont spécifiques à la version matérielle (ned, one ou "
-"ned2). Ces fichiers sont présents en versions différentes pour chaque "
+"Ces paramètres sont spécifiques à la version matérielle (Ned, Niryo One ou "
+"Ned2). Ces fichiers sont présents en versions différentes pour chaque "
 "version matérielle. Ils sont situés dans un dossier du nom de la version "
 "matérielle."
 
@@ -164,11 +164,11 @@ msgstr "Liste des types de moteurs pour les outils"
 
 #: ../../source/stack/low_level/tools_interface.rst
 msgid "Default: 'xl320' for NED and ONE"
-msgstr "Défaut: 'xl320' pour le NED et le ONE"
+msgstr "Défaut: 'xl320' pour le Ned et le One"
 
 #: ../../source/stack/low_level/tools_interface.rst
 msgid "Default: 'xl330' for NED2"
-msgstr "Défaut: 'xl330' pour le NED2"
+msgstr "Défaut: 'xl330' pour le Ned2"
 
 #: ../../source/stack/low_level/tools_interface.rst
 msgid "Default: 'fakeDxl' for simulation"

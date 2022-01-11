@@ -5,12 +5,12 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 13:17+0000\n"
+"POT-Creation-Date: 2022-01-11 13:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgid ""
 " with the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-"
 "python>`_."
 msgstr ""
-"Le LED Ring est composé de 30 Leds RGB WS2811, contrôlées par le package "
+"Le LED Ring est composé de 30 LEDs RGB WS2811, contrôlées par le package "
 "grâce la bibliothèque `rpi_ws281x <https://github.com/rpi-ws281x/rpi-"
 "ws281x-\"python>`_."
 
@@ -67,12 +67,16 @@ msgid "The LED Ring can either be:"
 msgstr "L'anneau LED peut être : "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:20
-msgid "in **ROBOT STATUS** mode : the LED is displaying the status of the robot."
+msgid "in **ROBOT STATUS** mode: the LED is displaying the status of the robot."
 msgstr "en mode **ROBOT STATUS** : la LED affiche l'état du robot. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:25
-msgid "in **USER** mode"
-msgstr ""
+msgid ""
+"in **USER** mode: the user can control the LED Ring with the several "
+"methods implemented, through"
+msgstr "En mode **USER** : l'utilisateur peut contrôler"
+" le LED Ring avec les différentes méthodes "
+"mises en œuvre, via :"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:22
 msgid ""
@@ -83,14 +87,12 @@ msgid ""
 "<source/python_ros_wrapper/ros_wrapper_doc:Python ROS Wrapper "
 "documentation>` ."
 msgstr ""
-"en mode **USER** : l'utilisateur peut contrôler le LED Ring avec les "
-"différentes méthodes mises en œuvre, via `Blockly "
-"<https://docs.niryo.com/product/niryo-"
+" `Blockly <https://docs.niryo.com/product/niryo-"
 "studio/v3.2.1/en/source/blockly_api.html>`_ , `Pyniryo "
 "<https://docs.niryo.com/dev/pyniryo/v1.0.5/en/index.html>`_ ou "
 ":ref:`Python ROS Wrapper "
 "<source/python_ros_wrapper/ros_wrapper_doc:Python ROS Wrapper "
-"documentation>`. "
+"documentation>`."
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:28
 msgid "Robot status mode"
@@ -105,7 +107,7 @@ msgid ""
 ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`."
 msgstr ""
 "Lors de l'affichage du **robot status**, l'anneau LED a plusieurs états "
-"\"qui représentent différents modes et états d'erreur. Reportez-vous au "
+"qui représentent différents modes et états d'erreur. Reportez-vous au "
 "tableau suivant. Le nœud s'abonne au topic ROS "
 "``/niryo_robot_status/robot_status``, publié par le package "
 ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`."
@@ -241,7 +243,7 @@ msgstr "Orange :ref:`fixe <Solid>`"
 msgid "Joint out of bounds"
 msgstr "Joint hors limites "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:75  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:75
 msgid "Switch to Free Motion mode to bring the joints within limits."
 msgstr ""
 "Passez en mode mouvement libre pour ramener les articulationsdans les "
@@ -299,7 +301,7 @@ msgstr ""
 msgid "Remake the GIFs"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:95  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:95
 msgid ""
 "Several animations are implemented to allow the user different ways to "
 "control the LED Ring. Refer to the following table. The node receives "
@@ -339,15 +341,15 @@ msgstr "Gif "
 msgid "_`None`"
 msgstr "_`None` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:111  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:111
 msgid "LEDs are turned off"
-msgstr "Les leds sont éteintes "
+msgstr "Les LEDs sont éteintes "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:113
 msgid "_`Solid`"
 msgstr "_`Solid` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:114  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:114
 msgid "Set the whole LED Ring to the same color at once"
 msgstr "Réglez l'ensemble de l'anneau LED sur la même couleur à la fois "
 
@@ -373,26 +375,26 @@ msgstr "_`Chase` "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "Movie theater light style chase animation."
-msgstr "Animation dans le style d'une salle de cinéma. "
+msgstr "Une LED sur trois est allumée. Toutes se décalent une LED après l’autre. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:125
 msgid "_`Color Wipe`"
 msgstr "_`Color Wipe` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "Wipe a color across the LED Ring."
 msgstr "Allume les LEDs une à une jusqu'à allumer complètement l'anneau. "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "Similar to go_up, but LEDs are not turned off at the end."
-msgstr "Similaire à *Go Up*, mais les Leds ne sont pas éteintes à la fin. "
+msgstr "Similaire à *Go Up*, mais les LEDs ne sont pas éteintes à la fin. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:129
 msgid "_`Rainbow`"
 msgstr "_`Rainbow` "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
-#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:1 of  
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:1 of
 msgid "Draws rainbow that fades across all LEDs at once."
 msgstr "Dessine un arc-en-ciel qui s'estompe sur toutes les LED à la fois. "
 
@@ -400,9 +402,9 @@ msgstr "Dessine un arc-en-ciel qui s'estompe sur toutes les LED à la fois. "
 msgid "_`Rainbow cycle`"
 msgstr "_`Rainbow cycle` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "Draw rainbow that uniformly distributes itself across all LEDs."
-msgstr "Dessine un arc-en-ciel qui se répartit sur toutes les Leds. "
+msgstr "Dessine un arc-en-ciel qui se répartit sur toutes les LEDs. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:135
 msgid "_`Rainbow chase`"
@@ -416,10 +418,10 @@ msgstr "Animation de *chase* arc-en-ciel. "
 msgid "_`Go up`"
 msgstr "_`Go up` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "LEDs turn on like a loading circle until lighting up the whole LED Ring."
 msgstr ""
-"Les Leds s'allument comme un cercle de chargement jusqu'à allumer tout "
+"Les LEDs s'allument comme un cercle de chargement jusqu'à allumer tout "
 "l'anneau LED. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -430,10 +432,10 @@ msgstr "et sont ensuite tous éteints en même temps."
 msgid "_`Go up and down`"
 msgstr "_`Go up and down` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid "Like go_up, but LEDs are turned off the same way they are turned on."
 msgstr ""
-"Comme *Go UP*, mais les Leds sont éteintes de la même manière qu'elles "
+"Comme *Go UP*, mais les LEDs sont éteintes de la même manière qu'elles "
 "sont allumées. "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:145
@@ -452,7 +454,7 @@ msgstr "_`Snake` "
 msgid "Luminous snake that turns around the LED Ring."
 msgstr "Serpent lumineux qui tourne autour de l'anneau LED. "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:153  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:153
 msgid ""
 "When displaying the robot status, the LED Ring commander uses those "
 "methods, with the default parameters defined below."
@@ -729,7 +731,7 @@ msgstr "1.5 "
 msgid "``led_offset``"
 msgstr "``led_offset`` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:242  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:242
 msgid ""
 "Offset ID between the LED with the ID 0 and the ID of the LED at the back"
 " of the robot."
@@ -745,7 +747,7 @@ msgstr "8 "
 msgid "``simulation_led_ring_markers_publish_rate``"
 msgstr "``simulation_led_ring_markers_publish_rate`` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:245  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:245
 msgid "Rviz LED ring markers publishinf rate in simulation mode"
 msgstr "Taux de publication des marqueurs annulaires Rviz en mode simulation "
 
@@ -757,7 +759,7 @@ msgstr "20 "
 msgid "``led_ring_markers_publish_rate``"
 msgstr "``led_ring_markers_publish_rate`` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:248  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:248
 msgid "Rviz LED ring markers publishing rate on a real robot"
 msgstr "Les marqueurs d'anneau à led Rviz publient le taux sur un robot real "
 
@@ -765,7 +767,7 @@ msgstr "Les marqueurs d'anneau à led Rviz publient le taux sur un robot real "
 msgid "Services - LED Ring"
 msgstr "Services - Anneau LED "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:256  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:256
 msgid ""
 "The ROS node implements one service, designed for the user to control the"
 " LED Ring."
@@ -795,7 +797,7 @@ msgstr ""
 ":ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser "
 "(Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid ""
 "Allows user to control the LED Ring, with implemented animations. A new "
 "request"
@@ -808,7 +810,7 @@ msgid ""
 "will **interrupt** the previous one, if still playing. Depending on the "
 "``wait`` boolean field"
 msgstr ""
-"va **interrompre** le précédent, s'il est toujours en cours de lecture. "
+"va **interrompre** la précédente, si elle est toujours en cours de lecture. "
 "En fonction du champ booléen ``wait`` "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -839,9 +841,9 @@ msgstr ""
 ":ref:`SetLedColor<source/stack/high_level/niryo_robot_led_ring:SetLedColor"
 " (Service)>` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:275  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:275
 msgid "Lights up a LED identified by an ID"
-msgstr "Allume une led identifiée par un identifiant "
+msgstr "Allume une LED identifiée par un identifiant "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:279
 msgid "Publishers - LED Ring"
@@ -863,7 +865,7 @@ msgstr ""
 ":ref:`LedRingStatus<source/stack/high_level/niryo_robot_led_ring:LedRingStatus"
 " (Message)>`"
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid ""
 "Publishes the **status** of the LED Ring, providing information on the "
 "**current mode**"
@@ -908,7 +910,7 @@ msgid ""
 "Publishes shapes representing LEDs when Ned is used in simulation with "
 "**Rviz**,"
 msgstr ""
-"Publie des formes représentant des Leds lorsque Ned est utilisé en "
+"Publie des formes représentant des LEDs lorsque Ned est utilisé en "
 "simulation avec **Rviz**, "
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -939,7 +941,7 @@ msgstr "``/niryo_robot_status/robot_status`` "
 msgid ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
 msgstr ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:317  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:317
 msgid ""
 "Retrieves the current robot status, and control LED accordingly (see "
 ":ref:`Niryo_robot_status "
@@ -957,7 +959,7 @@ msgstr "``/niryo_robot/blockly/save_current_point`` "
 msgid ":std_msgs:`std_msgs/Int32<Int32>`"
 msgstr ":std_msgs:`std_msgs/Int32<Int32>` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:320  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:320
 msgid "Catches the 'Save Point' action to make the LED ring blink."
 msgstr ""
 "Capturez l'action *Enregistrer le point* pour faire clignoter l'anneau "
@@ -971,7 +973,7 @@ msgstr "``/niryo_studio_connection`` "
 msgid ":std_msgs:`std_msgs/Empty<Empty>`"
 msgstr ":std_msgs:`std_msgs/Vide<Vide>` "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:323  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:323
 msgid "Catches the Niryo Studio connection to make the LED ring blink."
 msgstr "Récupère la connection Niryo Studio pour faire clignotter l'anneau LED."
 
@@ -1001,7 +1003,7 @@ msgid ""
 "python/tree/v4.3.0>`_"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:337  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:337
 msgid "Services files - LED Ring"
 msgstr "Fichiers de service - Anneau LED "
 
@@ -1013,7 +1015,7 @@ msgstr "LedUser (Service) "
 msgid "SetLedColor (Service)"
 msgstr "SetLedColor (Service) "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:353  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:353
 msgid "Messages files - LED Ring"
 msgstr "Messages files - LED Ring "
 
@@ -1029,7 +1031,7 @@ msgstr "LedRingCurrentState (Message) "
 msgid "LedRingStatus (Message)"
 msgstr "LedRingStatus (Message) "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:376  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:376
 msgid "LED Ring API functions"
 msgstr "Fonctions de l'API de l'anneau LED "
 
@@ -1041,7 +1043,7 @@ msgstr ""
 "Afin de contrôler le robot plus facilement que d'appeler chaqueTopic et "
 "Service un par un, un Python ROS Wrapper de ROS a été développé."
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:381  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:381
 msgid ""
 "For instance, a script turning on the LED Ring via Python ROS Wrapper "
 "will look like: ::"
@@ -1049,7 +1051,7 @@ msgstr ""
 "Par exemple, un script activant le LED Ring via Python ROS Wrapper "
 "ressemblera à : :: "
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:389  
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst:389
 msgid ""
 "This class allows you to control the robot via internal API. By "
 "controlling, we mean using the LED ring"
@@ -1209,7 +1211,7 @@ msgstr ""
 #: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.turn_off:1
 #: of
 msgid "Turns off all Leds"
-msgstr "Éteignez toutes les Leds"
+msgstr "Éteignez toutes les LEDs"
 
 #: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:1
 #: of
@@ -1333,7 +1335,7 @@ msgstr ""
 #: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:1
 #: of
 msgid "Draws rainbow that uniformly distributes itself across all LEDs."
-msgstr "Dessine un arc-en-ciel qui se répartit sur toutes les Leds. "
+msgstr "Dessine un arc-en-ciel qui se répartit sur toutes les LEDs. "
 
 #: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:11
 #: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:11
@@ -1404,4 +1406,7 @@ msgstr ""
 
 #~ msgid "Draw rainbow that fades across all Leds at once."
 #~ msgstr "Dessinez un arc-en-ciel qui s'estompe sur toutes les LED à lafois."
+
+#~ msgid "in **USER** mode"
+#~ msgstr "en mode **USER** :"
 

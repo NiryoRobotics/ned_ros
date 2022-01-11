@@ -36,6 +36,8 @@ msgid ""
 "Two version of the conveyor exist: The Conveyor Belt, communicating via a"
 " CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus."
 msgstr ""
+"Il existe deux Convoyeurs : le Convoyeur, communiquant via"
+" un bus CAN, et le Convoyeur (v2), communiquant via un bus TTL."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:10
 msgid ""
@@ -43,6 +45,9 @@ msgid ""
 "will need to change the stepper card of the CAN Conveyor Belt to be able "
 "to use it on a TTL port (there is no CAN port on Ned2)."
 msgstr ""
+"Les deux sont directement compatibles pour le Ned et le One. Pour Ned2, vous"
+" devez changer les cartes stepper de votre Convoyeur CAN afin de pouvoir"
+" l'utiliser sur un port TTL (il n'en existe pas sur le Ned2)."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:14
 msgid "Conveyor Interface node (For development and debugging purpose only)"
@@ -79,6 +84,8 @@ msgid ""
 "Interface itself with low level drivers (CAN or TTL for Ned and Niryo "
 "One, TTL only for Ned2)"
 msgstr ""
+"S'interfacer avec les drivers bas niveau (CAN ou TTL pour Ned et le Niryo"
+" One, TTL uniquement pour le Ned2"
 
 #: ../../source/stack/low_level/conveyor_interface.rst:25
 msgid "Initialize conveyor motors parameters."
@@ -86,7 +93,7 @@ msgstr "Initialiser l'interface du Convoyeur."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:26
 msgid "Handle the requests from services to set, control or remove the conveyors."
-msgstr ""
+msgstr "Gérer les requêtes depuis les services pour installer, contrôler ou retirer les convoyeurs."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:27
 msgid "Publish conveyor states."
@@ -151,7 +158,7 @@ msgstr "Protocole de communication."
 #: ../../source/stack/low_level/conveyor_interface.rst
 msgid "It can be 'CAN' (for Ned or One) or 'TTL' (for Ned or One or Ned 2)"
 msgstr ""
-"Peut être 'CAN' (pour le Ned ou le One) ou 'TTL' (pour le Ned ou le One "
+"Peut être 'CAN' (pour Ned ou le One) ou 'TTL' (pour Ned ou le One "
 "ou le Ned2)"
 
 #: ../../source/stack/low_level/conveyor_interface.rst:54
@@ -160,7 +167,7 @@ msgstr "``default_id``"
 
 #: ../../source/stack/low_level/conveyor_interface.rst
 msgid "Default id of the conveyor before the connection."
-msgstr "Identifiant (id) par défaut pour le convoyeur avant la connection."
+msgstr "Identifiant (id) par défaut pour le convoyeur avant la connexion."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:57
 msgid "``Pool_id_list``"
@@ -168,7 +175,7 @@ msgstr "``Pool_id_list``"
 
 #: ../../source/stack/low_level/conveyor_interface.rst
 msgid "Id of the conveyor after the connection."
-msgstr "Identifiant du convoyeur après la connetion."
+msgstr "Identifiant du convoyeur après la connexion."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:60
 msgid "``Direction``"

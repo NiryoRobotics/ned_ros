@@ -29,7 +29,7 @@ msgid ""
 "handler of CAN Bus. It uses the mcp_can_rpi for CAN bus communication."
 msgstr ""
 "Ce package procure une interface entre les packages ROS haut niveau et le"
-" gestionnaire de bus CAN"
+" gestionnaire de bus CAN".
 
 #: ../../source/stack/low_level/can_driver.rst:6 
 msgid "It is used by only Ned and the Niryo One."
@@ -45,7 +45,7 @@ msgstr "Le Node ROS est conçu pour :"
 
 #: ../../source/stack/low_level/can_driver.rst:11
 msgid "Initialize CAN Interface."
-msgstr "Initialise l'interface CAN."
+msgstr "Initialiser l'interface CAN."
 
 #: ../../source/stack/low_level/can_driver.rst:14
 msgid "CAN Interface Core"
@@ -53,9 +53,7 @@ msgstr "CAN Interface Core"
 
 #: ../../source/stack/low_level/can_driver.rst:15
 msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
-msgstr ""
-"Il est instancié dans le package :doc:`niryo_robot_hardware_interface` "
-"pour."
+msgstr "Il est instancié dans le package :doc:`niryo_robot_hardware_interface` "
 
 #: ../../source/stack/low_level/can_driver.rst:21
 msgid "It has been conceived to:"
@@ -72,12 +70,12 @@ msgstr "Ajouter, enlever et surveiller les périphériques sur le bus."
 #: ../../source/stack/low_level/can_driver.rst:20
 msgid "Start control loop to get and send data from/to motors."
 msgstr ""
-"Démarre la boucle de contrôle pour récupérer et envoyer des données "
+"Démarrer la boucle de contrôle pour récupérer et envoyer des données "
 "depuis/vers les moteurs."
 
 #: ../../source/stack/low_level/can_driver.rst:21
 msgid "Start ROS stuffs like services, topics if they exist."
-msgstr "Démarre les services et topics ROS si ils existent."
+msgstr "Démarrer les services et topics ROS s'ils existent."
 
 #: ../../source/stack/low_level/can_driver.rst:23
 msgid "It belongs to the ROS namespace: |namespace_emphasize|."
@@ -114,7 +112,7 @@ msgstr "``can_hardware_control_loop_frequency``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Control loop frequency."
-msgstr "Frequence de la boucle de control."
+msgstr "Frequence de la boucle de contrôle."
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Default: '1500.0'"
@@ -126,7 +124,7 @@ msgstr "``can_hw_write_frequency``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Write frequency."
-msgstr "Fréqunce d'écriture."
+msgstr "Fréquence d'écriture."
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Default: '200.0'"
@@ -150,7 +148,7 @@ msgstr "``bus_params/spi_channel``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "spi channel."
-msgstr "canal spi (Serial Peripheral Interface) utilisé pour le bus CAN."
+msgstr "Canal spi (Serial Peripheral Interface) utilisé pour le bus CAN."
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Default: '0'"

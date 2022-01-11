@@ -30,7 +30,7 @@ msgid ""
 "data on bus."
 msgstr ""
 "Ce package contient des scripts utilisables pour debugguer et configurer "
-"des périphériques CAN. Il expose plusierus fonctions principales comme "
+"des périphériques CAN. Il expose plusieurs fonctions principales comme "
 "l'initialisation du bus CAN et le sniffing de données sur le bus."
 
 #: ../../source/stack/low_level/can_debug_tools.rst:8
@@ -83,11 +83,11 @@ msgstr ""
 msgid "When you dump data on CAN bus, the result is a table including:"
 msgstr ""
 "Quand vous affichez les données circulant sur le bus, le résultat du "
-"tableau inclue :"
+"tableau inclut :"
 
 #: ../../source/stack/low_level/can_debug_tools.rst:24
 msgid "Number of data's package"
-msgstr "Nombre de donnée du package"
+msgstr "Nombre de données du package"
 
 #: ../../source/stack/low_level/can_debug_tools.rst:25
 msgid "Status of package"

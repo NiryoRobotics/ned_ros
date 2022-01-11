@@ -37,12 +37,12 @@ msgid ""
 " on the robot. It is also possible to set the volume of the robot."
 msgstr ""
 "Le noeud ROS est composé de services pour jouer, arrêter, importer "
-"etsupprimer un son sur le robot. Il est également possible de modifier le"
+"et supprimer un son sur le robot. Il est également possible de modifier le"
 " volume du robot."
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:11
 msgid "It belongs to the ROS namespace: |namespace_emphasize|."
-msgstr "l appartient à l'espace de noms ROS : |namespace_emphasize|."
+msgstr "Il appartient à l'espace de noms ROS : |namespace_emphasize|."
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:14
 msgid "Parameters - Sound"
@@ -54,7 +54,7 @@ msgid ""
 "default settings of the robot and the system sounds."
 msgstr ""
 "Voici une liste des différents paramètres qui permettent d'ajuster "
-"lesparamètres par défaut du robot et les sons du système."
+"les paramètres par défaut du robot et les sons du système."
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:18
 msgid "Parameters of the volume Sound component"
@@ -499,7 +499,7 @@ msgid ""
 "For instance, a script playing sound via Python ROS Wrapper will look "
 "like: ::"
 msgstr ""
-"Par exemple, un script jouant du son via Python ROS Wrapper ressemble à: "
+"Par exemple, un script jouant du son via Python ROS Wrapper ressemble à : "
 "::"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:212 

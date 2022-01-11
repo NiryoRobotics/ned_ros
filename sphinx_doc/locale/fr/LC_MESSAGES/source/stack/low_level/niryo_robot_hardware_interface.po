@@ -53,7 +53,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:26
 msgid "Among those interfaces we have:"
-msgstr ""
+msgstr "Parmi ces interfaces, nous avons : "
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:20
 msgid "Conveyor Interface"
@@ -113,7 +113,7 @@ msgstr "``publish_hw_status_frequency``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Publishes rate for hardware status."
-msgstr "Fréquence de publication des status materiels."
+msgstr "Fréquence de publication des statuts materiels."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Default : '2.0'"
@@ -125,7 +125,7 @@ msgstr "``publish_software_version_frequency``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst
 msgid "Publishes rate for software status."
-msgstr "Fréquence de publication des status logiciels."
+msgstr "Fréquence de publication des statuts logiciels."
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:49
 msgid "Dependencies"
@@ -178,7 +178,7 @@ msgstr ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robo
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:74
 msgid "Motors, bus, joints and CPU status"
-msgstr "Moteurs, bus, joints et status des processeurs"
+msgstr "Moteurs, bus, joints et statuts des processeurs"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:75
 msgid "``software_version``"
@@ -216,7 +216,7 @@ msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:93
 msgid "Starts motors report"
-msgstr "Lance l'outil de diagnostique des moteurs"
+msgstr "Lance l'outil de diagnostic des moteurs"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:94
 msgid "``reboot_motors``"
@@ -232,7 +232,7 @@ msgstr "``stop_motors_report``"
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:99
 msgid "Stops motors report"
-msgstr "Arrête l'outil de diagnostique des moteurs"
+msgstr "Arrête l'outil de diagnostic des moteurs"
 
 #~ msgid ":doc:`../../ros/niryo_robot_msgs`"
 #~ msgstr ""

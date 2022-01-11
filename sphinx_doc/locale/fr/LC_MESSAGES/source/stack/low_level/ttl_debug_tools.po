@@ -29,7 +29,7 @@ msgid ""
 "hardware components on the TTL bus. It provides main functions like ping,"
 " scan device and read/write/syncRead/syncWrite operations on devices."
 msgstr ""
-"Ce package est un package de débuguage pour configurer et accéder "
+"Ce package est un package de débogage pour configurer et accéder "
 "directement aux composants matériels présents sur le bus TTL. Il expose "
 "des fonctions principales comme le ping, le scan de périphérique et les "
 "opérations de lecture/écriture/lecture synchrone/écriture synchrone sur "
@@ -57,7 +57,7 @@ msgid ""
 msgstr ""
 "Le binaire compilé (situé dans "
 "*install/lib/ttl_debug_tools/ttl_debug_tools*) accède directement au bus "
-"TTL en utilisatnt la librairie tierce "
+"TTL en utilisant la librairie tierce "
 ":doc:`../third_parties/dynamixel_sdk`. Il ne peut donc pas être utilisé "
 "si la stack ROS Niryo est déja en train de tourner et vous devez d'abord "
 "arrêter la stack du robot (sudo service niryo_robot_ros stop)"
@@ -80,7 +80,7 @@ msgstr "**--help / -h:** Affiche l'aide"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:25 
 msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
-msgstr "**--baudrate / -b [Baudrate]:** débit de Baud (1000000 par défaut)"
+msgstr "**--baudrate / -b [Baudrate]:** Débit de Baud (1000000 par défaut)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:26 
 msgid "**--port / -p [Port]:** Sets port"
@@ -88,11 +88,11 @@ msgstr "**--port / -p [Port]:** Indique le port à utiliser"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:27 
 msgid "**--id / -i [ID]:** Devices ID (-1 by default)"
-msgstr "**--id / -i [ID]:** Id du périphérique (-1 par défaut)"
+msgstr "**--id / -i [ID]:**  ID du périphérique (-1 par défaut)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:28 
 msgid "**--ids [IDs]:** Lists of devices IDs"
-msgstr "**--ids [IDs]:** liste des ids des périphériques"
+msgstr "**--ids [IDs]:** Liste des ids des périphériques"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:29 
 msgid "**--scan:** Scans all devices on the bus"
@@ -107,7 +107,7 @@ msgid ""
 "**--get-register [Addr]:** Gets a value from a register, parameters is: "
 "register address"
 msgstr ""
-"**--get-register [Addr]:** lire une valeur depuis un registre; le "
+"**--get-register [Addr]:** Lire une valeur depuis un registre; le "
 "paramètre est : addresse du registre"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:32 
@@ -115,7 +115,7 @@ msgid ""
 "**--get-registers [Addr]:** Gets list of values from multiple devices at "
 "a register address, parameters is: register address"
 msgstr ""
-"**--get-registers [Addr]:** récupérer la liste des valeurs sur plusieurs "
+"**--get-registers [Addr]:** Récupérer la liste des valeurs sur plusieurs "
 "périphériques à une adresse de registre, le paramètre est : addresse du "
 "registre"
 
@@ -124,7 +124,7 @@ msgid ""
 "**--get-size [Size]:** Size of data to be read with get-register or get-"
 "registers, parameters is: size of data in bytes"
 msgstr ""
-"**--get-size [Size]:** taille des données à lire avec get-register ou "
+"**--get-size [Size]:** Taille des données à lire avec get-register ou "
 "get-registers, le paramètre est : taille des données en octets"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:34 
@@ -166,7 +166,7 @@ msgid ""
 " been developped. They ensure access to the data on the TTL bus via two "
 "services implemented in the package :doc:`ttl_driver`:"
 msgstr ""
-"Afin de pouvoir utiliser Ttl debug tools pour débuguer une stack ROS en "
+"Afin de pouvoir utiliser Ttl debug tools pour déboger une stack ROS en "
 "train de tourner, il était nécessaire de développer un autre outil. Pour "
 "cela, deux scripts python on été développés. Ils permettent d'accéder aux"
 " données du bus TTL via deux services implémentés dans le package "
@@ -213,7 +213,7 @@ msgstr "paramètres - Send custom value"
 #: ../../source/stack/low_level/ttl_debug_tools.rst:55
 #: ../../source/stack/low_level/ttl_debug_tools.rst:69
 msgid "**--id [ID]:** Device ID"
-msgstr "**--id [ID]:** id du périphérique"
+msgstr "**--id [ID]:** ID du périphérique"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:56 
 msgid "**--address [Addr]:** Registers address to modify"
@@ -250,7 +250,7 @@ msgstr "**--address [Addr]:** Adresses registres à modifier"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:71
 msgid "**--size [Size]:** Size in bytes of the data to read"
-msgstr "**--size [Size]:** taille en oected des données à lire"
+msgstr "**--size [Size]:** taille en octet des données à lire"
 
 #~ msgid ""
 #~ "This package offers scripts to change"
