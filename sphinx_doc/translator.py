@@ -3,15 +3,19 @@ from googletrans import Translator
 
 translator = Translator()
 
+
 # translation = translator.translate("Hello", src="en", dest="fr")
 # print(f"{translation.origin} ({translation.src}) --> {translation.text} ({translation.dest})")
-file = 'api.po'
-file2 = 'api.po'
-folder_path = "/home/niryo/pyniryo/docs/locale/fr/LC_MESSAGES/source/api_doc"
-file_path = os.path.join(folder_path, file)
-output_file_path = os.path.join(folder_path, file2)
-trad_sentence = ""
-read_trad = False
+
+def find_file(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
+
+folder_path = "/home/niryo/catkin_ws/src/sphinx_doc/locale/fr/"
+file = 'joints_interface.po'
+file_path = find_file(file, folder_path)
 
 
 def split_str(sentance, char_nb_limit=60):
@@ -31,6 +35,8 @@ def split_str(sentance, char_nb_limit=60):
     return '\n'.join(splitted_sentence)
 
 
+trad_sentence = ""
+read_trad = False
 overall_translation = ''
 num_lines = sum(1 for line in open(file_path))
 
@@ -66,5 +72,5 @@ with open(file_path, 'r', encoding="utf-8") as source_file:
 
         overall_translation += line
 
-with open(output_file_path, 'w', encoding="utf-8") as output_file:
+with open(file_path, 'w', encoding="utf-8") as output_file:
     output_file.write(overall_translation)
