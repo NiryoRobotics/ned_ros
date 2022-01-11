@@ -31,9 +31,12 @@ Joints Interface's default Parameters
 
    *  -  Name
       -  Description
+      -  Default value
+      -  Unit
    *  -  ``ros_control_loop_frequency``
       -  | Controls loop frequency.
-         | Default: '100.0'
+      -  100
+      -  Hz
 
 
 Joints Interface's hardware specific Parameters 
@@ -72,76 +75,80 @@ This file comes in a different version for each hardware version. They are locat
 
    *  -  Name
       -  Description
+      -  Default value
       -  Unit
       -  Supported Hardware versions
    *  -  ``calibration_timeout``
       -  | Waiting time between 2 commands during the calibration process.
-         | Default: '30'
+      -  30
       -  seconds
       -  All versions
    *  -  ``calibration_file``
       -  | File path where is saved motors calibration value.
-         | Default: '/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'
+      -  | */home/niryo/niryo_robot_saved_files*
+         | */stepper_motor_calibration_offsets.txt*
       -  N.A.
       -  All versions
    *  -  ``stepper_N/id``
       -  | Stepper N (1, 2 or 3) id
-         | Default: -1 (invalid id)
+      -  -1 (invalid id)
       -  N.A.
       -  All versions
    *  -  ``stepper_N/v_start``
       -  | Stepper N (1, 2 or 3) starting velocity for the acceleration profile
-         | Default: 1
+      -  1
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_1``
       -  | Stepper N (1, 2 or 3) first acceleration for the acceleration profile
-         | Default: 0
+      -  0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_1``
       -  | Stepper N (1, 2 or 3) first velocity for the acceleration profile
-         | Default: 0
+      -  0
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_max``
       -  | Stepper N (1, 2 or 3) max acceleration for the acceleration profile
-         | Default: 6000
+      -  6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_max``
       -  | Stepper N (1, 2 or 3) max velocity for the acceleration profile
-         | Default: 6
+      -  6
       -  0.01 RPM
       -    Ned 2 only
    *  -  ``stepper_N/d_max``
       -  | Stepper N (1, 2 or 3) max deceleration for the acceleration profile
-         | Default: 6000
+      -  6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/d_1``
       -  | Stepper N (1, 2 or 3) last deceleration for the acceleration profile
-         | Default: 0
+      -  0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_stop``
       -  | Stepper N (1, 2 or 3) stop velocity for the acceleration profile
-         | Default: 2
+      -  2
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/stall_threshold``
-      -  | Stepper N (1, 2 or 3) stall threshold for which we detect the end of the joint course for the calibration process
-         | Default: 0
+      -  | Stepper N (1, 2 or 3) stall threshold for which we detect
+         | the end of the joint course for the calibration process
+      -  0
       -  N.A.
       -  Ned 2 only
    *  -  ``stepper_N/direction``
-      -  | Stepper N (1, 2 or 3) direction for the calibration (1 = same as motor direction, -1 = against motor direction)
-         | Default: 1
+      -  | Stepper N (1, 2 or 3) direction for the calibration
+         | (1 = same as motor direction, -1 = against motor direction)
+      -  1
       -  N.A.
       -  All versions
    *  -  ``stepper_N/delay``
       -  | Stepper N (1, 2 or 3) delay
-         | Default: 0
+      -  0
       -  milliseconds
       -  All versions
 
@@ -455,3 +462,7 @@ Errors and warning messages
 .. |namespace| replace:: /joints_interface/
 .. |namespace_emphasize| replace:: ``/joints_interface/``
 .. |package_path| replace:: ../../../../niryo_robot_hardware_stack/joints_interface
+
+.. |br| raw:: html
+
+     <br>
