@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 08:36+0000\n"
+"POT-Creation-Date: 2022-01-11 09:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -533,7 +533,7 @@ msgstr "Nom de la position"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved:6
 #: of
 msgid "x, y, z, roll, pitch, yaw"
-msgstr ""
+msgstr "x, y, z, roulis, tangage, lacet"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose:1 of
 msgid "Save pose in robot's memory"
@@ -546,12 +546,12 @@ msgstr "Supprime la position "
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list:1
 #: of
 msgid "Ask the pose manager service which positions are available"
-msgstr "Renvoie la liste des positions sauvegardées"
+msgstr "Renvoie la liste des positions sauvegardées et leur description."
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list:3
 #: of
 msgid "If it returns the poses descriptions"
-msgstr ""
+msgstr " "
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list:5
 #: of
@@ -755,17 +755,17 @@ msgstr "Ouvir la pince avec une vitesse 'speed'"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper:3 of
 msgid "Default -> 500"
-msgstr ""
+msgstr "Default -> 500"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper:5 of
 msgid "Default -> 100"
-msgstr ""
+msgstr "Default -> 100"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper:7 of
 msgid "Default -> 20"
-msgstr ""
+msgstr "Default -> 20"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:1
 #: of
@@ -1054,7 +1054,7 @@ msgstr "Couleur de la cible"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_cam:12
 #: of
 msgid "object_found, object_pose, object_shape, object_color"
-msgstr ""
+msgstr "object_found, object_pose, object_shape, object_color"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.vision_pick_w_obs_joints:1
 #: of
@@ -1203,7 +1203,7 @@ msgstr "Exemple: ::"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.sound:10 of
 msgid "SoundRosWrapper API instance"
-msgstr ""
+msgstr "SoundRosWrapper API instance"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:116
 msgid "Led Ring"
@@ -1224,7 +1224,7 @@ msgstr "Contrôler l'anneau LED"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.led_ring:10 of
 msgid "LedRingRosWrapper API instance"
-msgstr ""
+msgstr "LedRingRosWrapper API instance"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:125
 msgid "Custom Button"
@@ -1233,28 +1233,28 @@ msgstr "Bouton 'Custom'"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button:1
 #: of
 msgid "Manage the custom button"
-msgstr ""
+msgstr "Contrôler le bouton *custom*"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button:10
 #: of
 msgid "CustomButtonRosWrapper API instance"
-msgstr ""
+msgstr "CustomButtonRosWrapper API instance"
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:1
 #: of
 msgid "Get the button state from the ButtonAction class"
-msgstr ""
+msgstr "Obtenir l'état du bouton à partir de la classe ButtonAction"
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:3
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:3
 #: of
 msgid "int value from the ButtonAction class"
-msgstr ""
+msgstr "valeur entière provenant de la classe ButtonAction"
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.is_pressed:1
 #: of
 msgid "Button press state"
-msgstr ""
+msgstr "Etat d'appuie du bouton"
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:1
 #: of
@@ -1262,18 +1262,22 @@ msgid ""
 "Waits until a specific action occurs and returns true. Returns false if "
 "the timeout is reached."
 msgstr ""
+"Attendre jusqu'à ce que l'action attendue intervienne et retourne True. "
+"Retournefalse si le délais d'attente est atteint."
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:6
 #: of
 msgid "True if the action has occurred, false otherwise"
-msgstr ""
+msgstr "True si une action est intervenue, false sinon"
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:1
 #: of
 msgid ""
-"Returns the detected action. Returns  from ButtonAction class if the "
+"Returns the detected action. Returns ButtonAction.NO_ACTION if the "
 "timeout is reached  without action."
 msgstr ""
+"Retourne l'action détectée. Retourne ButtonAction.NO_ACTION si le délais "
+"d'attente est atteint sans action."
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:4
 #: of
@@ -1281,6 +1285,8 @@ msgid ""
 "Returns the detected action, or ButtonAction.NO_ACTION if the timeout is "
 "reached  without any action."
 msgstr ""
+"Renvoie l'action détectée, ou ButtonAction.NO_ACTION si le délai est "
+"atteint sans aucune action."
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration:1
 #: of
@@ -1288,6 +1294,8 @@ msgid ""
 "Waits for the button to be pressed and returns the press time. Returns 0 "
 "if no press is detected after the timeout duration."
 msgstr ""
+"Attend que le bouton soit pressé et renvoie le temps d'appuie.Renvoie 0 "
+"si aucune pression n'est détectée après la durée du délai d'attente."
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:139
 msgid "Enums"
@@ -1295,7 +1303,8 @@ msgstr "Enumération"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ToolID:1 of
 msgid "Tools IDs (need to match tools ids in niryo_robot_tools_commander package)"
-msgstr "Id de l'outil (doit correspondre à l'id de l'outil du package "
+msgstr ""
+"Id de l'outil (doit correspondre à l'id de l'outil du package "
 "niryo_robot_tools_commander)"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinMode:1 of

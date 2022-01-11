@@ -93,7 +93,7 @@ class CustomButtonRosWrapper:
 
     def wait_for_any_action(self, timeout=0):
         """
-        Returns the detected action. Returns  from ButtonAction class if the timeout is reached  without action.
+        Returns the detected action. Returns ButtonAction.NO_ACTION if the timeout is reached  without action.
 
         :type timeout: float
         :return: Returns the detected action, or ButtonAction.NO_ACTION if the timeout is reached  without any action.
