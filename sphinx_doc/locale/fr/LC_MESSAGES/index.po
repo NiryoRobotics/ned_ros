@@ -65,7 +65,7 @@ msgstr ""
 "Vous pouvez ensuite allez lire la section "
 ":doc:`source/installation/getting_started` pour mettre en place votre "
 "environnement et essayer la stack par vous-même. Si vous n'avez pas de robot "
-"réel à disposition, vous pouvez toujours el simuler via la section "
+"réel à disposition, vous pouvez toujours le simuler via la section "
 ":doc:`source/simulation`."
 
 #: ../../index.rst:41

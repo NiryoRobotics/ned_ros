@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../source/simulation.rst:3
 msgid "Use Niryo robot through simulation"
-msgstr ""
+msgstr "Utiliser les robots Niryo via la simulation"
 
 #: ../../source/simulation.rst:5
 msgid ""
