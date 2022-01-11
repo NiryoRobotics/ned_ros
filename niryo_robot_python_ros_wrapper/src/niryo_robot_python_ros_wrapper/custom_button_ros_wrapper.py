@@ -61,15 +61,9 @@ class CustomButtonRosWrapper:
     @property
     def state(self):
         """
-        Get Button state:
+        Get the button state from the ButtonAction class
 
-        HANDLE_HELD_ACTION = 0
-        LONG_PUSH_ACTION = 1
-        SINGLE_PUSH_ACTION = 2
-        DOUBLE_PUSH_ACTION = 3
-        NO_ACTION = 100
-
-        :return: int value from EEButtonStatus
+        :return: int value from the ButtonAction class
         :rtype: int
         """
         self.__check_ned_2_version()
@@ -88,7 +82,7 @@ class CustomButtonRosWrapper:
         """
         Waits until a specific action occurs and returns true. Returns false if the timeout is reached.
 
-        :param action: int value from EEButtonStatus
+        :param action: int value from the ButtonAction class
         :type action: int
         :type timeout: float
         :return: True if the action has occurred, false otherwise
@@ -99,11 +93,11 @@ class CustomButtonRosWrapper:
 
     def wait_for_any_action(self, timeout=0):
         """
-        Returns the detected action. Returns NO_ACTION if the timeout is reached  without action.
+        Returns the detected action. Returns  from ButtonAction class if the timeout is reached  without action.
 
         :type timeout: float
-        :return: Returns the detected action. Return NO_ACTION if the timeout is reached  without action
-        :rtype:  int
+        :return: Returns the detected action, or ButtonAction.NO_ACTION if the timeout is reached  without any action.
+        :rtype: int
         """
         self.__check_ned_2_version()
         return self.__wait_any(timeout)
@@ -113,7 +107,6 @@ class CustomButtonRosWrapper:
         Waits for the button to be pressed and returns the press time.
         Returns 0 if no press is detected after the timeout duration.
 
-        :param timeout:
         :type timeout: foat
         :rtype: float
         """

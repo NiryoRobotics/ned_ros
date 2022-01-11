@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 18:01+0000\n"
+"POT-Creation-Date: 2022-01-11 08:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -306,7 +306,6 @@ msgid ""
 " NiryoRosWrapperException"
 msgstr ""
 
-#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
@@ -1159,20 +1158,13 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:1
 #: of
-msgid "Get Button state:"
+msgid "Get the button state from the ButtonAction class"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:3
-#: of
-msgid ""
-"HANDLE_HELD_ACTION = 0 LONG_PUSH_ACTION = 1 SINGLE_PUSH_ACTION = 2 "
-"DOUBLE_PUSH_ACTION = 3 NO_ACTION = 100"
-msgstr ""
-
-#: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.state:9
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_action:3
 #: of
-msgid "int value from EEButtonStatus"
+msgid "int value from the ButtonAction class"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.is_pressed:1
@@ -1195,15 +1187,15 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:1
 #: of
 msgid ""
-"Returns the detected action. Returns NO_ACTION if the timeout is reached"
-"  without action."
+"Returns the detected action. Returns  from ButtonAction class if the "
+"timeout is reached  without action."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.wait_for_any_action:4
 #: of
 msgid ""
-"Returns the detected action. Return NO_ACTION if the timeout is reached  "
-"without action"
+"Returns the detected action, or ButtonAction.NO_ACTION if the timeout is "
+"reached  without any action."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper.get_and_wait_press_duration:1
@@ -1873,5 +1865,29 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "ici je ne vois pas les fonctions"
+#~ msgstr ""
+
+#~ msgid "Get Button state:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "HANDLE_HELD_ACTION = 0 LONG_PUSH_ACTION = "
+#~ "1 SINGLE_PUSH_ACTION = 2 DOUBLE_PUSH_ACTION"
+#~ " = 3 NO_ACTION = 100"
+#~ msgstr ""
+
+#~ msgid "int value from EEButtonStatus"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Returns "
+#~ "NO_ACTION if the timeout is reached  "
+#~ "without action."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Return "
+#~ "NO_ACTION if the timeout is reached  "
+#~ "without action"
 #~ msgstr ""
 
