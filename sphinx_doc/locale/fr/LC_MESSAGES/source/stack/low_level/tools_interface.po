@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -118,8 +117,7 @@ msgstr "Défaut: '2.0'"
 msgid "Tool Interface's hardware specific Parameters"
 msgstr "Paramètres spécifiques à la version matérielle du robot"
 
-#: ../../source/stack/low_level/tools_interface.rst:43
-#, fuzzy
+#: ../../source/stack/low_level/tools_interface.rst:43 
 msgid ""
 "These parameters are specific to the hardware version (Ned, One or Ned2)."
 " This file comes in a different version for each hardware version, "
@@ -142,8 +140,7 @@ msgstr "Versions Matérielles supportées"
 msgid "``id_list``"
 msgstr "``id_list``"
 
-#: ../../source/stack/low_level/tools_interface.rst
-#, fuzzy
+#: ../../source/stack/low_level/tools_interface.rst 
 msgid "List of default IDs of each tool supported by Niryo"
 msgstr "Liste des Ids par défaut de chaque outil supporté par Niryo"
 
@@ -181,8 +178,7 @@ msgstr "Défaut: 'fakeDxl' pour la simulation"
 msgid "``name_list``"
 msgstr "``name_list``"
 
-#: ../../source/stack/low_level/tools_interface.rst
-#, fuzzy
+#: ../../source/stack/low_level/tools_interface.rst 
 msgid "List of tools's name corresponds to ID list and type list above"
 msgstr ""
 "Liste des noms d'outils correspondant à la liste des ids et des types ci-"

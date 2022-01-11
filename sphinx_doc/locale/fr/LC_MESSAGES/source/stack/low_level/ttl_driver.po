@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -134,8 +133,7 @@ msgstr "Défaut: '240.0'"
 msgid "``ttl_hardware_write_frequency``"
 msgstr "``ttl_hardware_write_frequency``"
 
-#: ../../source/stack/low_level/ttl_driver.rst
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst 
 msgid "Writes frequency on the bus."
 msgstr "Fréquence d'écriture sur le bus."
 
@@ -147,8 +145,7 @@ msgstr "Défaut: '120.0'"
 msgid "``ttl_hardware_read_data_frequency``"
 msgstr "``ttl_hardware_read_data_frequency``"
 
-#: ../../source/stack/low_level/ttl_driver.rst
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst 
 msgid "Reads frequency on the bus."
 msgstr "Fréquence de lecture sur le bus."
 
@@ -156,8 +153,7 @@ msgstr "Fréquence de lecture sur le bus."
 msgid "``ttl_hardware_read_status_frequency``"
 msgstr "``ttl_hardware_read_status_frequency``"
 
-#: ../../source/stack/low_level/ttl_driver.rst
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst 
 msgid "Reads frequency for device status on the bus."
 msgstr "Fréquence de lecture pour les status des périphériques TTL."
 
@@ -181,8 +177,7 @@ msgstr "Défaut: '13.0'"
 msgid "``bus_params/Baudrate``"
 msgstr "``bus_params/Baudrate``"
 
-#: ../../source/stack/low_level/ttl_driver.rst
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst 
 msgid "Baudrates of TTL bus"
 msgstr "Débit de Baude du bus TTL"
 
@@ -242,8 +237,7 @@ msgstr "``niryo_robot/ttl_driver/set_dxl_leds``"
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:85
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:85 
 msgid "Controls dynamixel LED"
 msgstr "Contrôle les LED des dynamixels"
 
@@ -259,8 +253,7 @@ msgstr ""
 ":ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue "
 "(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:88
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:88 
 msgid "Writes data at a custom register address of a given TTL device"
 msgstr ""
 "Ecrit des données sur une adresse registre choisie d'un périphérique TTL "
@@ -278,8 +271,7 @@ msgstr ""
 ":ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue "
 "(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:91
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:91 
 msgid "Reads data at a custom register address of a given TTL device"
 msgstr ""
 "Lit des données sur une addresse registre choisie d'un périphérique TTL "
@@ -297,8 +289,7 @@ msgstr ""
 ":ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue "
 "(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:94
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:94 
 msgid "Reads the PID of dxl motors"
 msgstr "Lit le PID des moteurs dxl"
 
@@ -314,8 +305,7 @@ msgstr ""
 ":ref:`WritePIDValue<source/stack/low_level/ttl_driver:WritePIDValue "
 "(Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:97
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:97 
 msgid "Writes the PID for dxl motors"
 msgstr "Ecrit le PID des moteurs dxl"
 
@@ -331,8 +321,7 @@ msgstr ""
 ":ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile"
 " (Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:100
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:100 
 msgid "Reads velocity Profile for steppers"
 msgstr "Lit les profiles de vitesse des steppers"
 
@@ -348,8 +337,7 @@ msgstr ""
 ":ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile"
 " (Service)>`"
 
-#: ../../source/stack/low_level/ttl_driver.rst:103
-#, fuzzy
+#: ../../source/stack/low_level/ttl_driver.rst:103 
 msgid "Writes velocity Profile for steppers"
 msgstr "Ecrit les profiles de vitesse des steppers"
 

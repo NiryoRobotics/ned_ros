@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -24,8 +23,7 @@ msgstr ""
 msgid "CAN Debug Tools"
 msgstr "CAN Debug Tools"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:4
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:4 
 msgid ""
 "This package offers scripts to debug with Hardware and setup CAN devices."
 " It provides some main functions like setting up the CAN bus and dumping "
@@ -51,23 +49,19 @@ msgstr ""
 msgid "Parameters - CAN debug tools"
 msgstr "Paramètres - Outil de debuguage CAN"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:16
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:16 
 msgid "**--help / -h:** Prints help message"
 msgstr "**--help / -h:** Affiche l'aide"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:17
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:17 
 msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
 msgstr "**--baudrate / -b [Baudrate]:** Débit Baud (1000000 par défaut)"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:18
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:18 
 msgid "**--channel / -c [Channel]:** Sets channel SPI (0 by default)"
 msgstr "**--channel / -c [Channel]:** Canal SPI à utiliser (0 par défaut)"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:19
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:19 
 msgid "**--gpio / -g:** GPIO Interrupts for CAN (25 by default)"
 msgstr "**--gpio / -g:** Pin d'interruption GPIO pour le CAN (25 par défaut)"
 
@@ -79,8 +73,7 @@ msgstr ""
 "**--freq / -f:** Fréquence de la boucle de control pour vérifier les "
 "données (100Hz par défaut)"
 
-#: ../../source/stack/low_level/can_debug_tools.rst:21
-#, fuzzy
+#: ../../source/stack/low_level/can_debug_tools.rst:21 
 msgid "**--dump:** runs dump service to dump and shows all data found on bus"
 msgstr ""
 "**--dump:** Lance le service de \"dump\" pour afficher en temps réel "

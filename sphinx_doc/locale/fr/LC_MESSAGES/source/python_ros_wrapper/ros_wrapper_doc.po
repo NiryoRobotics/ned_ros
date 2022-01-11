@@ -39,7 +39,8 @@ msgstr "Les fonctions de l'API"
 msgid ""
 "This class allows you to control the robot via internal API. By "
 "controlling, we mean:"
-msgstr "Cette classe vous permet de contrôler le robot via l'API interne."
+msgstr ""
+"Cette classe vous permet de contrôler le robot via l'API interne. Par le terme contrôler, nous signifions :"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:15
 msgid "Moving the robot."

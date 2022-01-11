@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -662,8 +661,7 @@ msgstr "Paramétrage du profil de vitesse pour le moteur Dynamixel N (1, 2 ou 3)
 msgid "RPM"
 msgstr "RPM"
 
-#: ../../source/stack/low_level/joints_interface.rst:237
-#, fuzzy
+#: ../../source/stack/low_level/joints_interface.rst:237 
 msgid ""
 "refers to the dedicated motor `reference documentation "
 "<https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-"
@@ -780,8 +778,7 @@ msgstr ""
 msgid "Default:"
 msgstr "Défaut :"
 
-#: ../../source/stack/low_level/joints_interface.rst:340
-#, fuzzy
+#: ../../source/stack/low_level/joints_interface.rst:340 
 msgid ""
 "The velocity profiles for the Stepper motors (in "
 "*calibration_params.yaml* and *steppers_params.yaml* files) can be "
@@ -884,8 +881,7 @@ msgstr "``/niryo_robot/joints_interface/calibrate_motors``"
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
-#: ../../source/stack/low_level/joints_interface.rst:407
-#, fuzzy
+#: ../../source/stack/low_level/joints_interface.rst:407 
 msgid ""
 "Starts motors calibration - value can be 1 for auto calibration, 2 for "
 "manual"
@@ -903,8 +899,7 @@ msgstr "``/niryo_robot/joints_interface/request_new_calibration``"
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 
-#: ../../source/stack/low_level/joints_interface.rst:410
-#, fuzzy
+#: ../../source/stack/low_level/joints_interface.rst:410 
 msgid ""
 "Resets motor calibration state to \"uncalibrated\". This will allow the "
 "user to ask a new calibration."
@@ -916,8 +911,7 @@ msgstr ""
 msgid "``niryo_robot/learning_mode/activate``"
 msgstr "``niryo_robot/learning_mode/activate``"
 
-#: ../../source/stack/low_level/joints_interface.rst:413
-#, fuzzy
+#: ../../source/stack/low_level/joints_interface.rst:413 
 msgid ""
 "Changes learning mode (Free Motion) state. When learning mode is "
 "activated, torques are disabled and the joints can move freely."

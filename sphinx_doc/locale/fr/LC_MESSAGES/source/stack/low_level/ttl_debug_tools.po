@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -24,8 +23,7 @@ msgstr ""
 msgid "TTL Debug Tools"
 msgstr "TTL Debug Tools"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:4
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:4 
 msgid ""
 "This package is a debugging package to setup and access directly to all "
 "hardware components on the TTL bus. It provides main functions like ping,"
@@ -37,8 +35,7 @@ msgstr ""
 "opérations de lecture/écriture/lecture synchrone/écriture synchrone sur "
 "les périphériques."
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:7
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:7 
 msgid ""
 "There are two ways to use this package: directly with the compiled "
 "binary, or via :doc:`ttl_driver` services called in dedicated scripts."
@@ -77,43 +74,35 @@ msgstr "ou ::"
 msgid "Parameters - Ttl debug tools"
 msgstr "Paramètres - Ttl debug tools"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:24
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:24 
 msgid "**--help / -h:** Prints help message"
 msgstr "**--help / -h:** Affiche l'aide"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:25
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:25 
 msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
 msgstr "**--baudrate / -b [Baudrate]:** débit de Baud (1000000 par défaut)"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:26
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:26 
 msgid "**--port / -p [Port]:** Sets port"
 msgstr "**--port / -p [Port]:** Indique le port à utiliser"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:27
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:27 
 msgid "**--id / -i [ID]:** Devices ID (-1 by default)"
 msgstr "**--id / -i [ID]:** Id du périphérique (-1 par défaut)"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:28
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:28 
 msgid "**--ids [IDs]:** Lists of devices IDs"
 msgstr "**--ids [IDs]:** liste des ids des périphériques"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:29
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:29 
 msgid "**--scan:** Scans all devices on the bus"
 msgstr "**--scan:** Scanne tous les périphériques sur le bus"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:30
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:30 
 msgid "**--ping:** Pings specific ID"
 msgstr "**--ping:** Ping un id spécifique"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:31
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:31 
 msgid ""
 "**--get-register [Addr]:** Gets a value from a register, parameters is: "
 "register address"
@@ -121,8 +110,7 @@ msgstr ""
 "**--get-register [Addr]:** lire une valeur depuis un registre; le "
 "paramètre est : addresse du registre"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:32
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:32 
 msgid ""
 "**--get-registers [Addr]:** Gets list of values from multiple devices at "
 "a register address, parameters is: register address"
@@ -139,8 +127,7 @@ msgstr ""
 "**--get-size [Size]:** taille des données à lire avec get-register ou "
 "get-registers, le paramètre est : taille des données en octets"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:34
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:34 
 msgid ""
 "**--set-register [Addr] [Value] [Size]:** Sets a value to a register, "
 "parameters are in the order: register address / value / size (in bytes) "
@@ -150,8 +137,7 @@ msgstr ""
 "les paramètres sont dans l'ordre : adresse du registre / valeur / taille "
 "(en octets) des données"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:35
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:35 
 msgid ""
 "**--set-registers [Addr] [Values] [Size]:** Sets values to a register on "
 "multiple devices, parameters are in the order: register address / list of"
@@ -161,8 +147,7 @@ msgstr ""
 " sur plusieurs périphériques, les paramètres sont dans l'ordre : adresse "
 "du registre / liste des valeurs / taille (en octets) des données"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:36
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:36 
 msgid ""
 "**--calibrate:** Calibrates all steppers on the bus. It is used in Ned2 "
 "only"
@@ -230,8 +215,7 @@ msgstr "paramètres - Send custom value"
 msgid "**--id [ID]:** Device ID"
 msgstr "**--id [ID]:** id du périphérique"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:56
-#, fuzzy
+#: ../../source/stack/low_level/ttl_debug_tools.rst:56 
 msgid "**--address [Addr]:** Registers address to modify"
 msgstr "**--address [Addr]:** Adresses registres à modifier"
 

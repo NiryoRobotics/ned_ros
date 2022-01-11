@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -268,8 +267,7 @@ msgstr ""
 ":ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor "
 "(Service)>`"
 
-#: ../../source/stack/low_level/conveyor_interface.rst:106
-#, fuzzy
+#: ../../source/stack/low_level/conveyor_interface.rst:106 
 msgid "Scans and sets a new Conveyor or removes a connected Conveyor"
 msgstr "Scan et connecte un nouveau Convoyeur ou supprime un Convoyeur connecté"
 

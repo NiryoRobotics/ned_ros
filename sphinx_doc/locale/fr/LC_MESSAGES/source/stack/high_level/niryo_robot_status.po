@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -29,15 +28,14 @@ msgid "Robot status Node"
 msgstr "Nœud d'état du robot "
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:7
-#, fuzzy
 msgid ""
 "The ROS Node is listening to the topics of the robot to deduce the "
 "current state of the robot. It manages the status of the robot, the "
 "status of the logs and informs about the overheating of the Raspberry PI "
 "and the out of limit joints."
 msgstr ""
-"Le nœud ROS est à l'écoute des topics du robot pour en déduirel'état "
-"actuel du robot. Il gère l'état du robot, l'état deslogs et informe de la"
+"Le nœud ROS est à l'écoute des topics du robot pour en déduire son état "
+"actuel. Il gère l'état du robot, l'état des logs et informe de la"
 " surchauffe du Raspberry Pi et du hors limite des articulations."
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:10
@@ -158,8 +156,7 @@ msgstr "Si le démarrage semble avoir raté, redémarrez le robot électriquemen
 msgid "If the problem persists, update the robot with ssh,"
 msgstr "Si le problème persiste, mettez à jour le robot en ssh,"
 
-#: ../../source/stack/high_level/niryo_robot_status.rst
-#, fuzzy
+#: ../../source/stack/high_level/niryo_robot_status.rst 
 msgid "change the SD card or contact customer service."
 msgstr "ou changez la carte SD, ou contactez le service client."
 

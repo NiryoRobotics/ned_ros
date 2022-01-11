@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -24,8 +23,7 @@ msgstr ""
 msgid "Common"
 msgstr "Common"
 
-#: ../../source/stack/low_level/common.rst:4
-#, fuzzy
+#: ../../source/stack/low_level/common.rst:4 
 msgid ""
 "The Common package defines the common software components of the low "
 "level stack. It is split into a model part and a utility part:"
@@ -124,8 +122,7 @@ msgstr "Single Cmd"
 msgid "Sync Cmd"
 msgstr "Sync Cmd"
 
-#: ../../source/stack/low_level/common.rst:58
-#, fuzzy
+#: ../../source/stack/low_level/common.rst:58 
 msgid ""
 "Each type of command is an alias to specified versions of two base "
 "template classes: AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"

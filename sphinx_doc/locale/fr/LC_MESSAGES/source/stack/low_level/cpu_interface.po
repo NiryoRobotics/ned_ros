@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -34,8 +33,7 @@ msgstr ""
 msgid "CPU Interface Node (For development and debugging purpose only)"
 msgstr "CPU Interface Node (pour le développement et le debuggage seulement)"
 
-#: ../../source/stack/low_level/cpu_interface.rst:10
-#, fuzzy
+#: ../../source/stack/low_level/cpu_interface.rst:10 
 msgid ""
 "This ROS Node has been conceived to launch the CPU interface in an "
 "isolated way."
@@ -51,8 +49,7 @@ msgstr "CPU Interface Core"
 msgid "It is instantiated in :doc:`niryo_robot_hardware_interface` package."
 msgstr "Il est instancié dans le package :doc:`niryo_robot_hardware_interface`."
 
-#: ../../source/stack/low_level/cpu_interface.rst:16
-#, fuzzy
+#: ../../source/stack/low_level/cpu_interface.rst:16 
 msgid ""
 "It has been made to monitor CPU temperature of the Raspberry Pi and "
 "automatically shutdown the Raspberry Pi if it reaches a critical "

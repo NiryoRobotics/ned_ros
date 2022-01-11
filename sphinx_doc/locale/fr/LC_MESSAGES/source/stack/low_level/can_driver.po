@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -24,8 +23,7 @@ msgstr ""
 msgid "CAN Driver"
 msgstr "Driver CAN"
 
-#: ../../source/stack/low_level/can_driver.rst:4
-#, fuzzy
+#: ../../source/stack/low_level/can_driver.rst:4 
 msgid ""
 "This package provides an interface between high level ROS packages and "
 "handler of CAN Bus. It uses the mcp_can_rpi for CAN bus communication."
@@ -33,8 +31,7 @@ msgstr ""
 "Ce package procure une interface entre les packages ROS haut niveau et le"
 " gestionnaire de bus CAN"
 
-#: ../../source/stack/low_level/can_driver.rst:6
-#, fuzzy
+#: ../../source/stack/low_level/can_driver.rst:6 
 msgid "It is used by only Ned and the Niryo One."
 msgstr "Utilisé uniquement par le Ned et le One."
 
@@ -90,8 +87,7 @@ msgstr "Il appartient au namespace ROS |namespace_emphasize|."
 msgid "Parameters"
 msgstr "Paramètres"
 
-#: ../../source/stack/low_level/can_driver.rst:28
-#, fuzzy
+#: ../../source/stack/low_level/can_driver.rst:28 
 msgid ""
 "These configuration parameters are set to work with Niryo's robot. Do not"
 " edit them."

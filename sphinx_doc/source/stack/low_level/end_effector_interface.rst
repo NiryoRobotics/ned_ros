@@ -2,7 +2,10 @@ End Effector Interface
 =====================================
 
 | This package handles the End Effector Panel of a robot, it is supported from Ned 2.
-| It provides services and topics specific to the End Effector Panel for use by an end user. 
+| It provides services and topics specific to the End Effector Panel for use by an end user.
+
+.. todo:: là je comprends pas la phrase
+
 | However, it does not deal with the low level bus communication with the components: this is done in the :doc:`ttl_driver` package.
 
 End Effector Interface node (For development and debug)
