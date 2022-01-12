@@ -238,7 +238,7 @@
     </joint>
 
     <joint name="joint_4" type="revolute">
-        <origin xyz="0. 0.0325 0" rpy="0 ${PI/2} 0"/>
+        <origin xyz="0.065 0.0325 0" rpy="0 ${PI/2} 0"/>
         <parent link="elbow_link"/>
         <child link="forearm_link"/>
         <axis xyz="0 0 1"/>
