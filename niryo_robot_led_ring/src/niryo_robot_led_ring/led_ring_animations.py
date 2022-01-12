@@ -259,7 +259,7 @@ class LedRingAnimations:
         for led_id in range(self.led_count):
             if self.__stop_func:
                 break
-            self.set_led((led_id + self.__led_offset) % self.led_count, color_rgba)
+            self.set_led(led_id, color_rgba)
             self.show_leds()
 
             next_loop += period
@@ -551,10 +551,11 @@ class LedRingAnimations:
         """
         Set the color of a pixel, in simu or in real
         """
+        led_index = (index + self.__led_offset) % self.led_count
         if not self.__is_simulation:
             color = get_24bits_color_from_msg(color_rgba)
-            self.strip.setPixelColor(index, color)
-        self.led_ring_makers.set_one_led_marker(index, color_rgba)
+            self.strip.setPixelColor(led_index, color)
+        self.led_ring_makers.set_one_led_marker(led_index, color_rgba)
 
     def show_leds(self):
         """
