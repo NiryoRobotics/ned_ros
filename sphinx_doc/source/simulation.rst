@@ -16,7 +16,6 @@ In this tutorial, you will learn how to setup a robot simulation on a computer.
     You can use :niryo_studio_simulation:`Niryo Studio with the simulation<>`.
     To do so, you just have to connect Niryo Studio to "Localhost".
 
-.. todo:: le lien ne fonctionne toujours pas 
 
 Simulation environment installation
 =========================================

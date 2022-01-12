@@ -6,7 +6,7 @@ Conveyor Interface
 
 | It allows you to control up to two Conveyors at the same time.
 
-| Two version of the conveyor exist: The Conveyor Belt, communicating via a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. 
+Two version of the conveyor exist: The Conveyor Belt, communicating via a CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus.
 Both of them are directly compatible for the Ned and One. For Ned2, you will need to change the stepper card of the CAN Conveyor Belt 
 to be able to use it on a TTL port (there is no CAN port on Ned2).
 

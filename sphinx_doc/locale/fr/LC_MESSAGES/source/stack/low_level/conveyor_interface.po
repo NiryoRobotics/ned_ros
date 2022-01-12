@@ -5,12 +5,12 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 13:17+0000\n"
+"POT-Creation-Date: 2022-01-12 17:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,20 +34,11 @@ msgstr "Il vous permet de contrôler jusqu'à deux Convoyeurs en même temps."
 #: ../../source/stack/low_level/conveyor_interface.rst:9
 msgid ""
 "Two version of the conveyor exist: The Conveyor Belt, communicating via a"
-" CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus."
+" CAN bus, and the Conveyor Belt (V2), communicating via a TTL bus. Both "
+"of them are directly compatible for the Ned and One. For Ned2, you will "
+"need to change the stepper card of the CAN Conveyor Belt to be able to "
+"use it on a TTL port (there is no CAN port on Ned2)."
 msgstr ""
-"Il existe deux Convoyeurs : le Convoyeur, communiquant via"
-" un bus CAN, et le Convoyeur (v2), communiquant via un bus TTL."
-
-#: ../../source/stack/low_level/conveyor_interface.rst:10
-msgid ""
-"Both of them are directly compatible for the Ned and One. For Ned2, you "
-"will need to change the stepper card of the CAN Conveyor Belt to be able "
-"to use it on a TTL port (there is no CAN port on Ned2)."
-msgstr ""
-"Les deux sont directement compatibles pour le Ned et le One. Pour Ned2, vous"
-" devez changer les cartes stepper de votre Convoyeur CAN afin de pouvoir"
-" l'utiliser sur un port TTL (il n'en existe pas sur le Ned2)."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:14
 msgid "Conveyor Interface node (For development and debugging purpose only)"
@@ -93,7 +84,9 @@ msgstr "Initialiser l'interface du Convoyeur."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:26
 msgid "Handle the requests from services to set, control or remove the conveyors."
-msgstr "Gérer les requêtes depuis les services pour installer, contrôler ou retirer les convoyeurs."
+msgstr ""
+"Gérer les requêtes depuis les services pour installer, contrôler ou "
+"retirer les convoyeurs."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:27
 msgid "Publish conveyor states."
@@ -158,8 +151,8 @@ msgstr "Protocole de communication."
 #: ../../source/stack/low_level/conveyor_interface.rst
 msgid "It can be 'CAN' (for Ned or One) or 'TTL' (for Ned or One or Ned 2)"
 msgstr ""
-"Peut être 'CAN' (pour Ned ou le One) ou 'TTL' (pour Ned ou le One "
-"ou le Ned2)"
+"Peut être 'CAN' (pour Ned ou le One) ou 'TTL' (pour Ned ou le One ou le "
+"Ned2)"
 
 #: ../../source/stack/low_level/conveyor_interface.rst:54
 msgid "``default_id``"
@@ -274,7 +267,7 @@ msgstr ""
 ":ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor "
 "(Service)>`"
 
-#: ../../source/stack/low_level/conveyor_interface.rst:106 
+#: ../../source/stack/low_level/conveyor_interface.rst:106
 msgid "Scans and sets a new Conveyor or removes a connected Conveyor"
 msgstr "Scan et connecte un nouveau Convoyeur ou supprime un Convoyeur connecté"
 
@@ -547,4 +540,32 @@ msgstr ": |namespace_emphasize|"
 #~ " it on a TTL port (there is "
 #~ "no CAN port on Ned2)."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "Two version of the conveyor exist: "
+#~ "The Conveyor Belt, communicating via a"
+#~ " CAN bus, and the Conveyor Belt "
+#~ "(V2), communicating via a TTL bus."
+#~ msgstr ""
+#~ "Il existe deux Convoyeurs : le "
+#~ "Convoyeur, communiquant via un bus CAN,"
+#~ " et le Convoyeur (v2), communiquant "
+#~ "via un bus TTL."
+
+#~ msgid ""
+#~ "Both of them are directly compatible "
+#~ "for the Ned and One. For Ned2, "
+#~ "you will need to change the "
+#~ "stepper card of the CAN Conveyor "
+#~ "Belt to be able to use it on"
+#~ " a TTL port (there is no CAN"
+#~ " port on Ned2)."
+#~ msgstr ""
+#~ "Les deux sont directement compatibles "
+#~ "pour le Ned et le One. Pour "
+#~ "Ned2, vous devez changer les cartes "
+#~ "stepper de votre Convoyeur CAN afin "
+#~ "de pouvoir l'utiliser sur un port "
+#~ "TTL (il n'en existe pas sur le "
+#~ "Ned2)."
 

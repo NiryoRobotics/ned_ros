@@ -1,4 +1,4 @@
-Niryo robot LED Ring package
+Niryo_robot_led_ring
 ========================================
 
 | This package is the one managing the LED Ring of Ned2.
@@ -89,9 +89,6 @@ the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotSt
 User mode 
 ^^^^^^^^^^^^^^^^^^^
 
-.. todo:: Remake the GIFs
-
-
 Several animations are implemented to allow the user different ways to control the LED Ring. Refer to the following
 table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`the service section<source/stack/high_level/niryo_robot_led_ring:Services - Led Ring>`)
 
@@ -109,45 +106,58 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
 
    *  - _`None`
       - LEDs are turned off
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_none.gif
+           :height: 250px
    *  - _`Solid`
       - Set the whole LED Ring to the same color at once
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_solid.gif
+           :height: 250px
    *  - _`Flashing`
       - | Flashes a color according to a frequency
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_flash.gif
+           :height: 250px
    *  - _`Alternate`
       - | The different colors are alternated one after the other.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/alternate.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_alternate.gif
+           :height: 250px
    *  - _`Chase`
       - | Movie theater light style chase animation.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_chase.gif
+           :height: 250px
    *  - _`Color Wipe`
       - | Wipe a color across the LED Ring.
         | Similar to go_up, but LEDs are not turned off at the end.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/color_wipe.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_wipe.gif
+           :height: 250px
    *  - _`Rainbow`
       - | Draws rainbow that fades across all LEDs at once.
-      -  .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow.gif
+      -  .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow.gif
+           :height: 250px
    *  - _`Rainbow cycle`
       - | Draw rainbow that uniformly distributes itself across all LEDs.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_cycle.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow_cycle.gif
+           :height: 250px
    *  - _`Rainbow chase`
       - | Rainbow chase animation.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow_chase.gif
+           :height: 250px
    *  - _`Go up`
       - | LEDs turn on like a loading circle until lighting up the whole LED Ring.
         | and are then all turned off at the same time.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goup.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_goup.gif
+           :height: 250px
    *  - _`Go up and down`
       - | Like go_up, but LEDs are turned off the same way they are turned on.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_goupdown.gif
+           :height: 250px
    *  - _`Breath`
       - | Variation of light intensity to imitate breathing.
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_breath.gif
+           :height: 250px
    *  - _`Snake`
       - | Luminous snake that turns around the LED Ring.
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_snake.gif
+           :height: 250px
 
 
 .. note:: When displaying the robot status, the LED Ring commander uses those methods, with the default parameters defined below.
