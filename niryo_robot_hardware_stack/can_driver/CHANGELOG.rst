@@ -316,7 +316,7 @@ Forthcoming
   #   niryo_robot_hardware_stack/ttl_driver/test/ttl_driver_unit_tests.cpp
 * remove can driver and dxl_debug tools dependencies to wiringpi
 * simplify message if roslint not present
-* Revert "remove dependancy to ros for dxl_debug_tools"
+* Revert "remove dependency to ros for dxl_debug_tools"
   This reverts commit ba5537157ffd8e9618c202ddf84326f6c4bced7a.
 * correction on can driver test
 * retrieve architecture in CMakeLists

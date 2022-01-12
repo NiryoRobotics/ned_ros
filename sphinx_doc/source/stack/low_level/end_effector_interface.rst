@@ -1,26 +1,29 @@
 End Effector Interface
 =====================================
 
-| This package handles Niryo’s End Effector, it is supported from Ned 2.
-| The End Effector can be used to do many things like activating Free Motion, Calibration and much more.
+| This package handles the End Effector Panel of a robot, it is supported from Ned 2.
+| It provides services and topics specific to the End Effector Panel for use by an end user. 
+| However, it does not deal with the low level bus communication with the components : this is done in the :doc:`ttl_driver` package.
 
-End Effector Interface node (For development and debugging)
---------------------------
+End Effector Interface node (For development and debug)
+------------------------------------------------------------
 The ROS Node in End Effector Interface Package is used to:
- - Create :doc:ttl_driver to communicate with hardware.
+ - Instantiate a :doc:`ttl_driver` manager to communicate with hardware.
  - Initialize End Effector Interface.
 
-End Effector Interface
---------------------------
-This interface is integrated in to :doc:niryo_robot_hardware_interface package.
+End Effector Interface Core
+-----------------------------
+It is instantiated in :doc:`niryo_robot_hardware_interface` package.
 
-The missions of End Effector Interfaces:
- - Get TTL Driver.
+It has been conceived to:
+ - Interface with TTL Driver.
  - Initialize End Effector parameters.
- - Get information about End Effector sent from TTL driver.
- - Begin ROS stuffs like publishing the status of buttons, starting service on IO State.
+ - Retrieve End Effector data from TTL driver.
+ - Publish the status of buttons.
+ - Publish the collision detection status.
+ - Start service on IO State.
 
-The namespace used is: ``/niryo_robot_hardware_interface/end_effector_interface/``
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters - End Effector Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -40,7 +43,7 @@ Parameters - End Effector Interface
       -  | Frequency to get End Effector from driver
          | Default: 40.0
    *  -  ``button_2__type``
-      -  | Button used to activate FreeMotion
+      -  | Button used to activate FreeMotion mode
          | Default: free_drive
    *  -  ``button_1__type``
       -  | Button used to save the actual position of robot
@@ -51,6 +54,8 @@ Parameters - End Effector Interface
    *  -  ``hardware_type``
       -  | Type of End Effector. It can be end_effector or fake_end_effector
          | Default: end_effector
+
+
 Published topics - End Effector Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -65,7 +70,7 @@ Published topics - End Effector Interface
       -  Description
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_free_drive_button_state_publisher
       -  :ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus (Message)>`
-      -  Publish state of Free Driver Button
+      -  Publish state of Free Motion Button
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_save_button_state_publisher
       -  :ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus (Message)>`
       -  Publish state of Save Position Button
@@ -96,8 +101,7 @@ Dependencies - End Effector Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - :msgs_index:`std_msgs`
 - :doc:`ttl_driver`
-
-Add dependencies of package
+- :doc:`common`
 
 Services & Messages files - End Effector Interface
 --------------------------------------------------
@@ -120,3 +124,8 @@ EEIOState (Message)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/end_effector_interface/msg/EEIOState.msg
    :language: rostype
 
+
+.. |namespace_cpp| replace:: end_effector_interface
+.. |namespace| replace:: /end_effector_interface/
+.. |namespace_emphasize| replace:: ``/end_effector_interface/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/end_effector_interface

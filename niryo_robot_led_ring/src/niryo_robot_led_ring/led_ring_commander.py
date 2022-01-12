@@ -4,7 +4,7 @@ import threading
 
 # Services
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
-from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCurrentState
+from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 
 # Message
 from niryo_robot_status.msg import RobotStatus
@@ -75,7 +75,7 @@ class LedRingCommander:
         self.led_ring_anim.register_observer(self)
 
         # - Services
-        self.__set_ring_led_user = rospy.Service('~user_service', LedUser, self.__callback_set_led_ring_user)
+        self.__set_ring_led_user = rospy.Service('~set_user_animation', LedUser, self.__callback_set_led_ring_user)
         self.__set_led_color_service = rospy.Service('~set_led_color', SetLedColor, self.__callback_set_led_color)
 
         # - Subscribers
@@ -326,7 +326,8 @@ class LedRingCommander:
 
             if not self.led_ring_anim.was_function_interrupted() and animation_id not in [LedRingAnimation.NONE,
                                                                                           LedRingAnimation.COLOR_WIPE,
-                                                                                          LedRingAnimation.SOLID]:
+                                                                                          LedRingAnimation.SOLID,
+                                                                                          LedRingAnimation.CUSTOM, ]:
                 robot_status_command = self.get_robot_status_led_ring_cmd()
                 self.running_status_command = robot_status_command
                 self.dict_led_ring_methods[robot_status_command.animation_mode.animation](robot_status_command)

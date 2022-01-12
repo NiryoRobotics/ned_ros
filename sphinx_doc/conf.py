@@ -4,11 +4,14 @@ from sphinx.builders.html import StandaloneHTMLBuilder
 import os
 
 # Import ROS Wrapper
-sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
+sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/niryo_robot_python_ros_wrapper/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_led_ring/api/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_sound/api/'))
 
 # Kindda hack the import to import shared config file
 sys.path.append(os.path.abspath('.'))
 from front_end.config import shared_conf
+from front_end.config import base_conf
 
 # -- Project information -----------------------------------------------------
 
@@ -17,22 +20,13 @@ copyright = shared_conf.copyright
 author = shared_conf.author
 
 # The short X.Y version
-version = u'v3.2'
+version = u'v4.0'
 # The full version, including alpha/beta/rc tags
-release = u'v3.2.0'
+release = u'v4.0.0'
 
 # -- General configuration ---------------------------------------------------
 
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks',
-    'sphinx.ext.todo',
-    'sphinx_togglebutton'
-]
+extensions = base_conf.extensions
 
 StandaloneHTMLBuilder.supported_image_types = [
     'image/svg+xml',
@@ -124,9 +118,13 @@ extlinks = {
     'tf2': ('http://docs.ros.org/' + ros_distro + '/api/tf2_ros/html/c++/classtf2__ros_1_1%s.html', ''),
     'msgs_index': ('http://docs.ros.org/' + ros_distro + '/api/%s/html/index-msg.html', ''),
     'moveit_msgs': ('http://docs.ros.org/' + ros_distro + '/api/moveit_msgs/html/msg/%s.html', 'moveit_msgs/'),
+    'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
+    'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
+    'visualization_msgs': ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
+    'visualization_msgs': ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',

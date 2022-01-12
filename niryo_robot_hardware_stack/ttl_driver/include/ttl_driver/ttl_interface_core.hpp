@@ -135,6 +135,7 @@ public:
     void resetCalibration() override ;
     int32_t getCalibrationResult(uint8_t id) const override ;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) override;
 
     void activeDebugMode(bool mode) override;
 
@@ -275,6 +276,16 @@ bool TtlInterfaceCore::readCollisionStatus() const
 {
     return _ttl_manager->readCollisionStatus();
 }
+
+/**
+ * @brief TtlInterfaceCore::setCalibrationStatus
+ */
+inline
+void TtlInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
+{
+    ROS_INFO("Set calibration status is not availble for TTL");
+}
+
 } // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

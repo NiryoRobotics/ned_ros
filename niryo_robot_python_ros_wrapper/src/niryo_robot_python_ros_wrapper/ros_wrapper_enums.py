@@ -94,9 +94,13 @@ class ConveyorID:
     def __init__(self):
         pass
 
+    # TODO : to adapt to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) conveyor in any possible combination
     NONE = 0
-    ID_1 = 9
-    ID_2 = 10
+    ID_1 = 12   # One, Ned
+    ID_2 = 13   # One, Ned
+    ID_3 = 9    # Ned2
+    ID_4 = 10   # Ned2
+
 
 
 class ConveyorDirection:
@@ -238,6 +242,7 @@ class CommandEnum(Enum):
     ANALOG_WRITE = 155
     ANALOG_READ = 156
     GET_ANALOG_IO_STATE = 157
+    CUSTOM_BUTTON_STATE = 158
 
     # - Conveyor
     SET_CONVEYOR = 180

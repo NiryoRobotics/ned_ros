@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-12-15 14:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,12 +46,14 @@ msgstr ""
 "chaque terminal."
 
 #: ../../source/python_ros_wrapper/before_running.rst:10
+#, fuzzy
 msgid ""
 "If your are using simulation, be sure to have followed the setup from "
-":ref:`source/simulation:Setup Ned ROS Environment`."
+":ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
 msgstr ""
 "Si vous utilisez la simulation, assurez-vous d'avoir suivi la "
-"configuration dans la rubrique :ref:`source/simulation:setup Ned ROS Environment`."
+"configuration dans la rubrique :ref:`source/simulation:setup Ned ROS "
+"Environment`."
 
 #: ../../source/python_ros_wrapper/before_running.rst:15
 msgid "Required piece of code"

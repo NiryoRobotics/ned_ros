@@ -8,18 +8,19 @@ developed for High Level interfaces.
    :maxdepth: 2
    :caption: Packages Detailed Documentation
 
-   ../ros/niryo_robot_bringup
-   ../ros/niryo_robot_arm_commander
-   ../ros/niryo_robot_description
-   ../ros/niryo_robot_gazebo
-   ../ros/niryo_robot_msgs
-   ../ros/niryo_robot_modbus
-   ../ros/niryo_robot_poses_handlers
-   ../ros/niryo_robot_programs_manager
-   ../ros/niryo_robot_rpi
-   ../ros/niryo_robot_sound
-   ../ros/niryo_robot_tools_commander
-   ../ros/niryo_robot_unit_tests
-   ../ros/niryo_robot_user_interface
-   ../ros/niryo_robot_vision
-   ../ros/niryo_robot_led_ring
+   ../stack/high_level/niryo_robot_bringup
+   ../stack/high_level/niryo_robot_arm_commander
+   ../stack/high_level/niryo_robot_description
+   ../stack/high_level/niryo_robot_gazebo
+   ../stack/high_level/niryo_robot_msgs
+   ../stack/high_level/niryo_robot_modbus
+   ../stack/high_level/niryo_robot_poses_handlers
+   ../stack/high_level/niryo_robot_programs_manager
+   ../stack/high_level/niryo_robot_rpi
+   ../stack/high_level/niryo_robot_sound
+   ../stack/high_level/niryo_robot_status
+   ../stack/high_level/niryo_robot_system_api_client
+   ../stack/high_level/niryo_robot_tools_commander
+   ../stack/high_level/niryo_robot_user_interface
+   ../stack/high_level/niryo_robot_vision
+   ../stack/high_level/niryo_robot_led_ring

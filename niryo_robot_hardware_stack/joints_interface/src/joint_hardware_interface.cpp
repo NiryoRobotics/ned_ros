@@ -85,8 +85,15 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
  */
 bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
+    bool torque_status{false};
+
+    robot_hwnh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
+    if (_hardware_version == "ned2")
+        torque_status = true;
+    else if (_hardware_version == "ned" || _hardware_version == "one")
+        torque_status = false;
+
     size_t nb_joints = 0;
-    bool torque_status = true;
 
     // retrieve nb joints with checking that the config param exists for both name and id
     while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
@@ -201,7 +208,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
-                        ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
+                        ROS_ERROR("JointHardwareInterface::init - Dynamixel motors are not available on CAN Bus");
                     else if (EBusProtocol::TTL == eBusProto)
                         result = _ttl_interface->addJoint(dxlState);
 
@@ -456,7 +463,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         if (jState && jState->isValid())
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
-            jState->vel = jState->to_rad_vel(jState->getVelocity());
+            // jState->vel = jState->to_rad_vel(jState->getVelocity());
         }
     }
 
@@ -549,12 +556,15 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
             }
             else
             {
-                ROS_ERROR("Fail to reboot motor id %d", jState->getId());
+                ROS_ERROR("JointHardwareInterface::init - Fail to reboot motor id %d", jState->getId());
                 res = false;
             }
         }
         // reboot not available for CAN
     }
+
+    // reset learning mode correctly
+    activateLearningMode(!torque_on);
 
     return res;
 }

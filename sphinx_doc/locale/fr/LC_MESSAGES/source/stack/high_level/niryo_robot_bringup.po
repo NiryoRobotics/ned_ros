@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-27 14:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,196 +21,265 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:2
 msgid "Niryo_robot_bringup"
-msgstr ""
+msgstr "Niryo_robot_bringup"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:3
 msgid ""
 "This packages provides config and launch files to start Ned and ROS "
 "packages with various parameters."
 msgstr ""
+"Ce package fournit des fichiers de configuration et de lancement pour "
+"démarrer les packages Ned et ROS avec divers paramètres."
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:5
 msgid ""
 "Launch files are placed in the *launch* folder. Only files with "
 "**.launch** extension can be executed."
 msgstr ""
+"Les fichiers de lancement sont placés dans le dossier de *lancement*. "
+"Seuls les fichiers avec **.lancement** peuvent être exécutés."
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:13
 msgid "Bring Up Launch Files' organization"
-msgstr ""
+msgstr "Organisation des fichiers de lancement Bring Up"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:16
 msgid "On RaspberryPI"
+msgstr "Sur RasberryPI"
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:19
+msgid "One"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:18
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:21
 msgid ""
-"The following files allows you to launch the ROS Stack on a real robot "
-"based on its model:"
+"The file **niryo_one_robot.launch** allows to launch ROS on a Raspberry "
+"Pi 3."
 msgstr ""
+"Le fichier **niryo_one_robot.launch** permet de lancer ROS sur une "
+"Raspberry Pi 3."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:20
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:54
-msgid "RPi launch files"
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:22
+msgid ""
+"This file is automatically launched when Niryo One boots (Niryo One RPi3B"
+" image)."
 msgstr ""
+"Ce fichier est automatiquement lancé au démarrage du Niryo One (image "
+"Niryo One RPi3B)."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:26
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:60
-msgid "File Name"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:27
-msgid "Rpi Model"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:28
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:61
-msgid "Robot Model"
-msgstr ""
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:24
+msgid "Command to launch Niryo One's ROS Stack::"
+msgstr "Commande pour lancer la stack ROS du Niryo One: ::"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:29
-msgid "``niryo_one_robot.launch``"
-msgstr ""
+msgid "Ned"
+msgstr "Ned"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst
-msgid "Raspberry Pi 3."
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:31
+msgid ""
+"The file **niryo_ned_robot.launch** allows to launch ROS on a Raspberry "
+"Pi 4."
 msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst
-msgid "Niryo One"
-msgstr ""
+"Le fichier **niryo_ned_robot.launch** permet de lancer ROS sur une "
+"Raspberry Pi 4."
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:32
-msgid "``niryo_ned_robot.launch``"
+msgid "This file is automatically launched when Ned boots (Ned RPi4B image)."
 msgstr ""
+"Ce fichier est automatiquement lancé au démarrage de Ned (image Ned "
+"RPi4B)."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst
-msgid "Raspberry Pi 4."
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst
-msgid "Niryo Ned"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:35
-msgid "``niryo_ned2_robot.launch``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst
-msgid "Niryo Ned2"
-msgstr ""
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:34
+msgid "Command to launch Ned's ROS Stack::"
+msgstr "Commande pour lancer la stack ROS de Ned : ::"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:39
-msgid "This file is automatically launched when Ned boots (Ned RPi4B image)."
+msgid "Ned2"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:41
-msgid "Command to launch Ned's ROS Stack:"
+msgid ""
+"The file **niryo_ned2_robot.launch** allows to launch ROS on a Raspberry "
+"Pi 4."
 msgstr ""
+"Le fichier **niryo_ned2_robot.launch** permet de lancer ROS sur une "
+"Raspberry Pi 4."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:48
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:42
+msgid "This file is automatically launched when Ned2 boots (Ned2 RPi4B image)."
+msgstr ""
+"Ce fichier est automatiquement lancé au démarrage de Ned2 (image Ned2 "
+"RPi4B)."
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:44
+msgid "Command to launch Ned2's ROS Stack::"
+msgstr "Commande pour lancer la stack ROS de Ned2 : ::"
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:49
 msgid "On Desktop (Simulation)"
-msgstr ""
+msgstr "Sur le bureau (Simulation)"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:50
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:51
 msgid ""
 "As the simulation happens on a computer, the hardware-related stuff is "
-"simulated."
+"not used."
 msgstr ""
+"Comme la simulation se produit sur un ordinateur, les éléments liés au "
+"matériel ne sont pas utilisés."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:52
-msgid ""
-"The following files allows you to launch the ROS Stack as a simulation on"
-" its model:"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:62
-msgid "``niryo_one_simulation.launch``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:64
-msgid "``niryo_ned_simulation.launch``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:66
-msgid "``niryo_ned2_simulation.launch``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:69
-msgid "Command to simulate Ned's ROS Stack:"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:78
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:54
 msgid "For both of following launch files, you can set:"
-msgstr ""
+msgstr "Pour les deux fichiers de lancement suivants, vous pouvez définir :"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:77
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:54
 msgid "*gui* to \"false\" in order to disable graphical interface."
-msgstr ""
+msgstr "*gui* à \"false\" pour désactiver l'interface graphique."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:78
-msgid ""
-"*hardware_version* to one of the existing robot model (one, ned or ned2) "
-"to simulate the corresponding model"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:81
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:57
 msgid "Gazebo simulation"
-msgstr ""
+msgstr "La simulation via Gazebo"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:87
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:63
 msgid ""
 "Run Gazebo simulation. The robot can do everything that is not hardware-"
 "related:"
 msgstr ""
+"Exécuter la simulation Gazebo. Le robot peut faire tout ce qui n'est pas "
+"lié au matériel :"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:84
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:60
 msgid "move, get_pose."
-msgstr ""
+msgstr "move, get_pose."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:85
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:61
 msgid "use the camera (to disable it, set \"camera\" parameter to 'false')."
 msgstr ""
+"Utiliser la caméra (pour la désactiver, régler le paramètre \"caméra\" "
+"sur 'faux')."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:86
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:62
 msgid ""
 "use the Gripper 1 (to disable it, set \"simu_gripper\" parameter to "
 "'false')."
 msgstr ""
+"Utilisez le Gripper Custom (pour le désactiver, définissez le paramètre "
+"\"simu_gripper\" sur 'faux')."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:87
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:63
 msgid "save/run programs, go to saved pose, ..."
-msgstr ""
+msgstr "Enregistrer/exécuter des programmes, accéder à la pose enregistrée, ..."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:89
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:65
 msgid "Command to launch the simulation: ::"
-msgstr ""
+msgstr "La commande pour lancer la simulation est : ::"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:93
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:69
 msgid "To disable camera & gripper: ::"
-msgstr ""
+msgstr "La commande pour désactiver la caméra et le Gripper est : ::"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:98
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:73
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:86
+msgid "To run it with a specific hardware version, use the command: ::"
+msgstr "La commande pour lancer la simulation est : ::"
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:78
 msgid "Rviz simulation"
-msgstr ""
+msgstr "La simulation via Rviz"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:100
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:80
 msgid ""
 "Run Rviz simulation. You can access same features as Gazebo except Camera"
 " & Gripper."
 msgstr ""
+"Exécuter la simulation Rviz. Il est possible d’accéder aux mêmes "
+"fonctionnalités que Gazebo, à l'exception de la caméra et du Gripper "
+"Custom."
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:102
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:82
 msgid "To run it, use the command: ::"
-msgstr ""
+msgstr "La commande pour lancer la simulation est : ::"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:107
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:91
 msgid "Notes - Ned Bringup"
-msgstr ""
+msgstr "Notes - Ned Bringup"
 
-#: ../../source/stack/high_level/niryo_robot_bringup.rst:108
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:93
 msgid ""
 "*niryo_robot_base* files setup many rosparams, these files should be "
 "launched before any other package."
 msgstr ""
+"Les fichiers *niryo_robot_base* configurent de nombreux rosparams, ces "
+"fichiers doivent être lancés avant tout autre package."
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:98
+msgid "The following files are used to configure the robot logs:"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:97
+msgid "*desktop_gazebo_simulation_trace.conf*"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:98
+msgid "*desktop_rviz_simulation_trace.conf*"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_bringup.rst:99
+#, fuzzy
+msgid "*niryo_robot_trace.conf*"
+msgstr "Niryo_robot_bringup"
+
+#~ msgid "Niryo Robot Bringup Package"
+#~ msgstr "Le package Bringup robot Niryo"
+
+#~ msgid ""
+#~ "Launch files are placed in the "
+#~ "*launch* folder. Only files with "
+#~ "**.launch** extension can be executed"
+#~ msgstr ""
+#~ "Les fichiers de lancement sont placés"
+#~ " dans le dossier *launch*. Seuls les"
+#~ " fichiers avec l'extension **.launch** "
+#~ "peuvent être exécutés."
+
+#~ msgid "On RPI"
+#~ msgstr "Sur RasberryPI"
+
+#~ msgid "Gazebo Simulation"
+#~ msgstr "La simulation via Gazebo"
+
+#~ msgid "move, get_pose"
+#~ msgstr "move, get_pose"
+
+#~ msgid "use the camera (to disable it, set \"camera\" parameter to 'false')"
+#~ msgstr ""
+#~ "Utiliser la caméra (pour la désactiver,"
+#~ " réglez le paramètre \"caméra\" sur "
+#~ "'false')"
+
+#~ msgid ""
+#~ "use the Gripper 1 (to disable it,"
+#~ " set \"simu_gripper\" parameter to 'false')"
+#~ msgstr ""
+#~ "Utilisez la Gripper Custom (pour le "
+#~ "désactiver, définissez le paramètre "
+#~ "\"simu_gripper\" sur 'faux')"
+
+#~ msgid "Rviz Simulation"
+#~ msgstr "La simulation via Rviz"
+
+#~ msgid "roslaunch niryo_robot_bringup niryo_ned_robot.launch"
+#~ msgstr "roslaunch niryo_robot_bringup niryo_ned_robot.launch"
+
+#~ msgid ""
+#~ "The following files are used to "
+#~ "configure the robot logs: * "
+#~ "*desktop_gazebo_simulation_trace.conf* * "
+#~ "*desktop_rviz_simulation_trace.conf* * "
+#~ "*niryo_robot_trace.conf*"
+#~ msgstr ""
+#~ "les fichiers suivants sont utilisés pour"
+#~ " configurer les logs du robot: * "
+#~ "*desktop_gazebo_simulation_trace.conf* * "
+#~ "*desktop_rviz_simulation_trace.conf* * "
+#~ "*niryo_robot_trace.conf*"
 

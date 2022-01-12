@@ -185,6 +185,9 @@ msgid ""
 "'payload_size': <payload_size_int>, 'command': "
 "<command_str>}<payload_str>``"
 msgstr ""
+"``{'status': 'OK', 'list_ret_param': [<param_1>, <param_2>, ....], "
+"'payload_size': <payload_size_int>, 'command': "
+"<command_str>}<payload_str>``"
 
 #: ../../source/tcp_server.rst:72
 msgid ""
@@ -217,6 +220,10 @@ msgstr ""
 #: ../../source/tcp_server.rst:86
 msgid "Commands enum for TCP server"
 msgstr "Commandes enum pour le serveur TCP"
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum:1 of
+msgid "Enumeration of all commands used"
+msgstr ""
 
 #~ msgid "Use Ned TCP Server"
 #~ msgstr "Utilisation du serveur Ned TCP"
@@ -303,9 +310,6 @@ msgstr "Commandes enum pour le serveur TCP"
 #~ "dans le JSON par le paramètre "
 #~ "\"status\""
 
-#~ msgid "A successful answer will have the format:"
-#~ msgstr "Une réponse réussie aura le format :"
-
 #~ msgid ""
 #~ "An unsuccessful answer will have the "
 #~ "format : ``{'status': 'KO', 'message': "
@@ -328,5 +332,6 @@ msgstr "Commandes enum pour le serveur TCP"
 #~ msgstr "Commandes enum pour TCP Server"
 
 #~ msgid "Enumeration of all commands used"
-#~ msgstr "Enumérations de toutes les commandes utilisées"
+#~ msgstr ""
+
 

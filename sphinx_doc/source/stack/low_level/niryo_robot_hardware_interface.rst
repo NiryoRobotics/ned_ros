@@ -4,24 +4,27 @@ Niryo Robot Hardware Interface
 | This package handles packages related to the robot's hardware.
 | It launches hardware interface nodes, motors communication and driver.  
 
-.. figure:: ../../../images/ros/hardware_stack_nodes.png
-   :alt: hardware packages organization
+.. figure:: ../../../images/stack/low_level/hardware_stack_nodes.png
+   :alt: Hardware Stack Nodes
    :height: 500px
    :align: center
 
    Global overview of hardware stack packages organization.
 
-Hardware interface node
+Hardware interface Node
 --------------------------
-The ROS Node is made to launch hardware interface and communication:
- - Conveyor Belt interface
- - Joints interface
- - Tools interface
- - Fake interface
- - Dynamixel driver
- - Stepper driver
 
-The namespace used is: |namespace_emphasize|.
+This node has been conceived to instantiate all the interfaces we need to have a fully functional robot. 
+Among those interfaces we have:
+ - Conveyor Interface
+ - Joints Interface
+ - Tools Interface
+ - Cpu Interface
+ - End Effector Interface (Ned2 only)
+ - Can Driver (Ned and One Only)
+ - Ttl Driver
+
+It belongs to the ROS namespace: |namespace_emphasize|.
 
 Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -72,7 +75,7 @@ Published topics
       -  Motors, bus, joints and CPU status
    *  -  ``software_version``
       -  :ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`
-      -  Raspberry and stepper software version
+      -  Software version of the Raspberry PI and every hardware components (motors, end effector, conveyors and tools)
 
 Services
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -95,3 +98,9 @@ Services
    *  -  ``stop_motors_report``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Stops motors report
+
+
+.. |namespace_cpp| replace:: niryo_robot_hardware_interface
+.. |namespace| replace:: /niryo_robot_hardware_interface/
+.. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``
+.. |package_path| replace:: ../../../../niryo_robot_hardware_stack/niryo_robot_hardware_interface

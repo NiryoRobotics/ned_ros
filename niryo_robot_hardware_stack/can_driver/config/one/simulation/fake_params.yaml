@@ -3,7 +3,7 @@ fake_params:
     position_spam: 30
     steppers:
         id: [1, 2, 3]
-        position: [0, -1090, 2447]
+        position: [0, -1058, -2506]
         temperature: [50, 52, 54]
         voltage: [12.1, 12.2, 12.3]
         model_number: [1, 1, 1]

@@ -5,8 +5,8 @@ import rospy
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
-from niryo_action_client import NiryoActionClient
-from niryo_topic_value import NiryoTopicValue
+from niryo_robot_python_ros_wrapper.niryo_action_client import NiryoActionClient
+from niryo_robot_python_ros_wrapper.niryo_topic_value import NiryoTopicValue
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
@@ -916,17 +916,16 @@ class NiryoRosWrapper:
         Execute trajectory from list of poses and joints
 
         :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
-        or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+            or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
         :type list_pose_joints: list[list[float]]
         :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
-                    If None, it is assumed there are only poses in the list.
+            If None, it is assumed there are only poses in the list.
         :type list_type: list[string]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
         :return: status, message
         :rtype: (int, str)
         """
-
         list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
         return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
 
@@ -1137,7 +1136,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
-        print tool_id
+        print(tool_id)
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper()
@@ -1940,10 +1939,36 @@ class NiryoRosWrapper:
 
     @property
     def led_ring(self):
+        """
+        Manage the LED ring
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            robot.led_ring.solid(color=[255, 255, 255])
+
+        :return: LedRingRosWrapper API instance
+        :rtype: LedRingRosWrapper
+        """
         return self.__led_ring
 
     @property
     def sound(self):
+        """
+        Manage sound
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            robot.sound.play(sound.sounds[0])
+
+        :return: SoundRosWrapper API instance
+        :rtype: SoundRosWrapper
+        """
         return self.__sound
 
     @property

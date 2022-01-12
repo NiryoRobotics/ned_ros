@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-23 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +44,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:17
-msgid "The namespace used is: |namespace_emphasize|"
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:20
@@ -384,4 +383,167 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:205
 msgid "Workspace (Message)"
 msgstr ""
+
+#~ msgid "Niryo Robot Poses Handlers Package"
+#~ msgstr ""
+
+#~ msgid "Poses Handlers Node"
+#~ msgstr ""
+
+#~ msgid "Description - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A workspace is defined by 4 "
+#~ "markers that form a rectangle. With "
+#~ "the help of the robot's calibration "
+#~ "tip, the marker positions are learnt."
+#~ " The camera returns poses (x, y, "
+#~ "yaw) relative to the workspace. We "
+#~ "can then infer the absolute object "
+#~ "pose in robot coordinates."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Camera detects object relative to "
+#~ "markers and sends x<sub>rel</sub>, "
+#~ "y<sub>rel</sub>, yaw<sub>rel</sub>"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The object is placed on the "
+#~ "workspace, revealing the object pose in"
+#~ " robot coordinates x, y, z, roll, "
+#~ "pitch, yaw"
+#~ msgstr ""
+
+#~ msgid "Poses & Trajectories"
+#~ msgstr ""
+
+#~ msgid "List of Poses"
+#~ msgstr ""
+
+#~ msgid "Parameters - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Services - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "All these services are available as soon as the node is started"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Get list of workspaces' name & description"
+#~ msgstr ""
+
+#~ msgid "Get saved programs' name"
+#~ msgstr ""
+
+#~ msgid "Get list of poses' name & description"
+#~ msgstr ""
+
+#~ msgid "Get list of trajectories' name & description"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageWorkspace<ManageWorkspace (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetWorkspaceRatio<GetWorkspaceRatio (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetNameDescriptionList`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetTargetPose<GetTargetPose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManagePose<ManagePose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetPose<GetPose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageTrajectory<ManageTrajectory (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetTrajectory<GetTrajectory (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot poses handlers package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Camera detects object relative to "
+#~ "markers and sends x<sub>rel</sub>, "
+#~ "y<sub>rel</sub>, yaw<sub>rel</sub>."
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManageWorkspace<source/ros/niryo_robot_poses_handlers:ManageWorkspace"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetWorkspaceRatio<source/ros/niryo_robot_poses_handlers:GetWorkspaceRatio"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetWorkspaceRobotPoses<source/ros/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetTargetPose<source/ros/niryo_robot_poses_handlers:GetTargetPose"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManagePose<source/ros/niryo_robot_poses_handlers:ManagePose "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetPose<source/ros/niryo_robot_poses_handlers:GetPose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManageTrajectory<source/ros/niryo_robot_poses_handlers:ManageTrajectory"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetTrajectory<source/ros/niryo_robot_poses_handlers:GetTrajectory"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
 

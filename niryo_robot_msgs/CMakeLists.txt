@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   BusState.msg
-  CommandJog.msg
+
   CommandStatus.msg
   HardwareStatus.msg
   MotorHeader.msg
@@ -27,6 +27,7 @@ add_service_files(
   GetBool.srv
   GetInt.srv
   GetNameDescriptionList.srv
+  GetString.srv
   GetStringList.srv
   Ping.srv
   SetBool.srv

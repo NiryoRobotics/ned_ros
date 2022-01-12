@@ -14,6 +14,7 @@ HOME_FOLDER=home/niryo
 
 ROS_SRC_FOLDER=src
 
+current_architecture=`uname -m`
 if [[ $ARCHITECTURE == "amd64" && $current_architecture == 'x86_64' ]]; then
     cross_build=false;
 elif [[ $ARCHITECTURE == "arm64" && $current_architecture == 'aarch64' ]]; then

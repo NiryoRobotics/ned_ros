@@ -36,7 +36,7 @@
         </collision>
     </link>
 
-
+    <!--Joints -->
 
     <joint name="joint_1"
            type="revolute">

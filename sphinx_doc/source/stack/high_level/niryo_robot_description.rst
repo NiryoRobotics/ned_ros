@@ -1,0 +1,16 @@
+Niryo_robot_description
+========================================
+
+This package contains URDF files and meshes (collada + stl) for Ned.
+
+To display Ned on Rviz: ::
+
+ roslaunch niryo_robot_description display.launch
+
+To display other Niryo robots on Rviz: ::
+
+ roslaunch niryo_robot_description display.launch hardware_version:=ned2  # one, ned
+
+
+**Note** : 3D visualization is not available on Ned Raspberry Pi4 image.
+To use the following commands, you must have setup Ned ros stack on your computer.

@@ -31,8 +31,8 @@ from control_msgs.msg import JointTrajectoryControllerState
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from moveit_msgs.msg import Constraints
 
+from niryo_robot_arm_commander.msg import CommandJog
 from niryo_robot_msgs.msg import RobotState
-from niryo_robot_msgs.msg import CommandJog
 from niryo_robot_msgs.msg import RPY
 
 # Services
@@ -242,7 +242,6 @@ class JogController:
         if shift_mode != self._shift_mode:
             self._reset_last_pub()
             self._shift_mode = shift_mode
-            rospy.logwarn("new")
 
         shift_command = list(msg.shift_values)
         if shift_mode == JogShiftRequest.POSE_SHIFT:

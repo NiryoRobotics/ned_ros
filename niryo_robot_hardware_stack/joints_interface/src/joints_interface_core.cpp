@@ -201,6 +201,11 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
  */
 bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+    std::string result_message;
+    activateLearningMode("ned2" != _hardware_version, result, result_message);
+    _previous_state_learning_mode = ("ned2" != _hardware_version);
+
     _enable_control_loop = false;
     bool res = _robot->rebootAll(torque_on);
 
@@ -208,8 +213,10 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
     _enable_control_loop = true;
     _reset_controller = true;
 
-    // need calibration after reset joints
-    _robot->setNeedCalibration();
+    // need calibration after reset joints (ned2 only)
+    if ("ned2" == _hardware_version)
+      _robot->setNeedCalibration();
+
     return res;
 }
 
@@ -304,19 +311,18 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
-    // set pos and command equal
-    // if (_hardware_version == "ned2")
-    // {
     _robot->setCommandToCurrentPosition();
-    _robot->write(ros::Time::now(), ros::Duration(0.0));
-    _lock_write_cnt = 50;
-    // }
-    // else if (_hardware_version == "ned" || _hardware_version == "one")
-    // {
-    //     _robot->setCommandToCurrentPosition();
-    //     _cm->update(ros::Time::now(), ros::Duration(0.0), true);
-    //     _robot->synchronizeMotors(true);
-    // }
+    // set pos and command equal
+    if (_hardware_version == "ned2")
+    {
+        _robot->write(ros::Time::now(), ros::Duration(0.0));
+        _lock_write_cnt = 100;
+    }
+    else if (_hardware_version == "ned" || _hardware_version == "one")
+    {
+        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
+        _robot->synchronizeMotors(true);
+    }
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
@@ -337,8 +343,11 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     int calibration_mode = req.value;
     std::string result_message;
     _enable_control_loop = false;
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+    // first activate learning mode for ned and one
+    activateLearningMode("ned2" != _hardware_version, result, result_message);
 
-    int result = _robot->calibrateJoints(calibration_mode, result_message);
+    result = _robot->calibrateJoints(calibration_mode, result_message);
     res.status = result;
     res.message = result_message;
 
@@ -351,7 +360,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         _enable_control_loop = true;
     }
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -365,8 +374,6 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
     std::string result_message;
-    int result = niryo_robot_msgs::CommandStatus::FAILURE;
-    activateLearningMode("ned2" != _hardware_version, result, result_message);
 
     _robot->setNeedCalibration();
 

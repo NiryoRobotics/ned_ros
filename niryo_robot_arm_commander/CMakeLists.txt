@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   ArmMoveCommand.msg
+  CommandJog.msg
   JointLimits.msg
   PausePlanExecution.msg
   ShiftPose.msg
@@ -83,6 +84,7 @@ if(CATKIN_ENABLE_TESTING)
   find_package(roslint QUIET)
 
   if(roslint_FOUND)
+      set(ROSLINT_PYTHON_OPTS "1>&2")
       roslint_python()
   else()
       message(WARNING "roslint not found. Skipping roslint target building")

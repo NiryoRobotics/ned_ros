@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2022-01-06 13:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,352 +21,358 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:2
 msgid "Niryo_robot_arm_commander"
-msgstr ""
+msgstr "Niryo_robot_arm_commander"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:4
 msgid "This package is the one dealing with all commander related stuff."
-msgstr ""
+msgstr "Ce package est celui qui traite tous les éléments liés aux commandes."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:5
 msgid ""
 "It is composed of only one node, which is running separately the arm "
 "commander and the tool commander."
 msgstr ""
+"Il est composé d'un seul nœud, qui exécute séparément les commandes du "
+"bras et les commandes de l’outil."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:9
 msgid "Commander node"
-msgstr ""
+msgstr "Node Commander"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:12
 msgid "The ROS Node is made to interact with:"
-msgstr ""
+msgstr "Le nœud ROS est conçu pour interagir avec :"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:11
 msgid "The Arm through MoveIt!"
-msgstr ""
+msgstr "Le bras via MoveIt!"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:12
 msgid "The tools through the tool controller."
-msgstr ""
+msgstr "Les outils à travers le 'tool_controller'."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:18
 msgid "All commands are firstly received on the actionlib server which:"
-msgstr ""
+msgstr "Toutes les commandes sont d'abord reçues sur le serveur actionlib qui :"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:15
 msgid "Handles concurrent requests."
-msgstr ""
+msgstr "Gère les demandes simultanées."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:16
 msgid ""
 "Checks if the command can't be processed due to other factors (ex: "
 "learning mode)."
 msgstr ""
+"Vérifie si la commande ne peut pas être traitée en raison d'autres "
+"facteurs (ex: mode d'apprentissage)."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:17
 msgid "Validates parameters."
-msgstr ""
+msgstr "Valide les paramètres."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:18
 msgid "Calls required controllers and returns appropriate status and message."
 msgstr ""
+"Appelle les contrôleurs requis et renvoie le statut et le message "
+"appropriés."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:20
-msgid "The namespace used is: |namespace_emphasize|"
-msgstr ""
+msgid "It belongs to the ROS namespace: |namespace_emphasize|."
+msgstr "Il appartien au namespace ROS : |namespace_emphasize|."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:23
 msgid "Parameters - Commander"
-msgstr ""
+msgstr "Paramètres - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:25
 msgid "Commander's Parameters"
-msgstr ""
+msgstr "Paramètres des commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:31
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:53
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:69
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:97
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:32
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:55
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:71
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:98
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:33
 msgid "``reference_frame``"
-msgstr ""
+msgstr "``reference_frame``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst
 msgid "Reference frame used by MoveIt! for moveP."
-msgstr ""
+msgstr "Cadre de référence utilisé par Movelt! pour moveP."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst
 msgid "Default : 'world'"
-msgstr ""
+msgstr "Par défault : 'monde'"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:36
 msgid "``move_group_commander_name``"
-msgstr ""
+msgstr "``move_group_commander_name``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:37
 msgid "Name of the group that MoveIt is controlling. By default: \"arm\""
-msgstr ""
+msgstr "Nom du groupe contrôlé par MoveIt. Par défault : \"bras\""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:38
 msgid "``jog_timer_rate_sec``"
-msgstr ""
+msgstr "``jog_timer_rate_sec``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:39
 msgid "Publish rate for jog controller"
-msgstr ""
+msgstr "Taux de diffusion pour le contrôleur du Jog"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:40
 msgid "``simu_gripper``"
-msgstr ""
+msgstr "``simu_gripper``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:41
 msgid "If you are using the simulated Gripper and want to control the Gripper"
 msgstr ""
+"Si vous êtes en train d'utiliser le Gripper simulé et souhaitez contrôler"
+" le Gripper"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:45
 msgid "Action Server - Commander"
-msgstr ""
+msgstr "Serveur d’action - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:47
 msgid "Commander Package Action Servers"
-msgstr ""
+msgstr "Package des commandes du serveur d’action"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:54
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:70
 msgid "Message Type"
-msgstr ""
+msgstr "Type de message"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:56
 msgid "``robot_action``"
-msgstr ""
+msgstr "``robot_action``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:57
-msgid ""
-":ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove"
-" (Action)>`"
+msgid ":ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove>`"
 msgstr ""
+
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:58
 msgid "Command the arm and tools through an action server"
-msgstr ""
+msgstr "Commandez le bras et les outils via un serveur d'action"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:61
 msgid "Services - Commander"
-msgstr ""
+msgstr "Services - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:63
 msgid "Commander Package Services"
-msgstr ""
+msgstr "Package des commandes des services"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:72
 msgid "``is_active``"
-msgstr ""
+msgstr "``is_active``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:73
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetBool`"
-msgstr ""
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:GetBool`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:74
 msgid "Indicate whereas a command is actually running or not"
-msgstr ""
+msgstr "Indiquer si une commande est en cours d’exécution ou non"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:75
 msgid "``stop_command``"
-msgstr ""
+msgstr "``stop_command``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:76
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
-msgstr ""
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:77
 msgid "Stop the actual command"
-msgstr ""
+msgstr "Arrêter la commande en cours"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:78
 msgid "``set_max_velocity_scaling_factor``"
-msgstr ""
+msgstr "``set_max_velocity_scaling_factor``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:79
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
-msgstr ""
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:80
 msgid "Set a percentage of maximum speed"
-msgstr ""
+msgstr "Définir un pourcentage de vitesse maximale"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:81
 msgid "``/niryo_robot/kinematics/forward``"
-msgstr ""
+msgstr "``/niryo_robot/kinematics/forward``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:82
-msgid ""
-":ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK "
-"(Service)>`"
+msgid ":ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK>`"
 msgstr ""
+
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:83
 msgid "Compute a Forward Kinematic"
-msgstr ""
+msgstr "Calculer une cinématique avant"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:84
 msgid "``/niryo_robot/kinematics/inverse``"
-msgstr ""
+msgstr "``/niryo_robot/kinematics/inverse``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:85
-msgid ""
-":ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK "
-"(Service)>`"
+msgid ":ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:86
 msgid "Compute a Inverse Kinematic"
-msgstr ""
+msgstr "Calculer une cinématique inverse"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:89
 msgid "Messages - Commander"
-msgstr ""
+msgstr "Messages - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:91
 msgid "Commander Package Messages"
-msgstr ""
+msgstr "Package des commandes des messages"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:99
-msgid ""
-":ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand"
-" (Message)>`"
+msgid ":ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:100
 msgid "Message to command the arm"
-msgstr ""
+msgstr "Message pour commander le bras"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:101
-msgid ""
-":ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose"
-" (Message)>`"
+msgid ":ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:102
 msgid "Message for shifting pose"
-msgstr ""
+msgstr "Message pour changer de pose"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:103
-msgid ""
-":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution"
-" (Message)>`"
+msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
 msgstr ""
+
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:104
 msgid "Pause movement execution"
-msgstr ""
+msgstr "Suspendre l'exécution du mouvement"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:106
 msgid "All these services are available as soon as the node is started."
-msgstr ""
+msgstr "Tous ces services sont disponibles dès le démarrage du nœud."
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:109
 msgid "Dependencies - Commander"
-msgstr ""
+msgstr "Dépendances - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:111
 msgid ":wiki_ros:`actionlib`"
-msgstr ""
+msgstr ":wiki_ros:`actionlib`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:112
 msgid ":msgs_index:`actionlib_msgs`"
-msgstr ""
+msgstr ":msgs_index:`actionlib_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:113
 msgid ":msgs_index:`control_msgs`"
-msgstr ""
+msgstr ":msgs_index:`control_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:114
 msgid ":msgs_index:`geometry_msgs`"
-msgstr ""
+msgstr ":msgs_index:`geometry_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:115
 msgid "`MoveIt! <https://moveit.ros.org/>`_"
-msgstr ""
+msgstr "`MoveIt! <https://moveit.ros.org/>`_"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:116
 msgid ":msgs_index:`moveit_msgs`"
-msgstr ""
+msgstr ":msgs_index:`moveit_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:117
 msgid ":doc:`niryo_robot_msgs`"
-msgstr ""
+msgstr ":doc:`niryo_robot_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:118
 msgid ":doc:`niryo_robot_tools_commander`"
-msgstr ""
+msgstr ":doc:`niryo_robot_tools_commander`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:119
 msgid "`python-numpy <https://numpy.org/>`_"
-msgstr ""
+msgstr "`python-numpy <https://numpy.org/>`_"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:120
 msgid ":wiki_ros:`ros_controllers`"
-msgstr ""
+msgstr ":wiki_ros:`ros_controllers`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:121
 msgid ":wiki_ros:`rosbridge_server`"
-msgstr ""
+msgstr ":wiki_ros:`rosbridge_server`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:122
 msgid ":msgs_index:`sensor_msgs`"
-msgstr ""
+msgstr ":msgs_index:`sensor_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:123
 msgid ":msgs_index:`std_msgs`"
-msgstr ""
+msgstr ":msgs_index:`std_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:124
 msgid ":wiki_ros:`tf2_web_republisher`"
-msgstr ""
+msgstr ":wiki_ros:`tf2_web_republisher`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:125
 msgid ":msgs_index:`trajectory_msgs`"
-msgstr ""
+msgstr ":msgs_index:`trajectory_msgs`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:129
-msgid "Action, services & messages files - Commander"
-msgstr ""
+msgid "Action files - Commander"
+msgstr "Fichier du Serveur d’action - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:132
-msgid "RobotMove (Action)"
+msgid "RobotMove"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:138
-msgid "GetFK (Service)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:139
+msgid "Services files - Commander"
+msgstr "Fichiers des Services - Commandes"
+
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:142
+msgid "GetFK"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:144
-msgid "GetIK (Service)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:148
+msgid "GetIK"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:150
-msgid "JogShift (Service)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:154
+msgid "JogShift"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:156
-msgid "ArmMoveCommand (Message)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:161
+msgid "Messages files - Commander"
+msgstr "Fichier des Messages - Commandes"
+
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:164
+msgid "ArmMoveCommand"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:163
-msgid "PausePlanExecution (Message)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:171
+msgid "PausePlanExecution"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:170
-msgid "ShiftPose (Message)"
+#: ../../source/stack/high_level/niryo_robot_arm_commander.rst:178
+msgid "ShiftPose"
 msgstr ""
-
