@@ -23,6 +23,26 @@ from niryo_robot_msgs.srv import SetInt
 from niryo_robot_system_api_client.srv import ManageWifi, ManageWifiRequest
 from niryo_robot_msgs.msg import CommandStatus
 
+__all__ = [
+    "LedState",
+
+    "send_hotspot_command",
+    "send_restart_wifi_command",
+    "send_deactivate_wifi_command",
+    "send_reconnect_wifi_command",
+
+    "send_trigger_program_autorun",
+    "send_reboot_motors_command",
+
+    "send_shutdown_command",
+    "send_reboot_command",
+
+    "send_led_state",
+    "activate_learning_mode",
+    "auto_calibration",
+    "stop_robot_action",
+]
+
 ENABLE_BUS_MOTORS_SUCCESS = 1
 ENABLE_BUS_MOTORS_READ_FAIL = -1
 ENABLE_BUS_MOTORS_WRITE_FAIL = -2
