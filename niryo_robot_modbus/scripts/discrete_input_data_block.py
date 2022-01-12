@@ -20,14 +20,25 @@ class DiscreteInputDataBlock(DataBlock):
     DI_IO_MODE = 0
     DI_IO_STATE = 100
 
-    DIO_ADDRESS = OrderedDict({"1A": 0,
-                               "1B": 1,
-                               "1C": 2,
-                               "2A": 3,
-                               "2B": 4,
-                               "2C": 5,
-                               "SW1": 6,
-                               "SW2": 7, })
+    if rospy.get_param("/niryo_robot_modbus/hardware_version") == "ned2":
+        DIO_ADDRESS = OrderedDict({"DI1": 0,
+                                   "DI2": 1,
+                                   "DI3": 2,
+                                   "DI4": 3,
+                                   "DI5": 4,
+                                   "DO1": 5,
+                                   "DO2": 6,
+                                   "DO3": 7,
+                                   "DO4": 8, })
+    else:
+        DIO_ADDRESS = OrderedDict({"1A": 0,
+                                   "1B": 1,
+                                   "1C": 2,
+                                   "2A": 3,
+                                   "2B": 4,
+                                   "2C": 5,
+                                   "SW1": 6,
+                                   "SW2": 7, })
 
     DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
     DIO_MODE_INPUT = SetIOModeRequest.INPUT
@@ -50,19 +61,3 @@ class DiscreteInputDataBlock(DataBlock):
         for dout in msg.digital_outputs:
             self.setValuesOffset(self.DI_IO_MODE + self.DIO_ADDRESS[dout.name], self.DIO_MODE_OUTPUT)
             self.setValuesOffset(self.DI_IO_STATE + self.DIO_ADDRESS[dout.name], int(dout.value))
-
-
-class DiscreteInputDataBlockNed2(DiscreteInputDataBlock):
-
-    DIO_ADDRESS = OrderedDict({"DI1": 0,
-                               "DI2": 1,
-                               "DI3": 2,
-                               "DI4": 3,
-                               "DI5": 4,
-                               "DO1": 5,
-                               "DO2": 6,
-                               "DO3": 7,
-                               "DO4": 8, })
-
-    def __init__(self):
-        super(DiscreteInputDataBlockNed2, self).__init__()

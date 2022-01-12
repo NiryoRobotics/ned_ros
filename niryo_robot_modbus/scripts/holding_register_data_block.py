@@ -126,7 +126,7 @@ HR_WORKSPACE_NAME = 626
 
 # Use next registers at address 641.
 
-HR_SET_ANALOG_IO = 700
+HR_SET_ANALOG_IO = 650
 
 AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI1",
                                    1: "AI2",
@@ -299,7 +299,6 @@ class HoldingRegisterDataBlock(DataBlock):
             self.update_y_rel(values[0])
         elif address == HR_YAW_REL:
             self.update_yaw_rel(values[0])
-
         elif address == HR_SET_ANALOG_IO:
             self.analog_write(values)
 
