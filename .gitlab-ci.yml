@@ -207,6 +207,8 @@ code_coverage_cpp_job:
     BUILD_CODE_COVERAGE_SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
     GENERATE_CODE_COVERAGE_SCRIPT_PATH: development-tools/Code_Analysis/gen_report_code_coverage.sh
     COBERTURA_OUTPUT_FILENAME: cobertura.xml
+  before_script:
+    - apt install -y curl
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
