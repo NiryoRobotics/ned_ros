@@ -1,4 +1,4 @@
-image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:amd64
 
 variables:
   ROS_LANG_DISABLE: genlisp:geneus:gennodejs
@@ -83,7 +83,7 @@ catkin_make_amd:
       - install
 
 catkin_make_arm:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
   extends: .abstract_catkin_build
   rules:
     - if: $CI_COMMIT_BRANCH
