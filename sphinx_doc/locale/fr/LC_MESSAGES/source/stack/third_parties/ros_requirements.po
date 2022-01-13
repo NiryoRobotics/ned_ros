@@ -25,31 +25,31 @@ msgstr "Paquet ROS Tierces"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:4
 msgid "ros_core"
-msgstr ""
+msgstr "ros_core"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:5
 msgid "moveit"
-msgstr ""
+msgstr "moveit"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:6
 msgid "ros_control"
-msgstr ""
+msgstr "ros_control"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:7
 msgid "roscpp"
-msgstr ""
+msgstr "roscpp"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:8
 msgid "rosdoc_lite"
-msgstr ""
+msgstr "rosdoc_lite"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:9
 msgid "roslint"
-msgstr ""
+msgstr "roslint"
 
 #: ../../source/stack/third_parties/ros_requirements.rst:10
 msgid "rostest"
-msgstr ""
+msgstr "rostest"
 
 #~ msgid "ros_core"
 #~ msgstr ""

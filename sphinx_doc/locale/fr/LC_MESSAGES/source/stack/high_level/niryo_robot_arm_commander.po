@@ -160,7 +160,7 @@ msgstr "``robot_action``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:57
 msgid ":ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove>`"
-msgstr ""
+msgstr ":ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:59
 msgid "Command the arm and tools through an action server"
@@ -216,7 +216,7 @@ msgstr "``/niryo_robot/kinematics/forward``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:82
 msgid ":ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK>`"
-msgstr ""
+msgstr ":ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:84
 msgid "Compute a Forward Kinematic"
@@ -228,7 +228,7 @@ msgstr "``/niryo_robot/kinematics/inverse``"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:85
 msgid ":ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK>`"
-msgstr ""
+msgstr ":ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:87
 msgid "Compute a Inverse Kinematic"
@@ -244,7 +244,7 @@ msgstr "Package des commandes des messages"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:99
 msgid ":ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand>`"
-msgstr ""
+msgstr ":ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:101
 msgid "Message to command the arm"
@@ -252,7 +252,7 @@ msgstr "Message pour commander le bras"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:101
 msgid ":ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose>`"
-msgstr ""
+msgstr ":ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:103
 msgid "Message for shifting pose"
@@ -260,7 +260,7 @@ msgstr "Message pour changer de pose"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:103
 msgid ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
-msgstr ""
+msgstr ":ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:105
 msgid "Pause movement execution"
@@ -340,7 +340,7 @@ msgstr "Fichier du Serveur d’action - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:132
 msgid "RobotMove"
-msgstr ""
+msgstr "RobotMove"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:139
 msgid "Services files - Commander"
@@ -348,15 +348,15 @@ msgstr "Fichiers des Services - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:142
 msgid "GetFK"
-msgstr ""
+msgstr "GetFK"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:148
 msgid "GetIK"
-msgstr ""
+msgstr "GetIK"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:154
 msgid "JogShift"
-msgstr ""
+msgstr "JogShift"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:161
 msgid "Messages files - Commander"
@@ -364,12 +364,12 @@ msgstr "Fichier des Messages - Commandes"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:164
 msgid "ArmMoveCommand"
-msgstr ""
+msgstr "ArmMoveCommand"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:171
 msgid "PausePlanExecution"
-msgstr ""
+msgstr "PausePlanExecution"
 
 #: ../../source/stack/high_level/niryo_robot_arm_commander.rst:178
 msgid "ShiftPose"
-msgstr ""
+msgstr "ShiftPose"

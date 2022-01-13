@@ -40,7 +40,7 @@ msgstr ""
 msgid ""
 "Thus you will be able to run simulations for the Ned, Niryo One or Ned2 "
 "robots on a Windows machine."
-msgstr ""
+msgstr "Vous pourrez donc lancer la simulation des robots Niryo One, Ned ou Ned2 sur votre machine Windows."
 
 #: ../../source/installation/wsl.rst:11
 msgid ""
@@ -75,7 +75,7 @@ msgstr "Installer WSL2 [3]_"
 msgid ""
 "Enable Windows Subsystem for Linux on your machine (in a powershell "
 "terminal)"
-msgstr ""
+msgstr "Active le Windows Subsystem for linux sur votre machine (dans un terminal Powershell)"
 
 #: ../../source/installation/wsl.rst:28
 msgid "Update WSL to use version 2 (in a powershell terminal)"
@@ -198,23 +198,26 @@ msgstr "Dépannage"
 msgid ""
 "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
 "does not match the address of your XServer."
-msgstr ""
+msgstr "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
+"does not match the address of your XServer."
 
 #: ../../source/installation/wsl.rst:119
 msgid "Try :"
-msgstr ""
+msgstr "Essayez:"
 
 #: ../../source/installation/wsl.rst:118
 msgid ""
 "Check that you correctly launched your XServer with the required options "
 "(Disable access control is essential)"
-msgstr ""
+msgstr "Vérifiez que vous avez correctement lancé le serveur X avec les options nécessaires"
+"(Désactiver le contrôle d'accès est nécessaire)"
 
 #: ../../source/installation/wsl.rst:119
 msgid ""
 "Check that the IP you gave is correct (you need the address in "
 "/etc/resolv.conf to have it work)"
-msgstr ""
+msgstr "Vérifiez que l'IP fournis est correcte (vous avez besoin de "
+"l'addresse de /etc/resolv.conf pour que cela fonctionne)"
 
 #: ../../source/installation/wsl.rst:121
 msgid ""

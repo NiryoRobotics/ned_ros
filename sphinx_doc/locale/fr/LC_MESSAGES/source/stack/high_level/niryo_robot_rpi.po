@@ -429,41 +429,47 @@ msgstr ":doc:`niryo_robot_arm_commander`"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:114
 msgid "`Adafruit-GPIO==1.0.3 <https://github.com/adafruit/Adafruit_Python_GPIO>`_"
-msgstr ""
+msgstr "`Adafruit-GPIO==1.0.3 <https://github.com/adafruit/Adafruit_Python_GPIO>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:115
 msgid ""
 "`Adafruit-PureIO==1.0.1 "
 "<https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.1>`_"
 msgstr ""
+"`Adafruit-PureIO==1.0.1 "
+"<https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.1>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:116
 msgid ""
 "`Adafruit-BBIO==1.0.9 <https://github.com/adafruit/adafruit-beaglebone-"
 "io-python/tree/1.0.9>`_"
 msgstr ""
+"`Adafruit-BBIO==1.0.9 <https://github.com/adafruit/adafruit-beaglebone-"
+"io-python/tree/1.0.9>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:117
 msgid ""
 "`Adafruit-ADS1x15==1.0.2 "
 "<https://github.com/adafruit/Adafruit_Python_ADS1x15>`_"
 msgstr ""
+"`Adafruit-ADS1x15==1.0.2 "
+"<https://github.com/adafruit/Adafruit_Python_ADS1x15>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:118
 msgid "`board==1.0 <https://github.com/tjguk/dojo-board>`_"
-msgstr ""
+msgstr "`board==1.0 <https://github.com/tjguk/dojo-board>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:119
 msgid "`smbus==1.1.post2 <https://i2c.wiki.kernel.org/index.php/I2C_Tools>`_"
-msgstr ""
+msgstr "`smbus==1.1.post2 <https://i2c.wiki.kernel.org/index.php/I2C_Tools>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:120
 msgid "`smbus2==0.4.1 <https://github.com/kplindegaard/smbus2/tree/0.4.1>`_"
-msgstr ""
+msgstr "`smbus2==0.4.1 <https://github.com/kplindegaard/smbus2/tree/0.4.1>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:121
 msgid "`spidev==3.5 <https://github.com/doceme/py-spidev>`_"
-msgstr ""
+msgstr "`spidev==3.5 <https://github.com/doceme/py-spidev>`_"
 
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:125
 msgid "Services files - Raspberry Pi"

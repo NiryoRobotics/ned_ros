@@ -38,7 +38,11 @@ msgid ""
 "of them are directly compatible for the Ned and One. For Ned2, you will "
 "need to change the stepper card of the CAN Conveyor Belt to be able to "
 "use it on a TTL port (there is no CAN port on Ned2)."
-msgstr ""
+msgstr "Deux versions du convoyeur existes: Le convoyeur v1, qui communique à travers un bus CAN et "
+"le convoyeur v2, qui communique à travers un bus TTL. "
+"Les deux sont entièrement compatible avec le Ned et le NiryoOne. "
+"Pour le Ned2, vous aurez besoin de changer la carte stepper du convoyeur belt v1 "
+"pour qu'il soit compatible; le Ned2 n'ayant pas de port CAN disponible de base."
 
 #: ../../source/stack/low_level/conveyor_interface.rst:14
 msgid "Conveyor Interface node (For development and debugging purpose only)"

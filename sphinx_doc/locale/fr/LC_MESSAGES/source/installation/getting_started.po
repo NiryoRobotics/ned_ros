@@ -52,7 +52,7 @@ msgstr ""
 
 #: ../../source/installation/getting_started.rst:12
 msgid "We currently support the following versions:"
-msgstr ""
+msgstr "Nous supportons actuellement les versions suivantes:"
 
 #: ../../source/installation/getting_started.rst:14
 msgid "Ubuntu 18.04 :doc:`ubuntu_18`"

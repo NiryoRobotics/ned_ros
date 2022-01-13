@@ -21,9 +21,9 @@ msgstr ""
 
 #: ../../source/installation/ubuntu_16.rst:2
 msgid "Ubuntu 16 Installation"
-msgstr ""
+msgstr "Installation sur Ubuntu 16"
 
 #: ../../source/installation/ubuntu_16.rst:4
 msgid "TODO"
-msgstr ""
+msgstr "TODO"
 

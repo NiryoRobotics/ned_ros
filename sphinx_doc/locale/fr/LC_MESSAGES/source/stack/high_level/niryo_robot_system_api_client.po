@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:2
 msgid "Niryo_robot_system_api_client"
-msgstr ""
+msgstr "Niryo_robot_system_api_client"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:8
 msgid "This packages handle the flask server requests to manage:"
@@ -41,7 +41,7 @@ msgstr "Les paramètres ethernet"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:11
 msgid "Publisher - System API Client"
-msgstr ""
+msgstr "Publisher - System API Client"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:13
 msgid "System API Client Package's Publishers"
@@ -60,17 +60,19 @@ msgstr "Type de Message"
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:21
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:39
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:22
 msgid "``/niryo_robot/wifi/status``"
-msgstr ""
+msgstr "``/niryo_robot/wifi/status``"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:23
 msgid ""
 ":ref:`WifiStatus<source/stack/high_level/niryo_robot_system_api_client:WifiStatus"
 " (Message)>`"
 msgstr ""
+":ref:`WifiStatus<source/stack/high_level/niryo_robot_system_api_client:WifiStatus"
+" (Message)>`"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:24
 msgid "Publish the current wifi status"
@@ -78,19 +80,19 @@ msgstr "Publier le status actuel du wifi"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:29
 msgid "Services - System API Client"
-msgstr ""
+msgstr "Services - System API Client"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:31
 msgid "System API Client Services"
-msgstr ""
+msgstr "System API Client Services"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:40
 msgid "``/niryo_robot/wifi/set_robot_name``"
-msgstr ""
+msgstr "``/niryo_robot/wifi/set_robot_name``"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:41
 msgid ":ref:`SetString<source/stack/high_level/niryo_robot_msgs:SetString>`"
-msgstr ""
+msgstr ":ref:`SetString<source/stack/high_level/niryo_robot_msgs:SetString>`"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:42
 msgid "Change the robot name"
@@ -98,13 +100,15 @@ msgstr "Changer le nom du robot"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:43
 msgid "``/niryo_robot/wifi/manage``"
-msgstr ""
+msgstr "``/niryo_robot/wifi/manage``"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:44
 msgid ""
 ":ref:`ManageWifi<source/stack/high_level/niryo_robot_system_api_client:ManageWifi"
 " (Service)>`"
 msgstr ""
+":ref:`ManageWifi<source/stack/high_level/niryo_robot_system_api_client:ManageWifi"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:45
 msgid "Change the wifi hotspot mode"
@@ -112,13 +116,15 @@ msgstr "Changer le mode du wifi"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:46
 msgid "``/niryo_robot/ethernet/manage``"
-msgstr ""
+msgstr "``/niryo_robot/ethernet/manage``"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:47
 msgid ""
 ":ref:`ManageEthernet<source/stack/high_level/niryo_robot_system_api_client:ManageEthernet"
 " (Service)>`"
 msgstr ""
+":ref:`ManageEthernet<source/stack/high_level/niryo_robot_system_api_client:ManageEthernet"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:48
 msgid ""
@@ -128,21 +134,21 @@ msgstr "Changer les paramètres ethernet (adresse IP, masques réseaux, gateway,
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:52
 msgid "Services files -  System API Client"
-msgstr ""
+msgstr "Services files -  System API Client"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:55
 msgid "ManageEthernet (Service)"
-msgstr ""
+msgstr "ManageEthernet (Service)"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:61
 msgid "ManageWifi (Service)"
-msgstr ""
+msgstr "ManageWifi (Service)"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:67
 msgid "Messages files - System API Client"
-msgstr ""
+msgstr "Messages files - System API Client"
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:70
 msgid "WifiStatus (Message)"
-msgstr ""
+msgstr "WifiStatus (Message)"
 

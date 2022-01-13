@@ -253,7 +253,7 @@ msgstr "Fichiers services et messages -  Programs manager"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:132
 msgid "ProgramIsRunning"
-msgstr ""
+msgstr "ProgramIsRunning"
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:139
 msgid "ProgramLanguage"

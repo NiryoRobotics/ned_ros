@@ -993,7 +993,8 @@ msgstr ":msgs_index:`visualization_msgs` "
 msgid ""
 "`rpi_ws281x==4.3.0 <https://github.com/rpi-ws281x/rpi-ws281x-"
 "python/tree/v4.3.0>`_"
-msgstr ""
+msgstr "`rpi_ws281x==4.3.0 <https://github.com/rpi-ws281x/rpi-ws281x-"
+"python/tree/v4.3.0>`_"
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:347
 msgid "Services files - LED Ring"
