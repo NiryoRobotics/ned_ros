@@ -407,7 +407,7 @@ class LedRingRosWrapper(object):
         result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
         return self.__classic_return_w_check(result)
 
-    ##    @check_ned2_version
+    #    @check_ned2_version
     def breath(self, color, period=0, iterations=0, wait=False):
         """
         Variation of the light intensity of the LED ring, similar to human breathing.
