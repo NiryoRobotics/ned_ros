@@ -5,44 +5,40 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 12:22+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:2
 msgid "TTL Debug Tools"
 msgstr "TTL Debug Tools"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:4
+#: ../../source/stack/low_level/ttl_debug_tools.rst:4 
 msgid ""
 "This package is a debugging package to setup and access directly to all "
-"hardware component on the TTL bus. It provides main functions like ping, "
-"scan device and read/write/syncRead/syncWrite operations on devices."
+"hardware components on the TTL bus. It provides main functions like ping,"
+" scan device and read/write/syncRead/syncWrite operations on devices."
 msgstr ""
-"Ce package est un package de débuguage pour configurer et accéder "
-"directement aux composants matériels présents sur le bus TTL. Il expose des "
-"fonctions principales comme le ping, le scan de périphérique et les "
-"opérations de lecture/écriture/lecture synchrone/écriture synchrone sur les "
-"périphériques."
+"Ce package est un package de débogage pour configurer et accéder "
+"directement aux composants matériels présents sur le bus TTL. Il expose "
+"des fonctions principales comme le ping, le scan de périphérique et les "
+"opérations de lecture/écriture/lecture synchrone/écriture synchrone sur "
+"les périphériques."
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:7
+#: ../../source/stack/low_level/ttl_debug_tools.rst:7 
 msgid ""
-"There are two ways to use this package : directly with the compiled binary, "
-"or via :doc:`ttl_driver` services called in dedicated scripts."
+"There are two ways to use this package: directly with the compiled "
+"binary, or via :doc:`ttl_driver` services called in dedicated scripts."
 msgstr ""
 "Il y a deux manières d'utiliser ce package : directement avec le binaire "
 "compilé, ou via :doc:`ttl_driver` en utilisant les scripts dédiés."
@@ -54,17 +50,17 @@ msgstr "Binaire Ttl debug tool"
 #: ../../source/stack/low_level/ttl_debug_tools.rst:11
 msgid ""
 "The compiled binary (located in "
-"*install/lib/ttl_debug_tools/ttl_debug_tools*) directly accesses the TTL bus "
-"using :doc:`../third_parties/dynamixel_sdk` third party library. Thus, it "
-"cannot be used if the Niryo ROS Stack is already running and you should "
-"first stop the robot stack (sudo service niryo_robot_ros stop)"
+"*install/lib/ttl_debug_tools/ttl_debug_tools*) directly accesses the TTL "
+"bus using :doc:`../third_parties/dynamixel_sdk` third party library. "
+"Thus, it cannot be used if the Niryo ROS Stack is already running and you"
+" should first stop the robot stack (sudo service niryo_robot_ros stop)"
 msgstr ""
 "Le binaire compilé (situé dans "
-"*install/lib/ttl_debug_tools/ttl_debug_tools*) accède directement au bus TTL "
-"en utilisatnt la librairie tierce :doc:`../third_parties/dynamixel_sdk`. Il "
-"ne peut donc pas être utilisé si la stack ROS Niryo est déja en train de "
-"tourner et vous devez d'abord arrêter la stack du robot (sudo service "
-"niryo_robot_ros stop)"
+"*install/lib/ttl_debug_tools/ttl_debug_tools*) accède directement au bus "
+"TTL en utilisant la librairie tierce "
+":doc:`../third_parties/dynamixel_sdk`. Il ne peut donc pas être utilisé "
+"si la stack ROS Niryo est déja en train de tourner et vous devez d'abord "
+"arrêter la stack du robot (sudo service niryo_robot_ros stop)"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:14
 msgid "This tool can be launched via:  ::"
@@ -78,84 +74,86 @@ msgstr "ou ::"
 msgid "Parameters - Ttl debug tools"
 msgstr "Paramètres - Ttl debug tools"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:24
-msgid "**--help / -h:** Print help message"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:24 
+msgid "**--help / -h:** Prints help message"
 msgstr "**--help / -h:** Affiche l'aide"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:25
-msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
-msgstr "**--baudrate / -b [Baudrate]:** débit de Baud (1000000 par défaut)"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:25 
+msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
+msgstr "**--baudrate / -b [Baudrate]:** Débit de Baud (1000000 par défaut)"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:26
-msgid "**--port / -p [Port]:** Set port"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:26 
+msgid "**--port / -p [Port]:** Sets port"
 msgstr "**--port / -p [Port]:** Indique le port à utiliser"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:27
-msgid "**--id / -i [ID]:** Device ID (-1 by default)"
-msgstr "**--id / -i [ID]:** Id du périphérique (-1 par défaut)"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:27 
+msgid "**--id / -i [ID]:** Devices ID (-1 by default)"
+msgstr "**--id / -i [ID]:**  ID du périphérique (-1 par défaut)"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:28
-msgid "**--ids [IDs]:** the list of TTL devices' ID"
-msgstr "**--ids [IDs]:** liste des ids des périphériques TTL"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:28 
+msgid "**--ids [IDs]:** Lists of devices IDs"
+msgstr "**--ids [IDs]:** Liste des ids des périphériques"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:29
-msgid "**--scan:** Scan all devices on the bus"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:29 
+msgid "**--scan:** Scans all devices on the bus"
 msgstr "**--scan:** Scanne tous les périphériques sur le bus"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:30
-msgid "**--ping:** Ping specific ID"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:30 
+msgid "**--ping:** Pings specific ID"
 msgstr "**--ping:** Ping un id spécifique"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:31
+#: ../../source/stack/low_level/ttl_debug_tools.rst:31 
 msgid ""
-"**--get-register [Addr]:** get a value from a register, parameters is: "
+"**--get-register [Addr]:** Gets a value from a register, parameters is: "
 "register address"
 msgstr ""
-"**--get-register [Addr]:** lire une valeur depuis un registre; le paramètre "
-"est : addresse du registre"
+"**--get-register [Addr]:** Lire une valeur depuis un registre; le "
+"paramètre est : addresse du registre"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:32
+#: ../../source/stack/low_level/ttl_debug_tools.rst:32 
 msgid ""
-"**--get-registers [Addr]:** get list of values from multiple devices at a "
-"register address, parameters is: register address"
+"**--get-registers [Addr]:** Gets list of values from multiple devices at "
+"a register address, parameters is: register address"
 msgstr ""
-"**--get-registers [Addr]:** récupérer la liste des valeurs sur plusieurs "
+"**--get-registers [Addr]:** Récupérer la liste des valeurs sur plusieurs "
 "périphériques à une adresse de registre, le paramètre est : addresse du "
 "registre"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:33
 msgid ""
-"**--get-size [Size]:** size of data to be read with get-register or "
-"get-registers, parameters is: size of data in bytes"
+"**--get-size [Size]:** Size of data to be read with get-register or get-"
+"registers, parameters is: size of data in bytes"
 msgstr ""
-"**--get-size [Size]:** taille des données à lire avec get-register ou "
+"**--get-size [Size]:** Taille des données à lire avec get-register ou "
 "get-registers, le paramètre est : taille des données en octets"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:34
+#: ../../source/stack/low_level/ttl_debug_tools.rst:34 
 msgid ""
-"**--set-register [Addr] [Value] [Size]:** Set a value to a register, "
-"parameters are in the order: register address / value / size (in bytes) of "
-"the data"
+"**--set-register [Addr] [Value] [Size]:** Sets a value to a register, "
+"parameters are in the order: register address / value / size (in bytes) "
+"of the data"
 msgstr ""
-"**--set-register [Addr] [Value] [Size]:** Ecrit une valeur en registre, les "
-"paramètres sont dans l'ordre : adresse du registre / valeur / taille (en "
-"octets) des données"
+"**--set-register [Addr] [Value] [Size]:** Ecrit une valeur en registre, "
+"les paramètres sont dans l'ordre : adresse du registre / valeur / taille "
+"(en octets) des données"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:35
+#: ../../source/stack/low_level/ttl_debug_tools.rst:35 
 msgid ""
-"**--set-registers [Addr] [Values] [Size]:** Set values to a register on "
-"multiple devices, parameters are in the order: register address / list of "
-"values / size (in bytes) of the data"
+"**--set-registers [Addr] [Values] [Size]:** Sets values to a register on "
+"multiple devices, parameters are in the order: register address / list of"
+" values / size (in bytes) of the data"
 msgstr ""
-"**--set-registers [Addr] [Values] [Size]:** Ecrit des valeurs en registre "
-"sur plusieurs périphériques, les paramètres sont dans l'ordre : adresse du "
-"registre / liste des valeurs / taille (en octets) des données"
+"**--set-registers [Addr] [Values] [Size]:** Ecrit des valeurs en registre"
+" sur plusieurs périphériques, les paramètres sont dans l'ordre : adresse "
+"du registre / liste des valeurs / taille (en octets) des données"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:36
-msgid "**--calibrate:** Calibrate all steppers TTL. It is used in NED2 only"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:36 
+msgid ""
+"**--calibrate:** Calibrates all steppers on the bus. It is used in Ned2 "
+"only"
 msgstr ""
-"**--calibrate:** Calibre tous les steppers TTL. Utilisable sur le NED2 "
-"seulement"
+"**--calibrate:** Calibre tous les steppers sur le bus. Utilisable sur le "
+"NED2 seulement"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:39
 msgid "Scripts"
@@ -163,15 +161,15 @@ msgstr "Scripts"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:40
 msgid ""
-"In order to use Ttl debug tools to debug an already running ROS stack, it "
-"was necessary to develop another tool. To do so, two python scripts have "
-"been developped. They ensure access to the data on the TTL bus via two "
+"In order to use Ttl debug tools to debug an already running ROS stack, it"
+" was necessary to develop another tool. To do so, two python scripts have"
+" been developped. They ensure access to the data on the TTL bus via two "
 "services implemented in the package :doc:`ttl_driver`:"
 msgstr ""
-"Afin de pouvoir utiliser Ttl debug tools pour débuguer une stack ROS en "
+"Afin de pouvoir utiliser Ttl debug tools pour déboger une stack ROS en "
 "train de tourner, il était nécessaire de développer un autre outil. Pour "
-"cela, deux scripts python on été développés. Ils permettent d'accéder aux "
-"données du bus TTL via deux services implémentés dans le package "
+"cela, deux scripts python on été développés. Ils permettent d'accéder aux"
+" données du bus TTL via deux services implémentés dans le package "
 ":doc:`ttl_driver` :"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:43
@@ -200,12 +198,13 @@ msgstr "Niryo robot - Envoie une valeur personnalisée sur le Dynamixel"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:48
 msgid ""
-"It uses a ttl_driver service to send data to a register of a device on the "
-"TTL bus when the ROS stack is running. This script can be launched via:  ::"
+"It uses a ttl_driver service to send data to a register of a device on "
+"the TTL bus when the ROS stack is running. This script can be launched "
+"via:  ::"
 msgstr ""
-"Il utilise un service de ttl_driver pour envoyer des données sur le registre "
-"des périphériques TTL quand la stack ROS tourne. Ce script peut être lancé "
-"via : ::"
+"Il utilise un service de ttl_driver pour envoyer des données sur le "
+"registre des périphériques TTL quand la stack ROS tourne. Ce script peut "
+"être lancé via : ::"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:54
 msgid "Parameters - Send custom value"
@@ -214,11 +213,10 @@ msgstr "paramètres - Send custom value"
 #: ../../source/stack/low_level/ttl_debug_tools.rst:55
 #: ../../source/stack/low_level/ttl_debug_tools.rst:69
 msgid "**--id [ID]:** Device ID"
-msgstr "**--id [ID]:** id du périphérique"
+msgstr "**--id [ID]:** ID du périphérique"
 
-#: ../../source/stack/low_level/ttl_debug_tools.rst:56
-#: ../../source/stack/low_level/ttl_debug_tools.rst:70
-msgid "**--address [Addr]:** Register address to modify"
+#: ../../source/stack/low_level/ttl_debug_tools.rst:56 
+msgid "**--address [Addr]:** Registers address to modify"
 msgstr "**--address [Addr]:** Adresses registres à modifier"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:57
@@ -235,23 +233,28 @@ msgstr "Niryo robot - Read DXL custom value"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:62
 msgid ""
-"It uses a service to read data from a register a device on the TTL bus when "
-"the ROS stack is running. This script can be launched via:  ::"
+"It uses a service to read data from a register a device on the TTL bus "
+"when the ROS stack is running. This script can be launched via:  ::"
 msgstr ""
 "Il utilise un service pour lire des données sur le registre des "
-"périphériques TTL quand la stack ROS tourne. Ce script peut être lancé via : "
-"::"
+"périphériques TTL quand la stack ROS tourne. Ce script peut être lancé "
+"via : ::"
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:68
 msgid "Parameters - Read custom value"
 msgstr "paramètres - Read custom value"
 
+#: ../../source/stack/low_level/ttl_debug_tools.rst:70
+msgid "**--address [Addr]:** Register address to modify"
+msgstr "**--address [Addr]:** Adresses registres à modifier"
+
 #: ../../source/stack/low_level/ttl_debug_tools.rst:71
 msgid "**--size [Size]:** Size in bytes of the data to read"
-msgstr "**--size [Size]:** taille en oected des données à lire"
+msgstr "**--size [Size]:** taille en octet des données à lire"
 
 #~ msgid ""
-#~ "This package offers scripts to change ping/scan DXL motors and changes "
+#~ "This package offers scripts to change"
+#~ " ping/scan DXL motors and changes "
 #~ "register values of these motors."
 #~ msgstr ""
 
@@ -268,9 +271,11 @@ msgstr "**--size [Size]:** taille en oected des données à lire"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "**--set-register [Number] [Number] [Number]:** Set a value to a register, "
-#~ "parameters are in the order: register address / value / size (in bytes) "
-#~ "of the value"
+#~ "**--set-register [Number] [Number] [Number]:**"
+#~ " Set a value to a register, "
+#~ "parameters are in the order: register"
+#~ " address / value / size (in "
+#~ "bytes) of the value"
 #~ msgstr ""
 
 #~ msgid "Services, Topics and Messages"
@@ -289,62 +294,89 @@ msgstr "**--size [Size]:** taille en oected des données à lire"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "This package offers scripts to debug with Hardware and setup TTL motors. "
-#~ "It provides some main functions like ping, scan device, "
-#~ "read/write/syncRead/syncWrite... from/to device."
+#~ "This package offers scripts to debug "
+#~ "with Hardware and setup TTL motors. "
+#~ "It provides some main functions like "
+#~ "ping, scan device, read/write/syncRead/syncWrite..."
+#~ " from/to device."
 #~ msgstr ""
-#~ "Ce package contient des scripts utilisables pour debugguer et configurer "
-#~ "des périphériques TTL. Il expose plusieurs fonctions principales comme le "
-#~ "ping, le scan des périphérique, la lecture/écriture/écriture "
-#~ "synchrone/lecture synchrone... depuis et vers le périphérique."
+#~ "Ce package contient des scripts "
+#~ "utilisables pour debugguer et configurer "
+#~ "des périphériques TTL. Il expose "
+#~ "plusieurs fonctions principales comme le "
+#~ "ping, le scan des périphérique, la "
+#~ "lecture/écriture/écriture synchrone/lecture synchrone..."
+#~ " depuis et vers le périphérique."
 
 #~ msgid "Niryo robot - Ttl debug tools"
 #~ msgstr "Niryo robot - Ttl debug tools"
 
 #~ msgid ""
-#~ "It provides service to interact directly with TTL motor to read or write "
-#~ "data... It is used only when no stack ros is running. This script can be "
-#~ "launched via:  ::"
+#~ "It provides service to interact directly"
+#~ " with TTL motor to read or "
+#~ "write data... It is used only when"
+#~ " no stack ros is running. This "
+#~ "script can be launched via:  ::"
 #~ msgstr ""
-#~ "Il fournit les services pour intéragir directement avec les moteurs TTL "
-#~ "pour lire et écrire des données... Il est utilisé seulement quand la "
-#~ "stack ROS ne tourne pas. Ce script peut être lancé via : ::"
+#~ "Il fournit les services pour intéragir"
+#~ " directement avec les moteurs TTL "
+#~ "pour lire et écrire des données... "
+#~ "Il est utilisé seulement quand la "
+#~ "stack ROS ne tourne pas. Ce script"
+#~ " peut être lancé via : ::"
 
 #~ msgid "**--size [Size]:** Size in bytes of the value given"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "It provides a service to read data to a register of TTL motor when the "
-#~ "ROS stack is running. This script can be launched via:  ::"
+#~ "It provides a service to read data"
+#~ " to a register of TTL motor "
+#~ "when the ROS stack is running. "
+#~ "This script can be launched via:  "
+#~ "::"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "It is used only when no stack ros is running. This script can be launched "
-#~ "via:  ::"
+#~ "It is used only when no stack "
+#~ "ros is running. This script can be"
+#~ " launched via:  ::"
 #~ msgstr ""
-#~ "Il est utilsé seulement quand la stack n'est pas en train de tourner. Ce "
-#~ "script peut être lancé via : ::"
+#~ "Il est utilsé seulement quand la "
+#~ "stack n'est pas en train de "
+#~ "tourner. Ce script peut être lancé "
+#~ "via : ::"
 
 #~ msgid ""
-#~ "As the compiled Ttl debug tools binary cannot be launch next to the "
-#~ "stack, we wrote two python scripts to use services from a launched stack. "
-#~ "Thus, we can debug an already running stack."
+#~ "As the compiled Ttl debug tools "
+#~ "binary cannot be launch next to "
+#~ "the stack, we wrote two python "
+#~ "scripts to use services from a "
+#~ "launched stack. Thus, we can debug "
+#~ "an already running stack."
 #~ msgstr ""
-#~ "Afin de pouvoir utiliser Ttl debug tools pour débuguer une stack ROS en "
-#~ "train de tourner, il était nécessaire de développer un autre outil. Pour "
-#~ "cela, deux scripts python ont été développés. Ils permettent d'accéder "
-#~ "aux données du bus TTL via deux services implémentés dans le package "
-#~ ":doc:`ttl_driver`"
+#~ "Afin de pouvoir utiliser Ttl debug "
+#~ "tools pour débuguer une stack ROS "
+#~ "en train de tourner, il était "
+#~ "nécessaire de développer un autre outil."
+#~ " Pour cela, deux scripts python ont"
+#~ " été développés. Ils permettent d'accéder"
+#~ " aux données du bus TTL via "
+#~ "deux services implémentés dans le "
+#~ "package :doc:`ttl_driver`"
 
 #~ msgid ""
-#~ "Two scripts are available :ttl_driver::ReadCustomValue - "
-#~ "read_custom_dxl_value.py : uses service "
-#~ ":ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue "
-#~ "(Service)>` to read values from the TTL bus - send_custom_dxl_value : "
+#~ "Two scripts are available "
+#~ ":ttl_driver::ReadCustomValue - read_custom_dxl_value.py"
+#~ " : uses service "
+#~ ":ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue"
+#~ " (Service)>` to read values from the"
+#~ " TTL bus - send_custom_dxl_value : "
 #~ "uses service "
-#~ ":ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue "
-#~ "(Service)>` to write values to the TTL bus"
+#~ ":ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue"
+#~ " (Service)>` to write values to the"
+#~ " TTL bus"
 #~ msgstr ""
 
 #~ msgid "**--id [ID]:** Motor ID"
 #~ msgstr "**--id [ID]:** Motor ID"
+

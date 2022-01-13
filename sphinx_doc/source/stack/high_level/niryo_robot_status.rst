@@ -4,8 +4,8 @@ Niryo_robot_status
 Robot status Node
 --------------------------
 
-The ROS Node is  listens to the topics of the robot to deduce the current state of the robot.
-It manages the status of the robot, the status of the logs and informs about the overheating of the raspberry pi and the out of limit joints.
+The ROS Node is listening to the topics of the robot to deduce the current state of the robot.
+It manages the status of the robot, the status of the logs and informs about the overheating of the Raspberry PI and the out of limit joints.
 
 It belongs to the ROS namespace: |namespace_emphasize|.
 
@@ -43,7 +43,7 @@ It belongs to the ROS namespace: |namespace_emphasize|.
       -  ROS a and the Raspberry are booting up
       -  | If the startup seems to timeout, restart the robot electrically.
          | If the problem persists, update the robot with ssh,
-         | or change the SD card or contact customer service.
+         | change the SD card or contact customer service.
    *  -  ``UPDATE``
       -  Robot update in progress
       -  Just wait and be patient :)

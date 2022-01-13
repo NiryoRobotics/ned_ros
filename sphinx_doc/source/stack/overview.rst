@@ -19,7 +19,7 @@ in order to understand where are placed each part of the software.
 
 .. figure:: ../../images/ros_logo.png
    :alt: ROS Logo
-   :width: 300px
+   :width: 150px
    :align: center
 
    ROS Logo

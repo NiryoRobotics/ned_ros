@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 12:22+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,13 +27,13 @@ msgstr ""
 #: ../../source/stack/low_level/ttl_debug_tools.rst:4
 msgid ""
 "This package is a debugging package to setup and access directly to all "
-"hardware component on the TTL bus. It provides main functions like ping, "
-"scan device and read/write/syncRead/syncWrite operations on devices."
+"hardware components on the TTL bus. It provides main functions like ping,"
+" scan device and read/write/syncRead/syncWrite operations on devices."
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:7
 msgid ""
-"There are two ways to use this package : directly with the compiled "
+"There are two ways to use this package: directly with the compiled "
 "binary, or via :doc:`ttl_driver` services called in dedicated scripts."
 msgstr ""
 
@@ -63,67 +63,69 @@ msgid "Parameters - Ttl debug tools"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:24
-msgid "**--help / -h:** Print help message"
+msgid "**--help / -h:** Prints help message"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:25
-msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:26
-msgid "**--port / -p [Port]:** Set port"
+msgid "**--port / -p [Port]:** Sets port"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:27
-msgid "**--id / -i [ID]:** Device ID (-1 by default)"
+msgid "**--id / -i [ID]:** Devices ID (-1 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:28
-msgid "**--ids [IDs]:** the list of TTL devices' ID"
+msgid "**--ids [IDs]:** Lists of devices IDs"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:29
-msgid "**--scan:** Scan all devices on the bus"
+msgid "**--scan:** Scans all devices on the bus"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:30
-msgid "**--ping:** Ping specific ID"
+msgid "**--ping:** Pings specific ID"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:31
 msgid ""
-"**--get-register [Addr]:** get a value from a register, parameters is: "
+"**--get-register [Addr]:** Gets a value from a register, parameters is: "
 "register address"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:32
 msgid ""
-"**--get-registers [Addr]:** get list of values from multiple devices at a"
-" register address, parameters is: register address"
+"**--get-registers [Addr]:** Gets list of values from multiple devices at "
+"a register address, parameters is: register address"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:33
 msgid ""
-"**--get-size [Size]:** size of data to be read with get-register or get-"
+"**--get-size [Size]:** Size of data to be read with get-register or get-"
 "registers, parameters is: size of data in bytes"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:34
 msgid ""
-"**--set-register [Addr] [Value] [Size]:** Set a value to a register, "
+"**--set-register [Addr] [Value] [Size]:** Sets a value to a register, "
 "parameters are in the order: register address / value / size (in bytes) "
 "of the data"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:35
 msgid ""
-"**--set-registers [Addr] [Values] [Size]:** Set values to a register on "
+"**--set-registers [Addr] [Values] [Size]:** Sets values to a register on "
 "multiple devices, parameters are in the order: register address / list of"
 " values / size (in bytes) of the data"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:36
-msgid "**--calibrate:** Calibrate all steppers TTL. It is used in NED2 only"
+msgid ""
+"**--calibrate:** Calibrates all steppers on the bus. It is used in Ned2 "
+"only"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:39
@@ -173,8 +175,7 @@ msgid "**--id [ID]:** Device ID"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:56
-#: ../../source/stack/low_level/ttl_debug_tools.rst:70
-msgid "**--address [Addr]:** Register address to modify"
+msgid "**--address [Addr]:** Registers address to modify"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:57
@@ -197,6 +198,10 @@ msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:68
 msgid "Parameters - Read custom value"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:70
+msgid "**--address [Addr]:** Register address to modify"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_debug_tools.rst:71
@@ -377,5 +382,104 @@ msgstr ""
 #~ "and you should first stop the "
 #~ "robot stack (sudo service niryo_robot_ros "
 #~ "stop)"
+#~ msgstr ""
+
+#~ msgid "**--ids [IDs]:** the list of TTL devices' ID"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-register [Addr]:** get a value"
+#~ " from a register, parameters is: "
+#~ "register address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-registers [Addr]:** get list of"
+#~ " values from multiple devices at a"
+#~ " register address, parameters is: register"
+#~ " address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-size [Size]:** size of data "
+#~ "to be read with get-register or"
+#~ " get-registers, parameters is: size "
+#~ "of data in bytes"
+#~ msgstr ""
+
+#~ msgid "**--calibrate:** Calibrate all steppers TTL. It is used in NED2 only"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package is a debugging package "
+#~ "to setup and access directly to "
+#~ "all hardware component on the TTL "
+#~ "bus. It provides main functions like "
+#~ "ping, scan device and "
+#~ "read/write/syncRead/syncWrite operations on devices."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "There are two ways to use this "
+#~ "package : directly with the compiled "
+#~ "binary, or via :doc:`ttl_driver` services "
+#~ "called in dedicated scripts."
+#~ msgstr ""
+
+#~ msgid "**--help / -h:** Print help message"
+#~ msgstr ""
+
+#~ msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+#~ msgstr ""
+
+#~ msgid "**--port / -p [Port]:** Set port"
+#~ msgstr ""
+
+#~ msgid "**--id / -i [ID]:** Device ID (-1 by default)"
+#~ msgstr ""
+
+#~ msgid "**--ids [IDs]:** List of devices IDs"
+#~ msgstr ""
+
+#~ msgid "**--scan:** Scan all devices on the bus"
+#~ msgstr ""
+
+#~ msgid "**--ping:** Ping specific ID"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-register [Addr]:** Get a value"
+#~ " from a register, parameters is: "
+#~ "register address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--get-registers [Addr]:** Get list of"
+#~ " values from multiple devices at a"
+#~ " register address, parameters is: register"
+#~ " address"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--set-register [Addr] [Value] [Size]:** "
+#~ "Set a value to a register, "
+#~ "parameters are in the order: register"
+#~ " address / value / size (in "
+#~ "bytes) of the data"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--set-registers [Addr] [Values] [Size]:**"
+#~ " Set values to a register on "
+#~ "multiple devices, parameters are in the"
+#~ " order: register address / list of"
+#~ " values / size (in bytes) of "
+#~ "the data"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**--calibrate:** Calibrate all steppers on "
+#~ "the bus. It is used in Ned2 "
+#~ "only"
 #~ msgstr ""
 
