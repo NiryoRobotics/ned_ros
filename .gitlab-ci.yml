@@ -12,6 +12,8 @@ variables:
 
   BASE_GITLAB_CI_RESSOURCE_URL: "https://gitlab.com/niryo/admin/gitlab-ci-ressources/-/raw/master/"
 
+  GITLAB_CATKIN_PROFILE_NAME: gitlab_ci
+
   ##############################################################################
 
   # Allow to pull the directory containing front-end files
@@ -20,7 +22,6 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
-  CATKIN_PROFILE_NAME: gitlab_ci
   
 stages:
   - build
@@ -72,9 +73,6 @@ include:
     - catkin build --profile ${CATKIN_PROFILE_NAME}    
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
-
-catkin_make_amd:
-  extends: .abstract_catkin_build
   artifacts:
     paths:
       - devel
@@ -82,20 +80,40 @@ catkin_make_amd:
       - build
       - install
 
-catkin_make_arm:
+catkin_make_amd:
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: ${GITLAB_CATKIN_PROFILE_NAME}
+
+build_arm_niryo_one:
   image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
   extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_one
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
       allow_failure: true
 
-  artifacts:
-    paths:
-      - devel
-      - src
-      - build
-      - install
+build_arm_ned:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_ned
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+
+build_arm_ned2:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_ned2
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
 
 build_doc_job:
   image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack/v1.0.6:amd64
@@ -128,7 +146,7 @@ build_doc_job:
     - mv ${previous_path}/devel .
     - cp -r src/.gitlab_resources/.catkin_tools .
     ################# Quickfix end ###############
-    - source install/${CATKIN_PROFILE_NAME}/setup.bash
+    - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
@@ -140,7 +158,7 @@ catkin_compile_tests:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
-    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args tests
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
@@ -160,21 +178,21 @@ test_job:
   artifacts:
     when: always
     paths:
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
     reports:
       junit:
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
-    - catkin run_tests --profile ${CATKIN_PROFILE_NAME} -j1
+    - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -186,7 +204,7 @@ roslint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
     # Check code linting
-    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args roslint -j1
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -j1
 
 catkin_lint_job:
   stage: test
@@ -211,13 +229,13 @@ code_coverage_cpp_job:
     - !reference [.abstract_move_source_tricks_job, script]
     # Build and generate reports
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
-    - ./${BUILD_CODE_COVERAGE_SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
+    - ./${BUILD_CODE_COVERAGE_SCRIPT_PATH} -p ${GITLAB_CATKIN_PROFILE_NAME}
     - ./${GENERATE_CODE_COVERAGE_SCRIPT_PATH} -s false -p build
     # Retrieve codecov software and upload code coverage to codecov.io
     - cd src
     - curl -Os https://uploader.codecov.io/latest/linux/codecov
     - chmod +x codecov
-    - ./codecov -t ${CODECOV_TOKEN} -s ../build/${CATKIN_PROFILE_NAME} -C ${CI_COMMIT_SHA} -B ${CI_COMMIT_REF_NAME}
+    - ./codecov -t ${CODECOV_TOKEN} -s ../build/${GITLAB_CATKIN_PROFILE_NAME} -C ${CI_COMMIT_SHA} -B ${CI_COMMIT_REF_NAME}
     # Generate parsable files by gitlab
     - cd ..
     - ./src/.gitlab_resources/create_code_coverage_for_gitlab.sh -p "./build" -o ${COBERTURA_OUTPUT_FILENAME}
