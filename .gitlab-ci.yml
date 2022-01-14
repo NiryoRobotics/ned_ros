@@ -175,6 +175,8 @@ test_job:
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
     - catkin run_tests --profile ${CATKIN_PROFILE_NAME} -j1
+  after_script:
+    - mv ${NIRYO_HOME_FOLDER}/* .
 
 roslint_job:
   stage: test
