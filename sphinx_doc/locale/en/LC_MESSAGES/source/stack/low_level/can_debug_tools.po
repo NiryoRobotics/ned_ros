@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-21 16:50+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,8 +27,8 @@ msgstr ""
 #: ../../source/stack/low_level/can_debug_tools.rst:4
 msgid ""
 "This package offers scripts to debug with Hardware and setup CAN devices."
-" It provides some main functions like setup the CAN bus and dump data on "
-"bus."
+" It provides some main functions like setting up the CAN bus and dumping "
+"data on bus."
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:8
@@ -46,19 +46,19 @@ msgid "Parameters - CAN debug tools"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:16
-msgid "**--help / -h:** Print help message"
+msgid "**--help / -h:** Prints help message"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:17
-msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+msgid "**--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:18
-msgid "**--channel / -c [Channel]:** Set channel SPI (0 by default)"
+msgid "**--channel / -c [Channel]:** Sets channel SPI (0 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:19
-msgid "**--gpio / -g:** GPIO Interrupt for CAN (25 by default)"
+msgid "**--gpio / -g:** GPIO Interrupts for CAN (25 by default)"
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:20
@@ -68,10 +68,10 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack/low_level/can_debug_tools.rst:21
-msgid "**--dump:** run dump service to dump and show all data found on bus"
+msgid "**--dump:** runs dump service to dump and shows all data found on bus"
 msgstr ""
 
-#: ../../source/stack/low_level/can_debug_tools.rst:26
+#: ../../source/stack/low_level/can_debug_tools.rst:28
 msgid "When you dump data on CAN bus, the result is a table including:"
 msgstr ""
 
@@ -98,5 +98,28 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Parameters - Ttl debug tools"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package offers scripts to debug "
+#~ "with Hardware and setup CAN devices. "
+#~ "It provides some main functions like "
+#~ "setup the CAN bus and dump data"
+#~ " on bus."
+#~ msgstr ""
+
+#~ msgid "**--help / -h:** Print help message"
+#~ msgstr ""
+
+#~ msgid "**--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)"
+#~ msgstr ""
+
+#~ msgid "**--channel / -c [Channel]:** Set channel SPI (0 by default)"
+#~ msgstr ""
+
+#~ msgid "**--gpio / -g:** GPIO Interrupt for CAN (25 by default)"
+#~ msgstr ""
+
+#~ msgid "**--dump:** run dump service to dump and show all data found on bus"
 #~ msgstr ""
 

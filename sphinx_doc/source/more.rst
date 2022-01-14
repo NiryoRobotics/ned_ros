@@ -4,6 +4,7 @@ More ways to control Ned
 There is even more ways to control Ned.
 
 | If you are a beginner, look at :ref:`Blockly <source/more:Blockly>` section to understand the programming fundamentals.
+
 | If you want to go further, maybe experience your own image processing, multi-robot, AI... You can go to :ref:`source/more:PyNiryo` for more information.
 
 Blockly

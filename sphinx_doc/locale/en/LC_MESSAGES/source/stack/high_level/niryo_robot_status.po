@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 10:00+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,10 +30,10 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:7
 msgid ""
-"The ROS Node is  listens to the topics of the robot to deduce the current"
-" state of the robot. It manages the status of the robot, the status of "
-"the logs and informs about the overheating of the raspberry pi and the "
-"out of limit joints."
+"The ROS Node is listening to the topics of the robot to deduce the "
+"current state of the robot. It manages the status of the robot, the "
+"status of the logs and informs about the overheating of the Raspberry PI "
+"and the out of limit joints."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:10
@@ -151,7 +151,7 @@ msgid "If the problem persists, update the robot with ssh,"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_status.rst
-msgid "or change the SD card or contact customer service."
+msgid "change the SD card or contact customer service."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_status.rst:47
@@ -499,5 +499,19 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "A single motion or jod is being processed"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node is  listens to the"
+#~ " topics of the robot to deduce "
+#~ "the current state of the robot. It"
+#~ " manages the status of the robot, "
+#~ "the status of the logs and informs"
+#~ " about the overheating of the "
+#~ "raspberry pi and the out of limit"
+#~ " joints."
+#~ msgstr ""
+
+#~ msgid "or change the SD card or contact customer service."
 #~ msgstr ""
 

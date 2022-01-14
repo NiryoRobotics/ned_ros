@@ -1,30 +1,33 @@
-Niryo robot Led Ring
+Niryo_robot_led_ring
 ========================================
 
-| This package is the one managing the Led Ring of Ned2.
-| It is composed of one node, receiving commands and the current robot status, and publishing Led Ring states.
-| The Led Ring is composed of 30 WS2811 RGB Leds, controlled by the package with the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-python>`_.
+| This package is the one managing the LED Ring of Ned2.
+
+| It is composed of one node, receiving commands and the current robot status, and publishing LED Ring states.
+
+| The LED Ring is composed of 30 WS2811 RGB LEDs, controlled by the package with the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-python>`_.
 
 
-Led Ring node
+LED Ring node
 --------------------------
-The ROS Node is made to manage the Led Ring state, and to publish its currents status and state
+The ROS Node is made to manage the LED Ring state, and to publish its currents status and state
 on ROS topics.
-It uses a class implementing several animation, allowing to control the Led Ring or to
-display the current robot status. The Led Ring is also implemented in Rviz.
+It uses a class implementing several animation (11 for now), allowing to control the LED Ring or to
+display the current robot status. The LED Ring is also implemented in Rviz.
 
-The Led Ring can either be:
+The LED Ring can either be:
 
-- in **ROBOT STATUS** mode : the Led is displaying the status of the robot.
--   in **USER** mode : the user can control the Led Ring with the several methods implemented, through
+- in **ROBOT STATUS** mode: the LED is displaying the status of the robot.
+- in **USER** mode: the user can control the LED Ring with the several methods implemented, through
     `Blockly <https://docs.niryo.com/product/niryo-studio/v3.2.1/en/source/blockly_api.html>`_ ,
-    `Pyniryo <https://docs.niryo.com/dev/pyniryo/v1.0.5/en/index.html>`_ or :ref:`Python ROS Wrapper <source/python_ros_wrapper/ros_wrapper_doc:Python ROS Wrapper documentation>` .
+    `Pyniryo <https://docs.niryo.com/dev/pyniryo/v1.0.5/en/index.html>`_ or 
+    :ref:`Python ROS Wrapper <source/python_ros_wrapper/ros_wrapper_doc:Python ROS Wrapper documentation>` .
 
 
 Robot status mode
 ^^^^^^^^^^^^^^^^^^^
 
-When displaying the **robot status**, the Led Ring has several states which represent different modes and error status. 
+When displaying the **robot status**, the LED Ring has several states which represent different modes and error status. 
 Refer to the following table. The node subscribes to the ROS topic ``/niryo_robot_status/robot_status``, published by
 the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`.
 
@@ -69,7 +72,7 @@ the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotSt
       - Launch a new action to clear this state
    *  - :ref:`Solid <Solid>` Orange
       - Joint out of bounds
-      - Switch to free motion mode to bring the joints within limits.
+      - Switch to Free Motion mode to bring the joints within limits.
    *  - 1 Purple :ref:`Flashing <Flashing>`
       - New connection form Niryo Studio
       - N/A
@@ -86,10 +89,10 @@ the package :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotSt
 User mode 
 ^^^^^^^^^^^^^^^^^^^
 
-Several animations are implemented to allow the user different ways to control the Led Ring. Refer to the following
+Several animations are implemented to allow the user different ways to control the LED Ring. Refer to the following
 table. The node receives commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see :ref:`the service section<source/stack/high_level/niryo_robot_led_ring:Services - Led Ring>`)
 
-.. important:: Ned must be in autonomous mode in order to allow the user to control the Led Ring.
+.. important:: Ned must be in autonomous mode in order to allow the user to control the LED Ring.
 
 .. list-table:: 
    :header-rows: 1
@@ -102,58 +105,70 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/se
       - Gif
 
    *  - _`None`
-      - Leds are turned off
-      -
+      - LEDs are turned off
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_none.gif
+           :height: 250px
    *  - _`Solid`
-      - Set the whole Led Ring to the same color at once
-      -
+      - Set the whole LED Ring to the same color at once
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_solid.gif
+           :height: 250px
    *  - _`Flashing`
       - | Flashes a color according to a frequency
-      -
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_flash.gif
+           :height: 250px
    *  - _`Alternate`
       - | The different colors are alternated one after the other.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/alternate.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_alternate.gif
+           :height: 250px
    *  - _`Chase`
       - | Movie theater light style chase animation.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_chase.gif
+           :height: 250px
    *  - _`Color Wipe`
-      - | Wipe a color across the Led Ring.
-        | Similar to go_up, but Leds are not turned off at the end.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/color_wipe.gif
+      - | Wipe a color across the LED Ring.
+        | Similar to go_up, but LEDs are not turned off at the end.
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_wipe.gif
+           :height: 250px
    *  - _`Rainbow`
-      - | Draws rainbow that fades across all Leds at once.
-      -  .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow.gif
+      - | Draws rainbow that fades across all LEDs at once.
+      -  .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow.gif
+           :height: 250px
    *  - _`Rainbow cycle`
-      - | Draw rainbow that uniformly distributes itself across all Leds.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_cycle.gif
+      - | Draw rainbow that uniformly distributes itself across all LEDs.
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow_cycle.gif
+           :height: 250px
    *  - _`Rainbow chase`
       - | Rainbow chase animation.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_rainbow_chase.gif
+           :height: 250px
    *  - _`Go up`
-      - | Leds turn on like a loading circle until lighting up the whole Led Ring.
+      - | LEDs turn on like a loading circle until lighting up the whole LED Ring.
         | and are then all turned off at the same time.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goup.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_goup.gif
+           :height: 250px
    *  - _`Go up and down`
-      - | Like go_up, but Leds are turned off the same way they are turned on.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
+      - | Like go_up, but LEDs are turned off the same way they are turned on.
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_goupdown.gif
+           :height: 250px
    *  - _`Breath`
       - | Variation of light intensity to imitate breathing.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_breath.gif
+           :height: 250px
    *  - _`Snake`
       - | Luminous snake that turns around the LED Ring.
-      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/ned_led_ring_snake.gif
+           :height: 250px
 
 
-
-.. note:: When displaying the robot status, the Led Ring commander uses those methods, with the defaults parameters defined below.
+.. note:: When displaying the robot status, the LED Ring commander uses those methods, with the default parameters defined below.
 
 It belongs to the ROS namespace: |namespace_emphasize|.
 
-Parameters - Led Ring
+Parameters - LED Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Firstly, the Led Ring component, controlled with  the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-python>`_, through
-the python class PixelStrip, is parameterizable. Default parameters are set in the `led_strim_params.yaml` file of the  `/config` folder of the package
+Firstly, the LED Ring component, controlled with  the `rpi_ws281x library <https://github.com/rpi-ws281x/rpi-ws281x-python>`_, through
+the Python class PixelStrip, is parameterizable. Default parameters are set in the `led_strim_params.yaml` file of the  `/config` folder of the package
 
 .. list-table:: Parameters of the Led Ring component
    :header-rows: 1
@@ -166,7 +181,7 @@ the python class PixelStrip, is parameterizable. Default parameters are set in t
       - Default value
 
    *  - ``led_count``
-      - Number of LED pixels in the Led Ring
+      - Number of LED pixels in the LED Ring
       - 30
    *  - ``led_pin``
       - | Raspberry Pi GPIO pin connected to the pixels 
@@ -179,7 +194,7 @@ the python class PixelStrip, is parameterizable. Default parameters are set in t
       - DMA channel to use for generating signal
       - 10
    *  - ``led_brightness``
-      - Leds brightness. Set to 0 for darkest and 255 for brightest
+      - LEDs brightness. Set to 0 for darkest and 255 for brightest
       - 255
    *  - ``led_invert``
       - True to invert the signal (when using NPN transistor level shift)
@@ -188,9 +203,9 @@ the python class PixelStrip, is parameterizable. Default parameters are set in t
       - the PWM channel to use
       - 0
 
-Another configuration file, the `led_ring_params.yaml`, sets the default parameters of Led Ring animations.
+Another configuration file, the `led_ring_params.yaml`, sets the default parameters of LED Ring animations.
 
-.. list-table:: Parameters of the Led Ring animations
+.. list-table:: Parameters of the LED Ring animations
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -234,23 +249,23 @@ Another configuration file, the `led_ring_params.yaml`, sets the default paramet
       - Default :ref:`Snake <Snake>` animation period in seconds
       - 1.5
    *  - ``led_offset``
-      - Offset ID between the LED with the ID 0 and the ID of the led at the back of the robot.
+      - Offset ID between the LED with the ID 0 and the ID of the LED at the back of the robot.
       - 8
    *  - ``simulation_led_ring_markers_publish_rate``
-      - Rviz led ring markers publish rate in simulation mode
+      - Rviz LED ring markers publishinf rate in simulation mode
       - 20
    *  - ``led_ring_markers_publish_rate``
-      - Rviz led ring markers publish rate on a real robot
+      - Rviz LED ring markers publishing rate on a real robot
       - 5
 
 
-Services - Led Ring
+Services - LED Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-The ROS node implements one service, designed for the user to control the Led Ring.
+The ROS node implements one service, designed for the user to control the LED Ring.
 
-.. list-table:: Led Ring Package services
+.. list-table:: LED Ring Package services
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -261,19 +276,19 @@ The ROS node implements one service, designed for the user to control the Led Ri
       - Description
    *  - ``set_user_animation``
       - :ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser (Service)>`
-      - | Allow user to control the Led Ring, with implemented animations. A new request
+      - | Allows user to control the LED Ring, with implemented animations. A new request
         | will **interrupt** the previous one, if still playing. Depending on the ``wait`` boolean field
         | and the ``iterations`` field of the request, the service will either **answer immediately** after
         | launching the animation, or **wait for the animation to finish** to answer.
    *  - ``set_led_color``
       - :ref:`SetLedColor<source/stack/high_level/niryo_robot_led_ring:SetLedColor (Service)>`
-      - Light up a led identified by an ID
+      - Lights up a LED identified by an ID
 
 
-Publishers - Led Ring
+Publishers - LED Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Led Ring Package publishers
+.. list-table:: LED Ring Package publishers
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -284,21 +299,21 @@ Publishers - Led Ring
       - Description
    *  - ``led_ring_status``
       - :ref:`LedRingStatus<source/stack/high_level/niryo_robot_led_ring:LedRingStatus (Message)>`
-      - | Publishes the **status** of the Led Ring, providing information on the **current mode** 
+      - | Publishes the **status** of the LED Ring, providing information on the **current mode** 
         | (displaying robot status or controlled by user if the robot works in AUTONOMOUS mode),
         | the **current animation played** and the animation color (except for rainbow methods, where
         | the animation color is not defined). Publishes every time at least **one field changed**.
    *  - ``visualization_marker_array``
       - :visualization_msgs:`visualization_msgs/MarkerArray<MarkerArray>`
-      - | Publishes shapes representing Leds when Ned is used in simulation with **Rviz**, 
+      - | Publishes shapes representing LEDs when Ned is used in simulation with **Rviz**, 
         | as a list of 30 :visualization_msgs:`visualization_msgs/Marker<Marker>` of size 30. 
 
 
-Subscribers - Led Ring
+Subscribers - LED Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-.. list-table:: Led Ring Package subscribers
+.. list-table:: LED Ring Package subscribers
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -309,24 +324,26 @@ Subscribers - Led Ring
       - Description
    *  - ``/niryo_robot_status/robot_status``
       - :ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`
-      - Retrieves the current robot status, and control Led accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
+      - Retrieves the current robot status, and control LED accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
    *  - ``/niryo_robot/blockly/save_current_point``
       - :std_msgs:`std_msgs/Int32<Int32>`
-      - Catch the 'Save Point' action to make the LED ring blink.
+      - Catches the 'Save Point' action to make the LED ring blink.
    *  - ``/niryo_studio_connection``
       - :std_msgs:`std_msgs/Empty<Empty>`
-      - Catch the Niryo Studio connection to make the LED ring blink.
+      - Catches the Niryo Studio connection to make the LED ring blink.
 
 
-Dependencies - Led Ring
+Dependencies - LED Ring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :ref:`niryo_robot_msgs <source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`
 - :msgs_index:`std_msgs`
 - :msgs_index:`visualization_msgs`
 
+- `rpi_ws281x==4.3.0 <https://github.com/rpi-ws281x/rpi-ws281x-python/tree/v4.3.0>`_
 
-Services files - Led Ring
+
+Services files - LED Ring
 ------------------------------------------------------
 
 LedUser (Service)
@@ -342,7 +359,7 @@ SetLedColor (Service)
    :language: rostype
 
 
-Messages files - Led Ring
+Messages files - LED Ring
 ------------------------------------------------------
 
 LedRingAnimation (Message)
@@ -365,13 +382,13 @@ LedRingStatus (Message)
 
 
 
-Led Ring API functions
+LED Ring API functions
 ------------------------------------
 
 In order to control the robot more easily than calling each topics & services one by one,
 a Python ROS Wrapper has been built on top of ROS.
 
-For instance, a script turning on the Led Ring via Python ROS Wrapper will look like: ::
+For instance, a script turning on the LED Ring via Python ROS Wrapper will look like: ::
 
     from niryo_robot_led_ring.api import LedRingRosWrapper
 
@@ -379,8 +396,7 @@ For instance, a script turning on the Led Ring via Python ROS Wrapper will look 
     led_ring.solid(color=[255, 255, 255])
 
 
-| This class allows you to control the robot via internal API.
-| By controlling, we mean using the LED ring
+| This class allows you to control the robot via internal API. By controlling, we mean using the LED ring
 
 List of functions subsections:
 
@@ -409,3 +425,6 @@ Pre-made animations functions
 .. |namespace| replace:: /niryo_robot_led_ring/
 .. |namespace_emphasize| replace:: ``/niryo_robot_led_ring/``
 .. |package_path| replace:: ../../../../niryo_robot_led_ring
+.. |newline| raw:: html
+
+    <br>

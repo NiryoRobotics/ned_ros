@@ -92,7 +92,7 @@ Releasing
 ^^^^^^^^^^^^
 
 To release with any tool, you can use the function:
-:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`. This action correspond to:
+:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`. This action corresponds to:
 
   - Open gripper for Grippers.
   - Push Air for Vacuum pump.

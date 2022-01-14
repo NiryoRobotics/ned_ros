@@ -2,6 +2,7 @@ Joints Interface
 ====================================
 
 | This package handles packages related to the robot's joints controller.
+
 | It provides an interface to :wiki_ros:`ros_control`.
 
 Joints interface node
@@ -10,7 +11,7 @@ It is instantiated in :doc:`niryo_robot_hardware_interface` package.
 
 It has been conceived to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
- - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
+ - Create a controller manager, from :wiki_ros:`controller_manager` package, that provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
@@ -31,15 +32,18 @@ Joints Interface's default Parameters
 
    *  -  Name
       -  Description
+      -  Default value
+      -  Unit
    *  -  ``ros_control_loop_frequency``
       -  | Controls loop frequency.
-         | Default: '100.0'
+      -  100
+      -  Hz
 
 
 Joints Interface's hardware specific Parameters 
 **************************************************
 
-These parameters are specific to the hardware version (ned, one or ned2).
+These parameters are specific to the hardware version (Ned, Niryo One or Ned2).
 This file comes in a different version for each hardware version. They are located in a directory of the hardware version name.
 
 .. list-table:: *joints_params.yaml* file
@@ -72,76 +76,80 @@ This file comes in a different version for each hardware version. They are locat
 
    *  -  Name
       -  Description
+      -  Default value
       -  Unit
       -  Supported Hardware versions
    *  -  ``calibration_timeout``
       -  | Waiting time between 2 commands during the calibration process.
-         | Default: '30'
+      -  30
       -  seconds
       -  All versions
    *  -  ``calibration_file``
       -  | File path where is saved motors calibration value.
-         | Default: '/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'
+      -  | */home/niryo/niryo_robot_saved_files*
+         | */stepper_motor_calibration_offsets.txt*
       -  N.A.
       -  All versions
    *  -  ``stepper_N/id``
       -  | Stepper N (1, 2 or 3) id
-         | Default: -1 (invalid id)
+      -  -1 (invalid id)
       -  N.A.
       -  All versions
    *  -  ``stepper_N/v_start``
       -  | Stepper N (1, 2 or 3) starting velocity for the acceleration profile
-         | Default: 1
+      -  1
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_1``
       -  | Stepper N (1, 2 or 3) first acceleration for the acceleration profile
-         | Default: 0
+      -  0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_1``
       -  | Stepper N (1, 2 or 3) first velocity for the acceleration profile
-         | Default: 0
+      -  0
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/a_max``
       -  | Stepper N (1, 2 or 3) max acceleration for the acceleration profile
-         | Default: 6000
+      -  6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_max``
       -  | Stepper N (1, 2 or 3) max velocity for the acceleration profile
-         | Default: 6
+      -  6
       -  0.01 RPM
       -    Ned 2 only
    *  -  ``stepper_N/d_max``
       -  | Stepper N (1, 2 or 3) max deceleration for the acceleration profile
-         | Default: 6000
+      -  6000
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/d_1``
       -  | Stepper N (1, 2 or 3) last deceleration for the acceleration profile
-         | Default: 0
+      -  0
       -  RPM²
       -  Ned 2 only
    *  -  ``stepper_N/v_stop``
       -  | Stepper N (1, 2 or 3) stop velocity for the acceleration profile
-         | Default: 2
+      -  2
       -  0.01 RPM
       -  Ned 2 only
    *  -  ``stepper_N/stall_threshold``
-      -  | Stepper N (1, 2 or 3) stall threshold for which we detect the end of the joint course for the calibration process
-         | Default: 0
+      -  | Stepper N (1, 2 or 3) stall threshold for which we detect
+         | the end of the joint course for the calibration process
+      -  0
       -  N.A.
       -  Ned 2 only
    *  -  ``stepper_N/direction``
-      -  | Stepper N (1, 2 or 3) direction for the calibration (1 = same as motor direction, -1 = against motor direction)
-         | Default: 1
+      -  | Stepper N (1, 2 or 3) direction for the calibration
+         | (1 = same as motor direction, -1 = against motor direction)
+      -  1
       -  N.A.
       -  All versions
    *  -  ``stepper_N/delay``
       -  | Stepper N (1, 2 or 3) delay
-         | Default: 0
+      -  0
       -  milliseconds
       -  All versions
 
@@ -226,7 +234,7 @@ This file comes in a different version for each hardware version. They are locat
       -  RPM
       -  All versions
 
-.. [*] refer to the dedicated motor `reference documentation <https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-profile>`_.
+.. [*] refers to the dedicated motor `reference documentation <https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#what-is-the-profile>`_.
 
 .. list-table:: *steppers_params.yaml* file
    :header-rows: 1
@@ -329,8 +337,8 @@ This file comes in a different version for each hardware version. They are locat
       -  N.A.
       -  Ned 2 only
 
-The velocity profiles for the steppers (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL steppers only (thus for Ned2 only).
-They are defined according to the following graph :
+The velocity profiles for the Stepper motors (in *calibration_params.yaml* and *steppers_params.yaml* files) can be defined for TTL bus only (thus for Ned2 only).
+They are defined according to the following graph:
 
 .. figure:: ../../../images/stack/low_level/steppers_velocity_profiles.png
    :alt: TTL steppers velocity profiles
@@ -396,13 +404,13 @@ Services
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
+      -  Starts motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Reset motor calibration state to "uncalibrated". This will allow the user to ask a new calibration.
+      -  Resets motor calibration state to "uncalibrated". This will allow the user to ask a new calibration.
    *  -  ``niryo_robot/learning_mode/activate``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Change learning mode (Free Motion) state. When learning mode is activated, torques are disabled and the joints can move freely.
+      -  Changes learning mode (Free Motion) state. When learning mode is activated, torques are disabled and the joints can move freely.
    *  -  ``niryo_robot/joints_interface/steppers_reset_controller``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Resets the controller
@@ -455,3 +463,7 @@ Errors and warning messages
 .. |namespace| replace:: /joints_interface/
 .. |namespace_emphasize| replace:: ``/joints_interface/``
 .. |package_path| replace:: ../../../../niryo_robot_hardware_stack/joints_interface
+
+.. |br| raw:: html
+
+     <br>

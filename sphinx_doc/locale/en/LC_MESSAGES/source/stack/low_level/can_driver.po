@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,15 +27,11 @@ msgstr ""
 #: ../../source/stack/low_level/can_driver.rst:4
 msgid ""
 "This package provides an interface between high level ROS packages and "
-"handler of CAN Bus"
-msgstr ""
-
-#: ../../source/stack/low_level/can_driver.rst:5
-msgid "This package uses the mcp_can_rpi for CAN communication."
+"handler of CAN Bus. It uses the mcp_can_rpi for CAN bus communication."
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:6
-msgid "It is used by only NED and ONE."
+msgid "It is used by only Ned and the Niryo One."
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:9
@@ -88,8 +84,8 @@ msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:28
 msgid ""
-"Theses configuration parameters are set to work with Niryo's robot. Do "
-"not edit them."
+"These configuration parameters are set to work with Niryo's robot. Do not"
+" edit them."
 msgstr ""
 
 #: ../../source/stack/low_level/can_driver.rst:30
@@ -250,5 +246,29 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "It is integrated in :doc:`niryo_robot_hardware_interface` package to:"
+#~ msgstr ""
+
+#~ msgid "This package uses the mcp_can_rpi for CAN communication."
+#~ msgstr ""
+
+#~ msgid "It is used by only NED and ONE."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package provides an interface "
+#~ "between high level ROS packages and "
+#~ "handler of CAN Bus"
+#~ msgstr ""
+
+#~ msgid "This package uses the mcp_can_rpi for CAN bus communication."
+#~ msgstr ""
+
+#~ msgid "It is used by only Ned and One."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Theses configuration parameters are set "
+#~ "to work with Niryo's robot. Do not"
+#~ " edit them."
 #~ msgstr ""
 

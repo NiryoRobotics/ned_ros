@@ -1,7 +1,7 @@
 Common
 =====================================
 
-| The Common package defines the common software components of the low level stack. It is split into a model part and a utility part :
+| The Common package defines the common software components of the low level stack. It is split into a model part and a utility part:
 | - The 'model' subpackage defines the model tree needed to keep a virtual state of the robot up to date at any time.
 | - The 'util' subpackage defines cpp interfaces and useful functions
 
@@ -11,7 +11,7 @@ The model subpackage is comprised of:
 
 States
 **************************
-Classes to represent the virtual state of each hardware component at any moment. 
+Classes, to represent the virtual state of each hardware component at any moment. 
 The hierarchy allows powerful polymorphism so that we can interpret each component differently based on the information we need to obtain. 
 
 .. figure:: ../../../images/stack/low_level/classcommon_1_1model_1_1AbstractHardwareState__inherit__graph.png
@@ -55,7 +55,7 @@ Classes representing single and synchronize commands, for steppers and dynamixel
     Single Cmd    Sync Cmd
    ============  ===========
 
-Each type of command is an alias to specified versions of two base template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd
+Each type of command is an alias to specified versions of two base template classes: AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd
 
 Util
 --------------------------
@@ -67,7 +67,7 @@ The util subpackage is comprised of:
 Dependencies
 --------------------------
 This package does not depend on any package.
-This package is a dependency of the following packages :
+This package is a dependency of the following packages:
 
 * can_driver
 * conveyor_interface

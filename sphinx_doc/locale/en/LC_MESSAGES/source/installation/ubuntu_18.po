@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 15:17+0000\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgid ""
 "This guide will explain the steps needed to install the Niryo Robot Stack"
 " on an Ubuntu 18 OS. You can apply these steps to set up a working "
 "simulation environment on any development computer, or to set up a "
-"working robot stack on a raspberry pi."
+"working robot stack on a Raspberry Pi."
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:8
@@ -47,226 +47,219 @@ msgid ""
 "this OS is currently the only official supported OS."
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:23
-msgid "Be sure to have an up to date system before continuing ::"
+#: ../../source/installation/ubuntu_18.rst:20
+msgid "Be sure to have an up to date system before continuing"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:21
-msgid "sudo apt-get update sudo apt-get upgrade sudo apt-get dist-upgrade"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:26
+#: ../../source/installation/ubuntu_18.rst:29
 msgid "Ubuntu packages"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:28
+#: ../../source/installation/ubuntu_18.rst:31
 msgid ""
 "The Niryo ROS Stack needs the following packages in order to run "
 "correctly:"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:30
+#: ../../source/installation/ubuntu_18.rst:33
 msgid "build-essential"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:31
+#: ../../source/installation/ubuntu_18.rst:34
 msgid "sqlite3"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:32
+#: ../../source/installation/ubuntu_18.rst:35
 msgid "ffmpeg"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:35
+#: ../../source/installation/ubuntu_18.rst:38
 msgid ""
 "These packages are mostly useful on a real robot, but as the code is "
 "identical between simulation and real functioning, a lack of these "
 "packages on a simulation can lead to unstabilities."
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:40
+#: ../../source/installation/ubuntu_18.rst:43
 msgid "Python environment"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:42
-msgid ""
-"The python environment is installed using the requirements_ned2.txt file "
-"::"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:47
-msgid ""
-"ROS Melodic is still using python2 internally. We are aligning our python"
-" version to it so you need to install the requirements using python2 pip "
-"tool"
+#: ../../source/installation/ubuntu_18.rst:45
+msgid "The Python environment is installed using the requirements_ned2.txt file"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:52
+msgid ""
+"ROS Melodic is still using Python2 internally so are our Python scripts "
+"to keep version alignment. You thus need to install the requirements "
+"using Python2 pip2 tool"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:56
 msgid "ROS set up"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:55
+#: ../../source/installation/ubuntu_18.rst:59
 msgid "All terminal command listed are for Ubuntu users."
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:58
+#: ../../source/installation/ubuntu_18.rst:62
 msgid ""
 "Place yourself in the folder of your choice and create a folder "
 "**catkin_ws_niryo_ned** as well as a sub-folder **src**: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:63
+#: ../../source/installation/ubuntu_18.rst:67
 msgid ""
 "Then go to the folder **catkin_ws_niryo_ned** and clone Ned repository in"
-" the folder **src**. For the future operation, be sure to stay in the "
+" the folder **src**. For the future operations, be sure to stay in the "
 "**catkin_ws_niryo_ned** folder: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:72
+#: ../../source/installation/ubuntu_18.rst:76
 msgid "Install ROS dependencies"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:75
+#: ../../source/installation/ubuntu_18.rst:79
 msgid "Install ROS"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:77
+#: ../../source/installation/ubuntu_18.rst:81
 msgid ""
-"You firstly need to install ROS Melodic. To do so, follow the ROS "
-"official tutorial `here "
-"<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the "
-"**Desktop-Full Install**."
+"You need to install ROS Melodic. To do so, follow the ROS official "
+"tutorial `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
+"chose the **Desktop-Full Install**."
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:82
+#: ../../source/installation/ubuntu_18.rst:86
 msgid "Install additional packages"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:83
+#: ../../source/installation/ubuntu_18.rst:87
 msgid ""
 "To ensure the functioning of all Ned's packages, you need to install "
 "several more packages:"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:87
+#: ../../source/installation/ubuntu_18.rst:91
 msgid "Method 1: Quick installation via ROSDep"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:88
+#: ../../source/installation/ubuntu_18.rst:92
 msgid ""
-"For each packages, we have referenced all the dependencies in their "
-"respective *package.xml* file, which allow to install each dependency via"
-" *rosdep* command: ::"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:96
-msgid "Method 2: Full installation"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:98
-msgid "ROS packages needed are:"
+"For each package, we have referenced all the dependencies in their "
+"respective *package.xml* file, which allows to install each dependency "
+"via *rosdep* command: ::"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:100
-msgid "catkin"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:101
-msgid "python-catkin-pkg"
+msgid "Method 2: Full installation"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:102
-msgid "python-pymodbus"
-msgstr ""
-
-#: ../../source/installation/ubuntu_18.rst:103
-msgid "python-rosdistro"
+msgid "ROS packages needed are:"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:104
-msgid "python-rospkg"
+msgid "catkin"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:105
-msgid "python-rosdep-modules"
+msgid "python-catkin-pkg"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:106
-msgid "python-rosinstall python-rosinstall-generator"
+msgid "python-pymodbus"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:107
-msgid "python-wstool"
+msgid "python-rosdistro"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:108
+msgid "python-rospkg"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:109
+msgid "python-rosdep-modules"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:110
+msgid "python-rosinstall python-rosinstall-generator"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:111
+msgid "python-wstool"
+msgstr ""
+
+#: ../../source/installation/ubuntu_18.rst:113
 msgid "To install a package on Ubuntu: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:114
+#: ../../source/installation/ubuntu_18.rst:118
 msgid "Melodic specific packages needed are:"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:116
+#: ../../source/installation/ubuntu_18.rst:120
 msgid "moveit"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:117
+#: ../../source/installation/ubuntu_18.rst:121
 msgid "control"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:118
+#: ../../source/installation/ubuntu_18.rst:122
 msgid "controllers"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:119
+#: ../../source/installation/ubuntu_18.rst:123
 msgid "tf2-web-republisher"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:120
+#: ../../source/installation/ubuntu_18.rst:124
 msgid "rosbridge-server"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:121
+#: ../../source/installation/ubuntu_18.rst:125
 msgid "joint-state-publisher-gui"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:123
+#: ../../source/installation/ubuntu_18.rst:127
 msgid "To install a ROS Melodic's package on Ubuntu: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:129
+#: ../../source/installation/ubuntu_18.rst:133
 msgid "Setup Ned ROS environment"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:132
+#: ../../source/installation/ubuntu_18.rst:136
 msgid "Be sure to be still placed in the **catkin_ws_niryo_ned** folder."
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:134
+#: ../../source/installation/ubuntu_18.rst:138
 msgid "Then perform the **make** of Ned's ROS Stack via the command: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:138
+#: ../../source/installation/ubuntu_18.rst:142
 msgid ""
 "If no errors occurred during the **make** phase, the setup of your "
 "environment is almost complete!"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:141
+#: ../../source/installation/ubuntu_18.rst:145
 msgid ""
 "It is necessary to source the configuration file to add all Ned packages "
 "to ROS environment. To do so, run the command: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:146
+#: ../../source/installation/ubuntu_18.rst:150
 msgid ""
 "It is necessary to run this command each time you launch a new terminal. "
 "If you want to make this sourcing appends for all your future terminals, "
 "you can add it to your **bashrc** file: ::"
 msgstr ""
 
-#: ../../source/installation/ubuntu_18.rst:153
+#: ../../source/installation/ubuntu_18.rst:157
 msgid "Installation is now finished!"
 msgstr ""
 
@@ -298,5 +291,60 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Be sure to have an up to date system before continuing."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This guide will explain the steps "
+#~ "needed to install the Niryo Robot "
+#~ "Stack on an Ubuntu 18 OS. You "
+#~ "can apply these steps to set up"
+#~ " a working simulation environment on "
+#~ "any development computer, or to set "
+#~ "up a working robot stack on a "
+#~ "raspberry pi."
+#~ msgstr ""
+
+#~ msgid "Be sure to have an up to date system before continuing ::"
+#~ msgstr ""
+
+#~ msgid "sudo apt-get update sudo apt-get upgrade sudo apt-get dist-upgrade"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The python environment is installed "
+#~ "using the requirements_ned2.txt file ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "ROS Melodic is still using python2 "
+#~ "internally. We are aligning our python"
+#~ " version to it so you need to"
+#~ " install the requirements using python2 "
+#~ "pip tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then go to the folder "
+#~ "**catkin_ws_niryo_ned** and clone Ned "
+#~ "repository in the folder **src**. For"
+#~ " the future operation, be sure to "
+#~ "stay in the **catkin_ws_niryo_ned** folder:"
+#~ " ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You firstly need to install ROS "
+#~ "Melodic. To do so, follow the ROS"
+#~ " official tutorial `here "
+#~ "<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
+#~ "chose the **Desktop-Full Install**."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For each packages, we have referenced"
+#~ " all the dependencies in their "
+#~ "respective *package.xml* file, which allow "
+#~ "to install each dependency via *rosdep*"
+#~ " command: ::"
 #~ msgstr ""
 
