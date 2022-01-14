@@ -1326,3 +1326,6 @@ msgstr "ID de la broche"
 #~ msgid "Activate electromagnet associated to electromagnet_id on pin_id"
 #~ msgstr "Activer l'électroaimant associé à electromagnet_id sur pin_id"
 
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID:1 of
+msgid "Pins ID"
+msgstr "ID de la broche"

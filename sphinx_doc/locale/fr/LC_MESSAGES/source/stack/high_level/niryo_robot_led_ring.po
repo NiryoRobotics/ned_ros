@@ -1409,3 +1409,204 @@ msgstr ""
 #~ msgid "Remake the GIFs"
 #~ msgstr ""
 
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.solid:1 of
+msgid "Set the whole Led Ring to a fixed color."
+msgstr "Réglez l'ensemble de l'anneau LED sur une couleur fixe."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.solid:12
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.turn_off:7
+#: of
+msgid ""
+"The service wait for the animation to finish or not to answer. For this "
+"method, the action is quickly done, so waiting doesn't take a lot of "
+"time."
+msgstr "Le service attend que l'animation se termine ou ne réponde pas."
+"Pour cette "méthode, l'action se fait rapidement, donc l'attente"
+"ne prend pas beaucoup de temps."
+
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.turn_off:1
+#: of
+msgid "Turn off all Leds"
+msgstr "Éteignez toutes les Leds"
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:1
+#: of
+msgid ""
+"Flashes a color according to a frequency. The frequency is equal to 1 / "
+"period."
+msgstr "Clignote une couleur selon une fréquence. La fréquence est égale"
+"à 1/période."
+
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.breath:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.chase:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up_down:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.snake:3
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.wipe:3 of
+msgid "Examples: ::"
+msgstr "Exemples: ::"
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:19
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.breath:13
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.chase:13
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:17
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up:14
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up_down:14
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:9
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:9
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:9
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.wipe:13 of
+msgid ""
+"Execution time for a pattern in seconds. If 0, the default time will be "
+"used."
+msgstr "Temps d'exécution d'un motif en secondes. Si 0, la période par défaut"
+"sera utilisée."
+
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:19
+#: of
+msgid "Number of consecutive flashes. If 0, the Led Ring flashes endlessly."
+msgstr "Nombre de clignotements consécutifs. Si 0, la Led Ring clignote"
+"sans indéfiniment."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:23
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.chase:18
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.flashing:21
+#: of
+msgid ""
+"The service wait for the animation to finish all iterations or not to "
+"answer. If iterations is 0, the service answers immediately."
+msgstr "Le service attend que l'animation termine toutes les itérations"
+"ou non pour répondre. Si le nombre d'itérations est à 0, le service répond"
+"immédiatement."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:1
+#: of
+msgid "Several colors are alternated one after the other."
+msgstr "Plusieurs couleurs sont alternées les unes après les autres."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:17
+#: of
+msgid ""
+"Led color list of lists of size 3[R, G, B] or ColorRGBA objects. RGB "
+"channels from 0 to 255."
+msgstr "Liste des couleurs des leds des listes d'objets de taille 3[R,"
+"G, B] ou ColorRGBA. Les canaux RVB ont une valeur comprise entre 0 et 255."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.alternate:21
+#: of
+msgid ""
+"Number of consecutive alternations. If 0, the Led Ring alternates "
+"endlessly."
+msgstr "Nombre d'alternances consécutives. Si 0, le Led Ring alterne"
+"indéfiniment."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.chase:1 of
+msgid "Movie theater light style chaser animation."
+msgstr "Animation de Chase de style lumière de cinéma."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.chase:15 of
+msgid ""
+"Number of consecutive chase. If 0, the animation continues endlessly. One"
+" chase just lights one Led every 3 Leds."
+msgstr "Nombre de Chase consécutives. Si 0, l'animation continue"
+"indéfiniment. Un Chase allume juste une Led sur 3.""
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.wipe:1 of
+msgid "Wipe a color across the Led Ring, light a Led at a time."
+msgstr "Essuyez une couleur sur l'anneau LED, allumez une LED à la fois."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.wipe:15 of
+msgid "The service wait for the animation to finish or not to answer."
+msgstr "Le service attend que l'animation se termine ou ne réponde pas."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:1 of
+msgid "Draw rainbow that fades across all Leds at once."
+msgstr "Dessinez un arc-en-ciel qui s'estompe sur toutes les LED à la"
+"fois."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:11
+#: of
+msgid "Number of consecutive rainbows. If 0, the animation continues endlessly."
+msgstr "Nombre d'arcs-en-ciel consécutifs. Si 0, l'animation continue"
+"indéfiniment."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.breath:18
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up:19
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up_down:19
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow:13
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:13
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:13
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.snake:18 of
+msgid ""
+"The service wait for the animation to finish or not to answer. If "
+"iterations is 0, the service answers immediately."
+msgstr "Le service attend que l'animation se termine ou ne réponde pas."
+"Si le nombre d'itérations vaut 0, le service est non bloquant."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:1
+#: of
+msgid "Draw rainbow that uniformly distributes itself across all Leds."
+msgstr "Dessinez un arc-en-ciel qui se répartit uniformément sur toutes"
+"les LED."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:11
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_cycle:11
+#: of
+msgid ""
+"Number of consecutive rainbow cycles. If 0, the animation continues "
+"endlessly."
+msgstr "Nombre de cycles arc-en-ciel consécutifs. Si 0, l'animation continue"
+"indéfiniment."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.rainbow_chase:1
+#: of
+msgid "Rainbow chase animation, like the led_ring_chase method."
+msgstr "Animation de Chase arc-en-ciel, comme la méthode led_ring_chase."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up:1 of
+msgid "Leds turn on like a loading circle, and are then all turned off at once."
+msgstr "Les LED s'allument comme un cercle de chargement, puis s'éteignent"
+"toutes en même temps."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.breath:15
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up:16
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up_down:16
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.snake:15 of
+msgid ""
+"Number of consecutive turns around the Led Ring. If 0, the animation "
+"continues endlessly."
+msgstr "Nombre de tours consécutifs autour du Led Ring. Si 0, l'animation"
+"continue indéfiniment."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.go_up_down:1
+#: of
+msgid "Leds turn on like a loading circle, and are turned off the same way."
+msgstr "Les LED s'allument comme un cercle de chargement et s'éteignent"
+"de la même manière."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.breath:1 of
+msgid ""
+"Variation of the light intensity of the LED ring, similar to human "
+"breathing."
+msgstr "Variation de l'intensité lumineuse de l'anneau LED, similaire"
+"à la respiration humaine."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.snake:1 of
+msgid "A small coloured snake (certainly a python :D ) runs around the LED ring."
+msgstr "Un petit serpent coloré (certainement un python :D ) se déplace autour"
+"de l'anneau LED."
+
+#: niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper.snake:13 of
+msgid ""
+"Execution time for a pattern in seconds. If 0, the default duration will "
+"be used."
+msgstr "Temps d'exécution d'un motif en secondes. Si 0, la durée par"
+"défaut sera utilisée."

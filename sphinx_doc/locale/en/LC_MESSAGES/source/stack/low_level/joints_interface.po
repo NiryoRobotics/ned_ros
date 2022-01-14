@@ -304,6 +304,7 @@ msgid "1"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:101
+#: ../../source/stack/low_level/joints_interface.rst:106
 #: ../../source/stack/low_level/joints_interface.rst:111
 #: ../../source/stack/low_level/joints_interface.rst:121
 #: ../../source/stack/low_level/joints_interface.rst:136
