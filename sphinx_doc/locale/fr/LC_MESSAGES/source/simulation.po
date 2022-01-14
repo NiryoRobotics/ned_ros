@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 14:24+0100\n"
+"POT-Creation-Date: 2022-01-12 17:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 
 #: ../../source/simulation.rst:3
 msgid "Use Niryo robot through simulation"
-msgstr "Utilisation du robot Niryo via la simulation"
+msgstr "Utiliser les robots Niryo via la simulation"
 
 #: ../../source/simulation.rst:5
 msgid ""
@@ -37,9 +37,10 @@ msgid "Ned in Gazebo Simulation"
 msgstr "Ned dans la simulation de Gazebo"
 
 #: ../../source/simulation.rst:13
-msgid "In this tutorial, you will learn how to setup simulation on a computer."
-msgstr ""
-"Avec ce tutoriel, apprenez à configurer une simulation sur un ordinateur."
+msgid ""
+"In this tutorial, you will learn how to setup a robot simulation on a "
+"computer."
+msgstr "Avec ce tutoriel, apprenez à configurer une simulation sur un ordinateur."
 
 #: ../../source/simulation.rst:16
 msgid ""
@@ -50,39 +51,37 @@ msgstr ""
 "simulation<>`. Pour cela il vous suffit de connecter Niryo Studio en "
 "\"Localhost\"."
 
-#: ../../source/simulation.rst:20
+#: ../../source/simulation.rst:21
 msgid "Simulation environment installation"
 msgstr "Installation de l'environnement de simulation"
 
-#: ../../source/simulation.rst:23
+#: ../../source/simulation.rst:24
 msgid ""
 "The whole ROS Stack is developed and tested on ROS **Melodic** which "
-"requires **Ubuntu 18.04** to run correctly. The using of another ROS version "
-"or OS may lead to malfunctions of some packages. Please follow the steps in "
-":ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
+"requires **Ubuntu 18.04** to run correctly. The using of another ROS "
+"version or OS may lead to malfunctions of some packages. Please follow "
+"the steps in :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation` "
+"to install a working environment."
 msgstr ""
-"L'ensemble de la stack ROS est développée et testée sur ROS **Melodic** qui "
-"nécessite **Ubuntu 18.04** pour fonctionner correctement. L'utilisation "
-"d'une autre version de ROS ou d'un autre système d'exploitation peut "
-"entraîner les dysfonctionnements de certains packages. Veuillez suivre les "
-"étapes indiquées dans :ref:`source/installation/ubuntu_18:Ubuntu 18 "
-"Installation` pour installer un environnement fonctionnel."
+"L'ensemble de la stack ROS est développée et testée sur ROS **Melodic** "
+"qui nécessite **Ubuntu 18.04** pour fonctionner correctement. "
+"L'utilisation d'une autre version de ROS ou d'un autre système "
+"d'exploitation peut entraîner les dysfonctionnements de certains "
+"packages. Veuillez suivre les étapes indiquées dans "
+":ref:`source/installation/ubuntu_18:Ubuntu 18 Installation` pour "
+"installer un environnement fonctionnel."
 
-#: ../../source/simulation.rst:28
-msgid "to install a working environment."
-msgstr "pour installer un environnement fonctionnel."
-
-#: ../../source/simulation.rst:31
+#: ../../source/simulation.rst:30
 msgid "Simulation usage"
 msgstr "Utilisation de la simulation"
 
-#: ../../source/simulation.rst:34
+#: ../../source/simulation.rst:33
 msgid "Hardware features are simulated as if you were using a real robot."
 msgstr ""
 "Les fonctionnalités materielles sont simulées comme si vous utilisiez un "
 "robot réel."
 
-#: ../../source/simulation.rst:35
+#: ../../source/simulation.rst:34
 msgid ""
 "The data returned by the faked drivers is arbitrary and immutable. Among "
 "this data, you will have : voltage, temperature, error state (always 0), "
@@ -92,16 +91,16 @@ msgstr ""
 "Parmi ces données, vous trouverez : voltage, température, état d'erreur "
 "(toujours 0), ping (toujours vrai), état du end effector (immuable)"
 
-#: ../../source/simulation.rst:40
+#: ../../source/simulation.rst:39
 msgid ""
-"The simulation is a powerful tool allowing to test new programs directly on "
-"your computer which prevent to transfer new code on the robot."
+"The simulation is a powerful tool allowing to test new programs directly "
+"on your computer which prevents to transfer new code on the robot."
 msgstr ""
 "La simulation est un outil puissant qui permet de tester de nouveaux "
 "programmes directement sur votre ordinateur en évitant de transférer un "
 "nouveau code sur le robot."
 
-#: ../../source/simulation.rst:42
+#: ../../source/simulation.rst:41
 msgid ""
 "It also helps for developing purpose → no need to transfer code, compile and "
 "restart the robot which is way slower than doing it on a desktop computer."
@@ -110,11 +109,11 @@ msgstr ""
 "du code, de compiler et de redémarrer le robot, ce qui est beaucoup plus "
 "lent que de le faire sur un ordinateur de bureau."
 
-#: ../../source/simulation.rst:45
-msgid "Without physics - No Visualization"
+#: ../../source/simulation.rst:44
+msgid "Without physics - No visualization"
 msgstr "Sans physique - Pas de Visualisation"
 
-#: ../../source/simulation.rst:47
+#: ../../source/simulation.rst:46
 msgid ""
 "This mode is mainly for simulation and tests purpose, bringing you in the "
 "closest state as possible to a real robot control. It is available for all "
@@ -125,203 +124,204 @@ msgstr ""
 "pour toutes les architectures actuellement supportées. Vous pouvez y accéder "
 "par la commande :"
 
-#: ../../source/simulation.rst:51
+#: ../../source/simulation.rst:50
 msgid "One simulation: ::"
 msgstr "Simulation du One : ::"
 
-#: ../../source/simulation.rst:55
+#: ../../source/simulation.rst:54
 msgid "Ned simulation: ::"
 msgstr "Simulation du One : ::"
 
-#: ../../source/simulation.rst:59
+#: ../../source/simulation.rst:58
 msgid "Ned2 simulation: ::"
 msgstr "Simulation du Ned2 : ::"
 
-#: ../../source/simulation.rst:64
+#: ../../source/simulation.rst:63
 msgid ""
-"This mode is useful if your CPU capacity is limited or if you don't have X "
-"server available."
+"This mode is useful if your CPU capacity is limited or if you don't have "
+"X server available."
 msgstr ""
-"Ce mode est utile si vos capacités de calcul sont limitées ou si vous n'avez "
-"pas de serveur X disponible."
+"Ce mode est utile si vos capacités de calcul sont limitées ou si vous "
+"n'avez pas de serveur X disponible."
 
-#: ../../source/simulation.rst:67
+#: ../../source/simulation.rst:66
 msgid "Options"
 msgstr "Options"
 
-#: ../../source/simulation.rst:68
+#: ../../source/simulation.rst:67
 msgid ""
-"This mode is the more flexible one, as it provides all the possible options "
-"to customize the simulation. For the other simulation modes (with RViz and "
-"Gazebo) we will just force some of these parameters to specific values."
+"This mode is the more flexible one, as it provides all the possible "
+"options to customize the simulation. For the other simulation modes (with"
+" RViz and Gazebo) we will just force some of these parameters to specific"
+" values."
 msgstr ""
 "Ce mode est le mode le plus flexible, car il procure toutes les options "
-"possibles pour personnaliser la simulation. Les autres modes de simulation "
-"(avec RViz et Gazebo), certains paramètres seront forcés à certaines valeurs."
+"possibles pour personnaliser la simulation. Les autres modes de "
+"simulation (avec RViz et Gazebo), certains paramètres seront forcés à "
+"certaines valeurs."
 
-#: ../../source/simulation.rst:72
+#: ../../source/simulation.rst:71
 msgid "Simulation without visualization Options"
 msgstr "Options de la simulation sans visualisation"
 
-#: ../../source/simulation.rst:78 ../../source/simulation.rst:156
-#: ../../source/simulation.rst:233
+#: ../../source/simulation.rst:77 ../../source/simulation.rst:157
+#: ../../source/simulation.rst:235
 msgid "Name"
 msgstr "Nom"
 
-#: ../../source/simulation.rst:79 ../../source/simulation.rst:157
-#: ../../source/simulation.rst:234
+#: ../../source/simulation.rst:78 ../../source/simulation.rst:158
+#: ../../source/simulation.rst:236
 msgid "Default Value"
 msgstr "Valeur par défaut"
 
-#: ../../source/simulation.rst:80 ../../source/simulation.rst:158
-#: ../../source/simulation.rst:235
+#: ../../source/simulation.rst:79 ../../source/simulation.rst:159
+#: ../../source/simulation.rst:237
 msgid "Description"
 msgstr "Description"
 
-#: ../../source/simulation.rst:81 ../../source/simulation.rst:159
-#: ../../source/simulation.rst:236
+#: ../../source/simulation.rst:80 ../../source/simulation.rst:160
+#: ../../source/simulation.rst:238
 msgid "log_level"
 msgstr "log_level"
 
-#: ../../source/simulation.rst:82 ../../source/simulation.rst:160
-#: ../../source/simulation.rst:237
+#: ../../source/simulation.rst:81 ../../source/simulation.rst:161
+#: ../../source/simulation.rst:239
 msgid "INFO"
 msgstr "INFO"
 
-#: ../../source/simulation.rst:83 ../../source/simulation.rst:161
-#: ../../source/simulation.rst:238
+#: ../../source/simulation.rst:82 ../../source/simulation.rst:162
+#: ../../source/simulation.rst:240
 msgid "Log level to display for ROS loggers"
 msgstr "Niveau de log à afficher pour les loggeurs ROS"
 
-#: ../../source/simulation.rst:84
+#: ../../source/simulation.rst:83
 msgid "ttl_enabled"
 msgstr "ttl_enabled"
 
-#: ../../source/simulation.rst:85 ../../source/simulation.rst:88
-#: ../../source/simulation.rst:97 ../../source/simulation.rst:100
-#: ../../source/simulation.rst:103 ../../source/simulation.rst:169
-#: ../../source/simulation.rst:246 ../../source/simulation.rst:252
-#: ../../source/simulation.rst:255
+#: ../../source/simulation.rst:84 ../../source/simulation.rst:87
+#: ../../source/simulation.rst:96 ../../source/simulation.rst:99
+#: ../../source/simulation.rst:102 ../../source/simulation.rst:170
+#: ../../source/simulation.rst:248 ../../source/simulation.rst:254
+#: ../../source/simulation.rst:257
 msgid "true"
 msgstr "true"
 
-#: ../../source/simulation.rst:86
+#: ../../source/simulation.rst:85
 msgid ""
-"Enable or disable the TTL bus usage. This feature is used for debug mainly "
-"and can lead to an unstable stack."
+"Enable or disable the TTL bus usage. This feature is used for debug "
+"mainly and can lead to an unstable stack."
 msgstr ""
 "Active ou désactive l'usage du bus TTL. Cette fonctionnalité est "
 "principalement utilisée pour débugguer et peut mener à un fonctionnement "
 "instable de la stack."
 
-#: ../../source/simulation.rst:87
+#: ../../source/simulation.rst:86
 msgid "can_enabled"
 msgstr "can_enabled"
 
-#: ../../source/simulation.rst:89
+#: ../../source/simulation.rst:88
 msgid ""
-"Enable or disable the CAN bus usage. This feature is used for debug mainly "
-"and can lead to an unstable stack."
+"Enable or disable the CAN bus usage. This feature is used for debug "
+"mainly and can lead to an unstable stack."
 msgstr ""
 "Active ou désactive l'usage du bus CAN. Cette fonctionnalité est "
 "principalement utilisée pour débugguer et peut mener à un fonctionnement "
 "instable de la stack."
 
-#: ../../source/simulation.rst:90 ../../source/simulation.rst:165
-#: ../../source/simulation.rst:242
+#: ../../source/simulation.rst:89 ../../source/simulation.rst:166
+#: ../../source/simulation.rst:244
 msgid "debug"
 msgstr "debug"
 
-#: ../../source/simulation.rst:91 ../../source/simulation.rst:106
-#: ../../source/simulation.rst:166 ../../source/simulation.rst:175
-#: ../../source/simulation.rst:178 ../../source/simulation.rst:243
+#: ../../source/simulation.rst:90 ../../source/simulation.rst:105
+#: ../../source/simulation.rst:167 ../../source/simulation.rst:176
+#: ../../source/simulation.rst:179 ../../source/simulation.rst:245
 msgid "false"
 msgstr "false"
 
-#: ../../source/simulation.rst:92 ../../source/simulation.rst:167
-#: ../../source/simulation.rst:244
+#: ../../source/simulation.rst:91 ../../source/simulation.rst:168
+#: ../../source/simulation.rst:246
 msgid "Launch in debug mode. For development and debug only."
 msgstr ""
 "Lance la stack en mode debug. Pour le développement et le debugguage "
 "seulement."
 
-#: ../../source/simulation.rst:93 ../../source/simulation.rst:171
-#: ../../source/simulation.rst:248
+#: ../../source/simulation.rst:92 ../../source/simulation.rst:172
+#: ../../source/simulation.rst:250
 msgid "conf_location"
 msgstr "conf_location"
 
-#: ../../source/simulation.rst:94 ../../source/simulation.rst:172
-#: ../../source/simulation.rst:249
+#: ../../source/simulation.rst:93 ../../source/simulation.rst:173
+#: ../../source/simulation.rst:251
 msgid "version.txt"
 msgstr "version.txt"
 
-#: ../../source/simulation.rst:95 ../../source/simulation.rst:173
-#: ../../source/simulation.rst:250
+#: ../../source/simulation.rst:94 ../../source/simulation.rst:174
+#: ../../source/simulation.rst:252
 msgid "Location of the version.txt file. A path to the file is required."
-msgstr ""
-"Localisation du fichier version.txt. Un chemin vers ce fichier est requis."
+msgstr "Localisation du fichier version.txt. Un chemin vers ce fichier est requis."
 
-#: ../../source/simulation.rst:96 ../../source/simulation.rst:174
+#: ../../source/simulation.rst:95 ../../source/simulation.rst:175
 msgid "simu_gripper"
 msgstr "simu_gripper"
 
-#: ../../source/simulation.rst:98
+#: ../../source/simulation.rst:97
 msgid "Simulate the presence of a gripper id 11 on the bus"
 msgstr "Simule la présence d'un outil d'id 11 sur le bus"
 
-#: ../../source/simulation.rst:99 ../../source/simulation.rst:177
-#: ../../source/simulation.rst:254
+#: ../../source/simulation.rst:98 ../../source/simulation.rst:178
+#: ../../source/simulation.rst:256
 msgid "simu_conveyor"
 msgstr "simu_conveyor"
 
-#: ../../source/simulation.rst:101
+#: ../../source/simulation.rst:100
 msgid ""
 "Simulate the presence of a conveyor (CAN for One and Ned, TTL for Ned2, "
 "based on configuration files) on the bus"
 msgstr ""
-"Siluma la présence d'un convoyeur (CAN pour le One et le Ned, TTL pour le "
-"Ned2, d'après les fichiers de configuration) sur le bus"
+"Siluma la présence d'un convoyeur (CAN pour le One et le Ned, TTL pour le"
+" Ned2, d'après les fichiers de configuration) sur le bus"
 
-#: ../../source/simulation.rst:102
+#: ../../source/simulation.rst:101
 msgid "vision_enabled"
 msgstr "vision_enabled"
 
-#: ../../source/simulation.rst:104
+#: ../../source/simulation.rst:103
 msgid "Enable the Vision Kit"
 msgstr "Active le kit vision"
 
-#: ../../source/simulation.rst:105
+#: ../../source/simulation.rst:104
 msgid "gazebo"
 msgstr "gazebo"
 
-#: ../../source/simulation.rst:107
+#: ../../source/simulation.rst:106
 msgid ""
-"Enable gazebo specific parameters (However it does not launch gazebo, use "
-"gazebo specific launch file for that)"
+"Enable gazebo specific parameters (However it does not launch gazebo, use"
+" gazebo specific launch file for that)"
 msgstr ""
-"Active les paramètres dédiés à gazebo (Cependant cela ne lance pas gazebp, "
-"utilisez le fichier launch dédié à gazebo pour cela)"
+"Active les paramètres dédiés à gazebo (Cependant cela ne lance pas "
+"gazebp, utilisez le fichier launch dédié à gazebo pour cela)"
 
-#: ../../source/simulation.rst:110
+#: ../../source/simulation.rst:109
 msgid "Without physics - RViz Visualization"
 msgstr "Sans physique - RViz Visualisation"
 
-#: ../../source/simulation.rst:112
+#: ../../source/simulation.rst:111
 msgid ""
-"A simple visualization of the robot is possible via a tool called Rviz. This "
-"application will simulate the robot with its correct geometry and positions "
-"but without physics to avoid using too much CPU."
+"A simple visualization of the robot is possible via a tool called Rviz. "
+"This application will simulate the robot with its correct geometry and "
+"positions but without physics to avoid using too much CPU."
 msgstr ""
 "Une simple visualisation du robot est possible via un outil appelé RViz. "
 "Cette application va simuler le robot avec sa géométrie et ses positions "
 "correctes mais sans moteur physique pour éviter d'utiliser trop de "
 "processeur."
 
-#: ../../source/simulation.rst:116
+#: ../../source/simulation.rst:115
 msgid "Control with trackbar"
 msgstr "Contrôler avec Trackbar"
 
-#: ../../source/simulation.rst:118
+#: ../../source/simulation.rst:117
 msgid ""
 "This visualization allows an easy first control of the robot, and helps to "
 "understand joints disposal. You can access it by using the command: ::"
@@ -329,7 +329,7 @@ msgstr ""
 "Cette visualisation permet un premier contrôle facile du robot et aide à "
 "comprendre la position des axes. Utiliser la commande pour y accéder : ::"
 
-#: ../../source/simulation.rst:123
+#: ../../source/simulation.rst:122
 msgid ""
 "Rviz should open with a window containing 6 trackbars. Each of these "
 "trackbars allows to control the corresponding joint."
@@ -347,46 +347,45 @@ msgstr "Contrôler via ROS"
 
 #: ../../source/simulation.rst:135
 msgid ""
-"Not only `RViz <http://wiki.ros.org/rviz>`_ can display the robot, it can "
-"also be linked with ROS controllers to show robot's actions from ROS "
-"commands!"
+"Not only `Rviz <http://wiki.ros.org/rviz>`_ can display the robot, but it"
+" can also be linked with ROS controllers to show the robot's actions from"
+" ROS commands!"
 msgstr ""
-"Non seulement `RViz<http://wiki.ros.org/rviz>`_ peut afficher le robot, mais "
-"il peut également être lié aux contrôleurs ROS pour afficher les actions du "
-"robot à partir des commandes ROS !"
+"Non seulement `RViz <http://wiki.ros.org/rviz>`_ peut afficher le robot, "
+"mais il peut également être lié aux contrôleurs ROS pour afficher les "
+"actions du robot à partir des commandes ROS !"
 
 #: ../../source/simulation.rst:136
-msgid ""
-"This method can help you debug ROS topics, services and also, API scripts."
+msgid "This method can help you debug ROS topics, services and also, API scripts."
 msgstr ""
-"Cette méthode peut aider à debugguer les topics et ervices ROS ainsi que les "
-"scripts des API."
+"Cette méthode peut aider à debugguer les topics et ervices ROS ainsi que "
+"les scripts des API."
 
-#: ../../source/simulation.rst:138 ../../source/simulation.rst:201
+#: ../../source/simulation.rst:138 ../../source/simulation.rst:202
 msgid "To run it: ::"
 msgstr "Pour l'exécuter : ::"
 
-#: ../../source/simulation.rst:145
+#: ../../source/simulation.rst:146
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
 msgstr "L’ouverture de Rviz, avec le robot prêt à être contrôlé avec ROS !"
 
-#: ../../source/simulation.rst:148
+#: ../../source/simulation.rst:149
 msgid "RViz Visualization options"
 msgstr "Option de Visualisation RViz"
 
-#: ../../source/simulation.rst:150
+#: ../../source/simulation.rst:151
 msgid "Table of RViz launch Options"
 msgstr "Table des options de lancement de RViz"
 
-#: ../../source/simulation.rst:162 ../../source/simulation.rst:239
+#: ../../source/simulation.rst:163 ../../source/simulation.rst:241
 msgid "hardware_version"
 msgstr "hardware_version"
 
-#: ../../source/simulation.rst:163 ../../source/simulation.rst:240
+#: ../../source/simulation.rst:164 ../../source/simulation.rst:242
 msgid "ned"
 msgstr "ned"
 
-#: ../../source/simulation.rst:164 ../../source/simulation.rst:241
+#: ../../source/simulation.rst:165 ../../source/simulation.rst:243
 msgid ""
 "Use the parameters dedicated to this specific hardware_version. Possible "
 "values are \"one\", \"ned\" and \"ned2\""
@@ -394,35 +393,36 @@ msgstr ""
 "Utilise les paramètres dédiés à cette version matérielle. Les valeurs "
 "acceptées sont \"one\", \"ned\" et \"ned2\""
 
-#: ../../source/simulation.rst:168 ../../source/simulation.rst:245
+#: ../../source/simulation.rst:169 ../../source/simulation.rst:247
 msgid "gui"
 msgstr "gui"
 
-#: ../../source/simulation.rst:170 ../../source/simulation.rst:247
+#: ../../source/simulation.rst:171 ../../source/simulation.rst:249
 msgid "Enable the gui visualization"
 msgstr "Active la visualisation de l'interface graphique"
 
-#: ../../source/simulation.rst:176
+#: ../../source/simulation.rst:177
 msgid ""
-"Simulate the presence of a gripper id 11 on the bus (Visualisation of the "
-"tool will not be visible, whatever the value of this parameter)"
+"Simulate the presence of a gripper id 11 on the bus (Visualisation of the"
+" tool will not be visible, whatever the value of this parameter)"
 msgstr ""
-"Simula la présence d'un outils d'id 11 sur le bus (l'outil ne sera cependant "
-"pas visible dans la visualisation, quelque soit la valeur de ce paramètre)"
+"Simula la présence d'un outils d'id 11 sur le bus (l'outil ne sera "
+"cependant pas visible dans la visualisation, quelque soit la valeur de ce"
+" paramètre)"
 
-#: ../../source/simulation.rst:179 ../../source/simulation.rst:256
+#: ../../source/simulation.rst:180 ../../source/simulation.rst:258
 msgid ""
-"Simulate the presence of a conveyor (Visualisation of the conveyor will not "
-"be visible, whatever the value of this parameter)"
+"Simulate the presence of a conveyor (Visualisation of the conveyor will "
+"not be visible, whatever the value of this parameter)"
 msgstr ""
 "Simule la présence d'un convoyeur (le convoyeur ne sera cependant pas "
 "visible dans la simulation, quelque soit la valeur de ce paramètre)"
 
-#: ../../source/simulation.rst:182
+#: ../../source/simulation.rst:183
 msgid "With physics - Gazebo Simulation"
 msgstr "Sans physique - Simulation Gazebo"
 
-#: ../../source/simulation.rst:184
+#: ../../source/simulation.rst:185
 msgid ""
 "For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
@@ -430,23 +430,23 @@ msgstr ""
 "Pour la simulation, Ned utilise Gazebo, un outil bien connu de la communauté "
 "ROS. Il permet :"
 
-#: ../../source/simulation.rst:187
+#: ../../source/simulation.rst:188
 msgid "Collision."
 msgstr "La collision."
 
-#: ../../source/simulation.rst:188
+#: ../../source/simulation.rst:189
 msgid ""
-"World creation → An virtual environment in which the robot can deal with "
+"World creation → A virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 "La création d’un monde → Un environnement virtuel dans lequel le robot peut "
 "manipuler des objets."
 
-#: ../../source/simulation.rst:189
+#: ../../source/simulation.rst:190
 msgid "Gripper & Camera using."
 msgstr "L’utilisation de la caméra et des Grippers."
 
-#: ../../source/simulation.rst:191
+#: ../../source/simulation.rst:192
 msgid ""
 "The Niryo Gripper 1 has been replicated in Gazebo. The Camera is also "
 "implemented."
@@ -454,7 +454,7 @@ msgstr ""
 "Le Gripper Custom a été modélisé dans Gazebo. La caméra est également "
 "implémentée."
 
-#: ../../source/simulation.rst:195
+#: ../../source/simulation.rst:196
 msgid ""
 "Gazebo also generates camera distortion, which brings the simulation even "
 "closer from the reality!"
@@ -462,22 +462,21 @@ msgstr ""
 "Gazebo génère également une distorsion de la caméra, ce qui rapproche encore "
 "plus la simulation de la réalité !"
 
-#: ../../source/simulation.rst:198
+#: ../../source/simulation.rst:199
 msgid "Launch Gazebo simulation"
 msgstr "Lancer une simulation Gazebo"
 
-#: ../../source/simulation.rst:199
-msgid ""
-"A specific world has been created to use Ned in Gazebo with 2 workspaces."
+#: ../../source/simulation.rst:200
+msgid "A specific world has been created to use Ned in Gazebo with 2 workspaces."
 msgstr ""
 "Un monde spécifique a été créé pour utiliser Ned dans Gazebo avec 2 espaces "
 "de travail."
 
-#: ../../source/simulation.rst:208
+#: ../../source/simulation.rst:210
 msgid "Gazebo view, with the robot ready to be controlled with ROS!"
 msgstr "Aperçu de Gazebo avec le robot prêt à être contrôlé avec ROS !"
 
-#: ../../source/simulation.rst:211
+#: ../../source/simulation.rst:213
 msgid ""
 "You can edit Gazebo world to do your own! It's placed in the folder *worlds* "
 "of the package niryo_robot_gazebo."
@@ -485,11 +484,11 @@ msgstr ""
 "Il est possible de modifier le monde Gazebo pour faire le vôtre ! Il est "
 "situé dans le dossier **mondes** du package niryo_robot_gazebo."
 
-#: ../../source/simulation.rst:215
+#: ../../source/simulation.rst:217
 msgid "Gazebo Simulation options"
 msgstr "Option de simulation Gazebo"
 
-#: ../../source/simulation.rst:217
+#: ../../source/simulation.rst:219
 msgid ""
 "The user can disable 3 things by adding the specific string to the command "
 "line:"
@@ -497,11 +496,11 @@ msgstr ""
 "L'utilisateur peut désactiver 3 choses en ajoutant la chaîne spécifique à la "
 "ligne de commande :"
 
-#: ../../source/simulation.rst:219
+#: ../../source/simulation.rst:221
 msgid "the Gazebo graphical interface: `gui:=false`."
 msgstr "L'interface graphique Gazebo : `gui:=false`."
 
-#: ../../source/simulation.rst:220
+#: ../../source/simulation.rst:222
 msgid ""
 "the Camera & the Gripper - Vision & Gripper wise functions won't be usable: "
 "`gripper_n_camera:=false`."
@@ -509,7 +508,7 @@ msgstr ""
 "La caméra et le Gripper - Les fonctions de vision et le Gripper ne seront "
 "pas utilisables : `gripper_n_camera:=false`."
 
-#: ../../source/simulation.rst:224
+#: ../../source/simulation.rst:226
 msgid ""
 "Gazebo can be very slow. If your tests do not need Gripper and Camera, "
 "consider using Rviz to alleviate your CPU."
@@ -529,6 +528,18 @@ msgstr "gripper_n_camera"
 msgid "Simulate the presence of a gripper id 11 and a camera on the bus"
 msgstr ""
 "Simule la présence d'un outil d'id 11 sur le bus ainsi que de la caméra"
+
+#: ../../source/simulation.rst:229
+msgid "Table of Gazebo launch Options"
+msgstr "Table des options de lancement de Gazebo"
+
+#: ../../source/simulation.rst:253
+msgid "gripper_n_camera"
+msgstr "gripper_n_camera"
+
+#: ../../source/simulation.rst:255
+msgid "Simulate the presence of a gripper id 11 and a camera on the bus"
+msgstr "Simule la présence d'un outil d'id 11 sur le bus ainsi que de la caméra"
 
 #~ msgid "Use Niryo Robot through Simulation"
 #~ msgstr "Utilisation du robot Niryo via la simulation"
@@ -923,7 +934,8 @@ msgstr ""
 
 #~ msgid "The visualization happens with Rviz which is a powerful tool."
 #~ msgstr ""
-#~ "La visualisation se fait avec Rviz qui est un outil particulièrement "
+#~ "La visualisation se fait avec Rviz "
+#~ "qui est un outil particulièrement "
 #~ "puissant."
 
 #~ msgid "Ned simulation:  ::"
@@ -943,3 +955,16 @@ msgstr ""
 
 #~ msgid "Gazebo Simulation Options"
 #~ msgstr "Option de simulation Gazebo"
+
+#~ msgid "Use Niryo robot through simulation"
+#~ msgstr "Utilisation du robot Niryo via la simulation"
+
+#~ msgid "to install a working environment."
+#~ msgstr "pour installer un environnement fonctionnel."
+
+#~ msgid "Simulate a Niryo Robot"
+#~ msgstr ""
+
+#~ msgid "le lien ne fonctionne toujours pas"
+#~ msgstr ""
+

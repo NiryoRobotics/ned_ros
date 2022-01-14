@@ -2,13 +2,14 @@ Niryo_robot_arm_commander
 ========================================
 
 | This package is the one dealing with all commander related stuff.
-| It is composed of only one node, which is running separately the arm commander and the tool commander.
+
+| It is composed of only one node, which runs separately the arm commander and the tool commander.
 
 
 Commander node
 --------------------------
 The ROS Node is made to interact with:
- - The Arm through MoveIt!
+ - The arm through MoveIt!
  - The tools through the tool controller.
 
 All commands are firstly received on the actionlib server which:

@@ -5,8 +5,7 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
@@ -22,9 +21,9 @@ msgstr ""
 
 #: ../../source/installation/ubuntu_16.rst:2
 msgid "Ubuntu 16 Installation"
-msgstr ""
+msgstr "Installation sur Ubuntu 16"
 
 #: ../../source/installation/ubuntu_16.rst:4
 msgid "TODO"
-msgstr ""
+msgstr "TODO"
 

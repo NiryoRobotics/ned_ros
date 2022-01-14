@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-19 15:27+0200\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,8 +33,8 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:7
 msgid ""
-"It offers a simple way for developers to create programs for robot to "
-"control them via remote communication on a computer, on a mobile or any "
+"It offers a simple way for developers to create programs for robot and to"
+" control them via remote communication on a computer, on a mobile or any "
 "device with network facilities."
 msgstr ""
 "Il offre un moyen simple aux développeurs de créer des programmes pour "
@@ -223,7 +223,7 @@ msgstr "Commandes enum pour le serveur TCP"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum:1 of
 msgid "Enumeration of all commands used"
-msgstr ""
+msgstr "Enumération de toutes les commandes utilisées"
 
 #~ msgid "Use Ned TCP Server"
 #~ msgstr "Utilisation du serveur Ned TCP"

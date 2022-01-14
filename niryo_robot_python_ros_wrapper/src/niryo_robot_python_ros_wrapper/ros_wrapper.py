@@ -154,8 +154,8 @@ class NiryoRosWrapper:
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
         """
-        Wait for the service called service_name
-        Then call the service with args
+        Waits for the service called service_name
+        Then calls the service with args
 
         :param service_name:
         :param service_msg_type:
@@ -194,7 +194,7 @@ class NiryoRosWrapper:
     # -- Main Purpose
     def request_new_calibration(self):
         """
-        Call service to set the request calibration value. If failed, raise NiryoRosWrapperException.
+        Calls service to set the request calibration value. If failed, raises NiryoRosWrapperException.
 
         :return: status, message
         :rtype: (int, str)
@@ -206,7 +206,7 @@ class NiryoRosWrapper:
 
     def calibrate_auto(self):
         """
-        Call service to calibrate motors then wait for its end. If failed, raise NiryoRosWrapperException
+        Calls service to calibrate motors then waits for its end. If failed, raises NiryoRosWrapperException
 
         :return: status, message
         :rtype: (int, str)
@@ -215,7 +215,7 @@ class NiryoRosWrapper:
 
     def calibrate_manual(self):
         """
-        Call service to calibrate motors then wait for its end. If failed, raise NiryoRosWrapperException
+        Calls service to calibrate motors then waits for its end. If failed, raises NiryoRosWrapperException
 
         :return: status, message
         :rtype: (int, str)
@@ -224,7 +224,7 @@ class NiryoRosWrapper:
 
     def __calibrate(self, calib_type_int):
         """
-        Call service to calibrate motors then wait for its end. If failed, raise NiryoRosWrapperException
+        Call service to calibrate motors then waits for its end. If failed, raises NiryoRosWrapperException
 
         :param calib_type_int: 1 for auto-calibration & 2 for manual calibration
         :return: status, message
@@ -255,7 +255,7 @@ class NiryoRosWrapper:
 
     def get_learning_mode(self):
         """
-        Use /niryo_robot/learning_mode/state topic subscriber to get learning mode status
+        Uses /niryo_robot/learning_mode/state topic subscriber to get learning mode status
 
         :return: ``True`` if activate else ``False``
         :rtype: bool
@@ -264,7 +264,7 @@ class NiryoRosWrapper:
 
     def set_learning_mode(self, set_bool):
         """
-        Call service to set_learning_mode according to set_bool. If failed, raise NiryoRosWrapperException
+        Calsl service to set_learning_mode according to set_bool. If failed, raises NiryoRosWrapperException
 
         :param set_bool: ``True`` to activate, ``False`` to deactivate
         :type set_bool: bool
@@ -278,7 +278,7 @@ class NiryoRosWrapper:
 
     def get_max_velocity_scaling_factor(self):
         """
-        Get the max velocity scaling factor
+        Gets the max velocity scaling factor
         :return: max velocity scaling factor
         :rtype: float
         """
@@ -286,7 +286,7 @@ class NiryoRosWrapper:
 
     def set_arm_max_velocity(self, percentage):
         """
-        Set relative max velocity (in %)
+        Sets relative max velocity (in %)
 
         :param percentage: Percentage of max velocity
         :type percentage: int
@@ -299,7 +299,7 @@ class NiryoRosWrapper:
 
     def set_arm_max_acceleration(self, percentage):
         """
-        Set relative max acceleration (in %)
+        Sets relative max acceleration (in %)
 
         :param percentage: Percentage of max acceleration
         :type percentage: int
@@ -320,7 +320,7 @@ class NiryoRosWrapper:
 
     def get_joints(self):
         """
-        Use /joint_states topic to get joints status
+        Uses /joint_states topic to get joints status
 
         :return: list of joints value
         :rtype: list[float]
@@ -329,7 +329,7 @@ class NiryoRosWrapper:
 
     def get_joint_names(self):
         """
-        Use /joint_states topic to get the name of the joints
+        Uses /joint_states topic to get the name of the joints
 
         :return: list of the name of the joints
         :rtype: list[string]
@@ -338,7 +338,7 @@ class NiryoRosWrapper:
 
     def get_pose(self):
         """
-        Use /niryo_robot/robot_state topic to get pose status
+        Uses /niryo_robot/robot_state topic to get pose status
 
         :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
         :rtype: RobotState
@@ -347,7 +347,7 @@ class NiryoRosWrapper:
 
     def get_pose_as_list(self):
         """
-        Use /niryo_robot/robot_state topic to get pose status
+        Uses /niryo_robot/robot_state topic to get pose status
 
         :return: list corresponding to [x, y, z, roll, pitch, yaw]
         :rtype: list[float]
@@ -357,7 +357,7 @@ class NiryoRosWrapper:
 
     def move_joints(self, j1, j2, j3, j4, j5, j6):
         """
-        Execute Move joints action
+        Executes Move joints action
 
         :param j1:
         :type j1: float
@@ -380,7 +380,7 @@ class NiryoRosWrapper:
 
     def move_to_sleep_pose(self):
         """
-        Move to Sleep pose which allows the user to activate the learning mode without the risk
+        Moves to Sleep pose which allows the user to activate the learning mode without the risk
         of the robot hitting something because of gravity
 
         :return: status, message
@@ -390,7 +390,7 @@ class NiryoRosWrapper:
 
     def move_pose(self, x, y, z, roll, pitch, yaw):
         """
-        Move robot end effector pose to a (x, y, z, roll, pitch, yaw) pose.
+        Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose.
 
         :param x:
         :type x: float
@@ -415,7 +415,7 @@ class NiryoRosWrapper:
 
     def move_pose_saved(self, pose_name):
         """
-        Move robot end effector pose to a pose saved
+        Moves robot end effector pose to a pose saved
 
         :param pose_name:
         :type pose_name: str
@@ -427,7 +427,7 @@ class NiryoRosWrapper:
 
     def __move_pose_with_cmd(self, cmd_type, *pose):
         """
-        Execute Move pose action
+        Executes Move pose action
 
         :param cmd_type: Command Type
         :type cmd_type: ArmMoveCommand -> POSE, LINEAR_POSE
@@ -442,7 +442,7 @@ class NiryoRosWrapper:
 
     def shift_pose(self, axis, value):
         """
-        Execute Shift pose action
+        Executes Shift pose action
 
         :param axis: Value of RobotAxis enum corresponding to where the shift happens
         :type axis: ShiftPose
@@ -458,7 +458,7 @@ class NiryoRosWrapper:
 
     def shift_linear_pose(self, axis, value):
         """
-        Execute Shift pose action with a linear trajectory
+        Executes Shift pose action with a linear trajectory
 
         :param axis: Value of RobotAxis enum corresponding to where the shift happens
         :type axis: ShiftPose
@@ -474,7 +474,7 @@ class NiryoRosWrapper:
 
     def move_linear_pose(self, x, y, z, roll, pitch, yaw):
         """
-        Move robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, with a linear trajectory
+        Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, with a linear trajectory
 
         :param x:
         :type x: float
@@ -495,7 +495,7 @@ class NiryoRosWrapper:
 
     def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
         """
-        Call robot action service to draw a spiral trajectory
+        Calls robot action service to draw a spiral trajectory
 
         :param radius: maximum distance between the spiral and the starting point
         :param angle_step: rotation between each waypoint creation
@@ -542,7 +542,7 @@ class NiryoRosWrapper:
 
     def stop_move(self):
         """
-        Stop the robot movement
+        Stops the robot movement
 
         :return: list of joints value
         :rtype: list[float]
@@ -552,7 +552,7 @@ class NiryoRosWrapper:
 
     def set_jog_use_state(self, state):
         """
-        Turn jog controller On or Off
+        Turns jog controller On or Off
 
         :param state: ``True`` to turn on, else ``False``
         :type state: bool
@@ -564,7 +564,7 @@ class NiryoRosWrapper:
 
     def jog_joints_shift(self, shift_values):
         """
-        Make a Jog on joints position
+        Makes a Jog on joints position
 
         :param shift_values: list corresponding to the shift to be applied to each joint
         :type shift_values: list[float]
@@ -576,7 +576,7 @@ class NiryoRosWrapper:
 
     def jog_pose_shift(self, shift_values):
         """
-        Make a Jog on end-effector position
+        Makes a Jog on end-effector position
 
         :param shift_values: list corresponding to the shift to be applied to the position
         :type shift_values: list[float]
@@ -594,7 +594,7 @@ class NiryoRosWrapper:
 
     def forward_kinematics(self, j1, j2, j3, j4, j5, j6):
         """
-        Compute forward kinematics
+        Computes forward kinematics
 
         :param j1:
         :type j1: float
@@ -618,7 +618,7 @@ class NiryoRosWrapper:
 
     def inverse_kinematics(self, x, y, z, roll, pitch, yaw):
         """
-        Compute inverse kinematics
+        Computes inverse kinematics
 
         :param x:
         :type x: float
@@ -647,7 +647,7 @@ class NiryoRosWrapper:
 
     def get_pose_saved(self, pose_name):
         """
-        Get saved pose from robot intern storage
+        Gets saved pose from robot intern storage
         Will raise error if position does not exist
 
         :param pose_name: Pose Name
@@ -666,7 +666,7 @@ class NiryoRosWrapper:
 
     def save_pose(self, name, x, y, z, roll, pitch, yaw):
         """
-        Save pose in robot's memory
+        Saves pose in robot's memory
 
         :param name:
         :type name: str
@@ -699,7 +699,7 @@ class NiryoRosWrapper:
 
     def delete_pose(self, name):
         """
-        Send delete command to the pose manager service
+        Sends delete command to the pose manager service
 
         :param name:
         :type name: str
@@ -717,7 +717,7 @@ class NiryoRosWrapper:
 
     def get_saved_pose_list(self, with_desc=False):
         """
-        Ask the pose manager service which positions are available
+        Asks the pose manager service which positions are available
 
         :param with_desc: If it returns the poses descriptions
         :type with_desc: bool
@@ -735,7 +735,7 @@ class NiryoRosWrapper:
 
     def pick_from_pose(self, x, y, z, roll, pitch, yaw):
         """
-        Execute a picking from a position. If an error happens during the movement, error will be raised.
+        Executes a picking from a position. If an error happens during the movement, error will be raised.
         A picking is described as :
         - going over the object
         - going down until height = z
@@ -768,7 +768,7 @@ class NiryoRosWrapper:
 
     def place_from_pose(self, x, y, z, roll, pitch, yaw):
         """
-        Execute a placing from a position. If an error happens during the movement, error will be raised.
+        Executes a placing from a position. If an error happens during the movement, error will be raised.
         A placing is described as :
         - going over the place
         - going down until height = z
@@ -799,7 +799,7 @@ class NiryoRosWrapper:
 
     def pick_and_place(self, pick_pose, place_pose, dist_smoothing=0.0):
         """
-        Execute a pick and place. If an error happens during the movement, error will be raised.
+        Executes a pick and place. If an error happens during the movement, error will be raised.
         -> Args param is for development purposes
 
         :param pick_pose:
@@ -829,7 +829,7 @@ class NiryoRosWrapper:
 
     def get_trajectory_saved(self, trajectory_name):
         """
-        Get saved trajectory from robot intern storage
+        Gets saved trajectory from robot intern storage
         Will raise error if position does not exist
 
         :param trajectory_name:
@@ -853,7 +853,7 @@ class NiryoRosWrapper:
 
     def execute_trajectory_saved(self, trajectory_name):
         """
-        Execute trajectory saved in Robot internal storage
+        Executes trajectory saved in Robot internal storage
 
         :param trajectory_name:
         :type trajectory_name: str
@@ -869,7 +869,7 @@ class NiryoRosWrapper:
 
     def execute_trajectory_from_poses(self, list_poses_raw, dist_smoothing=0.0):
         """
-        Execute trajectory from a list of pose
+        Executes trajectory from a list of pose
 
         :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
         :type list_poses_raw: list[list[float]]
@@ -913,7 +913,7 @@ class NiryoRosWrapper:
 
     def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
         """
-        Execute trajectory from list of poses and joints
+        Executes trajectory from list of poses and joints
 
         :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
             or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
@@ -946,7 +946,7 @@ class NiryoRosWrapper:
 
             else:
                 raise NiryoRosWrapperException(
-                    "Execute trajectory from poses and joints - Wrong list_type argument : got " +
+                    "Executes trajectory from poses and joints - Wrong list_type argument : got " +
                     list_type[0] +
                     ", expected 'pose' or 'joint'")
 
@@ -960,19 +960,19 @@ class NiryoRosWrapper:
                     list_pose_waypoints.append(target)
                 else:
                     raise NiryoRosWrapperException(
-                        'Execute trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
+                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
                         ' got ' + type_ + ", expected 'pose' or 'joint'")
 
         else:
             raise NiryoRosWrapperException(
-                'Execute trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
+                'Executes trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
                 ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
 
         return list_pose_waypoints
 
     def save_trajectory(self, trajectory_name, list_poses_raw):
         """
-        Save trajectory object and send it to the trajectory manager service
+        Saves trajectory object and sends it to the trajectory manager service
 
         :param trajectory_name: name which will have the trajectory
         :type trajectory_name: str
@@ -1018,7 +1018,7 @@ class NiryoRosWrapper:
 
     def delete_trajectory(self, trajectory_name):
         """
-        Send delete command to the trajectory manager service
+        Sends delete command to the trajectory manager service
 
         :param trajectory_name: name
         :type trajectory_name: str
@@ -1035,7 +1035,7 @@ class NiryoRosWrapper:
 
     def get_saved_trajectory_list(self):
         """
-        Ask the pose trajectory service which trajectories are available
+        Asks the pose trajectory service which trajectories are available
 
         :return: list of trajectory name
         :rtype: list[str]
@@ -1049,7 +1049,7 @@ class NiryoRosWrapper:
     @staticmethod
     def copy_position_with_offsets(copied_pose, x_offset=0.0, y_offset=0.0, z_offset=0.0):
         """
-        Copy a position and add offset to some coordinates
+        Copies a position and adds offset to some coordinates
         """
         new_pose = [v for v in copied_pose]  # Copying all values
         new_pose[0] += x_offset  # adjust x
@@ -1060,7 +1060,7 @@ class NiryoRosWrapper:
     @staticmethod
     def list_to_robot_state_msg(x, y, z, roll, pitch, yaw):
         """
-        Translate (x, y, z, roll, pitch, yaw) to a RobotState Object
+        Translates (x, y, z, roll, pitch, yaw) to a RobotState Object
         """
         r = RobotState()
         r.position.x = x
@@ -1074,7 +1074,7 @@ class NiryoRosWrapper:
     @staticmethod
     def robot_state_msg_to_list(robot_state):
         """
-        Translate a RobotState Object to (x, y, z, roll, pitch, yaw)
+        Translates a RobotState Object to (x, y, z, roll, pitch, yaw)
         """
         return (robot_state.position.x, robot_state.position.y, robot_state.position.z,
                 robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
@@ -1083,7 +1083,7 @@ class NiryoRosWrapper:
 
     def get_current_tool_id(self):
         """
-        Use /niryo_robot_tools_commander/current_id  topic to get current tool id
+        Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
         :rtype: ToolID
@@ -1092,7 +1092,7 @@ class NiryoRosWrapper:
 
     def update_tool(self):
         """
-        Call service niryo_robot_tools_commander/update_tool to update tool
+        Calls service niryo_robot_tools_commander/update_tool to update tool
 
         :return: status, message
         :rtype: (int, str)
@@ -1102,8 +1102,8 @@ class NiryoRosWrapper:
 
     def grasp_with_tool(self, pin_id=""):
         """
-        Grasp with the tool linked to tool_id.
-        This action correspond to
+        Grasps with the tool linked to tool_id.
+        This action corresponds to
         - Close gripper for Grippers
         - Pull Air for Vacuum pump
         - Activate for Electromagnet
@@ -1124,8 +1124,8 @@ class NiryoRosWrapper:
 
     def release_with_tool(self, pin_id=""):
         """
-        Release with the tool associated to tool_id.
-        This action correspond to
+        Releases with the tool associated to tool_id.
+        This action corresponds to
         - Open gripper for Grippers
         - Push Air for Vacuum pump
         - Deactivate for Electromagnet
@@ -1148,7 +1148,7 @@ class NiryoRosWrapper:
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
         """
-        Open gripper with a speed 'speed'
+        Opens gripper with a speed 'speed'
 
         :param speed: Default -> 500
         :type speed: int
@@ -1163,7 +1163,7 @@ class NiryoRosWrapper:
 
     def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
         """
-        Close gripper with a speed 'speed'
+        Closes gripper with a speed 'speed'
 
         :param speed: Default -> 500
         :type speed: int
@@ -1191,7 +1191,7 @@ class NiryoRosWrapper:
     # - Vacuum
     def pull_air_vacuum_pump(self):
         """
-        Pull air
+        Pulls air
 
         :return: status, message
         :rtype: (int, str)
@@ -1200,7 +1200,7 @@ class NiryoRosWrapper:
 
     def push_air_vacuum_pump(self):
         """
-        Pull air
+        Pulls air
 
         :return: status, message
         :rtype: (int, str)
@@ -1217,7 +1217,7 @@ class NiryoRosWrapper:
     # - Electromagnet
     def setup_electromagnet(self, pin_id):
         """
-        Setup electromagnet on pin
+        Setups electromagnet on pin
 
         :param pin_id: Pin ID
         :type pin_id:  PinID
@@ -1234,7 +1234,7 @@ class NiryoRosWrapper:
 
     def activate_electromagnet(self, pin_id):
         """
-        Activate electromagnet associated to electromagnet_id on pin_id
+        Activates electromagnet associated to electromagnet_id on pin_id
 
         :param pin_id: Pin ID
         :type pin_id:  PinID
@@ -1245,7 +1245,7 @@ class NiryoRosWrapper:
 
     def deactivate_electromagnet(self, pin_id):
         """
-        Deactivate electromagnet associated to electromagnet_id on pin_id
+        Deactivates electromagnet associated to electromagnet_id on pin_id
 
         :param pin_id: Pin ID
         :type pin_id:  PinID
@@ -1304,7 +1304,7 @@ class NiryoRosWrapper:
 
     def reset_tcp(self):
         """
-        Reset the TCP (Tool Center Point) transformation.
+        Resets the TCP (Tool Center Point) transformation.
         The TCP will be reset according to the tool equipped.
 
         :return: status, message
@@ -1315,7 +1315,7 @@ class NiryoRosWrapper:
 
     def tool_reboot(self):
         """
-        Reboot the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
+        Reboots the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
 
         :return: success, message
         :rtype: (bool, str)
@@ -1335,7 +1335,7 @@ class NiryoRosWrapper:
 
     def set_pin_mode(self, pin_id, pin_mode):
         """
-        Set pin number pin_id to mode pin_mode
+        Sets pin number pin_id to mode pin_mode
 
         :param pin_id:
         :type pin_id: PinID
@@ -1350,7 +1350,7 @@ class NiryoRosWrapper:
 
     def digital_write(self, pin_id, digital_state):
         """
-        Set pin_id state to pin_state
+        Sets pin_id state to pin_state
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
@@ -1365,7 +1365,7 @@ class NiryoRosWrapper:
 
     def analog_write(self, pin_id, analog_state):
         """
-        Set pin_id state to pin_state
+        Sets pin_id state to pin_state
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
@@ -1380,7 +1380,7 @@ class NiryoRosWrapper:
 
     def digital_read(self, pin_id):
         """
-        Read pin number pin_id and return its state
+        Reads pin number pin_id and returns its state
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
@@ -1394,7 +1394,7 @@ class NiryoRosWrapper:
 
     def analog_read(self, pin_id):
         """
-        Read pin number pin_id and return its state
+        Reads pin number pin_id and returns its state
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
@@ -1408,7 +1408,7 @@ class NiryoRosWrapper:
 
     def get_digital_io_state(self):
         """
-        Get Digital IO state : Names, modes, states
+        Gets Digital IO state : Names, modes, states
 
         :return: Infos contains in a IOsState object (see niryo_robot_msgs)
         :rtype: IOsState
@@ -1420,13 +1420,13 @@ class NiryoRosWrapper:
 
     def get_hardware_version(self):
         """
-        Get the robot hardware version
+        Gets the robot hardware version
         """
         return self.__hardware_version
 
     def get_hardware_status(self):
         """
-        Get hardware status : Temperature, Hardware version, motors names & types ...
+        Gets hardware status : Temperature, Hardware version, motors names & types ...
 
         :return: Infos contains in a HardwareStatus object (see niryo_robot_msgs)
         :rtype: HardwareStatus
@@ -1439,7 +1439,7 @@ class NiryoRosWrapper:
 
     def get_axis_limits(self):
         """
-        Return the joints and positions min and max values
+        Returns the joints and positions min and max values
 
         :return: An object containing all the values
         :rtype: dict
@@ -1481,7 +1481,7 @@ class NiryoRosWrapper:
 
     def reboot_motors(self):
         """
-        Reboot the robots motors
+        Reboots the robots motors
 
         :raises NiryoRosWrapperException:
         :return: status, message
@@ -1494,7 +1494,7 @@ class NiryoRosWrapper:
 
     def set_conveyor(self):
         """
-        Scan for conveyor on can bus. If conveyor detected, return the conveyor ID
+        Scans for conveyor on can bus. If conveyor detected, returns the conveyor ID
 
         :raises NiryoRosWrapperException:
         :return: ID
@@ -1513,7 +1513,7 @@ class NiryoRosWrapper:
 
     def unset_conveyor(self, conveyor_id):
         """
-        Remove specific conveyor.
+        Removes specific conveyor.
 
         :param conveyor_id: Basically, ConveyorID.ONE or ConveyorID.TWO
         :type conveyor_id: ConveyorID
@@ -1528,7 +1528,7 @@ class NiryoRosWrapper:
 
     def control_conveyor(self, conveyor_id, bool_control_on, speed, direction):
         """
-        Control conveyor associated to conveyor_id.
+        Controls conveyor associated to conveyor_id.
         Then stops it if bool_control_on is False, else refreshes it speed and direction
 
         :param conveyor_id: ConveyorID.ID_1 or ConveyorID.ID_2
@@ -1549,7 +1549,7 @@ class NiryoRosWrapper:
 
     def get_conveyors_feedback(self):
         """
-        Give conveyors feedback
+        Gives conveyors feedback
 
         :return: List[ID, connection_state, running, speed, direction]
         :rtype: List(int, bool, bool, int, int)
@@ -1561,7 +1561,7 @@ class NiryoRosWrapper:
 
     def get_compressed_image(self, with_seq=False):
         """
-        Get last stream image in a compressed format
+        Gets last stream image in a compressed format
 
         :return: string containing a JPEG compressed image
         :rtype: str
@@ -1575,7 +1575,7 @@ class NiryoRosWrapper:
 
     def set_brightness(self, brightness_factor):
         """
-        Modify image brightness
+        Modifies image brightness
 
         :param brightness_factor: How much to adjust the brightness. 0.5 will
             give a darkened image, 1 will give the original image while
@@ -1590,7 +1590,7 @@ class NiryoRosWrapper:
 
     def set_contrast(self, contrast_factor):
         """
-        Modify image contrast
+        Modifies image contrast
 
         :param contrast_factor: While a factor of 1 gives original image.
             Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
@@ -1604,7 +1604,7 @@ class NiryoRosWrapper:
 
     def set_saturation(self, saturation_factor):
         """
-        Modify image saturation
+        Modifies image saturation
 
         :param saturation_factor: How much to adjust the saturation. 0 will
             give a black and white image, 1 will give the original image while
@@ -1620,7 +1620,7 @@ class NiryoRosWrapper:
     @staticmethod
     def get_image_parameters():
         """
-        Get last stream image parameters: Brightness factor, Contrast factor, Saturation factor.
+        Gets last stream image parameters: Brightness factor, Contrast factor, Saturation factor.
 
         Brightness factor: How much to adjust the brightness. 0.5 will give a darkened image,
         1 will give the original image while 2 will enhance the brightness by a factor of 2.
@@ -1696,14 +1696,14 @@ class NiryoRosWrapper:
 
     def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):
         """
-        Move Joints to observation_joints, then execute a vision pick
+        Move Joints to observation_joints, then executes a vision pick
         """
         self.move_joints(*observation_joints)
         return self.vision_pick(workspace_name, height_offset, shape, color)
 
     def vision_pick_w_obs_pose(self, workspace_name, height_offset, shape, color, observation_pose_list):
         """
-        Move Pose to observation_pose, then execute a vision pick
+        Move Pose to observation_pose, then executes a vision pick
         """
         self.move_pose(*observation_pose_list)
         return self.vision_pick(workspace_name, height_offset, shape, color)
@@ -1711,12 +1711,12 @@ class NiryoRosWrapper:
     def vision_pick(self, workspace_name, height_offset, shape, color):
         """
         Picks the specified object from the workspace. This function has multiple phases:
-        1. detect object using the camera
-        2. prepare the current tool for picking
-        3. approach the object
-        4. move down to the correct picking pose
-        5. actuate the current tool
-        6. lift the object
+        1. detects object using the camera
+        2. prepares the current tool for picking
+        3. approaches the object
+        4. moves down to the correct picking pose
+        5. actuates the current tool
+        6. lifts the object
 
         :param workspace_name: name of the workspace
         :type workspace_name: str
@@ -1797,7 +1797,7 @@ class NiryoRosWrapper:
 
     def get_camera_intrinsics(self):
         """
-        Get calibration object: camera intrinsics, distortions coefficients
+        Gets calibration object: camera intrinsics, distortions coefficients
 
         :return: raw camera intrinsics, distortions coefficients
         :rtype: (list, list)
@@ -1820,7 +1820,7 @@ class NiryoRosWrapper:
     # - Workspace
     def save_workspace_from_poses(self, name, list_poses_raw):
         """
-        Save workspace by giving the poses of the robot to point its 4 corners
+        Saves workspace by giving the poses of the robot to point its 4 corners
         with the calibration Tip. Corners should be in the good order
 
         :param name: workspace name, max 30 char.
@@ -1845,7 +1845,7 @@ class NiryoRosWrapper:
 
     def save_workspace_from_points(self, name, list_points_raw):
         """
-        Save workspace by giving the poses of its 4 corners in the good order
+        Saves workspace by giving the poses of its 4 corners in the good order
 
         :param name: workspace name, max 30 char.
         :type name: str
@@ -1869,7 +1869,7 @@ class NiryoRosWrapper:
 
     def delete_workspace(self, name):
         """
-        Call workspace manager to delete a certain workspace
+        Calls workspace manager to delete a certain workspace
 
         :param name: workspace name
         :type name: str
@@ -1887,7 +1887,7 @@ class NiryoRosWrapper:
 
     def get_workspace_poses(self, name):
         """
-        Get the 4 workspace poses of the workspace called 'name'
+        Gets the 4 workspace poses of the workspace called 'name'
 
         :param name: workspace name
         :type name: str
@@ -1908,7 +1908,7 @@ class NiryoRosWrapper:
 
     def get_workspace_ratio(self, name):
         """
-        Give the length over width ratio of a certain workspace
+        Gives the length over width ratio of a certain workspace
 
         :param name: workspace name
         :type name: str
@@ -1924,7 +1924,7 @@ class NiryoRosWrapper:
 
     def get_workspace_list(self, with_desc=False):
         """
-        Ask the workspace manager service names of the available workspace
+        Asks the workspace manager service names of the available workspace
 
         :return: list of workspaces name
         :rtype: list[str]
@@ -1940,7 +1940,7 @@ class NiryoRosWrapper:
     @property
     def led_ring(self):
         """
-        Manage the LED ring
+        Manages the LED ring
 
         Example: ::
 
@@ -1957,7 +1957,7 @@ class NiryoRosWrapper:
     @property
     def sound(self):
         """
-        Manage sound
+        Manages sound
 
         Example: ::
 
@@ -1973,11 +1973,24 @@ class NiryoRosWrapper:
 
     @property
     def custom_button(self):
+        """
+        Manages the custom button
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            print(robot.custom_button.state)
+
+        :return: CustomButtonRosWrapper API instance
+        :rtype:  CustomButtonRosWrapper
+        """
         return self.__custom_button
 
     def set_database_setting(self, name, value):
         """
-        Set a setting in the database
+        Sets a setting in the database
 
         :param name: the name of a setting
         :type name: str
@@ -1989,7 +2002,7 @@ class NiryoRosWrapper:
 
     def get_database_setting(self, name):
         """
-        Retrieve a setting from the database
+        Retrieves a setting from the database
 
         :param name: the name of the setting
         :type name: str

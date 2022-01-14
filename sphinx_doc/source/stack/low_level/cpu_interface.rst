@@ -7,14 +7,14 @@ CPU Interface
 
 CPU Interface Node (For development and debugging purpose only) 
 -----------------------------------------------------------------
-This ROS Node has been conceived to launch the cpu interface in an isolated way.
+This ROS Node has been conceived to launch the CPU interface in an isolated way.
 
 CPU Interface Core
 ----------------------------
 It is instantiated in :doc:`niryo_robot_hardware_interface` package.
 
-It has been made to monitor CPU temperature of the raspberry pi and automatically shutdown the raspberry pi if it reaches a critical threshold.
-Two thresholds can be defined via parameters : a warning threshold and a shutdown threshold.
+It has been made to monitor CPU temperature of the Raspberry Pi and automatically shutdown the Raspberry Pi if it reaches a critical threshold.
+Two thresholds can be defined via parameters: a warning threshold and a shutdown threshold.
 
 The CPU temperature is read from the Ubuntu system file */sys/class/thermal/thermal_zone0/temp*.
 

@@ -5,23 +5,19 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 15:00+0100\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/installation/wsl.rst:2
 msgid "Windows Subsystem for Linux installation (experimental)"
@@ -29,211 +25,287 @@ msgstr "Installation pour le Sous-système Windows pour Linux (expérimental)"
 
 #: ../../source/installation/wsl.rst:5
 msgid ""
-"You have to be running Windows 10 version 2004 (Build 19041) or higher for "
-"WSL2 to work."
+"Microsoft is developping since 2016 a compatibility layer for running "
+"Linux binary executables natively on Windows 10. With the version 2 "
+"issued in 2019, this \"hidden Linux kernel\" is now mature enough to run "
+"complex operations like the full ROS stack [2]_."
+msgstr ""
+"Microsoft a développé depuis 2016 une couche de compatibilité pour faire "
+"tourner les executables Linux nativement sous Windows 10. Avec la version"
+" 2 sortie en 2019, ce \"coeur Linux caché\" est maintenant assez mûr pour"
+" faire faire tourner des programmes aussi complexes que la stack ROS "
+"complète [2]_."
+
+#: ../../source/installation/wsl.rst:8
+msgid ""
+"Thus you will be able to run simulations for the Ned, Niryo One or Ned2 "
+"robots on a Windows machine."
+msgstr "Vous pourrez donc lancer la simulation des robots Niryo One, Ned ou Ned2 sur votre machine Windows."
+
+#: ../../source/installation/wsl.rst:11
+msgid ""
+"You have to be running Windows 10 version 2004 (Build 19041) or higher "
+"for WSL2 to work."
 msgstr ""
 "Il vous faut à minima Windows 10 version 2004 (Build 19041) ou plus pour "
 "faire tourner WSL2."
 
-#: ../../source/installation/wsl.rst:8
+#: ../../source/installation/wsl.rst:14
 msgid ""
-"The installation under WSL is not originally supported by Niryo, this guide "
-"is provided on an indicative basis only."
+"The installation under WSL is not originally supported by Niryo, this "
+"guide is provided on an indicative basis only."
 msgstr ""
-"L'installation sous WSL n'étant pas officiellement supportée par Niryo, ce "
-"guide n'est fourni qu'à titre d'information seulement."
+"L'installation sous WSL n'étant pas officiellement supportée par Niryo, "
+"ce guide n'est fourni qu'à titre d'information seulement."
 
-#: ../../source/installation/wsl.rst:10
+#: ../../source/installation/wsl.rst:16
 msgid ""
-"The following guide is mainly adapted from this blog post from Jack Kawell, "
-"feel free to refer to it for more complete information [1]_"
+"The following guide is mainly adapted from this blog post from Jack "
+"Kawell, feel free to refer to it for more complete information [1]_"
 msgstr ""
-"Ce guide est globalement adapté de ce poste de blog écrit par Jack Kawell, "
-"soyer libres de vous y réferer pour de plus amples informations [1]_"
+"Ce guide est globalement adapté de ce poste de blog écrit par Jack "
+"Kawell, soyer libres de vous y réferer pour de plus amples informations "
+"[1]_"
 
-#: ../../source/installation/wsl.rst:12
-msgid ""
-"Microsoft is developping since 2016 a compatibility layer for running Linux "
-"binary executables natively on Windows 10. With the version 2 issued in "
-"2019, this \"hidden Linux kernel\" is now mature enough to run complex "
-"operations like the full ROS stack [2]_."
-msgstr ""
-"Microsoft a développé depuis 2016 une couche de compatibilité pour faire "
-"tourner les executables Linux nativement sous Windows 10. Avec la version 2 "
-"sortie en 2019, ce \"coeur Linux caché\" est maintenant assez mûr pour faire "
-"faire tourner des programmes aussi complexes que la stack ROS complète [2]_."
-
-#: ../../source/installation/wsl.rst:17
+#: ../../source/installation/wsl.rst:20
 msgid "Install WSL2 [3]_"
 msgstr "Installer WSL2 [3]_"
 
-#: ../../source/installation/wsl.rst:19
+#: ../../source/installation/wsl.rst:22
 msgid ""
-"1. Enable Windows Subsystem for Linux on your machine (in a powershell "
-"terminal) :: dism.exe /online /enable-feature "
-"/featurename:Microsoft-Windows-Subsystem-Linux /all /norestart"
-msgstr ""
-"1. Activer le Sous-système Windows pour Linux sur votre machine (dans un "
-"terminal powershell) :: dism.exe /online /enable-feature "
-"/featurename:Microsoft-Windows-Subsystem-Linux /all /norestart"
+"Enable Windows Subsystem for Linux on your machine (in a powershell "
+"terminal)"
+msgstr "Active le Windows Subsystem for linux sur votre machine (dans un terminal Powershell)"
 
-#: ../../source/installation/wsl.rst:23
-msgid ""
-"2. Update WSL to use version 2 (in a powershell terminal) :: dism.exe "
-"/online /enable-feature /featurename:VirtualMachinePlatform /all /norestart"
-msgstr ""
-"2. Mettre à jour WSL pour utiliser la version 2 (dans un terminal "
-"powershell) :: dism.exe /online /enable-feature "
-"/featurename:VirtualMachinePlatform /all /norestart"
-
-#: ../../source/installation/wsl.rst:27
-msgid ""
-"You then need to restart your machine to finish the WSL install and the "
-"upgrade to WSL2."
-msgstr ""
-"Vous devez ensuite redémarrer votre ordinateur pour terminer l'installation "
-"de WSL et la mise à jour vers WSL2."
-
-#: ../../source/installation/wsl.rst:29
-msgid "Set default version of WSL to 2 (in a powershell terminal)"
+#: ../../source/installation/wsl.rst:28
+msgid "Update WSL to use version 2 (in a powershell terminal)"
 msgstr "Mettre la version de WSL par défaut à 2 (dans un terminal powershell)"
 
 #: ../../source/installation/wsl.rst:35
+msgid ""
+"You then need to restart your machine to finish the WSL installation and "
+"the upgrade to WSL2."
+msgstr ""
+"Vous devez ensuite redémarrer votre ordinateur pour terminer "
+"l'installation de WSL et la mise à jour vers WSL2."
+
+#: ../../source/installation/wsl.rst:37
+msgid "Set default version of WSL to 2 (in a powershell terminal)"
+msgstr "Mettre la version de WSL par défaut à 2 (dans un terminal powershell)"
+
+#: ../../source/installation/wsl.rst:43
 msgid "Install an Ubuntu 18.04 distribution using the Windows Store"
 msgstr "Installer une distribution Ubuntu 18.04 via le Windows Store"
 
-#: ../../source/installation/wsl.rst:43
+#: ../../source/installation/wsl.rst:51
 msgid "Ubuntu 18.04 in the Windows Store"
 msgstr "Ubuntu 18.04 sur le Windows Store"
 
-#: ../../source/installation/wsl.rst:45
+#: ../../source/installation/wsl.rst:53
 msgid ""
-"6. Launch the app. The first time, it asks you to finish the initialization "
-"of the OS Your Ubuntu OS is now ready. You can continue the build of the "
-"stack using the tutorial"
+"Launch the app. The first time, it asks you to finish the initialization "
+"of the OS."
 msgstr ""
 "6. Lancer l'application. La première fois, on vous demandera de finir "
 "l'initialisation du Système d'Exploitation Votre Système Ubuntu est "
-"maintenant prêt. Vous pouvez continuer à compiler la stack en utilisant le "
-"tutoriel"
-
-#: ../../source/installation/wsl.rst:50
-msgid "Setting up GUI forwarding"
-msgstr "Mise en place de la redirection d'Interface Graphique"
-
-#: ../../source/installation/wsl.rst:52
-msgid ""
-"WSL does not come with an X server. Thus, you will not be able to launch any "
-"graphical windows for now. But we can change this by using a Windows X "
-"server and forward the GUI to it using GUI forwarding"
-msgstr ""
-"WSL n'est pas fourni avec un serveur X. Vous ne pourrez donc pas lancer "
-"d'application graphique dans des fenêtres pour le moment. Mais il est "
-"possible d'y remédier en utilisant un serveur X dédié pour Windows et d'y "
-"rediriger les sorties graphiques via la redirection d'interface graphique "
-"(GUI forwarding)"
+"maintenant prêt. Vous pouvez continuer à compiler la stack en utilisant "
+"le tutoriel"
 
 #: ../../source/installation/wsl.rst:55
 msgid ""
-"Many X servers exist for Windows 10. We tested VcXsrc, and it correctly does "
-"the job. https://sourceforge.net/projects/vcxsrv/"
+"Your Ubuntu OS is now ready. You can continue the build of the stack "
+"using the tutorial."
 msgstr ""
-"Beaucoup de serveurs X existent pour Windows 10. Nous avons testé VcXsrc en "
-"interne, et il fait corretement le job. "
+"6. Lancer l'application. La première fois, on vous demandera de finir "
+"l'initialisation du Système d'Exploitation Votre Système Ubuntu est "
+"maintenant prêt. Vous pouvez continuer à compiler la stack en utilisant "
+"le tutoriel"
+
+#: ../../source/installation/wsl.rst:59
+msgid "Setting up GUI forwarding"
+msgstr "Mise en place de la redirection d'Interface Graphique"
+
+#: ../../source/installation/wsl.rst:61
+msgid ""
+"WSL does not come with an X server. Thus, you will not be able to launch "
+"any graphical windows for now. But we can change this by using a Windows "
+"X server and forward the GUI to it using GUI forwarding."
+msgstr ""
+"WSL n'est pas fourni avec un serveur X. Vous ne pourrez donc pas lancer "
+"d'application graphique dans des fenêtres pour le moment. Mais il est "
+"possible d'y remédier en utilisant un serveur X dédié pour Windows et d'y"
+" rediriger les sorties graphiques via la redirection d'interface "
+"graphique (GUI forwarding)"
+
+#: ../../source/installation/wsl.rst:64
+msgid ""
+"Many X servers exist for Windows 10. We tested VcXsrc, and it correctly "
+"does the job. https://sourceforge.net/projects/vcxsrv/"
+msgstr ""
+"Beaucoup de serveurs X existent pour Windows 10. Nous avons testé VcXsrc "
+"en interne, et il fait corretement le job. "
 "https://sourceforge.net/projects/vcxsrv/"
 
-#: ../../source/installation/wsl.rst:58
+#: ../../source/installation/wsl.rst:67
 msgid ""
-"1. Launch VcXsrv. Be sure to have the following options : - Uncheck \"Native "
-"OpenGL\" - Check \"Disable access control\""
+"1. Launch VcXsrv. Be sure to have the following options : - Uncheck "
+"\"Native OpenGL\" - Check \"Disable access control\""
 msgstr ""
 "1. Lancer VcXsrc. Vérifiez que vous avez bien les options suivantes : - "
 "Décocher \"Native OpenGL\" - Cocher \"Disable access control\""
 
-#: ../../source/installation/wsl.rst:75
+#: ../../source/installation/wsl.rst:84
 msgid ""
-"You need to export the address of your Xserver in Ubuntu 18 to forward the "
-"GUI"
+"You need to export the address of your Xserver in Ubuntu 18 to forward "
+"the GUI"
 msgstr ""
-"Vous avez besoin d'exporter l'adresse de votre serveur X dans Ubuntu 18 pour "
-"rediriger l'interface graphique"
+"Vous avez besoin d'exporter l'adresse de votre serveur X dans Ubuntu 18 "
+"pour rediriger l'interface graphique"
 
-#: ../../source/installation/wsl.rst:81
-msgid "You can add this to your bashrc file"
+#: ../../source/installation/wsl.rst:90
+msgid "You can add this to your bashrc file."
 msgstr "Vous pouvez ajouter cette ligne à votre fichier bashrc"
 
-#: ../../source/installation/wsl.rst:83
+#: ../../source/installation/wsl.rst:92
 msgid ""
 "You can check that your forwarding works by using simple X11 apps for "
-"example :"
+"example:"
 msgstr ""
 "Vous pouvez vérifier que la redirection fonctionne en lançant une "
 "application X11 simple par exemple :"
 
-#: ../../source/installation/wsl.rst:91
-msgid "Install ROS melodic (see instructions here)"
+#: ../../source/installation/wsl.rst:100
+msgid "Install ROS Melodic (see instructions here)"
 msgstr "Installer ROS melodic (voir les instructions ici)"
 
-#: ../../source/installation/wsl.rst:93
-msgid "Try launching rviz"
+#: ../../source/installation/wsl.rst:102
+msgid "Try launching Rviz"
 msgstr "Essayer de lancer rviz"
 
-#: ../../source/installation/wsl.rst:99
+#: ../../source/installation/wsl.rst:108
 msgid ""
 "You should now be able to launch any simulation of the One, Ned or Ned2 "
-"using rviz or gazebo"
+"using Rviz or Gazebo"
 msgstr ""
-"Vous devriez maintenant être capable de lancer n'importe quelle simulation "
-"du One, du Ned ou du Ned2 en utilisatn rviz ou gazebo"
+"Vous devriez maintenant être capable de lancer n'importe quelle "
+"simulation du One, du Ned ou du Ned2 en utilisatn rviz ou gazebo"
 
-#: ../../source/installation/wsl.rst:102
+#: ../../source/installation/wsl.rst:112
 msgid "Troubleshooting"
 msgstr "Dépannage"
 
-#: ../../source/installation/wsl.rst:104
+#: ../../source/installation/wsl.rst:114
 msgid ""
-"**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable does "
-"not match the address of your XServer. Try : - Check that you correctly "
-"launched your XServer with the required options (Disable access control is "
-"essential) - Check that the ip you gave is correct (you need the address in "
-"/etc/resolv.conf to have it work)"
-msgstr ""
-"**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable does "
-"not match the address of your XServer. Essayer : - Vérifier que vous avez "
-"correctement lancer votre server X avec les options requises (Disable access "
-"control est essentiel) - Vérifier que l'addresse IP que vous avez indiqué "
-"est correcte (vous avez besoin de l'adresse présente dans /etc/resolv.conf "
-"pour que ça fonctionne)"
+"**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
+"does not match the address of your XServer."
+msgstr "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
+"does not match the address of your XServer."
 
-#: ../../source/installation/wsl.rst:110
+#: ../../source/installation/wsl.rst:119
+msgid "Try :"
+msgstr "Essayez:"
+
+#: ../../source/installation/wsl.rst:118
+msgid ""
+"Check that you correctly launched your XServer with the required options "
+"(Disable access control is essential)"
+msgstr "Vérifiez que vous avez correctement lancé le serveur X avec les options nécessaires"
+"(Désactiver le contrôle d'accès est nécessaire)"
+
+#: ../../source/installation/wsl.rst:119
+msgid ""
+"Check that the IP you gave is correct (you need the address in "
+"/etc/resolv.conf to have it work)"
+msgstr "Vérifiez que l'IP fournis est correcte (vous avez besoin de "
+"l'addresse de /etc/resolv.conf pour que cela fonctionne)"
+
+#: ../../source/installation/wsl.rst:121
 msgid ""
 "**OpenGL issues** Some people have said that they run into issues with "
 "OpenGL applications like Rviz. If you do, try setting the environment "
 "variable LIBGL_ALWAYS_INDIRECT=0 in your WSL2 terminal (you can just add "
 "export LIBGL_ALWAYS_INDIRECT=0 to the end of your .bashrc file)."
 msgstr ""
-"**Problème d'OpenGL** Quelques personnes ont indiqué avec eu des souci avec "
-"les applications OpenGL comme Rviz. Si c'est le cas pour vous, essayez de "
-"définir la variable d'environnement LIBGL_ALWAYS_INDIRECT=0 dans un terminal "
-"WSL2 (vous pouvez par exemple ajouter LIBGL_ALWAYS_INDIRECT=0 à la fin de "
-"votre fichier .bashrc)."
+"**Problème d'OpenGL** Quelques personnes ont indiqué avec eu des souci "
+"avec les applications OpenGL comme Rviz. Si c'est le cas pour vous, "
+"essayez de définir la variable d'environnement LIBGL_ALWAYS_INDIRECT=0 "
+"dans un terminal WSL2 (vous pouvez par exemple ajouter "
+"LIBGL_ALWAYS_INDIRECT=0 à la fin de votre fichier .bashrc)."
 
-#: ../../source/installation/wsl.rst:116
+#: ../../source/installation/wsl.rst:127
 msgid "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 msgstr "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 
-#: ../../source/installation/wsl.rst:118
+#: ../../source/installation/wsl.rst:129
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 msgstr "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 
-#: ../../source/installation/wsl.rst:120
+#: ../../source/installation/wsl.rst:131
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 msgstr "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 
 #~ msgid ""
-#~ "1. Enable Windows Subsystem for Linux on your machine (in a powershell "
+#~ "1. Enable Windows Subsystem for Linux"
+#~ " on your machine (in a powershell "
 #~ "terminal) ::"
 #~ msgstr ""
 
 #~ msgid "2. Update WSL to use version 2 (in a powershell terminal) ::"
 #~ msgstr ""
+
+#~ msgid ""
+#~ "1. Enable Windows Subsystem for Linux"
+#~ " on your machine (in a powershell "
+#~ "terminal) :: dism.exe /online /enable-"
+#~ "feature /featurename:Microsoft-Windows-Subsystem-"
+#~ "Linux /all /norestart"
+#~ msgstr ""
+#~ "1. Activer le Sous-système Windows "
+#~ "pour Linux sur votre machine (dans "
+#~ "un terminal powershell) :: dism.exe "
+#~ "/online /enable-feature /featurename:Microsoft-"
+#~ "Windows-Subsystem-Linux /all /norestart"
+
+#~ msgid ""
+#~ "2. Update WSL to use version 2 "
+#~ "(in a powershell terminal) :: dism.exe"
+#~ " /online /enable-feature "
+#~ "/featurename:VirtualMachinePlatform /all /norestart"
+#~ msgstr ""
+#~ "2. Mettre à jour WSL pour utiliser"
+#~ " la version 2 (dans un terminal "
+#~ "powershell) :: dism.exe /online /enable-"
+#~ "feature /featurename:VirtualMachinePlatform /all "
+#~ "/norestart"
+
+#~ msgid ""
+#~ "**Error: Can't open display: "
+#~ "192.168.1.44:0.0** Your DISPLAY variable does"
+#~ " not match the address of your "
+#~ "XServer. Try : - Check that you"
+#~ " correctly launched your XServer with "
+#~ "the required options (Disable access "
+#~ "control is essential) - Check that "
+#~ "the ip you gave is correct (you"
+#~ " need the address in /etc/resolv.conf "
+#~ "to have it work)"
+#~ msgstr ""
+#~ "**Error: Can't open display: "
+#~ "192.168.1.44:0.0** Your DISPLAY variable does"
+#~ " not match the address of your "
+#~ "XServer. Essayer : - Vérifier que "
+#~ "vous avez correctement lancer votre "
+#~ "server X avec les options requises "
+#~ "(Disable access control est essentiel) -"
+#~ " Vérifier que l'addresse IP que vous"
+#~ " avez indiqué est correcte (vous avez"
+#~ " besoin de l'adresse présente dans "
+#~ "/etc/resolv.conf pour que ça fonctionne)"
+
+#~ msgid ""
+#~ "**Error: Can't open display: "
+#~ "192.168.1.44:0.0** Your DISPLAY variable does"
+#~ " not match the address of your "
+#~ "XServer. Try :"
+#~ msgstr ""
+

@@ -4,7 +4,7 @@ Use Ned's TCP server
 Ned is permanently running a TCP Server to acquire requests.
 This server is built on top of the :doc:`Ned Python ROS Wrapper <ros_wrapper>`.
 
-It offers a simple way for developers to create programs for robot
+It offers a simple way for developers to create programs for robot and
 to control them via remote communication on a computer, on a mobile
 or any device with network facilities.
 

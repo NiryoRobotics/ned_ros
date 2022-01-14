@@ -5,23 +5,19 @@
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:2
 msgid "MCP CAN rpi"
@@ -29,30 +25,32 @@ msgstr "MCP CAN rpi"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:4
 msgid ""
-"Raspberry Pi library for MCP2515 module (CAN bus interface) through SPI GPIOs"
+"Raspberry Pi library for MCP2515 module (CAN bus interface) through SPI "
+"GPIOs"
 msgstr ""
-"Bibliotèque pour le module MCP2515 pour Raspberry Pi (Interface Bus CAN) via "
-"les GPIOs SPI"
+"Bibliotèque pour le module MCP2515 pour Raspberry Pi (Interface Bus CAN) "
+"via les GPIOs SPI"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:6
 msgid ""
-"Forked from [MCP_CAN](https://github.com/coryjfowler/MCP_CAN_lib) library."
+"Forked from `[MCP_CAN] library "
+"<https://github.com/coryjfowler/MCP_CAN_lib>`_."
 msgstr ""
-"Forked depuis la bilbliothèque "
-"[MCP_CAN](https://github.com/coryjfowler/MCP_CAN_lib)."
+"Forked depuis `la bibliothèque [MCP_CAN] "
+"<https://github.com/coryjfowler/MCP_CAN_lib>`_."
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:8
 msgid ""
-"The MCP2515 module is a SPI-CAN interface. The MCP_CAN library is using the "
-"SPI protocol on Arduino to program and use this module. It has been adapted "
-"here to work with the Raspberry Pi 4 GPIOs, using the SPI functions of the  "
-"[wiringPi](http://wiringpi.com/) library."
+"The MCP2515 module is a SPI-CAN interface. The MCP_CAN library is using "
+"the SPI protocol on Arduino to program and use this module. It has been "
+"adapted here to work with the Raspberry Pi 4 GPIOs, using the SPI "
+"functions of the using the `[wiringPi] library <http://wiringpi.com/>`_."
 msgstr ""
-"Le module MCP2515 est une interface SPi CAN. La bibliothèque MCP_CAN utilise "
-"le protocole SPI sur Arduino pour programmer et utiliser ce module. Il a été "
-"adapté ici pour fonctionner avec les GPIOs de la Raspberry Pi 4, en "
-"utilisant les fonction SPI de la bibliothèque "
-"[wiringPi](http://wiringpi.com/)."
+"Le module MCP2515 est une interface SPi CAN. La bibliothèque MCP_CAN "
+"utilise le protocole SPI sur Arduino pour programmer et utiliser ce "
+"module. Il a été adapté ici pour fonctionner avec les GPIOs de la "
+"Raspberry Pi 4, en utilisant les fonction SPI de la "
+"`bibliothèque [wiringPi] <http://wiringpi.com/>`_."
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:10
 msgid "---"
@@ -60,18 +58,19 @@ msgstr "---"
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:12
 msgid ""
-"One of the main difference is we don't handle SPI Chip Select PIN. This is "
-"already done by the wiringPi library, and all PINs for SPI are already "
-"predefined (spi channel 0 or 1)."
+"One of the main difference is that we don't handle SPI Chip Select PIN. "
+"This is already done by the wiringPi library, and all PINs for SPI are "
+"already predefined (spi channel 0 or 1)."
 msgstr ""
-"Une des principales différences est que le pin SPI Chip Select PIN n'est pas "
-"gérée. Ceci est déja mis en oeuvre via la bibliothèque wiringPi, et tous les "
-"PINs pour le SPI sont déja prédéfinis (canal SPI 0 ou 1)."
+"Une des principales différences est que le pin SPI Chip Select PIN n'est "
+"pas gérée. Ceci est déja mis en oeuvre via la bibliothèque wiringPi, et "
+"tous les PINs pour le SPI sont déja prédéfinis (canal SPI 0 ou 1)."
 
 #: ../../source/stack/third_parties/mcp_can_rpi.rst:15
 msgid ""
 "To poll the MCP2515 module (to see if there is any data to read), the "
 "_digitalRead_ function of wiringPi is used."
 msgstr ""
-"Pour sonder le module MCP2515 (pour voir si il y a des données à lire), la "
-"fonction _digitalRead_ de wiringPi est utilisée."
+"Pour sonder le module MCP2515 (pour voir si il y a des données à lire), "
+"la fonction _digitalRead_ de wiringPi est utilisée."
+

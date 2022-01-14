@@ -1,8 +1,6 @@
 Use the Modbus TCP server
 ====================================
 
-:todo: vu avec Etienne, supprimer la partie Modbus d'ici et mettre en place une redirection vers doc Modbus.
-
 Ned is permanently running a Modbus TCP Server that enables Ned to communicate with a PLC, or another computer in the same network.
 
 Connection - Modbus TCP server

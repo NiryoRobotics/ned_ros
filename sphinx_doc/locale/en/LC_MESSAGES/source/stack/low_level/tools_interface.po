@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:28+0100\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,7 +118,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst:43
 msgid ""
-"These parameters are specific to the hardware version (ned, one or ned2)."
+"These parameters are specific to the hardware version (Ned, One or Ned2)."
 " This file comes in a different version for each hardware version, "
 "located in a directory of the hardware version name."
 msgstr ""
@@ -136,7 +136,7 @@ msgid "``id_list``"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "List of default IDs of each tool supported By Niryo"
+msgid "List of default IDs of each tool supported by Niryo"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst
@@ -174,7 +174,7 @@ msgid "``name_list``"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst
-msgid "List of tools's name corresponds to id list and type list above"
+msgid "List of tools's name corresponds to ID list and type list above"
 msgstr ""
 
 #: ../../source/stack/low_level/tools_interface.rst
@@ -433,5 +433,20 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "It belongs to the ROS namespace |namespace_emphasize|."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "These parameters are specific to the "
+#~ "hardware version (ned, one or ned2). "
+#~ "This file comes in a different "
+#~ "version for each hardware version, "
+#~ "located in a directory of the "
+#~ "hardware version name."
+#~ msgstr ""
+
+#~ msgid "List of default IDs of each tool supported By Niryo"
+#~ msgstr ""
+
+#~ msgid "List of tools's name corresponds to id list and type list above"
 #~ msgstr ""
 

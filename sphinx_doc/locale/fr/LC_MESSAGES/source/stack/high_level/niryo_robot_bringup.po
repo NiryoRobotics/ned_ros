@@ -49,7 +49,7 @@ msgstr "Sur RasberryPI"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:19
 msgid "One"
-msgstr ""
+msgstr "One"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:21
 msgid ""
@@ -95,7 +95,7 @@ msgstr "Commande pour lancer la stack ROS de Ned : ::"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:39
 msgid "Ned2"
-msgstr ""
+msgstr "Ned2"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:41
 msgid ""
@@ -213,20 +213,19 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:98
 msgid "The following files are used to configure the robot logs:"
-msgstr ""
+msgstr "Les fichiers suivants sont utilisés pour configurés les logs des robots:"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:97
 msgid "*desktop_gazebo_simulation_trace.conf*"
-msgstr ""
+msgstr "*desktop_gazebo_simulation_trace.conf*"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:98
 msgid "*desktop_rviz_simulation_trace.conf*"
-msgstr ""
+msgstr "*desktop_rviz_simulation_trace.conf*"
 
 #: ../../source/stack/high_level/niryo_robot_bringup.rst:99
-#, fuzzy
 msgid "*niryo_robot_trace.conf*"
-msgstr "Niryo_robot_bringup"
+msgstr "*niryo_robot_trace.conf*"
 
 #~ msgid "Niryo Robot Bringup Package"
 #~ msgstr "Le package Bringup robot Niryo"

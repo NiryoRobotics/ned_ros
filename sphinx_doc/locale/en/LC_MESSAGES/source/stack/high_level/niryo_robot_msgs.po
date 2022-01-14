@@ -92,7 +92,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:29
-msgid "several hardware informations"
+msgid "several hardware information"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:30
@@ -381,5 +381,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid "several hardware informations"
 #~ msgstr ""
 
