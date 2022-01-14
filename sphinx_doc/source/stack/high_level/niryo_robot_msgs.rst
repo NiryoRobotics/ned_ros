@@ -26,7 +26,7 @@ Niryo messages
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:RPY`
       -  roll, pitch, yaw
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`
-      -  several hardware informations 
+      -  several hardware information 
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SoftwareVersion`
       -  several software version 
 

@@ -102,7 +102,6 @@ class ConveyorID:
     ID_4 = 10   # Ned2
 
 
-
 class ConveyorDirection:
     def __init__(self):
         pass

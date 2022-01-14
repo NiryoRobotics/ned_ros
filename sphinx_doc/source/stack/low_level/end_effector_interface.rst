@@ -2,8 +2,9 @@ End Effector Interface
 =====================================
 
 | This package handles the End Effector Panel of a robot, it is supported from Ned 2.
-| It provides services and topics specific to the End Effector Panel for use by an end user. 
-| However, it does not deal with the low level bus communication with the components : this is done in the :doc:`ttl_driver` package.
+| It provides services and topics specific to the End Effector Panel in order to be used by a final user.
+
+| However, it does not deal with the low level bus communication with the components: this is done in the :doc:`ttl_driver` package.
 
 End Effector Interface node (For development and debug)
 ------------------------------------------------------------
@@ -37,22 +38,22 @@ Parameters - End Effector Interface
    *  -  Name
       -  Description
    *  -  ``end_effector_id``
-      -  | Id of End Effector in TTL bus
+      -  | Id of the End Effector in TTL bus
          | Default: 0
    *  -  ``check_end_effector_status_frequency``
-      -  | Frequency to get End Effector from driver
+      -  | Frequency to get the End Effector from driver
          | Default: 40.0
    *  -  ``button_2__type``
-      -  | Button used to activate FreeMotion mode
+      -  | Button used to activate the FreeMotion mode
          | Default: free_drive
    *  -  ``button_1__type``
-      -  | Button used to save the actual position of robot
+      -  | Button used to save the actual position of the robot
          | Default: save_position
    *  -  ``button_0__type``
-      -  | Custom Button used by Users to do something
+      -  | Custom Button used by users to do something
          | Default: custom
    *  -  ``hardware_type``
-      -  | Type of End Effector. It can be end_effector or fake_end_effector
+      -  | Type of the End Effector. It can be end_effector or fake_end_effector
          | Default: end_effector
 
 
@@ -70,16 +71,16 @@ Published topics - End Effector Interface
       -  Description
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_free_drive_button_state_publisher
       -  :ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus (Message)>`
-      -  Publish state of Free Motion Button
+      -  Publishes state of Free Motion Button
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_save_button_state_publisher
       -  :ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus (Message)>`
-      -  Publish state of Save Position Button
+      -  Publishes state of Save Position Button
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_custom_button_state_publisher
       -  :ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus (Message)>`
-      -  Publish state of Custom Button
+      -  Publishes state of Custom Button
    *  -  /niryo_robot_hardware_interface/end_effector_interface/_digital_out_publisher
       -  :ref:`EEIOState<source/stack/low_level/end_effector_interface:EEIOState (Message)>`
-      -  Publish state of IO Digital
+      -  Publishes state of IO Digital
 
 Services - End Effector Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

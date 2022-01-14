@@ -74,7 +74,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def solid(self, color, wait=False):
         """
-        Set the whole Led Ring to a fixed color.
+        Sets the whole Led Ring to a fixed color.
 
         Example: ::
 
@@ -101,7 +101,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def turn_off(self, wait=False):
         """
-        Turn off all Leds
+        Turns off all Leds
 
         Example: ::
 
@@ -230,7 +230,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def wipe(self, color, period=0, wait=False):
         """
-        Wipe a color across the Led Ring, light a Led at a time.
+        Wipes a color across the LED Ring, light a LED at a time.
 
         Examples: ::
 
@@ -259,7 +259,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def rainbow(self, period=0, iterations=0, wait=False):
         """
-        Draw rainbow that fades across all Leds at once.
+        Draws rainbow that fades across all LEDs at once.
 
         Examples: ::
 
@@ -286,7 +286,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def rainbow_cycle(self, period=0, iterations=0, wait=False):
         """
-        Draw rainbow that uniformly distributes itself across all Leds.
+        Draws rainbow that uniformly distributes itself across all LEDs.
 
         Examples: ::
 
@@ -341,7 +341,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def go_up(self, color, period=0, iterations=0, wait=False):
         """
-        Leds turn on like a loading circle, and are then all turned off at once.
+        LEDs turn on like a loading circle, and are then all turned off at once.
 
         Examples: ::
 
@@ -375,7 +375,7 @@ class LedRingRosWrapper(object):
     #    @check_ned2_version
     def go_up_down(self, color, period=0, iterations=0, wait=False):
         """
-        Leds turn on like a loading circle, and are turned off the same way.
+        LEDs turn on like a loading circle, and are turned off the same way.
 
         Examples: ::
 
@@ -407,7 +407,7 @@ class LedRingRosWrapper(object):
         result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
         return self.__classic_return_w_check(result)
 
-    ##    @check_ned2_version
+    #    @check_ned2_version
     def breath(self, color, period=0, iterations=0, wait=False):
         """
         Variation of the light intensity of the LED ring, similar to human breathing.
@@ -500,8 +500,8 @@ class LedRingRosWrapper(object):
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):
         """
-        Wait for the service called service_name
-        Then call the service with args
+        Waits for the service called service_name
+        Then calls the service with args
 
         :param service_name:
         :param service_msg_type:

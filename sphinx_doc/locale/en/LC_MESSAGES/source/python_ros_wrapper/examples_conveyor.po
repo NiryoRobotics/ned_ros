@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +35,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:9
-msgid "Imports & initialisation are not mentioned, but you should not forget it!"
+msgid "Imports & initialization are not mentionned, but you should not forget it!"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:12
@@ -112,5 +110,11 @@ msgstr ""
 #~ "This short example shows how to "
 #~ "connect a Conveyor Belt, activating "
 #~ "connection and launch its motor: ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Imports & initialisation are not "
+#~ "mentioned, but you should not forget "
+#~ "it!"
 #~ msgstr ""
 

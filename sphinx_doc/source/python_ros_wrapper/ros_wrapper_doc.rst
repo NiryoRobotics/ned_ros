@@ -10,8 +10,7 @@ This file presents the different Functions, Classes & Enums available with the A
 API functions
 ------------------------------------
 
-| This class allows you to control the robot via internal API.
-| By controlling, we mean:
+| This class allows you to control the robot via internal API. By controlling, we mean:
 
 - Moving the robot.
 - Using Vision.
@@ -128,6 +127,13 @@ Custom Button
     :members: custom_button
     :member-order: bysource
 
+.. automodule:: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper
+   :members: CustomButtonRosWrapper
+
+.. autoclass:: CustomButtonRosWrapper
+    :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
+    :member-order: bysource
+
 Enums
 ------------------------------------
 
@@ -136,3 +142,4 @@ Enums
     :undoc-members:
     :exclude-members: CommandEnum
     :member-order: bysource
+

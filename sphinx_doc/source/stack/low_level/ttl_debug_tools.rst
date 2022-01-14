@@ -1,10 +1,10 @@
 TTL Debug Tools
 ====================================
 
-This package is a debugging package to setup and access directly to all hardware component on the TTL bus.
+This package is a debugging package to setup and access directly to all hardware components on the TTL bus.
 It provides main functions like ping, scan device and read/write/syncRead/syncWrite operations on devices.
 
-There are two ways to use this package : directly with the compiled binary, or via :doc:`ttl_driver` services called in dedicated scripts.
+There are two ways to use this package: directly with the compiled binary, or via :doc:`ttl_driver` services called in dedicated scripts.
 
 Ttl debug tool binary
 ------------------------------------
@@ -21,19 +21,19 @@ or ::
 
 Parameters - Ttl debug tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    - **--help / -h:** Print help message
-    - **--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)
-    - **--port / -p [Port]:** Set port
-    - **--id / -i [ID]:** Device ID (-1 by default)
-    - **--ids [IDs]:** the list of TTL devices' ID
-    - **--scan:** Scan all devices on the bus
-    - **--ping:** Ping specific ID
-    - **--get-register [Addr]:** get a value from a register, parameters is: register address
-    - **--get-registers [Addr]:** get list of values from multiple devices at a register address, parameters is: register address
-    - **--get-size [Size]:** size of data to be read with get-register or get-registers, parameters is: size of data in bytes
-    - **--set-register [Addr] [Value] [Size]:** Set a value to a register, parameters are in the order: register address / value / size (in bytes) of the data
-    - **--set-registers [Addr] [Values] [Size]:** Set values to a register on multiple devices, parameters are in the order: register address / list of values / size (in bytes) of the data
-    - **--calibrate:** Calibrate all steppers TTL. It is used in NED2 only
+    - **--help / -h:** Prints help message
+    - **--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)
+    - **--port / -p [Port]:** Sets port
+    - **--id / -i [ID]:** Devices ID (-1 by default)
+    - **--ids [IDs]:** Lists of devices IDs
+    - **--scan:** Scans all devices on the bus
+    - **--ping:** Pings specific ID
+    - **--get-register [Addr]:** Gets a value from a register, parameters is: register address
+    - **--get-registers [Addr]:** Gets list of values from multiple devices at a register address, parameters is: register address
+    - **--get-size [Size]:** Size of data to be read with get-register or get-registers, parameters is: size of data in bytes
+    - **--set-register [Addr] [Value] [Size]:** Sets a value to a register, parameters are in the order: register address / value / size (in bytes) of the data
+    - **--set-registers [Addr] [Values] [Size]:** Sets values to a register on multiple devices, parameters are in the order: register address / list of values / size (in bytes) of the data
+    - **--calibrate:** Calibrates all steppers on the bus. It is used in Ned2 only
 
 Scripts
 ------------------------------------
@@ -53,7 +53,7 @@ This script can be launched via:  ::
 Parameters - Send custom value
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     - **--id [ID]:** Device ID
-    - **--address [Addr]:** Register address to modify
+    - **--address [Addr]:** Registers address to modify
     - **--value [Value]:** Value to store at the register address given
     - **--size [Size]:** Size in bytes of the data to write
 

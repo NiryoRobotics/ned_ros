@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 17:40+0100\n"
+"POT-Creation-Date: 2022-01-07 12:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,11 @@ msgid "The Niryo ROS Stack can be installed in multiple target OS:"
 msgstr ""
 
 #: ../../source/installation/getting_started.rst:6
-msgid "Raspberry pi 3 (deprecated, not supported anymore)"
+msgid "Raspberry Pi 3 (deprecated, not supported anymore)"
 msgstr ""
 
 #: ../../source/installation/getting_started.rst:7
-msgid "Raspberry pi 4"
+msgid "Raspberry Pi 4"
 msgstr ""
 
 #: ../../source/installation/getting_started.rst:8
@@ -42,16 +42,19 @@ msgstr ""
 
 #: ../../source/installation/getting_started.rst:10
 msgid ""
-"As the stack is based on ROS melodic or kinetic (deprecated), you need to"
-" be on a system based on Ubuntu. We currently support the following "
-"versions:"
+"As the stack is based on ROS Melodic or Kinetic (deprecated), you need to"
+" be on an Ubuntu based system."
 msgstr ""
 
-#: ../../source/installation/getting_started.rst:13
-msgid "Ubuntu 18.04 :doc:`ubuntu_18`"
+#: ../../source/installation/getting_started.rst:12
+msgid "We currently support the following versions:"
 msgstr ""
 
 #: ../../source/installation/getting_started.rst:14
+msgid "Ubuntu 18.04 :doc:`ubuntu_18`"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:15
 msgid "Windows Subsystem for Linux 2 (WSL 2) - Ubuntu 18.04 :doc:`wsl`"
 msgstr ""
 
@@ -67,5 +70,19 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Ubuntu 16.04 :doc:`ubuntu_16`"
+#~ msgstr ""
+
+#~ msgid "Raspberry pi 3 (deprecated, not supported anymore)"
+#~ msgstr ""
+
+#~ msgid "Raspberry pi 4"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As the stack is based on ROS "
+#~ "melodic or kinetic (deprecated), you "
+#~ "need to be on a system based "
+#~ "on Ubuntu. We currently support the "
+#~ "following versions:"
 #~ msgstr ""
 

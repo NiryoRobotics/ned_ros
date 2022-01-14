@@ -1,4 +1,4 @@
-image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:amd64
 
 variables:
   ROS_LANG_DISABLE: genlisp:geneus:gennodejs
@@ -83,7 +83,7 @@ catkin_make_amd:
       - install
 
 catkin_make_arm:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
   extends: .abstract_catkin_build
   rules:
     - if: $CI_COMMIT_BRANCH
@@ -171,13 +171,12 @@ test_job:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
-    # Launch roscore in background
-    - roscore&
-
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
-    - catkin run_tests -j1
+    - catkin run_tests --profile ${CATKIN_PROFILE_NAME} -j1
+  after_script:
+    - mv ${NIRYO_HOME_FOLDER}/* .
 
 roslint_job:
   stage: test
@@ -253,6 +252,9 @@ missing_translation_job:
   stage: test
   variables:
     LOCALE_FOLDER_PATH: ./sphinx_doc/locale
+  rules:
+    - if: $CI_COMMIT_BRANCH 
+    - if: $CI_COMMIT_TAG
 
 .staging_job:
   variables: &staging_variables
@@ -283,8 +285,14 @@ linkchecker_staging_job:
   stage: environment_test
   variables:
     <<: *staging_variables
+  rules:
+    - if: $CI_COMMIT_BRANCH
   needs:
     - upload_staging_job
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
   extends: .abstract_linkchecker
 
 .production_job:
@@ -313,10 +321,10 @@ upload_production_job:
 
 linkchecker_production_job:
   image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
+  rules: *production_rules
   stage: environment_test
   variables:
     <<: *production_variables
-  rules: *production_rules
   needs:
     - upload_production_job
   allow_failure: true

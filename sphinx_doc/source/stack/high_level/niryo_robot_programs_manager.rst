@@ -11,7 +11,7 @@ Programs manager node
 The ROS Node is made of several services to deal with the storage and running of
 programs.
 
-Calls are not available from the Python ROS Wrapper, as it made to run its programs
+Calls are not available from the Python ROS Wrapper, as it is made to run its programs
 with the Python ROS Wrapper.
 
 It belongs to the ROS namespace: |namespace_emphasize|.

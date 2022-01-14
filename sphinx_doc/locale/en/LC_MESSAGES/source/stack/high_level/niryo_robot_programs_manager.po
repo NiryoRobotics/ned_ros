@@ -41,8 +41,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:14
 msgid ""
-"Calls are not available from the Python ROS Wrapper, as it made to run "
-"its programs with the Python ROS Wrapper."
+"Calls are not available from the Python ROS Wrapper, as it is made to run"
+" its programs with the Python ROS Wrapper."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_programs_manager.rst:17
@@ -422,12 +422,6 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram"
 #~ " (Service)>`"
 #~ msgstr ""
 
