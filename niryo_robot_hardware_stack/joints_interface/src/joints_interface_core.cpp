@@ -56,6 +56,9 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
 
     ROS_INFO("JointsInterfaceCore::init - Started");
     rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
+
+    // in ned2, mode is not learning mode in the first time
+    _previous_state_learning_mode = (_hardware_version != "ned2");
 }
 
 /**
