@@ -571,28 +571,25 @@ bool TtlManager::readJointsStatus()
                 vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
                 // we retrieve all the associated id for the type of the current driver
-                vector<std::array<uint32_t, 2> > data_list{};
+                vector<uint32_t> position_list;
 
                 // retrieve joint status
-                if (COMM_SUCCESS == driver->syncReadJointStatus(ids_list, data_list))
+                int res = driver->syncReadPosition(ids_list, position_list);
+                if (COMM_SUCCESS == res)
                 {
-                    if (ids_list.size() == data_list.size())
+                    if (ids_list.size() == position_list.size())
                     {
                         // set motors states accordingly
                         for (size_t i = 0; i < ids_list.size(); ++i)
                         {
                             uint8_t id = ids_list.at(i);
 
-                            int velocity = static_cast<int>((data_list.at(i)).at(0));
-                            int position = static_cast<int>((data_list.at(i)).at(1));
-
                             if (_state_map.count(id))
                             {
                                 auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
                                 if (state)
                                 {
-                                    state->setPosition(position);
-                                    state->setVelocity(velocity);
+                                    state->setPosition(static_cast<int>((position_list.at(i))));
                                 }
                             }
                         }
@@ -602,12 +599,14 @@ bool TtlManager::readJointsStatus()
                         ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
                                     "vector mismatch (id_list size %d, position_list size %d)",
                                     static_cast<int>(ids_list.size()),
-                                    static_cast<int>(data_list.size()));
+                                    static_cast<int>(position_list.size()));
                         hw_errors_increment++;
                     }
                 }
                 else
                 {
+                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                              "driver fail to syncReadJointStatus (error %d)", res);
                     hw_errors_increment++;
                 }
             }
@@ -746,9 +745,9 @@ bool TtlManager::readHardwareStatus()
 
             // 1. syncread for all motors
             // **********  voltage and Temperature
-            /* vector<std::pair<double, uint8_t> > hw_data_list;
+             vector<std::pair<double, uint8_t> > hw_data_list;
 
-            if (COMM_SUCCESS != stepper_driver->syncReadHwStatus(ids_list, hw_data_list))
+            if (COMM_SUCCESS != driver->syncReadHwStatus(ids_list, hw_data_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
@@ -759,40 +758,6 @@ bool TtlManager::readHardwareStatus()
                 ROS_ERROR("TtlManager::readHardwareStatusOptimized : syncReadHwStatus failed - "
                             "vector mistmatch (id_list size %d, hw_data_list size %d)",
                             static_cast<int>(ids_list.size()), static_cast<int>(hw_data_list.size()));
-
-                hw_errors_increment++;
-            }*/
-
-            // **********  Temperature
-            vector<uint8_t> temperature_list;
-            if (COMM_SUCCESS != driver->syncReadTemperature(ids_list, temperature_list))
-            {
-                // this operation can fail, it is normal, so no error message
-                hw_errors_increment++;
-            }
-            else if (ids_list.size() != temperature_list.size())
-            {
-                // however, if we have a mismatch here, it is not normal
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
-                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
-                            static_cast<int>(ids_list.size()), static_cast<int>(temperature_list.size()));
-
-                hw_errors_increment++;
-            }
-
-            // **********  Voltage
-            vector<double> voltage_list;
-            if (COMM_SUCCESS != driver->syncReadRawVoltage(ids_list, voltage_list))
-            {
-                // this operation can fail, it is normal, so no error message
-                hw_errors_increment++;
-            }
-            else if (ids_list.size() != voltage_list.size())
-            {
-                // however, if we have a mismatch here, it is not normal
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
-                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
-                            static_cast<int>(ids_list.size()), static_cast<int>(voltage_list.size()));
 
                 hw_errors_increment++;
             }
@@ -823,24 +788,13 @@ bool TtlManager::readHardwareStatus()
                     auto state = _state_map.at(id);
 
                     // **************  temperature and voltage
-                    /*if (hw_data_list.size() > i)
+                    if (hw_data_list.size() > i)
                     {
                         double voltage = (hw_data_list.at(i)).first;
                         uint8_t temperature = (hw_data_list.at(i)).second;
 
                         state->setTemperature(temperature);
                         state->setRawVoltage(voltage);
-                    }*/
-
-                    // **************  temperature and voltage
-                    if (temperature_list.size() > i)
-                    {
-                        state->setTemperature(temperature_list.at(i));
-                    }
-
-                    if (voltage_list.size() > i)
-                    {
-                        state->setRawVoltage(voltage_list.at(i));
                     }
 
                     // **********  error state
@@ -903,7 +857,10 @@ uint8_t TtlManager::readSteppersStatus()
         // we want to check calibration (done at startup and when calibration is started)
         if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() &&  _ids_map.count(hw_type))
         {
-            vector<uint8_t> ids_list = _ids_map.at(hw_type);
+            vector<uint8_t> id_list = _ids_map.at(hw_type);
+            vector<uint8_t> stepper_id_list;
+            std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list), [this](uint8_t id){
+                                    return _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR;});
 
             /* Truth Table
              * still_in_progress | state | new state
@@ -919,9 +876,9 @@ uint8_t TtlManager::readSteppersStatus()
 
             // ***********  calibration status, only if initialized
             std::vector<uint8_t> homing_status_list;
-            if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(ids_list, homing_status_list))
+            if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(stepper_id_list, homing_status_list))
             {
-                if (ids_list.size() == homing_status_list.size())
+                if (stepper_id_list.size() == homing_status_list.size())
                 {
                     // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
                     int max_status = -1;
@@ -935,7 +892,7 @@ uint8_t TtlManager::readSteppersStatus()
                     // set states accordingly
                     for (size_t i = 0; i < homing_status_list.size(); ++i)
                     {
-                        uint8_t id = ids_list.at(i);
+                        uint8_t id = stepper_id_list.at(i);
                         ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
 
                         if (_state_map.count(id))
@@ -947,25 +904,25 @@ uint8_t TtlManager::readSteppersStatus()
                             if (stepperState && !stepperState->isConveyor())
                             {
                                 stepperState->setCalibration(status, 1);
-                            }
 
-                            // get max status of all motors (to retrieve potential errors)
-                            // carefull to those possible cases :
-                            // 1, 1, 1
-                            // 1, 2, 1
-                            // 0, 2, 2
-                            // 2, 0, 2
+                                // get max status of all motors (to retrieve potential errors)
+                                // carefull to those possible cases :
+                                // 1, 1, 1
+                                // 1, 2, 1
+                                // 0, 2, 2
+                                // 2, 0, 2
 
-                            // if 0, uninitialized, else, take max
-                            // we need to keep the status unconverted to have the correct order
-                            if (0 != max_status && homing_status_list.at(i) > max_status)
-                                max_status = homing_status_list.at(i);
+                                // if 0, uninitialized, else, take max
+                                // we need to keep the status unconverted to have the correct order
+                                if (0 != max_status && homing_status_list.at(i) > max_status)
+                                    max_status = homing_status_list.at(i);
 
-                            // if one status is in progress or uinitialized, we are really in progress
-                            if ((0 == homing_status_list.at(i)) ||
-                                EStepperCalibrationStatus::IN_PROGRESS == status)
-                            {
-                                still_in_progress = true;
+                                // if one status is in progress or uinitialized, we are really in progress
+                                if ((0 == homing_status_list.at(i)) ||
+                                    EStepperCalibrationStatus::IN_PROGRESS == status)
+                                {
+                                    still_in_progress = true;
+                                }
                             }
                         }
                     }  // for homing_status_list
@@ -995,7 +952,7 @@ uint8_t TtlManager::readSteppersStatus()
                 {
                     ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
                                 "vector mistmatch (id_list size %d, homing_status_list size %d)",
-                                static_cast<int>(ids_list.size()), static_cast<int>(homing_status_list.size()));
+                                static_cast<int>(stepper_id_list.size()), static_cast<int>(homing_status_list.size()));
 
                     hw_errors_increment++;
                 }

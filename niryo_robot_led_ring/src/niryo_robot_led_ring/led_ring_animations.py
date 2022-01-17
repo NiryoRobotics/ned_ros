@@ -27,10 +27,10 @@ class LedRingAnimations:
         self.LED_PIN = rospy.get_param('~led_pin')  # GPIO pin connected to the pixels (must support PWM!)
         self.LED_FREQ_HZ = rospy.get_param('~led_freq_hs')  # LED signal frequency in hertz (usually 800khz)
         self.LED_DMA = rospy.get_param('~led_dma')  # DMA channel to use for generating signal (try 10)
-        self.LED_BRIGHTNESS = rospy.get_param(
-            '~led_brightness')  # Set to 0 for darkest and 255 for brightest
-        self.LED_INVERT = rospy.get_param(
-            '~led_invert')  # True to invert the signal (when using NPN transistor level shift)
+        # Set to 0 for darkest and 255 for brightest
+        self.LED_BRIGHTNESS = rospy.get_param('~led_brightness')
+        # True to invert the signal (when using NPN transistor level shift)
+        self.LED_INVERT = rospy.get_param('~led_invert')
         self.LED_CHANNEL = rospy.get_param('~led_channel')
         self.__led_offset = rospy.get_param("~led_offset")
 
@@ -59,16 +59,8 @@ class LedRingAnimations:
         self.current_animation = LedRingAnimation.NONE
         self.set_current_anim_and_color(self.current_animation, self.current_animation_color, )
 
-        if not self.__is_simulation:
-            self.strip = PixelStrip(self.LED_COUNT, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
-                                    self.LED_BRIGHTNESS, self.LED_CHANNEL, self.LED_STRIP)
-            self.strip.begin()
-
-        if self.__is_simulation:
-            self.led_count = self.LED_COUNT
-        else:
-            self.led_count = self.strip.numPixels()
-
+        self.strip = None
+        self.led_count = self.LED_COUNT
         self.off_color = GREY if self.__is_simulation else BLACK
 
         # for real mode
@@ -81,8 +73,15 @@ class LedRingAnimations:
 
     def __del__(self):
         self.set_and_show_leds(self.off_color)
-        if not self.__is_simulation:
+        if self.strip is not None:
             del self.strip
+
+    def init_led_ring(self):
+        if not self.__is_simulation:
+            self.strip = PixelStrip(self.LED_COUNT, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
+                                    self.LED_BRIGHTNESS, self.LED_CHANNEL, self.LED_STRIP)
+            self.strip.begin()
+            self.led_count = self.strip.numPixels()
 
     def stop_animation(self):
         """
@@ -536,13 +535,15 @@ class LedRingAnimations:
         Return a list of size self.led_count, containing the current rgb color [r, g, b] of each Led in the
         real led ring
         """
+        if self.strip is None:
+            return []
+
         real_leds_state = []
-        if not self.__is_simulation:
-            for i in range(self.led_count):
-                # read back the state from the library memory buffer
-                # (can't read directly Led state, they are Write-only)
-                color_i = self.strip.getPixelColorRGB(i)
-                real_leds_state.append([color_i.r, color_i.g, color_i.b])
+        for i in range(self.led_count):
+            # read back the state from the library memory buffer
+            # (can't read directly Led state, they are Write-only)
+            color_i = self.strip.getPixelColorRGB(i)
+            real_leds_state.append([color_i.r, color_i.g, color_i.b])
         return real_leds_state
 
     # - Generic methods usable for simulation and real robot
@@ -552,16 +553,16 @@ class LedRingAnimations:
         Set the color of a pixel, in simu or in real
         """
         led_index = (index + self.__led_offset) % self.led_count
-        if not self.__is_simulation:
-            color = get_24bits_color_from_msg(color_rgba)
-            self.strip.setPixelColor(led_index, color)
+        if self.strip is not None:
+            led_color = get_24bits_color_from_msg(color_rgba)
+            self.strip.setPixelColor(led_index, led_color)
         self.led_ring_makers.set_one_led_marker(led_index, color_rgba)
 
     def show_leds(self):
         """
         Display all Led's values previously set, in simu or in real
         """
-        if not self.__is_simulation:
+        if self.strip is not None:
             self.strip.show()
 
             # update value of current led state
@@ -573,7 +574,7 @@ class LedRingAnimations:
             self.set_current_real_leds_state(current_color_rgba_led_state)
         self.led_ring_makers.show_led_ring_markers()
 
-    def set_and_show_leds(self, color, range_=None, index_delta=0):
+    def set_and_show_leds(self, led_color, range_=None, index_delta=0):
         """
         Iterate over all leds, set them to the chosen color and show them all at once.
         "range_" must be filled only if we want to iterate over a part of the led ring.
@@ -583,16 +584,16 @@ class LedRingAnimations:
         if range_ is None:
             range_ = self.led_count
             for i in range(range_):
-                self.set_led(i + index_delta, color)
+                self.set_led(i + index_delta, led_color)
             self.show_leds()
 
         elif isinstance(range_, list) and len(range_) == 3:
             for i in range(range_[0], range_[1], range_[2]):
-                self.set_led(i + index_delta, color)
+                self.set_led(i + index_delta, led_color)
             self.show_leds()
 
     def set_brightness(self, brightness):
-        if not self.__is_simulation:
+        if self.strip is not None:
             self.strip.setBrightness(brightness)
 
     def __sleep_animation(self, until_time):
@@ -604,8 +605,8 @@ class LedRingAnimations:
             rospy.sleep(until_time - rospy.Time.now())
 
     # Observable related methods
-    def set_current_anim_and_color(self, animation, color=None):
-        self.current_animation_color = color if color is not None else BLACK
+    def set_current_anim_and_color(self, animation, anim_color=None):
+        self.current_animation_color = anim_color if anim_color is not None else BLACK
         self.current_animation = animation
         self.notify_observers()
 
@@ -634,9 +635,7 @@ def get_24bits_color_from_msg(color_request):
     r = int(color_request.r)
     g = int(color_request.g)
     b = int(color_request.b)
-
-    color = Color(r, g, b)
-    return color
+    return Color(r, g, b)
 
 
 def color(r, g, b):
@@ -646,7 +645,7 @@ def color(r, g, b):
     return Color(r, g, b)
 
 
-# Rainbow led related usefull methods
+# Rainbow led related usefully methods
 def wheel_rgba(pos):
     """Generate rainbow colors across 0-255 positions."""
     if pos < 85:

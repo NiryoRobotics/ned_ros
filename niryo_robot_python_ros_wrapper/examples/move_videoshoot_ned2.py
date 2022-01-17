@@ -2,6 +2,7 @@
 
 # To use the API, copy these 4 lines on each Python file you create
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
+from niryo_robot_arm_commander.msg import PausePlanExecution
 import rospy
 import threading
 import random
@@ -15,6 +16,14 @@ PINK = [255, 0, 255]
 RED = [255, 0, 0]
 CYAN = [0, 255, 255]
 
+state = PausePlanExecution.STANDBY
+
+
+def callback_pause_movement(msg):
+    global state
+    state = msg.state
+
+rospy.Subscriber('/niryo_robot_rpi/pause_state', PausePlanExecution, callback_pause_movement)
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
 print "--- Start"
 
@@ -83,8 +92,10 @@ def open_gripper():
 def random_sounds():
     random_sounds = ["connected.wav", "start2b.wav", "start4abis.wav", "start4a.wav", "connected3.wav",
                      "connected2.wav"]
-    while not rospy.is_shutdown():
-        n.sound.play(random_sounds[random.randint(0, len(random_sounds)-1)], wait_end=False)
+    global state
+    while not (rospy.is_shutdown() or state == PausePlanExecution.CANCEL):
+        if not (state == PausePlanExecution.PAUSE):
+            n.sound.play(random_sounds[random.randint(0, len(random_sounds) - 1)], wait_end=False)
         rospy.sleep(random.randint(5, 15))
 
 
@@ -98,7 +109,7 @@ french_flag()
 n.move_pose(*[0.029, 0.217, 0.3, 2.254, 1.476, -2.38])
 print ("-- Compute traj 1 --")
 traj1 = n.compute_trajectory_from_poses_and_joints(
-    [[0.029, 0.217, 0.3, 2.254, 1.476, -2.38], [0.029, 0.217, 0.15, 2.254, 1.476, -2.38],
+    [[0.029, 0.217, 0.15, 2.254, 1.476, -2.38],
      [0.03, 0.217, 0.3, 2.254, 1.476, -2.38], [0.159, 0.126, 0.3, 0.062, 1.535, 0.96],
      [0.159, 0.126, 0.15, 0.062, 1.535, 0.96], [0.16, 0.126, 0.3, 0.062, 1.535, 0.96],
      [0.219, -0.019, 0.3, -1.555, 1.544, -1.526], [0.219, -0.019, 0.15, -1.555, 1.544, -1.526],
@@ -106,7 +117,7 @@ traj1 = n.compute_trajectory_from_poses_and_joints(
      [0.16, -0.175, 0.15, -2.693, 1.529, 2.976], [0.17, -0.175, 0.3, -2.693, 1.529, 2.976],
      [-0.015, -0.229, 0.3, -2.552, 1.563, 2.298], [-0.015, -0.229, 0.15, -2.552, 1.563, 2.298],
      [-0.016, -0.229, 0.3, -2.552, 1.563, 2.298]],
-    ["pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose",
+    ["pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose",
      "pose"], 0.01)
 # n.execute_moveit_robot_trajectory(traj1)
 
@@ -123,10 +134,10 @@ traj2 = n.compute_trajectory_from_poses_and_joints(
 print ("-- Compute traj 3 --")
 n.move_pose(*[0.1, -0.01, 0.531, -0.045, 0.011, -0.074])
 traj3 = n.compute_trajectory_from_poses_and_joints(
-    [[0.1, -0.01, 0.531, -0.045, 0.011, -0.074], [0.152, -0.005, 0.301, -0.063, -0.073, -0.036],
+    [[0.152, -0.005, 0.301, -0.063, -0.073, -0.036],
      [-0.011, -0.215, 0.229, -0.307, 0.045, -0.551], [0.009, -0.117, 0.369, 0.437, 0.497, -0.223],
      [-0.018, -0.2, 0.15, -1.57, 0, -1.57], [-0.018, -0.2, 0.3, -1.57, 0, -1.57]],
-    ["pose", "pose", "pose", "pose", "pose", "pose"], 0)
+    ["pose", "pose", "pose", "pose", "pose"], 0)
 # n.execute_moveit_robot_trajectory(traj3)
 
 print ("-- Compute traj 4 --")
@@ -317,6 +328,7 @@ while True:
 
     except NiryoRosWrapperException as e:
         print e
+        break
         # handle exception here
         # you can also make a try/except for each command separately
 

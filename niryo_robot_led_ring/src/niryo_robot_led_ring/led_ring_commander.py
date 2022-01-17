@@ -121,7 +121,11 @@ class LedRingCommander:
             self.shutdown()
 
         elif self.robot_status == RobotStatus.BOOTING and msg.robot_status != RobotStatus.BOOTING:
-            self.led_ring_anim.fade(BLUE)
+            if not self.__is_simulation:
+                from led_ring_utils import enable_led_ring
+                enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
+                self.led_ring_anim.init_led_ring()
+        #    self.led_ring_anim.fade(BLUE)
 
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or
@@ -289,6 +293,9 @@ class LedRingCommander:
             self._publish_led_ring_status()
 
     def display_user_mode(self):
+        if RobotStatus.BOOTING == self.robot_status:
+            return
+
         command = self.get_robot_status_led_ring_cmd()
         if command == self.running_status_command or self.error_animation_lock.locked():
             return
