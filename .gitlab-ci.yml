@@ -79,6 +79,9 @@ include:
       - src
       - build
       - install
+    exclude:
+      - src/.git/*
+      - src/.git/**/*
 
 catkin_make_amd:
   extends: .abstract_catkin_build
