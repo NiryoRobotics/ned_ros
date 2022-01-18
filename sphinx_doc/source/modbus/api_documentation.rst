@@ -42,12 +42,42 @@ Accepted Modbus functions:
 
 This datastore can be used to set Digital I/O mode and state. Digital I/O numbers used for Modbus:
 
-- 0: 1A
-- 1: 1B
-- 2: 1C
-- 3: 2A
-- 4: 2B
-- 5: 2C
+.. list-table:: Digital IO addresses offset table
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   *  - Address offset
+      - Niryo One / Ned digital IO
+      - Ned2 digital IO
+   *  - 0
+      - 1A
+      - DI1
+   *  - 1
+      - 1B
+      - DI2
+   *  - 2
+      - 1C
+      - DI3
+   *  - 3
+      - 2A
+      - DI4
+   *  - 4
+      - 2B
+      - DI5
+   *  - 5
+      - 2C
+      - D01
+   *  - 6
+      - SW1
+      - D02
+   *  - 7
+      - SW2
+      - D03
+   *  - 8
+      -
+      - D04
+
 
 .. list-table::
    :header-rows: 1
@@ -57,10 +87,10 @@ This datastore can be used to set Digital I/O mode and state. Digital I/O number
    *  - Address
       - Description
 
-   *  - 0-5
+   *  - 0-8
       - Digital I/O mode (Input = 1, Output = 0)
 
-   *  - 100-105
+   *  - 100-108
       - Digital I/O state (High = 1, Low = 0)
 
    *  - 200-299
@@ -88,10 +118,10 @@ This datastore can be used to read Digital I/O mode and state. See the :ref:`sou
    *  - Address
       - Description
 
-   *  - 0-5
+   *  - 0-8
       - Digital I/O mode (Input = 1, Output = 0)
 
-   *  - 100-105
+   *  - 100-108
       - Digital I/O state (High = 1, Low = 0)
 
 
@@ -258,8 +288,9 @@ Accepted Modbus functions:
    
    *  - 626 - max 641
       - Vision - Stores workspace's name, as a string encoded in 16 bits hex (see examples on how to store a workspace name from a client)
-   
 
+   *  - 650
+      - Set Analog IO - Arg: [:ref:`Analog IO number<Analog IO addresses offset table>`, voltage 0V- 5000mV]
 
 '*' The "Last command result" gives you more information about the last executed command:
 
@@ -360,6 +391,36 @@ Accepted Modbus functions:
       
    *  - 543
       - Conveyor 2 direction (Backward = -1, Forward = 1)
+
+   *  - 600 - 604
+      - Analog IO mode
+
+   *  - 610 - 614
+      - Analog IO state in mV
+
+
+.. _Analog IO addresses offset table:
+
+.. list-table:: Analog IO addresses offset table
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   *  - Address offset
+      - Niryo One / Ned analog IO
+      - Ned2 analog IO
+   *  - 0
+      - /
+      - AI1
+   *  - 1
+      - /
+      - AI2
+   *  - 2
+      - /
+      - AO1
+   *  - 3
+      - /
+      - AO2
 
 
 
