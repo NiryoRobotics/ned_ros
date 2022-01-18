@@ -1,5 +1,5 @@
-December release - Hardware Stack refinement
-===========================================================
+January 2022 release - Niryo One & Ned compatibility - Hardware Stack refinement
+===========================================================================================================
 
 Requirements
 -----------------------------------------------------------
@@ -88,7 +88,8 @@ Features (for Ned and One only)
 
 Know issues (for Ned and One only)
 -----------------------------------------------------------
-No known issues detected
+
+Can't scan 2 conveyors at the same time. Please scan the conveyors one by one.
 
 Limitations
 -----------------------------------------------------------
