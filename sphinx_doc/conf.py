@@ -86,7 +86,7 @@ add_module_names = False
 html_theme = shared_conf.html_theme
 
 templates_path = shared_conf.templates_path
-html_static_path = shared_conf.html_static_path
+html_static_path = shared_conf.html_static_path[:] + ['_static', '../niryo_robot_sound/niryo_robot_state_sounds']
 
 html_logo = shared_conf.html_logo
 html_favicon = shared_conf.html_favicon
