@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:53+0100\n"
+"POT-Creation-Date: 2022-01-18 10:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,9 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/changelog.rst:2
-msgid "December release - Hardware Stack refinement"
+msgid ""
+"January 2022 release - Niryo One & Ned compatibility - Hardware Stack "
+"refinement"
 msgstr ""
 
 #: ../../source/changelog.rst:5
@@ -302,193 +304,195 @@ msgstr ""
 msgid "Know issues (for Ned and One only)"
 msgstr ""
 
-#: ../../source/changelog.rst:91
-msgid "No known issues detected"
-msgstr ""
-
-#: ../../source/changelog.rst:94
-msgid "Limitations"
+#: ../../source/changelog.rst:92
+msgid ""
+"Can't scan 2 conveyors at the same time. Please scan the conveyors one by"
+" one."
 msgstr ""
 
 #: ../../source/changelog.rst:95
-msgid "Calibration deactivated on Simulated Ned and One"
+msgid "Limitations"
 msgstr ""
 
 #: ../../source/changelog.rst:96
-msgid "Not officially supporting Ned2 hardware version"
+msgid "Calibration deactivated on Simulated Ned and One"
 msgstr ""
 
 #: ../../source/changelog.rst:97
+msgid "Not officially supporting Ned2 hardware version"
+msgstr ""
+
+#: ../../source/changelog.rst:98
 msgid "Hotspot mode is always on by default on reboot for the Niryo One"
 msgstr ""
 
-#: ../../source/changelog.rst:100
+#: ../../source/changelog.rst:101
 msgid "Niryo Studio"
 msgstr ""
 
-#: ../../source/changelog.rst:103
+#: ../../source/changelog.rst:104
 msgid "New features"
 msgstr ""
 
-#: ../../source/changelog.rst:105
+#: ../../source/changelog.rst:106
 msgid "Network settings (DHCP / Static IP)"
 msgstr ""
 
-#: ../../source/changelog.rst:106
+#: ../../source/changelog.rst:107
 msgid "Hardware detection One / Ned / Ned2"
 msgstr ""
 
-#: ../../source/changelog.rst:107
+#: ../../source/changelog.rst:108
 msgid "Display TCP Speed"
 msgstr ""
 
-#: ../../source/changelog.rst:108
+#: ../../source/changelog.rst:109
 msgid "Blockly - Dynamic blocks (Saved pose, workspace)"
 msgstr ""
 
-#: ../../source/changelog.rst:111
+#: ../../source/changelog.rst:112
 msgid "Bugs fix"
 msgstr ""
 
-#: ../../source/changelog.rst:112
+#: ../../source/changelog.rst:113
 msgid "Blockly - Conversion RAD / DEG in block"
 msgstr ""
 
-#: ../../source/changelog.rst:116
+#: ../../source/changelog.rst:117
 msgid "September release - New features batch"
 msgstr ""
 
-#: ../../source/changelog.rst:119
+#: ../../source/changelog.rst:120
 msgid "Features"
 msgstr ""
 
-#: ../../source/changelog.rst:122
+#: ../../source/changelog.rst:123
 msgid "Tool commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:124
+#: ../../source/changelog.rst:125
 msgid "TCP service settings"
 msgstr ""
 
-#: ../../source/changelog.rst:126
+#: ../../source/changelog.rst:127
 msgid "TCP.msg"
 msgstr ""
 
-#: ../../source/changelog.rst:128
+#: ../../source/changelog.rst:129
 msgid "SetTCP.srv"
 msgstr ""
 
-#: ../../source/changelog.rst:132
+#: ../../source/changelog.rst:133
 msgid "Arm commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:134
+#: ../../source/changelog.rst:135
 msgid "New movements available in ArmMoveCommand.msg"
 msgstr ""
 
-#: ../../source/changelog.rst:136 ../../source/changelog.rst:150
+#: ../../source/changelog.rst:137 ../../source/changelog.rst:151
 msgid "linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:138 ../../source/changelog.rst:156
+#: ../../source/changelog.rst:139 ../../source/changelog.rst:157
 msgid "shift linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:140
+#: ../../source/changelog.rst:141
 msgid "trajectory"
 msgstr ""
 
-#: ../../source/changelog.rst:144
+#: ../../source/changelog.rst:145
 msgid "Python ROS Wrapper package"
 msgstr ""
 
-#: ../../source/changelog.rst:146
+#: ../../source/changelog.rst:147
 msgid "New movement functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:148
+#: ../../source/changelog.rst:149
 msgid "move linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:152
+#: ../../source/changelog.rst:153
 msgid "jog pose shift"
 msgstr ""
 
-#: ../../source/changelog.rst:154
+#: ../../source/changelog.rst:155
 msgid "jog joints shift"
 msgstr ""
 
-#: ../../source/changelog.rst:158
+#: ../../source/changelog.rst:159
 msgid "execute trajectory from pose"
 msgstr ""
 
-#: ../../source/changelog.rst:160
+#: ../../source/changelog.rst:161
 msgid "New TCP functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:162
+#: ../../source/changelog.rst:163
 msgid "set_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:164
+#: ../../source/changelog.rst:165
 msgid "enable_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:166
+#: ../../source/changelog.rst:167
 msgid "reset_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:168
+#: ../../source/changelog.rst:169
 msgid "New camera settings functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:170
+#: ../../source/changelog.rst:171
 msgid "set_brightness"
 msgstr ""
 
-#: ../../source/changelog.rst:172
+#: ../../source/changelog.rst:173
 msgid "set_contrast"
 msgstr ""
 
-#: ../../source/changelog.rst:174
+#: ../../source/changelog.rst:175
 msgid "set_saturation"
 msgstr ""
 
-#: ../../source/changelog.rst:177
+#: ../../source/changelog.rst:178
 msgid "Improvements"
 msgstr ""
 
-#: ../../source/changelog.rst:179
+#: ../../source/changelog.rst:180
 msgid "Refactoring Tool Commander and Robot Commander packages."
 msgstr ""
 
-#: ../../source/changelog.rst:181
+#: ../../source/changelog.rst:182
 msgid "Remove Robot Commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:183
+#: ../../source/changelog.rst:184
 msgid ""
 "Reorder Robot Commander package between Tool Commander and Arm Commander "
 "packages."
 msgstr ""
 
-#: ../../source/changelog.rst:185
+#: ../../source/changelog.rst:186
 msgid "Self collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:187
+#: ../../source/changelog.rst:188
 msgid "Add self-collision detection via MoveIt."
 msgstr ""
 
-#: ../../source/changelog.rst:189
+#: ../../source/changelog.rst:190
 msgid "Collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:191
+#: ../../source/changelog.rst:192
 msgid "Collision detection improvement on each joints."
 msgstr ""
 
-#: ../../source/changelog.rst:193
+#: ../../source/changelog.rst:194
 msgid "Learning mode activation in case of a collision."
 msgstr ""
 
@@ -502,5 +506,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Save and replay waypointed trajectories"
+#~ msgstr ""
+
+#~ msgid "December release - Hardware Stack refinement"
+#~ msgstr ""
+
+#~ msgid "No known issues detected"
 #~ msgstr ""
 

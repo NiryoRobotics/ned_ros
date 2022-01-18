@@ -722,8 +722,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:278
 msgid ""
-"Offset ID between the LED with the ID 0 and the ID of the led at the back"
-" of the robot."
+":ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -732,16 +732,22 @@ msgid ""
 "request"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:239
-msgid "``simulation_led_ring_markers_publish_rate``"
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
+msgid ""
+"will **interrupt** the previous one, if still playing. Depending on the "
+"``wait`` boolean field"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:240
-msgid "Rviz led ring markers publish rate in simulation mode"
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
+msgid ""
+"and the ``iterations`` field of the request, the service will either "
+"**answer immediately** after"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:241
-msgid "20"
+#: ../../source/stack/high_level/niryo_robot_led_ring.rst
+msgid ""
+"launching the animation, or **wait for the animation to finish** to "
+"answer."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:283
@@ -772,28 +778,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:301
 msgid ""
-"The ROS node implements one service, designed for the user to control the"
-" Led Ring."
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:253
-msgid "Led Ring Package services"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:260
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:283
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:308
-msgid "Message type"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:262
-msgid "``set_user_animation``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:263
-msgid ""
-":ref:`LedUser<source/stack/high_level/niryo_robot_led_ring:LedUser "
-"(Service)>`"
+":ref:`LedRingStatus<source/stack/high_level/niryo_robot_led_ring:LedRingStatus"
+" (Message)>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
@@ -804,34 +790,20 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid ""
-"will **interrupt** the previous one, if still playing. Depending on the "
-"``wait`` boolean field"
+"(displaying robot status or controlled by user if the robot works in "
+"AUTONOMOUS mode),"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid ""
-"and the ``iterations`` field of the request, the service will either "
-"**answer immediately** after"
+"the **current animation played** and the animation color (except for "
+"rainbow methods, where"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst
 msgid ""
-"launching the animation, or **wait for the animation to finish** to "
-"answer."
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:268
-msgid "``set_led_color``"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:269
-msgid ""
-":ref:`SetLedColor<source/stack/high_level/niryo_robot_led_ring:SetLedColor"
-" (Service)>`"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_led_ring.rst:270
-msgid "Light up a led identified by an ID"
+"the animation color is not defined). Publishes every time at least **one "
+"field changed**."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:306
