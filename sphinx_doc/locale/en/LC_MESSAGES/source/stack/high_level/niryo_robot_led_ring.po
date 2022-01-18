@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 10:56+0000\n"
+"POT-Creation-Date: 2022-01-18 13:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -688,7 +688,7 @@ msgid "``led_ring_markers_publish_rate``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:243
-msgid "Rviz led ring markers publish rate on a ral robot"
+msgid "Rviz led ring markers publish rate on a real robot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:248
@@ -1613,5 +1613,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "to one full rainbow fading accross Leds, unlike the chase method"
+#~ msgstr ""
+
+#~ msgid "Rviz led ring markers publish rate on a ral robot"
 #~ msgstr ""
 

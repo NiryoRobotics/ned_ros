@@ -1,0 +1,84 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Modbus User Manual
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Modbus User Manual 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-21 07:28+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/setup.rst:2
+msgid "Modbus Python library installation"
+msgstr "Installation de la librairie Python Modbus"
+
+#: ../../source/setup.rst:4
+msgid ""
+"To use the Modbus Python library, your workspace must have a Python "
+"interpreter with **Python 3** (3.6 or greater) or **Python 2** (2.7 or "
+"greater)."
+msgstr ""
+"Votre espace de travail doit disposer d’un interpréteur Python avec "
+"**Python 3** (3.6 ou une version supérieure) ou **Python 2** (2.7 ou une version "
+"supérieure)."
+
+#: ../../source/setup.rst:7
+msgid ""
+"Download Python on the official :python_website:`Python website<>` and "
+"find more information about the installation on "
+":python_installation:`this website<>`."
+msgstr ""
+"Téléchargez Python sur son :python_website:`site officiel<>` et "
+"retrouvez plus d'informations sur son installation sur "
+":python_installation:`ce site<>`."
+
+#: ../../source/setup.rst:10
+msgid ""
+"This installation requires the use of :pip_website:`pip<>`, the package "
+"manager included in Python."
+msgstr ""
+"Cette installation nécessitera l’utilisation de l'utilitaire :pip_website:`pip<>`, "
+"fourni avec Python."
+
+#: ../../source/setup.rst:13
+msgid "Start with the installation of numpy: ::"
+msgstr "Vous aurez tout d'abord besoin d’installer numpy :"
+
+#: ../../source/setup.rst:17
+msgid ""
+"To use the **Modbus API**, you also need to install Modbus python library"
+" :pymodbus:`pymodbus<>`: ::"
+msgstr ""
+"Pour utiliser l’**API Modbus Python**, vous aurez besoin d’installer la "
+"librairie Modbus pour python :pymodbus:`pymodbus<>` : ::"
+
+#: ../../source/setup.rst:23
+msgid ""
+"Pip can require administrator authorizations to install packages. In this"
+" case, add ::"
+msgstr ""
+"Pip peut nécessiter une autorisation de l’administrateur afin d’installer"
+" ces packages. Dans ce cas, ajoutez ::"
+
+#: ../../source/setup.rst:27
+msgid "before your command lines on Linux."
+msgstr "avant vos lignes de commande sur Linux."
+
+#: ../../source/setup.rst:29
+msgid ""
+"If pip is not automatically installed with Python, please visit the "
+"following website: :pip_website:`pip installation<>`."
+msgstr ""
+"Si pip n’est pas automatiquement installée avec Python, rendez-vous sur "
+"le site de :pip_website:`Pypi<>`."

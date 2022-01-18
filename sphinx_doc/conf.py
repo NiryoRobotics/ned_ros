@@ -129,6 +129,14 @@ extlinks = {
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',
         None),
+    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html/%s', None),
+    'python_website': ('https://www.python.org/%s', None),
+    'python_installation': ('https://realpython.com/installing-python/%s', None),
+    'pip_website': ('https://pypi.org/project/pip/%s', None),
+    'pip_installation': ('https://pip.pypa.io/en/stable/installing/%s', None),
+    'ned_ros_stack': ('https://github.com/NiryoRobotics/niryo_one_ros/%s', None),
+    'api_modbus_readme': ('https://github.com/NiryoRobotics/niryo_one_ros/tree/master/niryo_one_modbus/%s', None),
+    'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None),
 }
 
 TRANSLATE_CAPTIONS_JS="""
