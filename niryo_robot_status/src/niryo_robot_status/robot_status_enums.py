@@ -36,6 +36,7 @@ ROBOT_STATUS_TO_STR = {
     RobotStatus.RUNNING_DEBUG: 'Running debug',
     RobotStatus.PAUSE: 'Pause',
     RobotStatus.LEARNING_MODE_AUTONOMOUS: 'Learning mode autonomous',
+    RobotStatus.REBOOT_MOTOR: 'Reboot motor'
 }
 
 LOG_STATUS_TO_STR = {

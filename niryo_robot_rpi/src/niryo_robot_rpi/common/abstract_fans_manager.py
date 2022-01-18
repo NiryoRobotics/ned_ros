@@ -43,7 +43,7 @@ class AbstractFansManager(object):
             return
 
         rospy.sleep(1)
-        rospy.log("Fan Manager - Stop fans")
+        rospy.loginfo("Fan Manager - Stop fans")
         for fan in self._fans_list:
             fan.value = False
 
