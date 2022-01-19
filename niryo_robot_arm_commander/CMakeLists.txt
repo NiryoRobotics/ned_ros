@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   ArmMoveCommand.msg
+  CommandJog.msg
   JointLimits.msg
   PausePlanExecution.msg
   ShiftPose.msg

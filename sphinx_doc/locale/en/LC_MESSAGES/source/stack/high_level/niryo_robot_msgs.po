@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"POT-Creation-Date: 2022-01-06 17:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,196 +38,252 @@ msgid "Ned Messages"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:16
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:40
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:42
 msgid "Name"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:17
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:41
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:43
 msgid "Description"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:18
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:CommandStatus`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:BusState`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:19
-msgid "Enum-wise message for status code"
+msgid "TTL bus state"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:20
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:ObjectPose`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:CommandStatus`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:21
-msgid "x, y, z, roll, pitch, yaw"
+msgid "Enum-wise message for status code"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:22
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:RobotState`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:ObjectPose`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:23
-msgid "position, rpy, quaternion"
+msgid "x, y, z, roll, pitch, yaw"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:24
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:RPY`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:RobotState`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:25
-msgid "roll, pitch, yaw"
+msgid "position, rpy, quaternion"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:26
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:RPY`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:27
-msgid "several hardware informations"
+msgid "roll, pitch, yaw"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:28
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SoftwareVersion`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:29
+msgid "several hardware information"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:30
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SoftwareVersion`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:31
 msgid "several software version"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:32
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:34
 msgid "Niryo services"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:34
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:36
 msgid "Ned Services"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:42
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:44
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetBool`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:43
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:45
 msgid "Return a bool"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:44
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:46
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetInt`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:45
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:47
 msgid "Return a integer"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:46
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetStringList`"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:47
-msgid "Return a list of string"
-msgstr ""
-
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:48
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:49
-msgid "Set a bool and return status"
+msgid "Return a name list and a description list"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:50
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetString`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:51
-msgid "Set a integer and return status"
+msgid "Return a string"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:52
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetString`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetStringList`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:53
-msgid "Set a string and return status"
+msgid "Return a list of string"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:54
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Ping`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:55
-msgid "Trigger a task"
+msgid "Used to ping APIs"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:56
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:57
+msgid "Set a bool and return status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:58
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetFloat`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:59
-msgid "Niryo message dependencies"
+msgid "Set a float and return status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:60
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:61
-msgid ":msgs_index:`geometry_msgs`"
+msgid "Set a integer and return status"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:62
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetString`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:63
+msgid "Set a string and return status"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:64
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:65
+msgid "Trigger a task"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:69
+msgid "Niryo message dependencies"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:71
+msgid ":msgs_index:`geometry_msgs`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:74
 msgid "Niryo message files"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:67
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:77
+msgid "BusState"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:83
 msgid "CommandStatus"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:73
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:89
 msgid "ObjectPose"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:79
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:95
 msgid "RobotState"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:85
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:101
 msgid "RPY"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:91
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:107
 msgid "HardwareStatus"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:97
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:113
 msgid "SoftwareVersion"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:103
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:119
 msgid "Niryo Service files"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:106
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:122
 msgid "GetBool"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:112
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:128
 msgid "GetInt"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:118
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:134
 msgid "GetNameDescriptionList"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:124
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:140
+msgid "GetString"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:146
 msgid "GetStringList"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:130
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:152
+msgid "Ping"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:158
 msgid "SetBool"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:136
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:164
+msgid "SetFloat"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:170
 msgid "SetInt"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:142
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:176
 msgid "SetString"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_msgs.rst:148
+#: ../../source/stack/high_level/niryo_robot_msgs.rst:182
 msgid "Trigger"
 msgstr ""
 
@@ -325,5 +381,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid "several hardware informations"
 #~ msgstr ""
 

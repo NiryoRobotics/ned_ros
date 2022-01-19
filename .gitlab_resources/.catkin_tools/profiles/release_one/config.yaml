@@ -1,0 +1,21 @@
+blacklist: []
+build_space: build/release/one
+catkin_make_args: []
+cmake_args:
+- -DHARDWARE_VERSION=one
+- -DCATKIN_ENABLE_TESTING=OFF
+- -DENABLE_COVERAGE_TESTING=OFF
+- -DCMAKE_BUILD_TYPE=Release
+devel_layout: linked
+devel_space: devel/release/one
+extend_path:  /opt/ros/kinetic
+install: true
+install_space: install/release/one
+isolate_install: false
+jobs_args: []
+log_space: log/release/one
+make_args: []
+source_space: src
+use_env_cache: false
+use_internal_make_jobserver: true
+whitelist: []

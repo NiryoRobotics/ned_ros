@@ -1,4 +1,4 @@
-Niryo robot tools commander package
+Niryo robot tools commander
 ========================================
 
 Provides functionalities to control end-effectors and accessories for Ned.
@@ -44,10 +44,10 @@ Publisher - tools
       -  Description
    *  -  ``current_id``
       -  :std_msgs:`Int32`
-      -  Publish the current tool ID
+      -  Publishes the current tool ID
    *  -  ``tcp``
       -  :ref:`TCP<source/stack/high_level/niryo_robot_tools_commander:TCP (Message)>`
-      -  Publish if the TCP (Tool Center Point) is enabled and transformation between the tool_link and the TCP
+      -  Publishes if the TCP (Tool Center Point) is enabled and transformation between the tool_link and the TCP
 
 Services - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -63,21 +63,21 @@ Services - tools
       -  Description
    *  -  ``update_tool``
       -  :std_srvs:`Trigger`
-      -  Ping/scan for a dxl motor flashed with an ID corresponding to a tool and equip it (if found)
+      -  Pings/scans for a dxl motor flashed with an ID corresponding to a tool and equip it (if found)
    *  -  ``equip_electromagnet``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Equip the electromagnet with the motor ID given as parameter
+      -  Equips the electromagnet with the motor ID given as parameter
    *  -  ``enable_tcp``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetBool`
-      -  | Enable or disable the TCP (Tool Center Point) functionality.
+      -  | Enables or disablse the TCP (Tool Center Point) functionality.
          | When we activate it, the transformation will be the last one saved since the robot started.
          | By default it will be the one of the equipped tool.
    *  -  ``set_tcp``
       -  :ref:`SetTCP<source/stack/high_level/niryo_robot_tools_commander:SetTCP (Service)>`
-      -  Activate the TCP (Tool Center Point) functionality and defines a new TCP transformation.
+      -  Activates the TCP (Tool Center Point) functionality and defines a new TCP transformation.
    *  -  ``reset_tcp``
       -  :std_srvs:`Trigger`
-      -  Reset the TCP transformation. By default it will be the one of the equipped tool.
+      -  Resets the TCP transformation. By default it will be the one of the equipped tool.
 
 Dependencies - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

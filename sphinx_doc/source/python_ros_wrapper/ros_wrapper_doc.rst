@@ -10,8 +10,7 @@ This file presents the different Functions, Classes & Enums available with the A
 API functions
 ------------------------------------
 
-| This class allows you to control the robot via internal API.
-| By controlling, we mean:
+| This class allows you to control the robot via internal API. By controlling, we mean:
 
 - Moving the robot.
 - Using Vision.
@@ -106,24 +105,33 @@ Vision
 Sound
 ^^^^^^^^^^^^^
 
-.. automodule:: niryo_robot_sound.api.sound_ros_wrapper
-   :members: SoundRosWrapper
+For more function, please refer to: :ref:`Sound API functions<source/stack/high_level/niryo_robot_sound:Sound API functions>`
 
-.. autoclass:: SoundRosWrapper
-    :members: play, stop, set_volume,
-              import_sound, delete_sound
+.. autoclass:: NiryoRosWrapper
+    :members: sound
     :member-order: bysource
 
 Led Ring
 ^^^^^^^^^^^^^
 
-.. automodule:: niryo_robot_led_ring.api.led_ring_ros_wrapper
-   :members: LedRingRosWrapper
+For more function, please refer to: :ref:`Led Ring API functions<source/stack/high_level/niryo_robot_led_ring:Led Ring API functions>`
 
-.. autoclass:: LedRingRosWrapper
-    :members: solid, turn_off, flashing, alternate, 
-                chase, wipe, rainbow, rainbow_cycle,
-                rainbow_chase, go_up, go_up_down
+.. autoclass:: NiryoRosWrapper
+    :members: led_ring
+    :member-order: bysource
+
+Custom Button
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: custom_button
+    :member-order: bysource
+
+.. automodule:: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper
+   :members: CustomButtonRosWrapper
+
+.. autoclass:: CustomButtonRosWrapper
+    :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
     :member-order: bysource
 
 Enums
@@ -134,3 +142,4 @@ Enums
     :undoc-members:
     :exclude-members: CommandEnum
     :member-order: bysource
+

@@ -48,29 +48,69 @@ class CustomButtonRosWrapper:
             '/niryo_robot_hardware_interface/end_effector_interface/custom_button_status',
             EEButtonStatus, self.__callback_custom_pos_button_status)
 
+    def __check_ned_2_version(self):
+        if self.__hardware_version != 'ned2':
+            raise CustomButtonRosWrapperException(
+                "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
+                    CommandStatus.BAD_HARDWARE_VERSION))
+
     @property
     def hardware_version(self):
         return self.__hardware_version
 
-    @check_ned2_version
     @property
     def state(self):
+        """
+        Get the button state from the ButtonAction class
+
+        :return: int value from the ButtonAction class
+        :rtype: int
+        """
+        self.__check_ned_2_version()
         return self.__custom_button_state
 
-    @check_ned2_version
     def is_pressed(self):
+        """
+        Button press state
+
+        :rtype: bool
+        """
+        self.__check_ned_2_version()
         return self.__custom_button_state != EEButtonStatus.NO_ACTION
 
-    @check_ned2_version
     def wait_for_action(self, action, timeout=0):
+        """
+        Waits until a specific action occurs and returns true. Returns false if the timeout is reached.
+
+        :param action: int value from the ButtonAction class
+        :type action: int
+        :type timeout: float
+        :return: True if the action has occurred, false otherwise
+        :rtype: bool
+        """
+        self.__check_ned_2_version()
         return self.__wait(action, timeout)
 
-    @check_ned2_version
     def wait_for_any_action(self, timeout=0):
+        """
+        Returns the detected action. Returns ButtonAction.NO_ACTION if the timeout is reached  without action.
+
+        :type timeout: float
+        :return: Returns the detected action, or ButtonAction.NO_ACTION if the timeout is reached  without any action.
+        :rtype: int
+        """
+        self.__check_ned_2_version()
         return self.__wait_any(timeout)
 
-    @check_ned2_version
     def get_and_wait_press_duration(self, timeout=0):
+        """
+        Waits for the button to be pressed and returns the press time.
+        Returns 0 if no press is detected after the timeout duration.
+
+        :type timeout: foat
+        :rtype: float
+        """
+        self.__check_ned_2_version()
         return self.__get_press_time(timeout)
 
     def __clear(self):
@@ -84,7 +124,7 @@ class CustomButtonRosWrapper:
             with self.__action_lock:
                 self.__action_events[action].set()
 
-    def __wait(self, action, timeout=0):
+    def __wait(self, action, timeout=0.0):
         if action not in self.__action_events:
             return False
 
@@ -104,7 +144,7 @@ class CustomButtonRosWrapper:
 
         return False
 
-    def __wait_any(self, timeout=0):
+    def __wait_any(self, timeout=0.0):
         start_time = rospy.Time.now()
         self.__clear()
         if not self.__wait(ButtonAction.HANDLE_HELD_ACTION, timeout=timeout):
@@ -123,7 +163,7 @@ class CustomButtonRosWrapper:
 
         return ButtonAction.HANDLE_HELD_ACTION
 
-    def __get_press_time(self, timeout=0):
+    def __get_press_time(self, timeout=0.0):
         if not self.__wait(ButtonAction.HANDLE_HELD_ACTION, timeout=timeout):
             return 0
 

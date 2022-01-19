@@ -1,3 +1,5 @@
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:amd64
+
 variables:
   ROS_LANG_DISABLE: genlisp:geneus:gennodejs
 
@@ -8,6 +10,10 @@ variables:
   
   DOCUMENTATION_OUTPUT_FOLDER: "output_build"
 
+  BASE_GITLAB_CI_RESSOURCE_URL: "https://gitlab.com/niryo/admin/gitlab-ci-ressources/-/raw/master/"
+
+  GITLAB_CATKIN_PROFILE_NAME: gitlab_ci
+
   ##############################################################################
 
   # Allow to pull the directory containing front-end files
@@ -16,18 +22,39 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
-  CATKIN_PROFILE_NAME: gitlab_ci
   
-
 stages:
   - build
   - documentation
   - build_tests
   - test
   - upload
+  - environment_test
   - release_gitlab
 
-image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
+include:
+  ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
+  - template: Code-Quality.gitlab-ci.yml
+  # Build documentation
+  - project: 'niryo/admin/gitlab-ci-ressources'
+    ref: master
+    file: 'documentation/build_documentation/build_documentation_config.yml'
+  # Check for missing translations or fuzzy
+  - project: 'niryo/admin/gitlab-ci-ressources'
+    ref: master
+    file: 'documentation/missing_translations/missing_translations_config.yml'
+  # Upload documentation to niryo.com ftp
+  - project: 'niryo/admin/gitlab-ci-ressources'
+    ref: master
+    file: 'documentation/upload_to_ftp/upload_to_ftp_config.yml'
+  # Check for broken links in website
+  - project: 'niryo/admin/gitlab-ci-ressources'
+    ref: master
+    file: 'documentation/link_checker/link_checker_config.yml'
+  # Create Gitlab release (tag + release)
+  - project: 'niryo/admin/gitlab-ci-ressources'
+    ref: master
+    file: 'various/release_gitlab/release_gitlab_config.yml'
 
 .abstract_catkin_build:
   stage: build
@@ -46,40 +73,56 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - catkin build --profile ${CATKIN_PROFILE_NAME}    
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
-
-catkin_make_amd:
-  extends: .abstract_catkin_build
   artifacts:
     paths:
       - devel
       - src
       - build
       - install
+    exclude:
+      - src/.git/*
+      - src/.git/**/*
 
-catkin_make_arm:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:arm64
+catkin_make_amd:
   extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: ${GITLAB_CATKIN_PROFILE_NAME}
+
+build_arm_niryo_one:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_one
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
       allow_failure: true
 
-  artifacts:
-    paths:
-      - devel
-      - src
-      - build
-      - install
+build_arm_ned:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_ned
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+
+build_arm_ned2:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.0:arm64
+  extends: .abstract_catkin_build
+  variables:
+    CATKIN_PROFILE_NAME: release_ned2
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
 
 build_doc_job:
-  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
+  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack/v1.0.6:amd64
   dependencies:
     - catkin_make_amd
   stage: documentation
-  retry:
-    max: 1
-  before_script:
-    - pip3 install -U pyyaml rospkg
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
@@ -90,9 +133,6 @@ build_doc_job:
     - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
   after_script:
     - mv src/sphinx_doc/${DOCUMENTATION_OUTPUT_FOLDER} ${DOCUMENTATION_OUTPUT_FOLDER}
-  artifacts:
-    paths:
-      - ${DOCUMENTATION_OUTPUT_FOLDER}
 
 .abstract_move_source_tricks_job:
   stage: test
@@ -109,7 +149,7 @@ build_doc_job:
     - mv ${previous_path}/devel .
     - cp -r src/.gitlab_resources/.catkin_tools .
     ################# Quickfix end ###############
-    - source install/${CATKIN_PROFILE_NAME}/setup.bash
+    - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
@@ -121,7 +161,7 @@ catkin_compile_tests:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
-    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args tests
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
@@ -141,24 +181,23 @@ test_job:
   artifacts:
     when: always
     paths:
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
     reports:
       junit:
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
-        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
-    # Launch roscore in background
-    - roscore&
-
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
-    - catkin run_tests -j1
+    - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
+  after_script:
+    - mv ${NIRYO_HOME_FOLDER}/* .
 
 roslint_job:
   stage: test
@@ -168,7 +207,7 @@ roslint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
     # Check code linting
-    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args roslint -j1
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -j1
 
 catkin_lint_job:
   stage: test
@@ -193,13 +232,13 @@ code_coverage_cpp_job:
     - !reference [.abstract_move_source_tricks_job, script]
     # Build and generate reports
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
-    - ./${BUILD_CODE_COVERAGE_SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
+    - ./${BUILD_CODE_COVERAGE_SCRIPT_PATH} -p ${GITLAB_CATKIN_PROFILE_NAME}
     - ./${GENERATE_CODE_COVERAGE_SCRIPT_PATH} -s false -p build
     # Retrieve codecov software and upload code coverage to codecov.io
     - cd src
     - curl -Os https://uploader.codecov.io/latest/linux/codecov
     - chmod +x codecov
-    - ./codecov -t ${CODECOV_TOKEN} -s ../build/${CATKIN_PROFILE_NAME} -C ${CI_COMMIT_SHA} -B ${CI_COMMIT_REF_NAME}
+    - ./codecov -t ${CODECOV_TOKEN} -s ../build/${GITLAB_CATKIN_PROFILE_NAME} -C ${CI_COMMIT_SHA} -B ${CI_COMMIT_REF_NAME}
     # Generate parsable files by gitlab
     - cd ..
     - ./src/.gitlab_resources/create_code_coverage_for_gitlab.sh -p "./build" -o ${COBERTURA_OUTPUT_FILENAME}
@@ -212,10 +251,6 @@ code_coverage_cpp_job:
       cobertura: ${COBERTURA_OUTPUT_FILENAME}
   # URL: https://docs.gitlab.com/ee/ci/yaml/#coverage
   coverage: '/lines\.+: (\d+.\d+\%)/'
-
-## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
-include:
-  - template: Code-Quality.gitlab-ci.yml
 
 code_quality:
   tags:
@@ -232,122 +267,90 @@ code_quality_html:
     REPORT_FORMAT: html
   artifacts:
     paths: [gl-code-quality-report.html]
-##
 
-.abstract_upload:
-  before_script:
-    - mv ${DOCUMENTATION_OUTPUT_FOLDER} ${CI_COMMIT_TAG}
-  script:
-    - apt update
-    # Install jq (json CLI for bash) + LFTP
-    - apt install -y --no-install-recommends jq wget lftp
-    # Bash script that creates a versions.json file locally (it adds versions to existing file)
-    - ./.gitlab_resources/setup_versions_file.bash ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME} $CI_COMMIT_TAG
-    # Create .htaccess that will redirects from "X/index.html" to "X/last_version/en/index.html"
-    - |
-      echo \
-      "RewriteEngine on
+missing_translation_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
+  stage: test
+  variables:
+    LOCALE_FOLDER_PATH: ./sphinx_doc/locale
+  rules:
+    - if: $CI_COMMIT_BRANCH 
+    - if: $CI_COMMIT_TAG
 
-      # Redirect index.html with lang fr to last version in fr
-      RewriteCond %{QUERY_STRING} ^lang=fr$
-      RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/index.html [R=301,NC]
-
-      # Redirect index.html to last version
-      RewriteCond %{QUERY_STRING} ^$
-      RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/index.html [R=301,NC]
-
-      ErrorDocument 403 ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/index.html
-
-      # Disable directory listing when accessing directy folder web address
-      Options -Indexes
-      " > .htaccess_last_version_default_language
-    - mkdir -p source
-      # Create .htaccess that will redirects from "X/source/index.html" to "X/last_version/en/index.html"
-    - |
-      echo \
-      "RewriteEngine on
-
-      # Redirect everything after the "source/" to the proper latest link (fr language)
-      RewriteCond %{QUERY_STRING} ^lang=fr$
-      RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/source/\$1 [R=301,NC]
-
-      # Redirect everything after the "source/" to the proper latest link
-      RewriteCond %{QUERY_STRING} ^$
-      RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/source/\$1 [R=301,NC]
-
-      # Disable directory listing when accessing directy folder web address
-      Options -Indexes
-      " > .htaccess_old_url_to_default_language
-    # Deploy new doc through LFPT
-    - lftp -u ${FTP_USERNAME},${FTP_PASSWORD} ${FTP_URL} << EOF
-    # Send to root folder for this documentation
-    - cd ${TARGET_FOLDER_OVH}/${DOCUMENTATION_NAME} || exit 1
-    # Send whole folder for this new version
-    - mirror -c -R $CI_COMMIT_TAG
-    # Send updated versions json file
-    - put versions.json
-    # Send the default redirecting to en language
-    - put .htaccess_last_version_default_language -o .htaccess
-    # Create source folder if it doesn't exists
-    - mkdir -f source
-    # Send "dummy" folder that redirects (htaccess) to new url with language
-    - put -O source .htaccess_old_url_to_default_language -o .htaccess
-    # Quit lftp
-    - quit
-    # EOF because it's in stdin 'input' mode
-    - EOF
+.staging_job:
+  variables: &staging_variables
+    DOMAIN_NAME: https://staging.docs.niryo.com
+    BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
+    TARGET_FOLDER_OVH: ~/docs_staging/dev
 
 upload_staging_job:
-  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
   stage: upload
   environment:
     name: staging
     deployment_tier: staging
+    action: start
+  tags:
+    - staging
   variables:
-    BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
-    TARGET_FOLDER_OVH: ~/docs_staging/dev
     CI_COMMIT_TAG: v0.0.1
+    <<: *staging_variables
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
       allow_failure: true
-  dependencies:
-    - build_doc_job
-  needs:
-    - build_doc_job
   extends: .abstract_upload
 
-upload_production_job:
+linkchecker_staging_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
+  stage: environment_test
+  variables:
+    <<: *staging_variables
   rules:
+    - if: $CI_COMMIT_BRANCH
+  needs:
+    - upload_staging_job
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+  extends: .abstract_linkchecker
+
+.production_job:
+  variables: &production_variables
+    DOMAIN_NAME: https://docs.niryo.com
+    BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
+    TARGET_FOLDER_OVH: ~/docs/dev
+  rules: &production_rules
     ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
     # If a it's a tag && protected tag
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
 
-  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
+upload_production_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
+  rules: *production_rules
   stage: upload
   environment:
     name: production
     deployment_tier: production
+    action: start
+  tags:
+    - production
   variables:
-    BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
-    TARGET_FOLDER_OVH: ~/docs/dev
-  dependencies:
-    - build_doc_job
-  needs:
-    - build_doc_job
+    <<: *production_variables
   extends: .abstract_upload
 
+linkchecker_production_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
+  rules: *production_rules
+  stage: environment_test
+  variables:
+    <<: *production_variables
+  needs:
+    - upload_production_job
+  allow_failure: true
+  extends: .abstract_linkchecker
+
 release_gitlab_job:
-  image: registry.gitlab.com/gitlab-org/release-cli:v0.8.0
-  rules:
-    ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
-    # If a it's a tag && protected tag
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
-  environment:
-    name: production
-    deployment_tier: production
+  rules: *production_rules
   stage: release_gitlab
-  retry:
-    max: 2
-  script:
-    - release-cli create  --name="Release $CI_COMMIT_TAG" --description="Release created automatically by Gitlab pipeline at $CI_PIPELINE_URL" --tag-name=$CI_COMMIT_TAG

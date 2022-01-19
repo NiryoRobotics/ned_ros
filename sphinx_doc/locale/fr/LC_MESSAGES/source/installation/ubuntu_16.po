@@ -1,17 +1,16 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# Copyright (C) 2022, Niryo All rights reserved. No part of this document
 # may be reproduced or transmitted in any form or by any means without prior
 # written consent of Niryo SAS
 # This file is distributed under the same license as the Ned ROS
 # Documentation package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
-#, fuzzy
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2022-01-03 15:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,14 +19,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../source/stack/third_parties/python.rst:2
-msgid "Python Libraries"
-msgstr ""
+#: ../../source/installation/ubuntu_16.rst:2
+msgid "Ubuntu 16 Installation"
+msgstr "Installation sur Ubuntu 16"
 
-#: ../../source/stack/third_parties/python.rst:4
-msgid ""
-"rpi_ws281x==4.3.0 Adafruit-GPIO==1.0.3 Adafruit-PureIO==1.0.1 Adafruit-"
-"BBIO==1.0.9 Adafruit-ADS1x15==1.0.2 board==1.0 smbus==1.1.post2 "
-"smbus2==0.4.1 spidev==3.5"
-msgstr ""
+#: ../../source/installation/ubuntu_16.rst:4
+msgid "TODO"
+msgstr "TODO"
 

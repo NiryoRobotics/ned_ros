@@ -67,7 +67,7 @@ class ToolCommander:
         self.__current_tool = None
         self.__motor_type = Tool.NO_MOTOR
 
-        self.__available_tools, self.__dict_commands_string_to_id = self.create_tools()
+        self.__available_tools, self.__dict_commands_string_to_id, self.__dict_tool_str_to_id = self.create_tools()
 
         self.__dict_id_commands_to_string = {string: id_ for id_, string
                                              in self.__dict_commands_string_to_id.iteritems()}
@@ -81,18 +81,14 @@ class ToolCommander:
             self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
-        rospy.Subscriber('/niryo_robot_hardware/tools/motor', Tool,
-                         self.__callback_current_tool_motor)
+        rospy.Subscriber('/niryo_robot_hardware/tools/motor', Tool, self.__callback_current_tool_motor)
 
         # Publisher
         self.__tool_id_publisher = rospy.Publisher('~current_id', Int32, queue_size=10, latch=True)
 
         # Services
-        rospy.Service('~update_tool', Trigger,
-                      self.__callback_update_tool)
-
-        rospy.Service('~equip_electromagnet', SetInt,
-                      self.__callback_equip_electromagnet)
+        rospy.Service('~update_tool', Trigger, self.__callback_update_tool)
+        rospy.Service('~equip_electromagnet', SetInt, self.__callback_equip_electromagnet)
 
         # Action Server
         self.__action_server = actionlib.SimpleActionServer('~action_server', ToolAction,
@@ -121,10 +117,11 @@ class ToolCommander:
 
     def __callback_current_tool_motor(self, msg):
         if self.__current_tool is None or self.__current_tool.get_type() != "electromagnet":
-            self.set_tool(self.__available_tools[msg.id])
-            self.__motor_type = msg.motor_type
-
-        self.__tool_id_publisher.publish(self.__current_tool.get_id())
+            tool_id = msg.id if msg.id in self.__available_tools else self.__dict_tool_str_to_id['No Tool']
+            if self.__current_tool is None or tool_id != self.__current_tool.get_id():
+                self.set_tool(self.__available_tools[tool_id])
+                self.__motor_type = msg.motor_type
+                self.__tool_id_publisher.publish(self.__current_tool.get_id())
 
     # - Callbacks
 
@@ -236,6 +233,7 @@ class ToolCommander:
         rospy.logdebug("ToolCommander.create_tools - command_list: {}".format(list_commands_all_tools))
 
         dict_tools = {}
+        dict_tool_str_to_id = {}
 
         for tool in tool_config_dict:
             (tool_type, tool_id, tool_name,
@@ -269,8 +267,9 @@ class ToolCommander:
             new_tool.set_available_commands(tool_command_list)
 
             dict_tools[tool_id] = new_tool
+            dict_tool_str_to_id[tool_name] = tool_id
 
-        return dict_tools, list_commands_all_tools
+        return dict_tools, list_commands_all_tools, dict_tool_str_to_id
 
     def update_tool(self):
         return self.__ros_command_interface.ping_dxl_tool()

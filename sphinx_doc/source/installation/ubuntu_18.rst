@@ -3,7 +3,7 @@ Ubuntu 18 Installation
 
 This guide will explain the steps needed to install the Niryo Robot Stack on an Ubuntu 18 OS.
 You can apply these steps to set up a working simulation environment on any development computer, or to set up a working robot stack
-on a raspberry pi.
+on a Raspberry Pi.
 
 Installation index:
 
@@ -17,7 +17,10 @@ Prerequisites
 The Niryo ROS Stack runs on top of ROS Melodic or Kinetic (deprecated). This version of ROS is strongly dependent of Ubuntu 18.04 version,
 thus, this OS is currently the only official supported OS.
 
-Be sure to have an up to date system before continuing ::
+Be sure to have an up to date system before continuing
+
+.. code::
+
     sudo apt-get update
     sudo apt-get upgrade
     sudo apt-get dist-upgrade
@@ -39,14 +42,15 @@ The Niryo ROS Stack needs the following packages in order to run correctly:
 Python environment
 ************************************************
 
-The python environment is installed using the requirements_ned2.txt file ::
+The Python environment is installed using the requirements_ned2.txt file
 
-    pip install -r src/requirements_ned2.txt
+.. code::
+
+    pip2 install -r src/requirements_ned2.txt
 
 .. note::
-    ROS Melodic is still using python2 internally. We are aligning our python version 
-    to it so you need to install the requirements using python2 pip tool
-
+    ROS Melodic is still using Python2 internally so are our Python scripts to keep version alignment.
+    You thus need to install the requirements using Python2 pip2 tool
 
 ROS set up
 ************************************************
@@ -62,7 +66,7 @@ Place yourself in the folder of your choice and create a folder
 
 Then go to the folder **catkin_ws_niryo_ned** and
 clone Ned repository in the folder **src**.
-For the future operation, be sure to stay in the **catkin_ws_niryo_ned** folder: ::
+For the future operations, be sure to stay in the **catkin_ws_niryo_ned** folder: ::
 
     cd catkin_ws_niryo_ned
     git clone https://github.com/NiryoRobotics/ned_ros src
@@ -74,7 +78,7 @@ Install ROS dependencies
 Install ROS
 ************************************************
 
-You firstly need to install ROS Melodic. To do so, follow the ROS official tutorial
+You need to install ROS Melodic. To do so, follow the ROS official tutorial
 `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the
 **Desktop-Full Install**.
 
@@ -85,8 +89,8 @@ install several more packages:
 
 Method 1: Quick installation via ROSDep
 """""""""""""""""""""""""""""""""""""""""""""""""
-For each packages, we have referenced all the dependencies in their respective
-*package.xml* file, which allow to install each dependency via *rosdep* command: ::
+For each package, we have referenced all the dependencies in their respective
+*package.xml* file, which allows to install each dependency via *rosdep* command: ::
 
  rosdep update
  rosdep install --from-paths src --ignore-src --default-yes --rosdistro melodic --skip-keys "python-rpi.gpio"

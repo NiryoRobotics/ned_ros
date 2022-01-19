@@ -2,13 +2,14 @@ Niryo_robot_arm_commander
 ========================================
 
 | This package is the one dealing with all commander related stuff.
-| It is composed of only one node, which is running separately the arm commander and the tool commander.
+
+| It is composed of only one node, which runs separately the arm commander and the tool commander.
 
 
 Commander node
 --------------------------
 The ROS Node is made to interact with:
- - The Arm through MoveIt!
+ - The arm through MoveIt!
  - The tools through the tool controller.
 
 All commands are firstly received on the actionlib server which:
@@ -54,7 +55,7 @@ Action Server - Commander
       -  Message Type
       -  Description
    *  -  ``robot_action``
-      -  :ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove (Action)>`
+      -  :ref:`RobotMove<source/stack/high_level/niryo_robot_arm_commander:RobotMove>`
       -  Command the arm and tools through an action server
 
 Services - Commander
@@ -79,10 +80,10 @@ Services - Commander
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
       -  Set a percentage of maximum speed
    *  -  ``/niryo_robot/kinematics/forward``
-      -  :ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK (Service)>`
+      -  :ref:`GetFK<source/stack/high_level/niryo_robot_arm_commander:GetFK>`
       -  Compute a Forward Kinematic
    *  -  ``/niryo_robot/kinematics/inverse``
-      -  :ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK (Service)>`
+      -  :ref:`GetIK<source/stack/high_level/niryo_robot_arm_commander:GetIK>`
       -  Compute a Inverse Kinematic
 
 Messages - Commander
@@ -96,11 +97,11 @@ Messages - Commander
 
    *  -  Name
       -  Description
-   *  -  :ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand (Message)>`
+   *  -  :ref:`ArmMoveCommand<source/stack/high_level/niryo_robot_arm_commander:ArmMoveCommand>`
       -  Message to command the arm
-   *  -  :ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose (Message)>`
+   *  -  :ref:`ShiftPose<source/stack/high_level/niryo_robot_arm_commander:ShiftPose>`
       -  Message for shifting pose
-   *  -  :ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution (Message)>`
+   *  -  :ref:`PausePlanExecution<source/stack/high_level/niryo_robot_arm_commander:PausePlanExecution>`
       -  Pause movement execution
 
 All these services are available as soon as the node is started.
@@ -125,48 +126,56 @@ Dependencies - Commander
 - :msgs_index:`trajectory_msgs`
 
 
-Action, services & messages files - Commander
+Action files - Commander
 ------------------------------------------------------
 
-RobotMove (Action)
+RobotMove
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/action/RobotMove.action
    :language: rostype
 
-GetFK (Service)
+
+Services files - Commander
+------------------------------------------------------
+
+GetFK
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/srv/GetFK.srv
    :language: rostype
 
-GetIK (Service)
+GetIK
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/srv/GetIK.srv
    :language: rostype
 
-JogShift (Service)
+JogShift
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/srv/JogShift.srv
    :language: rostype
 
-ArmMoveCommand (Message)
+
+Messages files - Commander
+------------------------------------------------------
+
+ArmMoveCommand
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/msg/ArmMoveCommand.msg
    :language: rostype
 
 
-PausePlanExecution (Message)
+PausePlanExecution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/msg/PausePlanExecution.msg
    :language: rostype
 
 
-ShiftPose (Message)
+ShiftPose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_arm_commander/msg/ShiftPose.msg
