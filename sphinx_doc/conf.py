@@ -4,11 +4,14 @@ from sphinx.builders.html import StandaloneHTMLBuilder
 import os
 
 # Import ROS Wrapper
-sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
+sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/niryo_robot_python_ros_wrapper/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_led_ring/api/'))
+sys.path.append(os.path.abspath('../niryo_robot_led_ring/src/niryo_robot_sound/api/'))
 
 # Kindda hack the import to import shared config file
 sys.path.append(os.path.abspath('.'))
 from front_end.config import shared_conf
+from front_end.config import base_conf
 
 # -- Project information -----------------------------------------------------
 
@@ -23,16 +26,7 @@ release = u'v4.0.0'
 
 # -- General configuration ---------------------------------------------------
 
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks',
-    'sphinx.ext.todo',
-    'sphinx_togglebutton'
-]
+extensions = base_conf.extensions
 
 StandaloneHTMLBuilder.supported_image_types = [
     'image/svg+xml',
@@ -78,7 +72,6 @@ html_context = {}
 # Only for testing purpose
 html_context["BASE_FOLDER_URL"] = "https://docs.niryo.com/dev/ros"
 
-
 html_context["TRANSLATION"] = translation_object[language if language is not None else 'en']
 
 exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
@@ -86,7 +79,6 @@ exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 pygments_style = None
 
 add_module_names = False
-
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = shared_conf.html_theme
@@ -127,16 +119,17 @@ extlinks = {
     'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
-    'visualization_msgs': ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
+    'visualization_msgs': (
+    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'niryo_studio_simulation': (
-        'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',
+        'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
 }
 
-TRANSLATE_CAPTIONS_JS="""
+TRANSLATE_CAPTIONS_JS = """
 window.onload = function ()
 {
     const matches = document.querySelectorAll(".wy-menu-vertical p span");
@@ -150,6 +143,8 @@ window.onload = function ()
     }
 }
 """
+
+
 # Add custom JS that translate captions in left menu bar
 def setup(app):
     # 3. Tell Sphinx to add your JS code. Sphinx will insert
