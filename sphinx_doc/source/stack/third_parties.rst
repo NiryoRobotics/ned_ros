@@ -10,5 +10,4 @@ dedicated to low-level interfaces
 
    third_parties/dynamixel_sdk
    third_parties/mcp_can_rpi
-   third_parties/python
    third_parties/ros_requirements

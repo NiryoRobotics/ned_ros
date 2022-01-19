@@ -3,9 +3,12 @@
 
 1. (Vous pouvez passez cette partie si vous utilisez Docker).
 
-    Pour modifier la doc, vous aurez tout d'abord besoin de Sphinx :
+    Pour modifier la doc, vous aurez tout d'abord besoin de certaines librairies python,  :
 
-    `pip install Sphinx sphinx_rtd_theme`
+    La documentation est compilée avec sphinx et python3. Il faut installer au préalable des librairies python
+    en utilisant le fichiers de requirements 'requirements_docs.txt'
+
+    `pip3 install -r requirements_docs.txt'
 
 2. Le dossier front_end est un [sous-module git](https://git-scm.com/book/fr/v2/Utilitaires-Git-Sous-modules),
     il peux donc être nécessaire de le mettre à jour régulièrement.

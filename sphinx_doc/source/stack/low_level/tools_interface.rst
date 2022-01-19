@@ -40,7 +40,7 @@ Tool Interface's default Parameters
 Tool Interface's hardware specific Parameters 
 **************************************************
 
-These parameters are specific to the hardware version (ned, one or ned2).
+These parameters are specific to the hardware version (Ned, One or Ned2).
 This file comes in a different version for each hardware version, located in a directory of the hardware version name.
 
 .. list-table:: tools_params.yaml
@@ -53,7 +53,7 @@ This file comes in a different version for each hardware version, located in a d
       -  Description
       -  Supported Hardware versions
    *  -  ``id_list``
-      -  | List of default IDs of each tool supported By Niryo
+      -  | List of default IDs of each tool supported by Niryo
          | Default: '[11,12,13,30,31]'
       -  All Versions
    *  -  ``type_list``
@@ -63,7 +63,7 @@ This file comes in a different version for each hardware version, located in a d
          | Default: 'fakeDxl' for simulation
       -  All Versions
    *  -  ``name_list``
-      -  | List of tools's name corresponds to id list and type list above
+      -  | List of tools's name corresponds to ID list and type list above
          | Default: '["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump", "Electromagnet"]'
       -  All Versions
    

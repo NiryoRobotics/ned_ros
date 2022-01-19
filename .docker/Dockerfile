@@ -21,7 +21,7 @@ RUN if [ "$(arch)" = "x86_64" ]; then export SKIPPED_ROS_KEYS="python-rpi.gpio";
 
 # Install additionnal dependencies
 RUN apt update \
-    && apt install -y ros-${ROS_DISTRO}-rosdoc-lite \
+    && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl\
     && rm -rf /var/lib/apt/lists/*
 
 # Clean tmp dependencies folder

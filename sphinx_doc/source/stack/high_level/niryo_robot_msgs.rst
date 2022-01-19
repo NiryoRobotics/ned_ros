@@ -15,6 +15,8 @@ Niryo messages
 
    *  -  Name
       -  Description
+   *  -  :ref:`source/stack/high_level/niryo_robot_msgs:BusState`
+      -  TTL bus state
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:CommandStatus`
       -  Enum-wise message for status code
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:ObjectPose`
@@ -24,7 +26,7 @@ Niryo messages
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:RPY`
       -  roll, pitch, yaw
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:HardwareStatus`
-      -  several hardware informations 
+      -  several hardware information 
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SoftwareVersion`
       -  several software version 
 
@@ -43,10 +45,18 @@ Niryo services
       -  Return a bool
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:GetInt`
       -  Return a integer
+   *  -  :ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`
+      -  Return a name list and a description list
+   *  -  :ref:`source/stack/high_level/niryo_robot_msgs:GetString`
+      -  Return a string
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:GetStringList`
       -  Return a list of string
+   *  -  :ref:`source/stack/high_level/niryo_robot_msgs:Ping`
+      -  Used to ping APIs
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SetBool`
       -  Set a bool and return status
+   *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SetFloat`
+      -  Set a float and return status
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
       -  Set a integer and return status
    *  -  :ref:`source/stack/high_level/niryo_robot_msgs:SetString`
@@ -62,6 +72,12 @@ Niryo message dependencies
 
 Niryo message files
 -----------------------------------
+
+BusState
+^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_msgs/msg/BusState.msg
+   :language: rostype
 
 CommandStatus
 ^^^^^^^^^^^^^^^^^^^
@@ -120,16 +136,34 @@ GetNameDescriptionList
 .. literalinclude:: ../../../../niryo_robot_msgs/srv/GetNameDescriptionList.srv
    :language: rostype
 
+GetString
+^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_msgs/srv/GetString.srv
+   :language: rostype
+
 GetStringList
 ^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_msgs/srv/GetStringList.srv
    :language: rostype
 
+Ping
+^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_msgs/srv/Ping.srv
+   :language: rostype
+
 SetBool
 ^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_msgs/srv/SetBool.srv
+   :language: rostype
+
+SetFloat
+^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_msgs/srv/SetFloat.srv
    :language: rostype
 
 SetInt

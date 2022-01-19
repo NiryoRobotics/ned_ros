@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 17:32+0100\n"
+"POT-Creation-Date: 2022-01-14 15:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,78 +34,93 @@ msgid "API functions"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:13
-msgid "This class allows you to control the robot via internal API."
+msgid ""
+"This class allows you to control the robot via internal API. By "
+"controlling, we mean:"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:14
-msgid "By controlling, we mean:"
-msgstr ""
-
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:16
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:15
 msgid "Moving the robot."
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:17
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:16
 msgid "Using Vision."
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:18
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:17
 msgid "Controlling Conveyors Belt."
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:19
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:18
 msgid "Playing with hardware."
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:21
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:20
 msgid "List of functions subsections:"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:31
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:30
 msgid "Main purpose functions"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:39
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:38
 msgid "Joints & Pose"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:49
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:48
 msgid "Saved poses"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:56
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:55
 msgid "Pick & place"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:63
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:62
 msgid "Trajectories"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:71
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:70
 msgid "Tools"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:81
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:80
 msgid "Hardware"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
 msgid "Conveyor Belt"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:96
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:95
 msgid "Vision"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:107
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:106
 msgid "Sound"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:118
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:108
+msgid ""
+"For more function, please refer to: :ref:`Sound API "
+"functions<source/stack/high_level/niryo_robot_sound:Sound API functions>`"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:115
 msgid "Led Ring"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:130
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:117
+msgid ""
+"For more function, please refer to: :ref:`Led Ring API "
+"functions<source/stack/high_level/niryo_robot_led_ring:Led Ring API "
+"functions>`"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:124
+msgid "Custom Button"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:138
 msgid "Enums"
 msgstr ""
 
@@ -718,5 +733,398 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The name of the pin"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "List of [x, y, z, qx, qy, "
+#~ "qz, qw] or list of [x, y, z,"
+#~ " roll, pitch, yaw] or a list of"
+#~ " [j1, j2, j3, j4, j5, j6]"
+#~ msgstr ""
+
+#~ msgid "Mange sound"
+#~ msgstr ""
+
+#~ msgid "Manage sound"
+#~ msgstr ""
+
+#~ msgid "Example: ::"
+#~ msgstr ""
+
+#~ msgid "SoundRosWrapper API instance"
+#~ msgstr ""
+
+#~ msgid "Manage the LED ring"
+#~ msgstr ""
+
+#~ msgid "LedRingRosWrapper API instance"
+#~ msgstr ""
+
+#~ msgid "Todo"
+#~ msgstr ""
+
+#~ msgid "ici je ne vois pas les fonctions"
+#~ msgstr ""
+
+#~ msgid "Get Button state:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "HANDLE_HELD_ACTION = 0 LONG_PUSH_ACTION = "
+#~ "1 SINGLE_PUSH_ACTION = 2 DOUBLE_PUSH_ACTION"
+#~ " = 3 NO_ACTION = 100"
+#~ msgstr ""
+
+#~ msgid "int value from EEButtonStatus"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Returns "
+#~ "NO_ACTION if the timeout is reached  "
+#~ "without action."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Return "
+#~ "NO_ACTION if the timeout is reached  "
+#~ "without action"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Returns  "
+#~ "from ButtonAction class if the timeout"
+#~ " is reached  without action."
+#~ msgstr ""
+
+#~ msgid "This class allows you to control the robot via internal API."
+#~ msgstr ""
+
+#~ msgid "By controlling, we mean:"
+#~ msgstr ""
+
+#~ msgid "Manage the custom button"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Calls service to calibrate motors then"
+#~ " waits for its end. If failed, "
+#~ "raises NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Uses /niryo_robot/learning_mode/state topic "
+#~ "subscriber to get learning mode status"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Calsl service to set_learning_mode according"
+#~ " to set_bool. If failed, raises "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "Sets relative max velocity (in %)"
+#~ msgstr ""
+
+#~ msgid "Uses /joint_states topic to get joints status"
+#~ msgstr ""
+
+#~ msgid "Uses /niryo_robot/robot_state topic to get pose status"
+#~ msgstr ""
+
+#~ msgid "Executes Move joints action"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves to Sleep pose which allows "
+#~ "the user to activate the learning "
+#~ "mode without the risk of the robot"
+#~ " hitting something because of gravity"
+#~ msgstr ""
+
+#~ msgid "Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose."
+#~ msgstr ""
+
+#~ msgid "Executes Shift pose action"
+#~ msgstr ""
+
+#~ msgid "Executes Shift pose action with a linear trajectory"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory"
+#~ msgstr ""
+
+#~ msgid "Turns jog controller On or Off"
+#~ msgstr ""
+
+#~ msgid "Makes a Jog on joints position"
+#~ msgstr ""
+
+#~ msgid "Makes a Jog on end-effector position"
+#~ msgstr ""
+
+#~ msgid "Computes forward kinematics"
+#~ msgstr ""
+
+#~ msgid "Computes inverse kinematics"
+#~ msgstr ""
+
+#~ msgid "Moves robot end effector pose to a pose saved"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Gets saved pose from robot intern "
+#~ "storage Will raise error if position "
+#~ "does not exist"
+#~ msgstr ""
+
+#~ msgid "Saves pose in robot's memory"
+#~ msgstr ""
+
+#~ msgid "Sends delete command to the pose manager service"
+#~ msgstr ""
+
+#~ msgid "Asks the pose manager service which positions are available"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a picking from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "picking is described as : - going"
+#~ " over the object - going down "
+#~ "until height = z - grasping with"
+#~ " tool - going back over the "
+#~ "object"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a placing from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "placing is described as : - going"
+#~ " over the place - going down "
+#~ "until height = z - releasing the"
+#~ " object with tool - going back "
+#~ "over the place"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a pick and place. If an"
+#~ " error happens during the movement, "
+#~ "error will be raised. -> Args "
+#~ "param is for development purposes"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Gets saved trajectory from robot intern"
+#~ " storage Will raise error if position"
+#~ " does not exist"
+#~ msgstr ""
+
+#~ msgid "Executes trajectory saved in Robot internal storage"
+#~ msgstr ""
+
+#~ msgid "Executes trajectory from a list of pose"
+#~ msgstr ""
+
+#~ msgid "Executes trajectory from list of poses and joints"
+#~ msgstr ""
+
+#~ msgid "Saves trajectory object and sends it to the trajectory manager service"
+#~ msgstr ""
+
+#~ msgid "Sends delete command to the trajectory manager service"
+#~ msgstr ""
+
+#~ msgid "Asks the pose trajectory service which trajectories are available"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Uses /niryo_robot_tools_commander/current_id  topic "
+#~ "to get current tool id"
+#~ msgstr ""
+
+#~ msgid "Calls service niryo_robot_tools_commander/update_tool to update tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Grasps with the tool linked to "
+#~ "tool_id. This action corresponds to -"
+#~ " Close gripper for Grippers - Pull"
+#~ " Air for Vacuum pump - Activate "
+#~ "for Electromagnet"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Releases with the tool associated to "
+#~ "tool_id. This action corresponds to -"
+#~ " Open gripper for Grippers - Push "
+#~ "Air for Vacuum pump - Deactivate "
+#~ "for Electromagnet"
+#~ msgstr ""
+
+#~ msgid "Opens gripper with a speed 'speed'"
+#~ msgstr ""
+
+#~ msgid "Closes gripper with a speed 'speed'"
+#~ msgstr ""
+
+#~ msgid "Pulls air"
+#~ msgstr ""
+
+#~ msgid "Setups electromagnet on pin"
+#~ msgstr ""
+
+#~ msgid "Activates electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr ""
+
+#~ msgid "Deactivates electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Resets the TCP (Tool Center Point) "
+#~ "transformation. The TCP will be reset"
+#~ " according to the tool equipped."
+#~ msgstr ""
+
+#~ msgid "Sets pin number pin_id to mode pin_mode"
+#~ msgstr ""
+
+#~ msgid "Sets pin_id state to pin_state"
+#~ msgstr ""
+
+#~ msgid "Reads pin number pin_id and returns its state"
+#~ msgstr ""
+
+#~ msgid "Gets Digital IO state : Names, modes, states"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Gets hardware status : Temperature, "
+#~ "Hardware version, motors names & types"
+#~ " ..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scans for conveyor on can bus. If"
+#~ " conveyor detected, returns the conveyor"
+#~ " ID"
+#~ msgstr ""
+
+#~ msgid "Removes specific conveyor."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Controls conveyor associated to conveyor_id."
+#~ " Then stops it if bool_control_on is"
+#~ " False, else refreshes it speed and"
+#~ " direction"
+#~ msgstr ""
+
+#~ msgid "Gets last stream image in a compressed format"
+#~ msgstr ""
+
+#~ msgid "Modifies image brightness"
+#~ msgstr ""
+
+#~ msgid "Modifies image contrast"
+#~ msgstr ""
+
+#~ msgid "Modifies image saturation"
+#~ msgstr ""
+
+#~ msgid "Move Joints to observation_joints, then executes a vision pick"
+#~ msgstr ""
+
+#~ msgid "Move Pose to observation_pose, then executes a vision pick"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Picks the specified object from the "
+#~ "workspace. This function has multiple "
+#~ "phases: 1. detects object using the "
+#~ "camera 2. prepares the current tool "
+#~ "for picking 3. approaches the object "
+#~ "4. moves down to the correct "
+#~ "picking pose 5. actuates the current "
+#~ "tool 6. lifts the object"
+#~ msgstr ""
+
+#~ msgid "Gets calibration object: camera intrinsics, distortions coefficients"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Saves workspace by giving the poses "
+#~ "of the robot to point its 4 "
+#~ "corners with the calibration Tip. "
+#~ "Corners should be in the good "
+#~ "order"
+#~ msgstr ""
+
+#~ msgid "Saves workspace by giving the poses of its 4 corners in the good order"
+#~ msgstr ""
+
+#~ msgid "Calls workspace manager to delete a certain workspace"
+#~ msgstr ""
+
+#~ msgid "Gets the 4 workspace poses of the workspace called 'name'"
+#~ msgstr ""
+
+#~ msgid "Gives the length over width ratio of a certain workspace"
+#~ msgstr ""
+
+#~ msgid "Asks the workspace manager service names of the available workspace"
+#~ msgstr ""
+
+#~ msgid "Manages sound"
+#~ msgstr ""
+
+#~ msgid "Manages the LED ring"
+#~ msgstr ""
+
+#~ msgid "Manages the custom button"
+#~ msgstr ""
+
+#~ msgid "CustomButtonRosWrapper API instance"
+#~ msgstr ""
+
+#~ msgid "Get the button state from the ButtonAction class"
+#~ msgstr ""
+
+#~ msgid "int value from the ButtonAction class"
+#~ msgstr ""
+
+#~ msgid "Button press state"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Waits until a specific action occurs "
+#~ "and returns true. Returns false if "
+#~ "the timeout is reached."
+#~ msgstr ""
+
+#~ msgid "True if the action has occurred, false otherwise"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action. Returns "
+#~ "ButtonAction.NO_ACTION if the timeout is "
+#~ "reached  without action."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Returns the detected action, or "
+#~ "ButtonAction.NO_ACTION if the timeout is "
+#~ "reached  without any action."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Waits for the button to be pressed"
+#~ " and returns the press time. Returns"
+#~ " 0 if no press is detected "
+#~ "after the timeout duration."
 #~ msgstr ""
 

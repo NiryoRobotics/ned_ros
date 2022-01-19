@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-01-06 14:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:2
-msgid "Niryo robot tools commander package"
+msgid "Niryo robot tools commander"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:4
@@ -108,7 +108,7 @@ msgid ":std_msgs:`Int32`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:47
-msgid "Publish the current tool ID"
+msgid "Publishes the current tool ID"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:48
@@ -123,7 +123,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:50
 msgid ""
-"Publish if the TCP (Tool Center Point) is enabled and transformation "
+"Publishes if the TCP (Tool Center Point) is enabled and transformation "
 "between the tool_link and the TCP"
 msgstr ""
 
@@ -146,8 +146,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:66
 msgid ""
-"Ping/scan for a dxl motor flashed with an ID corresponding to a tool and "
-"equip it (if found)"
+"Pings/scans for a dxl motor flashed with an ID corresponding to a tool "
+"and equip it (if found)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:67
@@ -159,7 +159,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:69
-msgid "Equip the electromagnet with the motor ID given as parameter"
+msgid "Equips the electromagnet with the motor ID given as parameter"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:70
@@ -171,7 +171,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
-msgid "Enable or disable the TCP (Tool Center Point) functionality."
+msgid "Enables or disablse the TCP (Tool Center Point) functionality."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
@@ -196,8 +196,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:77
 msgid ""
-"Activate the TCP (Tool Center Point) functionality and defines a new TCP "
-"transformation."
+"Activates the TCP (Tool Center Point) functionality and defines a new TCP"
+" transformation."
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:78
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:80
 msgid ""
-"Reset the TCP transformation. By default it will be the one of the "
+"Resets the TCP transformation. By default it will be the one of the "
 "equipped tool."
 msgstr ""
 
@@ -341,5 +341,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Niryo robot tools commander package"
 #~ msgstr ""
 
