@@ -16,18 +16,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_rpi.msg import I2CComponent
+
+# Service
+from niryo_robot_rpi.srv import ScanI2CBus, ScanI2CBusResponse
 
 # Libraries
 from niryo_robot_rpi.common.abstract_io_panel import AbstractIOPanel
 from niryo_robot_rpi.common.end_effector_panel import NiryoEndEffectorPanel
+from niryo_robot_rpi.common.rpi_ros_utils import ping_i2c
 
 from .hardware.MAX11644 import MAX11644
-
 from .mcp_io_objects import AnalogInput, AnalogOutput, McpIOManager
+
+I2CObject = namedtuple("I2CObject", ['info', 'bus', 'address'])
 
 
 class IOPanel(AbstractIOPanel):
@@ -39,13 +45,16 @@ class IOPanel(AbstractIOPanel):
         adc_param = rospy.get_param("~adc")
         self.__adc = adc if adc is not None else MAX11644(bus=adc_param["i2c_bus"], address=adc_param["address"],
                                                           v_ref_internal=adc_param["v_ref"])
-
         self.__end_effector_panel = NiryoEndEffectorPanel(self._callback_digital_io_change)
         self.__init_ios()
 
         self._publish_digital_io_state()
 
         self.__mcp_manager.register_on_change_callback(self._callback_digital_io_change, "io panel callback")
+
+        self.__sound_card_i2C = I2CObject(info='Sound Card', address=rospy.get_param('~sound_card/i2c_address'),
+                                          bus=rospy.get_param('~sound_card/i2c_bus'))
+        rospy.Service("~scan_i2c_bus", ScanI2CBus, self.__callback_scan_i2c_bus)
 
     def shutdown(self):
         super(IOPanel, self).shutdown()
@@ -98,3 +107,24 @@ class IOPanel(AbstractIOPanel):
                                          "No IO found for {}".format(req.name))
         self._publish_analog_io_state()
         return self._create_response(CommandStatus.SUCCESS, "Successfully set value for {}".format(req.name))
+
+    def __callback_scan_i2c_bus(self, _req):
+        resp = ScanI2CBusResponse()
+
+        for i2c_object in [self.__mcp_manager.mcp, self.__adc, self.__sound_card_i2C] + list(
+                self._analog_outputs.values()):
+            i2C_component = I2CComponent(info=str(i2c_object), bus=int(i2c_object.bus), address=int(i2c_object.address))
+            if ping_i2c(i2c_object.bus, i2c_object.address):
+                resp.detected.append(i2C_component)
+            else:
+                resp.missing.append(i2C_component)
+        resp.is_ok = not resp.missing
+
+        if resp.is_ok:
+            resp.status = CommandStatus.SUCCESS
+            resp.message = "I2C scan succeed"
+        else:
+            resp.is_ok = CommandStatus.MISSING_I2C
+            resp.message = "I2C scan failed"
+
+        return resp

@@ -41,6 +41,8 @@ __all__ = [
     "activate_learning_mode",
     "auto_calibration",
     "stop_robot_action",
+
+    "ping_i2c",
 ]
 
 ENABLE_BUS_MOTORS_SUCCESS = 1
@@ -202,3 +204,18 @@ def stop_robot_action():
         stop_cmd()
     except (rospy.ServiceException, rospy.ROSException) as e:
         pass
+
+
+def ping_i2c(bus_num, address):
+    from smbus2 import SMBus
+
+    try:
+        bus = SMBus(bus_num)
+    except OSError:
+        return False
+
+    try:
+        bus.read_byte(address)
+        return True
+    except IOError as e:
+        return e.args[0] == 16  # Busy but connected if error=16
