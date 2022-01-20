@@ -25,9 +25,8 @@ class ReportsNode:
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
-        self.__get_setting = rospy.ServiceProxy(
-            '/niryo_robot_database/settings/get', GetSettings
-        )
+        rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
+        self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
         cloud_domain = rospy.get_param('~cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
@@ -57,15 +56,9 @@ class ReportsNode:
         if not os.path.isdir(reports_path):
             mkpath(reports_path)
 
-        get_all_files_paths = rospy.ServiceProxy(
-            '/niryo_robot_database/file_paths/get_all_by_type', GetAllByType
-        )
-        add_report_db = rospy.ServiceProxy(
-            '/niryo_robot_database/file_paths/add', AddFilePath
-        )
-        rm_report_db = rospy.ServiceProxy(
-            '/niryo_robot_database/file_paths/rm', RmFilePath
-        )
+        get_all_files_paths = rospy.ServiceProxy('/niryo_robot_database/file_paths/get_all_by_type', GetAllByType)
+        add_report_db = rospy.ServiceProxy('/niryo_robot_database/file_paths/add', AddFilePath)
+        rm_report_db = rospy.ServiceProxy('/niryo_robot_database/file_paths/rm', RmFilePath)
 
         DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
@@ -74,7 +67,7 @@ class ReportsNode:
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
 
-        # Set a bool to mentioned this node is initialized
+        # Set a bool to mention that this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)

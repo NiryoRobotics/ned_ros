@@ -25,38 +25,23 @@ class DatabaseNode:
         rospy.logdebug("Database Node - Entering in Init")
 
         db_path = os.path.expanduser(rospy.get_param('~sqlite_db_file_path'))
-
         if not os.path.isfile(db_path):
             package_path = rospkg.RosPack().get_path('niryo_robot_database')
-            file_path = package_path + '/sql/init.sh'
+            file_path = os.path.join(package_path, 'sql', 'init.sh')
             subprocess.call(['bash', file_path])
             if not os.path.isfile(db_path):
-                rospy.logerr(
-                    'Database Node - Unable to open the database. Did you run sql/init.sh ?'
-                )
+                rospy.logerr('Database Node - Unable to open the database. Did you run sql/init.sh ?')
 
         sqlite_dao = SQLiteDAO(db_path)
 
         self.__settings = Settings(sqlite_dao)
         self.__file_paths = FilePath(sqlite_dao)
 
-        rospy.Service(
-            '~settings/set', SetSettings, self.__callback_set_settings
-        )
-        rospy.Service(
-            '~settings/get', GetSettings, self.__callback_get_settings
-        )
-        rospy.Service(
-            '~file_paths/add', AddFilePath, self.__callback_add_file_path
-        )
-        rospy.Service(
-            '~file_paths/rm', RmFilePath, self.__callback_rm_file_path
-        )
-        rospy.Service(
-            '~file_paths/get_all_by_type',
-            GetAllByType,
-            self.__callback_get_all_by_type,
-        )
+        rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
+        rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
+        rospy.Service('~file_paths/add', AddFilePath, self.__callback_add_file_path)
+        rospy.Service('~file_paths/rm', RmFilePath, self.__callback_rm_file_path)
+        rospy.Service('~file_paths/get_all_by_type', GetAllByType, self.__callback_get_all_by_type, )
 
         self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
 
@@ -82,7 +67,7 @@ class DatabaseNode:
         except UnknownSettingsException:
             return CommandStatus.DATABASE_SETTINGS_UNKNOWN, 'Unknown settings', None
         except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
+            return CommandStatus.DATABASE_DB_ERROR, str(e), None
         return CommandStatus.SUCCESS, value, value_type
 
     def __callback_add_file_path(self, req):
@@ -98,11 +83,14 @@ class DatabaseNode:
         try:
             filepaths = self.__file_paths.get_all_by_type(req.type)
         except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
+            rospy.logwarn('[Database Node] OperationalError: {}'.format(str(e)))
+            return CommandStatus.DATABASE_DB_ERROR, []
+
         res = [
-            FilePathMsg(x['id'], x['type'], x['name'], x['date'], x['path'])
+            FilePathMsg(id=x['id'], type=x['type'], name=x['name'], date=x['date'], path=x['path'])
             for x in filepaths
         ]
+
         return CommandStatus.SUCCESS, res
 
     def __callback_rm_file_path(self, req):
@@ -111,9 +99,7 @@ class DatabaseNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node(
-        'niryo_robot_database', anonymous=False, log_level=rospy.INFO
-    )
+    rospy.init_node('niryo_robot_database', anonymous=False, log_level=rospy.INFO)
     try:
         node = DatabaseNode()
         rospy.spin()
