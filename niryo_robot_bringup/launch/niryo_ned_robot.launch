@@ -16,4 +16,8 @@
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
+    <include file="$(find niryo_robot_reports)/launch/reports.launch">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
+
 </launch>
