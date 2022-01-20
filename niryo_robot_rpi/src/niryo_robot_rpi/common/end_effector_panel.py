@@ -100,7 +100,6 @@ class NiryoEndEffectorPanel:
                 activate_learning_mode(False)
                 self.__learning_mode_button_state = msg.action
 
-
     def __callback_save_pos_button_status(self, msg):
         if msg.action in [EEButtonStatus.NO_ACTION]:
             pressed = False
