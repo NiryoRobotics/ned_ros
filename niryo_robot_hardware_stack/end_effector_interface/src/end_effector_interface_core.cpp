@@ -120,11 +120,15 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     _states_publisher_duration = ros::Duration(1.0 / check_end_effector_status_frequency);
 
     std::string hw_type;
+    int collision_thresh;
     nh.getParam("hardware_type", hw_type);
+    nh.getParam("collision_thresh", collision_thresh);
     auto ee_type = common::model::HardwareTypeEnum(hw_type.c_str());
 
     //  initiliaze end effector state
     _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
+
+    _end_effector_state->setCollisionThresh(collision_thresh);
 
     uint8_t button_id = 0;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
@@ -213,7 +217,13 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
  */
 int EndEffectorInterfaceCore::initHardware()
 {
-    // nothing to init for now;
+    if (_end_effector_state)
+    {
+        uint8_t thresh = _end_effector_state->getCollisionThresh();
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH,
+                                                                            _end_effector_state->getId(),
+                                                                            std::initializer_list<uint32_t>{thresh}));
+    }
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 

@@ -193,6 +193,15 @@ void EndEffectorState::setCollisionStatus(bool status)
 }
 
 /**
+ * @brief EndEffectorState::setCollisionThresh
+ * @param thresh
+ */
+void EndEffectorState::setCollisionThresh(int thresh)
+{
+  _collision_thresh = thresh;
+}
+
+/**
  * @brief EndEffectorState::setDigitalIn
  * @param digital_in
  */
