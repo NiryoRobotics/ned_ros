@@ -295,8 +295,8 @@ void JointsInterfaceCore::resetController()
     if (_hardware_version == "ned2")
     {
         _robot->write(ros::Time::now(), ros::Duration(0.0));
-        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
         _lock_write_cnt = 150;
+        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
     }
     else if (_hardware_version == "ned" || _hardware_version == "one")
     {
