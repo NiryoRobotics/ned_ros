@@ -118,6 +118,8 @@ class IOPanel(AbstractIOPanel):
                 resp.detected.append(i2C_component)
             else:
                 resp.missing.append(i2C_component)
+                rospy.logwarn(
+                    'Missing ic2 component: bus {}, address {}'.format(int(i2c_object.bus), int(i2c_object.address)))
         resp.is_ok = not resp.missing
 
         if resp.is_ok:
