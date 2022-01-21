@@ -606,7 +606,7 @@ bool TtlManager::readJointsStatus()
                 else
                 {
                     ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
-                              "driver fail to syncReadJointStatus (error %d)", res);
+                              "driver fail to syncReadPosition (error %d)", res);
                     hw_errors_increment++;
                 }
             }
@@ -627,7 +627,7 @@ bool TtlManager::readEndEffectorStatus()
 
     EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
 
-    // if has end effector driver
+    // if calibration not in progress
     if (!isCalibrationInProgress())
     {
         unsigned int hw_errors_increment = 0;
@@ -717,7 +717,7 @@ bool TtlManager::readEndEffectorStatus()
     }
     else
     {
-        ROS_DEBUG_THROTTLE(2, "TtlManager::readEndEffectorStatus - No end effector found");
+        ROS_DEBUG_THROTTLE(2, "TtlManager::readEndEffectorStatus - calibration is in progress");
     }
 
     return res;
