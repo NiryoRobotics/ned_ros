@@ -8,9 +8,9 @@ dynamixels:
         # assembly direction (1 or -1)
         limit_position_max: 2.089
         limit_position_min: -2.093
-        position_P_gain: 1024
-        position_I_gain: 3642
-        position_D_gain: 11200
+        position_P_gain: 1292
+        position_I_gain: 163
+        position_D_gain: 0
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 0
@@ -24,9 +24,9 @@ dynamixels:
         direction: -1
         limit_position_max: 1.919
         limit_position_min: -1.919
-        position_P_gain: 716
-        position_I_gain: 3583
-        position_D_gain: 11200
+        position_P_gain: 1292
+        position_I_gain: 13
+        position_D_gain: 0
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 0

@@ -120,49 +120,49 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
         nh.getParam(currentNamespace + "/direction", direction);
         nh.getParam(currentNamespace + "/delay", delay);
 
-        // acceleration and velocity profiles
+        // acceleration and velocity profiles (with conversion from RPM and RPM-2)
         common::model::VelocityProfile profile{};
-        int data{};
+        double data{};
         if (nh.hasParam(currentNamespace + "/v_start"))
         {
             nh.getParam(currentNamespace + "/v_start", data);
-            profile.v_start = static_cast<uint32_t>(data);
+            // v in 0.01 RPM
+            profile.v_start = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
-
         if (nh.hasParam(currentNamespace + "/a_1"))
         {
             nh.getParam(currentNamespace + "/a_1", data);
-            profile.a_1 = static_cast<uint32_t>(data);
+            profile.a_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (nh.hasParam(currentNamespace + "/v_1"))
         {
             nh.getParam(currentNamespace + "/v_1", data);
-            profile.v_1 = static_cast<uint32_t>(data);
+            profile.v_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (nh.hasParam(currentNamespace + "/a_max"))
         {
             nh.getParam(currentNamespace + "/a_max", data);
-            profile.a_max = static_cast<uint32_t>(data);
+            profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (nh.hasParam(currentNamespace + "/v_max"))
         {
             nh.getParam(currentNamespace + "/v_max", data);
-            profile.v_max = static_cast<uint32_t>(data);
+            profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (nh.hasParam(currentNamespace + "/d_max"))
         {
             nh.getParam(currentNamespace + "/d_max", data);
-            profile.d_max = static_cast<uint32_t>(data);
+            profile.d_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (nh.hasParam(currentNamespace + "/d_1"))
         {
             nh.getParam(currentNamespace + "/d_1", data);
-            profile.d_1 = static_cast<uint32_t>(data);
+            profile.d_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (nh.hasParam(currentNamespace + "/v_stop"))
         {
             nh.getParam(currentNamespace + "/v_stop", data);
-            profile.v_stop = static_cast<uint32_t>(data);
+            profile.v_stop = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
 
         // add parameters

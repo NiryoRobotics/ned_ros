@@ -35,11 +35,18 @@ class ArmState(object):
         rospy.logdebug("ArmCommander.init - reference_frame: %s", self.__reference_frame)
 
         self.__arm = None
-        self.__velocity_scaling_factor = 1.0
         self.__acceleration_scaling_factor = 1.0
+        self.__velocity_scaling_factor = 1.0
+        self.__velocity_percentage_scaling_factor = 100.0
+
+        # specific values for ned2
+        if self.__hardware_version == 'ned2':
+            self.__velocity_scaling_factor = 0.5
+            self.__velocity_percentage_scaling_factor = 200.0
 
         # Arm velocity
-        self.__max_velocity_scaling_percentage = self.__velocity_scaling_factor * 100
+        self.__max_velocity_scaling_percentage = (self.__velocity_scaling_factor *
+                                                  self.__velocity_percentage_scaling_factor)
         self.__max_velocity_scaling_factor_pub = rospy.Publisher(
             '/niryo_robot/max_velocity_scaling_factor', Int32, queue_size=10, latch=True)
         self.__publish_velocity_scaling_percentage()
@@ -148,10 +155,14 @@ class ArmState(object):
         self.__hardware_status = msg
 
     def __callback_set_max_velocity_scaling_factor(self, req):
-        rospy.logdebug("ArmCommander.init - __callback_set_max_velocity_scaling_factor: %d", req.value)
+        rospy.logdebug("ArmCommander - __callback_set_max_velocity_scaling_factor: %d", req.value)
 
-        if not 0 < req.value <= 100:
-            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 100'}
+        if not 0 < req.value <= 200:
+            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 200'}
+
+        if 100 < req.value <= 200:
+            rospy.logwarn("ArmCommander - __callback_set_max_velocity_scaling_factor %d is above 100%%."
+                          "You are now in the experimental mode of the robot", req.value)
 
         try:
             self.__set_max_velocity_scaling_percentage(req.value)
@@ -188,7 +199,7 @@ class ArmState(object):
         :return: None
         """
         self.__max_velocity_scaling_percentage = percentage
-        self.__velocity_scaling_factor = percentage / 100.0
+        self.__velocity_scaling_factor = percentage / self.__velocity_percentage_scaling_factor
         self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
         self.__publish_velocity_scaling_percentage()
 
@@ -227,10 +238,6 @@ class ArmState(object):
         self.__arm.set_goal_joint_tolerance(rospy.get_param("~goal_joint_tolerance"))
         self.__arm.set_goal_position_tolerance(rospy.get_param("~goal_position_tolerance"))
         self.__arm.set_goal_orientation_tolerance(rospy.get_param("~goal_orientation_tolerance"))
-
-        # set default velocity and acceleration to 100%
-        self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
-        self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
 
         rospy.loginfo("Arm commander - MoveIt! successfully connected to move_group '{}'".format(self.__arm.get_name()))
         rospy.logdebug("Arm commander - MoveIt! will move '{}' in the planning_frame '{}'".format(

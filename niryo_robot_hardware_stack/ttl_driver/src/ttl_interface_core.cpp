@@ -1211,14 +1211,17 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
     if (COMM_SUCCESS == _ttl_manager->readVelocityProfile(id, v_start, a_1, v_1,
                                                           a_max, v_max, d_max, d_1, v_stop))
     {
-        res.v_start = v_start;
-        res.a_1 = a_1;
-        res.v_1 = v_1;
-        res.a_max = a_max;
-        res.v_max = v_max;
-        res.d_max = d_max;
-        res.d_1 = d_1;
-        res.v_stop = v_stop;
+        // converting from RPM and RPM-2
+
+        // v in 0.01 RPM
+        res.v_start = v_start / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.a_1 = a_1 / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_1 = v_1 / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.a_max = a_max / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_max = v_max / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.d_max = d_max / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.d_1 = d_1 / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_stop = v_stop / (RADIAN_PER_SECONDS_TO_RPM * 100);
 
         res.message = "TtlInterfaceCore - Reading Velocity Profile successful";
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -1244,14 +1247,27 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 {
   int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-  auto dxl_cmd_pos_p = std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                                                      req.id, std::initializer_list<uint32_t>{req.v_start, req.a_1, req.v_1,
-                                                                                              req.a_max, req.v_max, req.d_max,
-                                                                                              req.d_1, req.v_stop});
+  // converting into RPM and RPM-2
 
-  if (dxl_cmd_pos_p->isValid())
+  // v in 0.01 RPM
+  auto v_start = static_cast<uint32_t>(req.v_start * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto a_1 = static_cast<uint32_t>(req.a_1 * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_1 = static_cast<uint32_t>(req.v_1 * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto a_max = static_cast<uint32_t>(req.a_max * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_max = static_cast<uint32_t>(req.v_max * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto d_max = static_cast<uint32_t>(req.d_max * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto d_1 = static_cast<uint32_t>(req.d_1 * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_stop = static_cast<uint32_t>(req.v_stop * RADIAN_PER_SECONDS_TO_RPM * 100);
+
+
+  auto profile_cmd = std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
+                                                      req.id, std::initializer_list<uint32_t>{v_start, a_1, v_1,
+                                                                                              a_max, v_max, d_max,
+                                                                                              d_1, v_stop});
+
+  if (profile_cmd->isValid())
   {
-      addSingleCommandToQueue(std::move(dxl_cmd_pos_p));
+      addSingleCommandToQueue(std::move(profile_cmd));
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
       res.message = "TtlInterfaceCore - Writing Velocity Profile successful";
   }
