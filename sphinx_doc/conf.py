@@ -119,13 +119,15 @@ extlinks = {
     'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
-    'visualization_msgs': (
-    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'visualization_msgs': (
     'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
+    'rosconsole': ('http://wiki.ros.org/rosconsole%s', ''),
+    'log4cxx': ('https://logging.apache.org/log4cxx/latest_stable/index.html%s', ''),
+    'ros_multimachine': ('https://wiki.ros.org/ROS/Tutorials/MultipleMachines%s', ''),
+    'doc_niryo_studio': ('https://docs.niryo.com/product/niryo-studio/v3.2.1/en/index.html%s', ''),
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
@@ -137,6 +139,9 @@ extlinks = {
     'ned_ros_stack': ('https://github.com/NiryoRobotics/niryo_one_ros/%s', None),
     'api_modbus_readme': ('https://github.com/NiryoRobotics/niryo_one_ros/tree/master/niryo_one_modbus/%s', None),
     'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None),
+    'connecting_to_the_robot': (
+        'https://docs.niryo.com/product/niryo-studio/source/connection.html%s',
+        None),
 }
 
 TRANSLATE_CAPTIONS_JS = """

@@ -302,6 +302,7 @@ upload_staging_job:
   extends: .abstract_upload
 
 linkchecker_staging_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
   stage: environment_test
   variables:
     <<: *staging_variables
@@ -340,6 +341,7 @@ upload_production_job:
   extends: .abstract_upload
 
 linkchecker_production_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base/v1.0.6:amd64
   rules: *production_rules
   stage: environment_test
   variables:
