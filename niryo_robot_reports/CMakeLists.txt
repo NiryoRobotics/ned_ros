@@ -10,10 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
 # enable python module support
 catkin_python_setup()
 
-generate_messages(
-  DEPENDENCIES
-)
-
 catkin_package(
   CATKIN_DEPENDS
   message_runtime
