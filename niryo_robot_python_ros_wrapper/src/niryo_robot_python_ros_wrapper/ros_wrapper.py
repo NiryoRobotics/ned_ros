@@ -1212,7 +1212,7 @@ class NiryoRosWrapper:
         goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
         goal.cmd.cmd_type = command_int
 
-        return self.__tool_action_nac.execute(goal.goal)
+        return self.__tool_action_nac.execute(goal)
 
     # - Electromagnet
     def setup_electromagnet(self, pin_id):

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-19 16:27+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -812,89 +812,5 @@ msgstr ""
 #~ "This class allows you to control "
 #~ "the sound of the robot via "
 #~ "internal API."
-#~ msgstr ""
-
-#~ msgid "Play a sound from the robot If failed, raise NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid "Parameters"
-#~ msgstr ""
-
-#~ msgid "Name of the sound to play"
-#~ msgstr ""
-
-#~ msgid "start the sound from this value in seconds"
-#~ msgstr ""
-
-#~ msgid "end the sound at this value in seconds"
-#~ msgstr ""
-
-#~ msgid "wait for the end of the sound before exiting the function"
-#~ msgstr ""
-
-#~ msgid "Returns"
-#~ msgstr ""
-
-#~ msgid "status, message"
-#~ msgstr ""
-
-#~ msgid "Return type"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Set the volume percentage of the "
-#~ "robot. If failed, raise "
-#~ "NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid "volume percentage of the sound (0: no sound, 100: max sound)"
-#~ msgstr ""
-
-#~ msgid "Stop a sound being played. If failed, raise NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Use gtts (Google Text To Speech) "
-#~ "to interpret a string as sound "
-#~ "Languages available are: - English: 0"
-#~ " - French: 1 - Spanish: 2 - "
-#~ "Mandarin: 3 - Portuguese: 4"
-#~ msgstr ""
-
-#~ msgid "text to speek < 100 char"
-#~ msgstr ""
-
-#~ msgid "language of the text"
-#~ msgstr ""
-
-#~ msgid "Get sound name list"
-#~ msgstr ""
-
-#~ msgid "list of the sounds of the robot"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Delete a sound on the RaspberryPi "
-#~ "of the robot. If failed, raise "
-#~ "NiryoRosWrapperException"
-#~ msgstr ""
-
-#~ msgid "name of the sound which needs to be deleted"
-#~ msgstr ""
-
-#~ msgid "String containing the encoded data of the sound file (wav or mp3)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Returns the duration in seconds of "
-#~ "a sound stored in the robot "
-#~ "database raise SoundRosWrapperException if the"
-#~ " sound doesn't exists"
-#~ msgstr ""
-
-#~ msgid "name of sound"
-#~ msgstr ""
-
-#~ msgid "sound duration in seconds"
 #~ msgstr ""
 

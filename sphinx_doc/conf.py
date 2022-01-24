@@ -125,7 +125,7 @@ extlinks = {
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'visualization_msgs': (
     'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
-    'wiki_ros': ('http://wiki.ros.org%s', ''),
+    'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'rosconsole': ('http://wiki.ros.org/rosconsole%s', ''),
     'log4cxx': ('https://logging.apache.org/log4cxx/latest_stable/index.html%s', ''),
     'ros_multimachine': ('https://wiki.ros.org/ROS/Tutorials/MultipleMachines%s', ''),
