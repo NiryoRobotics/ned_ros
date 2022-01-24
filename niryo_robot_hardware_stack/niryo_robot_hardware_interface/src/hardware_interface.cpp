@@ -256,6 +256,7 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
                                                   niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    _hardware_state = niryo_robot_msgs::HardwareStatus::DEBUG;
 
     ROS_INFO("Hardware Interface - Stop Motor Report");
 
@@ -268,6 +269,7 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "";
 
+    _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
     return true;
 }
 
@@ -281,6 +283,7 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
                                                     niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    _hardware_state = niryo_robot_msgs::HardwareStatus::DEBUG;
 
     ROS_INFO("Hardware Interface - Start Motors Report");
 
@@ -327,6 +330,7 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
     res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
 
     ROS_INFO("Hardware Interface - Motors report ended");
+    _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
 
     return true;
 }
@@ -341,11 +345,15 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
                                               niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    _hardware_state = niryo_robot_msgs::HardwareStatus::REBOOT;
 
     // for each interface, call for reboot
     int ret = 0;
     std::string message;
     bool torque_on = ("ned2" == _hardware_version);
+
+    if ("ned2" == _hardware_version)
+        ros::Duration(3).sleep();
 
     if (_joints_interface && !_joints_interface->rebootAll(torque_on))
     {
@@ -376,6 +384,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         res.message = "Reboot motors Problems: " + message;
     }
 
+    _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
     return true;
 }
 
@@ -492,6 +501,7 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
     }
 
     msg.error_message = error_message;
+    msg.hardware_state = _hardware_state;
 
     msg.calibration_needed = need_calibration;
     msg.calibration_in_progress = calibration_in_progress;

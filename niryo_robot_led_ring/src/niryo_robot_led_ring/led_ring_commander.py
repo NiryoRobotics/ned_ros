@@ -120,7 +120,7 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
-        elif self.robot_status == RobotStatus.BOOTING and msg.robot_status != RobotStatus.BOOTING:
+        elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
             if not self.__is_simulation:
                 from led_ring_utils import enable_led_ring
                 enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
@@ -131,8 +131,8 @@ class LedRingCommander:
                 self.robot_out_of_bounds != msg.out_of_bounds or
                 self.rpi_overheating != msg.rpi_overheating):
 
-            if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS and \
-                    msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+            if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS == msg.robot_status \
+                    or self.robot_status != RobotStatus.REBOOT_MOTOR == msg.robot_status:
                 rospy.sleep(0.5)  # for synchro
                 self.blink(YELLOW, 3, 1)
 

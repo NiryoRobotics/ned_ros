@@ -33,6 +33,7 @@ class MAX11644(object):
         # added to avoid communication problems
         time.sleep(1)
         self._address = address
+        self._bus = bus
         self._SETUP = 0x80
         self._CONF = 0x00
 
@@ -45,6 +46,17 @@ class MAX11644(object):
 
         self._SETUP = (self._SETUP | 0x02)  # internal clock, unipolar, no action
         self._send_data_(self._SETUP)
+
+    def __str__(self):
+        return 'MAX11644, bus {}, address {}'.format(self._bus, self._address)
+
+    @property
+    def address(self):
+        return self._address
+
+    @property
+    def bus(self):
+        return self._bus
 
     def _send_data_(self, byte):
         """Send a byte to device"""

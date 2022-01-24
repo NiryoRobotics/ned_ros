@@ -243,14 +243,17 @@ class TopButton:
     def led_advertiser(self, elapsed_seconds):
         # Use LED to help user know which action to execute
         if elapsed_seconds >= 10:
-            self.__led_state = LedState.OK
-            send_led_state(LedState.OK)
+            if LedState.OK != self.__led_state:
+                self.__led_state = LedState.OK
+                send_led_state(LedState.OK)
         elif elapsed_seconds >= 6:
-            self.__led_state = LedState.WAIT_HOTSPOT
-            send_led_state(LedState.WAIT_HOTSPOT)
+            if LedState.WAIT_HOTSPOT != self.__led_state:
+                self.__led_state = LedState.WAIT_HOTSPOT
+                send_led_state(LedState.WAIT_HOTSPOT)
         elif elapsed_seconds >= 3:
-            self.__led_state = LedState.SHUTDOWN
-            send_led_state(LedState.SHUTDOWN)
+            if LedState.SHUTDOWN != self.__led_state:
+                self.__led_state = LedState.SHUTDOWN
+                send_led_state(LedState.SHUTDOWN)
 
     @staticmethod
     def shutdown():

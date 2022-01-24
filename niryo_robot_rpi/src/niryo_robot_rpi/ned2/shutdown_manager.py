@@ -34,7 +34,10 @@ class ShutdownManager(AbstractShutdownManager):
     def __init__(self, mcp_manager=None):
         super(ShutdownManager, self).__init__()
 
-        self.__turn_off_sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/turn_off_sound")
+        try:
+            self.__turn_off_sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/turn_off_sound")
+        except KeyError:
+            self.__turn_off_sound_name = ""
 
         self.__shutdown_requested = False
         self.__shutdown_event = Event()
