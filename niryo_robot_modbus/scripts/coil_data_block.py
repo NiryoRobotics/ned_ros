@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import rospy
 
 from data_block import DataBlock
 from collections import OrderedDict
@@ -19,16 +20,26 @@ from niryo_robot_rpi.srv import SetPullup, SetIOMode, SetIOModeRequest
 class CoilDataBlock(DataBlock):
     CO_IO_MODE = 0
     CO_IO_STATE = 100
-    CO_IO_ENABLE_PULLUP = 200
 
-    DIO_ADDRESS = OrderedDict({0: "1A",
-                               1: "1B",
-                               2: "1C",
-                               3: "2A",
-                               4: "2B",
-                               5: "2C",
-                               6: "SW1",
-                               7: "SW2", })
+    if rospy.get_param("/niryo_robot_modbus/hardware_version") == "ned2":
+        DIO_ADDRESS = OrderedDict({0: "DI1",
+                                   1: "DI2",
+                                   2: "DI3",
+                                   3: "DI4",
+                                   4: "DI5",
+                                   5: "DO1",
+                                   6: "DO2",
+                                   7: "DO3",
+                                   8: "DO4", })
+    else:
+        DIO_ADDRESS = OrderedDict({0: "1A",
+                                   1: "1B",
+                                   2: "1C",
+                                   3: "2A",
+                                   4: "2B",
+                                   5: "2C",
+                                   6: "SW1",
+                                   7: "SW2", })
 
     DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
     DIO_MODE_INPUT = SetIOModeRequest.INPUT
@@ -48,10 +59,7 @@ class CoilDataBlock(DataBlock):
         value = values[0]
 
         try:
-            if address >= self.CO_IO_ENABLE_PULLUP:
-                pin_id = self.DIO_ADDRESS[address % 100]
-                self.set_pullup_mode(pin_id, value)
-            elif address >= self.CO_IO_STATE:
+            if address >= self.CO_IO_STATE:
                 if address % 100 in self.DIO_ADDRESS:
                     self.digital_write(self.DIO_ADDRESS[address % 100], value)
             elif address >= self.CO_IO_MODE:
@@ -86,27 +94,3 @@ class CoilDataBlock(DataBlock):
         _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id,
                                         bool(digital_state))
 
-    def set_pullup_mode(self, pin_id, enable):
-        """
-        Enable or disable digital intput pullup resistor.
-
-        :param pin_id: The name of the pin
-        :type pin_id: Union[ PinID, str]
-        :param enable: True to enable the input pullup resistor, false otherwise.
-        :type enable: bool
-        :rtype: None
-        """
-        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io_state', SetPullup, pin_id, bool(enable))
-
-
-class CoilDataBlockNed2(CoilDataBlock):
-    DIO_ADDRESS = OrderedDict({1: "DI1",
-                               2: "DI2",
-                               3: "DI3",
-                               4: "DO1",
-                               5: "DO2",
-                               6: "DO3",
-                               7: "Electromagnet", })
-
-    def __init__(self):
-        super(CoilDataBlockNed2, self).__init__()

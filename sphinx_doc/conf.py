@@ -84,7 +84,7 @@ add_module_names = False
 html_theme = shared_conf.html_theme
 
 templates_path = shared_conf.templates_path
-html_static_path = shared_conf.html_static_path
+html_static_path = shared_conf.html_static_path[:] + ['_static', '../niryo_robot_sound/niryo_robot_state_sounds']
 
 html_logo = shared_conf.html_logo
 html_favicon = shared_conf.html_favicon
@@ -119,8 +119,6 @@ extlinks = {
     'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
-    'visualization_msgs': (
-    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'visualization_msgs': (
@@ -133,6 +131,14 @@ extlinks = {
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
+    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html/%s', None),
+    'python_website': ('https://www.python.org/%s', None),
+    'python_installation': ('https://realpython.com/installing-python/%s', None),
+    'pip_website': ('https://pypi.org/project/pip/%s', None),
+    'pip_installation': ('https://pip.pypa.io/en/stable/installing/%s', None),
+    'ned_ros_stack': ('https://github.com/NiryoRobotics/niryo_one_ros/%s', None),
+    'api_modbus_readme': ('https://github.com/NiryoRobotics/niryo_one_ros/tree/master/niryo_one_modbus/%s', None),
+    'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None),
     'connecting_to_the_robot': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html%s',
         None),

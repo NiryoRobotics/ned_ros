@@ -65,22 +65,98 @@ Here is a list of the different parameters that allow you to adjust the default 
       - "niryo_robot_state_sounds"
    *  - ``robot_sounds/error_sound``
       - Sound played when an error occurs
-      - error4.2.wav
+      - error.wav
    *  - ``robot_sounds/turn_on_sound``
       - Sound played at the start-up of the robot
-      - start4a.wav
+      - booting.wav
    *  - ``robot_sounds/turn_off_sound``
       - Sound played at shutdown
       - stop.wav
    *  - ``robot_sounds/connection_sound``
       - Sound played an Niryo Studio connection
-      - connected3.wav
+      - connected.wav
    *  - ``robot_sounds/robot_ready_sound``
       - Sound played when the robot is ready
-      - connected2.wav
+      - ready.wav
    *  - ``robot_sounds/calibration_sound``
       - Sound played at start of calibration
       - calibration.wav
+
+
+.. list-table:: State sounds
+   :header-rows: 1
+   :widths: auto
+   :stub-columns: 0
+   :align: center
+
+   *  - State
+      - Description
+      - DSound
+
+   *  - Booting
+      - Sound played while booting
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/booting.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Ready
+      - Sound played when the robot is ready after booting
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/ready.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Calibration
+      - Sound played at start of calibration
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/calibration.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Connected
+      - Notify of a connection to Niryo Studio
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/connected.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Reboot
+      - Sound played at start of a motor reboot
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/reboot.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Warn
+      - Sound played when a warning occurs
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/warn.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Error
+      - Sound played when a robot/motor/raspberry/program/overheating error occurs
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/robot_error.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
+   *  - Shutdown
+      - Sound played at shutdown
+      - .. raw:: html
+
+            <audio controls="controls">
+              <source src="../../../_static/audio/stop.wav" type="audio/wav">
+              Your browser does not support the <code>audio</code> element.
+            </audio>
 
 
 Publisher - Sound

@@ -87,6 +87,10 @@ class PinID:
     DI4 = "DI4"
     DI5 = "DI5"
 
+    AI1 = "AI1"
+    AI2 = "AI2"
+    AO1 = "AO1"
+    AO2 = "AO2"
 
 # - Conveyor
 

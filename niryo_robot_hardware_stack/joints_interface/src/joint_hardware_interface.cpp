@@ -543,10 +543,10 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     {
         if (jState->getBusProtocol() == EBusProtocol::TTL)
         {
-            // first set torque off
+            // first set torque state
             if (jState->isStepper())
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                jState->getId(), std::initializer_list<uint32_t>{false}));
+                                                                                jState->getId(), std::initializer_list<uint32_t>{torque_on}));
 
             ros::Duration(0.2).sleep();
 

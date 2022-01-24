@@ -132,7 +132,9 @@ class RobotStatusHandler(object):
         # - Robot status - No errors
         if new_robot_status == RobotStatus.UNKNOWN:
             self.__autonomous_mode = self.get_autonomous_status()
-            if self.__robot_status_observer.hardware_status.calibration_in_progress:
+            if self.__robot_status_observer.hardware_status.hardware_state:
+                new_robot_status, new_robot_message = RobotStatus.REBOOT_MOTOR, "Rebooting one or more motors"
+            elif self.__robot_status_observer.hardware_status.calibration_in_progress:
                 new_robot_status, new_robot_message = RobotStatus.CALIBRATION_IN_PROGRESS, "Calibration in progress"
             elif self.__robot_status_observer.hardware_status.calibration_needed:
                 new_robot_status, new_robot_message = RobotStatus.CALIBRATION_NEEDED, "Calibration needed"
@@ -173,6 +175,10 @@ class RobotStatusHandler(object):
         robot_status_msg.rpi_overheating = self.__robot_status_observer.rpi_overheating
 
         self.__robot_status_pub.publish(robot_status_msg)
+
+        if RobotStatus.SHUTDOWN < robot_status_msg.robot_status < RobotStatus.NONE:
+            rospy.logwarn(
+                "[Robot Status] - {} - {}".format(robot_status_msg.robot_status_str, robot_status_msg.robot_message))
 
     def __check_hardware_error(self):
         new_robot_status = RobotStatus.UNKNOWN
