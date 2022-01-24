@@ -46,14 +46,12 @@ msgstr ""
 "chaque terminal."
 
 #: ../../source/python_ros_wrapper/before_running.rst:10
-#, fuzzy
 msgid ""
 "If your are using simulation, be sure to have followed the setup from "
 ":ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
 msgstr ""
 "Si vous utilisez la simulation, assurez-vous d'avoir suivi la "
-"configuration dans la rubrique :ref:`source/simulation:setup Ned ROS "
-"Environment`."
+"configuration dans la rubrique :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
 
 #: ../../source/python_ros_wrapper/before_running.rst:15
 msgid "Required piece of code"

@@ -67,7 +67,7 @@ Here is a list of the different parameters that allow you to adjust the default 
       - Sound played when an error occurs
       - error.wav
    *  - ``robot_sounds/turn_on_sound``
-      - Sound played at start of the robot
+      - Sound played at the start-up of the robot
       - booting.wav
    *  - ``robot_sounds/turn_off_sound``
       - Sound played at shutdown
@@ -173,13 +173,13 @@ Publisher - Sound
       -  Description
    *  -  ``/niryo_robot_sound/sound``
       -  :std_msgs:`std_msgs/String<String>`
-      -  Publish the sound being played
+      -  Publisesh the sound being played
    *  -  ``/niryo_robot_sound/volume``
       -  :std_msgs:`std_msgs/UInt8<UInt8>`
-      -  Publish the volume of the robot
+      -  Publishes the volume of the robot
    *  -  ``/niryo_robot_sound/sound_database``
       -  :ref:`SoundList<source/stack/high_level/niryo_robot_sound:SoundList (Message)>`
-      -  Publish the sounds (and their duration) on the robot
+      -  Publishes the sounds (and their duration) on the robot
 
 
 Services - Sound
@@ -196,19 +196,19 @@ Services - Sound
       -  Description
    *  -  ``/niryo_robot_sound/play``
       -  :ref:`PlaySound<source/stack/high_level/niryo_robot_sound:PlaySound (Service)>`
-      -  Play a sound from the robot database
+      -  Plays a sound from the robot database
    *  -  ``/niryo_robot_sound/stop``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
-      -  Stop the sound being played
+      -  Stops the sound being played
    *  -  ``/niryo_robot_sound/set_volume``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
-      -  Set the volume percentage between 0 and 200%
+      -  Sets the volume percentage between 0 and 200%
    *  -  ``/niryo_robot_sound/text_to_speech``
       -  :ref:`TextToSpeech<source/stack/high_level/niryo_robot_sound:TextToSpeech (Service)>`
-      -  Pronounce a sentence via GTTS
+      -  Pronouncses a sentence via GTTS
    *  -  ``/niryo_robot_sound/manage``
       -  :ref:`ManageSound<source/stack/high_level/niryo_robot_sound:ManageSound (Service)>`
-      -  Stop a sound being played
+      -  Stops a sound being played
 
 
 Subscribers - Sound
@@ -228,7 +228,7 @@ Subscribers - Sound
       - Retrieves the current robot status, and controls the sound accordingly (see :ref:`Niryo_robot_status <source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)
    *  - ``/niryo_studio_connection``
       - :std_msgs:`std_msgs/Empty<Empty>`
-      - Catch the Niryo Studio connection to make a sound.
+      - Catches Niryo Studio's connection to make a sound.
 
 
 Dependencies - Sound
@@ -285,7 +285,7 @@ For instance, a script playing sound via Python ROS Wrapper will look like: ::
     sound = SoundRosWrapper()
     sound.play(sound.sounds[0])
 
-| This class allows you to control the sound of the robot via internal API.
+| This class allows you to control the sound of the robot via the internal API.
 
 List of functions subsections:
 

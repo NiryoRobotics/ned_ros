@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-06 14:40+0000\n"
+"POT-Creation-Date: 2022-01-10 10:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,9 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:2
-#, fuzzy
 msgid "Niryo robot tools commander"
-msgstr "Package Niryo robot Tools Commander"
+msgstr "Package Niryo robot tools commander"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:4
 msgid "Provides functionalities to control end-effectors and accessories for Ned."
@@ -124,7 +123,7 @@ msgid ":std_msgs:`Int32`"
 msgstr ":std_msgs:`Int32`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:47
-msgid "Publish the current tool ID"
+msgid "Publishes the current tool ID"
 msgstr "Publier l'ID d'outil actuel"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:48
@@ -141,7 +140,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:50
 msgid ""
-"Publish if the TCP (Tool Center Point) is enabled and transformation "
+"Publishes if the TCP (Tool Center Point) is enabled and transformation "
 "between the tool_link and the TCP"
 msgstr ""
 "Publie l'état activé/désactivé du PCO (Point Central de l'Outil) ainsi "
@@ -166,8 +165,8 @@ msgstr ":std_srvs:`Trigger`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:66
 msgid ""
-"Ping/scan for a dxl motor flashed with an ID corresponding to a tool and "
-"equip it (if found)"
+"Pings/scans for a dxl motor flashed with an ID corresponding to a tool "
+"and equip it (if found)"
 msgstr ""
 "Scanner pour voir si un moteur dynamixel est flashé avec un ID "
 "correspondant à un outil et l'équiper"
@@ -181,7 +180,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:69
-msgid "Equip the electromagnet with the motor ID given as parameter"
+msgid "Equips the electromagnet with the motor ID given as parameter"
 msgstr "Equiper l'électroaimant avec l'ID moteur donné comme paramètre"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:70
@@ -193,7 +192,7 @@ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
-msgid "Enable or disable the TCP (Tool Center Point) functionality."
+msgid "Enables or disablse the TCP (Tool Center Point) functionality."
 msgstr "Activer ou désactiver le PCO (Point central de l'outil)."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
@@ -222,8 +221,8 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:77
 msgid ""
-"Activate the TCP (Tool Center Point) functionality and defines a new TCP "
-"transformation."
+"Activates the TCP (Tool Center Point) functionality and defines a new TCP"
+" transformation."
 msgstr "Activer le PCO (Point Central de l'outil) et définir un nouveau PCO."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:78
@@ -232,7 +231,7 @@ msgstr "``reset_tcp``"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:80
 msgid ""
-"Reset the TCP transformation. By default it will be the one of the "
+"Resets the TCP transformation. By default it will be the one of the "
 "equipped tool."
 msgstr "Réinitialiser la transformation du PCO avec celle de l'outil équipé."
 

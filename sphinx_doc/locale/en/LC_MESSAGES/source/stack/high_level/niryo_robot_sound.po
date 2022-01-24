@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-18 13:45+0000\n"
+"POT-Creation-Date: 2022-01-11 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,17 +58,16 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:24
 #: ../../source/stack/high_level/niryo_robot_sound.rst:53
-#: ../../source/stack/high_level/niryo_robot_sound.rst:171
-#: ../../source/stack/high_level/niryo_robot_sound.rst:194
+#: ../../source/stack/high_level/niryo_robot_sound.rst:95
+#: ../../source/stack/high_level/niryo_robot_sound.rst:118
 msgid "Name"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:25
 #: ../../source/stack/high_level/niryo_robot_sound.rst:54
-#: ../../source/stack/high_level/niryo_robot_sound.rst:93
-#: ../../source/stack/high_level/niryo_robot_sound.rst:173
-#: ../../source/stack/high_level/niryo_robot_sound.rst:196
-#: ../../source/stack/high_level/niryo_robot_sound.rst:225
+#: ../../source/stack/high_level/niryo_robot_sound.rst:97
+#: ../../source/stack/high_level/niryo_robot_sound.rst:120
+#: ../../source/stack/high_level/niryo_robot_sound.rst:149
 msgid "Description"
 msgstr ""
 
@@ -189,7 +188,7 @@ msgid "Sound played when an error occurs"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:68
-msgid "error.wav"
+msgid "error4.2.wav"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:69
@@ -197,11 +196,11 @@ msgid "``robot_sounds/turn_on_sound``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:70
-msgid "Sound played at start of the robot"
+msgid "Sound played at the start-up of the robot"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:71
-msgid "booting.wav"
+msgid "start4a.wav"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:72
@@ -209,7 +208,6 @@ msgid "``robot_sounds/turn_off_sound``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:73
-#: ../../source/stack/high_level/niryo_robot_sound.rst:153
 msgid "Sound played at shutdown"
 msgstr ""
 
@@ -226,7 +224,7 @@ msgid "Sound played an Niryo Studio connection"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:77
-msgid "connected.wav"
+msgid "connected3.wav"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:78
@@ -238,7 +236,7 @@ msgid "Sound played when the robot is ready"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:80
-msgid "ready.wav"
+msgid "connected2.wav"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:81
@@ -246,7 +244,6 @@ msgid "``robot_sounds/calibration_sound``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:82
-#: ../../source/stack/high_level/niryo_robot_sound.rst:113
 msgid "Sound played at start of calibration"
 msgstr ""
 
@@ -254,311 +251,245 @@ msgstr ""
 msgid "calibration.wav"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:86
-msgid "State sounds"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:92
-msgid "State"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:94
-msgid "DSound"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:96
-msgid "Booting"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:97
-msgid "Sound played while booting"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:104
-msgid "Ready"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:105
-msgid "Sound played when the robot is ready after booting"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:112
-msgid "Calibration"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:120
-msgid "Connected"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:121
-msgid "Notify of a connection to Niryo Studio"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:128
-msgid "Reboot"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:129
-msgid "Sound played at start of a motor reboot"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:136
-msgid "Warn"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:137
-msgid "Sound played when a warning occurs"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:144
-msgid "Error"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:145
-msgid "Sound played when a robot/motor/raspberry/program/overheating error occurs"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:152
-msgid "Shutdown"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_sound.rst:163
+#: ../../source/stack/high_level/niryo_robot_sound.rst:87
 msgid "Publisher - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:165
+#: ../../source/stack/high_level/niryo_robot_sound.rst:89
 msgid "Sound Package's Publishers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:172
-#: ../../source/stack/high_level/niryo_robot_sound.rst:195
+#: ../../source/stack/high_level/niryo_robot_sound.rst:96
+#: ../../source/stack/high_level/niryo_robot_sound.rst:119
 msgid "Message Type"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:174
+#: ../../source/stack/high_level/niryo_robot_sound.rst:98
 msgid "``/niryo_robot_sound/sound``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:175
+#: ../../source/stack/high_level/niryo_robot_sound.rst:99
 msgid ":std_msgs:`std_msgs/String<String>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:176
-msgid "Publish the sound being played"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:100
+msgid "Publisesh the sound being played"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:177
+#: ../../source/stack/high_level/niryo_robot_sound.rst:101
 msgid "``/niryo_robot_sound/volume``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:178
+#: ../../source/stack/high_level/niryo_robot_sound.rst:102
 msgid ":std_msgs:`std_msgs/UInt8<UInt8>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:179
-msgid "Publish the volume of the robot"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:103
+msgid "Publishes the volume of the robot"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:180
+#: ../../source/stack/high_level/niryo_robot_sound.rst:104
 msgid "``/niryo_robot_sound/sound_database``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:181
+#: ../../source/stack/high_level/niryo_robot_sound.rst:105
 msgid ""
 ":ref:`SoundList<source/stack/high_level/niryo_robot_sound:SoundList "
 "(Message)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:182
-msgid "Publish the sounds (and their duration) on the robot"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:106
+msgid "Publishes the sounds (and their duration) on the robot"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:186
+#: ../../source/stack/high_level/niryo_robot_sound.rst:110
 msgid "Services - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:188
+#: ../../source/stack/high_level/niryo_robot_sound.rst:112
 msgid "Sound Services"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:197
+#: ../../source/stack/high_level/niryo_robot_sound.rst:121
 msgid "``/niryo_robot_sound/play``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:198
+#: ../../source/stack/high_level/niryo_robot_sound.rst:122
 msgid ""
 ":ref:`PlaySound<source/stack/high_level/niryo_robot_sound:PlaySound "
 "(Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:199
-msgid "Play a sound from the robot database"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:123
+msgid "Plays a sound from the robot database"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:200
+#: ../../source/stack/high_level/niryo_robot_sound.rst:124
 msgid "``/niryo_robot_sound/stop``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:201
+#: ../../source/stack/high_level/niryo_robot_sound.rst:125
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:202
-msgid "Stop the sound being played"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:126
+msgid "Stops the sound being played"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:203
+#: ../../source/stack/high_level/niryo_robot_sound.rst:127
 msgid "``/niryo_robot_sound/set_volume``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:204
+#: ../../source/stack/high_level/niryo_robot_sound.rst:128
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:205
-msgid "Set the volume percentage between 0 and 200%"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:129
+msgid "Sets the volume percentage between 0 and 200%"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:206
+#: ../../source/stack/high_level/niryo_robot_sound.rst:130
 msgid "``/niryo_robot_sound/text_to_speech``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:207
+#: ../../source/stack/high_level/niryo_robot_sound.rst:131
 msgid ""
 ":ref:`TextToSpeech<source/stack/high_level/niryo_robot_sound:TextToSpeech"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:208
-msgid "Pronounce a sentence via GTTS"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:132
+msgid "Pronouncses a sentence via GTTS"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:209
+#: ../../source/stack/high_level/niryo_robot_sound.rst:133
 msgid "``/niryo_robot_sound/manage``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:210
+#: ../../source/stack/high_level/niryo_robot_sound.rst:134
 msgid ""
 ":ref:`ManageSound<source/stack/high_level/niryo_robot_sound:ManageSound "
 "(Service)>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:211
-msgid "Stop a sound being played"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:135
+msgid "Stops a sound being played"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:215
+#: ../../source/stack/high_level/niryo_robot_sound.rst:139
 msgid "Subscribers - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:217
+#: ../../source/stack/high_level/niryo_robot_sound.rst:141
 msgid "Sound Package subscribers"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:223
+#: ../../source/stack/high_level/niryo_robot_sound.rst:147
 msgid "Topic name"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:224
+#: ../../source/stack/high_level/niryo_robot_sound.rst:148
 msgid "Message type"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:226
+#: ../../source/stack/high_level/niryo_robot_sound.rst:150
 msgid "``/niryo_robot_status/robot_status``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:227
+#: ../../source/stack/high_level/niryo_robot_sound.rst:151
 msgid ":ref:`RobotStatus<source/stack/high_level/niryo_robot_status:RobotStatus>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:228
+#: ../../source/stack/high_level/niryo_robot_sound.rst:152
 msgid ""
 "Retrieves the current robot status, and controls the sound accordingly "
 "(see :ref:`Niryo_robot_status "
 "<source/stack/high_level/niryo_robot_status:Niryo_robot_status>` section)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:229
+#: ../../source/stack/high_level/niryo_robot_sound.rst:153
 msgid "``/niryo_studio_connection``"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:230
+#: ../../source/stack/high_level/niryo_robot_sound.rst:154
 msgid ":std_msgs:`std_msgs/Empty<Empty>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:231
-msgid "Catch the Niryo Studio connection to make a sound."
+#: ../../source/stack/high_level/niryo_robot_sound.rst:155
+msgid "Catches Niryo Studio's connection to make a sound."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:235
+#: ../../source/stack/high_level/niryo_robot_sound.rst:159
 msgid "Dependencies - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:237
+#: ../../source/stack/high_level/niryo_robot_sound.rst:161
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:238
+#: ../../source/stack/high_level/niryo_robot_sound.rst:162
 msgid ""
 ":ref:`niryo_robot_msgs "
 "<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:239
+#: ../../source/stack/high_level/niryo_robot_sound.rst:163
 msgid ""
 ":ref:`niryo_robot_status "
 "<source/stack/high_level/niryo_robot_status:Niryo_robot_status>`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:242
+#: ../../source/stack/high_level/niryo_robot_sound.rst:166
 msgid "Services & Messages files - Sound"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:245
+#: ../../source/stack/high_level/niryo_robot_sound.rst:169
 msgid "SoundList (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:251
+#: ../../source/stack/high_level/niryo_robot_sound.rst:175
 msgid "SoundObject (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:258
+#: ../../source/stack/high_level/niryo_robot_sound.rst:182
 msgid "ManageSound (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:264
+#: ../../source/stack/high_level/niryo_robot_sound.rst:188
 msgid "PlaySound (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:270
+#: ../../source/stack/high_level/niryo_robot_sound.rst:194
 msgid "TextToSpeech (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:276
+#: ../../source/stack/high_level/niryo_robot_sound.rst:200
 msgid "Sound API functions"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:278
+#: ../../source/stack/high_level/niryo_robot_sound.rst:202
 msgid ""
 "In order to control the robot more easily than calling each topics & "
 "services one by one, a Python ROS Wrapper has been built on top of ROS."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:281
+#: ../../source/stack/high_level/niryo_robot_sound.rst:205
 msgid ""
 "For instance, a script playing sound via Python ROS Wrapper will look "
 "like: ::"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:288
-msgid "This class allows you to control the sound of the robot via internal API."
+#: ../../source/stack/high_level/niryo_robot_sound.rst:212
+msgid ""
+"This class allows you to control the sound of the robot via the internal "
+"API."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:290
+#: ../../source/stack/high_level/niryo_robot_sound.rst:214
 msgid "List of functions subsections:"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:300
+#: ../../source/stack/high_level/niryo_robot_sound.rst:224
 msgid "Play sound"
 msgstr ""
 
@@ -651,7 +582,7 @@ msgstr ""
 msgid "language of the text"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:307
+#: ../../source/stack/high_level/niryo_robot_sound.rst:231
 msgid "Sound database"
 msgstr ""
 
@@ -847,15 +778,39 @@ msgstr ""
 #~ msgid "sound_data: str"
 #~ msgstr ""
 
-#~ msgid "error4.2.wav"
+#~ msgid "Sound played at start of the robot"
 #~ msgstr ""
 
-#~ msgid "start4a.wav"
+#~ msgid "Publish the sound being played"
 #~ msgstr ""
 
-#~ msgid "connected3.wav"
+#~ msgid "Publish the volume of the robot"
 #~ msgstr ""
 
-#~ msgid "connected2.wav"
+#~ msgid "Publish the sounds (and their duration) on the robot"
+#~ msgstr ""
+
+#~ msgid "Play a sound from the robot database"
+#~ msgstr ""
+
+#~ msgid "Stop the sound being played"
+#~ msgstr ""
+
+#~ msgid "Set the volume percentage between 0 and 200%"
+#~ msgstr ""
+
+#~ msgid "Pronounce a sentence via GTTS"
+#~ msgstr ""
+
+#~ msgid "Stop a sound being played"
+#~ msgstr ""
+
+#~ msgid "Catch the Niryo Studio connection to make a sound."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This class allows you to control "
+#~ "the sound of the robot via "
+#~ "internal API."
 #~ msgstr ""
 

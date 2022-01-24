@@ -2,7 +2,7 @@ CAN Debug Tools
 ====================================
 
 This package offers scripts to debug with Hardware and setup CAN devices.
-It provides some main functions like setup the CAN bus and dump data on bus.
+It provides some main functions like setting up the CAN bus and dumping data on bus.
 
 Niryo robot - CAN debug tools
 ------------------------------------
@@ -13,12 +13,12 @@ This script can be launched via:  ::
 
 Parameters - CAN debug tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    - **--help / -h:** Print help message
-    - **--baudrate / -b [Baudrate]:** Baudrate (1000000 by default)
-    - **--channel / -c [Channel]:** Set channel SPI (0 by default)
-    - **--gpio / -g:** GPIO Interrupt for CAN (25 by default)
+    - **--help / -h:** Prints help message
+    - **--baudrate / -b [Baudrate]:** Baudrates (1000000 by default)
+    - **--channel / -c [Channel]:** Sets channel SPI (0 by default)
+    - **--gpio / -g:** GPIO Interrupts for CAN (25 by default)
     - **--freq / -f:** frequency of control loop to check data (100Hz by default)
-    - **--dump:** run dump service to dump and show all data found on bus
+    - **--dump:** runs dump service to dump and shows all data found on bus
 
 When you dump data on CAN bus, the result is a table including:
     - Number of data's package 
