@@ -4,10 +4,10 @@ alert_report:
     threshold: 90
   get_cpu_usage:
     frequency: 'HIGH'
-    threshold: 80
+    threshold: 90
   get_cpu_temperature:
     frequency: 'HIGH'
     threshold: 70
   get_ram_usage:
     frequency: 'HIGH'
-    threshold: 80
+    threshold: 90
