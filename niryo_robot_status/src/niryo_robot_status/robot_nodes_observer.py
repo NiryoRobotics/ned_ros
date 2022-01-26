@@ -87,6 +87,7 @@ class RobotNodesObserver(object):
             if not rospy.has_param(initialisation_param) or not rospy.get_param(initialisation_param):
                 missing_params.append(initialisation_param)
 
+        print missing_params
         self.__not_initialized_nodes = missing_params
         return not self.__not_initialized_nodes
 

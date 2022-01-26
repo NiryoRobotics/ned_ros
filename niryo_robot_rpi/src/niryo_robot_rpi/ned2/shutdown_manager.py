@@ -66,11 +66,12 @@ class ShutdownManager(AbstractShutdownManager):
         self.__shutdown_input.disable_on_press()
         self.__stop_move()
         self.wait_end_of_sound()
-        send_shutdown_command()
+        send_shutdown_command(learning_mode=False)
 
     def reboot(self):
+        self.__stop_move()
         self.wait_end_of_sound()
-        send_reboot_command()
+        send_reboot_command(learning_mode=False )
 
     @staticmethod
     def __stop_move():

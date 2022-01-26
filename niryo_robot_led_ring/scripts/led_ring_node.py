@@ -14,8 +14,8 @@ class LedRingNode:
     def __init__(self):
         self.led_ring_commander = LedRingCommander()
 
-        self.__shutdown_watcher_thread = Thread(target=self.shutdown_thread)
-        self.__shutdown_watcher_thread.start()
+        #self.__shutdown_watcher_thread = Thread(target=self.shutdown_thread)
+        #self.__shutdown_watcher_thread.start()
 
     def shutdown_thread(self):
         try:
@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     try:
         node = LedRingNode()
-        rospy.on_shutdown(node.shutdown)
+        #rospy.on_shutdown(node.shutdown)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

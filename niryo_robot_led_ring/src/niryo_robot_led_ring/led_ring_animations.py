@@ -71,10 +71,11 @@ class LedRingAnimations:
 
         self.blackout()
 
-    def __del__(self):
-        self.set_and_show_leds(self.off_color)
-        if self.strip is not None:
-            del self.strip
+    # def __del__(self):
+    #     pass
+    #     #self.set_and_show_leds(self.off_color)
+    #     if self.strip is not None:
+    #         del self.strip
 
     def init_led_ring(self):
         if not self.__is_simulation:

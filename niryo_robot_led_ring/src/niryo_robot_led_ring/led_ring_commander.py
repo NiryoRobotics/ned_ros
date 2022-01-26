@@ -1,7 +1,7 @@
 # Lib
 import rospy
 import threading
-
+import time
 # Services
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
@@ -81,16 +81,14 @@ class LedRingCommander:
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
                                                         RobotStatus, self.__callback_robot_status, queue_size=1)
-        self.save_point_publisher = rospy.Subscriber(
-            "/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
-
-        rospy.Subscriber('/niryo_studio_connection', Empty,
-                         self.__callback_niryo_studio)
+        rospy.Subscriber("/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
+        rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
 
         rospy.loginfo("Led Ring Commander - Started")
 
-    def shutdown(self):
+    def shutdown(self, color=None):
         if not self.__is_shutdown:
+            self.__is_shutdown = True
             self.robot_status_subscriber.unregister()
             self.stop_led_ring_thread()
             self.user_animation_lock.acquire()
@@ -100,10 +98,17 @@ class LedRingCommander:
             command.iterations = 1
             command.period = 2
             self.breath_animation(command)
+
             self.blink(WHITE, 8, 0.5)
             self.error_animation_lock.acquire()
-            self.none_animation(None)
-            self.__is_shutdown = True
+
+            if color is None:
+                self.none_animation(None)
+            else:
+                self.led_ring_anim.solid(color)
+                time.sleep(0.5)
+            #self.__is_shutdown = True
+            rospy.signal_shutdown("shutdown")
 
     @property
     def is_shutdown(self):
@@ -117,8 +122,12 @@ class LedRingCommander:
         robot status is not RUNNING_AUTONOMOUS and logs status is not NONE.
         It is triggered only when the robot status changed.
         """
+        print msg
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
+        elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
+            self.shutdown(WHITE)
+
 
         elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
             if not self.__is_simulation:

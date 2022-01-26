@@ -71,9 +71,9 @@ class SoundManager:
         self.check_log_status(msg.logs_status)
 
     def check_shutdown(self, new_robot_status):
-        if self.__robot_status == RobotStatus.SHUTDOWN:
+        if self.__robot_status <= RobotStatus.SHUTDOWN:
             return True
-        elif new_robot_status == RobotStatus.SHUTDOWN:
+        elif new_robot_status <= RobotStatus.SHUTDOWN:
             self.__robot_status = new_robot_status
             rospy.sleep(1.5)  # avoid ctrl+c
             self.play_shutdown_sound()

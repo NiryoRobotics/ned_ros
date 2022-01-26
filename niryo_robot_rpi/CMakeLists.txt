@@ -25,6 +25,7 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
+  AdvertiseShutdown.srv
   ChangeMotorConfig.srv
   GetAnalogIO.srv
   GetDigitalIO.srv

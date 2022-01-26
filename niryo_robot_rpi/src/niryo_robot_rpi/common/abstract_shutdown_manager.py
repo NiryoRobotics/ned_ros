@@ -23,7 +23,7 @@ from .rpi_ros_utils import send_reboot_command, send_shutdown_command
 
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_msgs.srv import SetInt
-from niryo_robot_msgs.srv import Trigger
+from niryo_robot_rpi.srv import AdvertiseShutdown
 
 
 class AbstractShutdownManager(object):
@@ -32,7 +32,8 @@ class AbstractShutdownManager(object):
 
         rospy.Service('~shutdown_rpi', SetInt, self.callback_shutdown_rpi)
 
-        self._advertise_shutdown_service = rospy.ServiceProxy('/niryo_robot_status/advertise_shutdown', Trigger)
+        self._advertise_shutdown_service = rospy.ServiceProxy('/niryo_robot_status/advertise_shutdown',
+                                                              AdvertiseShutdown)
 
     def callback_shutdown_rpi(self, req):
         if req.value == 1:
@@ -50,14 +51,21 @@ class AbstractShutdownManager(object):
         send_shutdown_command_thread.start()
 
     def request_reboot(self):
-        self.advertise_shutdown()
+        self.advertise_reboot()
         send_shutdown_command_thread = threading.Timer(1.0, self.reboot)
         send_shutdown_command_thread.start()
 
     def advertise_shutdown(self):
         try:
             rospy.wait_for_service('/niryo_robot_status/advertise_shutdown', timeout=0.2)
-            self._advertise_shutdown_service.call()
+            self._advertise_shutdown_service.call(AdvertiseShutdown.SHUTDOWN)
+        except (rospy.ROSException, rospy.ROSInterruptException, rospy.ServiceException):
+            pass
+
+    def advertise_reboot(self):
+        try:
+            rospy.wait_for_service('/niryo_robot_status/advertise_shutdown', timeout=0.2)
+            self._advertise_shutdown_service.call(AdvertiseShutdown.REBOOT)
         except (rospy.ROSException, rospy.ROSInterruptException, rospy.ServiceException):
             pass
 

@@ -15,6 +15,7 @@ PURPLE = ColorRGBA(153, 51, 153, 0)
 YELLOW = ColorRGBA(255, 200, 0, 0)
 
 ROBOT_STATUS_TO_ANIM = {
+    RobotStatus.REBOOT: [LedRingAnimation.SOLID, WHITE],
     RobotStatus.SHUTDOWN: [LedRingAnimation.NONE, NONE],
     RobotStatus.FATAL_ERROR: [LedRingAnimation.SOLID, RED],
     RobotStatus.MOTOR_ERROR: [LedRingAnimation.FLASHING, RED],

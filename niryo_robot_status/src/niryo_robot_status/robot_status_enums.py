@@ -19,6 +19,8 @@ LOG_LEVEL_TO_MSG = {
 }
 
 ROBOT_STATUS_TO_STR = {
+    RobotStatus.UPDATE: 'Update',
+    RobotStatus.REBOOT: 'Reboot',
     RobotStatus.SHUTDOWN: 'Shutdown',
     RobotStatus.FATAL_ERROR: 'Fatal error',
     RobotStatus.MOTOR_ERROR: 'Motor Error',
@@ -26,7 +28,6 @@ ROBOT_STATUS_TO_STR = {
     RobotStatus.USER_PROGRAM_ERROR: 'User program error',
     RobotStatus.UNKNOWN: 'Unknown',
     RobotStatus.BOOTING: 'Booting',
-    RobotStatus.UPDATE: 'Update',
     RobotStatus.CALIBRATION_NEEDED: 'Calibration Needed',
     RobotStatus.CALIBRATION_IN_PROGRESS: 'Calibration in progress',
     RobotStatus.LEARNING_MODE: 'Learning mode',

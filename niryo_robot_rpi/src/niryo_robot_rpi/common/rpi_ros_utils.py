@@ -132,10 +132,10 @@ def send_reboot_motors_command():
         pass
 
 
-def send_shutdown_command():
+def send_shutdown_command(learning_mode=True):
     rospy.loginfo("SHUTDOWN")
     rospy.loginfo("Activate learning mode")
-    activate_learning_mode(True)
+    activate_learning_mode(learning_mode)
     send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo shutdown now'")
@@ -146,10 +146,10 @@ def send_shutdown_command():
         rospy.logwarn("Can't exec shutdown cmd")
 
 
-def send_reboot_command():
+def send_reboot_command(learning_mode=True):
     rospy.loginfo("REBOOT")
     rospy.loginfo("Activate learning mode")
-    activate_learning_mode(True)
+    activate_learning_mode(learning_mode)
     send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo reboot'")

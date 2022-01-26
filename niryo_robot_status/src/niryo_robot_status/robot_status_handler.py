@@ -11,14 +11,14 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_arm_commander.msg import PausePlanExecution
 
 # - Services
-from niryo_robot_msgs.srv import Trigger
+from niryo_robot_rpi.srv import AdvertiseShutdown, AdvertiseShutdownRequest
 
 
 class RobotStatusHandler(object):
 
     def __init__(self):
         self.__robot_status = RobotStatus.BOOTING
-        self.__robot_message = None
+        self.__robot_message = ""
         self.__booting = True
         self.__autonomous_mode = False
         self.__robot_status_pub = None
@@ -32,7 +32,7 @@ class RobotStatusHandler(object):
         self.__robot_status_pub = rospy.Publisher('~robot_status', RobotStatus, latch=True, queue_size=10)
 
         # - Services
-        self.__advertise_shutdown_service = rospy.Service('~advertise_shutdown', Trigger,
+        self.__advertise_shutdown_service = rospy.Service('~advertise_shutdown', AdvertiseShutdown,
                                                           self.__callback_advertise_shutdown)
 
         # - Handle shutdown
@@ -48,9 +48,18 @@ class RobotStatusHandler(object):
     def robot_status(self):
         return self.__robot_status
 
-    def __callback_advertise_shutdown(self, _req):
-        self.__shutdown_advertise()
-        return CommandStatus.SUCCESS, "Success"
+    def __callback_advertise_shutdown(self, req):
+        if req.value == AdvertiseShutdownRequest.SHUTDOWN:
+            self.__shutdown_advertise(RobotStatus.SHUTDOWN)
+            return CommandStatus.SUCCESS, "Success"
+        elif req.value == AdvertiseShutdownRequest.REBOOT:
+            self.__shutdown_advertise(RobotStatus.REBOOT)
+            return CommandStatus.SUCCESS, "Success"
+        elif req.value == AdvertiseShutdownRequest.UPDATE:
+            self.__shutdown_advertise(RobotStatus.UPDATE)
+            return CommandStatus.SUCCESS, "Success"
+
+        return CommandStatus.FAILURE, "Bad arguments"
 
     def __waiting_for_booting(self):
         self.__booting = True
@@ -89,25 +98,24 @@ class RobotStatusHandler(object):
             self.__build_robot_status()
 
     def advertise_new_logs(self):
-        if self.__robot_status_pub is not None and self.__robot_status != RobotStatus.SHUTDOWN:
+        if self.__robot_status_pub is not None and self.__robot_status > RobotStatus.SHUTDOWN:
             self.__publish()
 
     def advertise_warning(self):
         if self.__robot_status_pub is not None:
             self.__publish()
 
-    def __shutdown_advertise(self):
-        self.__robot_status = RobotStatus.SHUTDOWN
+    def __shutdown_advertise(self, status=RobotStatus.SHUTDOWN):
+        self.__robot_status = status
         self.__robot_message = ""
         self.__booting = False
         self.__log_status = RobotStatus.NONE
         self.__log_msg = ""
-
         self.__publish()
 
     def __build_robot_status(self):
         # - Hardware status
-        if self.__robot_status == RobotStatus.SHUTDOWN:
+        if self.__robot_status <= RobotStatus.SHUTDOWN:
             return
         elif self.__booting:
             new_robot_status, new_robot_message = RobotStatus.BOOTING, "Robot is booting"
