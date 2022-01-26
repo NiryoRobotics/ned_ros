@@ -126,9 +126,21 @@ extlinks = {
     'visualization_msgs': (
     'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
+    'rosconsole': ('http://wiki.ros.org/rosconsole%s', ''),
+    'log4cxx': ('https://logging.apache.org/log4cxx/latest_stable/index.html%s', ''),
+    'ros_multimachine': ('https://wiki.ros.org/ROS/Tutorials/MultipleMachines%s', ''),
+    'doc_niryo_studio': ('https://docs.niryo.com/product/niryo-studio/v3.2.1/en/index.html%s', ''),
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
+    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html/%s', None),
+    'python_website': ('https://www.python.org/%s', None),
+    'python_installation': ('https://realpython.com/installing-python/%s', None),
+    'pip_website': ('https://pypi.org/project/pip/%s', None),
+    'pip_installation': ('https://pip.pypa.io/en/stable/installing/%s', None),
+    'ned_ros_stack': ('https://github.com/NiryoRobotics/niryo_one_ros/%s', None),
+    'api_modbus_readme': ('https://github.com/NiryoRobotics/niryo_one_ros/tree/master/niryo_one_modbus/%s', None),
+    'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None)
 }
 
 TRANSLATE_CAPTIONS_JS = """
