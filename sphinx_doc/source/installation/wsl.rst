@@ -81,6 +81,11 @@ https://sourceforge.net/projects/vcxsrv/
    :alt: VcXsrv installation wizard - 3
    :width: 30%
 
+.. note:: 
+
+    You can directly use this configuration by using this :download:`configuration file <../../resources/installation/wsl_config.xlaunch>`
+
+
 2. You need to export the address of your Xserver in Ubuntu 18 to forward the GUI
 
 .. code::

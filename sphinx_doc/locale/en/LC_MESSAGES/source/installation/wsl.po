@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 10:56+0000\n"
+"POT-Creation-Date: 2022-01-14 15:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,63 +123,70 @@ msgid ""
 "\"Native OpenGL\" - Check \"Disable access control\""
 msgstr ""
 
-#: ../../source/installation/wsl.rst:84
+#: ../../source/installation/wsl.rst:86
+msgid ""
+"You can directly use this configuration by using this "
+":download:`configuration file "
+"<../../resources/installation/wsl_config.xlaunch>`"
+msgstr ""
+
+#: ../../source/installation/wsl.rst:89
 msgid ""
 "You need to export the address of your Xserver in Ubuntu 18 to forward "
 "the GUI"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:90
+#: ../../source/installation/wsl.rst:95
 msgid "You can add this to your bashrc file."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:92
+#: ../../source/installation/wsl.rst:97
 msgid ""
 "You can check that your forwarding works by using simple X11 apps for "
 "example:"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:100
+#: ../../source/installation/wsl.rst:105
 msgid "Install ROS Melodic (see instructions here)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:102
+#: ../../source/installation/wsl.rst:107
 msgid "Try launching Rviz"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:108
+#: ../../source/installation/wsl.rst:113
 msgid ""
 "You should now be able to launch any simulation of the One, Ned or Ned2 "
 "using Rviz or Gazebo"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:112
+#: ../../source/installation/wsl.rst:117
 msgid "Troubleshooting"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:114
+#: ../../source/installation/wsl.rst:119
 msgid ""
 "**Error: Can't open display: 192.168.1.44:0.0** Your DISPLAY variable "
 "does not match the address of your XServer."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:119
+#: ../../source/installation/wsl.rst:124
 msgid "Try :"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:118
+#: ../../source/installation/wsl.rst:123
 msgid ""
 "Check that you correctly launched your XServer with the required options "
 "(Disable access control is essential)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:119
+#: ../../source/installation/wsl.rst:124
 msgid ""
 "Check that the IP you gave is correct (you need the address in "
 "/etc/resolv.conf to have it work)"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:121
+#: ../../source/installation/wsl.rst:126
 msgid ""
 "**OpenGL issues** Some people have said that they run into issues with "
 "OpenGL applications like Rviz. If you do, try setting the environment "
@@ -187,15 +194,15 @@ msgid ""
 "export LIBGL_ALWAYS_INDIRECT=0 to the end of your .bashrc file)."
 msgstr ""
 
-#: ../../source/installation/wsl.rst:127
+#: ../../source/installation/wsl.rst:132
 msgid "`<https://jack-kawell.com/2020/06/12/ros-wsl2/>`_"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:129
+#: ../../source/installation/wsl.rst:134
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/compare-versions>`_"
 msgstr ""
 
-#: ../../source/installation/wsl.rst:131
+#: ../../source/installation/wsl.rst:136
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 msgstr ""
 
