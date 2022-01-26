@@ -11,7 +11,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_arm_commander.msg import PausePlanExecution
 
 # - Services
-from niryo_robot_rpi.srv import AdvertiseShutdown, AdvertiseShutdownRequest
+from niryo_robot_msgs.srv import AdvertiseShutdown, AdvertiseShutdownRequest
 
 
 class RobotStatusHandler(object):

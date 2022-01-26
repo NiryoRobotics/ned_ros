@@ -110,6 +110,9 @@ class NiryoRosWrapper:
         from niryo_robot_system_api_client.api import SystemApiClientRosWrapper
         self.__system_api_client = SystemApiClientRosWrapper(self.__service_timeout)
 
+        from niryo_robot_status.api import RobotStatusRosWrapper
+        self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
+
         if self.__hardware_version == 'ned2':
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
             from niryo_robot_led_ring.api import LedRingRosWrapper
@@ -2022,3 +2025,7 @@ class NiryoRosWrapper:
         :rtype:  CustomButtonRosWrapper
         """
         return self.__custom_button
+
+    @property
+    def robot_status(self):
+        return self.__robot_status

@@ -17,9 +17,13 @@
 
     <build_depend>message_generation</build_depend>
     <build_depend>rospy</build_depend>
+    <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>std_msgs</build_depend>
 
     <exec_depend>message_runtime</exec_depend>
     <exec_depend>rospy</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
 
     <test_depend>python-catkin-lint</test_depend>
     <test_depend>roslint</test_depend>

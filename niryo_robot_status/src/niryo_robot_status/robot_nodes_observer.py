@@ -65,7 +65,10 @@ class RobotNodesObserver(object):
         return bool(self.__python_wrapper_nodes)
 
     def check_vital_nodes(self):
-        alive_nodes = rosnode.get_node_names()
+        try:
+            alive_nodes = rosnode.get_node_names()
+        except rosnode.ROSNodeIOException:
+            alive_nodes = []
 
         self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
                                        pywrapper_node in alive_nodes}
@@ -87,7 +90,6 @@ class RobotNodesObserver(object):
             if not rospy.has_param(initialisation_param) or not rospy.get_param(initialisation_param):
                 missing_params.append(initialisation_param)
 
-        print missing_params
         self.__not_initialized_nodes = missing_params
         return not self.__not_initialized_nodes
 

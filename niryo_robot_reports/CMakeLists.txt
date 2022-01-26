@@ -5,7 +5,12 @@ message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 find_package(catkin REQUIRED COMPONENTS
   message_generation
   rospy
+  niryo_robot_msgs
+  std_msgs
 )
+
+# enable python module support
+catkin_python_setup()
 
 add_message_files(
   FILES
@@ -19,12 +24,17 @@ add_service_files(
   RunAutoDiagnosis.srv
 )
 
-# enable python module support
-catkin_python_setup()
+generate_messages(
+  DEPENDENCIES
+  niryo_robot_msgs
+  std_msgs
+)
 
 catkin_package(
   CATKIN_DEPENDS
   message_runtime
+  niryo_robot_msgs
+  std_msgs
 )
 
 include_directories(
@@ -81,6 +91,11 @@ install(
 install(
   DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+install(
+  DIRECTORY niryo_robot_reports/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/niryo_robot_reports
 )
 
 if (rosdoc_lite_FOUND)

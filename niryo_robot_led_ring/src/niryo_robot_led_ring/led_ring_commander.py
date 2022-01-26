@@ -66,6 +66,8 @@ class LedRingCommander:
         self.__led_ring_status_pub = rospy.Publisher('~led_ring_status', LedRingStatus, latch=True, queue_size=10)
         rospy.sleep(1)
         self._publish_led_ring_status()  # publish the status at the beginning
+
+        rospy.on_shutdown(self.shutdown)
         self.display_user_mode()  # Turn on the leds with the right animation
 
         # Define this object as an observer of led_ring_anim, so when an observable
@@ -107,7 +109,7 @@ class LedRingCommander:
             else:
                 self.led_ring_anim.solid(color)
                 time.sleep(0.5)
-            #self.__is_shutdown = True
+            # self.__is_shutdown = True
             rospy.signal_shutdown("shutdown")
 
     @property
@@ -122,7 +124,6 @@ class LedRingCommander:
         robot status is not RUNNING_AUTONOMOUS and logs status is not NONE.
         It is triggered only when the robot status changed.
         """
-        print msg
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
         elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
