@@ -5,6 +5,7 @@ from enum import Enum
 from threading import Event, Thread
 from datetime import datetime
 
+import rospy
 from niryo_robot_reports.metrics.PsutilWrapper import PsutilWrapper
 
 
@@ -54,17 +55,13 @@ class AlertReportHandler:
         self.__watch.setDaemon(True)
 
         self.__psutil_wrapper = PsutilWrapper()
-        self.__metrics = {
-            CheckFrequencies.LOW: [
-                MetricChecker(self.__psutil_wrapper.get_rom_usage, lambda x: x < 90),
-            ],
-            CheckFrequencies.NORMAL: [],
-            CheckFrequencies.HIGH: [
-                MetricChecker(self.__psutil_wrapper.get_cpu_usage, lambda x: x < 80),
-                MetricChecker(self.__psutil_wrapper.get_cpu_temperature, lambda x: x < 50),
-                MetricChecker(self.__psutil_wrapper.get_ram_usage, lambda x: x < 75),
-            ],
-        }
+
+        self.__metrics = {CheckFrequencies.LOW: [], CheckFrequencies.NORMAL: [], CheckFrequencies.HIGH: [], }
+        for alert_report_name, alert_report_args in rospy.get_param('~alert_report').items():
+            freq = CheckFrequencies[alert_report_args['frequency']]
+            threshold = alert_report_args['threshold']
+            self.__metrics[freq].append(MetricChecker(metrics=getattr(self.__psutil_wrapper, alert_report_name),
+                                                      test=lambda x: x < threshold))
 
         self.__check_by_frequency(CheckFrequencies.LOW)
         self.__watch.start()

@@ -172,10 +172,12 @@ class TestFunctions(object):
         self.led_stop()
 
     def led_error(self, duration=360):
-        self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
+        if self.__robot.get_hardware_version() != 'ned2':
+            self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
 
     def led_stop(self):
-        self.__set_led_state_service(False, 0, 0, 0)
+        if self.__robot.get_hardware_version() != 'ned2':
+            self.__set_led_state_service(False, 0, 0, 0)
 
     def test_cloud_connection(self, report):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
@@ -351,9 +353,9 @@ if __name__ == '__main__':
     print("----- END -----")
     test.print_report()
     test.send_report()
-    robot.system_api_client.set_ethernet_static()
+    #robot.system_api_client.set_ethernet_static()
 
     if test.get_report()['success']:
         set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting('sharing_allowed', 'False', 'bool')
+        #set_setting('sharing_allowed', 'False', 'bool')
         set_setting('test_report_done', 'True', 'bool')

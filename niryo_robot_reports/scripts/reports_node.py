@@ -23,6 +23,7 @@ from niryo_robot_reports.srv import CheckConnection
 
 class ReportsNode:
     def __init__(self):
+        self.__wait_booting()
         rospy.logdebug("Reports Node - Entering in Init")
 
         rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
@@ -73,6 +74,15 @@ class ReportsNode:
         rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)
 
         rospy.logdebug("Reports Node - Node Started")
+
+    def __wait_booting(self):
+        from niryo_robot_status.msg import RobotStatus
+
+        for i in range(1, 20):
+            msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 20 / i)
+            if msg.robot_status not in [RobotStatus.BOOTING, RobotStatus.UNKNOWN]:
+                return
+            rospy.sleep(1)
 
     def __check_connection_callback(self, req):
         rospy.logdebug('service called: ' + str(req.service.to_test))
