@@ -128,14 +128,14 @@ class LedRingCommander:
             self.shutdown()
         elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
             self.shutdown(WHITE)
-
-
         elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
+            rospy.sleep(3.5) # because no fade
             if not self.__is_simulation:
                 from led_ring_utils import enable_led_ring
                 enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
                 self.led_ring_anim.init_led_ring()
-        #    self.led_ring_anim.fade(BLUE)
+            #    self.led_ring_anim.fade(BLUE)
+
 
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or

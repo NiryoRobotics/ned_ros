@@ -25,6 +25,7 @@ from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownMan
 from .mcp_io_objects import McpIOManager
 
 from std_msgs.msg import String
+from niryo_robot_msgs.srv import AdvertiseShutdownRequest
 from niryo_robot_msgs.srv import Trigger
 
 
@@ -57,7 +58,7 @@ class ShutdownManager(AbstractShutdownManager):
         if not self.__shutdown_requested:
             self.__shutdown_requested = True
             self.__shutdown_output.value = True
-            self._advertise_shutdown_service.call()
+            self._advertise_shutdown_service.call(AdvertiseShutdownRequest.SHUTDOWN)
             send_shutdown_command_thread = Timer(1.0, self.shutdown)
             send_shutdown_command_thread.start()
 
