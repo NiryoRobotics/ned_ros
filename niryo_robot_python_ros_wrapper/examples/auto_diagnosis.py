@@ -1,13 +1,9 @@
-import time
 import rospy
 import json
 import numpy as np
 from datetime import datetime
 
-from std_msgs.msg import String
 from niryo_robot_reports.msg import Service
-
-from niryo_robot_database.srv import SetSettings
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
@@ -141,24 +137,10 @@ class TestProduction:
         return self.__success
 
     def get_report(self):
-        return {"details": [test.get_report() for test in self.__sub_tests], "success": self.__success}
+        return {"script": [test.get_report() for test in self.__sub_tests], "success": self.__success}
 
     def print_report(self):
-        print(json.dumps(self.get_report(), indent=4, sort_keys=True))
-
-    def send_report(self):
-        new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
-
-        # Wait for the publisher initialization
-        start_time = rospy.Time.now()
-        while not rospy.is_shutdown() and new_report_publisher.get_num_connections() == 0:
-            if (rospy.Time.now() - start_time).to_sec() > 1:
-                rospy.logerr('Unable to publish the new report')
-                return
-            rospy.sleep(0.1)
-
-        new_report_publisher.publish(json.dumps(self.get_report()))
-        rospy.logdebug('test report published')
+        print(json.dumps(self.get_report(), sort_keys=True))
 
 
 class TestFunctions(object):
@@ -179,16 +161,16 @@ class TestFunctions(object):
 
     def test_cloud_connection(self, report):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
-        result = check_connection_service(Service(Service.TEST_REPORTS))
+        result = check_connection_service(Service(Service.AUTO_DIAGNOSIS_REPORTS))
         if result.status < 0:
-            error_str = "Service test_report doesn't exists"
+            error_str = "Service auto_diagnosis_reports doesn't exists"
             report.append(error_str)
-            raise TestFailure("Service test_report doesn't exists")
+            raise TestFailure("Service auto_diagnosis_reports doesn't exists")
         if result.result is False:
-            error_str = "test_reports api didnt respond"
+            error_str = "auto_diagnosis_reports api didnt respond"
             report.append(error_str)
             raise TestFailure(error_str)
-        report.append('Service test_reports successfully reached')
+        report.append('Service auto_diagnosis_reports successfully reached')
 
     def test_robot_status(self, report):
         try:
@@ -210,7 +192,7 @@ class TestFunctions(object):
             raise TestFailure
 
     def test_calibration(self, report):
-        for loop_index in range(CALIBRATION_LOOPS):
+        for _ in range(CALIBRATION_LOOPS):
             self.__robot.request_new_calibration()
             rospy.sleep(0.1)
 
@@ -268,10 +250,10 @@ class TestFunctions(object):
                      [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
 
         for loop_index in range(LOOPS):
-            for wayoint_index, wayoint in enumerate(waypoints):
+            for waypoint_index, waypoint in enumerate(waypoints):
                 report.execute(self.move_and_compare_without_moveit,
-                               "Loop {}.{} - Fun move".format(loop_index, wayoint_index),
-                               args=[wayoint, 1, 4])
+                               "Loop {}.{} - Fun move".format(loop_index, waypoint_index),
+                               args=[waypoint, 1, 4])
 
     def test_pick_and_place(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
@@ -344,16 +326,6 @@ class TestFunctions(object):
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
-    robot.system_api_client.set_ethernet_auto()
-    print("----- START -----")
     test = TestProduction()
     test.run()
-    print("----- END -----")
     test.print_report()
-    test.send_report()
-    robot.system_api_client.set_ethernet_static()
-
-    if test.get_report()['success']:
-        set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting('sharing_allowed', 'False', 'bool')
-        set_setting('test_report_done', 'True', 'bool')

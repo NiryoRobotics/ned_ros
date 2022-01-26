@@ -10,18 +10,16 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   FilePath.msg
-  Metric.msg
+  Setting.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
   AddFilePath.srv
-  GetAllByType.srv
-  GetAllMetrics.srv
   GetSettings.srv
+  GetAllByType.srv
   RmFilePath.srv
-  SetMetric.srv
   SetSettings.srv
 )
 

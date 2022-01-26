@@ -275,18 +275,18 @@ class ProgramManagerNode:
                 self.__program_is_running.program_is_running = True
                 self.__program_is_running_publisher.publish(self.__program_is_running)
 
-            ret, message = manager.execute(prog_name)
+            ret, message, output = manager.execute(prog_name)
             while self.__loop_autorun and ret:
-                ret, message = manager.execute(prog_name)
+                ret, message, output = manager.execute(prog_name)
 
         except FileDoesNotExistException:
             self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.FILE_ERROR, "File Doesn't Exist")
             self.__program_is_running_publisher.publish(self.__program_is_running)
-            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, "File Doesn't Exist"
+            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, "File Doesn't Exist", ""
         except Exception as e:
             self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, str(e))
             self.__program_is_running_publisher.publish(self.__program_is_running)
-            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, str(e)
+            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, str(e), ""
 
         if ret:
             message = "Program execution success"
@@ -301,7 +301,7 @@ class ProgramManagerNode:
             self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, message)
 
         self.__program_is_running_publisher.publish(self.__program_is_running)
-        return status, message
+        return status, message, output
 
     def __get_autorun_infos(self):
         if not os.path.isfile(self.__autorun_file_path):

@@ -7,6 +7,18 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
+add_message_files(
+  FILES
+  Service.msg
+)
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  CheckConnection.srv
+  RunAutoDiagnosis.srv
+)
+
 # enable python module support
 catkin_python_setup()
 
