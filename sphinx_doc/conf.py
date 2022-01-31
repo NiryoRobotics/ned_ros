@@ -84,12 +84,12 @@ add_module_names = False
 html_theme = shared_conf.html_theme
 
 templates_path = shared_conf.templates_path
-html_static_path = shared_conf.html_static_path
+html_static_path = shared_conf.html_static_path[:] + ['static/']
 
 html_logo = shared_conf.html_logo
 html_favicon = shared_conf.html_favicon
 
-html_css_files = shared_conf.html_css_files
+html_css_files =  ['config.css'] + shared_conf.html_css_files[:]
 
 html_js_files = shared_conf.html_js_files
 

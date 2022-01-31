@@ -85,6 +85,7 @@ Learn more on this :doc:`section <source/more>`.
 
    source/overview
    source/simulation
+   source/quick_start
 
 
 .. toctree::
@@ -95,6 +96,7 @@ Learn more on this :doc:`section <source/more>`.
    source/installation/getting_started
    source/installation/ubuntu_18
    source/installation/wsl
+
 
 .. toctree::
    :hidden:
