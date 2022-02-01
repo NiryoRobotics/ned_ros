@@ -267,7 +267,7 @@ ConveyorInterfaceCore::addConveyor()
             {
                 return res;
             }
-
+            res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
             res.message = "no conveyor found";
         }
         else
@@ -280,7 +280,7 @@ ConveyorInterfaceCore::addConveyor()
     // on failure after three tries for both buses
     if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
     {
-        ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, message : %s, return : %d",
+        ROS_WARN("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, message : %s, return : %d",
                     res.message.c_str(),
                     res.status);
 
