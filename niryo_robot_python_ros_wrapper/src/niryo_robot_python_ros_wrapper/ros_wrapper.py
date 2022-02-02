@@ -80,8 +80,8 @@ class NiryoRosWrapper:
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
                                                               CompressedImage, queue_size=1)
-        self.__camera_intrinsics_message_ntv = NiryoTopicValue('/niryo_robot_vision/camera_intrinsics', CameraInfo,
-                                                               queue_size=1)
+        self.__camera_intrinsics_message_ntv = NiryoTopicValue('/niryo_robot_vision/camera_intrinsics',
+                                                               CameraInfo, queue_size=1)
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
@@ -92,8 +92,9 @@ class NiryoRosWrapper:
 
         # - Action server
         # Robot action
-        self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action', RobotMoveAction,
-                                                    RobotMoveGoal)
+        self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action',
+                                                    RobotMoveAction, RobotMoveGoal)
+
         self.__follow_joint_traj_nac = NiryoActionClient(
             rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory",
             FollowJointTrajectoryAction, FollowJointTrajectoryGoal)
@@ -1522,7 +1523,7 @@ class NiryoRosWrapper:
 
         # If no new conveyor is detected, it should not crash
         if result.status in [CommandStatus.NO_CONVEYOR_LEFT, CommandStatus.NO_CONVEYOR_FOUND]:
-            rospy.logwarn_throttle(1, 'ROS Wrapper - No new conveyor found')
+            rospy.loginfo_throttle(1, 'ROS Wrapper - No new conveyor found')
         else:
             self.__check_result_status(result)
         return result.id
