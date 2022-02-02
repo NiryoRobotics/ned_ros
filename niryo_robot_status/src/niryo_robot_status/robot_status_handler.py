@@ -84,6 +84,7 @@ class RobotStatusHandler(object):
 
             rospy.sleep(0.1)
 
+        self.__robot_message = ""
         self.__build_robot_status()
         self.__robot_nodes_observer.start_nodes_check_loop()  # Start nodes checker observer
 
