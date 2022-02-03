@@ -42,7 +42,6 @@ class AutoDiagnosisReportHandler:
         rospy.logdebug('Executing the auto-diagnosis script...')
         res = self.__execute_program_service(req)
 
-        print res
         serialized_json = res.output[res.output.index('{')::].rstrip()
         try:
             report = json.loads(serialized_json)

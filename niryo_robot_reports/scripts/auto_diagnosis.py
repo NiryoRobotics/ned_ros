@@ -125,8 +125,8 @@ class TestProduction:
         rospy.sleep(1)
         self.__functions.led_stop()
         try:
-            for test in self.__sub_tests:
-                test.run()
+            for sub_test in self.__sub_tests:
+                sub_test.run()
 
         except TestFailure:
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
@@ -141,7 +141,7 @@ class TestProduction:
         return self.__success
 
     def get_report(self):
-        return {"script": [test.get_report() for test in self.__sub_tests], "success": self.__success}
+        return {"script": [sub_test.get_report() for sub_test in self.__sub_tests], "success": self.__success}
 
     def print_report(self):
         print(json.dumps(self.get_report(), sort_keys=True))
@@ -169,7 +169,7 @@ class TestFunctions(object):
         self.__robot.set_arm_max_acceleration(100)
 
     def led_error(self, duration=360):
-        if self.__robot_version in ['one', 'ned']:
+        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode:
             try:
                 led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
                 led_serv(True, 5, LedBlinkerRequest.LED_WHITE, duration)
@@ -177,7 +177,7 @@ class TestFunctions(object):
                 pass
 
     def led_stop(self):
-        if self.__robot_version in ['one', 'ned']:
+        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode:
             try:
                 led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
                 led_serv(False, 0, 0, 0)
@@ -209,16 +209,19 @@ class TestFunctions(object):
             raise TestFailure(e)
 
         if hardware_status.error_message:
-            report.append("Hardware status Error - {}".format(hardware_status.error_message))
-            raise TestFailure
+            message = "Hardware status Error - {}".format(hardware_status.error_message)
+            report.append(message)
+            raise TestFailure(message)
 
         if any(hardware_status.hardware_errors):
-            report.append("Hardware status Motor Error - {}".format(hardware_status.hardware_errors_message))
-            raise TestFailure
+            message = "Hardware status Motor Error - {}".format(hardware_status.hardware_errors_message)
+            report.append(message)
+            raise TestFailure(message)
 
         if hardware_status.rpi_temperature > 70:
-            report.append("Rpi overheating")
-            raise TestFailure
+            message = "Rpi overheating"
+            report.append(message)
+            raise TestFailure(message)
 
         try:
             robot_status = self.__robot.get_robot_status()
@@ -227,7 +230,9 @@ class TestFunctions(object):
             raise TestFailure(e)
 
         if robot_status.robot_status < 0:
-            report.append("Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message))
+            message = "Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message)
+            report.append(message)
+            raise TestFailure(message)
 
         def test_i2c():
             if self.__robot.get_simulation_mode():
