@@ -37,8 +37,19 @@ class SoundExecution:
         self.message = "Sound {} not played".format(self.name)
 
     def wait(self):
-        while not rospy.is_shutdown() and not self.event.wait(0.1):
-            pass
+        play_time = rospy.Time.now()
+        while not rospy.is_shutdown() and not self.event.wait(0.25):
+            # self.__process.poll() is None ==> finished
+            if self.__process.poll() is None:
+                break
+            elif (rospy.Time.now() - play_time).to_sec() > self.duration * 1.5:
+                self.message = "Sound {} timeout".format(self.name)
+                self.result = CommandStatus.SOUND_TIMEOUT
+                return self.result, self.message
+
+        if self.result != CommandStatus.PREEMPTED:
+            self.message = "Sound {} played".format(self.name)
+            self.result = CommandStatus.SUCCESS
 
         return self.result, self.message
 
@@ -70,13 +81,15 @@ class SoundExecution:
 
     def stop(self):
         with self.__lock:
+            self.result = CommandStatus.PREEMPTED
+            self.message = "Sound {} stopped".format(self.name)
+
             if self.__process is not None:
                 try:
                     self.__process.kill()  # .terminate()
                 except OSError:
                     pass
-            self.result = CommandStatus.PREEMPTED
-            self.message = "Sound {} stopped".format(self.name)
+
             self.event.set()
 
     def is_busy(self):
