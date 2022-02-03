@@ -7,7 +7,12 @@ from GenericWrapper import GenericWrapper
 class TuptimeWrapper(GenericWrapper):
     def _fetch_datas(self, with_unit=True):
         # root access is sometimes needed at boot
-        output = subprocess.check_output(['sudo', 'tuptime', '-cs'])
+        try:
+            output = subprocess.check_output(['sudo', 'tuptime', '-cs'])
+        except subprocess.CalledProcessError:
+            print('Please install the tuptime libray and give it root rights')
+            return
+
         loutput = output.splitlines()
         reader = csv.reader(loutput)
         for row in reader:

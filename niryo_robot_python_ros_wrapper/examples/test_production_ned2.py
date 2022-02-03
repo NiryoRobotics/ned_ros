@@ -64,7 +64,7 @@ class TestReport(object):
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
         print(new_line)
-        self._report += new_line + "\n"
+        self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
         try:
@@ -149,6 +149,7 @@ class TestProduction:
         except TestFailure:
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
             self.__sub_tests[-1].run()
+            self.__functions.reset()
             self.__success = False
         else:
             self.__success = True
@@ -183,6 +184,10 @@ class TestFunctions(object):
         self.__robot = robot
         self.__robot.set_arm_max_velocity(SPEED)
         self.__robot.set_arm_max_acceleration(ACCELERATION)
+
+    def reset(self):
+        self.__robot.set_arm_max_velocity(100)
+        self.__robot.set_arm_max_acceleration(100)
 
     def test_cloud_connection(self, report):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
@@ -219,23 +224,24 @@ class TestFunctions(object):
             report.append(message)
             raise TestFailure(message)
 
-        try:
-            rospy.wait_for_message("/niryo_robot_rpi/scan_i2c_bus", ScanI2CBus, timeout=0.2)
-            resp = rospy.ServiceProxy("/niryo_robot_rpi/scan_i2c_bus", ScanI2CBus).call()
+        def test_i2c():
+            try:
+                rospy.wait_for_service("/niryo_robot_rpi/scan_i2c_bus", timeout=0.2)
+                resp = rospy.ServiceProxy("/niryo_robot_rpi/scan_i2c_bus", ScanI2CBus).call()
 
-            if not resp.is_ok:
-                message = "I2C Bus - Missing components: {}".format(resp.missing)
-                report.append(message)
-                raise TestFailure(message)
+                if not resp.is_ok:
+                    message = "I2C Bus - Missing components: {}".format(resp.missing)
+                    report.append(message)
+                    raise TestFailure(message)
 
-        except rospy.exceptions.ROSException as e:
-            report.append(str(e))
-            raise TestFailure(e)
+            except (rospy.ROSExceptionas, rospy.ServiceException) as e:
+                report.append(str(e))
+                raise TestFailure(e)
+
+        test_i2c()
 
     def test_calibration(self, report):
-        self.__robot.sound.say("Test de calibration", 1)
-
-        for loop_index in range(CALIBRATION_LOOPS):
+        for _ in range(CALIBRATION_LOOPS):
             self.__robot.request_new_calibration()
             rospy.sleep(0.1)
 
@@ -427,7 +433,7 @@ class TestFunctions(object):
             for position_index, joint_position in enumerate(poses):
                 report.execute(self.move_and_compare_without_moveit,
                                "Move number {}.{}".format(loop_index, position_index),
-                               args=[joint_position, 1, 2])
+                               args=[joint_position, 1, 4])
 
     def test_spiral(self, report):
         self.__robot.led_ring.rainbow_cycle()
@@ -437,7 +443,7 @@ class TestFunctions(object):
             report.execute(self.__robot.move_pose, "Loop {} - Move to spiral center".format(loop_index),
                            [0.3, 0, 0.2, 0, 1.57, 0])
             report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index),
-                           [0.1, 5, 216, 3])
+                           [0.15, 5, 216, 3])
 
     def test_fun_poses(self, report):
         self.__robot.led_ring.rainbow_cycle()
@@ -453,7 +459,7 @@ class TestFunctions(object):
             for wayoint_index, wayoint in enumerate(waypoints):
                 report.execute(self.move_and_compare_without_moveit,
                                "Loop {}.{} - Fun move".format(loop_index, wayoint_index),
-                               args=[wayoint, 1, 2])
+                               args=[wayoint, 1, 4])
 
     def test_pick_and_place(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])

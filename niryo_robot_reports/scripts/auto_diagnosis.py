@@ -1,17 +1,21 @@
+#!/usr/bin/env python
+
 import rospy
 import json
 import numpy as np
 from datetime import datetime
 
 from niryo_robot_reports.msg import Service
+
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_reports.srv import CheckConnection
+from niryo_robot_rpi.srv import ScanI2CBus
+
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 
-LOOPS = 5
+LOOPS = 1
 CALIBRATION_LOOPS = 2
-SPIRAL_LOOPS = 5
-
+SPIRAL_LOOPS = 1
 SPEED = 80  # %
 ACCELERATION = 50  # %
 
@@ -46,7 +50,7 @@ class TestReport(object):
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
         print(new_line)
-        self._report += new_line + "\n"
+        self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
         try:
@@ -114,8 +118,6 @@ class TestProduction:
             TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
             TestStep(self.__functions.test_joint_limits, "Test move", critical=True),
             TestStep(self.__functions.test_spiral, "Test move", critical=True),
-            TestStep(self.__functions.test_fun_poses, "Test move", critical=True),
-            TestStep(self.__functions.test_pick_and_place, "Test pick and place", critical=True),
             TestStep(self.__functions.end_test, "Test final check", critical=True),
         ]
 
@@ -129,6 +131,8 @@ class TestProduction:
         except TestFailure:
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
             self.__sub_tests[-1].run()
+            self.__functions.reset()
+
             self.__success = False
             self.__functions.led_error()
         else:
@@ -148,18 +152,43 @@ class TestFunctions(object):
     def __init__(self):
         rospy.sleep(2)
         self.__robot = robot
+        self.__robot_version = self.__robot.get_hardware_version()
         self.__robot.set_arm_max_velocity(SPEED)
         self.__robot.set_arm_max_acceleration(ACCELERATION)
-        self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
-        self.led_stop()
+
+        if self.__robot_version in ['ned2']:
+            self.__robot.led_ring.rainbow()
+            self.__robot.sound.set_volume(100)
+            self.__robot.sound.say('Initialization of the auto-diagnosis')
+            rospy.sleep(3)
+        else:
+            self.led_stop()
+
+    def reset(self):
+        self.__robot.set_arm_max_velocity(100)
+        self.__robot.set_arm_max_acceleration(100)
 
     def led_error(self, duration=360):
-        self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
+        if self.__robot_version in ['one', 'ned']:
+            try:
+                led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
+                led_serv(True, 5, LedBlinkerRequest.LED_WHITE, duration)
+            except rospy.ROSException:
+                pass
 
     def led_stop(self):
-        self.__set_led_state_service(False, 0, 0, 0)
+        if self.__robot_version in ['one', 'ned']:
+            try:
+                led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
+                led_serv(False, 0, 0, 0)
+            except rospy.ROSException:
+                pass
 
     def test_cloud_connection(self, report):
+        if self.__robot.get_simulation_mode:
+            report.append("Test Cloud connection - Skipped in simulation mode")
+            return
+
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
         result = check_connection_service(Service(Service.AUTO_DIAGNOSIS_REPORTS))
         if result.status < 0:
@@ -190,6 +219,36 @@ class TestFunctions(object):
         if hardware_status.rpi_temperature > 70:
             report.append("Rpi overheating")
             raise TestFailure
+
+        try:
+            robot_status = self.__robot.get_robot_status()
+        except rospy.exceptions.ROSException as e:
+            report.append(str(e))
+            raise TestFailure(e)
+
+        if robot_status.robot_status < 0:
+            report.append("Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message))
+
+        def test_i2c():
+            if self.__robot.get_simulation_mode():
+                report.append("I2C Bus - Skipped in simulation mode")
+                return
+
+            try:
+                rospy.wait_for_service("/niryo_robot_rpi/scan_i2c_bus", timeout=0.2)
+                resp = rospy.ServiceProxy("/niryo_robot_rpi/scan_i2c_bus", ScanI2CBus).call()
+
+                if not resp.is_ok:
+                    message = "I2C Bus - Missing components: {}".format(resp.missing)
+                    report.append(message)
+                    raise TestFailure(message)
+
+            except (rospy.ROSException, rospy.ServiceException) as e:
+                report.append(str(e))
+                raise TestFailure(e)
+
+        if self.__robot_version in ['ned2']:
+            test_i2c()
 
     def test_calibration(self, report):
         for _ in range(CALIBRATION_LOOPS):
@@ -241,60 +300,6 @@ class TestFunctions(object):
                            [0.3, 0, 0.2, 0, 1.57, 0])
             report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index),
                            [0.15, 5, 216, 3])
-
-    def test_fun_poses(self, report):
-        waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26],
-                     [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
-                     [1.40, 0.35, -0.34, -1.24, -1.23, -0.10],
-                     [0.00, 0.60, 0.46, -1.55, -0.15, 2.50],
-                     [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
-
-        for loop_index in range(LOOPS):
-            for waypoint_index, waypoint in enumerate(waypoints):
-                report.execute(self.move_and_compare_without_moveit,
-                               "Loop {}.{} - Fun move".format(loop_index, waypoint_index),
-                               args=[waypoint, 1, 4])
-
-    def test_pick_and_place(self, report):
-        report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
-
-        report.execute(self.__robot.update_tool, "Scan tool")
-        report.append("Detected tool: {}".format(self.__robot.get_current_tool_id()))
-
-        self.__robot.enable_tcp(True)
-
-        z_offset = 0.15 if self.__robot.get_current_tool_id() <= 0 else 0.02
-        sleep_pose = [0.25, 0, 0.3, 0, 1.57, 0]
-        pick_1 = [0, 0.2, z_offset, 0, 1.57, 0]
-        pick_2 = [0, -0.2, z_offset, 0, 1.57, 0]
-        place_1 = [0.15, 0, z_offset, 0, 1.57, 0]
-        place_2 = [0.22, 0, z_offset, 0, 1.57, 0]
-
-        report.execute(self.__robot.move_pose, "Move to sleep pose", sleep_pose)
-
-        report.execute(self.__robot.pick_from_pose, "Pick 1st piece", pick_1)
-        report.execute(self.__robot.place_from_pose, "Place 1st piece", place_1)
-
-        report.execute(self.__robot.move_pose, "Move to sleep pose", sleep_pose)
-
-        report.execute(self.__robot.pick_from_pose, "Pick 2nd piece", pick_2)
-        report.execute(self.__robot.place_from_pose, "Place 2nd piece", place_2)
-
-        report.execute(self.__robot.move_pose, "Move to sleep pose", sleep_pose)
-
-        report.execute(self.__robot.pick_from_pose, "Pick 1st piece from center", place_1)
-        pick_1[5] = 1.57
-        report.execute(self.__robot.place_from_pose, "Replace 1st piece", pick_1)
-
-        report.execute(self.__robot.move_pose, "Move to sleep pose", sleep_pose)
-
-        report.execute(self.__robot.pick_from_pose, "Pick 2nd piece from center", place_2)
-        pick_2[5] = -1.57
-        report.execute(self.__robot.place_from_pose, "Replace 2nd piece", pick_2)
-
-        report.execute(self.__robot.move_pose, "Move to sleep pose", sleep_pose)
-
-        self.__robot.enable_tcp(False)
 
     def end_test(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])

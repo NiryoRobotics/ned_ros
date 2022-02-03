@@ -50,7 +50,7 @@ class TestReport(object):
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
         print(new_line)
-        self._report += new_line + "\n"
+        self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
         try:
@@ -133,6 +133,7 @@ class TestProduction:
         except TestFailure:
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
             self.__sub_tests[-1].run()
+            self.__functions.reset()
             self.__success = False
             self.__functions.led_error()
         else:
@@ -171,6 +172,10 @@ class TestFunctions(object):
         self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
         self.led_stop()
 
+    def reset(self):
+        self.__robot.set_arm_max_velocity(100)
+        self.__robot.set_arm_max_acceleration(100)
+
     def led_error(self, duration=360):
         if self.__robot.get_hardware_version() != 'ned2':
             self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
@@ -180,6 +185,10 @@ class TestFunctions(object):
             self.__set_led_state_service(False, 0, 0, 0)
 
     def test_cloud_connection(self, report):
+        if self.__robot.get_simulation_mode:
+            report.append("Test Cloud connection - Skipped in simulation mode")
+            return
+
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
         result = check_connection_service(Service(Service.TEST_REPORTS))
         if result.status < 0:
@@ -211,8 +220,18 @@ class TestFunctions(object):
             report.append("Rpi overheating")
             raise TestFailure
 
+        try:
+            robot_status = self.__robot.get_robot_status()
+        except rospy.exceptions.ROSException as e:
+            report.append(str(e))
+            raise TestFailure(e)
+
+        if robot_status.robot_status < 0:
+            report.append("Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message))
+
+
     def test_calibration(self, report):
-        for loop_index in range(CALIBRATION_LOOPS):
+        for _ in range(CALIBRATION_LOOPS):
             self.__robot.request_new_calibration()
             rospy.sleep(0.1)
 
