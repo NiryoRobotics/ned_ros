@@ -41,9 +41,9 @@ class DailyReportHandler:
             return
         success = self.__cloud_api.daily_reports.send({
             'date':
-            self.__current_date,
+                self.__current_date,
             'report':
-            self.__daily_report.content
+                self.__daily_report.content
         })
         if success:
             self.__daily_report.delete()

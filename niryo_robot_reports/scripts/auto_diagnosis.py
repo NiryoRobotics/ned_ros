@@ -79,10 +79,9 @@ class TestStep(object):
         self.__name = name
         self.__report = TestReport(name)
         self.__critical = critical
-
         self.__status = TestStatus.NONE
 
-    def run(self, *args, **kwargs):
+    def run(self, *_args, **_kwargs):
         self.__status = TestStatus.NONE
 
         try:
@@ -234,7 +233,7 @@ class TestFunctions(object):
             report.append(message)
             raise TestFailure(message)
 
-        def test_i2c():
+        if self.__robot_version in ['ned2']:
             if self.__robot.get_simulation_mode():
                 report.append("I2C Bus - Skipped in simulation mode")
                 return
@@ -251,9 +250,6 @@ class TestFunctions(object):
             except (rospy.ROSException, rospy.ServiceException) as e:
                 report.append(str(e))
                 raise TestFailure(e)
-
-        if self.__robot_version in ['ned2']:
-            test_i2c()
 
     def test_calibration(self, report):
         for _ in range(CALIBRATION_LOOPS):

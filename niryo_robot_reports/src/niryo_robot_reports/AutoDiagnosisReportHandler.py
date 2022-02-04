@@ -61,4 +61,3 @@ class AutoDiagnosisReportHandler:
             return CommandStatus.REPORTS_SENDING_FAIL, 'Unable to send the report'
 
         return CommandStatus.SUCCESS, 'Report sent successfully'
-
