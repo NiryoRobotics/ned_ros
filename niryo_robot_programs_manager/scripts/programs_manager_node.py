@@ -84,7 +84,8 @@ class ProgramManagerNode:
         self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
         self.__publish_program_list()
 
-        self.__program_is_running_publisher = rospy.Publisher('~program_is_running', ProgramIsRunning, latch=True, queue_size=1)
+        self.__program_is_running_publisher = rospy.Publisher('~program_is_running', ProgramIsRunning, latch=True,
+                                                              queue_size=1)
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
         # - Autorun
