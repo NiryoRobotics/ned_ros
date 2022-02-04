@@ -240,11 +240,15 @@ void JointsInterfaceCore::rosControlLoop()
     {
         if (_enable_control_loop)
         {
+            _robot->read(current_time, elapsed_time);
+
             // check if a collision is occurred, reset controller to stop robot
             if (_ttl_interface->readCollisionStatus())
+            {
                 resetController();
+                ROS_WARN("JointsInterfaceCore: collision detected by End Effector");
+            }
 
-            _robot->read(current_time, elapsed_time);
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
@@ -337,6 +341,9 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
                                                    niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
+
+    // update position of joints
+    _robot->read(ros::Time::now(), ros::Duration(0.0));
 
     resetController();
 

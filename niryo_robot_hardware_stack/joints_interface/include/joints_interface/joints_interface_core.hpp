@@ -101,7 +101,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
-        bool _reset_controller{false};
+        bool _reset_controller{true};
 
         std::string _joint_controller_name;
 
