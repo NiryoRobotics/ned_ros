@@ -123,7 +123,6 @@ HR_COLOR_REQUEST = 625
 # Workspaces' names are limited to 30 characters, so the number of register to store it is 15 (2 char = 1 register)
 HR_WORKSPACE_NAME = 626
 
-
 # Use next registers at address 641.
 
 HR_SET_ANALOG_IO = 650
@@ -456,7 +455,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.cmd_action_client = actionlib.SimpleActionClient(action_name, action_msg_type)
 
         # Connect to server
-        if not self.cmd_action_client.wait_for_server(rospy.Duration(0.5)):
+        if not self.cmd_action_client.wait_for_server(rospy.Duration().from_sec(0.5)):
             self.setValuesOffset(HR_IS_EXECUTING_CMD, [0])
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [7])
             return
@@ -465,7 +464,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.cmd_action_client.send_goal(goal)
 
         self.is_action_client_running = True
-        if not self.cmd_action_client.wait_for_result(timeout=rospy.Duration(15.0)):
+        if not self.cmd_action_client.wait_for_result(timeout=rospy.Duration(15)):
             self.cmd_action_client.cancel_goal()
             self.cmd_action_client.stop_tracking_goal()
             self.setValuesOffset(HR_IS_EXECUTING_CMD, [0])
@@ -768,7 +767,7 @@ class HoldingRegisterDataBlock(DataBlock):
             if self.current_tool_id in self.list_id_grippers:
                 self.open_gripper(self.current_tool_id, speed_tool)
             elif self.current_tool_id == 31:  # vacuum pump
-                self.push_air_vacuum_pump(self.current_tool_id)
+                self.push_air_vacuum_pump()
 
             # - Move pose
             self.move_pose(approach_pose)
@@ -778,7 +777,7 @@ class HoldingRegisterDataBlock(DataBlock):
             if self.current_tool_id in self.list_id_grippers:
                 self.close_gripper(self.current_tool_id, speed_tool)
             elif self.current_tool_id == 31:  # vacuum pump
-                self.pull_air_vacuum_pump(self.current_tool_id)
+                self.pull_air_vacuum_pump()
 
             # - Lift the object
             self.move_pose(approach_pose)

@@ -93,4 +93,3 @@ class CoilDataBlock(DataBlock):
         """
         _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id,
                                         bool(digital_state))
-
