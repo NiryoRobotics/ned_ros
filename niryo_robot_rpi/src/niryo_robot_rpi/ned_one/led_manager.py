@@ -30,7 +30,6 @@ from niryo_robot_msgs.srv import SetInt
 from niryo_robot_system_api_client.msg import WifiStatus
 from niryo_robot_rpi.srv import LedBlinker
 
-
 LED_OFF = 0
 LED_BLUE = 1
 LED_GREEN = 2
