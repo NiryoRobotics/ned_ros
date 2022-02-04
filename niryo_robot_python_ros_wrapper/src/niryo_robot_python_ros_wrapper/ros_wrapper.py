@@ -1542,7 +1542,8 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         from conveyor_interface.srv import SetConveyor, SetConveyorRequest
-        req = SetConveyorRequest(cmd=SetConveyorRequest.REMOVE, id=conveyor_id)
+
+        req = SetConveyorRequest(cmd=SetConveyorRequest.REMOVE, id=self.__conveyor_number_to_conveyor_id(conveyor_id))
         result = self.__call_service('/niryo_robot/conveyor/ping_and_set_conveyor', SetConveyor, req)
         return self.__classic_return_w_check(result)
 
@@ -1562,9 +1563,11 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        from conveyor_interface.srv import ControlConveyor
-        result = self.__call_service('/niryo_robot/conveyor/control_conveyor',
-                                     ControlConveyor, conveyor_id, bool_control_on, speed, direction)
+        from conveyor_interface.srv import ControlConveyor, ControlConveyorRequest
+
+        req = ControlConveyorRequest(id=self.__conveyor_number_to_conveyor_id(conveyor_id),
+                                     control_on=bool_control_on, speed=speed, direction=direction)
+        result = self.__call_service('/niryo_robot/conveyor/control_conveyor', ControlConveyor, req)
         return self.__classic_return_w_check(result)
 
     def get_conveyors_feedback(self):
@@ -1576,6 +1579,23 @@ class NiryoRosWrapper:
         """
         fb = self.__conveyors_feedback_ntv.value
         return fb.conveyors
+
+    def __conveyor_number_to_conveyor_id(self, conveyor_number):
+        if conveyor_number == ConveyorID.ID_1:
+            return ConveyorTTL.ID_1 if self.get_hardware_version() in ['ned2'] else ConveyorCan.ID_1
+        elif conveyor_number == ConveyorID.ID_2:
+            return ConveyorTTL.ID_2 if self.get_hardware_version() in ['ned2'] else ConveyorCan.ID_2
+        else:
+            return conveyor_number
+
+    def __conveyor_id_to_conveyor_number(self, conveyor_id):
+        if conveyor_id in [ConveyorTTL.ID_1, ConveyorCan.ID_1]:
+            return ConveyorID.ID_1
+        elif conveyor_id in [ConveyorTTL.ID_2, ConveyorCan.ID_2]:
+            return ConveyorID.ID_2
+        else:
+            return conveyor_id
+
 
     # - Vision
 
