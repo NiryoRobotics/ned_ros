@@ -97,4 +97,3 @@ class AbstractTopButton(object):
     def _send_pause_state(self, state):
         self._pause_state = state
         self._pause_movement_publisher.publish(self._pause_state)
-

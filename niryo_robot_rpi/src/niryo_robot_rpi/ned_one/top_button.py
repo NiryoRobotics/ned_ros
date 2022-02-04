@@ -67,7 +67,7 @@ class TopButton(AbstractTopButton):
         # - Publishers
         # Publisher used to send info to Niryo Studio, so the user can add a move block
         # by pressing the button
-        self.save_point_publisher = rospy.Publisher(  "/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
+        self.save_point_publisher = rospy.Publisher("/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
 
         self._button_state_publisher = rospy.Publisher(
             "/niryo_robot/rpi/is_button_pressed", Bool, latch=True, queue_size=1)
@@ -78,7 +78,6 @@ class TopButton(AbstractTopButton):
         self.__button_loop_thread.start()
 
         rospy.loginfo("Niryo Button started")
-
 
     def read_value(self):
         super(TopButton, self).read_value()

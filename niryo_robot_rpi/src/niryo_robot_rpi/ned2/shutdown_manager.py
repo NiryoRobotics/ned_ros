@@ -74,7 +74,7 @@ class ShutdownManager(AbstractShutdownManager):
         self.__stop_move()
         self.wait_end_of_sound()
         if not self._fake:
-            send_reboot_command(learning_mode=False )
+            send_reboot_command(learning_mode=False)
 
     @staticmethod
     def __stop_move():
