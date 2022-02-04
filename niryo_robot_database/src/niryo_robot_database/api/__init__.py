@@ -1,1 +1,1 @@
-from database_ros_wrapper import DatabaseRosWrapper
+from .database_ros_wrapper import DatabaseRosWrapper

@@ -71,4 +71,14 @@
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
+    <group if="$(eval hardware_version != 'one' and not simulation_mode)">
+        <include file="$(find niryo_robot_database)/launch/database.launch">
+            <arg name="database_path" value="$(arg conf_location)"/>
+        </include>
+
+        <include file="$(find niryo_robot_reports)/launch/reports.launch">
+            <arg name="log_level" value="$(arg log_level)" />
+        </include>
+    </group>
+
 </launch>

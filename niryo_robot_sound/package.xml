@@ -7,7 +7,6 @@
     <version>4.0.0</version>
     <description> Linking Ned 2 to his sound card in order to deal with sounds and musics</description>
     <author email="n.guy@niryo.com">Nicolas Guy</author>
-    <maintainer email="n.guy@niryo.com">Nicolas Guy</maintainer>
     <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
     <license>GPLv3</license>
 
