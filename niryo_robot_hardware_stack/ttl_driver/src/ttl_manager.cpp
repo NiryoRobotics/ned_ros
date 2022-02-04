@@ -596,7 +596,8 @@ bool TtlManager::readJointsStatus()
                     }
                     else
                     {
-                        ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                        // warn to avoid sound and light error on high level (error on ROS_ERROR)
+                        ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
                                     "vector mismatch (id_list size %d, position_list size %d)",
                                     static_cast<int>(ids_list.size()),
                                     static_cast<int>(position_list.size()));
@@ -605,12 +606,23 @@ bool TtlManager::readJointsStatus()
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                    // warn to avoid sound and light error on high level (error on ROS_ERROR)
+                    ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
                               "driver fail to syncReadPosition (error %d)", res);
                     hw_errors_increment++;
                 }
             }
         }  // for driver_map
+    }
+
+    // we reset the global error variable only if no errors
+    if (0 == hw_errors_increment)
+    {
+        _hw_fail_counter_read = 0;
+    }
+    else
+    {
+        _hw_fail_counter_read += hw_errors_increment;
     }
 
     ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);

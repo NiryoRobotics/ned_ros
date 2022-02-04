@@ -148,7 +148,7 @@ class LedRingCommander(object):
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or
                 self.rpi_overheating != msg.rpi_overheating):
-            print self.robot_status
+
             if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS == msg.robot_status \
                     or self.robot_status != RobotStatus.REBOOT_MOTOR == msg.robot_status:
                 rospy.sleep(0.5)  # for synchro
