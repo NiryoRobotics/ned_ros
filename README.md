@@ -7,7 +7,7 @@ This repository contains all ROS packages used on Ned robot (Raspberry Pi 4B - U
 
 Here's a global overview of Ned ROS Stack :
 
-![Ned ros stack - global overview](https://niryo.com/wp-content/uploads/github/ned_global_overview.jpg)
+![Ned ros stack - global overview](sphinx_doc/images/stack/ros_stack_global_overview.png)
 ## How to use Ned with a graphical interface ?
 
 You can [download Niryo Studio](https://niryo.com/download/?utm_source=github) (Linux, Windows and MacOS compatible).

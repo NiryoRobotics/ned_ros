@@ -2,6 +2,20 @@
 Use your Niryo Robot
 *******************************************
 
+.. list-table::
+   :header-rows: 0
+   :widths: auto
+   :align: center
+
+   *  -  .. image:: ../images/niryo_one_front.jpg
+                  :alt: One
+                  :width: 300px
+                  :align: center
+      -  .. image:: ../images/niryo_ned_front.jpg
+                  :alt: Ned
+                  :width: 300px
+                  :align: center
+
 Every Niryo Robot is usable as is when first switched on, with Niryo Studio for instance.
 However this Robot can be used in many more ways if you want to go deeper into its understanding.
 
@@ -11,7 +25,7 @@ Connecting to the Robot
 ======================================
 You can connect to your robot in multiple ways (Ethernet direct, Wifi Hotspot, LAN).
 
-You can find more information on how to connect to your robot :connecting_to_the_robot:`here <>`.
+You can find more information on how to connect to your robot `here <https://docs.niryo.com/product/niryo-studio/source/connection.html>`_.
 
 Once your robot is accessible from your computer, you can access it through three ways :
 

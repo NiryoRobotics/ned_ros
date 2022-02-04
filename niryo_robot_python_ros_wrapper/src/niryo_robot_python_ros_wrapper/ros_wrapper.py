@@ -135,7 +135,10 @@ class NiryoRosWrapper:
 
     def __advertise_stop(self):
         if self.__hardware_version in ['ned', 'ned2']:
-            self.__advertise_ros_wrapper_srv(self.__node_name, False)
+            try:
+                self.__advertise_ros_wrapper_srv(self.__node_name, False)
+            except [rospy.ServiceException, rospy.ROSException]:
+                pass
 
     def __ping_ros_wrapper_callback(self):
         return CommandStatus.SUCCESS, self.__node_name
