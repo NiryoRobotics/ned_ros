@@ -9,8 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-catkin_python_setup()
-
 add_message_files(
   FILES
   Service.msg
@@ -84,6 +82,11 @@ catkin_install_python(PROGRAMS
     scripts/reports_node.py
     scripts/auto_diagnosis.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(PROGRAMS
+    pub_new_day.sh
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
+)
 
 # Mark other files for installation
 install(

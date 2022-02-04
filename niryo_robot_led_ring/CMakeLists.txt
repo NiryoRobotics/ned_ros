@@ -10,8 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
 )
 
-catkin_python_setup()
-
 add_message_files(
   FILES
   LedRingAnimation.msg
