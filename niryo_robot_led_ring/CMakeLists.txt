@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
 )
 
+catkin_python_setup()
+
 add_message_files(
   FILES
   LedRingAnimation.msg
@@ -77,6 +79,7 @@ if(CATKIN_ENABLE_TESTING)
       message(WARNING "roslint not found. Skipping roslint target building")
   endif()
 endif()
+
 
 #############
 ## Install ##

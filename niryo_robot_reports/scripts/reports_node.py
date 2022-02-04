@@ -6,10 +6,10 @@ import rospy
 from distutils.dir_util import mkpath
 
 from niryo_robot_reports.CloudAPI import CloudAPI
-from DailyReportHandler import DailyReportHandler
-from TestReportHandler import TestReportHandler
-from AlertReportHandler import AlertReportHandler
-from AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
+from niryo_robot_reports.DailyReportHandler import DailyReportHandler
+from niryo_robot_reports.TestReportHandler import TestReportHandler
+from niryo_robot_reports.AlertReportHandler import AlertReportHandler
+from niryo_robot_reports.AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 
 # msg
 from niryo_robot_database.msg import Setting
