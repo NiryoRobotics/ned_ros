@@ -90,7 +90,6 @@ install(PROGRAMS
 
 install(PROGRAMS
     pub_new_day.sh
-    scripts/reports_node.py
     scripts/auto_diagnosis.py
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/scripts
 )

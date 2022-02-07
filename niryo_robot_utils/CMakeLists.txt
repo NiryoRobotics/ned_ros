@@ -23,22 +23,25 @@ include_directories(
 ## Testing ##
 #############
 
+if(CATKIN_ENABLE_TESTING)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+      set(ROSLINT_PYTHON_OPTS "1>&2")
+      roslint_python()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
+endif()
+# no testings : external lib
+
+
 #############
 ## Install ##
 #############
 
 # no scripts to install
 
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    # no static code analysis on external libs
-    # create empty target (needed for catkin build --make-args roslint)
-    message(STATUS "no lint analysis for this packet. Create empty target for conveniency")
-    roslint_cpp(empty) # hack to create an empty roslint target
-else()
-    message(WARNING "roslint not found. Skipping roslint target building")
-endif()
