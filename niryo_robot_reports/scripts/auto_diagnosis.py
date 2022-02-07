@@ -305,7 +305,7 @@ class TestFunctions(object):
     def end_test(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
         self.__robot.move_to_sleep_pose()
-        self.__robot.set_learning_mode(True)
+        self.__robot.set_learning_mode(self.__robot_version in ['ned', 'one'])
         self.__robot.set_arm_max_velocity(100)
         self.__robot.set_arm_max_acceleration(100)
 
