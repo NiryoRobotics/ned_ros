@@ -88,6 +88,13 @@ install(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
 )
 
+install(PROGRAMS
+    pub_new_day.sh
+    scripts/reports_node.py
+    scripts/auto_diagnosis.py
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/scripts
+)
+
 # Mark other files for installation
 install(
   DIRECTORY launch/
