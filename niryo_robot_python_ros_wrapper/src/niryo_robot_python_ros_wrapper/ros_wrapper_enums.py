@@ -1,5 +1,9 @@
 from enum import Enum, unique
 
+# Others enums
+from niryo_robot_tools_commander.api import ToolID
+
+
 class ShiftPose:
     def __init__(self):
         pass

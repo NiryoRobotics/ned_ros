@@ -176,7 +176,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         result = self._call_service('/niryo_robot_tools_commander/equip_electromagnet',
-                                     SetInt, ToolID.ELECTROMAGNET_1)
+                                    SetInt, ToolID.ELECTROMAGNET_1)
 
         if result.status != CommandStatus.SUCCESS:
             return result.status, result.message

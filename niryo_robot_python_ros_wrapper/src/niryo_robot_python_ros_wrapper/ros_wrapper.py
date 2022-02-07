@@ -28,7 +28,7 @@ from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMo
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
 
-from niryo_robot_tools_commander.api import ToolsRosWrapper
+from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
 
 
 class NiryoRosWrapper(AbstractNiryoRosWrapper):
