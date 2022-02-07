@@ -22,6 +22,9 @@ from niryo_robot_rpi.common.rpi_ros_utils import activate_learning_mode, auto_ca
 
 from .end_effector_io import DigitalInput, DigitalOutput
 
+from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
+from niryo_robot_utils import NiryoRosWrapperException
+
 # Messages
 from std_msgs.msg import Int32, Bool
 from end_effector_interface.msg import EEButtonStatus
@@ -42,6 +45,8 @@ class NiryoEndEffectorPanel:
         self.__save_pos_button_state = False
 
         self.__learning_mode_on = False
+        self.__tool = ToolsRosWrapper()
+        self.__tool_state = False
 
         self.digital_input = DigitalInput(rospy.get_param("~end_effector_ios/digital_input"))
         self.digital_output = DigitalOutput(rospy.get_param("~end_effector_ios/digital_output"))
@@ -91,7 +96,6 @@ class NiryoEndEffectorPanel:
 
     def __callback_learning_mode_button(self, msg):
         if self.__learning_mode_button_state != msg:
-
             if msg.action == EEButtonStatus.HANDLE_HELD_ACTION:
                 activate_learning_mode(True)
                 self.__learning_mode_button_state = msg.action
@@ -117,16 +121,32 @@ class NiryoEndEffectorPanel:
         old_button_state = self.__custom_button_state
         self.__custom_button_state = msg.action
 
-        if self.__robot_status == RobotStatus.CALIBRATION_NEEDED and \
-                old_button_state != EEButtonStatus.NO_ACTION == self.__custom_button_state:
-            auto_calibration()
+        custom_button_pressed = None
 
         if old_button_state == EEButtonStatus.HANDLE_HELD_ACTION \
                 and self.__custom_button_state == EEButtonStatus.NO_ACTION:
-            self.__button_state_publisher.publish(False)
+            custom_button_pressed = False
         elif old_button_state == EEButtonStatus.NO_ACTION \
                 and self.__custom_button_state == EEButtonStatus.HANDLE_HELD_ACTION:
-            self.__button_state_publisher.publish(True)
+            custom_button_pressed = True
+
+        if custom_button_pressed is not None:
+            self.__button_state_publisher.publish(custom_button_pressed)
+
+            try:
+                if old_button_state != EEButtonStatus.NO_ACTION == self.__custom_button_state:
+                    if self.__robot_status == RobotStatus.CALIBRATION_NEEDED:
+                        auto_calibration()
+                    elif self.__tool.get_current_tool_id() != ToolID.NONE:
+                        if self.__tool_state:
+                            self.__tool.release_with_tool()
+                        else:
+                            self.__tool.grasp_with_tool()
+                        self.__tool_state = not self.__tool_state
+                    else:
+                        self.__tool.update_tool()
+            except NiryoRosWrapperException:
+                pass
 
     def __callback_sub_learning_mode(self, msg):
         self.__learning_mode_on = msg.data
