@@ -246,9 +246,12 @@ class LedRingCommander(object):
             if self.led_ring_anim.is_animation_running():
                 self.led_ring_anim.stop_animation()
 
-            if self.led_ring_animation_thread.is_alive():
-                self.led_ring_animation_thread.join()
-        except AttributeError:
+            while self.led_ring_animation_thread.join(timeout=0.1) is None and not rospy.is_shutdown():
+                self.led_ring_anim.stop_animation()
+                if not self.led_ring_animation_thread.is_alive():
+                    return
+
+        except (AttributeError, RuntimeError):
             pass
 
     def error_animation(self):
