@@ -24,7 +24,10 @@ class DatabaseNode:
     def __init__(self):
         rospy.logdebug("Database Node - Entering in Init")
 
-        db_path = os.path.expanduser(rospy.get_param('~sqlite_db_file_path'))
+        sqlite_db_file_path = os.path.join(rospy.get_param('~database_path'),
+                                           rospy.get_param('~hardware_version') + ".db")
+        db_path = os.path.expanduser(sqlite_db_file_path)
+
         if not os.path.isfile(db_path):
             package_path = rospkg.RosPack().get_path('niryo_robot_database')
             file_path = os.path.join(package_path, 'sql', 'init.sh')
