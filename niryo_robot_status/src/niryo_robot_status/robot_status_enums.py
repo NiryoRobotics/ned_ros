@@ -1,4 +1,3 @@
-
 from niryo_robot_status.msg import RobotStatus
 from rosgraph_msgs.msg import Log
 
@@ -37,6 +36,25 @@ ROBOT_STATUS_TO_STR = {
     RobotStatus.RUNNING_DEBUG: 'Running debug',
     RobotStatus.PAUSE: 'Pause',
     RobotStatus.LEARNING_MODE_AUTONOMOUS: 'Learning mode autonomous',
+    RobotStatus.REBOOT_MOTOR: 'Reboot motor'
+}
+
+ROBOT_STATUS_TO_MESSAGE = {
+    RobotStatus.UPDATE: "Update",
+    RobotStatus.REBOOT: "Rebooting one or more motors",
+    RobotStatus.SHUTDOWN: 'Shutdown',
+    RobotStatus.COLLISION: "Robot collision detected, waiting for user intervention",
+    RobotStatus.USER_PROGRAM_ERROR: 'User program error',
+    RobotStatus.BOOTING: "Robot is booting",
+    RobotStatus.CALIBRATION_NEEDED: 'Calibration Needed',
+    RobotStatus.CALIBRATION_IN_PROGRESS: "Calibration in progress",
+    RobotStatus.LEARNING_MODE: "Learning mode activated",
+    RobotStatus.STANDBY: "Standby, nothing else to say",
+    RobotStatus.MOVING: "Robot is moving",
+    RobotStatus.RUNNING_AUTONOMOUS: "Program is running",
+    RobotStatus.RUNNING_DEBUG: "Debug program is running",
+    RobotStatus.PAUSE: "Program paused",
+    RobotStatus.LEARNING_MODE_AUTONOMOUS: "Program is running and learning_mode active",
     RobotStatus.REBOOT_MOTOR: 'Reboot motor'
 }
 
