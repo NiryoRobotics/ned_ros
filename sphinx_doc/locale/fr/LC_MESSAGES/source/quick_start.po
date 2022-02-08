@@ -217,7 +217,6 @@ msgstr ""
 "#network-settings>`_."
 
 #: ../../source/quick_start.rst:56
-#, fuzzy
 msgid ""
 "**Advantage:** The robot and the computer can have access to the "
 "internet. Better communication with the robot."
