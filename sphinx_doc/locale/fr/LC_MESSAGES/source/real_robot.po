@@ -153,30 +153,39 @@ msgid ""
 "The robot is running on top of an Ubuntu server 18.04.5 for ARM "
 "customized to work on a Raspberry Pi 4B."
 msgstr ""
+"Le Robot tourne sur une Ubuntu  erver 18.04.5 pour ARM, personnalisé "
+"pour fonctionner avec une raspberry pi 4B."
+#~ " suivants : - ROS melodic et "
+#~ "ses prérequis - Driver de son -"
+#~ " Driver du Led Ring - Services "
+#~ "du système du Robot (connectivité, base"
+#~ " de donnée, serveur flask) - Outils"
+#~ " de développement de base (compilation, "
+#~ "outils d'édition)"
 
 #: ../../source/real_robot.rst:73
 msgid "It comprises all the following elements :"
-msgstr ""
+msgstr "Il comprend tous les éléments suivants:"
 
 #: ../../source/real_robot.rst:69
 msgid "ROS melodic and its requirements"
-msgstr ""
+msgstr "ROS melodic et ses prérequis"
 
 #: ../../source/real_robot.rst:70
 msgid "Sound driver"
-msgstr ""
+msgstr "Driver de son"
 
 #: ../../source/real_robot.rst:71
 msgid "Led ring driver"
-msgstr ""
+msgstr "Driver du Led Ring"
 
 #: ../../source/real_robot.rst:72
 msgid "Robot System services (connectivity, databases, flask server)"
-msgstr ""
+msgstr "Services du système du Robot (connectivité, base de donnée, serveur flask)"
 
 #: ../../source/real_robot.rst:73
 msgid "Basic development tools (compilation, editing tools)"
-msgstr ""
+msgstr " Outils de développement de base (compilation, outils d'édition)"
 
 #: ../../source/real_robot.rst:75
 msgid "We took care to update and upgrade the system before sending it to you"
@@ -313,7 +322,7 @@ msgstr ""
 
 #: ../../source/real_robot.rst:132
 msgid "For Ned"
-msgstr ""
+msgstr "Pour le Ned"
 
 #: ../../source/real_robot.rst:139
 msgid "For Ned2"
@@ -459,166 +468,3 @@ msgstr ""
 "Vous pouvez aussi choisir de changer seulement les niveaux de log d'un "
 "package cpp spécifique en décommentant l'une des lignes suivantes et "
 "éventuellement changer le niveau de log associé."
-
-#~ msgid "The Niryo Robot"
-#~ msgstr ""
-
-#~ msgid "Robot usage"
-#~ msgstr ""
-
-#~ msgid "TODO .. list-table:: Simulation without visualization Options"
-#~ msgstr ""
-
-#~ msgid "header-rows"
-#~ msgstr ""
-
-#~ msgid "1"
-#~ msgstr ""
-
-#~ msgid "widths"
-#~ msgstr ""
-
-#~ msgid "auto"
-#~ msgstr ""
-
-#~ msgid "stub-columns"
-#~ msgstr ""
-
-#~ msgid "0"
-#~ msgstr ""
-
-#~ msgid "align"
-#~ msgstr ""
-
-#~ msgid "center"
-#~ msgstr ""
-
-#~ msgid "conf_location"
-#~ msgstr ""
-
-#~ msgid "version.txt"
-#~ msgstr ""
-
-#~ msgid "Location of the version.txt file. A path to the file is required."
-#~ msgstr ""
-
-#~ msgid "simu_gripper"
-#~ msgstr ""
-
-#~ msgid "Simulate the presence of a gripper id 11 on the bus"
-#~ msgstr ""
-
-#~ msgid "simu_conveyor"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Simulate the presence of a conveyor "
-#~ "(CAN for One and Ned, TTL for "
-#~ "Ned2, based on configuration files) on"
-#~ " the bus"
-#~ msgstr ""
-
-#~ msgid "vision_enabled"
-#~ msgstr ""
-
-#~ msgid "Enable the Vision Kit"
-#~ msgstr ""
-
-#~ msgid "gazebo"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Enable gazebo specific parameters (However "
-#~ "it does not launch gazebo, use "
-#~ "gazebo specific launch file for that)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Via Niryo Studio Niryo Studio provides"
-#~ " you with all the tools you "
-#~ "need to control the robot. Please "
-#~ "refere to the :doc_niryo_studio:`Niryo Studio"
-#~ " documentation <>` for more information."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Via ROS Multimachine. ROS implements a"
-#~ " way to communicate between nodes "
-#~ "launched on different machines. By "
-#~ "indicating your computer where the Niryo"
-#~ " Robot ROS Master Node is, you "
-#~ "can communicate to any ROS Node as"
-#~ " if you were directly connected on"
-#~ " the robot. See the tutorial on "
-#~ "the :ros_multimachine:`ROS wiki <>` for "
-#~ "more information."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Via ssh (for advanced users only). "
-#~ "Port 22 is open without restriction. "
-#~ "The default user is \"niryo\" and "
-#~ "its password is \"robotics\"."
-#~ msgstr ""
-
-#~ msgid "File */opt/start_ros.sh* on the ned2 robot : .. code::"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Enable or disable the TTL bus "
-#~ "usage. This feature is used for "
-#~ "debug mainly and can lead to an"
-#~ " unstable stack."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Enable or disable the CAN bus "
-#~ "usage. This feature is used for "
-#~ "debug mainly and can lead to an"
-#~ " unstable stack."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "To launch the node using "
-#~ "timed_roslaunch. If enabled, will first "
-#~ "launch sound and light nodes to "
-#~ "have a better user experience. If "
-#~ "disabled, the node is directly launched"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "It defines the logs levels for all"
-#~ " cpp packages, based on log4cxx "
-#~ "configuration file syntax. Please see "
-#~ "documentation of :ros_console:`ros_console <>` "
-#~ "or :log4xx:`log4xx <>` for more "
-#~ "information."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The Robot is running on top of "
-#~ "an Ubuntu server 18.04.5 for ARM "
-#~ "customized to work on a raspberry "
-#~ "pi 4B It comprises all the "
-#~ "following elements : - ROS melodic "
-#~ "and its requirements - Sound driver "
-#~ "- Led ring driver - Robot System"
-#~ " services (connectivity, databases, flask "
-#~ "server) - Basic development tools "
-#~ "(compilation, editing tools)"
-#~ msgstr ""
-#~ "Le Robot tourne sur une Ubuntu "
-#~ "server 18.04.5 pour ARM, personnalisé "
-#~ "pour fonctionner avec une raspberry pi"
-#~ " 4B. Il comprend tous les éléments"
-#~ " suivants : - ROS melodic et "
-#~ "ses prérequis - Driver de son -"
-#~ " Driver du Led Ring - Services "
-#~ "du système du Robot (connectivité, base"
-#~ " de donnée, serveur flask) - Outils"
-#~ " de développement de base (compilation, "
-#~ "outils d'édition)"
-
-#~ msgid "For the Ned"
-#~ msgstr "Pour le Ned"
-
