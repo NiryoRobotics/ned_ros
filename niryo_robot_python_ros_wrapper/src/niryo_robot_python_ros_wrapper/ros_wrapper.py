@@ -118,7 +118,10 @@ class NiryoRosWrapper:
 
     def __advertise_stop(self):
         if self.__hardware_version in ['ned', 'ned2']:
-            self.__advertise_ros_wrapper_srv(self.__node_name, False)
+            try:
+                self.__advertise_ros_wrapper_srv(self.__node_name, False)
+            except [rospy.ServiceException, rospy.ROSException]:
+                pass
 
     def __ping_ros_wrapper_callback(self):
         return CommandStatus.SUCCESS, self.__node_name
@@ -1212,7 +1215,7 @@ class NiryoRosWrapper:
         goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
         goal.cmd.cmd_type = command_int
 
-        return self.__tool_action_nac.execute(goal.goal)
+        return self.__tool_action_nac.execute(goal)
 
     # - Electromagnet
     def setup_electromagnet(self, pin_id):

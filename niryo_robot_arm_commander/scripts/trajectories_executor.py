@@ -79,6 +79,8 @@ class TrajectoriesExecutor:
 
         self.__collision_detected_publisher = rospy.Publisher('~collision_detected', Bool, queue_size=10)
 
+        rospy.on_shutdown(self.stop_current_plan)
+
     def __set_position_hold_mode(self):
         """
         Stop the Robot where it is
