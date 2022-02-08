@@ -41,7 +41,10 @@ class DigitalPin(NiryoIO):
 
     def _read(self):
         with self._lock:
-            self._value = GPIO.input(self._pin)
+            try:
+                self._value = GPIO.input(self._pin)
+            except RuntimeError:
+                pass
 
     @property
     def value(self):
@@ -54,7 +57,10 @@ class DigitalPin(NiryoIO):
         if self._mode == PinMode.DIGITAL_OUTPUT:
             with self._lock:
                 self._value = bool(value)
-                GPIO.output(self._pin, GPIO.HIGH if self._value else GPIO.LOW)
+                try:
+                    GPIO.output(self._pin, GPIO.HIGH if self._value else GPIO.LOW)
+                except RuntimeError:
+                    pass
 
     @property
     def mode(self):

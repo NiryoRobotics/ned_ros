@@ -430,7 +430,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
 
         // 6. Move steppers to home
         moveSteppersToHome();
-        ros::Duration(3.5).sleep();
+        ros::Duration(("ned2" == _hardware_version) ? 3.5 : 4).sleep();
 
         // 7. Write sensor_offset_steps to file
         saveCalibrationOffsetsToFile(sensor_offset_ids, sensor_offset_results);
@@ -611,14 +611,14 @@ void CalibrationManager::moveRobotBeforeCalibration()
 
     _ttl_interface->waitSyncQueueFree();
 
-    // 1. Relative Move Motor 1 (can only)
+    // 1. Relative Move Motor 2 (can only)
     if (_can_interface &&
-        _joint_states_list.at(0)->isStepper() &&
-        common::model::EBusProtocol::CAN == _joint_states_list.at(0)->getBusProtocol())
+        _joint_states_list.at(1)->isStepper() &&
+        common::model::EBusProtocol::CAN == _joint_states_list.at(1)->getBusProtocol())
     {
-        uint8_t motor_id = _joint_states_list.at(0)->getId();
-        int steps = -500 * _joint_states_list.at(0)->getDirection();
-        int delay = 200;
+        uint8_t motor_id = _joint_states_list.at(1)->getId();
+        int steps = -500 * _joint_states_list.at(1)->getDirection();
+        int delay = 1000;
 
         _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
                                                     StepperSingleCmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
@@ -633,7 +633,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         if (EBusProtocol::CAN == _joint_states_list.at(2)->getBusProtocol())
         {
             int steps = _joint_states_list.at(2)->to_motor_pos(0.25);
-            int delay = 500;
+            int delay = 1000;
 
             _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
                                                       StepperSingleCmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
@@ -697,7 +697,7 @@ void CalibrationManager::moveSteppersToHome()
                 else
                     steps = jState->to_motor_pos(jState->getHomePosition()) - jState->to_motor_pos(jState->getLimitPositionMin());
 
-                int delay = 550;
+                int delay = (1 >= motor_id)  ? 500 : 1700;
                 // TODO(cc) quick fix, we should use the same method for real and simulation.
                 // The difficulty here is that simulation does not move the joints during the calibration (how to do it ?)
                 if (!_simulation_mode)

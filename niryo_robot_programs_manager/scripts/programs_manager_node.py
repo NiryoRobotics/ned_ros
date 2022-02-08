@@ -113,6 +113,8 @@ class ProgramManagerNode:
         self.__execution_thread = None
         self.__execution_stopped = False
 
+        rospy.on_shutdown(self.stop_program)
+
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
@@ -183,26 +185,7 @@ class ProgramManagerNode:
         return self.__execute_program(language, name=name, code_string=code_string)
 
     def __callback_stop_program(self, _req):
-        if not self.__program_is_running.program_is_running:
-            return CommandStatus.SUCCESS, "No program is running"
-
-        try:
-            self.__loop_autorun = False
-            ret, message = self.__python2_manager.stop_execution()
-            if not self.__standalone:
-                self.__stop_robot_action()
-
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, "")
-            self.__program_is_running_publisher.publish(self.__program_is_running)
-
-        except Exception as e:
-            return CommandStatus.PROGRAMS_MANAGER_FAILURE, str(e)
-
-        if ret:
-            self.__execution_stopped = True
-            return CommandStatus.SUCCESS, "Stop program success"
-        else:
-            return CommandStatus.PROGRAMS_MANAGER_STOPPING_FAILED, message
+        return self.stop_program()
 
     # Autorun
     def __callback_set_program_autorun(self, req):
@@ -399,6 +382,27 @@ class ProgramManagerNode:
         return programs_names, list_of_language_list, programs_description
 
     # - Others functions
+    def stop_program(self):
+        if not self.__program_is_running.program_is_running:
+            return CommandStatus.SUCCESS, "No program is running"
+
+        try:
+            self.__loop_autorun = False
+            ret, message = self.__python2_manager.stop_execution()
+            if not self.__standalone:
+                self.__stop_robot_action()
+
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, "")
+            self.__program_is_running_publisher.publish(self.__program_is_running)
+
+        except Exception as e:
+            return CommandStatus.PROGRAMS_MANAGER_FAILURE, str(e)
+
+        if ret:
+            self.__execution_stopped = True
+            return CommandStatus.SUCCESS, "Stop program success"
+        else:
+            return CommandStatus.PROGRAMS_MANAGER_STOPPING_FAILED, message
 
     @staticmethod
     def __stop_robot_action():

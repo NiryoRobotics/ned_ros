@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_python_ros_wrapper</name>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <description>Provides a python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
