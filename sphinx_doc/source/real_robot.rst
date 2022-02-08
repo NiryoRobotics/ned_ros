@@ -15,24 +15,28 @@ Use your Niryo Robot
                   :alt: Ned
                   :width: 300px
                   :align: center
+      -  .. image:: ../images/niryo_ned2_front.png
+                  :alt: Ned
+                  :width: 300px
+                  :align: center
 
-Every Niryo Robot is usable as is when first switched on, with Niryo Studio for instance.
-However this Robot can be used in many more ways if you want to go deeper into its understanding.
+Every Niryo Robot is usable as it is when first switched on, with Niryo Studio for instance.
+However this robot can be used in many more ways if you want to go deeper into its understanding.
 
-In this tutorial, we will explain how the Robot is setup and the different options you have of controlling it.
+In this tutorial, we will explain how the robot is setup and the different options you have to control it.
 
 Connecting to the Robot
 ======================================
-You can connect to your robot in multiple ways (Ethernet direct, Wifi Hotspot, LAN).
+You can connect to your robot in multiple ways (Ethernet direct, Wi-Fi Hotspot, LAN).
 
 You can find more information on how to connect to your robot `here <https://docs.niryo.com/product/niryo-studio/source/connection.html>`_.
 
-Once your robot is accessible from your computer, you can access it through three ways :
+Once your robot is accessible from your computer, you can access it through three ways:
 
 * Via Niryo Studio
   
   Niryo Studio provides you with all the tools you need to control the robot.
-  Please refere to the :doc_niryo_studio:`Niryo Studio documentation <>` for more information.
+  Please refer to the :doc_niryo_studio:`Niryo Studio documentation <>` for more information.
   
 * Via ROS Multimachine.
   
@@ -59,24 +63,25 @@ To help you understand how the OS is setup in the robot, we provide you with som
 System setup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Robot is running on top of an Ubuntu server 18.04.5 for ARM customized to work on a raspberry pi 4B
+The robot is running on top of an Ubuntu server 18.04.5 for ARM customized to work on a Raspberry Pi 4B.
+
 It comprises all the following elements :
-- ROS melodic and its requirements
-- Sound driver
-- Led ring driver
-- Robot System services (connectivity, databases, flask server)
-- Basic development tools (compilation, editing tools)
+   - ROS melodic and its requirements
+   - Sound driver
+   - Led ring driver
+   - Robot System services (connectivity, databases, flask server)
+   - Basic development tools (compilation, editing tools)
 
 We took care to update and upgrade the system before sending it to you
 
 .. attention::
-   We cannot ensure that the stability of the system will be kept if you try to update your system yourself (using apt).
-   We strongly advise you against it.
+   We can't ensure that the stability of the system will be kept if you try to update your system by yourself (using apt).
+   We strongly advise you not to do so. 
 
 Home setup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The system has been configured with a default user "niryo".
-The core of the Robot program is installed in the home directory of niryo user */home/niryo*.
+The core of the robot program is installed in the home directory of niryo user */home/niryo*.
 
 In this directory, you have:
 
@@ -87,7 +92,7 @@ In this directory, you have:
 
 Services and daemons
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Two services are used on the Robot : 
+Two services are used on the robot: 
 
 - niryo_system_software : It launches the flask server for API communication with the robot
 
@@ -113,7 +118,7 @@ You will need to have a ssh access setup to continue.
 
 Stopping the service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-First you will need to stop the Niryo ROS Stack that is automatically started when the robot boot up.
+First you will need to stop the Niryo ROS Stack that is automatically started when the robot boots up.
 Use the system linux command to do so:
 
 .. code::
@@ -124,14 +129,14 @@ Starting the robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 To start the robot, launch the following commands in a ssh terminal:
 
-For the Ned
+For Ned
 
 .. code::
 
    source /home/niryo/catkin_ws/install/release/ned/setup.bash
    roslaunch niryo_robot_bringup niryo_ned_robot.launch
 
-For the Ned2
+For Ned2
 
 .. code::
 

@@ -19,8 +19,8 @@ Hotspot
 * **Type:** Wi-Fi
 * **Difficulty:** :green:`Easy`
 * **Description:** The robot provides its own Wi-Fi network. In this mode, you can connect to the robot like any other Wi-Fi network. |br| The network name is in the format of **NiryoRobot xx-xx-xx** and the default password is **niryorobot**. To change the name of the robot, refer to the section: `Robot Name <https://docs.niryo.com/product/niryo-studio/source/settings.html#robot-name>`_ .
-* **More informations:** `Wi-Fi settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned in Hotspot mode <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-hotspot-mode>`_
-* **Advantage:** Easy, no cable required
+* **More informations:** `Wi-Fi settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned in Hotspot mode <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-hotspot-mode>`_ .
+* **Advantage:** Easy, no cable required.
 * **Disadvantage:** Ethernet connection needed on the computer to have access to the internet. The robot has no access to the internet and cannot update itself.
 * **IP address:** 10.10.10.10
 
@@ -29,11 +29,11 @@ Connected mode
 
 * **Type:** Wi-Fi
 * **Difficulty:** :orange:`Medium`
-* **Description:** The robot is connected to an existing wifi network.
-* **More informations:** `Wi-Fi settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned on your Wi-Fi network <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-on-your-wi-fi-network>`_
+* **Description:** The robot is connected to an existing Wi-Fi network.
+* **More informations:** `Wi-Fi settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned on your Wi-Fi network <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-on-your-wi-fi-network>`_ .
 * **Advantage:** Ethernet connection needed on the computer to have access to the internet. The robot has no access to the internet and cannot update itself.
 * **Disadvantage:** Stable Wi-Fi connection required.
-* **IP address:** Dependant of your network
+* **IP address:** Dependant of your network.
 
 Ethernet direct
 **************************************************
@@ -41,8 +41,8 @@ Ethernet direct
 * **Type:** Ethernet
 * **Difficulty:** :orange:`Medium`
 * **Description:** The robot is connected directly to the computer via an ethernet cable.
-* **More informations:** `Ethernet settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#network-settings>`_, `Using Ned with an Ethernet cable <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-with-an-ethernet-cable>`_
-* **Advantage:** The computer can have access to the internet through wifi. Safer and better communication with the robot
+* **More informations:** `Ethernet settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#network-settings>`_, `Using Ned with an Ethernet cable <https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-with-an-ethernet-cable>`_ .
+* **Advantage:** The computer can have access to the internet through Wi-Fi. Safer and better communication with the robot.
 * **Disadvantage:** Cable required. The robot has no access to the internet and cannot update itself.
 * **IP address:** 169.254.200.200
 
@@ -52,15 +52,15 @@ Ethernet through network
 * **Type:** Ethernet
 * **Difficulty:** :orange:`Medium`
 * **Description:** The robot is connected to the network via an ethernet cable, and the computer is connected to the network via an ethernet cable or via Wi-Fi.
-* **More informations:** `Ethernet settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#network-settings>`_
-* **Advantage:** The robot and the computer can have access to the internet. Better communication with the robot
+* **More informations:** `Ethernet settings <https://docs.niryo.com/product/niryo-studio/source/settings.html#network-settings>`_ .
+* **Advantage:** The robot and the computer can have access to the internet. Better communication with the robot.
 * **Disadvantage:** Cable required.
-* **IP address:** Dependant of your network
+* **IP address:** Dependant of your network.
 
 Robot programming
 --------------------
 
-There are 6 ways to program the Niryo robots:
+There are 6 ways to program Niryo's robots:
 
 .. list-table:: Ways to program the Niryo robots
    :header-rows: 1
@@ -81,11 +81,11 @@ There are 6 ways to program the Niryo robots:
       - | Simplified block programming.
         | Program your use cases as quickly as possible.
 
-   *  - Pyniryo
+   *  - PyNiryo
       - Python
       - :orange:`Intermediate`
       - `Pyniryo <https://docs.niryo.com/dev/pyniryo/index.html>`_
-      - Program your robot remotely via a python api 2.7 and 3.X .
+      - Program your robot remotely via a Python API 2.7 and 3.X .
 
    *  - Python ROS wrapper
       - Python
@@ -122,9 +122,9 @@ Program your first move in 30 seconds
 *********************************************
 
 The fastest way to program the robot is via `Blockly <https://docs.niryo.com/product/niryo-studio/source/blockly_api.html>`_.
-When you are on the blockly page and logged into the robot, switch to learning mode via the toggle.
+When you are on the Blockly page and logged into the robot, switch to learning mode via the toggle.
 You can then press the button on top of the robot's base once to bring up a block with the robot's current position.
-So, move your robot by hand, press the button, connect the blocks. Congratulations you have programmed a robot at lightning speed!
+Thus, move your robot by hand, press the button and connect the blocks. Congratulations you have programmed a robot at lightning speed!
 
 At the top right of the Blockly window, you can choose to save the positions in either **Joints** or **Pose** mode.
 
@@ -146,13 +146,13 @@ Use a tool
 *********************************************
 
 To use a tool, remember to use the **scan** function to detect the connected tool.
-You can then use the grippers, the vacuum pump or the electromagnet as you wish.
+You can then use the grippers, the Vacuum Pump or the Electromagnet as you wish.
 
 Remember to add the scan function at the beginning of each of your programs to avoid any surprises.
 
 Our different tools are intelligent, so the robot will be able to adapt its movements according to the selected tool for a pick and place with vision.
 Also, you can program your movements with **Pose**.
-So by activating the `TCP (Tool Center Point) <https://docs.niryo.com/product/niryo-studio/source/settings.html#robot-tcp-tool-center-point>`_ function,
+By activating the `TCP (Tool Center Point) <https://docs.niryo.com/product/niryo-studio/source/settings.html#robot-tcp-tool-center-point>`_ function,
 the TCP of the robot, and therefore the movements, will adapt to the tool equipped.
 
 
@@ -187,7 +187,7 @@ The 3 most used are the following:
 Start, Pause, Cancel a program execution
 **************************************************
 
-You may not have known it, but the button on the top of the base of the robot also allows you to start, pause and stop a program.
+You may not know it, but the button on the top of the base of the robot also allows you to start, pause and stop a program.
 
 When a program is running:
     * 1 press pauses the program
@@ -195,7 +195,7 @@ When a program is running:
 
 When a program is paused:
     * 1 press resumes the program
-    * 2 press stops the program
+    * 2 presses stop the program
     * If there is no intervention for 30 seconds, the programme stops automatically
 
 When the program is paused, the LED at the back flashes white.
