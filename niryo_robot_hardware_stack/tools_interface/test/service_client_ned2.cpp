@@ -82,7 +82,7 @@ TEST(ToolTestConfigSuite, compabilityConfig)
     for (int i = 0; i < filters.size(); i++)
     {
         int id = static_cast<int>(filters[i]["id"]);
-        if (id == -1)
+        if (id == 0)
             continue;
         EXPECT_TRUE(std::find(idList.begin(), idList.end(), id) != idList.end());
     }
@@ -99,7 +99,8 @@ TEST(ToolTestSetTool, addTool)
 
     auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
+    // using timeout 5 seconds for the first calling service Ros to delay tests until tools_interface node launched
+    bool exists(client.waitForExistence(ros::Duration(5)));
     EXPECT_TRUE(exists);
 
     tools_interface::PingDxlTool srv;
