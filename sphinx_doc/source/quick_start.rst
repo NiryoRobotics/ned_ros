@@ -97,7 +97,7 @@ There are 6 ways to program Niryo's robots:
    *  - ROS
       - Python, C++
       - :red:`Advanced`
-      - `Niryo Ros <https://docs.niryo.com/dev/ros/v4.0.0/en/source/stack/overview.html>`_
+      - `Niryo Ros <https://docs.niryo.com/dev/ros/source/stack/overview.html>`_
       - | Program and run your ROS node directly on the robot,
         | or remotely through ROS Multimachine.
 
@@ -201,7 +201,7 @@ When a program is paused:
 When the program is paused, the LED at the back flashes white.
 
 When no program is running you can also start a program by pressing the same button once.
-To set it up, go to the `Program Autorun <https://docs.niryo.com/product/niryo-studio/v4.0.0/en/source/programs.html#program-autorun>`_.
+To set it up, go to the `Program Autorun <https://docs.niryo.com/product/niryo-studio/en/source/programs.html#program-autorun>`_.
 
 
 .. |br| raw:: html
