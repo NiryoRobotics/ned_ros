@@ -2,7 +2,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # Can be changed, choices are: amd64 or arm64
 ARCHITECTURE=amd64
-VERSION=v4.0.0
+VERSION=v4.0.1
 
 DOCKER_IMAGE_NAME=registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/${VERSION}
 ## Tag to push image on gitlab

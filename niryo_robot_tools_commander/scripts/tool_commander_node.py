@@ -204,14 +204,15 @@ class ToolCommander:
             return self.create_response(CommandStatus.TOOL_FAILURE,
                                         "Impossible to set new tool")
 
-        if id_ not in self.__available_tools:
+        if id_ < 0:
+            id_ = self.__dict_tool_str_to_id['No Tool']
+        elif id_ not in self.__available_tools:
             # no tool found in available tools
             return self.create_response(CommandStatus.TOOL_ID_INVALID, "This ID does not match any available tool ID")
 
         self.set_tool(self.__available_tools[id_])
 
-        return self.create_response(CommandStatus.SUCCESS,
-                                    "New tool has been set, id : {}".format(id_))
+        return self.create_response(CommandStatus.SUCCESS, "New tool has been set, id : {}".format(id_))
 
     def __callback_equip_electromagnet(self, req):
         id_ = req.value
