@@ -349,7 +349,7 @@ int TtlManager::changeId(EHardwareType motor_type, uint8_t old_id, uint8_t new_i
                             *iter = new_id;
                     }
                 }
-                if (!_ids_map.count(motor_type))
+                if (_ids_map.count(motor_type))
                 {
                     // update all maps
                     _ids_map.at(motor_type).erase(std::remove(_ids_map.at(motor_type).begin(), _ids_map.at(motor_type).end(), old_id),
@@ -550,7 +550,6 @@ bool TtlManager::readJointsStatus()
     uint8_t hw_errors_increment = 0;
 
     // syncread position for all motors.
-    // for ned 2 -> Using only one driver for all motors to avoid loop.
     // for ned and one -> we need at least one xl430 and one xl320 drivers as they are different
     // All addresses for position are the same
 
