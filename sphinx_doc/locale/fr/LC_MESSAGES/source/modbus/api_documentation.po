@@ -163,7 +163,7 @@ msgstr "1A"
 
 #: ../../source/modbus/api_documentation.rst:55
 msgid "DI1"
-msgstr "DI1
+msgstr "DI1"
 
 #: ../../source/modbus/api_documentation.rst:56
 #: ../../source/modbus/api_documentation.rst:415
@@ -786,7 +786,6 @@ msgid "650"
 msgstr "650"
 
 #: ../../source/modbus/api_documentation.rst:293
-#, fuzzy
 msgid ""
 "Set Analog IO - Arg: [:ref:`Analog IO number<Analog IO addresses offset "
 "table>`, voltage 0V- 5000mV]"
@@ -1059,4 +1058,4 @@ msgstr ":doc:`../stack/high_level/niryo_robot_msgs`"
 
 #: ../../source/modbus/api_documentation.rst:432
 msgid ":msgs_index:`std_msgs`"
-msgstr ""
+msgstr ":msgs_index:`std_msgs`"
