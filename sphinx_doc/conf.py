@@ -133,7 +133,7 @@ extlinks = {
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
-    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html/%s', None),
+    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html%s', ''),
     'python_website': ('https://www.python.org/%s', None),
     'python_installation': ('https://realpython.com/installing-python/%s', None),
     'pip_website': ('https://pypi.org/project/pip/%s', None),

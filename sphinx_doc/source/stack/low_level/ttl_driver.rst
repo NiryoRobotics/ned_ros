@@ -160,12 +160,6 @@ ArrayMotorHardwareStatus (Message)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/msg/ArrayMotorHardwareStatus.msg
    :language: rostype
 
-CollisionStatus (Message)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/msg/CollisionStatus.msg
-   :language: rostype
-
 
 .. |namespace_cpp| replace:: ttl_driver
 .. |namespace| replace:: /niryo_robot/ttl_driver/

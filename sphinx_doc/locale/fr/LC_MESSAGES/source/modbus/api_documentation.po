@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Modbus User Manual 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-18 16:36+0000\n"
+"POT-Creation-Date: 2022-02-10 09:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,12 +39,14 @@ msgstr ""
 #: ../../source/modbus/api_documentation.rst:13
 msgid ""
 "The Modbus/TCP server is running on **port 5020** by default. It has been"
-" built on top of the :pymodbus:`pymodbus<>` library. This enables you to "
-"make Ned communicates with a PLC, or another computer on the same "
-"network."
+" built on top of the `pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_ library. This "
+"enables you to make Ned communicates with a PLC, or another computer on "
+"the same network."
 msgstr ""
 "Le serveur Modbus/TCP tourne par défaut sur le **port 5020**. Il a été "
-"développé en utilisant la librairie :pymodbus:`pymodbus<>`. Le serveur "
+"développé en utilisant la librairie `pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_. Le serveur "
 "vous permet de faire communiquer Ned avec un CLP ou avec un autre "
 "ordinateur sur le même réseau."
 
@@ -789,9 +791,9 @@ msgstr "650"
 msgid ""
 "Set Analog IO - Arg: [:ref:`Analog IO number<Analog IO addresses offset "
 "table>`, voltage 0V- 5000mV]"
-msgstr "Appliquer l'E/S analogique - Arg : [:ref:`Analog IO number<Analog IO addresses offset "
-"table>`, Tension 0V- 5000mV]"
-
+msgstr ""
+"Appliquer l'E/S analogique - Arg : [:ref:`Analog IO number<Analog IO "
+"addresses offset table>`, Tension 0V- 5000mV]"
 
 #: ../../source/modbus/api_documentation.rst:295
 msgid ""
@@ -1010,8 +1012,9 @@ msgid "Analog IO state in mV"
 msgstr "Valeur de l'E/S analogique en mV"
 
 #: ../../source/modbus/api_documentation.rst:404
+#, fuzzy
 msgid "Analog IO addresses offset table"
-msgstr "Table de décalage des adresses E/S analogiques"
+msgstr "Table des décalages d'addresse des E/S digitales"
 
 #: ../../source/modbus/api_documentation.rst:410
 msgid "Niryo One / Ned analog IO"
@@ -1034,11 +1037,11 @@ msgstr "AI1"
 
 #: ../../source/modbus/api_documentation.rst:417
 msgid "AI2"
-msgstr "Quel"
+msgstr "AI2"
 
 #: ../../source/modbus/api_documentation.rst:420
 msgid "AO1"
-msgstr "av1"
+msgstr "AO1"
 
 #: ../../source/modbus/api_documentation.rst:423
 msgid "AO2"
@@ -1050,7 +1053,9 @@ msgstr "Dépendances - Serveur Modbus TCP"
 
 #: ../../source/modbus/api_documentation.rst:430
 msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
-msgstr "`Librairie pymodbus <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+msgstr ""
+"`Librairie pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_"
 
 #: ../../source/modbus/api_documentation.rst:431
 msgid ":doc:`../stack/high_level/niryo_robot_msgs`"
@@ -1059,3 +1064,4 @@ msgstr ":doc:`../stack/high_level/niryo_robot_msgs`"
 #: ../../source/modbus/api_documentation.rst:432
 msgid ":msgs_index:`std_msgs`"
 msgstr ":msgs_index:`std_msgs`"
+
