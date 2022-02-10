@@ -1,0 +1,699 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-09 10:13+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/quick_start.rst:6
+msgid "Quick start"
+msgstr ""
+
+#: ../../source/quick_start.rst:8
+msgid ""
+"Welcome to the robot quick start. Here you will learn the essential "
+"features of the robot to get you started."
+msgstr ""
+
+#: ../../source/quick_start.rst:12
+msgid "Robot connection"
+msgstr ""
+
+#: ../../source/quick_start.rst:14
+msgid "There are 4 ways to connect your computer to the robot:"
+msgstr ""
+
+#: ../../source/quick_start.rst:17
+msgid "Hotspot"
+msgstr ""
+
+#: ../../source/quick_start.rst:19 ../../source/quick_start.rst:30
+msgid "**Type:** Wi-Fi"
+msgstr ""
+
+#: ../../source/quick_start.rst:20
+msgid "**Difficulty:** :green:`Easy`"
+msgstr ""
+
+#: ../../source/quick_start.rst:21
+msgid ""
+"**Description:** The robot provides its own Wi-Fi network. In this mode, "
+"you can connect to the robot like any other Wi-Fi network. |br| The "
+"network name is in the format of **NiryoRobot xx-xx-xx** and the default "
+"password is **niryorobot**. To change the name of the robot, refer to the"
+" section: `Robot Name <https://docs.niryo.com/product/niryo-"
+"studio/source/settings.html#robot-name>`_ ."
+msgstr ""
+
+#: ../../source/quick_start.rst:22
+msgid ""
+"**More informations:** `Wi-Fi settings <https://docs.niryo.com/product"
+"/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned in "
+"Hotspot mode <https://docs.niryo.com/product/niryo-"
+"studio/source/connection.html#using-ned-in-hotspot-mode>`_ ."
+msgstr ""
+
+#: ../../source/quick_start.rst:23
+msgid "**Advantage:** Easy, no cable required."
+msgstr ""
+
+#: ../../source/quick_start.rst:24
+msgid ""
+"**Disadvantage:** Ethernet connection needed on the computer to have "
+"access to the internet. The robot has no access to the internet and "
+"cannot update itself."
+msgstr ""
+
+#: ../../source/quick_start.rst:25
+msgid "**IP address:** 10.10.10.10"
+msgstr ""
+
+#: ../../source/quick_start.rst:28
+msgid "Connected mode"
+msgstr ""
+
+#: ../../source/quick_start.rst:31 ../../source/quick_start.rst:42
+#: ../../source/quick_start.rst:53
+msgid "**Difficulty:** :orange:`Medium`"
+msgstr ""
+
+#: ../../source/quick_start.rst:32
+msgid "**Description:** The robot is connected to an existing Wi-Fi network."
+msgstr ""
+
+#: ../../source/quick_start.rst:33
+msgid ""
+"**More informations:** `Wi-Fi settings <https://docs.niryo.com/product"
+"/niryo-studio/source/settings.html#ned-wi-fi-setting>`_, `Using Ned on "
+"your Wi-Fi network <https://docs.niryo.com/product/niryo-"
+"studio/source/connection.html#using-ned-on-your-wi-fi-network>`_ ."
+msgstr ""
+
+#: ../../source/quick_start.rst:34
+msgid ""
+"**Advantage:** Ethernet connection needed on the computer to have access "
+"to the internet. The robot has no access to the internet and cannot "
+"update itself."
+msgstr ""
+
+#: ../../source/quick_start.rst:35
+msgid "**Disadvantage:** Stable Wi-Fi connection required."
+msgstr ""
+
+#: ../../source/quick_start.rst:36 ../../source/quick_start.rst:58
+msgid "**IP address:** Dependant of your network."
+msgstr ""
+
+#: ../../source/quick_start.rst:39
+msgid "Ethernet direct"
+msgstr ""
+
+#: ../../source/quick_start.rst:41 ../../source/quick_start.rst:52
+msgid "**Type:** Ethernet"
+msgstr ""
+
+#: ../../source/quick_start.rst:43
+msgid ""
+"**Description:** The robot is connected directly to the computer via an "
+"ethernet cable."
+msgstr ""
+
+#: ../../source/quick_start.rst:44
+msgid ""
+"**More informations:** `Ethernet settings <https://docs.niryo.com/product"
+"/niryo-studio/source/settings.html#network-settings>`_, `Using Ned with "
+"an Ethernet cable <https://docs.niryo.com/product/niryo-"
+"studio/source/connection.html#using-ned-with-an-ethernet-cable>`_ ."
+msgstr ""
+
+#: ../../source/quick_start.rst:45
+msgid ""
+"**Advantage:** The computer can have access to the internet through Wi-"
+"Fi. Safer and better communication with the robot."
+msgstr ""
+
+#: ../../source/quick_start.rst:46
+msgid ""
+"**Disadvantage:** Cable required. The robot has no access to the internet"
+" and cannot update itself."
+msgstr ""
+
+#: ../../source/quick_start.rst:47
+msgid "**IP address:** 169.254.200.200"
+msgstr ""
+
+#: ../../source/quick_start.rst:50
+msgid "Ethernet through network"
+msgstr ""
+
+#: ../../source/quick_start.rst:54
+msgid ""
+"**Description:** The robot is connected to the network via an ethernet "
+"cable, and the computer is connected to the network via an ethernet cable"
+" or via Wi-Fi."
+msgstr ""
+
+#: ../../source/quick_start.rst:55
+msgid ""
+"**More informations:** `Ethernet settings <https://docs.niryo.com/product"
+"/niryo-studio/source/settings.html#network-settings>`_ ."
+msgstr ""
+
+#: ../../source/quick_start.rst:56
+msgid ""
+"**Advantage:** The robot and the computer can have access to the "
+"internet. Better communication with the robot."
+msgstr ""
+
+#: ../../source/quick_start.rst:57
+msgid "**Disadvantage:** Cable required."
+msgstr ""
+
+#: ../../source/quick_start.rst:61
+msgid "Robot programming"
+msgstr ""
+
+#: ../../source/quick_start.rst:63
+msgid "There are 6 ways to program Niryo's robots:"
+msgstr ""
+
+#: ../../source/quick_start.rst:65
+msgid "Ways to program the Niryo robots"
+msgstr ""
+
+#: ../../source/quick_start.rst:71
+msgid "Name"
+msgstr ""
+
+#: ../../source/quick_start.rst:72
+msgid "Language"
+msgstr ""
+
+#: ../../source/quick_start.rst:73
+msgid "Difficulty"
+msgstr ""
+
+#: ../../source/quick_start.rst:74
+msgid "Documentation"
+msgstr ""
+
+#: ../../source/quick_start.rst:75
+msgid "Description"
+msgstr ""
+
+#: ../../source/quick_start.rst:77
+msgid "Niryo Studio"
+msgstr ""
+
+#: ../../source/quick_start.rst:78
+msgid "Blockly"
+msgstr ""
+
+#: ../../source/quick_start.rst:79
+msgid ":green:`Beginner`"
+msgstr ""
+
+#: ../../source/quick_start.rst:80
+msgid ""
+"`Blockly <https://docs.niryo.com/product/niryo-"
+"studio/source/blockly_api.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Simplified block programming."
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Program your use cases as quickly as possible."
+msgstr ""
+
+#: ../../source/quick_start.rst:84
+msgid "PyNiryo"
+msgstr ""
+
+#: ../../source/quick_start.rst:85 ../../source/quick_start.rst:91
+msgid "Python"
+msgstr ""
+
+#: ../../source/quick_start.rst:86 ../../source/quick_start.rst:92
+msgid ":orange:`Intermediate`"
+msgstr ""
+
+#: ../../source/quick_start.rst:87
+msgid "`Pyniryo <https://docs.niryo.com/dev/pyniryo/index.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst:88
+msgid "Program your robot remotely via a Python API 2.7 and 3.X ."
+msgstr ""
+
+#: ../../source/quick_start.rst:90
+msgid "Python ROS wrapper"
+msgstr ""
+
+#: ../../source/quick_start.rst:93
+msgid ""
+"`Python ROS wrapper "
+"<https://docs.niryo.com/dev/ros/source/ros_wrapper.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Program and run your Python code directly in the robot."
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "No software or setup required except Niryo Studio or an ssh terminal."
+msgstr ""
+
+#: ../../source/quick_start.rst:97
+msgid "ROS"
+msgstr ""
+
+#: ../../source/quick_start.rst:98
+msgid "Python, C++"
+msgstr ""
+
+#: ../../source/quick_start.rst:99 ../../source/quick_start.rst:106
+#: ../../source/quick_start.rst:113
+msgid ":red:`Advanced`"
+msgstr ""
+
+#: ../../source/quick_start.rst:100
+msgid "`Niryo Ros <https://docs.niryo.com/dev/ros/source/stack/overview.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Program and run your ROS node directly on the robot,"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "or remotely through ROS Multimachine."
+msgstr ""
+
+#: ../../source/quick_start.rst:104
+msgid "MODBUS"
+msgstr ""
+
+#: ../../source/quick_start.rst:105 ../../source/quick_start.rst:112
+msgid "Any"
+msgstr ""
+
+#: ../../source/quick_start.rst:107
+msgid "`MODBUS <https://docs.niryo.com/dev/ros/source/modbus_tcp_server.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Programs can communicate through network MODBUS"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "with the robots in any language available."
+msgstr ""
+
+#: ../../source/quick_start.rst:111
+msgid "TCP Server"
+msgstr ""
+
+#: ../../source/quick_start.rst:114
+msgid "`TCP Server <https://docs.niryo.com/dev/ros/source/tcp_server.html>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst
+msgid "Programs can communicate through network TCP"
+msgstr ""
+
+#: ../../source/quick_start.rst:119
+msgid "Niryo One and Ned tips"
+msgstr ""
+
+#: ../../source/quick_start.rst:122
+msgid "Program your first move in 30 seconds"
+msgstr ""
+
+#: ../../source/quick_start.rst:124
+msgid ""
+"The fastest way to program the robot is via `Blockly "
+"<https://docs.niryo.com/product/niryo-studio/source/blockly_api.html>`_. "
+"When you are on the Blockly page and logged into the robot, switch to "
+"learning mode via the toggle. You can then press the button on top of the"
+" robot's base once to bring up a block with the robot's current position."
+" Thus, move your robot by hand, press the button and connect the blocks. "
+"Congratulations you have programmed a robot at lightning speed!"
+msgstr ""
+
+#: ../../source/quick_start.rst:129
+msgid ""
+"At the top right of the Blockly window, you can choose to save the "
+"positions in either **Joints** or **Pose** mode."
+msgstr ""
+
+#: ../../source/quick_start.rst:132
+msgid "Joints & Poses, what's the difference?"
+msgstr ""
+
+#: ../../source/quick_start.rst:134
+msgid ""
+"The joints are the different joints of the robot. In joint mode, you give"
+" the robot a command on each of the robot motors. The default unit used "
+"is the radian. 6.28318530718 radian is 2π and corresponds to 360°. On "
+"Niryo Studio you can switch to degrees for more simplicity."
+msgstr ""
+
+#: ../../source/quick_start.rst:137
+msgid ""
+"The Pose corresponds to the x, y, z coordinates and the roll, pitch, yaw "
+"orientation (respecting the rotation around the x, y, z axes) of the "
+"extremity of the robot. The x-axis is directed to the front of the robot,"
+" and the y-axis to the left of the robot. A positive x-coordinate will "
+"move the robot forward. A positive y-coordinate will move the robot to "
+"the left, and negative y will move the robot to the right."
+msgstr ""
+
+#: ../../source/quick_start.rst:141
+msgid ""
+"Sometimes there can be several axis configurations of the robot that "
+"correspond to the same coordinates. This is why it is recommended to use "
+"the **Joints** commands instead. The **Pose** is however easier and more "
+"intuitive to use to ask the robot to go for example 10cm higher, or 10 to"
+" the right."
+msgstr ""
+
+#: ../../source/quick_start.rst:146
+msgid "Use a tool"
+msgstr ""
+
+#: ../../source/quick_start.rst:148
+msgid ""
+"To use a tool, remember to use the **scan** function to detect the "
+"connected tool. You can then use the grippers, the Vacuum Pump or the "
+"Electromagnet as you wish."
+msgstr ""
+
+#: ../../source/quick_start.rst:151
+msgid ""
+"Remember to add the scan function at the beginning of each of your "
+"programs to avoid any surprises."
+msgstr ""
+
+#: ../../source/quick_start.rst:153
+msgid ""
+"Our different tools are intelligent, so the robot will be able to adapt "
+"its movements according to the selected tool for a pick and place with "
+"vision. Also, you can program your movements with **Pose**. By activating"
+" the `TCP (Tool Center Point) <https://docs.niryo.com/product/niryo-"
+"studio/source/settings.html#robot-tcp-tool-center-point>`_ function, the "
+"TCP of the robot, and therefore the movements, will adapt to the tool "
+"equipped."
+msgstr ""
+
+#: ../../source/quick_start.rst:160
+msgid "Standard, linear, waypointed moves, what's the difference?"
+msgstr ""
+
+#: ../../source/quick_start.rst:162
+msgid ""
+"There are many different types of movement possible for robot arms. The 3"
+" most used are the following:"
+msgstr ""
+
+#: ../../source/quick_start.rst:165
+msgid ""
+"**Standard movements:** Also called PTP (Point To Point). This is the "
+"simplest movement. In this type of movement, the duration of the movement"
+" is minimized, each joint reaches the final position at the same time. "
+"The robot draws a kind of arc of a circle according to the initial and "
+"final positions."
+msgstr ""
+
+#: ../../source/quick_start.rst:169
+msgid ""
+"**Linear movements:** The robot draws a straight line between the start "
+"and end position However, a linear movement is not always possible "
+"between two points depending on the constraints of the robot. Make sure "
+"that the movement is feasible. If not, the robot will return an error."
+msgstr ""
+
+#: ../../source/quick_start.rst:173
+msgid ""
+"**Smoothed movements by waypoints:** This is where we ask the robot to "
+"make a movement to an end point by passing through intermediate points. "
+"The robot draws linear paths, or PTP if linear motion is not possible, "
+"between each waypoint without stopping. It is also possible to record "
+"blend radius to smooth the movement and to draw curves between the "
+"points. This path is ideal for dodging obstacles."
+msgstr ""
+
+#: ../../source/quick_start.rst:184
+msgid ""
+"`Waypointed trajectory with blend radius <https://ros-"
+"planning.github.io/moveit_tutorials/doc/pilz_industrial_motion_planner/pilz_industrial_motion_planner.html"
+"#user-interface-sequence-capability>`_"
+msgstr ""
+
+#: ../../source/quick_start.rst:188
+msgid "Start, Pause, Cancel a program execution"
+msgstr ""
+
+#: ../../source/quick_start.rst:190
+msgid ""
+"You may not know it, but the button on the top of the base of the robot "
+"also allows you to start, pause and stop a program."
+msgstr ""
+
+#: ../../source/quick_start.rst:194
+msgid "When a program is running:"
+msgstr ""
+
+#: ../../source/quick_start.rst:193
+msgid "1 press pauses the program"
+msgstr ""
+
+#: ../../source/quick_start.rst:194
+msgid "2 presses will pause the programme and activate the learning mode"
+msgstr ""
+
+#: ../../source/quick_start.rst:199
+msgid "When a program is paused:"
+msgstr ""
+
+#: ../../source/quick_start.rst:197
+msgid "1 press resumes the program"
+msgstr ""
+
+#: ../../source/quick_start.rst:198
+msgid "2 presses stop the program"
+msgstr ""
+
+#: ../../source/quick_start.rst:199
+msgid ""
+"If there is no intervention for 30 seconds, the programme stops "
+"automatically"
+msgstr ""
+
+#: ../../source/quick_start.rst:201
+msgid "When the program is paused, the LED at the back flashes white."
+msgstr ""
+
+#: ../../source/quick_start.rst:203
+msgid ""
+"When no program is running you can also start a program by pressing the "
+"same button once. To set it up, go to the `Program Autorun "
+"<https://docs.niryo.com/product/niryo-studio/en/source/programs.html"
+"#program-autorun>`_."
+msgstr ""
+
+#~ msgid "There are 6 ways to connect program the Niryo robots:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Our different tools are intelligent, so"
+#~ " the robot will be able to "
+#~ "adapt its movements according to the "
+#~ "selected tool for a pick and place"
+#~ " with vision. Also, you can program"
+#~ " your movements with **Pose**. So by"
+#~ " activating the `TCP (Tool Center "
+#~ "Point) <https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#robot-tcp-tool-"
+#~ "center-point>` function, the TCP of "
+#~ "the robot, and therefore the movements,"
+#~ " will adapt to the tool equipped."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Linear movements:** The robot draws a"
+#~ " straight line between the start and"
+#~ " end position.fir However, a linear "
+#~ "movement is not always possible between"
+#~ " two points depending on the "
+#~ "constraints of the robot. If it is"
+#~ " not possible, the robot will return"
+#~ " to its original position. If not,"
+#~ " the robot will return an error."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**More informations:** `Wi-Fi settings "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#ned-wi-fi-setting>`_,"
+#~ " `Using Ned in Hotspot mode "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/connection.html#using-ned-in-"
+#~ "hotspot-mode>`_"
+#~ msgstr ""
+
+#~ msgid "**Advantage:** Easy, no cable required"
+#~ msgstr ""
+
+#~ msgid "**Description:** The robot is connected to an existing wifi network."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**More informations:** `Wi-Fi settings "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#ned-wi-fi-setting>`_,"
+#~ " `Using Ned on your Wi-Fi "
+#~ "network <https://docs.niryo.com/product/niryo-"
+#~ "studio/source/connection.html#using-ned-on-your-"
+#~ "wi-fi-network>`_"
+#~ msgstr ""
+
+#~ msgid "**IP address:** Dependant of your network"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**More informations:** `Ethernet settings "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#network-settings>`_, `Using"
+#~ " Ned with an Ethernet cable "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/connection.html#using-ned-with-an-"
+#~ "ethernet-cable>`_"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Advantage:** The computer can have "
+#~ "access to the internet through wifi. "
+#~ "Safer and better communication with the"
+#~ " robot"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**More informations:** `Ethernet settings "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#network-settings>`_"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Advantage:** The robot and the "
+#~ "computer can have access to the "
+#~ "internet. Better communication with the "
+#~ "robot"
+#~ msgstr ""
+
+#~ msgid "There are 6 ways to program the Niryo robots:"
+#~ msgstr ""
+
+#~ msgid "Pyniryo"
+#~ msgstr ""
+
+#~ msgid "Program your robot remotely via a python api 2.7 and 3.X ."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The fastest way to program the "
+#~ "robot is via `Blockly "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/blockly_api.html>`_. When you are "
+#~ "on the blockly page and logged "
+#~ "into the robot, switch to learning "
+#~ "mode via the toggle. You can then"
+#~ " press the button on top of the"
+#~ " robot's base once to bring up "
+#~ "a block with the robot's current "
+#~ "position. So, move your robot by "
+#~ "hand, press the button, connect the "
+#~ "blocks. Congratulations you have programmed"
+#~ " a robot at lightning speed!"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To use a tool, remember to use "
+#~ "the **scan** function to detect the "
+#~ "connected tool. You can then use "
+#~ "the grippers, the vacuum pump or "
+#~ "the electromagnet as you wish."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Our different tools are intelligent, so"
+#~ " the robot will be able to "
+#~ "adapt its movements according to the "
+#~ "selected tool for a pick and place"
+#~ " with vision. Also, you can program"
+#~ " your movements with **Pose**. So by"
+#~ " activating the `TCP (Tool Center "
+#~ "Point) <https://docs.niryo.com/product/niryo-"
+#~ "studio/source/settings.html#robot-tcp-tool-"
+#~ "center-point>`_ function, the TCP of "
+#~ "the robot, and therefore the movements,"
+#~ " will adapt to the tool equipped."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You may not have known it, but "
+#~ "the button on the top of the "
+#~ "base of the robot also allows you"
+#~ " to start, pause and stop a "
+#~ "program."
+#~ msgstr ""
+
+#~ msgid "2 press stops the program"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The fastest way to program the "
+#~ "robot is via `Blockly "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/source/blockly_api.html>`_. When you are "
+#~ "on the Blockly page and logged "
+#~ "into the robot, switch to learning "
+#~ "mode via the toggle. You can then"
+#~ " press the button on top of the"
+#~ " robot's base once to bring up "
+#~ "a block with the robot's current "
+#~ "position. Then, move your robot by "
+#~ "hand, press the button again, connect"
+#~ " the blocks. Congratulations you have "
+#~ "programmed a robot at lightning speed!"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "`Niryo Ros "
+#~ "<https://docs.niryo.com/dev/ros/v4.0.0/en/source/stack/overview.html>`_"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "When no program is running you can"
+#~ " also start a program by pressing "
+#~ "the same button once. To set it"
+#~ " up, go to the `Program Autorun "
+#~ "<https://docs.niryo.com/product/niryo-"
+#~ "studio/v4.0.0/en/source/programs.html#program-autorun>`_."
+#~ msgstr ""
+

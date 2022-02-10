@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>common</name>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <description>Gathers all utilities and absctract classes of the different models</description>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 

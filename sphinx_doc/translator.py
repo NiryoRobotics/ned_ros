@@ -14,7 +14,7 @@ def find_file(name, path):
 
 
 folder_path = "/home/niryo/catkin_ws/src/sphinx_doc/locale/fr/"
-file = 'joints_interface.po'
+file = 'quick_start.po'
 file_path = find_file(file, folder_path)
 
 
