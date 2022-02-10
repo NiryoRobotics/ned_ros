@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 17:40+0100\n"
+"POT-Creation-Date: 2022-02-08 08:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,57 +24,57 @@ msgstr ""
 msgid "Use your Niryo Robot"
 msgstr ""
 
-#: ../../source/real_robot.rst:5
+#: ../../source/real_robot.rst:23
 msgid ""
-"Every Niryo Robot is usable as is when first switched on, with Niryo "
-"Studio for instance. However this Robot can be used in many more ways if "
+"Every Niryo Robot is usable as it is when first switched on, with Niryo "
+"Studio for instance. However this robot can be used in many more ways if "
 "you want to go deeper into its understanding."
 msgstr ""
 
-#: ../../source/real_robot.rst:8
+#: ../../source/real_robot.rst:26
 msgid ""
-"In this tutorial, we will explain how the Robot is setup and the "
-"different options you have of controlling it."
+"In this tutorial, we will explain how the robot is setup and the "
+"different options you have to control it."
 msgstr ""
 
-#: ../../source/real_robot.rst:11
+#: ../../source/real_robot.rst:29
 msgid "Connecting to the Robot"
 msgstr ""
 
-#: ../../source/real_robot.rst:12
+#: ../../source/real_robot.rst:30
 msgid ""
-"You can connect to your robot in multiple ways (Ethernet direct, Wifi "
+"You can connect to your robot in multiple ways (Ethernet direct, Wi-Fi "
 "Hotspot, LAN)."
 msgstr ""
 
-#: ../../source/real_robot.rst:14
+#: ../../source/real_robot.rst:32
 msgid ""
-"You can find more information on how to connect to your robot "
-":connecting_to_the_robot:`here <>`."
+"You can find more information on how to connect to your robot `here "
+"<https://docs.niryo.com/product/niryo-studio/source/connection.html>`_."
 msgstr ""
 
-#: ../../source/real_robot.rst:16
+#: ../../source/real_robot.rst:34
 msgid ""
 "Once your robot is accessible from your computer, you can access it "
-"through three ways :"
+"through three ways:"
 msgstr ""
 
-#: ../../source/real_robot.rst:18
+#: ../../source/real_robot.rst:36
 msgid "Via Niryo Studio"
 msgstr ""
 
-#: ../../source/real_robot.rst:20
+#: ../../source/real_robot.rst:38
 msgid ""
 "Niryo Studio provides you with all the tools you need to control the "
-"robot. Please refere to the :doc_niryo_studio:`Niryo Studio documentation"
-" <>` for more information."
+"robot. Please refer to the :doc_niryo_studio:`Niryo Studio documentation "
+"<>` for more information."
 msgstr ""
 
-#: ../../source/real_robot.rst:23
+#: ../../source/real_robot.rst:41
 msgid "Via ROS Multimachine."
 msgstr ""
 
-#: ../../source/real_robot.rst:25
+#: ../../source/real_robot.rst:43
 msgid ""
 "ROS implements a way to communicate between nodes launched on different "
 "machines. By indicating your computer where the Niryo Robot ROS Master "
@@ -83,27 +83,27 @@ msgid ""
 "wiki <>` for more information."
 msgstr ""
 
-#: ../../source/real_robot.rst:30
+#: ../../source/real_robot.rst:48
 msgid "Via ssh (**for advanced users only**)."
 msgstr ""
 
-#: ../../source/real_robot.rst:32
+#: ../../source/real_robot.rst:50
 msgid ""
 "Port 22 is open without restriction. The default user is \"niryo\" and "
 "its password is \"robotics\"."
 msgstr ""
 
-#: ../../source/real_robot.rst:35
+#: ../../source/real_robot.rst:53
 msgid "Robot setup"
 msgstr ""
 
-#: ../../source/real_robot.rst:37
+#: ../../source/real_robot.rst:55
 msgid ""
 "To help you understand how the OS is setup in the robot, we provide you "
 "with some insights of it."
 msgstr ""
 
-#: ../../source/real_robot.rst:40
+#: ../../source/real_robot.rst:58
 msgid ""
 "This document is not intended to explain how to completely install a "
 "robot from an empty SD card. It is only intended to give you clues on its"
@@ -112,168 +112,189 @@ msgid ""
 "would like to reinstall some part of it (catkin_ws for example)."
 msgstr ""
 
-#: ../../source/real_robot.rst:46
+#: ../../source/real_robot.rst:64
 msgid "System setup"
 msgstr ""
 
-#: ../../source/real_robot.rst:48
+#: ../../source/real_robot.rst:66
 msgid ""
-"The Robot is running on top of an Ubuntu server 18.04.5 for ARM "
-"customized to work on a raspberry pi 4B It comprises all the following "
-"elements : - ROS melodic and its requirements - Sound driver - Led ring "
-"driver - Robot System services (connectivity, databases, flask server) - "
-"Basic development tools (compilation, editing tools)"
+"The robot is running on top of an Ubuntu server 18.04.5 for ARM "
+"customized to work on a Raspberry Pi 4B."
 msgstr ""
 
-#: ../../source/real_robot.rst:56
-msgid "We took care to update and upgrade the system before sending it to you"
-msgstr ""
-
-#: ../../source/real_robot.rst:59
-msgid ""
-"We cannot ensure that the stability of the system will be kept if you try"
-" to update your system yourself (using apt). We strongly advise you "
-"against it."
-msgstr ""
-
-#: ../../source/real_robot.rst:63
-msgid "Home setup"
-msgstr ""
-
-#: ../../source/real_robot.rst:64
-msgid ""
-"The system has been configured with a default user \"niryo\". The core of"
-" the Robot program is installed in the home directory of niryo user "
-"*/home/niryo*."
-msgstr ""
-
-#: ../../source/real_robot.rst:67
-msgid "In this directory, you have:"
+#: ../../source/real_robot.rst:73
+msgid "It comprises all the following elements :"
 msgstr ""
 
 #: ../../source/real_robot.rst:69
+msgid "ROS melodic and its requirements"
+msgstr ""
+
+#: ../../source/real_robot.rst:70
+msgid "Sound driver"
+msgstr ""
+
+#: ../../source/real_robot.rst:71
+msgid "Led ring driver"
+msgstr ""
+
+#: ../../source/real_robot.rst:72
+msgid "Robot System services (connectivity, databases, flask server)"
+msgstr ""
+
+#: ../../source/real_robot.rst:73
+msgid "Basic development tools (compilation, editing tools)"
+msgstr ""
+
+#: ../../source/real_robot.rst:75
+msgid "We took care to update and upgrade the system before sending it to you"
+msgstr ""
+
+#: ../../source/real_robot.rst:78
+msgid ""
+"We can't ensure that the stability of the system will be kept if you try "
+"to update your system by yourself (using apt). We strongly advise you not"
+" to do so."
+msgstr ""
+
+#: ../../source/real_robot.rst:82
+msgid "Home setup"
+msgstr ""
+
+#: ../../source/real_robot.rst:83
+msgid ""
+"The system has been configured with a default user \"niryo\". The core of"
+" the robot program is installed in the home directory of niryo user "
+"*/home/niryo*."
+msgstr ""
+
+#: ../../source/real_robot.rst:86
+msgid "In this directory, you have:"
+msgstr ""
+
+#: ../../source/real_robot.rst:88
 msgid ""
 "catkin_ws : contains the source code and the compiled binary for the "
 "Niryo ROS Stack"
 msgstr ""
 
-#: ../../source/real_robot.rst:70
+#: ../../source/real_robot.rst:89
 msgid "firmware_updater : updater for the steppers and the End Effector"
 msgstr ""
 
-#: ../../source/real_robot.rst:71
+#: ../../source/real_robot.rst:90
 msgid ""
 "niryo_robot_saved_files : set of files saved on the robot, used by Niryo "
 "Studio"
 msgstr ""
 
-#: ../../source/real_robot.rst:72
+#: ../../source/real_robot.rst:91
 msgid "system_software : configuration files for system wide functions"
 msgstr ""
 
-#: ../../source/real_robot.rst:75
+#: ../../source/real_robot.rst:94
 msgid "Services and daemons"
 msgstr ""
 
-#: ../../source/real_robot.rst:76
-msgid "Two services are used on the Robot :"
+#: ../../source/real_robot.rst:95
+msgid "Two services are used on the robot:"
 msgstr ""
 
-#: ../../source/real_robot.rst:78
+#: ../../source/real_robot.rst:97
 msgid ""
 "niryo_system_software : It launches the flask server for API "
 "communication with the robot"
 msgstr ""
 
-#: ../../source/real_robot.rst:80
+#: ../../source/real_robot.rst:99
 msgid ""
 "niryo_robot_ros : It launches the stack via */opt/start_ros.sh* script at"
 " startup."
 msgstr ""
 
-#: ../../source/real_robot.rst:82
+#: ../../source/real_robot.rst:101
 msgid "File */opt/start_ros.sh* on the ned2 robot :"
 msgstr ""
 
-#: ../../source/real_robot.rst:90
+#: ../../source/real_robot.rst:109
 msgid ""
 "If you want to start, stop or disable one of those services, please refer"
 " to the `dedicated manual "
 "<https://manpages.ubuntu.com/manpages/bionic/man8/service.8.html>`_."
 msgstr ""
 
-#: ../../source/real_robot.rst:94
+#: ../../source/real_robot.rst:113
 msgid "Starting the robot manually (for advanced users only)"
 msgstr ""
 
-#: ../../source/real_robot.rst:95
+#: ../../source/real_robot.rst:114
 msgid "Before continuing, be sure you know what you are doing."
 msgstr ""
 
-#: ../../source/real_robot.rst:97
+#: ../../source/real_robot.rst:116
 msgid "You will need to have a ssh access setup to continue."
 msgstr ""
 
-#: ../../source/real_robot.rst:101
+#: ../../source/real_robot.rst:120
 msgid "Stopping the service"
 msgstr ""
 
-#: ../../source/real_robot.rst:102
+#: ../../source/real_robot.rst:121
 msgid ""
 "First you will need to stop the Niryo ROS Stack that is automatically "
-"started when the robot boot up. Use the system linux command to do so:"
+"started when the robot boots up. Use the system linux command to do so:"
 msgstr ""
 
-#: ../../source/real_robot.rst:110
+#: ../../source/real_robot.rst:129
 msgid "Starting the robot"
 msgstr ""
 
-#: ../../source/real_robot.rst:111
+#: ../../source/real_robot.rst:130
 msgid "To start the robot, launch the following commands in a ssh terminal:"
 msgstr ""
 
-#: ../../source/real_robot.rst:113
-msgid "For the Ned"
-msgstr ""
-
-#: ../../source/real_robot.rst:120
-msgid "For the Ned2"
-msgstr ""
-
-#: ../../source/real_robot.rst:127
-msgid "Robot launch options"
-msgstr ""
-
-#: ../../source/real_robot.rst:133
-msgid "Name"
-msgstr ""
-
-#: ../../source/real_robot.rst:134
-msgid "Default Value"
-msgstr ""
-
-#: ../../source/real_robot.rst:135
-msgid "Description"
-msgstr ""
-
-#: ../../source/real_robot.rst:136
-msgid "log_level"
-msgstr ""
-
-#: ../../source/real_robot.rst:137
-msgid "INFO"
-msgstr ""
-
-#: ../../source/real_robot.rst:138
-msgid "Log level to display for ROS loggers"
+#: ../../source/real_robot.rst:132
+msgid "For Ned"
 msgstr ""
 
 #: ../../source/real_robot.rst:139
+msgid "For Ned2"
+msgstr ""
+
+#: ../../source/real_robot.rst:146
+msgid "Robot launch options"
+msgstr ""
+
+#: ../../source/real_robot.rst:152
+msgid "Name"
+msgstr ""
+
+#: ../../source/real_robot.rst:153
+msgid "Default Value"
+msgstr ""
+
+#: ../../source/real_robot.rst:154
+msgid "Description"
+msgstr ""
+
+#: ../../source/real_robot.rst:155
+msgid "log_level"
+msgstr ""
+
+#: ../../source/real_robot.rst:156
+msgid "INFO"
+msgstr ""
+
+#: ../../source/real_robot.rst:157
+msgid "Log level to display for ROS loggers"
+msgstr ""
+
+#: ../../source/real_robot.rst:158
 msgid "ttl_enabled"
 msgstr ""
 
-#: ../../source/real_robot.rst:140 ../../source/real_robot.rst:144
-#: ../../source/real_robot.rst:151
+#: ../../source/real_robot.rst:159 ../../source/real_robot.rst:163
+#: ../../source/real_robot.rst:170
 msgid "true"
 msgstr ""
 
@@ -285,7 +306,7 @@ msgstr ""
 msgid "This feature is used for debug mainly and can lead to an unstable stack."
 msgstr ""
 
-#: ../../source/real_robot.rst:143
+#: ../../source/real_robot.rst:162
 msgid "can_enabled"
 msgstr ""
 
@@ -293,19 +314,19 @@ msgstr ""
 msgid "Enable or disable the CAN bus usage."
 msgstr ""
 
-#: ../../source/real_robot.rst:147
+#: ../../source/real_robot.rst:166
 msgid "debug"
 msgstr ""
 
-#: ../../source/real_robot.rst:148
+#: ../../source/real_robot.rst:167
 msgid "false"
 msgstr ""
 
-#: ../../source/real_robot.rst:149
+#: ../../source/real_robot.rst:168
 msgid "Launch in debug mode. For development and debug only."
 msgstr ""
 
-#: ../../source/real_robot.rst:150
+#: ../../source/real_robot.rst:169
 msgid "timed"
 msgstr ""
 
@@ -323,11 +344,11 @@ msgstr ""
 msgid "If disabled, the node is directly launched"
 msgstr ""
 
-#: ../../source/real_robot.rst:157
+#: ../../source/real_robot.rst:176
 msgid "Changing the log level"
 msgstr ""
 
-#: ../../source/real_robot.rst:158
+#: ../../source/real_robot.rst:177
 msgid ""
 "Before launching the robot, you can change the configuration file for the"
 " ROS Logger in order to change the log level displayed on the terminal. "
@@ -335,7 +356,7 @@ msgid ""
 "*/home/niryo/catkin_ws/src/niryo_robot_bringup/config/niryo_robot_trace.conf*."
 msgstr ""
 
-#: ../../source/real_robot.rst:161
+#: ../../source/real_robot.rst:180
 msgid ""
 "It defines the logs levels for all cpp packages, based on log4cxx "
 "configuration file syntax. Please see documentation of "
@@ -343,19 +364,19 @@ msgid ""
 "information."
 msgstr ""
 
-#: ../../source/real_robot.rst:164
+#: ../../source/real_robot.rst:183
 msgid ""
 "By default, the level is set to INFO, you can change this value if you "
 "want more logs."
 msgstr ""
 
-#: ../../source/real_robot.rst:172
+#: ../../source/real_robot.rst:191
 msgid ""
 "DEBUG level is very verbose, you can deteriorate the performances of your"
 " robot by doing so."
 msgstr ""
 
-#: ../../source/real_robot.rst:174
+#: ../../source/real_robot.rst:193
 msgid ""
 "You can also choose to change only the log level of a specific cpp "
 "package by uncommenting one of the following lines and optionally change "
@@ -513,5 +534,107 @@ msgstr ""
 #~ "documentation of :rosconsole:`rosconsole <>` "
 #~ "or :log4cxx:`logc4xx <>` for more "
 #~ "information."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can find more information on "
+#~ "how to connect to your robot "
+#~ ":connecting_to_the_robot:`here <>`."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can find more information on "
+#~ "how to connect to your robot `here"
+#~ " <'https://docs.niryo.com/product/niryo-"
+#~ "studio/v4.0.0/en/source/connection.html>`_."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can find more information on "
+#~ "how to connect to your robot `here"
+#~ " <https://docs.niryo.com/product/niryo-"
+#~ "studio/v4.0.0/en/source/connection.html>`_."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Every Niryo Robot is usable as is"
+#~ " when first switched on, with Niryo"
+#~ " Studio for instance. However this "
+#~ "Robot can be used in many more "
+#~ "ways if you want to go deeper "
+#~ "into its understanding."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "In this tutorial, we will explain "
+#~ "how the Robot is setup and the "
+#~ "different options you have of "
+#~ "controlling it."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can connect to your robot in"
+#~ " multiple ways (Ethernet direct, Wifi "
+#~ "Hotspot, LAN)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Once your robot is accessible from "
+#~ "your computer, you can access it "
+#~ "through three ways :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Niryo Studio provides you with all "
+#~ "the tools you need to control the"
+#~ " robot. Please refere to the "
+#~ ":doc_niryo_studio:`Niryo Studio documentation <>`"
+#~ " for more information."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The Robot is running on top of "
+#~ "an Ubuntu server 18.04.5 for ARM "
+#~ "customized to work on a raspberry "
+#~ "pi 4B It comprises all the "
+#~ "following elements : - ROS melodic "
+#~ "and its requirements - Sound driver "
+#~ "- Led ring driver - Robot System"
+#~ " services (connectivity, databases, flask "
+#~ "server) - Basic development tools "
+#~ "(compilation, editing tools)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "We cannot ensure that the stability "
+#~ "of the system will be kept if "
+#~ "you try to update your system "
+#~ "yourself (using apt). We strongly advise"
+#~ " you against it."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The system has been configured with "
+#~ "a default user \"niryo\". The core "
+#~ "of the Robot program is installed "
+#~ "in the home directory of niryo "
+#~ "user */home/niryo*."
+#~ msgstr ""
+
+#~ msgid "Two services are used on the Robot :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "First you will need to stop the"
+#~ " Niryo ROS Stack that is "
+#~ "automatically started when the robot "
+#~ "boot up. Use the system linux "
+#~ "command to do so:"
+#~ msgstr ""
+
+#~ msgid "For the Ned"
+#~ msgstr ""
+
+#~ msgid "For the Ned2"
 #~ msgstr ""
 

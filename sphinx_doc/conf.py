@@ -22,7 +22,7 @@ author = shared_conf.author
 # The short X.Y version
 version = u'v4.0'
 # The full version, including alpha/beta/rc tags
-release = u'v4.0.0'
+release = u'v4.0.1'
 
 # -- General configuration ---------------------------------------------------
 
@@ -84,12 +84,12 @@ add_module_names = False
 html_theme = shared_conf.html_theme
 
 templates_path = shared_conf.templates_path
-html_static_path = shared_conf.html_static_path[:] + ['_static', '../niryo_robot_sound/niryo_robot_state_sounds']
+html_static_path = shared_conf.html_static_path[:] + ['static/']
 
 html_logo = shared_conf.html_logo
 html_favicon = shared_conf.html_favicon
 
-html_css_files = shared_conf.html_css_files
+html_css_files =  ['config.css'] + shared_conf.html_css_files[:]
 
 html_js_files = shared_conf.html_js_files
 
@@ -138,10 +138,7 @@ extlinks = {
     'pip_installation': ('https://pip.pypa.io/en/stable/installing/%s', None),
     'ned_ros_stack': ('https://github.com/NiryoRobotics/niryo_one_ros/%s', None),
     'api_modbus_readme': ('https://github.com/NiryoRobotics/niryo_one_ros/tree/master/niryo_one_modbus/%s', None),
-    'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None),
-    'connecting_to_the_robot': (
-        'https://docs.niryo.com/product/niryo-studio/source/connection.html%s',
-        None),
+    'modbus_examples': ('https://github.com/NiryoRobotics/ned_ros/tree/master/niryo_robot_modbus/examples/%s', None)
 }
 
 TRANSLATE_CAPTIONS_JS = """
