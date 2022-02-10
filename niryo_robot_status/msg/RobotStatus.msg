@@ -17,6 +17,7 @@ int8 RUNNING_AUTONOMOUS=8   # User program is running
 int8 RUNNING_DEBUG=9    # Debug program is running
 int8 PAUSE=10           # User program paused
 int8 LEARNING_MODE_AUTONOMOUS=11    # User program is running + Learning mode activated
+int8 REBOOT_MOTOR=12
 
 int8 robot_status
 string robot_status_str

@@ -52,7 +52,6 @@ endif()
 add_message_files(
   FILES
     ArrayMotorHardwareStatus.msg
-    CollisionStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
 )

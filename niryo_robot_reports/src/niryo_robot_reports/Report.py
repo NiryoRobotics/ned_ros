@@ -3,7 +3,6 @@ import json
 
 
 class Report:
-
     DEFAULT_VALUE = {}
 
     def __init__(self, path):

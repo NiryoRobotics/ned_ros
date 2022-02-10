@@ -2,7 +2,7 @@
 import time
 
 from enum import Enum
-from threading import Event, Thread
+from threading import Thread
 from datetime import datetime
 
 import rospy

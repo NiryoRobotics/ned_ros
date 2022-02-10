@@ -14,7 +14,7 @@ class BlocklyManager(ProgramsFileManager):
                                              runnable=False)
 
     @staticmethod
-    def _generate_raw_text(code, description):
+    def _generate_raw_text(code, _description):
         return code
 
     def read(self, name):

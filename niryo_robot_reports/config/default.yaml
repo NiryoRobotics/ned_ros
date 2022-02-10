@@ -11,3 +11,5 @@ alert_report:
   get_ram_usage:
     frequency: 'HIGH'
     threshold: 90
+
+auto_diagnosis: 'auto_diagnosis.py'

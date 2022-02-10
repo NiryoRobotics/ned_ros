@@ -8,6 +8,7 @@ import math
 
 LED_ANGLE_OFFSET = 1.57
 
+
 class LedRingSimulation:
     """
     Object which implements control method for the Led ring

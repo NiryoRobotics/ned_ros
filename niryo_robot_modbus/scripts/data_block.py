@@ -24,7 +24,7 @@ class DataBlock(ModbusSparseDataBlock):
         # Connect to service
         try:
             rospy.wait_for_service(service_name, 0.1)
-        except rospy.ROSException, e:
+        except rospy.ROSException as _e:
             return
 
             # Call service
@@ -32,5 +32,5 @@ class DataBlock(ModbusSparseDataBlock):
             service = rospy.ServiceProxy(service_name, service_msg_type)
             response = service(*args)
             return response
-        except rospy.ServiceException, e:
+        except rospy.ServiceException as _e:
             return

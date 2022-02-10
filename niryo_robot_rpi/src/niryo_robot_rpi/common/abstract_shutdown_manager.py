@@ -24,6 +24,7 @@ from .rpi_ros_utils import send_reboot_command, send_shutdown_command
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_msgs.srv import AdvertiseShutdown, AdvertiseShutdownRequest
 
+
 class AbstractShutdownManager(object):
     def __init__(self, fake=False):
         rospy.logdebug("ShutdownManager - Entering in Init")

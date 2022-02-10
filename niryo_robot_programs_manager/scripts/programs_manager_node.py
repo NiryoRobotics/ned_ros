@@ -70,43 +70,28 @@ class ProgramManagerNode:
                                      in self.__autorun_mode_to_str.iteritems()}
 
         # Services
-        rospy.Service('~manage_program', ManageProgram,
-                      self.__callback_manage_program)
-        rospy.Service('~get_program_list', GetProgramList,
-                      self.__callback_get_program_list)
-        rospy.Service('~get_program', GetProgram,
-                      self.__callback_get_program)
+        rospy.Service('~manage_program', ManageProgram, self.__callback_manage_program)
+        rospy.Service('~get_program_list', GetProgramList, self.__callback_get_program_list)
+        rospy.Service('~get_program', GetProgram, self.__callback_get_program)
 
-        rospy.Service('~execute_program', ExecuteProgram,
-                      self.__callback_execute_program)
+        rospy.Service('~execute_program', ExecuteProgram, self.__callback_execute_program)
         self.__execute_from_string_program_name = rospy.get_param("~execute_from_string_program_name")
 
-        rospy.Service('~stop_program', Trigger,
-                      self.__callback_stop_program)
-
+        rospy.Service('~stop_program', Trigger, self.__callback_stop_program)
         self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.NONE, "")
 
         # Publisher
-        self.__program_list_publisher = rospy.Publisher(
-            '~program_list', ProgramList, latch=True, queue_size=1)
+        self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
         self.__publish_program_list()
 
-        self.__program_is_running_publisher = rospy.Publisher(
-            '~program_is_running', ProgramIsRunning, latch=True, queue_size=1)
+        self.__program_is_running_publisher = rospy.Publisher('~program_is_running', ProgramIsRunning, latch=True,
+                                                              queue_size=1)
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
         # - Autorun
-        self.__set_program_autorun_service = rospy.Service(
-            '~set_program_autorun', SetProgramAutorun,
-            self.__callback_set_program_autorun)
-
-        self.__get_program_autorun_infos_service = rospy.Service(
-            '~get_program_autorun_infos', GetProgramAutorunInfos,
-            self.__callback_get_program_autorun_infos)
-
-        self.__execute_program_autorun_service = rospy.Service(
-            '~execute_program_autorun', Trigger,
-            self.__callback_execute_program_autorun)
+        rospy.Service('~set_program_autorun', SetProgramAutorun, self.__callback_set_program_autorun)
+        rospy.Service('~get_program_autorun_infos', GetProgramAutorunInfos, self.__callback_get_program_autorun_infos)
+        rospy.Service('~execute_program_autorun', Trigger, self.__callback_execute_program_autorun)
 
         self.__loop_autorun = False
 

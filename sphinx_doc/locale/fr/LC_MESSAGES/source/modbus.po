@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/modbus.rst:2 ../../source/modbus.rst:18
 msgid "Modbus"
-msgstr ""
+msgstr "Modbus"
 
 #: ../../source/modbus.rst:9
 msgid "In this document, we will focus on the Modbus/TCP server."

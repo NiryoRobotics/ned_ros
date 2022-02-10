@@ -16,77 +16,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
-import RPi.GPIO as GPIO
-from threading import Thread
 
-from niryo_robot_rpi.common.rpi_ros_utils import *
-
-# Command Status
-from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_rpi.common.rpi_ros_utils import activate_learning_mode
+from niryo_robot_rpi.common.abstract_top_button import AbstractTopButton
 
 # Messages
 from niryo_robot_arm_commander.msg import PausePlanExecution
 from niryo_robot_status.msg import RobotStatus
 
-# Services
-from std_srvs.srv import Empty
-from niryo_robot_msgs.srv import Trigger, SetInt
 
-
-class TopButton:
+class TopButton(AbstractTopButton):
     def __init__(self):
-
-        rospy.logdebug("NiryoButton - Entering in Init")
-
-        self.pin = rospy.get_param("~button/gpio")
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        rospy.sleep(0.1)
-
-        self.debug_loop_repetition = 5
-
-        self.activated = True
+        super(TopButton, self).__init__()
 
         self.last_time_button_pressed = rospy.Time.from_sec(0)
 
-        self._robot_status = RobotStatus()
-
-        # - Publishers
-        self.__pause_movement_publisher = rospy.Publisher('~pause_state',
-                                                          PausePlanExecution, latch=True, queue_size=1)
-        self._pause_state = None
         self.__last_is_prog_running = False
         self.__button_action_done = False
-        self._send_pause_state(PausePlanExecution.STANDBY)
 
+        self._robot_status = RobotStatus()
         rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self._callback_robot_status)
 
         # Seems to be overkill over that value due to reading IO time
-        self.__button_state = self.read_value()
         rospy.Timer(rospy.Duration.from_sec(1.0 / 10), self.check_button)
 
-        rospy.on_shutdown(self.shutdown)
         rospy.loginfo("Niryo Button started")
-
-    def __del__(self):
-        pass
-
-    @staticmethod
-    def shutdown():
-        rospy.loginfo("Button Manager - Shutdown cleanup GPIO")
-        rospy.sleep(0.5)
-        GPIO.cleanup()
-
-    def _is_button_pressed(self):
-        return not self.__button_state
-
-    def read_value(self):
-        try:
-            value = GPIO.input(self.pin)
-        except RuntimeError:
-            return False
-        self.__button_state = value
-        return self.__button_state
 
     def _callback_robot_status(self, msg):
         self.__robot_status = msg
@@ -145,25 +99,3 @@ class TopButton:
             self._pause_program()
         elif self._pause_state == PausePlanExecution.PAUSE:
             self._resume_program()
-
-    def _trigger_sequence_autorun(self):
-        rospy.loginfo("Button Manager - Run Auto-sequence")
-        self._send_pause_state(PausePlanExecution.PLAY)
-        _status, _message = send_trigger_program_autorun()
-
-    @staticmethod
-    def _cancel_program_from_program_manager():
-        srv = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
-        resp = srv()
-        return resp.status, resp.message
-
-    def _resume_program(self):
-        rospy.loginfo("Button Manager - Resume sequence")
-        self._send_pause_state(PausePlanExecution.RESUME)
-
-    def _pause_program(self):
-        self._send_pause_state(PausePlanExecution.PAUSE)
-
-    def _send_pause_state(self, state):
-        self._pause_state = state
-        self.__pause_movement_publisher.publish(self._pause_state)

@@ -3,7 +3,7 @@
 import rospy
 
 # Enums
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import NiryoRosWrapperException
+from niryo_robot_utils.niryo_ros_wrapper_exceptions import NiryoRosWrapperException
 
 
 class NiryoTopicValue(object):

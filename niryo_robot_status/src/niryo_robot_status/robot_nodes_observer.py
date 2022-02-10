@@ -37,7 +37,7 @@ class RobotNodesObserver(object):
         self.__pyniryo_nodes_sub = rospy.Subscriber('/ping_pyniryo', Bool, self.__callback_pyniryo_nodes)
 
     def __callback_python_ros_wrapper_node(self, req):
-        if req.name not in ['/niryo_robot_user_interface', '']:
+        if req.name not in ['/niryo_robot_user_interface', '/system_software_node', '']:
             if req.state:
                 self.__python_wrapper_nodes.add(req.name)
             elif req.name in self.__python_wrapper_nodes:

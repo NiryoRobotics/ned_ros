@@ -2,7 +2,6 @@ from Report import Report
 
 
 class DailyReport(Report):
-
     DEFAULT_VALUE = {'logs': []}
 
     def add_log(self, msg, log_type, date):

@@ -1,24 +1,24 @@
 # Lib
-import rospy
 import threading
 import time
-# Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
+
+import rosnode
+import rospy
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
-
-# Message
-from niryo_robot_status.msg import RobotStatus
-from std_msgs.msg import Int32
-from std_msgs.msg import Empty
-
+# Services
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
+# Message
+from niryo_robot_status.msg import RobotStatus
+from std_msgs.msg import Empty
+from std_msgs.msg import Int32
 
 from led_ring_animations import LedRingAnimations
 from led_ring_enums import *
 
 
-class LedRingCommander:
+class LedRingCommander(object):
     """
     This class is in charge of the Led Ring Node
     Its main goal is to interpret commands, and use methods from the LedRingCommander class according to this command
@@ -86,6 +86,8 @@ class LedRingCommander:
         rospy.Subscriber("/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
         rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
 
+        self.__check_shutdown_timer = rospy.Timer(rospy.Duration(2), self.shutdown_check)
+
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self, color=None):
@@ -112,6 +114,13 @@ class LedRingCommander:
             # self.__is_shutdown = True
             rospy.signal_shutdown("shutdown")
 
+    def shutdown_check(self, *_):
+        try:
+            if not rospy.is_shutdown() and not self.__is_shutdown:
+                rosnode.get_node_names()
+        except rosnode.ROSNodeIOException:
+            self.shutdown()
+
     @property
     def is_shutdown(self):
         return self.__is_shutdown
@@ -129,13 +138,12 @@ class LedRingCommander:
         elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
             self.shutdown(WHITE)
         elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
-            rospy.sleep(3.5) # because no fade
+            rospy.sleep(3.5)  # because no fade
             if not self.__is_simulation:
                 from led_ring_utils import enable_led_ring
                 enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
                 self.led_ring_anim.init_led_ring()
             #    self.led_ring_anim.fade(BLUE)
-
 
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or
@@ -153,8 +161,7 @@ class LedRingCommander:
             self.rpi_overheating = msg.rpi_overheating
 
             self.set_user_mode(
-                (self.robot_status == RobotStatus.RUNNING_AUTONOMOUS or
-                 self.robot_status == RobotStatus.LEARNING_MODE_AUTONOMOUS))
+                self.robot_status in [RobotStatus.RUNNING_AUTONOMOUS, RobotStatus.LEARNING_MODE_AUTONOMOUS])
             self.display_user_mode()
 
     def __callback_set_led_ring_user(self, req):
@@ -222,20 +229,29 @@ class LedRingCommander:
         We use a thread to avoid the blocking effect of the Led ring
         control methods.
         """
+        # print 'get lock'
+        # with self.error_animation_lock:
+        #    pass
+        # print 'retrieve lock'
         self.stop_led_ring_thread()
+        # print 'stopped thread'
         self.led_ring_animation_thread = threading.Thread(
             target=self.dict_led_ring_methods[command.animation_mode.animation], args=[command])
         self.running_status_command = command
         self.led_ring_animation_thread.start()
+        # print 'thread started'
 
     def stop_led_ring_thread(self):
         try:
             if self.led_ring_anim.is_animation_running():
                 self.led_ring_anim.stop_animation()
 
-            if self.led_ring_animation_thread.is_alive():
-                self.led_ring_animation_thread.join()
-        except AttributeError:
+            while self.led_ring_animation_thread.join(timeout=0.1) is None and not rospy.is_shutdown():
+                self.led_ring_anim.stop_animation()
+                if not self.led_ring_animation_thread.is_alive():
+                    return
+
+        except (AttributeError, RuntimeError):
             pass
 
     def error_animation(self):
@@ -303,11 +319,12 @@ class LedRingCommander:
             self._publish_led_ring_status()
 
     def display_user_mode(self):
+        # print 'displayyyyyyyyyy'
         if RobotStatus.BOOTING == self.robot_status:
             return
 
         command = self.get_robot_status_led_ring_cmd()
-        if command == self.running_status_command or self.error_animation_lock.locked():
+        if command == self.running_status_command or self.__is_shutdown:
             return
         elif self.user_animation_lock.locked() and self.robot_status in [RobotStatus.RUNNING_AUTONOMOUS,
                                                                          RobotStatus.LEARNING_MODE_AUTONOMOUS]:
@@ -396,6 +413,7 @@ class LedRingCommander:
 
     def blink(self, color, iterations, period):
         with self.error_animation_lock:
+
             command = LedUserRequest()
             command.animation_mode.animation = LedRingAnimation.FLASHING
             command.colors = [color]

@@ -183,4 +183,3 @@ class InputRegisterDataBlock(DataBlock):
         for aout in msg.analog_outputs:
             self.setValuesOffset(IR_AIO_MODE + AIO_NAME_TO_ADDRESS[aout.name], AIO_MODE_OUTPUT)
             self.setValuesOffset(IR_AIO_STATE + AIO_NAME_TO_ADDRESS[aout.name], int(aout.value * MULT))
-

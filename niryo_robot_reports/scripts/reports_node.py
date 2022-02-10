@@ -6,10 +6,10 @@ import rospy
 from distutils.dir_util import mkpath
 
 from niryo_robot_reports.CloudAPI import CloudAPI
-from DailyReportHandler import DailyReportHandler
-from TestReportHandler import TestReportHandler
-from AlertReportHandler import AlertReportHandler
-from AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
+from niryo_robot_reports.DailyReportHandler import DailyReportHandler
+from niryo_robot_reports.TestReportHandler import TestReportHandler
+from niryo_robot_reports.AlertReportHandler import AlertReportHandler
+from niryo_robot_reports.AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 
 # msg
 from niryo_robot_database.msg import Setting
@@ -75,13 +75,21 @@ class ReportsNode:
 
         rospy.logdebug("Reports Node - Node Started")
 
-    def __wait_booting(self):
+    @staticmethod
+    def __wait_booting():
         from niryo_robot_status.msg import RobotStatus
 
         for i in range(1, 20):
-            msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 20 / i)
-            if msg.robot_status not in [RobotStatus.BOOTING, RobotStatus.UNKNOWN]:
+            try:
+                msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 20 / i)
+            except rospy.exceptions.ROSInterruptException:
                 return
+            except rospy.exceptions.ROSException:
+                pass
+            else:
+                if msg.robot_status not in [RobotStatus.BOOTING, RobotStatus.UNKNOWN]:
+                    return
+
             rospy.sleep(1)
 
     def __check_connection_callback(self, req):

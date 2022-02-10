@@ -3,7 +3,6 @@ import rospy
 
 
 class CloudAPI(object):
-
     __DAILY_PATH = '/daily-reports'
     __TEST_PATH = '/test-reports'
     __ALERT_PATH = '/alert-reports'
