@@ -204,61 +204,55 @@ int TtlManager::setupCommunication()
  */
 int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
 {
-    EHardwareType hardware_type = state->getHardwareType();
-    uint8_t id = state->getId();
-
-    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
-
-    // if not already instanciated
-    if (!_state_map.count(id))
+    if (state)
     {
-        _state_map.insert(std::make_pair(id, state));
-    }
+        EHardwareType hardware_type = state->getHardwareType();
+        uint8_t id = state->getId();
 
-    // if not already instanciated
-    if (!_ids_map.count(hardware_type))
-    {
-        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
-    }
-    else
-    {
-        _ids_map.at(hardware_type).emplace_back(id);
-    }
+        ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
 
-    // add to global lists
-    if (common::model::EComponentType::CONVEYOR == state->getComponentType())
-    {
-        if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
-            _conveyor_list.emplace_back(id);
-    }
+        // add state to state map
+        _state_map[id] = state;
 
-    addHardwareDriver(hardware_type);
+        // add id to ids_map
+        _ids_map[hardware_type].emplace_back(id);
 
-    // update firmware version
-    if (_driver_map.count(hardware_type))
-    {
-        std::string version;
-        int res = COMM_RX_FAIL;
-        for (int tries = 10; tries > 0; tries--)
+        // add to global lists
+        if (common::model::EComponentType::CONVEYOR == state->getComponentType())
         {
-            res = _driver_map.at(hardware_type)->readFirmwareVersion(id, version);
-            if (COMM_SUCCESS == res)
+            if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
+                _conveyor_list.emplace_back(id);
+        }
+
+        addHardwareDriver(hardware_type);
+
+        // update firmware version
+        if (_driver_map.at(hardware_type))
+        {
+            std::string version;
+            int res = COMM_RX_FAIL;
+            for (int tries = 10; tries > 0; tries--)
             {
-              state->setFirmwareVersion(version);
-              break;
+                res = _driver_map.at(hardware_type)->readFirmwareVersion(id, version);
+                if (COMM_SUCCESS == res)
+                {
+                    state->setFirmwareVersion(version);
+                    break;
+                }
+                ros::Duration(0.1).sleep();
             }
-            ros::Duration(0.1).sleep();
+
+            if (COMM_SUCCESS != res)
+            {
+                ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
+                        "hardware id %d : result = %d", id, res);
+            }
         }
 
-        if (COMM_SUCCESS != res)
-        {
-            ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
-                     "hardware id %d : result = %d", id, res);
-        }
+        setLeds(_led_state);
+        return niryo_robot_msgs::CommandStatus::SUCCESS;
     }
-
-    setLeds(_led_state);
-    return niryo_robot_msgs::CommandStatus::SUCCESS;
+    return niryo_robot_msgs::CommandStatus::FAILURE;
 }
 
 /**
@@ -398,18 +392,21 @@ int TtlManager::scanAndCheck()
         std::string error_motors_message;
         for (auto& istate : _state_map)
         {
-            uint8_t id = istate.first;
-            auto it = find(_all_ids_connected.begin(), _all_ids_connected.end(), id);
-            // not found
-            if (it == _all_ids_connected.end())
+            if (istate.second)
             {
-                _removed_motor_id_list.emplace_back(id);
-                error_motors_message += " " + to_string(id);
-                istate.second->setConnectionStatus(true);
-            }
-            else
-            {
-                istate.second->setConnectionStatus(false);
+                uint8_t id = istate.first;
+                auto it = find(_all_ids_connected.begin(), _all_ids_connected.end(), id);
+                // not found
+                if (it == _all_ids_connected.end())
+                {
+                    _removed_motor_id_list.emplace_back(id);
+                    error_motors_message += " " + to_string(id);
+                    istate.second->setConnectionStatus(true);
+                }
+                else
+                {
+                    istate.second->setConnectionStatus(false);
+                }
             }
         }
 
@@ -467,7 +464,7 @@ int TtlManager::rebootHardware(uint8_t hw_id)
     {
         EHardwareType type = _state_map.at(hw_id)->getHardwareType();
         ROS_DEBUG("TtlManager::rebootHardware - Reboot hardware with ID: %d", hw_id);
-        if (_driver_map.count(type))
+        if (_driver_map.count(type) && _driver_map.at(type))
         {
             return_value = _driver_map.at(type)->reboot(hw_id);
             if (COMM_SUCCESS == return_value)
@@ -513,7 +510,7 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
 {
     uint32_t position = 0;
     EHardwareType hardware_type = motor_state.getHardwareType();
-    if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
+    if (_driver_map.count(hardware_type))
     {
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
         if (driver)
@@ -553,7 +550,6 @@ bool TtlManager::readJointsStatus()
     uint8_t hw_errors_increment = 0;
 
     // syncread position for all motors.
-    // for ned 2 -> Using only one driver for all motors to avoid loop.
     // for ned and one -> we need at least one xl430 and one xl320 drivers as they are different
     // All addresses for position are the same
 
@@ -613,7 +609,22 @@ bool TtlManager::readJointsStatus()
                 }
             }
         }  // for driver_map
+
+        // check collision by END_EFFECTOR
+        if (_isRealCollision)
+        {
+            if (!checkCollision())
+            {
+                ROS_ERROR("TTLManager::readJointStatus : Fail to get the status detection of collision on EE");
+                _hw_fail_counter_read++;
+            }
+        }
+        else
+        {
+            _collision_status = false;
+        }
     }
+    ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
@@ -624,8 +635,6 @@ bool TtlManager::readJointsStatus()
     {
         _hw_fail_counter_read += hw_errors_increment;
     }
-
-    ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
 
     return (0 == hw_errors_increment);
 }
@@ -638,6 +647,9 @@ bool TtlManager::readEndEffectorStatus()
     bool res = false;
 
     EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+
+    if (!_driver_map.count(ee_type))
+        return false;
 
     // if calibration not in progress
     if (!isCalibrationInProgress())
@@ -655,19 +667,25 @@ bool TtlManager::readEndEffectorStatus()
                 if (_state_map.count(id))
                 {
                     // we retrieve the associated id for the end effector
-                    auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
+                    auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map[id]);
 
                     if (state)
                     {
                         vector<common::model::EActionType> action_list;
 
-                        // **********  boutons
+                        // **********  buttons
                         // get action of free driver button, save pos button, custom button
                         if (COMM_SUCCESS == driver->syncReadButtonsStatus(id, action_list))
                         {
                             for (uint8_t i = 0; i < action_list.size(); i++)
                             {
                                 state->setButtonStatus(i, action_list.at(i));
+                                // In case free driver button, it we hold this button, normally, because of the small threshold of collision detection
+                                // this action make EE confuse that it is a collision. That's why when we hold buttons, we need to deactivate the detection of collision.
+                                if (action_list.at(i) == common::model::EActionType::HANDLE_HELD_ACTION)
+                                    _isRealCollision = false;
+                                else if (action_list.at(i) == common::model::EActionType::NO_ACTION)
+                                    _isRealCollision = true;
                             }
                         }
                         else
@@ -683,27 +701,10 @@ bool TtlManager::readEndEffectorStatus()
                         }
                         else
                         {
-                             hw_errors_increment++;
-                        }
-
-                        // **********  collision
-                        // not accept other status of collistion in 1 second if it detected a collision
-                        if (_last_collision_detected == 0.0)
-                        {
-                            if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
-                            {
-                                if (_collision_status)
-                                    _last_collision_detected = ros::Time::now().toSec();
-                            }
-                            else
-                                hw_errors_increment++;
-                        }
-                        else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
-                        {
-                            _last_collision_detected = 0.0;
+                            hw_errors_increment++;
                         }
                     }  // if (state)
-                }  // if (_state_map.count(id))
+                }
             }  // if (_ids_map.count(EHardwareType::END_EFFECTOR))
         }  // if (driver)
 
@@ -733,6 +734,41 @@ bool TtlManager::readEndEffectorStatus()
     }
 
     return res;
+}
+
+bool TtlManager::checkCollision()
+{
+    EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+
+    if (_driver_map.count(ee_type))
+    {
+        auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+        if (driver)
+        {
+            if (_ids_map.count(ee_type) && !_ids_map[ee_type].empty())
+            {
+                uint8_t id = _ids_map.at(ee_type).front();
+
+                // **********  collision
+                // not accept other status of collistion in 1 second if it detected a collision
+                if (_last_collision_detected == 0.0)
+                {
+                    if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
+                    {
+                        if (_collision_status)
+                            _last_collision_detected = ros::Time::now().toSec();
+                    }
+                    else
+                        return false;
+                }
+                else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
+                {
+                    _last_collision_detected = 0.0;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 /**
@@ -795,7 +831,7 @@ bool TtlManager::readHardwareStatus()
             {
                 uint8_t id = ids_list.at(i);
 
-                if (_state_map.count(id))
+                if (_state_map.count(id) && _state_map.at(id))
                 {
                     auto state = _state_map.at(id);
 
@@ -872,7 +908,7 @@ uint8_t TtlManager::readSteppersStatus()
             vector<uint8_t> id_list = _ids_map.at(hw_type);
             vector<uint8_t> stepper_id_list;
             std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list), [this](uint8_t id){
-                                    return _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR;});
+                                    return _state_map[id] && _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR;});
 
             /* Truth Table
              * still_in_progress | state | new state
@@ -1103,6 +1139,11 @@ int TtlManager::setLeds(int led)
         id_list = _ids_map.at(mType);
 
         auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(mType));
+        if (driver)
+        {
+            ROS_DEBUG("Set leds failed. Driver is not compatible, check the driver's implementation ");
+            return niryo_robot_msgs::CommandStatus::FAILURE;
+        }
 
         // sync write led state
         vector<uint8_t> command_led_value(id_list.size(), static_cast<uint8_t>(led));
@@ -1258,7 +1299,7 @@ int TtlManager::readMotorPID(uint8_t id,
     {
         EHardwareType motor_type = _state_map.at(id)->getHardwareType();
 
-        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+        if (_driver_map.count(motor_type))
         {
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
             if (driver)
@@ -1380,7 +1421,7 @@ int TtlManager::readControlMode(uint8_t id, uint8_t& control_mode)
     {
         EHardwareType motor_type = _state_map.at(id)->getHardwareType();
 
-        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+        if (_driver_map.count(motor_type))
         {
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
             if (driver)
@@ -1497,7 +1538,7 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 
         ROS_DEBUG("TtlManager::writeSingleCommand:  %s", cmd->str().c_str());
 
-        if (_state_map.count(id) != 0)
+        if (_state_map.count(id) != 0 && _state_map.at(id))
         {
             auto state = _state_map.at(id);
             while ((COMM_SUCCESS != result) && (counter < 50))
@@ -1669,7 +1710,7 @@ TtlManager::getMotorsStates() const
     std::vector<std::shared_ptr<JointState> > states;
     for (const auto& it : _state_map)
     {
-        if (EHardwareType::UNKNOWN != it.second->getHardwareType()
+        if (it.second && EHardwareType::UNKNOWN != it.second->getHardwareType()
             && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
         {
             states.emplace_back(std::dynamic_pointer_cast<JointState>(it.second));
