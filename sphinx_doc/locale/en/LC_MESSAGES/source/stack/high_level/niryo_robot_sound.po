@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 08:13+0000\n"
+"POT-Creation-Date: 2022-02-10 09:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -263,7 +263,7 @@ msgid "State"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:94
-msgid "DSound"
+msgid "Sound"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:96
@@ -895,5 +895,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "connected2.wav"
+#~ msgstr ""
+
+#~ msgid "DSound"
 #~ msgstr ""
 

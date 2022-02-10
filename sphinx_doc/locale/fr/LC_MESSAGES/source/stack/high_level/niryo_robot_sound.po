@@ -193,9 +193,8 @@ msgid "Sound played when an error occurs"
 msgstr "Son joué lorsqu'une erreur se produit"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:68
-#, fuzzy
 msgid "error.wav"
-msgstr "error4.2.wav"
+msgstr "error.2.wav"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:69
 msgid "``robot_sounds/turn_on_sound``"
@@ -206,9 +205,8 @@ msgid "Sound played at the start-up of the robot"
 msgstr "Son joué au démarrage du robot"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:71
-#, fuzzy
 msgid "booting.wav"
-msgstr "calibration.wav"
+msgstr "booting.wav"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:72
 msgid "``robot_sounds/turn_off_sound``"
@@ -269,8 +267,7 @@ msgid "State"
 msgstr "Etat"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:94
-#, fuzzy
-msgid "DSound"
+msgid "Sound"
 msgstr "Son"
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:96

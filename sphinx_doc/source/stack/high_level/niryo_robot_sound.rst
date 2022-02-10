@@ -91,7 +91,7 @@ Here is a list of the different parameters that allow you to adjust the default 
 
    *  - State
       - Description
-      - DSound
+      - Sound
 
    *  - Booting
       - Sound played while booting

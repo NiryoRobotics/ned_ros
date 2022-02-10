@@ -1012,9 +1012,8 @@ msgid "Analog IO state in mV"
 msgstr "Valeur de l'E/S analogique en mV"
 
 #: ../../source/modbus/api_documentation.rst:404
-#, fuzzy
 msgid "Analog IO addresses offset table"
-msgstr "Table des décalages d'addresse des E/S digitales"
+msgstr "Analog IO addresses offset table"
 
 #: ../../source/modbus/api_documentation.rst:410
 msgid "Niryo One / Ned analog IO"
