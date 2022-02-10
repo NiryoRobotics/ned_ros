@@ -47,16 +47,10 @@ class ButtonMode:
 
 class TopButton(AbstractTopButton):
     def __init__(self):
-        super(TopButton, self).__init__()
-
         self.pause_time = None
         self.resume = None
 
         self.__program_manager_is_running = False
-        rospy.Subscriber('/niryo_robot_programs_manager/program_is_running', ProgramIsRunning,
-                         self.__callback_program_is_running)
-
-        rospy.Subscriber('/niryo_robot/rpi/led_state', Int8, self.__callback_led_state)
 
         self.button_mode = ButtonMode.TRIGGER_SEQUENCE_AUTORUN
         self.last_time_button_mode_changed = rospy.Time.now()
@@ -68,9 +62,15 @@ class TopButton(AbstractTopButton):
         # Publisher used to send info to Niryo Studio, so the user can add a move block
         # by pressing the button
         self.save_point_publisher = rospy.Publisher("/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
+        self._button_state_publisher = rospy.Publisher("/niryo_robot/rpi/is_button_pressed", Bool, latch=True,
+                                                       queue_size=1)
 
-        self._button_state_publisher = rospy.Publisher(
-            "/niryo_robot/rpi/is_button_pressed", Bool, latch=True, queue_size=1)
+        super(TopButton, self).__init__()
+
+        # - Subscribers
+        rospy.Subscriber('/niryo_robot_programs_manager/program_is_running', ProgramIsRunning,
+                         self.__callback_program_is_running)
+        rospy.Subscriber('/niryo_robot/rpi/led_state', Int8, self.__callback_led_state)
 
         # Seems to be overkill over that value due to reading IO time
         self.__button_loop_frequency = rospy.Rate(10)
@@ -85,7 +85,11 @@ class TopButton(AbstractTopButton):
         return self._button_state
 
     def __callback_program_is_running(self, msg):
-        self.__program_manager_is_running = msg.program_is_running
+        if self.__program_manager_is_running and not msg.program_is_running:
+            self.__program_manager_is_running = msg.program_is_running
+            self.__is_prog_running()
+        else:
+            self.__program_manager_is_running = msg.program_is_running
 
     def __callback_led_state(self, msg):
         self.__led_state = msg.data
@@ -148,11 +152,11 @@ class TopButton(AbstractTopButton):
             # wait if double clic occurs
             if self.double_press():
                 rospy.logwarn("Button Manager - Cancel sequence")
-                self.__set_led_state_service(False, 0, 0, 0)
+                self.__stop_blinker()
                 activate_learning_mode(True)
                 self._send_pause_state(PausePlanExecution.CANCEL)
                 if self.__program_manager_is_running:
-                    self.cancel_program_from_program_manager()
+                    self._cancel_program_from_program_manager()
 
                 self.read_value()
                 while not rospy.is_shutdown() and self._is_button_pressed():
@@ -160,7 +164,7 @@ class TopButton(AbstractTopButton):
                     self.read_value()
             else:
                 rospy.loginfo("Button Manager - Resume sequence")
-                self.__set_led_state_service(False, 0, 0, 0)
+                self.__stop_blinker()
                 activate_learning_mode(False)
                 rospy.sleep(0.2)
                 self._send_pause_state(PausePlanExecution.RESUME)
@@ -192,14 +196,17 @@ class TopButton(AbstractTopButton):
             if self._pause_state == PausePlanExecution.PAUSE:
                 activate_learning_mode(True)
             self._send_pause_state(PausePlanExecution.STANDBY)
-            self.__set_led_state_service(False, 0, 0, 0)
+            self.__stop_blinker()
 
         elif self._pause_state not in [PausePlanExecution.PLAY, PausePlanExecution.PAUSE]:
             # detect a new execution of a program
             self._send_pause_state(PausePlanExecution.PLAY)
-            self.__set_led_state_service(False, 0, 0, 0)
+            self.__stop_blinker()
 
         return python_prog_is_running
+
+    def __stop_blinker(self):
+        self.__set_led_state_service(False, 0, 0, 0)
 
     def led_advertiser(self, elapsed_seconds):
         # Use LED to help user know which action to execute
