@@ -602,9 +602,10 @@ bool TtlManager::readJointsStatus()
                 }
                 else
                 {
-                    // warn to avoid sound and light error on high level (error on ROS_ERROR)
-                    ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
-                              "driver fail to syncReadPosition (error %d)", res);
+                    // debug to avoid sound and light error on high level (error on ROS_ERROR)
+                    // also for Ned which has much more errors on XL320 motor
+                    ROS_DEBUG("TtlManager::readJointStatus : Fail to sync read joint state - "
+                              "driver fail to syncReadPosition");
                     hw_errors_increment++;
                 }
             }
@@ -1141,25 +1142,27 @@ int TtlManager::setLeds(int led)
         auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(mType));
         if (driver)
         {
+            // sync write led state
+            vector<uint8_t> command_led_value(id_list.size(), static_cast<uint8_t>(led));
+            if (0 <= led && 7 >= led)
+            {
+                int result = COMM_TX_FAIL;
+                for (int error_counter = 0; result != COMM_SUCCESS && error_counter < 5; ++error_counter)
+                {
+                    ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+                    result = driver->syncWriteLed(id_list, command_led_value);
+                }
+
+                if (COMM_SUCCESS == result)
+                    ret = niryo_robot_msgs::CommandStatus::SUCCESS;
+                else
+                    ROS_WARN("TtlManager::setLeds - Failed to write LED");
+            }
+        }
+        else
+        {
             ROS_DEBUG("Set leds failed. Driver is not compatible, check the driver's implementation ");
             return niryo_robot_msgs::CommandStatus::FAILURE;
-        }
-
-        // sync write led state
-        vector<uint8_t> command_led_value(id_list.size(), static_cast<uint8_t>(led));
-        if (0 <= led && 7 >= led)
-        {
-            int result = COMM_TX_FAIL;
-            for (int error_counter = 0; result != COMM_SUCCESS && error_counter < 5; ++error_counter)
-            {
-                ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
-                result = driver->syncWriteLed(id_list, command_led_value);
-            }
-
-            if (COMM_SUCCESS == result)
-                ret = niryo_robot_msgs::CommandStatus::SUCCESS;
-            else
-                ROS_WARN("TtlManager::setLeds - Failed to write LED");
         }
     }
     else
@@ -1538,7 +1541,7 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 
         ROS_DEBUG("TtlManager::writeSingleCommand:  %s", cmd->str().c_str());
 
-        if (_state_map.count(id) != 0 && _state_map.at(id))
+        if (_state_map.count(id) && _state_map.at(id))
         {
             auto state = _state_map.at(id);
             while ((COMM_SUCCESS != result) && (counter < 50))

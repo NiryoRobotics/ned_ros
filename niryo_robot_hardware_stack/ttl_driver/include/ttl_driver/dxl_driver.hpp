@@ -828,7 +828,7 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
         std::vector<uint32_t> position_list;
         res = syncReadPosition(id_list, position_list);
         for (auto p : position_list)
-          data_array_list.emplace_back(std::array<uint32_t, 2>{1, p});
+          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
     }
 
     return res;
