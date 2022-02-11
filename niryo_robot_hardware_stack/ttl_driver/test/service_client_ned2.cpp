@@ -231,14 +231,15 @@ TEST(TESTSuite, ReadVelocityProfile)
     }
     ASSERT_TRUE(res);
 
-    EXPECT_EQ(srv.response.v_start, 0U);
-    EXPECT_EQ(srv.response.a_1, 1260U);
-    EXPECT_EQ(srv.response.v_1, 500U);
-    EXPECT_EQ(srv.response.a_max, 2500U);
-    EXPECT_EQ(srv.response.v_max, 1500U);
-    EXPECT_EQ(srv.response.d_max, 2500U);
-    EXPECT_EQ(srv.response.d_1, 1228U);
-    EXPECT_EQ(srv.response.v_stop, 20U);
+    // In readVelocityProfile, using a convert function, so if we convert 2 times, there a very small error
+    EXPECT_DOUBLE_EQ(round(srv.response.v_start), 0.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.a_1), 1260.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.v_1), 500.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.a_max), 2500.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.v_max), 1500.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.d_max), 2500.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.d_1), 1228.0);
+    EXPECT_DOUBLE_EQ(round(srv.response.v_stop), 20.0);
 }
 
 int main(int argc, char **argv)

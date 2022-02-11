@@ -33,11 +33,23 @@ class MCP23017(object):
 
     def __init__(self, address, busnum=0):
         self.__address = address
+        self.__bus = busnum
         self.__num_gpios = 16
         self.__direction = 0x00
 
         self.i2c = Adafruit_I2C(address=address, busnum=busnum)
         self.init_config()
+
+    def __str__(self):
+        return 'MCP23017, bus {}, address {}'.format(self.__bus, self.__address)
+
+    @property
+    def address(self):
+        return self.__address
+
+    @property
+    def bus(self):
+        return self.__bus
 
     def init_config(self):
         self.write8(RegistersMCP23017.IODIRA, 0b00000010)  # all outputs on port A

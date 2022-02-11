@@ -1,8 +1,7 @@
 from enum import Enum, unique
 
-
-class NiryoRosWrapperException(Exception):
-    pass
+# Others enums
+from niryo_robot_tools_commander.api import ToolID
 
 
 class ShiftPose:
@@ -87,19 +86,57 @@ class PinID:
     DI4 = "DI4"
     DI5 = "DI5"
 
+    AI1 = "AI1"
+    AI2 = "AI2"
+    AO1 = "AO1"
+    AO2 = "AO2"
+
 
 # - Conveyor
 
-class ConveyorID:
-    def __init__(self):
-        pass
 
-    # TODO : to adapt to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) conveyor in any possible combination
-    NONE = 0
+class ConveyorID:
+    """
+    ConveyorID to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) conveyor in any possible combination
+
     ID_1 = 12   # One, Ned
     ID_2 = 13   # One, Ned
     ID_3 = 9    # Ned2
     ID_4 = 10   # Ned2
+    """
+
+    def __init__(self):
+        pass
+
+    NONE = 0
+    ID_1 = -1
+    ID_2 = -2
+
+
+class ConveyorCan:
+    """
+    ConveyorID to control conveyors with CAN interface
+    """
+
+    def __init__(self):
+        pass
+
+    NONE = 0
+    ID_1 = 12
+    ID_2 = 13
+
+
+class ConveyorTTL:
+    """
+    ConveyorID to control conveyors with TTL interface
+    """
+
+    def __init__(self):
+        pass
+
+    NONE = 0
+    ID_1 = 9
+    ID_2 = 10
 
 
 class ConveyorDirection:

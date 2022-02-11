@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 13:17+0000\n"
+"POT-Creation-Date: 2022-02-10 08:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1223,6 +1223,26 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID:1 of
 msgid "Pins ID"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorID:1 of
+msgid ""
+"ConveyorID to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) "
+"conveyor in any possible combination"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorID:3 of
+msgid ""
+"ID_1 = 12   # One, Ned ID_2 = 13   # One, Ned ID_3 = 9    # Ned2 ID_4 = "
+"10   # Ned2"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorCan:1 of
+msgid "ConveyorID to control conveyors with CAN interface"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorTTL:1 of
+msgid "ConveyorID to control conveyors with TTL interface"
 msgstr ""
 
 #~ msgid "Python ROS Wrapper Documentation"

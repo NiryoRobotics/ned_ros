@@ -5,42 +5,42 @@ calibration_file:  "/home/niryo/niryo_robot_saved_files/stepper_motor_calibratio
 calibration_params:
     stepper_1:
         id: 2
-        v_start: 0
-        a_1: 450
-        v_1: 300
-        a_max: 1200
-        v_max: 700
-        d_max: 1200
-        d_1: 450
-        v_stop: 20
+        v_start: 0.0
+        a_1: 0.785
+        v_1: 0.314
+        a_max: 2.094
+        v_max: 0.733
+        d_max: 2.094
+        d_1: 0.785
+        v_stop: 0.0209
         stall_threshold: 7
         direction: -1
         delay: 200
 
     stepper_2:
         id: 3
-        v_start: 0
-        a_1: 300
-        v_1: 300
-        a_max: 600
-        v_max: 600
-        d_max: 600
-        d_1: 300
-        v_stop: 20
-        stall_threshold: 6
+        v_start: 0.0
+        a_1: 0.524
+        v_1: 0.314
+        a_max: 1.047
+        v_max: 0.628
+        d_max: 1.047
+        d_1: 0.524
+        v_stop: 0.0209
+        stall_threshold: 7
         direction: -1
         delay: 1000
 
     stepper_3:
         id: 4
-        v_start: 0
-        a_1: 450
-        v_1: 300
-        a_max: 750
-        v_max: 600
-        d_max: 750
-        d_1: 450
-        v_stop: 20
+        v_start: 0.0
+        a_1: 0.785
+        v_1: 0.314
+        a_max: 1.309
+        v_max: 0.628
+        d_max: 1.309
+        d_1: 0.785
+        v_stop: 0.0209
         stall_threshold: 6
         direction: -1
         delay: 1000

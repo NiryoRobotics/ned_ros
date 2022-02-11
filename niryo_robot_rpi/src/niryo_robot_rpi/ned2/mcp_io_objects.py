@@ -31,7 +31,6 @@ class McpIOManager(object):
         self.__mcp = mcp if mcp is not None else MCP23017(address=rospy.get_param("~mcp/address"),
                                                           busnum=rospy.get_param("~mcp/i2c_bus"))
 
-        self.__mcp = mcp
         self.__lock = Lock()
 
         self.__inputs = {}
@@ -53,6 +52,10 @@ class McpIOManager(object):
 
     def __del__(self):
         GPIO.cleanup()
+
+    @property
+    def mcp(self):
+        return self.__mcp
 
     @property
     def lock(self):
@@ -262,8 +265,23 @@ class AnalogOutput(NiryoIO):
     def __init__(self, lock, pin, name, address, bus_i2c, v_ref, resolution):
         super(AnalogOutput, self).__init__(lock, pin, name)
 
+        self.__i2c_bus = bus_i2c
+        self.__i2c_address = address
+
         self.__dac = DACx0501(bus=bus_i2c, address=address, v_ref=v_ref, resolution=resolution)
         self.__mode = PinMode.ANALOG_OUTPUT
+
+    def __str__(self):
+        return 'DACx0501 {}, bus {}, address {}, value {}'.format(self._name, self.__i2c_bus, self.__i2c_address,
+                                                                  self._value)
+
+    @property
+    def bus(self):
+        return self.__i2c_bus
+
+    @property
+    def address(self):
+        return self.__i2c_address
 
     @property
     def value(self):

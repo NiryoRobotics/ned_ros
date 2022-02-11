@@ -39,6 +39,7 @@
         <include file="$(find niryo_robot_bringup)/launch/niryo_robot_sound_and_light.launch.xml">
             <arg name="hardware_version" value="ned2"/>
             <arg name="simulation_mode" value="false"/>
+            <arg name="log_level" value="$(arg log_level)"/>
         </include>
     </group>
 

@@ -18,6 +18,7 @@ add_message_files(
   AnalogIOState.msg
   DigitalIO.msg
   DigitalIOState.msg
+  I2CComponent.msg
   LogStatus.msg
 )
 
@@ -28,6 +29,7 @@ add_service_files(
   GetAnalogIO.srv
   GetDigitalIO.srv
   LedBlinker.srv
+  ScanI2CBus.srv
   SetAnalogIO.srv
   SetDigitalIO.srv
   SetIOMode.srv

@@ -32,12 +32,15 @@ class SoundDatabase:
         self.__robot_sound_directory_path = os.path.join(rospkg.RosPack().get_path('niryo_robot_sound'),
                                                          rospy.get_param("~path_robot_sound"))
 
+        self.__system_sounds = [sound for sound in list(rospy.get_param("~robot_sounds").values())]
         self.__error_sound_name = rospy.get_param("~robot_sounds/error_sound")
         self.__turn_on_sound_name = rospy.get_param("~robot_sounds/turn_on_sound")
         self.__turn_off_sound_name = rospy.get_param("~robot_sounds/turn_off_sound")
         self.__connection_sound = rospy.get_param("~robot_sounds/connection_sound")
         self.__robot_ready_sound = rospy.get_param("~robot_sounds/robot_ready_sound")
         self.__calibration_sound = rospy.get_param("~robot_sounds/calibration_sound")
+        self.__warning_sound = rospy.get_param("~robot_sounds/warn_sound")
+        self.__reboot_sound = rospy.get_param("~robot_sounds/reboot_sound")
 
         self.__robot_sounds = {}
         self.__user_sounds = {}
@@ -90,6 +93,14 @@ class SoundDatabase:
     @property
     def calibration_sound(self):
         return self.__robot_sounds[self.__calibration_sound]
+
+    @property
+    def reboot_sound(self):
+        return self.__robot_sounds[self.__reboot_sound]
+
+    @property
+    def warning_sound(self):
+        return self.__robot_sounds[self.__warning_sound]
 
     @property
     def state_sound_directory_path(self):
@@ -187,12 +198,9 @@ class SoundDatabase:
                     pass
 
     def __load_robot_sounds(self):
-        sounds = [self.__turn_on_sound_name, self.__turn_off_sound_name, self.__error_sound_name,
-                  self.__connection_sound, self.__robot_ready_sound, self.__calibration_sound]
-
         self.__robot_sounds = {
             sound_name: Sound(sound_name, os.path.join(self.__robot_sound_directory_path, sound_name)) for sound_name in
-            sounds}
+            self.__system_sounds}
 
     def __publish_sounds(self):
         msg = SoundList()
