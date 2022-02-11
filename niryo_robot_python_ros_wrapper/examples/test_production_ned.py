@@ -1,14 +1,27 @@
+#!/usr/bin/env python
+
 import rospy
 import json
-import argparse
 import numpy as np
 from datetime import datetime
 
-from std_msgs.msg import Int32, String
+from std_msgs.msg import String, Int32
+from niryo_robot_reports.msg import Service
+
 from niryo_robot_database.srv import SetSettings
+from niryo_robot_rpi.srv import ScanI2CBus
+from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
+from niryo_robot_reports.srv import CheckConnection
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
+
+LOOPS = 5
+CALIBRATION_LOOPS = 2
+SPIRAL_LOOPS = 5
+
+SPEED = 80  # %
+ACCELERATION = 50  # %
 
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
@@ -19,8 +32,7 @@ PINK = [255, 0, 255]
 RED = [255, 0, 0]
 
 USE_BUTTON = False
-VOLUME = 10
-LOOPS = 0
+VOLUME = 100
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -53,7 +65,7 @@ class TestReport(object):
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
         print(new_line)
-        self._report += new_line + "\n"
+        self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
         try:
@@ -116,6 +128,7 @@ class TestProduction:
         self.__success = False
 
         self.__sub_tests = [
+            TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
             TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
             TestStep(self.__functions.test_sound, "Test sound", critical=False),
             TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
@@ -130,6 +143,7 @@ class TestProduction:
 
     def run(self):
         rospy.sleep(1)
+        self.__functions.led_stop()
         try:
             for test in self.__sub_tests:
                 test.run()
@@ -137,7 +151,9 @@ class TestProduction:
         except TestFailure:
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
             self.__sub_tests[-1].run()
+            self.__functions.reset()
             self.__success = False
+            self.__functions.led_error()
         else:
             self.__success = True
 
@@ -161,15 +177,71 @@ class TestProduction:
             rospy.sleep(0.1)
 
         new_report_publisher.publish(json.dumps(self.get_report()))
+        rospy.logdebug('test report published')
 
 
 class TestFunctions(object):
 
     def __init__(self):
         rospy.sleep(2)
-        self.__robot = NiryoRosWrapper()
+        self.__robot = robot
+        self.__hardware_version = self.__robot.get_hardware_version()
+        self.__robot.set_arm_max_velocity(SPEED)
+        self.__robot.set_arm_max_acceleration(ACCELERATION)
+        self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
+        self.led_stop()
+
+    def reset(self):
+        self.__robot.set_arm_max_velocity(100)
+        self.__robot.set_arm_max_acceleration(100)
+
+    def led_error(self, duration=360):
+        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode:
+            self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
+
+    def led_stop(self):
+        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode:
+            self.__set_led_state_service(False, 0, 0, 0)
+
+    def test_cloud_connection(self, report):
+        if self.__robot.get_simulation_mode:
+            report.append("Test Cloud connection - Skipped in simulation mode")
+            return
+
+        check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
+        result = check_connection_service(Service(Service.TEST_REPORTS))
+        if result.status < 0:
+            error_str = "Service test_report doesn't exists"
+            report.append(error_str)
+            raise TestFailure("Service test_report doesn't exists")
+        if result.result is False:
+            error_str = "test_reports api didnt respond"
+            report.append(error_str)
+            raise TestFailure(error_str)
+        report.append('Service test_reports successfully reached')
 
     def test_robot_status(self, report):
+        try:
+            hardware_status = self.__robot.get_hardware_status()
+        except rospy.exceptions.ROSException as e:
+            report.append(str(e))
+            raise TestFailure(e)
+
+        if hardware_status.error_message:
+            message = "Hardware status Error - {}".format(hardware_status.error_message)
+            report.append(message)
+            raise TestFailure(message)
+
+        if any(hardware_status.hardware_errors):
+            message = "Hardware status Motor Error - {}".format(hardware_status.hardware_errors_message)
+            report.append(message)
+            raise TestFailure(message)
+
+        if hardware_status.rpi_temperature > 70:
+            message = "Rpi overheating"
+            report.append(message)
+            raise TestFailure(message)
+
         try:
             robot_status = self.__robot.get_robot_status()
         except rospy.exceptions.ROSException as e:
@@ -177,27 +249,54 @@ class TestFunctions(object):
             raise TestFailure(e)
 
         if robot_status.robot_status < 0:
-            report.append("Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message))
-            raise TestFailure
+            message = "Robot status - {} - {}".format(robot_status.robot_status_str, robot_status.robot_message)
+            report.append(message)
+            raise TestFailure(message)
 
-        if robot_status.rpi_overheating:
-            report.append("Rpi overheating")
-            raise TestFailure
+        def test_i2c():
+            if self.__robot.get_simulation_mode():
+                report.append("I2C Bus - Skipped in simulation mode")
+                return
+
+            try:
+                rospy.wait_for_service("/niryo_robot_rpi/scan_i2c_bus", timeout=0.2)
+                resp = rospy.ServiceProxy("/niryo_robot_rpi/scan_i2c_bus", ScanI2CBus).call()
+
+                if not resp.is_ok:
+                    message = "I2C Bus - Missing components: {}".format(resp.missing)
+                    report.append(message)
+                    raise TestFailure(message)
+
+            except (rospy.ROSException, rospy.ServiceException) as e:
+                report.append(str(e))
+                raise TestFailure(e)
+
+        if self.__hardware_version in ['ned2']:
+            test_i2c()
 
     def test_calibration(self, report):
-        self.__robot.sound.say("Test de calibration", 1)
-
-        for loop_index in range(2):
+        for _ in range(CALIBRATION_LOOPS):
             self.__robot.request_new_calibration()
             rospy.sleep(0.1)
-            report.execute(self.__robot.calibrate_auto, "Calibration")
-            report.execute(self.move_and_compare, "Move after calibration", args=[6 * [0], 1])
-            self.__robot.led_ring.flashing(BLUE)
 
-            self.__robot.sound.say("Validez la position du robot", 1)
-            report.execute(self.wait_save_button_press, "Wait save button press to validate")
+            report.execute(self.__robot.calibrate_auto, "Calibration")
+            self.__robot.set_learning_mode(False)
+            rospy.sleep(0.1)
+            report.execute(self.move_and_compare, "Move after calibration", args=[6 * [0], 1])
+
+            if self.__hardware_version in ['ned2']:
+                self.__robot.led_ring.flashing(BLUE)
+
+                self.__robot.sound.say("Validez la position du robot", 1)
+                report.execute(self.wait_save_button_press, "Wait save button press to validate")
+
+            self.__robot.move_to_sleep_pose()
 
     def test_led_ring(self, report):
+        if self.__hardware_version not in ['ned2']:
+            report.append("Led ring test - Skipped on {}".format(self.__hardware_version))
+            return
+
         self.__robot.led_ring.solid(WHITE)
 
         self.__robot.sound.say("Premier test du ruban led", 1)
@@ -212,6 +311,9 @@ class TestFunctions(object):
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate", args=[60, ])
 
     def test_sound(self, report):
+        if self.__hardware_version not in ['ned2']:
+            report.append("Sound test - Skipped on {}".format(self.__hardware_version))
+            return
 
         self.__robot.led_ring.solid(PURPLE)
         report.append("Led ring color set to PURPLE")
@@ -237,6 +339,19 @@ class TestFunctions(object):
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
     def test_freedrive(self, report):
+        if self.__hardware_version not in ['ned2']:
+            report.append("Freemotion test - Skipped on {}".format(self.__hardware_version))
+            return
+
+        def wait_learning_mode(value):
+            start_time = rospy.Time.now()
+            while self.__robot.get_learning_mode() == value:
+                if (rospy.Time.now() - start_time).to_sec() > 20:
+                    return -1, "Timeout: no detected".format("learning mode" if value else "torque on")
+                rospy.sleep(0.1)
+
+            return 1, "Learning mode".format("enabled" if value else "disabled")
+
         self.__robot.sound.say("Test de free motion", 1)
 
         joint_limit = self.__robot.get_axis_limits()[1]['joint_limits']
@@ -245,7 +360,7 @@ class TestFunctions(object):
         report.append("Led ring color set to GREEN")
 
         report.append("Wait learning mode")
-        report.execute(self.wait_learning_mode, "Wait learning mode")
+        report.execute(wait_learning_mode, "Wait learning mode", [True])
 
         for i in range(0, 30, 6):
             for j in range(2):
@@ -282,35 +397,61 @@ class TestFunctions(object):
         rospy.sleep(1)
         self.__robot.led_ring.flashing(GREEN)
 
-        report.execute(self.wait_torque_on, "Wait learning mode disabled")
+        report.execute(wait_learning_mode, "Wait learning mode disabled", [False])
         rospy.sleep(1)
 
     def test_io(self, report):
+        if self.__hardware_version not in ['ned2']:
+            report.append("IO test - Skipped on {}".format(self.__hardware_version))
+            return
+
+        def test_digital_io_value(io_name, state):
+            io_state = self.__robot.digital_read(io_name)
+            if io_state != state:
+                raise TestFailure(
+                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, state))
+            return 1, "Success"
+
+        def test_analog_io_value(io_name, value, error=0.3):
+            io_state = self.__robot.analog_read(io_name)
+            if not (value - error <= io_state <= value + error):
+                raise TestFailure(
+                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, value))
+            return 1, "Success"
+
         self.__robot.led_ring.solid(PINK)
 
         # Test digital ios
         dio = self.__robot.get_digital_io_state()
 
-        # for input in dio.digital_inputs:
-        #     self.__robot.digital_write(input.name, True)
-
-        for output in dio.digital_output:
-            assert self.__robot.digital_read(output.name)
+        for do in dio.digital_output:
+            report.execute(self.__robot.digital_write, 'Set digital output {}'.format(do.name), [do.name, True])
+        for di in dio.digital_input:
+            report.execute(test_digital_io_value, 'Test digital input {} is High'.format(di.name), [di.name, True])
 
         # Test analog ios
         aio = self.__robot.get_analog_io_state()
-        for input in aio.analog_inputs:
-            self.__robot.analog_write(input.name, 5)
-
-        # for output in aio.analog_output:
-        #     assert 4.8 <= self.__robot.analog_read(output.name) <= 5.2
+        for ao in aio.analog_outputs:
+            report.execute(self.__robot.digital_write, 'Set analog output {} to 5V'.format(ao.name), [ao.name, 5.0])
+        for ai in aio.analog_inputs:
+            report.execute(test_analog_io_value, 'Test analog input {} is 5V'.format(ai.name), [ai.name, 5.0])
 
         self.__robot.led_ring.flashing(PINK)
         self.wait_custom_button_press()
 
+        for do in dio.digital_output:
+            report.execute(self.__robot.digital_write, 'Unset digital output {}'.format(do.name), [do.name, False])
+        for di in dio.digital_input:
+            report.execute(test_digital_io_value, 'Test digital input {} is Low'.format(di.name), [di.name, False])
+        for ao in aio.analog_outputs:
+            report.execute(self.__robot.digital_write, 'Set analog output {} to 0V'.format(ao.name), [ao.name, 0.0])
+        for ai in aio.analog_inputs:
+            report.execute(test_analog_io_value, 'Test analog input {} is 0V'.format(ai.name), [ai.name, 0.0])
+
     def test_joint_limits(self, report):
-        self.__robot.led_ring.rainbow_cycle()
-        self.__robot.sound.say("Test des limites des joints", 1)
+        if self.__hardware_version in ['ned2']:
+            self.__robot.led_ring.rainbow_cycle()
+            self.__robot.sound.say("Test des limites des joints", 1)
 
         self.__robot.set_learning_mode(False)
         rospy.sleep(1)
@@ -334,27 +475,31 @@ class TestFunctions(object):
         last_target[2] = joint_limit[joint_names[2]]['max'] - 0.1
         last_target[4] = joint_limit[joint_names[4]]['min'] + 0.1
 
-        poses = [default_joint_pose, first_target, second_target, third_target, last_target]
+        poses = [default_joint_pose, first_target,
+                 default_joint_pose, second_target,
+                 default_joint_pose, third_target, last_target]
 
         for loop_index in range(LOOPS):
             for position_index, joint_position in enumerate(poses):
                 report.execute(self.move_and_compare_without_moveit,
                                "Move number {}.{}".format(loop_index, position_index),
-                               args=[joint_position, 1, 2])
+                               args=[joint_position, 1, 4])
 
     def test_spiral(self, report):
-        self.__robot.led_ring.rainbow_cycle()
-        self.__robot.sound.say("Test des spirales", 1)
+        if self.__hardware_version in ['ned2']:
+            self.__robot.led_ring.rainbow_cycle()
+            self.__robot.sound.say("Test des spirales", 1)
 
-        for loop_index in range(LOOPS):
+        for loop_index in range(SPIRAL_LOOPS):
             report.execute(self.__robot.move_pose, "Loop {} - Move to spiral center".format(loop_index),
                            [0.3, 0, 0.2, 0, 1.57, 0])
             report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index),
-                           [0.1, 5, 216, 3])
+                           [0.15, 5, 216, 3])
 
     def test_fun_poses(self, report):
-        self.__robot.led_ring.rainbow_cycle()
-        self.__robot.sound.say("Test de divers movements", 1)
+        if self.__hardware_version in ['ned2']:
+            self.__robot.led_ring.rainbow_cycle()
+            self.__robot.sound.say("Test de divers movements", 1)
 
         waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26],
                      [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
@@ -366,22 +511,22 @@ class TestFunctions(object):
             for wayoint_index, wayoint in enumerate(waypoints):
                 report.execute(self.move_and_compare_without_moveit,
                                "Loop {}.{} - Fun move".format(loop_index, wayoint_index),
-                               args=[wayoint, 1, 2])
+                               args=[wayoint, 1, 4])
 
     def test_pick_and_place(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
 
-        self.__robot.sound.say("Changez d'outil", 1)
-        self.wait_custom_button_press()
-
-        self.__robot.sound.say("Test de pick and place", 1)
+        if self.__hardware_version in ['ned2']:
+            self.__robot.sound.say("Changez d'outil", 1)
+            self.wait_custom_button_press()
+            self.__robot.sound.say("Test de pick and place", 1)
 
         report.execute(self.__robot.update_tool, "Scan tool")
         report.append("Detected tool: {}".format(self.__robot.get_current_tool_id()))
 
         self.__robot.enable_tcp(True)
 
-        z_offset = 0.02
+        z_offset = 0.15 if self.__robot.get_current_tool_id() <= 0 else 0.02
         sleep_pose = [0.25, 0, 0.3, 0, 1.57, 0]
         pick_1 = [0, 0.2, z_offset, 0, 1.57, 0]
         pick_2 = [0, -0.2, z_offset, 0, 1.57, 0]
@@ -417,10 +562,15 @@ class TestFunctions(object):
     def end_test(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
 
-        self.__robot.led_ring.flashing(BLUE)
-        report.append("End")
-        self.__robot.sound.say("Fin du test, validez la position 0", 1)
-        report.execute(self.wait_save_button_press, "Wait save button press to validate")
+        if self.__hardware_version in ['ned2']:
+            self.__robot.led_ring.flashing(BLUE)
+            report.append("End")
+            self.__robot.sound.say("Fin du test, validez la position 0", 1)
+            report.execute(self.wait_save_button_press, "Wait save button press to validate")
+
+        self.__robot.move_to_sleep_pose()
+        self.__robot.set_arm_max_velocity(100)
+        self.__robot.set_arm_max_acceleration(100)
 
     def wait_custom_button_press(self, timeout=20):
         if not USE_BUTTON:
@@ -447,24 +597,6 @@ class TestFunctions(object):
 
             return -1, "Timeout: no press detected"
 
-    def wait_learning_mode(self):
-        start_time = rospy.Time.now()
-        while not self.__robot.get_learning_mode():
-            if (rospy.Time.now() - start_time).to_sec() > 20:
-                return -1, "Timeout: no learning mode detected"
-            rospy.sleep(0.1)
-
-        return 1, "Learning mode enabled"
-
-    def wait_torque_on(self):
-        start_time = rospy.Time.now()
-        while self.__robot.get_learning_mode():
-            if (rospy.Time.now() - start_time).to_sec() > 20:
-                return -1, "Timeout: no torque on detected"
-            rospy.sleep(0.1)
-
-        return 1, "Learning mode disabled"
-
     def move_and_compare(self, target, precision_decimal=1):
         status, message = self.__robot.move_joints(*target)
         if status >= 0:
@@ -473,7 +605,7 @@ class TestFunctions(object):
                 raise TestFailure("Target not reached - Actual {} - Target {}".format(current_joints, target))
         return status, message
 
-    def move_and_compare_without_moveit(self, target, precision_decimal=1, duration=2):
+    def move_and_compare_without_moveit(self, target, precision_decimal=1, duration=4):
         _status, _message = self.__robot.move_without_moveit(target, duration)
 
         start_time = rospy.Time.now()
@@ -484,30 +616,20 @@ class TestFunctions(object):
             rospy.sleep(0.1)
         return 1, "Success"
 
-    def play_sound(self, sound_name):
-        start_time = rospy.Time.now()
-        self.__robot.sound.play(sound_name, wait_end=True)
-
-        sound_duration = self.__robot.sound.get_sound_duration(sound_name)
-        if sound_duration - 0.5 < (rospy.Time.now() - start_time).to_sec() < sound_duration + 1:
-            return -1, "Sound {} runtime error".format(sound_name)
-
-        return 1, "Success"
-
 
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
+    robot = NiryoRosWrapper()
+    # robot.system_api_client.set_ethernet_auto()
     print("----- START -----")
     test = TestProduction()
     test.run()
     print("----- END -----")
     test.print_report()
     test.send_report()
+    # robot.system_api_client.set_ethernet_static()
 
-    # This is to avoid deactivating the sharing each time we run this script
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--set_sharing_allowed', action='store_true')
-    args = parser.parse_args()
-    if args.set_sharing_allowed:
+    if test.get_report()['success']:
         set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting('sharing_allowed', 'False', 'bool')
+        # set_setting('sharing_allowed', 'False', 'bool')
+        set_setting('test_report_done', 'True', 'bool')

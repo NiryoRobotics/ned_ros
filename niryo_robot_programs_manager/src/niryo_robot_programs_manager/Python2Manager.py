@@ -36,14 +36,14 @@ class Python2FileManager(ProgramsFileManager):
         try:
             self.__process = subprocess.Popen(['python', self._path_from_name(name)],
                                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            _stdout, stderr = self.__process.communicate()
+            stdout, stderr = self.__process.communicate()
         except Exception as e:
-            return False, str(e)
+            return False, str(e), ''
 
         if stderr:
-            return False, stderr
+            return False, stderr, ''
 
-        return True, "Execution success"
+        return True, "Execution success", stdout
 
     def stop_execution(self):
         if self.__process is None:

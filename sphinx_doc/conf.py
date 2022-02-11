@@ -119,6 +119,8 @@ extlinks = {
     'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
+    'visualization_msgs': (
+    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'visualization_msgs': (
@@ -131,7 +133,7 @@ extlinks = {
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
         None),
-    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html/%s', None),
+    'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html%s', ''),
     'python_website': ('https://www.python.org/%s', None),
     'python_installation': ('https://realpython.com/installing-python/%s', None),
     'pip_website': ('https://pypi.org/project/pip/%s', None),

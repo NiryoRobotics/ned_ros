@@ -25,7 +25,7 @@
 #include "ros/serialization.h"
 #include "common/util/unique_ptr_cast.hpp"
 
-#include "ttl_driver/CollisionStatus.h"
+#include "std_msgs/Bool.h"
 
 // c++
 #include <cstdint>
@@ -180,7 +180,7 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void TtlInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _collision_status_publisher = nh.advertise<ttl_driver::CollisionStatus>("/niryo_robot/collision_detected", 1, true);
+    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/collision_detected", 1, true);
     _collision_status_publisher_timer = nh.createTimer(_collision_status_publisher_duration,
                                                       &TtlInterfaceCore::_publishCollisionStatus,
                                                       this);
@@ -1283,8 +1283,8 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {
-    ttl_driver::CollisionStatus msg;
-    msg.collision_detected = readCollisionStatus();
+    std_msgs::Bool msg;
+    msg.data = readCollisionStatus();
     _collision_status_publisher.publish(msg);
 }
 

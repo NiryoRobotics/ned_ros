@@ -37,7 +37,7 @@ class RobotNodesObserver(object):
         self.__pyniryo_nodes_sub = rospy.Subscriber('/ping_pyniryo', Bool, self.__callback_pyniryo_nodes)
 
     def __callback_python_ros_wrapper_node(self, req):
-        if req.name not in ['/niryo_robot_user_interface', '']:
+        if req.name not in ['/niryo_robot_user_interface', '/system_software_node', '']:
             if req.state:
                 self.__python_wrapper_nodes.add(req.name)
             elif req.name in self.__python_wrapper_nodes:
@@ -65,7 +65,10 @@ class RobotNodesObserver(object):
         return bool(self.__python_wrapper_nodes)
 
     def check_vital_nodes(self):
-        alive_nodes = rosnode.get_node_names()
+        try:
+            alive_nodes = rosnode.get_node_names()
+        except rosnode.ROSNodeIOException:
+            alive_nodes = []
 
         self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
                                        pywrapper_node in alive_nodes}

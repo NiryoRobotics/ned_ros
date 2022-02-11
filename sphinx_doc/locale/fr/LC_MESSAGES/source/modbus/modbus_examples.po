@@ -38,7 +38,7 @@ msgstr ""
 
 #: ../../source/modbus/modbus_examples.rst:8
 msgid "Client Modbus Test"
-msgstr ""
+msgstr "Client Modbus Test"
 
 #: ../../source/modbus/modbus_examples.rst:9
 msgid "Calls several functions on the IO of Ned."
@@ -46,7 +46,7 @@ msgstr "Appelle plusieurs fonctions utilisant les ports IO de Ned."
 
 #: ../../source/modbus/modbus_examples.rst:12
 msgid "Client Move Command"
-msgstr ""
+msgstr "Client Move Command"
 
 #: ../../source/modbus/modbus_examples.rst:13
 msgid "This script shows the calibration and Ned's moves."
@@ -54,7 +54,7 @@ msgstr "Ce script montre les mouvements et la calibration de Ned."
 
 #: ../../source/modbus/modbus_examples.rst:16
 msgid "Client Modbus Conveyor Example"
-msgstr ""
+msgstr "Client Modbus Conveyor Example"
 
 #: ../../source/modbus/modbus_examples.rst:17
 msgid ""
@@ -67,7 +67,7 @@ msgstr ""
 
 #: ../../source/modbus/modbus_examples.rst:20
 msgid "Client Modbus Vision Example"
-msgstr ""
+msgstr "Client Modbus Vision Example"
 
 #: ../../source/modbus/modbus_examples.rst:21
 msgid ""

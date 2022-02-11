@@ -17,7 +17,6 @@ initialisation_params:
  - "/niryo_robot_poses_handlers/initialized"
  - "/niryo_robot_programs_manager/initialized"
  - "/niryo_robot_tools_commander/initialized"
- - "/niryo_robot_user_interface/initialized"
 
 vital_nodes_common:
  - "/controller_spawner"

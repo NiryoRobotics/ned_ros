@@ -65,7 +65,7 @@ class RobotStatusObserver(object):
         self.learning_mode_state_sub = rospy.Subscriber('/niryo_robot/learning_mode/state',
                                                         Bool, self.__callback_learning_mode_state)
 
-        self.__collision_detected_sub = rospy.Subscriber('/niryo_robot_arm_commander/collision_detected',
+        self.__collision_detected_sub = rospy.Subscriber('/niryo_robot/collision_detected',
                                                          Bool, self.__callback_collision_detected)
 
         self.__joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
@@ -133,6 +133,8 @@ class RobotStatusObserver(object):
 
     def __callback_collision_detected(self, msg):
         self.collision_detected = msg.data
+        if self.collision_detected:
+            self.__robot_status_handler.advertise_new_state()
 
     def __callback_joint_states(self, msg):
         if not self.joint_limits:
