@@ -44,6 +44,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf2_web_republisher</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>niryo_robot_utils</exec_depend>
 
   <!-- Python Dependencies -->
   <exec_depend>python-numpy</exec_depend>

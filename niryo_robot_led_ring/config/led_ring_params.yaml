@@ -11,6 +11,7 @@ default_breath_period: 4
 default_snake_period: 1.5
 
 led_offset: 8
+enable_led_ring_bcm_pin: 27
 
 use_mesh: False
 simulation_led_mesh_path: "package://niryo_robot_description/meshes/led_ring/led.dae"

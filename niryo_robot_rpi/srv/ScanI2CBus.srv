@@ -1,0 +1,7 @@
+---
+int32 status
+string message
+
+bool is_ok
+niryo_robot_rpi/I2CComponent[] missing
+niryo_robot_rpi/I2CComponent[] detected

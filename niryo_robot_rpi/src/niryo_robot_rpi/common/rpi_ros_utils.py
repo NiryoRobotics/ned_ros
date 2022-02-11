@@ -23,6 +23,28 @@ from niryo_robot_msgs.srv import SetInt
 from niryo_robot_system_api_client.srv import ManageWifi, ManageWifiRequest
 from niryo_robot_msgs.msg import CommandStatus
 
+__all__ = [
+    "LedState",
+
+    "send_hotspot_command",
+    "send_restart_wifi_command",
+    "send_deactivate_wifi_command",
+    "send_reconnect_wifi_command",
+
+    "send_trigger_program_autorun",
+    "send_reboot_motors_command",
+
+    "send_shutdown_command",
+    "send_reboot_command",
+
+    "send_led_state",
+    "activate_learning_mode",
+    "auto_calibration",
+    "stop_robot_action",
+
+    "ping_i2c",
+]
+
 ENABLE_BUS_MOTORS_SUCCESS = 1
 ENABLE_BUS_MOTORS_READ_FAIL = -1
 ENABLE_BUS_MOTORS_WRITE_FAIL = -2
@@ -110,11 +132,10 @@ def send_reboot_motors_command():
         pass
 
 
-def send_shutdown_command():
+def send_shutdown_command(learning_mode=True):
     rospy.loginfo("SHUTDOWN")
-    rospy.loginfo("Activate learning mode")
-    activate_learning_mode(True)
-    send_reboot_motors_command()
+    activate_learning_mode(learning_mode)
+    # send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo shutdown now'")
     try:
@@ -124,11 +145,10 @@ def send_shutdown_command():
         rospy.logwarn("Can't exec shutdown cmd")
 
 
-def send_reboot_command():
+def send_reboot_command(learning_mode=True):
     rospy.loginfo("REBOOT")
-    rospy.loginfo("Activate learning mode")
-    activate_learning_mode(True)
-    send_reboot_motors_command()
+    activate_learning_mode(learning_mode)
+    # send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo reboot'")
     try:
@@ -182,3 +202,18 @@ def stop_robot_action():
         stop_cmd()
     except (rospy.ServiceException, rospy.ROSException) as e:
         pass
+
+
+def ping_i2c(bus_num, address):
+    from smbus2 import SMBus
+
+    try:
+        bus = SMBus(bus_num)
+    except OSError:
+        return False
+
+    try:
+        bus.read_byte(address)
+        return True
+    except IOError as e:
+        return e.args[0] == 16  # Busy but connected if error=16

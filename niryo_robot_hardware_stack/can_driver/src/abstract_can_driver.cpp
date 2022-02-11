@@ -176,7 +176,8 @@ uint8_t AbstractCanDriver::read(INT32U *id, uint8_t *len, std::array<uint8_t, MA
     for (auto i = 0; i < 10 && CAN_OK != status; ++i)
     {
         status = _mcp_can->readMsgBuf(id, len, buf.data());
-        ROS_WARN_COND(CAN_OK != status, "StepperDriver::read - Reading Stepper message on CAN Bus failed");
+        if (CAN_OK != status)
+            ROS_WARN_THROTTLE(1.0, "StepperDriver::read - Reading Stepper message on CAN Bus failed");
     }
 
     return status;

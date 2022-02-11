@@ -1,0 +1,1066 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Modbus User Manual
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Modbus User Manual 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-10 09:03+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/modbus/api_documentation.rst:2
+msgid "Use the Modbus TCP server"
+msgstr "Utilisation du serveur Modbus"
+
+#: ../../source/modbus/api_documentation.rst:9
+msgid "In this document, we will focus on the Modbus/TCP server."
+msgstr "Dans ce document, nous nous focaliserons sur le serveur Modbus/TCP."
+
+#: ../../source/modbus/api_documentation.rst:11
+msgid ""
+"Ned is permanently running a Modbus TCP Server that enables Ned to "
+"communicate with a PLC, or another computer in the same network."
+msgstr ""
+"Ned exécute en permanence un serveur Modbus TCP qui permet à Ned de "
+"communiquer avec une API ou un autre ordinateur du même réseau."
+
+#: ../../source/modbus/api_documentation.rst:13
+msgid ""
+"The Modbus/TCP server is running on **port 5020** by default. It has been"
+" built on top of the `pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_ library. This "
+"enables you to make Ned communicates with a PLC, or another computer on "
+"the same network."
+msgstr ""
+"Le serveur Modbus/TCP tourne par défaut sur le **port 5020**. Il a été "
+"développé en utilisant la librairie `pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_. Le serveur "
+"vous permet de faire communiquer Ned avec un CLP ou avec un autre "
+"ordinateur sur le même réseau."
+
+#: ../../source/modbus/api_documentation.rst:18
+msgid "Introduction"
+msgstr "Introduction"
+
+#: ../../source/modbus/api_documentation.rst:20
+msgid ""
+"All 4 Modbus datastores are implemented: "
+":ref:`Coils<source/modbus/api_documentation:Coils>`, :ref:`Discrete "
+"inputs<source/modbus/api_documentation:Discrete inputs>`, :ref:`Holding "
+"registers<source/modbus/api_documentation:Holding registers>`, "
+":ref:`Input registers<source/modbus/api_documentation:Input registers>`. "
+"Each datastore has a different set of functionalities. Note that each "
+"datastore contains a completely different set of data."
+msgstr ""
+"Les 4 banques de registres Modbus sont implémentées : les "
+":ref:`coils<source/modbus/api_documentation:Coils>`, les :ref:`entrées "
+"discrètes<source/modbus/api_documentation:Discrete inputs>`, les "
+":ref:`registres de maintien<source/modbus/api_documentation:Holding "
+"registers>`, ainsi que les :ref:`registres "
+"d'entrée<source/modbus/api_documentation:Input registers>`. Chaque banque"
+" de registres a un ensemble de fonctionnalités."
+
+#: ../../source/modbus/api_documentation.rst:23
+msgid ""
+"Discrete Input and Input register are **READ-ONLY** tables. Those have "
+"been used to keep the robot state."
+msgstr ""
+"Les entrées discrètes et les registres d'entrée sont en **lecture "
+"seule**. Ils sont utilisés pour garder les états du robot."
+
+#: ../../source/modbus/api_documentation.rst:25
+msgid ""
+"Coil and Holding Register are **READ/WRITE** tables. Those have been used"
+" to give user commands to the robot. Hence, those 2 tables do not contain"
+" the robot state, but the last given command."
+msgstr ""
+"Les coils et les registres de maintien sont en **lecture/écriture**. Ils "
+"sont utilisés pour donner à l'utilisateur l'accès aux commandes du robot."
+" Ces deux banques de registres ne contiennent pas les états du robot, "
+"mais les dernières commandes."
+
+#: ../../source/modbus/api_documentation.rst:28
+msgid "Address tables start at 0."
+msgstr "Les tables commencent par l'adresse 0."
+
+#: ../../source/modbus/api_documentation.rst:32
+msgid "Coils"
+msgstr "Coils"
+
+#: ../../source/modbus/api_documentation.rst:34
+#: ../../source/modbus/api_documentation.rst:103
+msgid "Each address contains a 1bit value."
+msgstr "Chaque adresse contient une valeur de 1bit."
+
+#: ../../source/modbus/api_documentation.rst:36
+#: ../../source/modbus/api_documentation.rst:133
+msgid ""
+"**READ/WRITE** (the stored values correspond to the last given command, "
+"not the current robot state)"
+msgstr ""
+"**Lecture/écriture** (les valeurs stockées correspondent à la dernière "
+"commande, pas à l'état courant du robot)."
+
+#: ../../source/modbus/api_documentation.rst:38
+#: ../../source/modbus/api_documentation.rst:107
+#: ../../source/modbus/api_documentation.rst:135
+#: ../../source/modbus/api_documentation.rst:314
+msgid "Accepted Modbus functions:"
+msgstr "Les fonctions Modbus acceptées :"
+
+#: ../../source/modbus/api_documentation.rst:40
+msgid "0x01: READ_COILS"
+msgstr "0x01 : READ_COILS"
+
+#: ../../source/modbus/api_documentation.rst:41
+msgid "0x05: WRITE_SINGLE_COIL"
+msgstr "0x05 : WRITE_SINGLE_COIL"
+
+#: ../../source/modbus/api_documentation.rst:43
+msgid ""
+"This datastore can be used to set Digital I/O mode and state. Digital I/O"
+" numbers used for Modbus:"
+msgstr ""
+"Cette banque de données peut être utilisée pour définir le mode et l'état"
+" des entrées/sorties numériques. Les numéros des entrées/sorties "
+"numériques utilisées par Modbus sont :"
+
+#: ../../source/modbus/api_documentation.rst:45
+msgid "Digital IO addresses offset table"
+msgstr "Table des décalages d'addresse des E/S digitales"
+
+#: ../../source/modbus/api_documentation.rst:50
+#: ../../source/modbus/api_documentation.rst:409
+msgid "Address offset"
+msgstr "Offset adresse"
+
+#: ../../source/modbus/api_documentation.rst:51
+msgid "Niryo One / Ned digital IO"
+msgstr "Niryo One / Ned E/S digitales"
+
+#: ../../source/modbus/api_documentation.rst:52
+msgid "Ned2 digital IO"
+msgstr "Ned2 E/S digitale"
+
+#: ../../source/modbus/api_documentation.rst:53
+#: ../../source/modbus/api_documentation.rst:412
+msgid "0"
+msgstr "0"
+
+#: ../../source/modbus/api_documentation.rst:54
+msgid "1A"
+msgstr "1A"
+
+#: ../../source/modbus/api_documentation.rst:55
+msgid "DI1"
+msgstr "DI1"
+
+#: ../../source/modbus/api_documentation.rst:56
+#: ../../source/modbus/api_documentation.rst:415
+msgid "1"
+msgstr "1"
+
+#: ../../source/modbus/api_documentation.rst:57
+msgid "1B"
+msgstr "1B"
+
+#: ../../source/modbus/api_documentation.rst:58
+msgid "DI2"
+msgstr "DI2"
+
+#: ../../source/modbus/api_documentation.rst:59
+#: ../../source/modbus/api_documentation.rst:418
+msgid "2"
+msgstr "2"
+
+#: ../../source/modbus/api_documentation.rst:60
+msgid "1C"
+msgstr "1C"
+
+#: ../../source/modbus/api_documentation.rst:61
+msgid "DI3"
+msgstr "DI3"
+
+#: ../../source/modbus/api_documentation.rst:62
+#: ../../source/modbus/api_documentation.rst:421
+msgid "3"
+msgstr "3"
+
+#: ../../source/modbus/api_documentation.rst:63
+msgid "2A"
+msgstr "2A"
+
+#: ../../source/modbus/api_documentation.rst:64
+msgid "DI4"
+msgstr "DI4"
+
+#: ../../source/modbus/api_documentation.rst:65
+msgid "4"
+msgstr "4"
+
+#: ../../source/modbus/api_documentation.rst:66
+msgid "2B"
+msgstr "2B"
+
+#: ../../source/modbus/api_documentation.rst:67
+msgid "DI5"
+msgstr "DI5"
+
+#: ../../source/modbus/api_documentation.rst:68
+msgid "5"
+msgstr "5"
+
+#: ../../source/modbus/api_documentation.rst:69
+msgid "2C"
+msgstr "2C"
+
+#: ../../source/modbus/api_documentation.rst:70
+msgid "D01"
+msgstr "D01"
+
+#: ../../source/modbus/api_documentation.rst:71
+msgid "6"
+msgstr "6"
+
+#: ../../source/modbus/api_documentation.rst:72
+msgid "SW1"
+msgstr "SW1"
+
+#: ../../source/modbus/api_documentation.rst:73
+msgid "D02"
+msgstr "D02"
+
+#: ../../source/modbus/api_documentation.rst:74
+msgid "7"
+msgstr "7"
+
+#: ../../source/modbus/api_documentation.rst:75
+msgid "SW2"
+msgstr "SW2"
+
+#: ../../source/modbus/api_documentation.rst:76
+msgid "D03"
+msgstr "d03"
+
+#: ../../source/modbus/api_documentation.rst:77
+msgid "8"
+msgstr "8"
+
+#: ../../source/modbus/api_documentation.rst:79
+msgid "D04"
+msgstr "D04"
+
+#: ../../source/modbus/api_documentation.rst:87
+#: ../../source/modbus/api_documentation.rst:118
+#: ../../source/modbus/api_documentation.rst:145
+#: ../../source/modbus/api_documentation.rst:323
+msgid "Address"
+msgstr "Adresse"
+
+#: ../../source/modbus/api_documentation.rst:88
+#: ../../source/modbus/api_documentation.rst:119
+#: ../../source/modbus/api_documentation.rst:146
+#: ../../source/modbus/api_documentation.rst:324
+msgid "Description"
+msgstr "Descripion"
+
+#: ../../source/modbus/api_documentation.rst:90
+#: ../../source/modbus/api_documentation.rst:121
+msgid "0-8"
+msgstr "0-8"
+
+#: ../../source/modbus/api_documentation.rst:91
+#: ../../source/modbus/api_documentation.rst:122
+msgid "Digital I/O mode (Input = 1, Output = 0)"
+msgstr "Mode des entrées/sorties numériques (Entrée = 1, Sortie = 0)"
+
+#: ../../source/modbus/api_documentation.rst:93
+#: ../../source/modbus/api_documentation.rst:124
+msgid "100-108"
+msgstr "100-108"
+
+#: ../../source/modbus/api_documentation.rst:94
+#: ../../source/modbus/api_documentation.rst:125
+msgid "Digital I/O state (High = 1, Low = 0)"
+msgstr "État des E/S numériques (Haut = 1, Bas = 0)"
+
+#: ../../source/modbus/api_documentation.rst:96
+#: ../../source/modbus/api_documentation.rst:187
+msgid "200-299"
+msgstr "200-299"
+
+#: ../../source/modbus/api_documentation.rst:97
+#: ../../source/modbus/api_documentation.rst:188
+msgid "Can be used to store your own variables"
+msgstr "Peut être utilisé pour stocker vos propres variables"
+
+#: ../../source/modbus/api_documentation.rst:101
+msgid "Discrete inputs"
+msgstr "Entrées discrètes"
+
+#: ../../source/modbus/api_documentation.rst:105
+msgid "**READ-ONLY**"
+msgstr "**LECTURE-SEULEMENT**"
+
+#: ../../source/modbus/api_documentation.rst:109
+msgid "0x02: READ_DISCRETE_INPUTS"
+msgstr "0x02 : READ_DISCRETE_INPUTS"
+
+#: ../../source/modbus/api_documentation.rst:111
+msgid ""
+"This datastore can be used to read Digital I/O mode and state. See the "
+":ref:`source/modbus/api_documentation:Coils` section above for digital "
+"I/O number mapping."
+msgstr ""
+"Cette banque de données peut être utilisée pour lire le mode et l'état "
+"des entrées/sorties numériques. Se référer à la :ref:`section relative "
+"aux coils<source/modbus/api_documentation:Coils>`, ci-dessus, pour la "
+"cartographie des numéros des entrées/sorties numériques."
+
+#: ../../source/modbus/api_documentation.rst:129
+msgid "Holding registers"
+msgstr "Registres de maintien"
+
+#: ../../source/modbus/api_documentation.rst:131
+#: ../../source/modbus/api_documentation.rst:310
+msgid "Each address contains a 16bit value."
+msgstr "Chaque adresse contient une valeur de 16bit."
+
+#: ../../source/modbus/api_documentation.rst:137
+msgid "0x03: READ_HOLDING_REGISTERS"
+msgstr "0x03 : READ_HOLDING_REGISTERS"
+
+#: ../../source/modbus/api_documentation.rst:138
+msgid "0x06: WRITE_SINGLE_REGISTER"
+msgstr "0x06 : WRITE_SINGLE_REGISTER"
+
+#: ../../source/modbus/api_documentation.rst:148
+#: ../../source/modbus/api_documentation.rst:326
+msgid "0-5"
+msgstr "0-5"
+
+#: ../../source/modbus/api_documentation.rst:149
+#: ../../source/modbus/api_documentation.rst:327
+msgid "Joints (mrad)"
+msgstr "Axes (mrad)"
+
+#: ../../source/modbus/api_documentation.rst:151
+#: ../../source/modbus/api_documentation.rst:329
+msgid "10-12"
+msgstr "10-12"
+
+#: ../../source/modbus/api_documentation.rst:152
+#: ../../source/modbus/api_documentation.rst:330
+msgid "Position x,y,z (mm)"
+msgstr "Position x, y, z (mm)"
+
+#: ../../source/modbus/api_documentation.rst:154
+#: ../../source/modbus/api_documentation.rst:332
+msgid "13-15"
+msgstr "13-15"
+
+#: ../../source/modbus/api_documentation.rst:155
+#: ../../source/modbus/api_documentation.rst:333
+msgid "Orientation roll, pitch, yaw (mrad)"
+msgstr "Orientation roulis, tangage, lacet (mrad)"
+
+#: ../../source/modbus/api_documentation.rst:157
+msgid "100"
+msgstr "100"
+
+#: ../../source/modbus/api_documentation.rst:158
+msgid "Sends Joint Move command with stored joints"
+msgstr "Envoie une commande de mouvement d'axe avec les valeurs stockées dans Axes"
+
+#: ../../source/modbus/api_documentation.rst:160
+msgid "101"
+msgstr "101"
+
+#: ../../source/modbus/api_documentation.rst:161
+msgid "Sends Pose Move command with stored position and orientation"
+msgstr ""
+"Envoie une commande de mouvement de position avec les valeurs stockées "
+"dans Position et Orientation"
+
+#: ../../source/modbus/api_documentation.rst:163
+msgid "102"
+msgstr "102"
+
+#: ../../source/modbus/api_documentation.rst:164
+msgid "Sends Linear Pose Move command with stored position and orientation"
+msgstr ""
+"Envoie une commande de mouvement de position linéaire avec les valeurs "
+"stockées dans Position et Orientation"
+
+#: ../../source/modbus/api_documentation.rst:166
+msgid "110"
+msgstr "110"
+
+#: ../../source/modbus/api_documentation.rst:167
+msgid "Stops current command execution"
+msgstr "Arrête la commande en cours d'exécution"
+
+#: ../../source/modbus/api_documentation.rst:169
+msgid "150"
+msgstr "150"
+
+#: ../../source/modbus/api_documentation.rst:170
+msgid "Is executing command flag"
+msgstr "Drapeau de commande en cours d'exécution"
+
+#: ../../source/modbus/api_documentation.rst:172
+msgid "151"
+msgstr "151"
+
+#: ../../source/modbus/api_documentation.rst:173
+msgid "Last command result*"
+msgstr "Résultat de la dernière commande*"
+
+#: ../../source/modbus/api_documentation.rst:175
+msgid "152"
+msgstr "152"
+
+#: ../../source/modbus/api_documentation.rst:176
+msgid "Last command data result (if not vision related)"
+msgstr "Grandeur résultant de la dernière commande (sauf commandes de vision) "
+
+#: ../../source/modbus/api_documentation.rst:178
+msgid "153 - 158"
+msgstr "153 - 158"
+
+#: ../../source/modbus/api_documentation.rst:179
+msgid "Vision - Target pose result"
+msgstr "Vision - Position de la cible"
+
+#: ../../source/modbus/api_documentation.rst:181
+msgid "159"
+msgstr "159"
+
+#: ../../source/modbus/api_documentation.rst:182
+msgid ""
+"Vision - Shape of the object found (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
+"TRIANGLE, 0: NONE)"
+msgstr ""
+"Vision - Forme de l'objet trouvé (-1 : TOUS, 1 : CERCLE, 2 : CARRE, 3 : "
+"TRIANGLE)"
+
+#: ../../source/modbus/api_documentation.rst:184
+msgid "160"
+msgstr "160"
+
+#: ../../source/modbus/api_documentation.rst:185
+msgid ""
+"Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
+"0: NONE)"
+msgstr ""
+"Vision - Couleur de l'objet trouvé (-1 : TOUS, 1 : BLEU, 2 : ROUGE, 3 : "
+"VERT)"
+
+#: ../../source/modbus/api_documentation.rst:190
+#: ../../source/modbus/api_documentation.rst:338
+msgid "300"
+msgstr "300"
+
+#: ../../source/modbus/api_documentation.rst:191
+msgid "Learning Mode (On = 1, Off = 0)"
+msgstr "Mode apprentissage (Activé = 1, Désactivé = 0)"
+
+#: ../../source/modbus/api_documentation.rst:193
+msgid "301"
+msgstr "301"
+
+#: ../../source/modbus/api_documentation.rst:194
+msgid "Joystick Enabled (On = 1, Off = 0)"
+msgstr "Joystick activé (Activé = 1, Désactivé = 0) "
+
+#: ../../source/modbus/api_documentation.rst:196
+msgid "310"
+msgstr "310"
+
+#: ../../source/modbus/api_documentation.rst:197
+msgid "Requests new calibration"
+msgstr "Demande d'une nouvelle calibration"
+
+#: ../../source/modbus/api_documentation.rst:199
+msgid "311"
+msgstr "311"
+
+#: ../../source/modbus/api_documentation.rst:200
+msgid "Starts auto calibration"
+msgstr "Demarrage d'une calibration automatique"
+
+#: ../../source/modbus/api_documentation.rst:202
+msgid "312"
+msgstr "312"
+
+#: ../../source/modbus/api_documentation.rst:203
+msgid "Starts manual calibration"
+msgstr "Demarrage d'une calibration manuelle"
+
+#: ../../source/modbus/api_documentation.rst:205
+#: ../../source/modbus/api_documentation.rst:344
+msgid "401"
+msgstr "401"
+
+#: ../../source/modbus/api_documentation.rst:206
+msgid "Gripper open speed (100-1000)"
+msgstr "Vitesse d'ouverture de la pince (100-1000)"
+
+#: ../../source/modbus/api_documentation.rst:208
+#: ../../source/modbus/api_documentation.rst:347
+msgid "402"
+msgstr "402"
+
+#: ../../source/modbus/api_documentation.rst:209
+msgid "Gripper close speed (100-1000)"
+msgstr "Vitesse de fermeture de la pince (100-1000)"
+
+#: ../../source/modbus/api_documentation.rst:211
+msgid "500"
+msgstr "500"
+
+#: ../../source/modbus/api_documentation.rst:212
+msgid ""
+"Updates the tool id according to the gripper plugged (gripper 1: 11, "
+"gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
+msgstr ""
+"Mettre à jour l'identifiant de l'accessoire branché (gripper 1 : 11, "
+"gripper 2 : 12, gripper 3 : 13, pompe à vide : 31)"
+
+#: ../../source/modbus/api_documentation.rst:214
+msgid "501"
+msgstr "501"
+
+#: ../../source/modbus/api_documentation.rst:215
+msgid "Stores the tool id"
+msgstr "Stocker l'identifiant de l'accessoire branché"
+
+#: ../../source/modbus/api_documentation.rst:217
+msgid "510"
+msgstr "510"
+
+#: ../../source/modbus/api_documentation.rst:218
+msgid "Opens gripper previously updated"
+msgstr "Ouvrir la pince précédemment mise à jour"
+
+#: ../../source/modbus/api_documentation.rst:220
+msgid "511"
+msgstr "511"
+
+#: ../../source/modbus/api_documentation.rst:221
+msgid "Closes gripper previously updated"
+msgstr "Fermer la pince précédemment mise à jour"
+
+#: ../../source/modbus/api_documentation.rst:223
+msgid "512"
+msgstr "512"
+
+#: ../../source/modbus/api_documentation.rst:224
+msgid "Pulls air vacuum pump with id 31"
+msgstr "Aspirer l'air de la pompe à vide avec l'identifiant 31"
+
+#: ../../source/modbus/api_documentation.rst:226
+msgid "513"
+msgstr "513"
+
+#: ../../source/modbus/api_documentation.rst:227
+msgid "Pushes air vacuum pump with id 31"
+msgstr "Expirer l'air de la pompe à vide avec l'identifiant 31"
+
+#: ../../source/modbus/api_documentation.rst:229
+msgid "520"
+msgstr "520"
+
+#: ../../source/modbus/api_documentation.rst:230
+msgid "Updates the conveyor id and enable it"
+msgstr "Mettre à jour l'identifiant du convoyeur et l'activer"
+
+#: ../../source/modbus/api_documentation.rst:232
+msgid "521"
+msgstr "521"
+
+#: ../../source/modbus/api_documentation.rst:233
+msgid "Detaches or disables the conveyor previously enabled and updated"
+msgstr "Détacher ou désactiver le convoyeur précédemment activé et mis à jour"
+
+#: ../../source/modbus/api_documentation.rst:235
+msgid "522"
+msgstr "522"
+
+#: ../../source/modbus/api_documentation.rst:236
+msgid "Starts the conveyor previously enabled and updated"
+msgstr "Démarrer le convoyeur précédemment activé et mis à jour"
+
+#: ../../source/modbus/api_documentation.rst:238
+msgid "523"
+msgstr "523"
+
+#: ../../source/modbus/api_documentation.rst:239
+msgid ""
+"Sets the conveyor direction (backward = number_to_raw_data(-1), forward ="
+" 1)"
+msgstr ""
+"Configurer la direction du Convoyeur (arrière = number_to_raw_data(-1), "
+"avant = 1)"
+
+#: ../../source/modbus/api_documentation.rst:241
+msgid "524"
+msgstr "524"
+
+#: ../../source/modbus/api_documentation.rst:242
+msgid "Sets the conveyor speed (0-100)(%)"
+msgstr "Configurer la vitesse du Convoyeur (0-100)(%)"
+
+#: ../../source/modbus/api_documentation.rst:244
+msgid "525"
+msgstr "525"
+
+#: ../../source/modbus/api_documentation.rst:245
+msgid "Stores the conveyor id"
+msgstr "Stocker l'identifiant du Convoyeur"
+
+#: ../../source/modbus/api_documentation.rst:247
+msgid "526"
+msgstr "526"
+
+#: ../../source/modbus/api_documentation.rst:248
+msgid "Stops conveyor previously enabled and updated"
+msgstr "Arrêter le convoyeur précédemment activé et mis à jour"
+
+#: ../../source/modbus/api_documentation.rst:250
+msgid "600"
+msgstr "600"
+
+#: ../../source/modbus/api_documentation.rst:251
+msgid "TCP - Enables or disables the TCP function (Tool Center Point)."
+msgstr "TCP - Active ou désactive la fonction PCO (Point Central Objet)"
+
+#: ../../source/modbus/api_documentation.rst:253
+msgid "601"
+msgstr "601"
+
+#: ../../source/modbus/api_documentation.rst:254
+msgid ""
+"Activates the TCP function (Tool Center Point) and defines the "
+"transformation between the tool_link frame and the TCP frame."
+msgstr ""
+"Active la fonction PCO et définit la transformation entre le repère de la"
+" jonction de l'outils et celui du PCO. "
+
+#: ../../source/modbus/api_documentation.rst:256
+msgid "610"
+msgstr "610"
+
+#: ../../source/modbus/api_documentation.rst:257
+msgid ""
+"Vision - Gets target pose from relative pose, with stored relative pose "
+"and height_offset"
+msgstr ""
+"Vision - Fonction 'Get target pose from relative pose', à partir des 3 "
+"positions relatives et du paramètre 'height offset' stockés"
+
+#: ../../source/modbus/api_documentation.rst:259
+msgid "611"
+msgstr "611"
+
+#: ../../source/modbus/api_documentation.rst:260
+msgid ""
+"Vision - Gets target pose from camera, with stored workspace name, height"
+" offset, shape and color"
+msgstr ""
+"Vision - Fonction 'Get target pose from camera', à partir du nom du "
+"workspace, de 'height offset', de la forme et la couleur stockés"
+
+#: ../../source/modbus/api_documentation.rst:262
+msgid "612"
+msgstr "612"
+
+#: ../../source/modbus/api_documentation.rst:263
+msgid ""
+"Vision - Vision pick, with stored workspace name, height offset, shape "
+"and color"
+msgstr ""
+"Vision - Fonction 'Vision pick', à partir du nom du workspace, de 'height"
+" offset', de la forme et la couleur stockés"
+
+#: ../../source/modbus/api_documentation.rst:265
+msgid "613"
+msgstr "613"
+
+#: ../../source/modbus/api_documentation.rst:266
+msgid ""
+"Vision - Moves to object, with stored workspace name, height offset, "
+"shape and color"
+msgstr ""
+"Vision - Fonction 'Move to object', à partir du nom du workspace, de "
+"'height offset', de la forme et la couleur stockés"
+
+#: ../../source/modbus/api_documentation.rst:268
+msgid "614"
+msgstr "614"
+
+#: ../../source/modbus/api_documentation.rst:269
+msgid "Vision - Detects object, with stored workspace name, shape and color"
+msgstr ""
+"Vision - Fonction 'Detect object', à partir du nom du workspace, de la "
+"forme et la couleur stockés"
+
+#: ../../source/modbus/api_documentation.rst:271
+msgid "620"
+msgstr "620"
+
+#: ../../source/modbus/api_documentation.rst:272
+msgid "Vision - Stores workspace's height offset"
+msgstr "Vision - Stocke le paramètre 'height offset' du workspace"
+
+#: ../../source/modbus/api_documentation.rst:274
+msgid "621"
+msgstr "621"
+
+#: ../../source/modbus/api_documentation.rst:275
+msgid "Vision - Stores relative pose x_rel"
+msgstr "Vision - Stocke la position relative x_rel"
+
+#: ../../source/modbus/api_documentation.rst:277
+msgid "622"
+msgstr "622"
+
+#: ../../source/modbus/api_documentation.rst:278
+msgid "Vision - Stores relative pose y_rel"
+msgstr "Vision - Stocke la position relative y_rel"
+
+#: ../../source/modbus/api_documentation.rst:280
+msgid "623"
+msgstr "623"
+
+#: ../../source/modbus/api_documentation.rst:281
+msgid "Vision - Stores relative pose yaw_rel"
+msgstr "Vision - Stocke la position relative yaw_rel"
+
+#: ../../source/modbus/api_documentation.rst:283
+msgid "624"
+msgstr "624"
+
+#: ../../source/modbus/api_documentation.rst:284
+msgid ""
+"Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
+"TRIANGLE)"
+msgstr ""
+"Vision -Stocke la forme demandée (-1 : TOUS, 1 : CERCLE, 2 : CARRE, 3 : "
+"TRIANGLE)"
+
+#: ../../source/modbus/api_documentation.rst:286
+msgid "625"
+msgstr "625"
+
+#: ../../source/modbus/api_documentation.rst:287
+msgid "Vision - Stores requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
+msgstr ""
+"Vision - Stocke la couleur demandée (-1 : TOUS, 1 : BLEU, 2 : ROUGE, 3 : "
+"VERT)"
+
+#: ../../source/modbus/api_documentation.rst:289
+msgid "626 - max 641"
+msgstr "626 - max 641"
+
+#: ../../source/modbus/api_documentation.rst:290
+msgid ""
+"Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
+" examples on how to store a workspace name from a client)"
+msgstr ""
+"Vision - Stocke le nom du workspace, sous la forme d'une chaîne de "
+"caractères codée en hexadécimal 16 bits (voir code d'exemple)."
+
+#: ../../source/modbus/api_documentation.rst:292
+msgid "650"
+msgstr "650"
+
+#: ../../source/modbus/api_documentation.rst:293
+msgid ""
+"Set Analog IO - Arg: [:ref:`Analog IO number<Analog IO addresses offset "
+"table>`, voltage 0V- 5000mV]"
+msgstr ""
+"Appliquer l'E/S analogique - Arg : [:ref:`Analog IO number<Analog IO "
+"addresses offset table>`, Tension 0V- 5000mV]"
+
+#: ../../source/modbus/api_documentation.rst:295
+msgid ""
+"'*' The \"Last command result\" gives you more information about the last"
+" executed command:"
+msgstr ""
+"'*' Le \"résultat de la dernière commande\" vous donne plus "
+"d'informations sur la dernière commande exécutée"
+
+#: ../../source/modbus/api_documentation.rst:297
+msgid "0: no result yet"
+msgstr "0 : pas encore de résultat"
+
+#: ../../source/modbus/api_documentation.rst:298
+msgid "1: success"
+msgstr "1 : succès"
+
+#: ../../source/modbus/api_documentation.rst:299
+msgid "2: command was rejected (invalid params, ...)"
+msgstr "2 : la commande a été rejetée (paramètres invalides, ...)"
+
+#: ../../source/modbus/api_documentation.rst:300
+msgid "3: command was aborted"
+msgstr "3 : la commande a été avortée"
+
+#: ../../source/modbus/api_documentation.rst:301
+msgid "4: command was canceled"
+msgstr "4 : la commande a été annulée"
+
+#: ../../source/modbus/api_documentation.rst:302
+msgid "5: command had an unexpected error"
+msgstr "5 : la commande a eu une erreur inattendue"
+
+#: ../../source/modbus/api_documentation.rst:303
+msgid "6: command timeout"
+msgstr "6 : délais d'attente de la commande"
+
+#: ../../source/modbus/api_documentation.rst:304
+msgid "7: internal error"
+msgstr "7 : erreur interne"
+
+#: ../../source/modbus/api_documentation.rst:308
+msgid "Input registers"
+msgstr "Registres d'entrée"
+
+#: ../../source/modbus/api_documentation.rst:312
+msgid "**READ-ONLY**."
+msgstr "**Lecture seule**."
+
+#: ../../source/modbus/api_documentation.rst:316
+msgid "0x04: READ_INPUT_REGISTERS"
+msgstr "0x04 : READ_INPUT_REGISTERS"
+
+#: ../../source/modbus/api_documentation.rst:335
+msgid "200"
+msgstr "200"
+
+#: ../../source/modbus/api_documentation.rst:336
+msgid "Selected tool ID (0 for no tool)"
+msgstr "Sélection de l'ID de l'outil (0 pour acun outil)"
+
+#: ../../source/modbus/api_documentation.rst:339
+msgid "Learning Mode activated"
+msgstr "Mode apprentissage activé"
+
+#: ../../source/modbus/api_documentation.rst:341
+msgid "400"
+msgstr "400"
+
+#: ../../source/modbus/api_documentation.rst:342
+msgid "Motors connection up (Ok = 1, Not ok = 0)"
+msgstr "Etat de la connection avec les moteurs (OK = 1; pas OK = 0)"
+
+#: ../../source/modbus/api_documentation.rst:345
+msgid "Calibration needed flag"
+msgstr "Drapeau de calibration nécessaire"
+
+#: ../../source/modbus/api_documentation.rst:348
+msgid "Calibration in progress flag"
+msgstr "Drapeau de calibration en cours"
+
+#: ../../source/modbus/api_documentation.rst:350
+msgid "403"
+msgstr "403"
+
+#: ../../source/modbus/api_documentation.rst:351
+msgid "Raspberry Pi temperature"
+msgstr "Température de la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:353
+msgid "404"
+msgstr "404"
+
+#: ../../source/modbus/api_documentation.rst:354
+msgid "Raspberry Pi available disk size"
+msgstr "Espace libre sur le disque de la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:356
+msgid "405"
+msgstr "405"
+
+#: ../../source/modbus/api_documentation.rst:357
+msgid "Raspberry Pi ROS log size"
+msgstr "Taille des fichiers de log ROS sur la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:359
+msgid "406"
+msgstr "406"
+
+#: ../../source/modbus/api_documentation.rst:360
+msgid "Ned RPI image version n.1"
+msgstr "Version n.1 de l'image de la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:362
+msgid "407"
+msgstr "407"
+
+#: ../../source/modbus/api_documentation.rst:363
+msgid "Ned RPI image version n.2"
+msgstr "Version n.2 de l'image de la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:365
+msgid "408"
+msgstr "408"
+
+#: ../../source/modbus/api_documentation.rst:366
+msgid "Ned RPI image version n.3"
+msgstr "Version n.3 de l'image de la Raspberry Pi"
+
+#: ../../source/modbus/api_documentation.rst:368
+msgid "409"
+msgstr "409"
+
+#: ../../source/modbus/api_documentation.rst:369
+msgid "Hardware version (1 or 2)"
+msgstr "Version du materiel (1 ou 2)"
+
+#: ../../source/modbus/api_documentation.rst:371
+msgid "530"
+msgstr "530"
+
+#: ../../source/modbus/api_documentation.rst:372
+msgid "Conveyor 1 connection state (Connected = 1 , Not connected = 0)"
+msgstr "Etat de la connexion du Convoyeur 1 (Connecté = 1, Non connecté = 0)"
+
+#: ../../source/modbus/api_documentation.rst:374
+msgid "531"
+msgstr "531"
+
+#: ../../source/modbus/api_documentation.rst:375
+msgid "Conveyor 1 control status ( On = 0, Off = 1)"
+msgstr "Etat de contrôle du Convoyeur 1 (Activé = 1, Désactivé = 0)"
+
+#: ../../source/modbus/api_documentation.rst:377
+msgid "532"
+msgstr "532"
+
+#: ../../source/modbus/api_documentation.rst:378
+msgid "Conveyor 1 Speed (0-100 (%))"
+msgstr "Vitesse du Convoyeur 1 (0-100)[%]"
+
+#: ../../source/modbus/api_documentation.rst:380
+msgid "533"
+msgstr "533"
+
+#: ../../source/modbus/api_documentation.rst:381
+msgid "Conveyor 1 direction (Backward = -1, Forward = 1)"
+msgstr "Direction du Convoyeur 1 (arrière = -1, avant = 1)"
+
+#: ../../source/modbus/api_documentation.rst:383
+msgid "540"
+msgstr "540"
+
+#: ../../source/modbus/api_documentation.rst:384
+msgid "Conveyor 2 connection state (Connected = 1 , Not connected = 0)"
+msgstr "Etat de la connexion du Convoyeur 2 (Connecté = 1, Non connecté = 0)"
+
+#: ../../source/modbus/api_documentation.rst:386
+msgid "541"
+msgstr "541"
+
+#: ../../source/modbus/api_documentation.rst:387
+msgid "Conveyor 2 control status ( On = 0, Off = 1)"
+msgstr "Etat de controle du Convoyeur 2 (Activé = 1, Désactivé = 0)"
+
+#: ../../source/modbus/api_documentation.rst:389
+msgid "542"
+msgstr "542"
+
+#: ../../source/modbus/api_documentation.rst:390
+msgid "Conveyor 2 Speed (0-100 (%))"
+msgstr "Vitesse du Convoyeur 2 (0-100)[%]"
+
+#: ../../source/modbus/api_documentation.rst:392
+msgid "543"
+msgstr "543"
+
+#: ../../source/modbus/api_documentation.rst:393
+msgid "Conveyor 2 direction (Backward = -1, Forward = 1)"
+msgstr "Direction du Convoyeur 2 (arrière = -1, avant = 1)"
+
+#: ../../source/modbus/api_documentation.rst:395
+msgid "600 - 604"
+msgstr "600 - 604"
+
+#: ../../source/modbus/api_documentation.rst:396
+msgid "Analog IO mode"
+msgstr "Mode E/S analogique"
+
+#: ../../source/modbus/api_documentation.rst:398
+msgid "610 - 614"
+msgstr "610 - 614"
+
+#: ../../source/modbus/api_documentation.rst:399
+msgid "Analog IO state in mV"
+msgstr "Valeur de l'E/S analogique en mV"
+
+#: ../../source/modbus/api_documentation.rst:404
+msgid "Analog IO addresses offset table"
+msgstr "Analog IO addresses offset table"
+
+#: ../../source/modbus/api_documentation.rst:410
+msgid "Niryo One / Ned analog IO"
+msgstr "Niryo One / Ned E/S analogique"
+
+#: ../../source/modbus/api_documentation.rst:411
+msgid "Ned2 analog IO"
+msgstr "Ned2 E/S analogiques"
+
+#: ../../source/modbus/api_documentation.rst:413
+#: ../../source/modbus/api_documentation.rst:416
+#: ../../source/modbus/api_documentation.rst:419
+#: ../../source/modbus/api_documentation.rst:422
+msgid "/"
+msgstr "/"
+
+#: ../../source/modbus/api_documentation.rst:414
+msgid "AI1"
+msgstr "AI1"
+
+#: ../../source/modbus/api_documentation.rst:417
+msgid "AI2"
+msgstr "AI2"
+
+#: ../../source/modbus/api_documentation.rst:420
+msgid "AO1"
+msgstr "AO1"
+
+#: ../../source/modbus/api_documentation.rst:423
+msgid "AO2"
+msgstr "AO2"
+
+#: ../../source/modbus/api_documentation.rst:428
+msgid "Dependencies - Modbus TCP Server"
+msgstr "Dépendances - Serveur Modbus TCP"
+
+#: ../../source/modbus/api_documentation.rst:430
+msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+msgstr ""
+"`Librairie pymodbus "
+"<https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+
+#: ../../source/modbus/api_documentation.rst:431
+msgid ":doc:`../stack/high_level/niryo_robot_msgs`"
+msgstr ":doc:`../stack/high_level/niryo_robot_msgs`"
+
+#: ../../source/modbus/api_documentation.rst:432
+msgid ":msgs_index:`std_msgs`"
+msgstr ":msgs_index:`std_msgs`"
+

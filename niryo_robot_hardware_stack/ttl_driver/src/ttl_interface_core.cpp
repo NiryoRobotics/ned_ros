@@ -25,7 +25,7 @@
 #include "ros/serialization.h"
 #include "common/util/unique_ptr_cast.hpp"
 
-#include "ttl_driver/CollisionStatus.h"
+#include "std_msgs/Bool.h"
 
 // c++
 #include <cstdint>
@@ -180,7 +180,7 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void TtlInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _collision_status_publisher = nh.advertise<ttl_driver::CollisionStatus>("/niryo_robot/collision_detected", 1, true);
+    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/collision_detected", 1, true);
     _collision_status_publisher_timer = nh.createTimer(_collision_status_publisher_duration,
                                                       &TtlInterfaceCore::_publishCollisionStatus,
                                                       this);
@@ -699,6 +699,8 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
+    // protect bus with mutex because of readFirmware version in addHardwareComponent
+    lock_guard<mutex> lck(_control_loop_mutex);
     return _ttl_manager->addHardwareComponent(jointState);
 }
 
@@ -793,12 +795,12 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
 {
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    // block control loop to avoid control loop called when removing conveyor is not finished yet
-    lock_guard<mutex> lck(_control_loop_mutex);
 
     auto state = getJointState(motor_id);
     if (niryo_robot_msgs::CommandStatus::SUCCESS == changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
+        // block control loop to avoid control loop called when removing conveyor is not finished yet
+        lock_guard<mutex> lck(_control_loop_mutex);
         _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
@@ -814,6 +816,7 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
  */
 int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
 
@@ -1129,7 +1132,7 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
     uint16_t ff1_gain{0};
     uint16_t ff2_gain{0};
 
-
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->readMotorPID(id, pos_p_gain, pos_i_gain, pos_d_gain,
                                                    vel_p_gain, vel_i_gain, ff1_gain, ff2_gain))
     {
@@ -1204,17 +1207,21 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
     uint32_t v_stop{2};
 
 
+    lock_guard<mutex> lck(_control_loop_mutex);
     if (COMM_SUCCESS == _ttl_manager->readVelocityProfile(id, v_start, a_1, v_1,
                                                           a_max, v_max, d_max, d_1, v_stop))
     {
-        res.v_start = v_start;
-        res.a_1 = a_1;
-        res.v_1 = v_1;
-        res.a_max = a_max;
-        res.v_max = v_max;
-        res.d_max = d_max;
-        res.d_1 = d_1;
-        res.v_stop = v_stop;
+        // converting from RPM and RPM-2
+
+        // v in 0.01 RPM
+        res.v_start = v_start / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.a_1 = a_1 / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_1 = v_1 / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.a_max = a_max / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_max = v_max / (RADIAN_PER_SECONDS_TO_RPM * 100);
+        res.d_max = d_max / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.d_1 = d_1 / RADIAN_PER_SECONDS_SQ_TO_RPM_SQ;
+        res.v_stop = v_stop / (RADIAN_PER_SECONDS_TO_RPM * 100);
 
         res.message = "TtlInterfaceCore - Reading Velocity Profile successful";
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -1240,14 +1247,27 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 {
   int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-  auto dxl_cmd_pos_p = std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                                                      req.id, std::initializer_list<uint32_t>{req.v_start, req.a_1, req.v_1,
-                                                                                              req.a_max, req.v_max, req.d_max,
-                                                                                              req.d_1, req.v_stop});
+  // converting into RPM and RPM-2
 
-  if (dxl_cmd_pos_p->isValid())
+  // v in 0.01 RPM
+  auto v_start = static_cast<uint32_t>(req.v_start * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto a_1 = static_cast<uint32_t>(req.a_1 * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_1 = static_cast<uint32_t>(req.v_1 * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto a_max = static_cast<uint32_t>(req.a_max * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_max = static_cast<uint32_t>(req.v_max * RADIAN_PER_SECONDS_TO_RPM * 100);
+  auto d_max = static_cast<uint32_t>(req.d_max * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto d_1 = static_cast<uint32_t>(req.d_1 * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+  auto v_stop = static_cast<uint32_t>(req.v_stop * RADIAN_PER_SECONDS_TO_RPM * 100);
+
+
+  auto profile_cmd = std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
+                                                      req.id, std::initializer_list<uint32_t>{v_start, a_1, v_1,
+                                                                                              a_max, v_max, d_max,
+                                                                                              d_1, v_stop});
+
+  if (profile_cmd->isValid())
   {
-      addSingleCommandToQueue(std::move(dxl_cmd_pos_p));
+      addSingleCommandToQueue(std::move(profile_cmd));
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
       res.message = "TtlInterfaceCore - Writing Velocity Profile successful";
   }
@@ -1263,8 +1283,8 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {
-    ttl_driver::CollisionStatus msg;
-    msg.collision_detected = readCollisionStatus();
+    std_msgs::Bool msg;
+    msg.data = readCollisionStatus();
     _collision_status_publisher.publish(msg);
 }
 

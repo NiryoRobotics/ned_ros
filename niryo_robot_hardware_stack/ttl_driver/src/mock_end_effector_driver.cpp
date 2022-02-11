@@ -399,6 +399,19 @@ int MockEndEffectorDriver::readCollisionStatus(uint8_t id, bool& status)
 }
 
 /**
+ * @brief MockEndEffectorDriver::writeCollisionThresh
+ * @param id
+ * @param status
+ * @return
+ */
+int MockEndEffectorDriver::writeCollisionThresh(uint8_t id, int thresh)
+{
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
+}
+
+/**
  * @brief MockEndEffectorDriver::readDigitalInput
  * @param id
  * @param in

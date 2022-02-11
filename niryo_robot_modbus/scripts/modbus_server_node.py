@@ -29,6 +29,7 @@ class ModbusServerNode:
         else:
             rospy.loginfo("Modbus Node - Not Correctly Started")
 
+
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_modbus', anonymous=False, log_level=rospy.INFO)
 

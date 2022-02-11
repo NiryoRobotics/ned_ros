@@ -312,49 +312,49 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
 
-        // acceleration and velocity profiles
+        // acceleration and velocity profiles (with conversion from RPM and RPM-2)
         common::model::VelocityProfile profile{};
-        int data{};
+        double data{};
         if (robot_hwnh.hasParam(currentNamespace + "/v_start"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_start", data);
-            profile.v_start = static_cast<uint32_t>(data);
+            // v in 0.01 RPM
+            profile.v_start = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
-
         if (robot_hwnh.hasParam(currentNamespace + "/a_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_1", data);
-            profile.a_1 = static_cast<uint32_t>(data);
+            profile.a_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_1", data);
-            profile.v_1 = static_cast<uint32_t>(data);
+            profile.v_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            profile.a_max = static_cast<uint32_t>(data);
+            profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            profile.v_max = static_cast<uint32_t>(data);
+            profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/d_max", data);
-            profile.d_max = static_cast<uint32_t>(data);
+            profile.d_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/d_1", data);
-            profile.d_1 = static_cast<uint32_t>(data);
+            profile.d_1 = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_stop"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_stop", data);
-            profile.v_stop = static_cast<uint32_t>(data);
+            profile.v_stop = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
 
         // add parameters
@@ -543,10 +543,10 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     {
         if (jState->getBusProtocol() == EBusProtocol::TTL)
         {
-            // first set torque off
+            // first set torque state
             if (jState->isStepper())
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                jState->getId(), std::initializer_list<uint32_t>{false}));
+                                                                                jState->getId(), std::initializer_list<uint32_t>{torque_on}));
 
             ros::Duration(0.2).sleep();
 
