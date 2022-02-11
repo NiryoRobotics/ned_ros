@@ -230,8 +230,9 @@ private:
 
     // status to track collision status
     bool _collision_status{false};
-    double _last_collision_detected{0.0};
+    double _last_collision_detection_activating{0.0};
     bool _isRealCollision{true};
+    bool _isWrongAction{false};
 
     class CalibrationMachineState
     {

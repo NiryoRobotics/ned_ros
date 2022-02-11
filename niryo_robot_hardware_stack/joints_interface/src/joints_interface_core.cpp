@@ -246,7 +246,7 @@ void JointsInterfaceCore::rosControlLoop()
             if (_ttl_interface->readCollisionStatus())
             {
                 resetController();
-                ROS_WARN("JointsInterfaceCore: collision detected by End Effector");
+                ROS_WARN_THROTTLE(1.0, "JointsInterfaceCore: collision detected by End Effector");
             }
 
             current_time = ros::Time::now();
