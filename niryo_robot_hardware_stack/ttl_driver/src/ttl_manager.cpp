@@ -683,10 +683,18 @@ bool TtlManager::readEndEffectorStatus()
                                 state->setButtonStatus(i, action_list.at(i));
                                 // In case free driver button, it we hold this button, normally, because of the small threshold of collision detection
                                 // this action make EE confuse that it is a collision. That's why when we hold buttons, we need to deactivate the detection of collision.
-                                if (action_list.at(i) == common::model::EActionType::HANDLE_HELD_ACTION)
+                                if (action_list.at(i) != common::model::EActionType::NO_ACTION)
+                                {
                                     _isRealCollision = false;
-                                else if (action_list.at(i) == common::model::EActionType::NO_ACTION)
+                                }
+                                else if (!_isRealCollision)
+                                {
+                                    // when previous action is not no_action => need to wait a short period to make sure no collision detected
+                                    // Note, we need to read one time the status of collision just after releasing button to reset the status.
                                     _isRealCollision = true;
+                                    _isWrongAction = true;
+                                    _last_collision_detection_activating = ros::Time::now().toSec();
+                                }
                             }
                         }
                         else
@@ -752,19 +760,28 @@ bool TtlManager::checkCollision()
 
                 // **********  collision
                 // not accept other status of collistion in 1 second if it detected a collision
-                if (_last_collision_detected == 0.0)
+                if (_last_collision_detection_activating == 0.0)
                 {
                     if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
                     {
                         if (_collision_status)
-                            _last_collision_detected = ros::Time::now().toSec();
+                        {
+                            if (_isWrongAction)
+                            {
+                                // if an action did a wrong detection of collision, we need to read once to reset the status
+                                _isWrongAction = false;
+                                _collision_status = false;
+                            }
+                            else
+                                _last_collision_detection_activating = ros::Time::now().toSec();
+                        }
                     }
                     else
                         return false;
                 }
-                else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
+                else if (ros::Time::now().toSec() - _last_collision_detection_activating >= 1.0)
                 {
-                    _last_collision_detected = 0.0;
+                    _last_collision_detection_activating = 0.0;
                 }
             }
         }
@@ -906,6 +923,10 @@ uint8_t TtlManager::readSteppersStatus()
         // we want to check calibration (done at startup and when calibration is started)
         if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() &&  _ids_map.count(hw_type))
         {
+            // When calibration is running, sometimes at an unexpected position, calibration make EE thinks that there is a collision
+            // Have to disable the feature collision detection in this period
+            _isRealCollision = false;
+
             vector<uint8_t> id_list = _ids_map.at(hw_type);
             vector<uint8_t> stepper_id_list;
             std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list), [this](uint8_t id){
@@ -995,6 +1016,13 @@ uint8_t TtlManager::readSteppersStatus()
                     {
                         _calibration_status = _default_stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
                         _calib_machine_state.reset();
+
+                        // In this CalibrationMachineState, the calibration is considered as finished => can activate collision detection here
+                        // we need to wait a short period to make sure no collision detected
+                        // calibration make a wrong collision, so we have to read the collision status once time to reset it.
+                        _isWrongAction = true;
+                        _isRealCollision = true;
+                        _last_collision_detection_activating = ros::Time::now().toSec();
                     }
                 }
                 else
