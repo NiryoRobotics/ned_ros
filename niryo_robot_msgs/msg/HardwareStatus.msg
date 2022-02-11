@@ -6,6 +6,14 @@ int32 rpi_temperature
 # Ned, One, ....
 string hardware_version
 
+# Hardware State
+int8 ERROR = -1
+int8 NORMAL = 0
+int8 DEBUG = 1
+int8 REBOOT = 2
+
+int8 hardware_state
+
 # Motors
 bool connection_up
 string error_message

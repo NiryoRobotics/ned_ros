@@ -77,6 +77,9 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
     ROS_DEBUG("JointsInterfaceCore::init - Initializing parameters...");
     initParameters(nh);
 
+    // in ned2, mode is not learning mode in the first time
+    _previous_state_learning_mode = (_hardware_version != "ned2");
+
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
     startServices(nh);
 
@@ -238,6 +241,14 @@ void JointsInterfaceCore::rosControlLoop()
         if (_enable_control_loop)
         {
             _robot->read(current_time, elapsed_time);
+
+            // check if a collision is occurred, reset controller to stop robot
+            if (_ttl_interface->readCollisionStatus())
+            {
+                resetController();
+                ROS_WARN_THROTTLE(1.0, "JointsInterfaceCore: collision detected by End Effector");
+            }
+
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
@@ -278,6 +289,26 @@ void JointsInterfaceCore::rosControlLoop()
     }
 }
 
+/**
+ * @brief JointsInterfaceCore::resetController 
+ */
+void JointsInterfaceCore::resetController()
+{
+    _robot->setCommandToCurrentPosition();
+    // set pos and command equal
+    if (_hardware_version == "ned2")
+    {
+        _robot->write(ros::Time::now(), ros::Duration(0.0));
+        _lock_write_cnt = 150;
+        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
+    }
+    else if (_hardware_version == "ned" || _hardware_version == "one")
+    {
+        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
+        _robot->synchronizeMotors(true);
+    }
+}
+
 // ********************
 //  Callbacks
 // ********************
@@ -311,18 +342,10 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
-    _robot->setCommandToCurrentPosition();
-    // set pos and command equal
-    if (_hardware_version == "ned2")
-    {
-        _robot->write(ros::Time::now(), ros::Duration(0.0));
-        _lock_write_cnt = 100;
-    }
-    else if (_hardware_version == "ned" || _hardware_version == "one")
-    {
-        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
-        _robot->synchronizeMotors(true);
-    }
+    // update position of joints
+    _robot->read(ros::Time::now(), ros::Duration(0.0));
+
+    resetController();
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";

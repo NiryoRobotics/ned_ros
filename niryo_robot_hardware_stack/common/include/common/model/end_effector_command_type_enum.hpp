@@ -36,6 +36,7 @@ namespace model
  */
 enum class EEndEffectorCommandType { CMD_TYPE_DIGITAL_OUTPUT = 4,
                                      CMD_TYPE_PING=5,
+                                     CMD_TYPE_SET_COLLISION_THRESH = 6,
                                      CMD_TYPE_UNKNOWN=100
                                    };
 

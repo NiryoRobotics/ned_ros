@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model
+        href="http://download.ros.org/schema/package_format3.xsd"
+        schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>niryo_robot_utils</name>
+    <version>4.0.0</version>
+    <description>Niryo utils used in other Niryo Robot packages</description>
+    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+    <license>GPLv3</license>
+    <author email="v.pitre@niryo.com">Valentin Pitre</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <exec_depend>actionlib</exec_depend>
+    <exec_depend>actionlib_msgs</exec_depend>
+    <exec_depend>geometry_msgs</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>rospy</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
+
+    <test_depend>python-catkin-lint</test_depend>
+</package>

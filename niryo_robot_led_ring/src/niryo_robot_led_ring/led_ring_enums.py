@@ -1,4 +1,3 @@
-
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 
 # Message
@@ -15,6 +14,7 @@ PURPLE = ColorRGBA(153, 51, 153, 0)
 YELLOW = ColorRGBA(255, 200, 0, 0)
 
 ROBOT_STATUS_TO_ANIM = {
+    RobotStatus.REBOOT: [LedRingAnimation.SOLID, WHITE],
     RobotStatus.SHUTDOWN: [LedRingAnimation.NONE, NONE],
     RobotStatus.FATAL_ERROR: [LedRingAnimation.SOLID, RED],
     RobotStatus.MOTOR_ERROR: [LedRingAnimation.FLASHING, RED],
@@ -32,6 +32,7 @@ ROBOT_STATUS_TO_ANIM = {
     RobotStatus.RUNNING_DEBUG: [LedRingAnimation.SOLID, GREEN],
     RobotStatus.PAUSE: [LedRingAnimation.CHASE, GREEN],
     RobotStatus.LEARNING_MODE_AUTONOMOUS: [LedRingAnimation.SOLID, GREEN],
+    RobotStatus.REBOOT_MOTOR: [LedRingAnimation.SNAKE, YELLOW],
     "overheating": [LedRingAnimation.FLASHING, RED],
     "out_of_bound": [LedRingAnimation.SOLID, ORANGE]
 }

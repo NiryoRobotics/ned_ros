@@ -29,6 +29,9 @@ add_action_files(
   Tool.action
 )
 
+# enable python module support
+catkin_python_setup()
+
 generate_messages(
   DEPENDENCIES
     actionlib_msgs

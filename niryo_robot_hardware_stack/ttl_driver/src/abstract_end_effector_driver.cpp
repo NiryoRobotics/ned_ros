@@ -147,6 +147,9 @@ int AbstractEndEffectorDriver::writeSingleCmd(const std::unique_ptr<common::mode
         case common::model::EEndEffectorCommandType::CMD_TYPE_PING:
             ping(cmd->getId());
             break;
+        case common::model::EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH:
+            writeCollisionThresh(cmd->getId(), cmd->getParam());
+            break;
         default:
             std::cout << "Command not implemented" << std::endl;
     }

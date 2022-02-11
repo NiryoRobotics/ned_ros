@@ -116,6 +116,8 @@ class EndEffectorState : public AbstractHardwareState
 
         bool getCollisionStatus() const;
         void setCollisionStatus(bool status);
+        int getCollisionThresh() const;
+        void setCollisionThresh(int thresh);
 
         bool getDigitalIn() const;
         void setDigitalIn(bool digital_in);
@@ -128,6 +130,7 @@ class EndEffectorState : public AbstractHardwareState
         Vector3D _accelerometer_values{};
 
         bool _collision_status{false};
+        int _collision_thresh{0};
 
         bool _digital_in{false};
         bool _digital_out{false};
@@ -183,6 +186,16 @@ inline
 bool EndEffectorState::getCollisionStatus() const
 {
   return _collision_status;
+}
+
+/**
+ * @brief EndEffectorState::getCollisionThresh
+ * @return
+ */
+inline
+int EndEffectorState::getCollisionThresh() const
+{
+  return _collision_thresh;
 }
 
 /**

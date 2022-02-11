@@ -103,6 +103,7 @@ class HardwareInterface : common::util::IInterfaceCore
         bool _can_enabled{false};
         bool _ttl_enabled{false};
         bool _end_effector_enabled{false};
+        int8_t _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
 
         common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
 

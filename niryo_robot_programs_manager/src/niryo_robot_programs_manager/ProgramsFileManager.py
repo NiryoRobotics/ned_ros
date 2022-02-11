@@ -158,7 +158,7 @@ class ProgramsFileManager(object):
         """
         return os.path.isfile(self._path_from_name(name))
 
-    def execute(self, name):
+    def execute(self, _name):
         if self._runnable:
             return False, "Execution not implemented"
         else:

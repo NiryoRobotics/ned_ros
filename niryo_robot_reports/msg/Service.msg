@@ -1,0 +1,6 @@
+int8 DAILY_REPORTS = 0
+int8 TEST_REPORTS = 1
+int8 ALERT_REPORTS = 2
+int8 AUTO_DIAGNOSIS_REPORTS = 3
+
+int8 to_test
