@@ -67,6 +67,11 @@ class TrajectoriesExecutor:
         rospy.Subscriber('{}/follow_joint_trajectory/feedback'.format(joint_controller_base_name),
                          FollowJointTrajectoryActionFeedback, self.__callback_current_feedback)
 
+        # collision detected by End Effector could be a real or fake collision.
+        # In a movement, if a collision detected, that will be a real collision, without a movement, it will be fake
+        rospy.Subscriber('/niryo_robot/hardware_interface/collision_detected',
+                         Bool, self.__callback_collision_detected)
+
         # - Publishers
         self.__traj_goal_pub = rospy.Publisher('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
                                                FollowJointTrajectoryActionGoal, queue_size=1)
@@ -119,6 +124,10 @@ class TrajectoriesExecutor:
                             "a motor not able to follow the given trajectory"
                 rospy.logwarn(abort_str)
                 return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+
+    def __callback_collision_detected(self, msg):
+        # The collision detected by EE is used only here. It just means if there is a movement.
+        self.__collision_detected = msg.data
 
     def __callback_goal_result(self, msg):
         """
@@ -262,10 +271,12 @@ class TrajectoriesExecutor:
             if self.__current_goal_result == GoalStatus.SUCCEEDED:
                 return CommandStatus.SUCCESS, "Command has been successfully processed"
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
+                # a collision detected by EE or by the calculation of errors by moveit
                 if self.__collision_detected:
                     self.__collision_detected = False
                     self.__collision_detected_publisher.publish(True)
-                    self.__set_learning_mode(True)
+                    if self.__hardware_version != "ned2":
+                        self.__set_learning_mode(True)
                     return (CommandStatus.STOPPED, "Command has been aborted due to a collision "
                             "or a motor not able to follow the given trajectory")
                 else:

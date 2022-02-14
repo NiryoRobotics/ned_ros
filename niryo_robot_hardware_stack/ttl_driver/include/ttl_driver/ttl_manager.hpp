@@ -128,7 +128,6 @@ public:
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
     bool readJointsStatus();
-    bool checkCollision();
 
     int readMotorPID(uint8_t id,
                      uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
@@ -180,6 +179,9 @@ private:
     // check if hardware is a motor or not
     // this helps get only one driver to use for all motors to get/set on the same address
     bool isMotorType(common::model::EHardwareType type);
+
+    bool checkCollision();
+
 private:
     ros::NodeHandle _nh;
     std::shared_ptr<dynamixel::PortHandler> _portHandler;

@@ -417,7 +417,7 @@ int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
     uint8_t value = 0;
     status = false;
     int res = read<typename reg_type::TYPE_COLLISION_STATUS>(reg_type::ADDR_COLLISION_STATUS, id, value);
-    if (res == COMM_SUCCESS)
+    if (COMM_SUCCESS == res)
     {
         status = (value > 0) ? true : false;
     }

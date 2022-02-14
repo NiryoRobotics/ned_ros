@@ -177,10 +177,12 @@ private:
 private:
     ros::Publisher _collision_status_publisher;
     ros::Timer     _collision_status_publisher_timer;
-    ros::Duration  _collision_status_publisher_duration{1.0};
+    ros::Duration  _collision_status_publisher_duration{0.01};
 
     bool _control_loop_flag{false};
     bool _debug_flag{false};
+
+    bool _collision_detected{false};
 
     mutable std::mutex _control_loop_mutex;
     mutable std::mutex _single_cmd_queue_mutex;
