@@ -816,6 +816,50 @@ bool TtlManager::checkCollision()
     return res;
 }
 
+bool TtlManager::checkCollision()
+{
+    EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+
+    if (_driver_map.count(ee_type))
+    {
+        auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+        if (driver)
+        {
+            if (_ids_map.count(ee_type) && !_ids_map[ee_type].empty())
+            {
+                uint8_t id = _ids_map.at(ee_type).front();
+
+                // **********  collision
+                // not accept other status of collistion in 1 second if it detected a collision
+                if (_last_collision_detection_activating == 0.0)
+                {
+                    if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
+                    {
+                        if (_collision_status)
+                        {
+                            if (_isWrongAction)
+                            {
+                                // if an action did a wrong detection of collision, we need to read once to reset the status
+                                _isWrongAction = false;
+                                _collision_status = false;
+                            }
+                            else
+                                _last_collision_detection_activating = ros::Time::now().toSec();
+                        }
+                    }
+                    else
+                        return false;
+                }
+                else if (ros::Time::now().toSec() - _last_collision_detection_activating >= 1.0)
+                {
+                    _last_collision_detection_activating = 0.0;
+                }
+            }
+        }
+    }
+    return true;
+}
+
 /**
  * @brief TtlManager::readHardwareStatus
  */

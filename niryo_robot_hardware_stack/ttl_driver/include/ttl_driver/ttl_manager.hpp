@@ -128,6 +128,7 @@ public:
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
     bool readJointsStatus();
+    bool checkCollision();
 
     int readMotorPID(uint8_t id,
                      uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
