@@ -4,3 +4,4 @@ sphinx_rtd_theme
 sphinx-togglebutton==0.2.3
 sphinx-intl
 sphinx-tabs==1.1.13
+rospkg

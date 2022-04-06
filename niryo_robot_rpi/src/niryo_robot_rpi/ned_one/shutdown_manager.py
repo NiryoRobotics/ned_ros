@@ -22,8 +22,8 @@ from niryo_robot_rpi.common.rpi_ros_utils import send_led_state, LedState
 
 class ShutdownManager(AbstractShutdownManager):
 
-    def __init__(self):
-        super(ShutdownManager, self).__init__()
+    def __init__(self, fake=False):
+        super(ShutdownManager, self).__init__(fake=fake)
 
     def shutdown(self):
         send_led_state(LedState.SHUTDOWN)

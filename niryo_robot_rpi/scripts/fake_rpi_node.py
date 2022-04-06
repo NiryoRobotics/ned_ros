@@ -3,6 +3,7 @@
 import rospy
 import logging
 from std_msgs.msg import Int32, Bool
+from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
 
 class FakeNiryoButton:
@@ -30,6 +31,8 @@ class NiryoFakeRpi(object):
             from niryo_robot_rpi.fake_ned_one import FakeIOPanel
 
         self.digital_io_panel = FakeIOPanel()
+
+        self.shutdown_manager = AbstractShutdownManager(fake=True)
 
 
 if __name__ == '__main__':

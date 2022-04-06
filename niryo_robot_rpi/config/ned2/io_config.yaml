@@ -81,3 +81,7 @@ analog_inputs:
   - name: AI2
     pin: 1
     dividing_bridge_factor: 0.781181619
+
+sound_card:
+  i2c_address: 26
+  i2c_bus: 1

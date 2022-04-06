@@ -85,6 +85,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         void startSubscribers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
+        void resetController();
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
@@ -100,7 +101,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
-        bool _reset_controller{false};
+        bool _reset_controller{true};
 
         std::string _joint_controller_name;
 

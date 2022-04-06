@@ -55,11 +55,11 @@ class TestPythonWrapper(unittest.TestCase):
         self.assertIsNotNone(ret, msg="AssertNotStatus cannot operate on None ret")
         self.assertTrue(ret[0] < 0, msg="status : {} - message : {}".format(ret[0], ret[1]))
 
-    def setUp(self):
+    def setUpClass(self):
         clean_folders()
         self.niryo_robot = NiryoRosWrapper()
 
-    def tearDown(self):
+    def tearDownClass(self):
         del self.niryo_robot
         clean_folders()
 

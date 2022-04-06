@@ -25,16 +25,20 @@ from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownMan
 from .mcp_io_objects import McpIOManager
 
 from std_msgs.msg import String
+from niryo_robot_msgs.srv import AdvertiseShutdownRequest
 from niryo_robot_msgs.srv import Trigger
 
 
 class ShutdownManager(AbstractShutdownManager):
     SHUTDOWN_TIMEOUT = 10
 
-    def __init__(self, mcp_manager=None):
-        super(ShutdownManager, self).__init__()
+    def __init__(self, mcp_manager=None, fake=False):
+        super(ShutdownManager, self).__init__(fake=fake)
 
-        self.__turn_off_sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/turn_off_sound")
+        try:
+            self.__turn_off_sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/turn_off_sound")
+        except KeyError:
+            self.__turn_off_sound_name = ""
 
         self.__shutdown_requested = False
         self.__shutdown_event = Event()
@@ -54,7 +58,7 @@ class ShutdownManager(AbstractShutdownManager):
         if not self.__shutdown_requested:
             self.__shutdown_requested = True
             self.__shutdown_output.value = True
-            self._advertise_shutdown_service.call()
+            self._advertise_shutdown_service.call(AdvertiseShutdownRequest.SHUTDOWN)
             send_shutdown_command_thread = Timer(1.0, self.shutdown)
             send_shutdown_command_thread.start()
 
@@ -63,22 +67,31 @@ class ShutdownManager(AbstractShutdownManager):
         self.__shutdown_input.disable_on_press()
         self.__stop_move()
         self.wait_end_of_sound()
-        send_shutdown_command()
+        if not self._fake:
+            send_shutdown_command(learning_mode=False)
 
     def reboot(self):
+        self.__stop_move()
         self.wait_end_of_sound()
-        send_reboot_command()
+        if not self._fake:
+            send_reboot_command(learning_mode=False)
 
     @staticmethod
     def __stop_move():
         """
         Stop the robot movement
         """
-        stop_move_service = rospy.ServiceProxy('/niryo_robot_commander/stop_command', Trigger)
-        stop_move_service()
+        try:
+            stop_move_service = rospy.ServiceProxy('/niryo_robot_commander/stop_command', Trigger)
+            stop_move_service()
+        except (rospy.ServiceException, rospy.ROSInterruptException, rospy.ROSException):
+            pass
 
-        stop_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
-        stop_program_service()
+        try:
+            stop_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
+            stop_program_service()
+        except (rospy.ServiceException, rospy.ROSInterruptException, rospy.ROSException):
+            pass
 
     def wait_end_of_sound(self):
         self.__shutdown_event.clear()

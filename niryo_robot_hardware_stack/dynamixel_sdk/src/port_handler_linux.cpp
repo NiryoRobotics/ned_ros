@@ -64,6 +64,19 @@
 
 #define GPIO_HALF_DUPLEX_DIRECTION 17
 
+// CC : just for example
+#ifdef NIRYO_ONE
+  #pragma message "One compilation"
+#endif
+
+#ifdef NIRYO_NED
+  #pragma message "Ned compilation"
+#endif
+
+#ifdef NIRYO_NED2
+  #pragma message "Ned 2 compilation"
+#endif
+
 using namespace dynamixel;
 
 PortHandlerLinux::PortHandlerLinux(const char *port_name)
@@ -76,14 +89,14 @@ PortHandlerLinux::PortHandlerLinux(const char *port_name)
 
 void PortHandlerLinux::gpioHigh()
 {
-#if defined __arm__ || defined __aarch64__
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
   digitalWrite(GPIO_HALF_DUPLEX_DIRECTION, HIGH);
 #endif
 }
 
 void PortHandlerLinux::gpioLow()
 {
-#if defined __arm__ || defined __aarch64__
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
   digitalWrite(GPIO_HALF_DUPLEX_DIRECTION, LOW);
 #endif
 }
@@ -97,7 +110,7 @@ void PortHandlerLinux::gpioLow()
  */
 bool PortHandlerLinux::openPort()
 {
-#if defined __arm__ || defined __aarch64__
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
   int res = wiringPiSetupGpio();
 
   if (res != 0)

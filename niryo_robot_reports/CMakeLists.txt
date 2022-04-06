@@ -4,7 +4,21 @@ message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
+  niryo_robot_msgs
   rospy
+  std_msgs
+)
+
+add_message_files(
+  FILES
+  Service.msg
+)
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  CheckConnection.srv
+  RunAutoDiagnosis.srv
 )
 
 # enable python module support
@@ -12,11 +26,15 @@ catkin_python_setup()
 
 generate_messages(
   DEPENDENCIES
+  niryo_robot_msgs
+  std_msgs
 )
 
 catkin_package(
   CATKIN_DEPENDS
   message_runtime
+  niryo_robot_msgs
+  std_msgs
 )
 
 include_directories(
@@ -55,16 +73,28 @@ if(CATKIN_ENABLE_TESTING)
   endif()
 endif()
 
+
 #############
 ## Install ##
 #############
 
 catkin_install_python(PROGRAMS 
     scripts/reports_node.py
+    scripts/auto_diagnosis.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-# Mark other files for installation
+install(PROGRAMS
+    pub_new_day.sh
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
+)
 
+install(PROGRAMS
+    pub_new_day.sh
+    scripts/auto_diagnosis.py
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/scripts
+)
+
+# Mark other files for installation
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

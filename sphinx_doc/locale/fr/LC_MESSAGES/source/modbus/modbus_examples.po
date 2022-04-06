@@ -1,0 +1,135 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Modbus User Manual
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Modbus User Manual 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-18 15:03+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/modbus/modbus_examples.rst:2
+msgid "Modbus Examples"
+msgstr "Exemples Modbus"
+
+#: ../../source/modbus/modbus_examples.rst:4
+msgid ""
+"Examples of Modbus python lib can be found here :modbus_examples:`Python "
+"Modbus examples<>`. In the examples folder, you can find several example "
+"scripts that control Ned. These scripts are commented to help you "
+"understand every step."
+msgstr ""
+"Des exemples de la librairie python Modbus peuvent être trouvés ici :modbus_examples:`Python "
+"Modbus examples<>`. Dans le dossier examples, vous pouvez trouver plusieurs exemples "
+"scripts qui contrôlent Ned. Ces scripts sont commentés pour vous aider à "
+"comprendre chaque étape.
+
+#: ../../source/modbus/modbus_examples.rst:8
+msgid "Client Modbus Test"
+msgstr "Client Modbus Test"
+
+#: ../../source/modbus/modbus_examples.rst:9
+msgid "Calls several functions on the IO of Ned."
+msgstr "Appelle plusieurs fonctions utilisant les ports IO de Ned."
+
+#: ../../source/modbus/modbus_examples.rst:12
+msgid "Client Move Command"
+msgstr "Client Move Command"
+
+#: ../../source/modbus/modbus_examples.rst:13
+msgid "This script shows the calibration and Ned's moves."
+msgstr "Ce script montre les mouvements et la calibration de Ned."
+
+#: ../../source/modbus/modbus_examples.rst:16
+msgid "Client Modbus Conveyor Example"
+msgstr "Client Modbus Conveyor Example"
+
+#: ../../source/modbus/modbus_examples.rst:17
+msgid ""
+"This script shows how to activate the Conveyor Belt through the Modbus "
+"Python API, set a direction, a speed, and start and stop the device."
+msgstr ""
+"Ce script montre comment activer le Convoyeur grâce à l’API Python "
+"Modbus, définir une direction, une vitesse ou démarrer et arrêter le "
+"convoyeur."
+
+#: ../../source/modbus/modbus_examples.rst:20
+msgid "Client Modbus Vision Example"
+msgstr "Client Modbus Vision Example"
+
+#: ../../source/modbus/modbus_examples.rst:21
+msgid ""
+"This script shows how to use the vision pick method from a Modbus Client,"
+" through the Modbus Python API. Ned picks a red object seen in its "
+"workspace and releases it on its left. Note that we use the "
+"**string_to_register** method to convert a string into an object storable"
+" in registers. ::"
+msgstr ""
+"Ce script montre comment utiliser la méthode de pick par vision à partir "
+"d'un client Modbus à travers l'API Python Modbus. Ned attrape un objet "
+"rouge vu dans son workspace et le relâche sur sa droite. On utilise la "
+"fonction **string_to_register** pour convertir une chaîne de caractères "
+"en un objet stockable dans les registres."
+
+#~ msgid "Documentation"
+#~ msgstr "Documentation"
+
+#~ msgid ""
+#~ "You can use the README.md file "
+#~ "that you previously downloaded, which "
+#~ "contains every detail needed to "
+#~ "understand every function available."
+#~ msgstr ""
+#~ "Vous pouvez utiliser le document "
+#~ "README.md précédemment téléchargé, qui "
+#~ "contient l’ensemble des détails requis "
+#~ "pour comprendre toutes les fonctionnalités "
+#~ "disponibles. "
+
+#~ msgid "Or follow :api_modbus_readme:`this link<>`."
+#~ msgstr "Ou suivre :api_modbus_readme:`ce lien<>`."
+
+#~ msgid "Create your first scripts"
+#~ msgstr "Créer vos premiers scripts"
+
+#~ msgid "These scripts are commented to help you understanding every step."
+#~ msgstr ""
+#~ "Ces scripts sont commentés pour vous "
+#~ "permettre d’en comprendre toutes les "
+#~ "étapes."
+
+#~ msgid ""
+#~ "This script shows how to use "
+#~ "vision related methods from a Modbus "
+#~ "Client, through the Modbus Python API."
+#~ msgstr ""
+#~ "Ce script montre comment utiliser les"
+#~ " fonctions relatives à la vision "
+#~ "depuis un client Modbus, via l'API "
+#~ "Python Modbus."
+
+#~ msgid "Repository"
+#~ msgstr "Dépot Git"
+
+#~ msgid ""
+#~ "Examples of Modbus python lib can "
+#~ "be found here :modbus_examples:`Python Modbus"
+#~ " examples<>`."
+#~ msgstr ""
+#~ "Des examples de l'utilisation de la "
+#~ "librairie python modbus peuvent être "
+#~ "trouvés ici :modbus_examples:`Examples Python "
+#~ "Modbus<>`."
+

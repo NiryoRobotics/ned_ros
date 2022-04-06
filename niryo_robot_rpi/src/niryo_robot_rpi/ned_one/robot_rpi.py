@@ -43,7 +43,7 @@ class RobotRpi:
                                                         RobotStatus, self.__callback_robot_status, queue_size=10)
 
     def __callback_robot_status(self, msg):
-        if msg.robot_status == RobotStatus.SHUTDOWN:
+        if msg.robot_status <= RobotStatus.SHUTDOWN:
             self.shutdown()
 
     def shutdown(self):

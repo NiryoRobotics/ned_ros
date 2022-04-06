@@ -128,6 +128,7 @@ public:
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
     bool readJointsStatus();
+    bool checkCollision();
 
     int readMotorPID(uint8_t id,
                      uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
@@ -229,7 +230,9 @@ private:
 
     // status to track collision status
     bool _collision_status{false};
-    double _last_collision_detected{0.0};
+    double _last_collision_detection_activating{0.0};
+    bool _isRealCollision{true};
+    bool _isWrongAction{false};
 
     class CalibrationMachineState
     {

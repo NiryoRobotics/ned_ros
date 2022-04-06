@@ -77,7 +77,7 @@ class TrajectoriesExecutor:
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
 
-        self.__collision_detected_publisher = rospy.Publisher('~collision_detected', Bool, queue_size=10)
+        self.__collision_detected_publisher = rospy.Publisher('/niryo_robot/collision_detected', Bool, queue_size=10)
 
         rospy.on_shutdown(self.stop_current_plan)
 

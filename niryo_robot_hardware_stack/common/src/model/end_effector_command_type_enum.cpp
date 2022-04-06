@@ -54,6 +54,7 @@ EndEffectorCommandTypeEnum::initialize()
 
     m[EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT] = "digit input cmd";
     m[EEndEffectorCommandType::CMD_TYPE_PING] = "ping";
+    m[EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH]  = "set collision threshold cmd";
     m[EEndEffectorCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
     return m;

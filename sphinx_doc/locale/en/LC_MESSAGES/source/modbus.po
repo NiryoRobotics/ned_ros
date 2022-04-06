@@ -1,0 +1,44 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-18 15:03+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/modbus.rst:2 ../../source/modbus.rst:18
+msgid "Modbus"
+msgstr ""
+
+#: ../../source/modbus.rst:9
+msgid "In this document, we will focus on the Modbus/TCP server."
+msgstr ""
+
+#: ../../source/modbus.rst:11
+msgid ""
+"Ned is permanently running a Modbus TCP Server that enables Ned to "
+"communicate with a PLC, or another computer in the same network."
+msgstr ""
+
+#: ../../source/modbus.rst:13
+msgid ""
+"The Modbus/TCP server is running on **port 5020** by default. It has been"
+" built on top of the :pymodbus:`pymodbus<>` library. This enables you to "
+"make Ned communicates with a PLC, or another computer on the same "
+"network."
+msgstr ""
+
