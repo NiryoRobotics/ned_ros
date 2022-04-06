@@ -180,7 +180,7 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void TtlInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/collision_detected", 1, true);
+    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/hardware_interface/collision_detected", 1, true);
     _collision_status_publisher_timer = nh.createTimer(_collision_status_publisher_duration,
                                                       &TtlInterfaceCore::_publishCollisionStatus,
                                                       this);
@@ -1285,7 +1285,11 @@ void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {
     std_msgs::Bool msg;
     msg.data = readCollisionStatus();
-    _collision_status_publisher.publish(msg);
+    if (msg.data != _collision_detected)
+    {
+        _collision_detected = msg.data;
+        _collision_status_publisher.publish(msg);
+    }
 }
 
 }  // namespace ttl_driver
