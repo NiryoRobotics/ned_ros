@@ -2,4 +2,4 @@ string name
 ---
 int32 status
 string message
-geometry_msgs/Pose[] list_poses
+trajectory_msgs/JointTrajectory trajectory

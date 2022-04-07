@@ -85,6 +85,7 @@ protected:
     int8_t _direction{1};
     double _offset_position{0.0};
     double _home_position{0.0};
+
     // joint limit used to calibration ned/one and protect joint move out of bound
     double _limit_position_min{0.0};
     double _limit_position_max{0.0};

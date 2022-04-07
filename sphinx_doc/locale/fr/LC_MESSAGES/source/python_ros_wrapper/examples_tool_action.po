@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-03-24 13:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:2
-msgid "Examples: tool action"
-msgstr "Exemples : les actions avec les outils"
+msgid "Examples: Tool action"
+msgstr "Exemples : Les actions avec les outils"
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:4
 msgid "This page shows how to control Ned's tools via the Python ROS Wrapper."

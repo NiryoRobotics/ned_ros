@@ -50,19 +50,15 @@ class VideoStream(object):
         self._running = False
         self._should_run = False
 
-        self._publisher_camera_stream_running = rospy.Publisher('~video_stream_is_active',
-                                                                Bool, queue_size=2)
-
+        self._publisher_camera_stream_running = rospy.Publisher('~video_stream_is_active', Bool, queue_size=2)
         self._publisher_stream_parameters = rospy.Publisher('~video_stream_parameters',
                                                             ImageParameters, queue_size=2, latch=True)
         self._publish_image_parameters()
 
-        rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~is_active_rate")),
-                    self._publish_is_active)
-        # - SERVICES
-        self.__service_start_stop = rospy.Service('~start_stop_video_streaming',
-                                                  SetBool, self._callback_start_stop)
+        rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~is_active_rate")), self._publish_is_active)
 
+        # - SERVICES
+        rospy.Service('~start_stop_video_streaming', SetBool, self._callback_start_stop)
         rospy.Service('~set_saturation', SetImageParameter, self._callback_set_saturation)
         rospy.Service('~set_brightness', SetImageParameter, self._callback_set_brightness)
         rospy.Service('~set_contrast', SetImageParameter, self._callback_set_contrast)
@@ -158,6 +154,28 @@ class VideoStream(object):
     def _loop(self):
         raise NotImplementedError
 
+    def adjust_image(self, img):
+        if self._brightness == self._contrast == self._saturation == 1.:
+            return img
+
+        im_pil = PILImage.fromarray(img)
+
+        if self._brightness != 1.:
+            brightness_filter = ImageEnhance.Brightness(im_pil)
+            im_pil = brightness_filter.enhance(self._brightness)
+
+        if self._contrast != 1.:
+            contrast_filter = ImageEnhance.Contrast(im_pil)
+            im_pil = contrast_filter.enhance(self._contrast)
+
+        if self._saturation != 1.:
+            color_filter = ImageEnhance.Color(im_pil)
+            im_pil = color_filter.enhance(self._saturation)
+
+        # For reversing the operation:
+        im_np = np.asarray(im_pil)
+        return im_np
+
 
 class WebcamStream(VideoStream):
 
@@ -185,14 +203,10 @@ class WebcamStream(VideoStream):
     # -- PUBLIC
 
     def read_undistorted(self):
-        if not self._running or not self._should_run:
+        frame = self.read_raw_img()
+        if frame is None:
             return None
-        with self.__lock_image:
-            ret, frame = self.__video_stream.retrieve()
 
-        frame = self.adjust_image(frame)
-        if ret is False:
-            return None
         if self._calibration_object.is_set():
             img = self._calibration_object.undistort_image(frame)
             return cv2.flip(frame, -1) if self._flip_img else img
@@ -206,6 +220,8 @@ class WebcamStream(VideoStream):
             ret, frame = self.__video_stream.retrieve()
         if ret is False:
             return None
+
+        frame = self.adjust_image(frame)
         return frame
 
     # -- Private
@@ -222,28 +238,6 @@ class WebcamStream(VideoStream):
         self.__video_stream.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
         # Set frame rate
         self.__video_stream.set(cv2.CAP_PROP_FPS, self._frame_rate)
-
-    def adjust_image(self, img):
-        if self._brightness == self._contrast == self._saturation == 1.:
-            return img
-
-        im_pil = PILImage.fromarray(img)
-
-        if self._brightness != 1.:
-            brightness_filter = ImageEnhance.Brightness(im_pil)
-            im_pil = brightness_filter.enhance(self._brightness)
-
-        if self._contrast != 1.:
-            contrast_filter = ImageEnhance.Contrast(im_pil)
-            im_pil = contrast_filter.enhance(self._contrast)
-
-        if self._saturation != 1.:
-            color_filter = ImageEnhance.Color(im_pil)
-            im_pil = color_filter.enhance(self._saturation)
-
-        # For reversing the operation:
-        im_np = np.asarray(im_pil)
-        return im_np
 
     def _loop(self):
         while not rospy.is_shutdown():
@@ -289,7 +283,6 @@ class WebcamStream(VideoStream):
             if index_read == 0:
                 _, frame = self.__video_stream.retrieve()
                 self.__last_time_read = rospy.get_time()
-
                 self.__frame_raw = frame
 
                 if self._undistort_stream:
@@ -301,7 +294,7 @@ class WebcamStream(VideoStream):
 
                 used_image = self.adjust_image(used_image)
                 if self._flip_img:
-                    used_image = cv2.flip(frame, -1)
+                    used_image = cv2.flip(used_image, -1)
                 if self._display:
                     cv2.imshow("Video Stream", used_image)
                     cv2.waitKey(1)
@@ -334,7 +327,8 @@ class GazeboStream(VideoStream):
         self._should_run = True
 
     def __callback_sub_image_raw(self, image_message):
-        self.__last_image_raw = self.__bridge.imgmsg_to_cv2(image_message, desired_encoding="bgr8")
+        img = self.__bridge.imgmsg_to_cv2(image_message, desired_encoding="bgr8")
+        self.__last_image_raw = self.adjust_image(img)
 
     def __callback_sub_image_compressed(self, msg):
         self.__last_image_compressed_msg = msg

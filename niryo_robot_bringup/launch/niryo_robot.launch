@@ -14,6 +14,7 @@
     <arg name="simulation_mode" default="false" />
     <arg name="simu_gripper" default="true" />
     <arg name="simu_conveyor" default="true" />
+    <arg name="database" default="false" />
     <arg name="conf_location" default="$(env HOME)/niryo_robot_saved_files/niryo_robot_versions/version.txt"/>
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">
@@ -28,5 +29,6 @@
         <arg name="vision_enabled" default="$(arg vision_enabled)"/>
         <arg name="gazebo" value="$(arg gazebo)" />
         <arg name="conf_location" value="$(arg conf_location)" />
+        <arg name="database" default="$(arg database)" />
     </include>
 </launch>

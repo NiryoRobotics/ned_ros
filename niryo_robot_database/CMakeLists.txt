@@ -2,25 +2,25 @@ cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_database)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-find_package(catkin REQUIRED COMPONENTS
-  message_generation
-  rospy
+find_package(catkin REQUIRED 
+  COMPONENTS
+    message_generation
+    rospy
 )
 
 add_message_files(
   FILES
-  FilePath.msg
-  Setting.msg
+    FilePath.msg
+    Setting.msg
 )
 
-add_service_files(
-  DIRECTORY srv
+add_service_files(DIRECTORY srv
   FILES
-  AddFilePath.srv
-  GetSettings.srv
-  GetAllByType.srv
-  RmFilePath.srv
-  SetSettings.srv
+    AddFilePath.srv
+    GetAllByType.srv
+    GetSettings.srv
+    RmFilePath.srv
+    SetSettings.srv
 )
 
 # enable python module support
@@ -32,7 +32,7 @@ generate_messages(
 
 catkin_package(
   CATKIN_DEPENDS
-  message_runtime
+    message_runtime
 )
 
 include_directories(

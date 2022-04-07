@@ -10,7 +10,7 @@ fake_params:
         min_position: [0, 0, 0]
         max_position: [4096, 4096, 4096]
         model_number: [1, 1, 1]
-        firmware: ["0.0.1", "0.0.01", "0.0.1"]
+        firmware: ["0.0.1", "0.0.1", "0.0.1"]
     dynamixels:
         id: [5, 6, 7]
         position: [2048, 2048, 2048]
@@ -21,7 +21,7 @@ fake_params:
         min_position: [0, 0, 0]
         max_position: [4096, 4096, 4096]
         model_number: [1, 1, 1]
-        firmware: ["0.0.1", "0.0.01", "0.0.1"]
+        firmware: ["0.0.1", "0.0.1", "0.0.1"]
     end_effector:
         id: [0]
         temperature: [32]

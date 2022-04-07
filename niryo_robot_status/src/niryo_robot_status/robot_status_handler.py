@@ -66,19 +66,23 @@ class RobotStatusHandler(object):
 
         return CommandStatus.FAILURE, "Bad arguments"
 
-    def __waiting_for_booting(self):
+    def __waiting_for_booting(self, timeout=120):
         self.__booting = True
         self.__build_robot_status()
 
-        booting_message = ""
-        while self.__booting:
+        rate = rospy.Rate(2)
+        start_time = rospy.Time.now()
+        while self.__booting and not rospy.is_shutdown():
             if self.__robot_status_observer.hardware_status is not None \
                     and self.__robot_status_observer.hardware_status.connection_up:
 
                 self.__booting = not self.__robot_nodes_observer.check_nodes_initialization()
 
                 if self.__booting:
-                    if self.__robot_nodes_observer.missing_vital_nodes:
+                    if (rospy.Time.now() - start_time).to_sec() > timeout:
+                        self.__booting = False
+                        break
+                    elif self.__robot_nodes_observer.missing_vital_nodes:
                         booting_message = "Missing nodes: {}".format(self.__robot_nodes_observer.missing_vital_nodes)
                     else:
                         booting_message = "Not initialized nodes: {}".format(
@@ -86,8 +90,9 @@ class RobotStatusHandler(object):
                     if booting_message != self.__robot_message:
                         self.__robot_message = booting_message
                         self.__publish()
+            rate.sleep()
 
-            rospy.sleep(0.1)
+        rospy.loginfo('\033[5;34;1m\(^-^)/ \033[3mRobot ready to receive commands! \033[0;5;34;1m\(^-^)/\033[0m')
 
         self.__robot_message = ""
         self.__build_robot_status()
@@ -178,7 +183,7 @@ class RobotStatusHandler(object):
                     self.__robot_status_observer.hardware_status.hardware_errors_message):
                 if motor_error and not (motor_index > 5 and motor_error == "Overload"):
                     new_robot_status = RobotStatus.MOTOR_ERROR
-                    self.__robot_message += "{}: {}\n".format(
+                    new_robot_message += "{}: {}\n".format(
                         self.__robot_status_observer.hardware_status.motor_names[motor_index],
                         motor_error)
 
@@ -190,6 +195,8 @@ class RobotStatusHandler(object):
             robot_status = RobotStatus.CALIBRATION_IN_PROGRESS
         elif self.__robot_status_observer.hardware_status.calibration_needed:
             robot_status = RobotStatus.CALIBRATION_NEEDED
+        elif self.__robot_status_observer.learning_trajectory:
+            robot_status = RobotStatus.LEARNING_TRAJECTORY
         elif self.__robot_status_observer.learning_mode_state and not self.__autonomous_mode:
             robot_status = RobotStatus.LEARNING_MODE
         elif self.__robot_status_observer.pause_state == PausePlanExecution.PAUSE:

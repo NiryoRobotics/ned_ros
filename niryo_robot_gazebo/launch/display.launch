@@ -1,0 +1,25 @@
+<launch>
+    <arg name="model"/>
+    <arg name="hardware_version" default="ned" />
+
+    <arg name="urdf_path"
+         value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro"/>
+
+    <!-- Load URDF -->
+    <param name="robot_description"
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+    <node
+            name="joint_state_publisher_gui"
+            pkg="joint_state_publisher_gui"
+            type="joint_state_publisher_gui"/>
+    <node
+            name="robot_state_publisher"
+            pkg="robot_state_publisher"
+            type="robot_state_publisher"/>
+    <node
+            name="rviz"
+            pkg="rviz"
+            type="rviz"
+            args="-d $(find niryo_robot_description)/config/default_config.rviz"/>
+</launch>

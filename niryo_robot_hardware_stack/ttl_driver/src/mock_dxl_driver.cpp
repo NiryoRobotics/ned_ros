@@ -174,10 +174,24 @@ int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, u
  */
 int MockDxlDriver::changeId(uint8_t id, uint8_t new_id)
 {
-    (void)id;  // unused
-    (void)new_id;  // unused
+  (void)id;  // unused
+  (void)new_id;  // unused
 
-    return COMM_TX_FAIL;
+  return COMM_TX_FAIL;
+}
+
+/**
+ * @brief MockDxlDriver::writeStartupConfiguration
+ * @param id
+ * @param value
+ * @return
+ */
+int MockDxlDriver::writeStartupConfiguration(uint8_t id, uint8_t value)
+{
+  (void)id;  // unused
+  (void)value;  // unused
+
+  return COMM_SUCCESS;
 }
 
 /**

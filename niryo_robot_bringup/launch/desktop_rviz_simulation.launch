@@ -13,6 +13,7 @@
     <arg name="conf_location" default="version.txt"/>
     <arg name="simu_gripper" default="false" />
     <arg name="simu_conveyor" default="false"/>
+    <arg name="database" default="false" />
 
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_$(arg hardware_version)_simulation.launch">
@@ -22,6 +23,7 @@
         <arg name="debug" value="$(arg debug)"/>
         <arg name="vision_enabled" value="false" />
         <arg name="gazebo" value="false" />
+        <arg name="database" default="$(arg database)"/>
     </include>
 
     <group if="$(arg gui)">

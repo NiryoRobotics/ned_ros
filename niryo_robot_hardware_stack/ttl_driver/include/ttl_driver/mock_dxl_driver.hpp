@@ -58,6 +58,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // eeprom write
         int changeId(uint8_t id, uint8_t new_id) override;
+        int writeStartupConfiguration(uint8_t id, uint8_t value) override;
 
         // eeprom read
         int checkModelNumber(uint8_t id) override;

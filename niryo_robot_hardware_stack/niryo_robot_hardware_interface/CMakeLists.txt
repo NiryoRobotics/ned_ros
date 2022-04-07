@@ -31,6 +31,7 @@ add_definitions(-Wall  -Werror -Os)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
+      common
       conveyor_interface
       cpu_interface
       end_effector_interface
@@ -39,7 +40,6 @@ find_package(catkin REQUIRED
       niryo_robot_msgs
       roscpp
       tools_interface
-      common
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -66,6 +66,7 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
+        common
         conveyor_interface
         cpu_interface
         end_effector_interface
@@ -74,7 +75,6 @@ catkin_package(
         niryo_robot_msgs
         roscpp
         tools_interface
-        common
 )
 
 ###########

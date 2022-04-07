@@ -47,6 +47,9 @@ class AbstractDxlDriver : public AbstractMotorDriver
     public:
         // specific DXL commands
 
+        // eeprom write
+        virtual int writeStartupConfiguration(uint8_t id, uint8_t config) = 0;
+
         // ram read
         virtual int readLoad(uint8_t id, uint16_t& present_load ) = 0;
         virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint16_t>& load_list ) = 0;

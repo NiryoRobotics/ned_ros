@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from cgitb import reset
+
+from urllib3 import Retry
 import rospy
 
 from enum import Enum
@@ -21,8 +24,10 @@ def check_nb_args(expected_nbr):
         def wrapper(*args):
             nbr_args = len(args) - 1  # Because "self"
             if nbr_args != expected_nbr:
-                err = "{} parameters expected but {} given".format(expected_nbr, nbr_args)
-                raise TcpCommandException(err + "\nIn function".format(function.__name__))
+                err = "{} parameters expected but {} given".format(
+                    expected_nbr, nbr_args)
+                raise TcpCommandException(
+                    err + "\nIn function".format(function.__name__))
             result = function(*args)
             return result
 
@@ -107,20 +112,25 @@ class CommandInterpreter:
 
     # Error Handlers
     def __raise_exception_expected_choice(self, expected_choice, given):
-        raise TcpCommandException("Expected one of the following: {}.\nGiven: {}".format(expected_choice, given))
+        raise TcpCommandException(
+            "Expected one of the following: {}.\nGiven: {}".format(expected_choice, given))
 
     def __raise_exception_expected_type(self, expected_type, given):
-        raise TcpCommandException("Expected the following type: " + expected_type + ".\nGiven: " + given)
+        raise TcpCommandException(
+            "Expected the following type: " + expected_type + ".\nGiven: " + given)
 
     def __raise_exception_expected_parameters_nbr(self, expected_nbr, given):
-        raise TcpCommandException(str(expected_nbr) + " parameters expected, given: " + str(given))
+        raise TcpCommandException(
+            str(expected_nbr) + " parameters expected, given: " + str(given))
 
     # Command interpreter
     def interpret_command(self, dict_command_received):
-        rospy.logdebug("Command Interpreter - Dict Received : {}".format(dict_command_received))
+        rospy.logdebug(
+            "Command Interpreter - Dict Received : {}".format(dict_command_received))
         # Check if command is a dict
         if not type(dict_command_received) is dict:
-            msg = "Cannot interpret command of incorrect type: " + type(dict_command_received)
+            msg = "Cannot interpret command of incorrect type: " + \
+                  type(dict_command_received)
             return self.generate_dict_failure(message=msg)
         # Check if the dict is well formed
         if set(dict_command_received.keys()) != {"command", "param_list"}:
@@ -135,8 +145,10 @@ class CommandInterpreter:
         try:
             param_list = dict_command_received["param_list"]
             # noinspection PyArgumentList
-            status, list_ret_param, payload = self.__commands_dict[command_name](*param_list)
-            rospy.logdebug("Command Interpreter - {} - {}".format(status, list_ret_param))
+            status, list_ret_param, payload = self.__commands_dict[command_name](
+                *param_list)
+            rospy.logdebug(
+                "Command Interpreter - {} - {}".format(status, list_ret_param))
         except (TcpCommandException, TypeError, NotImplementedError) as e:
             return dict_to_packet(self.generate_dict_failure(command=command_name, message=str(e)))
 
@@ -173,7 +185,8 @@ class CommandInterpreter:
         # noinspection PyTypeChecker
         for command in CommandEnum:
             try:
-                func_adr = getattr(self, "_{}__{}".format(self.__class__.__name__, command.name.lower()))
+                func_adr = getattr(self, "_{}__{}".format(
+                    self.__class__.__name__, command.name.lower()))
             except AttributeError:
                 func_adr = self.__not_implemented_function
             dict_c[command.name] = func_adr
@@ -215,7 +228,8 @@ class CommandInterpreter:
     def __check_instance(self, value, type_):
         if not isinstance(value, type_):
             self.__raise_exception_expected_type(
-                type_.__name__ if not isinstance(type_, tuple) else " or ".join([type__.__name__ for type__ in type_]),
+                type_.__name__ if not isinstance(type_, tuple) else " or ".join(
+                    [type__.__name__ for type__ in type_]),
                 value)
 
     def __check_list_type(self, list_, type_):
@@ -258,7 +272,8 @@ class CommandInterpreter:
     @check_nb_args(1)
     def __calibrate(self, calibrate_mode):
         self.__check_list_belonging(calibrate_mode, ["MANUAL", "AUTO"])
-        self.__niryo_robot.calibrate_manual() if calibrate_mode == "MANUAL" else self.__niryo_robot.calibrate_auto()
+        self.__niryo_robot.calibrate_manual(
+        ) if calibrate_mode == "MANUAL" else self.__niryo_robot.calibrate_auto()
 
         return self.__send_answer()
 
@@ -269,21 +284,24 @@ class CommandInterpreter:
 
     @check_nb_args(1)
     def __set_learning_mode(self, state_string):
-        state = self.__check_and_get_from_dict(state_string, self.__boolean_string_dict_converter)
+        state = self.__check_and_get_from_dict(
+            state_string, self.__boolean_string_dict_converter)
         ret = self.__niryo_robot.set_learning_mode(state)
         return self.__send_answer(ret)
 
     @check_nb_args(1)
     def __set_arm_max_velocity(self, max_velocity_percentage):
         if type(max_velocity_percentage) not in [int, float] or not 0 < max_velocity_percentage <= 100:
-            self.__raise_exception_expected_type("float/integer [1 -100]", max_velocity_percentage)
+            self.__raise_exception_expected_type(
+                "float/integer [1 -100]", max_velocity_percentage)
 
         self.__niryo_robot.set_arm_max_velocity(max_velocity_percentage)
         return self.__send_answer()
 
     @check_nb_args(1)
     def __set_jog_control(self, state_string):
-        state = self.__check_and_get_from_dict(state_string, self.__boolean_string_dict_converter)
+        state = self.__check_and_get_from_dict(
+            state_string, self.__boolean_string_dict_converter)
 
         ret = self.__niryo_robot.set_jog_use_state(state)
         return self.__send_answer(ret)
@@ -315,16 +333,19 @@ class CommandInterpreter:
         self.__niryo_robot.move_joints(*joint_list)
         return self.__send_answer()
 
-    @check_nb_args(6)
+    @check_nb_args(7)
     def __move_pose(self, *param_list):
-        parameters_value_array = self.__map_list(param_list, float)
+        parameters_value_array = self.__map_list(param_list[:-1], float)
 
-        self.__niryo_robot.move_pose(*parameters_value_array)
+        param = parameters_value_array + [param_list[-1]]
+
+        self.__niryo_robot.move_pose(*param)
         return self.__send_answer()
 
     @check_nb_args(2)
     def __shift_pose(self, axis_string, value_string):
-        axis = self.__check_and_get_from_dict(axis_string, self.__axis_string_dict_convertor)
+        axis = self.__check_and_get_from_dict(
+            axis_string, self.__axis_string_dict_convertor)
         value = self.__transform_to_type(value_string, float)
 
         self.__niryo_robot.shift_pose(axis, value)
@@ -332,7 +353,8 @@ class CommandInterpreter:
 
     @check_nb_args(2)
     def __shift_linear_pose(self, axis_string, value_string):
-        axis = self.__check_and_get_from_dict(axis_string, self.__axis_string_dict_convertor)
+        axis = self.__check_and_get_from_dict(
+            axis_string, self.__axis_string_dict_convertor)
         value = self.__transform_to_type(value_string, float)
 
         self.__niryo_robot.shift_linear_pose(axis, value)
@@ -352,11 +374,13 @@ class CommandInterpreter:
         self.__niryo_robot.jog_pose_shift(shift_values_list)
         return self.__send_answer()
 
-    @check_nb_args(6)
+    @check_nb_args(7)
     def __move_linear_pose(self, *param_list):
-        parameters_value_array = self.__map_list(param_list, float)
+        parameters_value_array = self.__map_list(param_list[:-1], float)
 
-        self.__niryo_robot.move_linear_pose(*parameters_value_array)
+        param = parameters_value_array + [param_list[-1]]
+
+        self.__niryo_robot.move_linear_pose(*param)
         return self.__send_answer()
 
     @check_nb_args(6)
@@ -385,7 +409,8 @@ class CommandInterpreter:
         except ValueError:
             self.__raise_exception_expected_type("float", param_list)
         else:
-            self.__niryo_robot.save_pose(param_list[0], *parameters_value_array)
+            self.__niryo_robot.save_pose(
+                param_list[0], *parameters_value_array)
         return self.__send_answer()
 
     @check_nb_args(1)
@@ -422,7 +447,8 @@ class CommandInterpreter:
         dist_smoothing = param_list[2]
         self.__check_type(dist_smoothing, float)
 
-        self.__niryo_robot.pick_and_place(pick_pose, place_pose, dist_smoothing)
+        self.__niryo_robot.pick_and_place(
+            pick_pose, place_pose, dist_smoothing)
         return self.__send_answer()
 
     # - Trajectories
@@ -431,18 +457,30 @@ class CommandInterpreter:
         traj = self.__niryo_robot.get_trajectory_saved(*param_list)
         return self.__send_answer(traj)
 
+    @check_nb_args(0)
+    def __get_saved_trajectory_list(self):
+        traj_list = self.__niryo_robot.get_saved_trajectory_list()
+        return self.__send_answer(traj_list)
+
+    @check_nb_args(1)
+    def __execute_registered_trajectory(self, *param_list):
+        self.__niryo_robot.execute_registered_trajectory(*param_list)
+        return self.__send_answer()
+
     @check_nb_args(2)
     def __execute_trajectory_from_poses(self, *param_list):
         list_poses = []
         for pose in param_list[0]:
             if len(pose) != 7 and len(pose) != 6:
-                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose))
+                self.__raise_exception_expected_parameters_nbr(
+                    '7 or 6', len(pose))
             list_poses.append(self.__map_list(pose, float))
 
         dist_smoothing = param_list[1]
         self.__check_type(dist_smoothing, float)
 
-        self.__niryo_robot.execute_trajectory_from_poses(list_poses, dist_smoothing)
+        self.__niryo_robot.execute_trajectory_from_poses(
+            list_poses, dist_smoothing)
         return self.__send_answer()
 
     @check_nb_args(3)
@@ -450,35 +488,44 @@ class CommandInterpreter:
         list_poses_joints = []
         for pose_joint in param_list[0]:
             if len(pose_joint) != 7 and len(pose_joint) != 6:
-                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose_joint))
+                self.__raise_exception_expected_parameters_nbr(
+                    '7 or 6', len(pose_joint))
             list_poses_joints.append(self.__map_list(pose_joint, float))
 
         list_type = []
         for type_ in param_list[1]:
             if type_ != 'joint' and type_ != 'pose':
-                self.__raise_exception_expected_choice("'pose' or 'joint'", type_)
+                self.__raise_exception_expected_choice(
+                    "'pose' or 'joint'", type_)
             list_type.append(type_)
 
         dist_smoothing = param_list[2]
         self.__check_type(dist_smoothing, float)
 
-        self.__niryo_robot.execute_trajectory_from_poses_and_joints(list_poses_joints, list_type, dist_smoothing)
+        self.__niryo_robot.execute_trajectory_from_poses_and_joints(
+            list_poses_joints, list_type, dist_smoothing)
         return self.__send_answer()
 
-    @check_nb_args(1)
-    def __execute_trajectory_saved(self, *param_list):
-        self.__niryo_robot.execute_trajectory_saved(param_list[0])
+    @check_nb_args(3)
+    def __save_trajectory(self, *param_list):
+        list_trajpoint = []
+        for trajpoint in param_list[0]:
+            if len(trajpoint) != 6:
+                self.__raise_exception_expected_parameters_nbr(
+                    '6', len(trajpoint))
+            list_trajpoint.append(self.__map_list(trajpoint, float))
+        self.__niryo_robot.save_trajectory(
+            list_trajpoint, param_list[1], param_list[2])
         return self.__send_answer()
 
     @check_nb_args(2)
-    def __save_trajectory(self, *param_list):
-        list_poses = []
-        for pose in param_list[1]:
-            if len(pose) != 7 and len(pose) != 6:
-                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose))
-            list_poses.append(self.__map_list(pose, float))
+    def __save_last_learned_trajectory(self, *param_list):
+        self.__niryo_robot.save_last_learned_trajectory(*param_list)
+        return self.__send_answer()
 
-        self.__niryo_robot.save_trajectory(param_list[0], list_poses)
+    @check_nb_args(3)
+    def __update_trajectory_infos(self, *param_list):
+        self.__niryo_robot.update_trajectory_infos(*param_list)
         return self.__send_answer()
 
     @check_nb_args(1)
@@ -487,11 +534,61 @@ class CommandInterpreter:
         return self.__send_answer()
 
     @check_nb_args(0)
-    def __get_saved_trajectory_list(self):
-        traj_list = self.__niryo_robot.get_saved_trajectory_list()
-        return self.__send_answer(traj_list)
+    def __clean_trajectory_memory(self):
+        self.__niryo_robot.clean_trajectory_memory()
+        return self.__send_answer()
+
+    # Dynamic frames
+    @check_nb_args(0)
+    def __get_saved_dynamic_frame_list(self):
+        frames_list, frames_description = self.__niryo_robot.get_saved_dynamic_frame_list()
+        return self.__send_answer((frames_list, frames_description))
+
+    @check_nb_args(1)
+    def __get_saved_dynamic_frame(self, *param_list):
+        frame = self.__niryo_robot.get_saved_dynamic_frame(*param_list)
+        return self.__send_answer(*frame)
+
+    @check_nb_args(5)
+    def __save_dynamic_frame_from_poses(self, *param_list):
+        name = param_list[0]
+        description = param_list[1]
+        list_poses = list(param_list[2:])
+
+        self.__niryo_robot.save_dynamic_frame_from_poses(name, description, list_poses)
+        return self.__send_answer()
+
+    @check_nb_args(5)
+    def __save_dynamic_frame_from_points(self, *param_list):
+        name = param_list[0]
+        description = param_list[1]
+        list_poses = list(param_list[2:])
+
+        self.__niryo_robot.save_dynamic_frame_from_points(name, description, list_poses)
+        return self.__send_answer()
+
+    @check_nb_args(3)
+    def __edit_dynamic_frame(self, *param_list):
+        self.__niryo_robot.edit_dynamic_frame(*param_list)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __delete_dynamic_frame(self, *param_list):
+        self.__niryo_robot.delete_dynamic_frame(*param_list)
+        return self.__send_answer()
+
+    @check_nb_args(2)
+    def __move_relative(self, *param_list):
+        self.__niryo_robot.move_relative(*param_list)
+        return self.__send_answer()
+
+    @check_nb_args(2)
+    def __move_linear_relative(self, *param_list):
+        self.__niryo_robot.move_linear_relative(*param_list)
+        return self.__send_answer()
 
     # -- Tools
+
     @check_nb_args(0)
     def __update_tool(self):
         self.__niryo_robot.update_tool()
@@ -519,7 +616,8 @@ class CommandInterpreter:
         self.__check_type(max_troque_percentage, int)
         self.__check_type(hold_torque_percentage, int)
 
-        self.__niryo_robot.open_gripper(speed, max_troque_percentage, hold_torque_percentage)
+        self.__niryo_robot.open_gripper(
+            speed, max_troque_percentage, hold_torque_percentage)
         return self.__send_answer()
 
     @check_nb_args(3)
@@ -528,7 +626,8 @@ class CommandInterpreter:
         self.__check_type(max_troque_percentage, int)
         self.__check_type(hold_torque_percentage, int)
 
-        self.__niryo_robot.close_gripper(speed, max_troque_percentage, hold_torque_percentage)
+        self.__niryo_robot.close_gripper(
+            speed, max_troque_percentage, hold_torque_percentage)
         return self.__send_answer()
 
     # - Vacuum
@@ -561,30 +660,8 @@ class CommandInterpreter:
     # TCP
     @check_nb_args(1)
     def __enable_tcp(self, enable):
-        boolean_enable = self.__check_and_get_from_dict(enable, self.__boolean_string_dict_converter)
-        self.__niryo_robot.enable_tcp(boolean_enable)
-        return self.__send_answer()
-
-    @check_nb_args(6)
-    def __set_tcp(self, *param_list):
-        parameters_value_array = self.__map_list(param_list, float)
-        self.__niryo_robot.set_tcp(*parameters_value_array)
-        return self.__send_answer()
-
-    @check_nb_args(0)
-    def __reset_tcp(self):
-        self.__niryo_robot.reset_tcp()
-        return self.__send_answer()
-
-    @check_nb_args(0)
-    def __tool_reboot(self):
-        self.__niryo_robot.tool_reboot()
-        return self.__send_answer()
-
-    # TCP
-    @check_nb_args(1)
-    def __enable_tcp(self, enable):
-        boolean_enable = self.__check_and_get_from_dict(enable, self.__boolean_string_dict_converter)
+        boolean_enable = self.__check_and_get_from_dict(
+            enable, self.__boolean_string_dict_converter)
         self.__niryo_robot.enable_tcp(boolean_enable)
         return self.__send_answer()
 
@@ -608,13 +685,15 @@ class CommandInterpreter:
 
     @check_nb_args(2)
     def __set_pin_mode(self, pin_string, pin_mode_string):
-        pin_mode = self.__check_and_get_from_dict(pin_mode_string, self.__pin_mode_string_dict_convertor)
+        pin_mode = self.__check_and_get_from_dict(
+            pin_mode_string, self.__pin_mode_string_dict_convertor)
         self.__niryo_robot.set_pin_mode(pin_string, pin_mode)
         return self.__send_answer()
 
     @check_nb_args(2)
     def __digital_write(self, pin_string, state_string):
-        state = self.__check_and_get_from_dict(state_string, self.__digital_state_string_dict_convertor)
+        state = self.__check_and_get_from_dict(
+            state_string, self.__digital_state_string_dict_convertor)
         self.__niryo_robot.digital_write(pin_string, state)
         return self.__send_answer()
 
@@ -637,8 +716,10 @@ class CommandInterpreter:
         digital_io_state_array = self.__niryo_robot.get_digital_io_state()
 
         data_answer = []
-        data_answer += [[di.name, PinMode.INPUT, int(di.value), ] for di in digital_io_state_array.digital_inputs]
-        data_answer += [[do.name, PinMode.OUTPUT, int(do.value), ] for do in digital_io_state_array.digital_outputs]
+        data_answer += [[di.name, PinMode.INPUT,
+                         int(di.value), ] for di in digital_io_state_array.digital_inputs]
+        data_answer += [[do.name, PinMode.OUTPUT,
+                         int(do.value), ] for do in digital_io_state_array.digital_outputs]
         data_answer.sort(key=lambda x: x[0])
         return self.__send_answer(*data_answer)
 
@@ -647,8 +728,10 @@ class CommandInterpreter:
         analog_io_state_array = self.__niryo_robot.get_analog_io_state()
 
         data_answer = []
-        data_answer += [[ai.name, PinMode.INPUT, ai.value, ] for ai in analog_io_state_array.analog_inputs]
-        data_answer += [[ao.name, PinMode.OUTPUT, ao.value, ] for ao in analog_io_state_array.analog_outputs]
+        data_answer += [[ai.name, PinMode.INPUT, ai.value, ]
+                        for ai in analog_io_state_array.analog_inputs]
+        data_answer += [[ao.name, PinMode.OUTPUT, ao.value, ]
+                        for ao in analog_io_state_array.analog_outputs]
         data_answer.sort(key=lambda x: x[0])
         return self.__send_answer(*data_answer)
 
@@ -676,23 +759,28 @@ class CommandInterpreter:
 
     @check_nb_args(1)
     def __unset_conveyor(self, conveyor_id_string):
-        conveyor_id = self.__check_and_get_from_dict(conveyor_id_string, self.__conveyor_id_string_dict_convertor)
+        conveyor_id = self.__check_and_get_from_dict(
+            conveyor_id_string, self.__conveyor_id_string_dict_convertor)
 
         status, message = self.__niryo_robot.unset_conveyor(conveyor_id)
         return self.__send_answer(status, message)
 
     @check_nb_args(4)
     def __control_conveyor(self, conveyor_id_string, control_on_string, speed, direction_string):
-        conveyor_id = self.__check_and_get_from_dict(conveyor_id_string, self.__conveyor_id_string_dict_convertor)
-        control_on = self.__check_and_get_from_dict(control_on_string, self.__boolean_string_dict_converter)
+        conveyor_id = self.__check_and_get_from_dict(
+            conveyor_id_string, self.__conveyor_id_string_dict_convertor)
+        control_on = self.__check_and_get_from_dict(
+            control_on_string, self.__boolean_string_dict_converter)
 
         self.__check_type(speed, int)
         if speed < 0 or speed > 100:
             self.__raise_exception_expected_choice("[0 => 100]", speed)
 
-        direction = self.__check_and_get_from_dict(direction_string, self.__conveyor_direction_string_dict_convertor)
+        direction = self.__check_and_get_from_dict(
+            direction_string, self.__conveyor_direction_string_dict_convertor)
 
-        self.__niryo_robot.control_conveyor(conveyor_id, control_on, speed, direction)
+        self.__niryo_robot.control_conveyor(
+            conveyor_id, control_on, speed, direction)
         return self.__send_answer()
 
     @check_nb_args(0)
@@ -733,7 +821,8 @@ class CommandInterpreter:
     def __get_target_pose_from_rel(self, *param_list):
         workspace = param_list[0]
         distance_params = param_list[1:5]
-        height_offset, x_rel, y_rel, yaw_rel = self.__map_list(distance_params, float)
+        height_offset, x_rel, y_rel, yaw_rel = self.__map_list(
+            distance_params, float)
 
         target_msg = self.__niryo_robot.get_target_pose_from_rel(
             workspace, height_offset, x_rel, y_rel, yaw_rel)
@@ -814,20 +903,23 @@ class CommandInterpreter:
     # - Led ring
     @check_nb_args(2)
     def __led_ring_solid(self, color, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__niryo_robot.led_ring.solid(color, wait)
         return self.__send_answer()
 
     @check_nb_args(1)
     def __led_ring_turn_off(self, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         self.__niryo_robot.led_ring.turn_off(wait)
         return self.__send_answer()
 
     @check_nb_args(4)
     def __led_ring_flash(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -836,17 +928,20 @@ class CommandInterpreter:
 
     @check_nb_args(4)
     def __led_ring_alternate(self, color_list, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         for index, color in enumerate(color_list):
             color = self.__check_color_led_ring(color)
             color_list[index] = color
         self.__check_instance(period, (float, int))
-        self.__niryo_robot.led_ring.alternate(color_list, period, iterations, wait)
+        self.__niryo_robot.led_ring.alternate(
+            color_list, period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(4)
     def __led_ring_chase(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -856,7 +951,8 @@ class CommandInterpreter:
 
     @check_nb_args(3)
     def __led_ring_wipe(self, color, period, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__niryo_robot.led_ring.wipe(color, period, wait)
@@ -864,7 +960,8 @@ class CommandInterpreter:
 
     @check_nb_args(3)
     def __led_ring_rainbow(self, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow(period, iterations, wait)
@@ -872,7 +969,8 @@ class CommandInterpreter:
 
     @check_nb_args(3)
     def __led_ring_rainbow_cycle(self, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow_cycle(period, iterations, wait)
@@ -880,7 +978,8 @@ class CommandInterpreter:
 
     @check_nb_args(3)
     def __led_ring_rainbow_chase(self, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
         self.__niryo_robot.led_ring.rainbow_chase(period, iterations, wait)
@@ -888,7 +987,8 @@ class CommandInterpreter:
 
     @check_nb_args(4)
     def __led_ring_go_up(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -897,7 +997,8 @@ class CommandInterpreter:
 
     @check_nb_args(4)
     def __led_ring_go_up_down(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -906,7 +1007,8 @@ class CommandInterpreter:
 
     @check_nb_args(4)
     def __led_ring_breath(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -915,7 +1017,8 @@ class CommandInterpreter:
 
     @check_nb_args(4)
     def __led_ring_snake(self, color, period, iterations, wait):
-        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        wait = self.__check_and_get_from_dict(
+            wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__check_instance(period, (float, int))
         self.__check_type(iterations, int)
@@ -924,7 +1027,8 @@ class CommandInterpreter:
 
     @check_nb_args(1)
     def __led_ring_custom(self, color_list):
-        verified_color_list = [self.__check_color_led_ring(color) for color in color_list]
+        verified_color_list = [self.__check_color_led_ring(
+            color) for color in color_list]
         self.__niryo_robot.led_ring.custom(verified_color_list)
         return self.__send_answer()
 
@@ -939,10 +1043,12 @@ class CommandInterpreter:
     def __check_color_led_ring(self, color):
         self.__check_type(color, list)
         if len(color) != 3:
-            self.__raise_exception_expected_type("Color must be a list of size 3: [r, g, b]", color)
+            self.__raise_exception_expected_type(
+                "Color must be a list of size 3: [r, g, b]", color)
         for index, color_elem in enumerate(color):
             if color_elem < 0 or color_elem > 255:
-                self.__raise_exception_expected_choice("[0 => 255]", color_elem)
+                self.__raise_exception_expected_choice(
+                    "[0 => 255]", color_elem)
             color[index] = self.__transform_to_type(color_elem, float)
         return color
 

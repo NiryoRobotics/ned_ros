@@ -80,6 +80,10 @@ struct XC430Reg
     static constexpr uint16_t ADDR_MIN_POSITION_LIMIT       = 52;
     using TYPE_MIN_POSITION_LIMIT = uint32_t;
 
+    static constexpr uint16_t ADDR_STARTUP_CONFIGURATION    = 60;
+    static constexpr uint8_t VERSION_STARTUP_CONFIGURATION  = 45;
+    using TYPE_STARTUP_CONFIGURATION = uint8_t;
+
     static constexpr uint16_t ADDR_ALARM_SHUTDOWN           = 63;
     using TYPE_ALARM_SHUTDOWN = uint8_t;
 

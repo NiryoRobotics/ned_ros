@@ -497,6 +497,35 @@ int TtlManager::rebootHardware(uint8_t hw_id)
     return return_value;
 }
 
+/**
+ * @brief TtlManager::resetTorques
+ * @return
+ */
+void TtlManager::resetTorques()
+{
+    for (auto const& it : _driver_map)
+    {
+        auto hw_type = it.first;
+        auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
+
+        if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
+        {
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint8_t> ids_list = _ids_map.at(hw_type);
+
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint32_t> position_list;
+
+            for (size_t i = 0; i < ids_list.size(); ++i)
+            {
+                ROS_DEBUG("TtlManager::resetTorques - Torque ON on stepper ID: %d", static_cast<int>(ids_list.at(i)));
+                driver->writeTorqueEnable(ids_list.at(i), 1);
+            }  // for ids_list
+        }
+    }  // for _driver_map
+}
+
+
 // ******************
 //  Read operations
 // ******************
@@ -551,66 +580,70 @@ bool TtlManager::readJointsStatus()
 
     // syncread position for all motors.
     // for ned and one -> we need at least one xl430 and one xl320 drivers as they are different
-    // All addresses for position are the same
 
-    // if no stepper, this should never be false (to be checked)
-    if (getCalibrationStatus() == common::model::EStepperCalibrationStatus::OK)
+    for (auto const& it : _driver_map)
     {
-        for (auto const& it : _driver_map)
+        auto hw_type = it.first;
+        auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
+
+        if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
         {
-            auto hw_type = it.first;
-            auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
-            if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint32_t> position_list;
+
+            // retrieve joint status
+            int res = driver->syncReadPosition(ids_list, position_list);
+            if (COMM_SUCCESS == res)
             {
-                // we retrieve all the associated id for the type of the current driver
-                vector<uint8_t> ids_list = _ids_map.at(hw_type);
-
-                // we retrieve all the associated id for the type of the current driver
-                vector<uint32_t> position_list;
-
-                // retrieve joint status
-                int res = driver->syncReadPosition(ids_list, position_list);
-                if (COMM_SUCCESS == res)
+                if (ids_list.size() == position_list.size())
                 {
-                    if (ids_list.size() == position_list.size())
+                    // set motors states accordingly
+                    for (size_t i = 0; i < ids_list.size(); ++i)
                     {
-                        // set motors states accordingly
-                        for (size_t i = 0; i < ids_list.size(); ++i)
-                        {
-                            uint8_t id = ids_list.at(i);
+                        uint8_t id = ids_list.at(i);
 
-                            if (_state_map.count(id))
+                        if (_state_map.count(id))
+                        {
+                            auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
+                            if (state)
                             {
-                                auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
-                                if (state)
-                                {
-                                    state->setPosition(static_cast<int>((position_list.at(i))));
-                                }
+                                state->setPosition(static_cast<int>((position_list.at(i))));
                             }
                         }
-                    }
-                    else
-                    {
-                        // warn to avoid sound and light error on high level (error on ROS_ERROR)
-                        ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
-                                    "vector mismatch (id_list size %d, position_list size %d)",
-                                    static_cast<int>(ids_list.size()),
-                                    static_cast<int>(position_list.size()));
-                        hw_errors_increment++;
                     }
                 }
                 else
                 {
-                    // debug to avoid sound and light error on high level (error on ROS_ERROR)
-                    // also for Ned which has much more errors on XL320 motor
-                    ROS_DEBUG("TtlManager::readJointStatus : Fail to sync read joint state - "
-                              "driver fail to syncReadPosition");
+                    // warn to avoid sound and light error on high level (error on ROS_ERROR)
+                    ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
+                                "vector mismatch (id_list size %d, position_list size %d)",
+                                static_cast<int>(ids_list.size()),
+                                static_cast<int>(position_list.size()));
                     hw_errors_increment++;
                 }
             }
-        }  // for driver_map
+            else
+            {
+                // debug to avoid sound and light error on high level (error on ROS_ERROR)
+                // also for Ned which has much more errors on XL320 motor
+                ROS_DEBUG("TtlManager::readJointStatus : Fail to sync read joint state - "
+                            "driver fail to syncReadPosition");
+                hw_errors_increment++;
+            }
+        }
+    }  // for driver_map
 
+    // check collision by END_EFFECTOR
+    if (_isRealCollision)
+    {
+        readCollisionStatus();
+    }
+    else
+    {
+        _collision_status = false;
         // check collision by END_EFFECTOR
         if (_isRealCollision)
         {
@@ -621,6 +654,7 @@ bool TtlManager::readJointsStatus()
             _collision_status = false;
         }
     }
+
     ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
 
     // we reset the global error variable only if no errors
@@ -638,7 +672,7 @@ bool TtlManager::readJointsStatus()
 
 /**
  * @brief TtlManager::readEndEffectorStatus
- * @return 
+ * @return
  */
 bool TtlManager::readEndEffectorStatus()
 {
@@ -716,6 +750,8 @@ bool TtlManager::readEndEffectorStatus()
             if (0 == hw_errors_increment)
             {
                 _end_effector_fail_counter_read = 0;
+                _debug_error_message.clear();
+
                 res = true;
             }
             else
@@ -727,7 +763,7 @@ bool TtlManager::readEndEffectorStatus()
             if (_end_effector_fail_counter_read > MAX_READ_EE_FAILURE)
             {
                 ROS_ERROR("TtlManager::readEndEffectorStatus - motor connection problem - Failed to read from bus (hw_fail_counter_read : %d)",
-                        _end_effector_fail_counter_read);
+                          _end_effector_fail_counter_read);
                 _end_effector_fail_counter_read = 0;
                 _debug_error_message = "TtlManager - Connection problem with physical Bus.";
             }
@@ -816,25 +852,34 @@ bool TtlManager::checkCollision()
     return res;
 }
 
-bool TtlManager::checkCollision()
+/**
+ * @brief TtlManager::readCollisionStatus
+ * @return
+ */
+bool TtlManager::readCollisionStatus()
 {
+    bool res = false;
+
     EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
 
     if (_driver_map.count(ee_type))
     {
         auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+
         if (driver)
         {
-            if (_ids_map.count(ee_type) && !_ids_map[ee_type].empty())
+            if (_ids_map.count(ee_type) && !_ids_map.at(ee_type).empty())
             {
                 uint8_t id = _ids_map.at(ee_type).front();
 
                 // **********  collision
-                // not accept other status of collistion in 1 second if it detected a collision
-                if (_last_collision_detection_activating == 0.0)
+                // don't accept other status of collistion in 1 second if it detected a collision
+                if (0.0 == _last_collision_detection_activating)
                 {
                     if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
                     {
+                        res = true;
+
                         if (_collision_status)
                         {
                             if (_isWrongAction)
@@ -844,11 +889,15 @@ bool TtlManager::checkCollision()
                                 _collision_status = false;
                             }
                             else
+                            {
                                 _last_collision_detection_activating = ros::Time::now().toSec();
+                            }
                         }
                     }
                     else
-                        return false;
+                    {
+                        _end_effector_fail_counter_read++;
+                    }
                 }
                 else if (ros::Time::now().toSec() - _last_collision_detection_activating >= 1.0)
                 {
@@ -857,7 +906,8 @@ bool TtlManager::checkCollision()
             }
         }
     }
-    return true;
+
+    return res;
 }
 
 /**
@@ -955,6 +1005,8 @@ bool TtlManager::readHardwareStatus()
     if (0 == hw_errors_increment)
     {
         _hw_fail_counter_read = 0;
+        _debug_error_message.clear();
+
         res = true;
     }
     else
@@ -1500,7 +1552,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
     }
     else
     {
-      ROS_ERROR_THROTTLE(1, "TtlManager::readMotorPID - driver for motor id %d unknown",
+      ROS_ERROR_THROTTLE(1, "TtlManager::readVelocityProfile - driver for motor id %d unknown",
                          static_cast<int>(id));
       result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
@@ -1867,6 +1919,9 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
             break;
             case EHardwareType::XC430:
                 _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
+            break;
+            case EHardwareType::XM430:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XM430Reg> >(_portHandler, _packetHandler)));
             break;
             case EHardwareType::XL320:
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));

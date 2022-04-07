@@ -25,6 +25,7 @@ class VolumeManager:
         self.__volume_percentage = None
         self.__max_volume = rospy.get_param("~max_volume")
         self.__min_volume = rospy.get_param("~min_volume")
+        self.__volume_factor = rospy.get_param("~volume_factor")
 
         # - Publisher
         self.__volume_state_publisher = rospy.Publisher('/niryo_robot_sound/volume', UInt8, latch=True, queue_size=10)
@@ -73,11 +74,11 @@ class VolumeManager:
             loop_time = rospy.Time.now()
             self.__volume_percentage = vol
             self.__set_robot_volume()
-            rospy.sleep((loop_time + sleep_duration)-rospy.Time.now())
+            rospy.sleep((loop_time + sleep_duration) - rospy.Time.now())
 
     def __set_robot_volume(self):
         if not self.__simulation_mode:
-            volume_decibels = self.__volume_to_decibels(self.__volume_percentage)
+            volume_decibels = self.__volume_to_decibels(self.__volume_percentage * self.__volume_factor)
             # args = ("amixer", "-q", "set", "Speaker", "--", str(volume_decibels) + "dB")
             args = ("amixer", "set", "Speaker", "--", str(volume_decibels) + "dB")
             p = subprocess.check_output(args)

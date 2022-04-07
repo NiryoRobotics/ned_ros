@@ -109,6 +109,8 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("end_effector_id", id);
     _id = static_cast<uint8_t>(id);
 
+    nh.getParam("/niryo_robot/simulation_mode", _simulation);
+
     double check_end_effector_status_frequency{1.0};
     nh.getParam("check_end_effector_status_frequency", check_end_effector_status_frequency);
     assert(check_end_effector_status_frequency);
@@ -238,27 +240,30 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
 
     if (_end_effector_state)
     {
-        for (const auto& button : _end_effector_state->getButtonsStatus())
+        if (!_simulation)
         {
-            if (button->actions.empty())
-                continue;
-
-            button_msg.action = static_cast<uint8_t>(button->actions.front());
-            switch (button->type)
+            for (const auto& button : _end_effector_state->getButtonsStatus())
             {
-                case EButtonType::FREE_DRIVE_BUTTON:
-                    _free_drive_button_state_publisher.publish(button_msg);
-                    break;
-                case EButtonType::SAVE_POSITION_BUTTON:
-                    _save_pos_button_state_publisher.publish(button_msg);
-                    break;
-                case EButtonType::CUSTOM_BUTTON:
-                    _custom_button_state_publisher.publish(button_msg);
-                    break;
-                default:
-                    break;
+                if (button->actions.empty())
+                    continue;
+
+                button_msg.action = static_cast<uint8_t>(button->actions.front());
+                switch (button->type)
+                {
+                    case EButtonType::FREE_DRIVE_BUTTON:
+                        _free_drive_button_state_publisher.publish(button_msg);
+                        break;
+                    case EButtonType::SAVE_POSITION_BUTTON:
+                        _save_pos_button_state_publisher.publish(button_msg);
+                        break;
+                    case EButtonType::CUSTOM_BUTTON:
+                        _custom_button_state_publisher.publish(button_msg);
+                        break;
+                    default:
+                        break;
+                }
+                button->actions.pop();
             }
-            button->actions.pop();
         }
 
         // digital io state

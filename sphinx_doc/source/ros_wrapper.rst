@@ -47,4 +47,5 @@ Ned Python ROS Wrapper.
    python_ros_wrapper/examples_tool_action
    python_ros_wrapper/examples_conveyor
    python_ros_wrapper/examples_vision
+   python_ros_wrapper/examples_frames
    python_ros_wrapper/ros_wrapper_doc

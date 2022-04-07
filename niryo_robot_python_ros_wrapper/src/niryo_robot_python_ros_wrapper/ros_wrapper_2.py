@@ -48,21 +48,17 @@ class NiryoRosWrapper2:
         rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
                          self.__callback_software_version)
 
-        self.__save_current_position_event = threading.Event()
-        rospy.Subscriber('/niryo_robot/blockly/save_current_point', Int32, self.__callback_save_current_position)
-
         self.__highlighted_block = None
-        rospy.Subscriber(
-            '/niryo_robot_blockly/highlight_block', String, self.__callback_highlight_block
-        )
+        rospy.Subscriber('/niryo_robot_blockly/highlight_block', String, self.__callback_highlight_block)
 
         self.__save_current_position_event = threading.Event()
         rospy.Subscriber('/niryo_robot/blockly/save_current_point', Int32, self.__callback_save_current_position)
+
+        self.__save_trajectory_event = threading.Event()
+        rospy.Subscriber('/niryo_robot/blockly/save_trajectory', Int32, self.__callback_save_trajectory)
 
         self.__logs = []
-        rospy.Subscriber(
-            '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
-        )
+        rospy.Subscriber('/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg)
 
         # - Action server
 
@@ -107,6 +103,9 @@ class NiryoRosWrapper2:
 
     def __callback_save_current_position(self, _res):
         self.__save_current_position_event.set()
+
+    def __callback_save_trajectory(self, _res):
+        self.__save_trajectory_event.set()
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):

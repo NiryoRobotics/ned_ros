@@ -38,7 +38,7 @@ Joints & Pose
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper
-    :members: get_joints, get_pose, get_pose_as_list, move_joints, move_to_sleep_pose, move_pose,  move_linear_pose,
+    :members: get_joints, get_pose, get_pose_as_list, move_joints, move_to_sleep_pose, move_pose, move_linear_pose,
               shift_pose, shift_linear_pose, 
               set_jog_use_state, jog_joints_shift, jog_pose_shift,
               forward_kinematics, inverse_kinematics
@@ -64,6 +64,14 @@ Trajectories
 .. autoclass:: NiryoRosWrapper
     :members: execute_trajectory_from_poses, execute_trajectory_from_poses_and_joints, execute_trajectory_saved, get_trajectory_saved,
               save_trajectory, delete_trajectory, get_saved_trajectory_list
+    :member-order: bysource
+
+Dynamic frames
+^^^^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: save_dynamic_frame_from_poses, save_dynamic_frame_from_points, edit_dynamic_frame, delete_dynamic_frame, get_saved_dynamic_frame,
+              get_saved_dynamic_frame_list, move_relative, move_linear_relative
     :member-order: bysource
 
 Tools

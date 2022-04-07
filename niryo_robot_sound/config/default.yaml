@@ -7,7 +7,8 @@ error_sound_delay: 60
 default_volume: 100
 default_volume_simulation: 10
 min_volume: 0
-max_volume: 200
+max_volume: 100
+volume_factor: 2.0
 volume_file_path: "~/niryo_robot_saved_files/robot_sound_volume.txt"
 volume_file_path_simulation: "~/.niryo/simulation/robot_sound_volume.txt"
 
@@ -25,3 +26,4 @@ robot_sounds:
   calibration_sound: "calibration.wav"
   warn_sound: "warn.wav"
   reboot_sound: "reboot.wav"
+  learning_trajectory_sound: "learning_trajectory.wav"

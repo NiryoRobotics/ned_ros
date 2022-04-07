@@ -56,6 +56,7 @@ HardwareTypeEnum::initialize()
     m[EHardwareType::XL320]              = "xl320";
     m[EHardwareType::XL330]              = "xl330";
     m[EHardwareType::XC430]              = "xc430";
+    m[EHardwareType::XM430]              = "xm430";
     m[EHardwareType::FAKE_DXL_MOTOR]     = "fakeDxl";
     m[EHardwareType::FAKE_STEPPER_MOTOR] = "fakeStepper";
     m[EHardwareType::END_EFFECTOR]       = "end_effector";

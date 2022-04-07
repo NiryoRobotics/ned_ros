@@ -12,14 +12,13 @@ from trajectories_executor import TrajectoriesExecutor
 from jog_controller import JogController
 from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
     angle_between_2_points
-
+from trajectory_handler import TrajectoryHandlerNode
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
-from moveit_msgs.msg import RobotTrajectory
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_msgs.msg import RPY
 
@@ -44,6 +43,7 @@ class ArmCommander:
 
         # Executor
         self.__traj_executor = TrajectoriesExecutor(self.__arm)
+        self.__traj_manager = TrajectoryHandlerNode(self.__arm_state, self.__traj_executor)
 
         # Validation
         self.__parameters_validator = self.__arm_state.parameters_validator
@@ -327,11 +327,14 @@ class ArmCommander:
 
     # - Waypointed Trajectory
     def execute_waypointed_trajectory(self, arm_cmd):
-        imported_moveit_plan = RobotTrajectory(joint_trajectory=arm_cmd.trajectory)
-        self.__arm.set_joint_value_target(imported_moveit_plan.joint_trajectory.points[0].positions)
-        partial_plan = self.__traj_executor.plan()
-        plan = self.__link_plans(partial_plan, imported_moveit_plan)
-        return self.__traj_executor.execute_plan(plan)
+        return self.__traj_executor.execute_joint_trajectory(arm_cmd.trajectory)
+
+    def execute_raw_waypointed_trajectory(self, arm_cmd):
+        # go to start pose # move_joints
+        self.__arm.set_joint_value_target(arm_cmd.trajectory.joint_trajectory.points[0].positions)
+        # plan = self.__traj_executor.plan(arm_cmd.trajectory)
+        # return self.__traj_executor.execute_plan(plan)
+        return self.__traj_executor.execute_plan(arm_cmd.trajectory)
 
     def compute_and_execute_waypointed_trajectory(self, arm_cmd):
         try:
@@ -417,20 +420,9 @@ class ArmCommander:
         if dist_smoothing > 0:
             plan = self.__link_plans_with_smoothing(dist_smoothing, *list_plans)
         else:
-            plan = self.__link_plans(*list_plans)
+            plan = self.__traj_executor.link_plans(*list_plans)
         self.display_traj(plan, id_=int(1000 * dist_smoothing))
         return plan
-
-    def __link_plans(self, *plans):
-        # Link plans
-        final_plan = plans[0]
-
-        for plan in plans[1:]:
-            final_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
-
-        # Retime plan et recompute velocities
-        final_plan = self.__traj_executor.retime_plan(final_plan, optimize=True)
-        return self.__filtering_plan(final_plan)
 
     def __link_plans_with_smoothing(self, dist_smoothing=0.0, *plans):
         """
@@ -492,19 +484,25 @@ class ArmCommander:
         )
         return final_plan
 
-    def __filtering_plan(self, plan):
-        if plan is None:
+    @staticmethod
+    def __filtering_plan(plan):
+        """
+        Remove duplicated points
+        """
+        if plan is None or len(plan.joint_trajectory.points) == 0:
             return None
 
         new_plan = RobotTrajectory()
         new_plan.joint_trajectory.header = plan.joint_trajectory.header
         new_plan.joint_trajectory.joint_names = plan.joint_trajectory.joint_names
         new_plan.joint_trajectory.points = []
+        new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[0])
 
-        for i, point in enumerate(plan.joint_trajectory.points[:-1]):
-            if point.time_from_start != plan.joint_trajectory.points[i + 1].time_from_start:
+        for point in plan.joint_trajectory.points[1:]:
+            if point.time_from_start > new_plan.joint_trajectory.points[-1].time_from_start:
                 new_plan.joint_trajectory.points.append(point)
-        new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[-1])
+
+        # print([point.time_from_start.to_sec() for point in new_plan.joint_trajectory.points])
         return new_plan
 
     # - General Purposes

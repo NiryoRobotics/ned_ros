@@ -168,7 +168,7 @@ class TestFunctions(object):
         self.__robot.set_arm_max_acceleration(100)
 
     def led_error(self, duration=360):
-        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode:
+        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode():
             try:
                 led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
                 led_serv(True, 5, LedBlinkerRequest.LED_WHITE, duration)
@@ -176,7 +176,7 @@ class TestFunctions(object):
                 pass
 
     def led_stop(self):
-        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode:
+        if self.__robot_version in ['one', 'ned'] and not self.__robot.get_simulation_mode():
             try:
                 led_serv = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
                 led_serv(False, 0, 0, 0)
@@ -184,7 +184,7 @@ class TestFunctions(object):
                 pass
 
     def test_cloud_connection(self, report):
-        if self.__robot.get_simulation_mode:
+        if self.__robot.get_simulation_mode():
             report.append("Test Cloud connection - Skipped in simulation mode")
             return
 

@@ -29,6 +29,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "xc430_reg.hpp"
 #include "xl430_reg.hpp"
+#include "xm430_reg.hpp"
 #include "xl330_reg.hpp"
 #include "xl320_reg.hpp"
 
@@ -74,11 +75,14 @@ class DxlDriver : public AbstractDxlDriver
         // as it is needed here for polymorphism (AbstractMotorDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
 
+        // eeprom write
         int changeId(uint8_t id, uint8_t new_id) override;
 
+        // eeprom read
         int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
+        // ram write
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) override;
 
         int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
@@ -90,6 +94,7 @@ class DxlDriver : public AbstractDxlDriver
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
+        // ram read
         int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) override;
 
         int readPosition(uint8_t id, uint32_t &present_position) override;
@@ -101,20 +106,29 @@ class DxlDriver : public AbstractDxlDriver
 
     public:
         // AbstractDxlDriver interface
-        int writePID(uint8_t id, const std::vector<uint16_t>& data) override;
-        int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
 
-        int writeControlMode(uint8_t id, uint8_t control_mode) override;
+	// eeprom read
+
+
+	// eeprom write
+        int writeStartupConfiguration(uint8_t id, uint8_t config) override;
+
+	// ram read
+        int readLoad(uint8_t id, uint16_t &present_load) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
+
+        int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
         int readControlMode(uint8_t id, uint8_t& control_mode) override;
+
+	// ram write
+        int writePID(uint8_t id, const std::vector<uint16_t>& data) override;
+        int writeControlMode(uint8_t id, uint8_t control_mode) override;
 
         int writeLed(uint8_t id, uint8_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) override;
 
         int writeTorqueGoal(uint8_t id, uint16_t torque) override;
         int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t> &torque_list) override;
-
-        int readLoad(uint8_t id, uint16_t &present_load) override;
-        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
 };
 
 // definition of methods
@@ -175,7 +189,7 @@ std::string DxlDriver<reg_type>::interpretFirmwareVersion(uint32_t fw_version) c
 template<typename reg_type>
 int DxlDriver<reg_type>::changeId(uint8_t id, uint8_t new_id)
 {
-    return write<typename reg_type::TYPE_ID>(reg_type::ADDR_ID, id, new_id);
+  return write<typename reg_type::TYPE_ID>(reg_type::ADDR_ID, id, new_id);
 }
 
 /**
@@ -213,6 +227,32 @@ int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
     uint8_t data{};
     res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
     version = interpretFirmwareVersion(data);
+    return res;
+}
+
+/**
+ * @brief DxlDriver<reg_type>::writeStartupConfiguration
+ * @param id
+ * @param config
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::writeStartupConfiguration(uint8_t id, uint8_t config)
+{
+    std::string version;
+    int res = readFirmwareVersion(id, version);
+
+    // only for version above certain version (see registers)
+    if(COMM_SUCCESS == res && std::stoi( version ) >= reg_type::VERSION_STARTUP_CONFIGURATION)
+    {
+      res = write<typename reg_type::TYPE_STARTUP_CONFIGURATION>(reg_type::ADDR_STARTUP_CONFIGURATION, id, config);
+    }
+    else
+    {
+      std::cout << "Startup configuration available only for version > " << static_cast<int>(reg_type::VERSION_STARTUP_CONFIGURATION)  << std::endl;
+      res = COMM_SUCCESS;
+    }
+
     return res;
 }
 
@@ -841,6 +881,14 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
 // XL320
 
 template<>
+inline int DxlDriver<XL320Reg>::writeStartupConfiguration(uint8_t /*id*/, uint8_t /*config*/)
+{
+  std::cout << "startup configuration for XL320 not available" << std::endl;
+  return COMM_SUCCESS;
+
+}
+
+template<>
 inline int DxlDriver<XL320Reg>::readMinPosition(uint8_t /*id*/, uint32_t &pos)
 {
     pos = 0;
@@ -1199,6 +1247,7 @@ inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
     return COMM_TX_ERROR;
 }
 
+
 // XC430
 
 template<>
@@ -1259,6 +1308,80 @@ inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
     std::cout << "syncWriteTorqueGoal not available for motor XC430" << std::endl;
     return COMM_TX_ERROR;
 }
+
+// XM430
+
+template<>
+inline std::string DxlDriver<XM430Reg>::interpretErrorState(uint32_t hw_state) const
+{
+    std::string hardware_message;
+
+    if (hw_state & 1<<0)    // 0b00000001
+    {
+        hardware_message += "Input Voltage";
+    }
+    if (hw_state & 1<<2)    // 0b00000100
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "OverHeating";
+    }
+    if (hw_state & 1<<3)    // 0b00001000
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<4)    // 0b00010000
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Electrical Shock";
+    }
+    if (hw_state & 1<<5)    // 0b00100000
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Overload";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
+    if (!hardware_message.empty())
+        hardware_message += " Error";
+
+    return hardware_message;
+}
+
+// works with current instead of load
+
+template<>
+inline int DxlDriver<XM430Reg>::writeTorqueGoal(uint8_t id, uint16_t torque)
+{
+    return write<typename XM430Reg::TYPE_GOAL_CURRENT>(XM430Reg::ADDR_GOAL_CURRENT, id, torque);
+}
+
+template<>
+inline int DxlDriver<XM430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t>& torque_list)
+{
+    return syncWrite<typename XM430Reg::TYPE_GOAL_CURRENT>(XM430Reg::ADDR_GOAL_CURRENT, id_list, torque_list);
+}
+
+template<>
+inline int DxlDriver<XM430Reg>::readLoad(uint8_t id, uint16_t& present_load)
+{
+    return read<typename XM430Reg::TYPE_PRESENT_CURRENT>(XM430Reg::ADDR_PRESENT_CURRENT, id, present_load);
+}
+
+template<>
+inline int DxlDriver<XM430Reg>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list)
+{
+    return syncRead<typename XM430Reg::TYPE_PRESENT_CURRENT>(XM430Reg::ADDR_PRESENT_CURRENT, id_list, load_list);
+}
+
 
 // XL330
 

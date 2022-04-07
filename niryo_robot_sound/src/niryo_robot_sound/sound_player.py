@@ -23,10 +23,9 @@ class SoundExecution:
         self.name = sound.name
 
         self.start_time_sec = start_time_sec
-        self.duration = 0 if (end_time_sec == 0 or
-                              end_time_sec > sound.duration or
-                              start_time_sec > end_time_sec) else end_time_sec - start_time_sec
-
+        self.play_duration = 0 if (end_time_sec == 0 or
+                                   end_time_sec > sound.duration or
+                                   start_time_sec > end_time_sec) else end_time_sec - start_time_sec
         self.__process = None
 
         self.__lock = Lock()
@@ -40,9 +39,15 @@ class SoundExecution:
         play_time = rospy.Time.now()
         while not rospy.is_shutdown() and not self.event.wait(0.25):
             # self.__process.poll() is None ==> finished
-            if self.__process.poll() is None:
-                break
-            elif (rospy.Time.now() - play_time).to_sec() > self.duration * 1.5:
+            try:
+                if self.__process is not None and not self.is_busy():
+                    break
+            except AttributeError:
+                pass
+
+            time_play = self.play_duration if self.play_duration > 0 else self.sound.duration
+            if (rospy.Time.now() - play_time).to_sec() > time_play * 2 + 2:
+                print(time_play, max(time_play * 2, 2), (rospy.Time.now() - play_time).to_sec())
                 self.message = "Sound {} timeout".format(self.name)
                 self.result = CommandStatus.SOUND_TIMEOUT
                 return self.result, self.message
@@ -67,16 +72,24 @@ class SoundExecution:
                 self.event.set()
                 return self
 
-            if self.duration > 0:
+            if self.play_duration > 0:
                 args = (
                     "ffplay", "-nodisp", "-loglevel", "quiet", "-autoexit", "-volume", str(volume), "-ss",
-                    str(self.start_time_sec), "-t", str(self.duration), sound_path)
+                    str(self.start_time_sec), "-t", str(self.play_duration), sound_path)
             else:
                 args = (
                     "ffplay", "-nodisp", "-loglevel", "quiet", "-autoexit", "-volume", str(volume), "-ss",
                     str(self.start_time_sec), sound_path)
             # os.system('ffplay -nodisp -autoexit -volume {} -ss {} {}'.format(volume, start_sec, self.__path))
-            self.__process = subprocess.Popen(args, stdout=subprocess.PIPE)
+
+            try:
+                self.__process = subprocess.Popen(args, stdout=subprocess.PIPE)
+            except OSError:
+                self.result = CommandStatus.FAILURE
+                self.message = 'Please install ffmpeg with "sudo apt install ffmpeg" to use the sound interface.'
+                rospy.logerr(self.message)
+                self.event.set()
+                return self
         return self
 
     def stop(self):
@@ -93,10 +106,10 @@ class SoundExecution:
             self.event.set()
 
     def is_busy(self):
-        if self.__process is None:
-            return False
-        else:
+        try:
             return self.__process.poll() is None
+        except AttributeError:
+            return False
 
 
 class SoundPlayer:

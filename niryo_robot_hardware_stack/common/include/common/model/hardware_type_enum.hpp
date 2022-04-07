@@ -40,10 +40,11 @@ enum class EHardwareType {
                             XL320=3,
                             XL330=4,
                             XC430=5,
-                            FAKE_DXL_MOTOR=6,
-                            FAKE_STEPPER_MOTOR=7,
-                            END_EFFECTOR=10,
-                            FAKE_END_EFFECTOR=11,
+                            XM430=6,
+                            FAKE_DXL_MOTOR=20,
+                            FAKE_STEPPER_MOTOR=21,
+                            FAKE_END_EFFECTOR=22,
+                            END_EFFECTOR=30,
                             UNKNOWN=100
                           };
 

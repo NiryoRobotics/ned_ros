@@ -3,35 +3,36 @@
 # Libs
 import rospy
 import logging
+import thread
 
 from transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
 from niryo_robot_poses_handlers.pose_manager import PoseManager
-from niryo_robot_poses_handlers.trajectory_manager import TrajectoryManager
 from niryo_robot_poses_handlers.workspace_manager import WorkspaceManager
+from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import Point, Quaternion
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
-from niryo_robot_poses_handlers.msg import NiryoPose
+from niryo_robot_poses_handlers.msg import NiryoPose, DynamicFrame
 from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList
 
-from niryo_robot_poses_handlers.srv import GetTargetPose
+from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
 from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses
-from niryo_robot_poses_handlers.srv import ManageWorkspace
+from niryo_robot_poses_handlers.srv import GetDynamicFrame, ManageWorkspace
 from niryo_robot_poses_handlers.srv import GetPose, ManagePose
-from niryo_robot_poses_handlers.srv import GetTrajectory, ManageTrajectory
+from niryo_robot_poses_handlers.srv import ManageDynamicFrame
 
 
 class PoseHandlerNode:
@@ -83,7 +84,7 @@ class PoseHandlerNode:
 
         rospy.logdebug("Poses Handlers - Transform Handler created")
 
-        # -- POSES AND TRAJECTORIES
+        # -- POSES
         # Poses
         poses_dir = rospy.get_param("~poses_dir")
         self.__pos_manager = PoseManager(poses_dir)
@@ -92,12 +93,18 @@ class PoseHandlerNode:
         rospy.Service('~get_pose', GetPose, self.__callback_get_pose)
         rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_position_list)
 
-        # Trajectories
-        trajectories_dir = rospy.get_param("~trajectories_dir")
-        self.traj_manager = TrajectoryManager(trajectories_dir)
-        rospy.Service('~manage_trajectory', ManageTrajectory, self.__callback_manage_trajectory)
-        rospy.Service('~get_trajectory', GetTrajectory, self.__callback_get_trajectory)
-        rospy.Service('~get_trajectory_list', GetNameDescriptionList, self.__callback_get_trajectory_list)
+        # Dynamic Frame
+        self.__tf_listener = None
+        self.__tf_buffer = None
+        dynamic_frame_dir = rospy.get_param("~dynamic_frame_dir")
+        self.dynamic_frame_manager = DynamicFrameManager(dynamic_frame_dir)
+        rospy.Service('~manage_dynamic_frame', ManageDynamicFrame, self.__callback_manage_dynamic_frame)
+        rospy.Service('~get_dynamic_frame', GetDynamicFrame, self.__callback_get_dynamic_frame)
+        rospy.Service('~get_dynamic_frame_list', GetNameDescriptionList, self.__callback_get_dynamic_frame_list)
+        rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
+        self.dynamic_frame_manager.restore_publisher()
+        # Publisher dynamic frames
+        thread.start_new_thread(self.dynamic_frame_manager.publish_frames, ())
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -216,41 +223,77 @@ class PoseHandlerNode:
         else:
             return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(cmd)
 
-    def __callback_manage_trajectory(self, req):
+    # Dynamic Frame
+    def __callback_manage_dynamic_frame(self, req):
         cmd = req.cmd
+        frame = req.dynamic_frame
+        frame.name = frame.name[:30]
         if cmd == req.SAVE:
+            if len(frame.poses) != 3:
+                return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
+                    len(frame.poses))
             try:
-                self.create_trajectory(req.name, req.description, req.poses)
-                return CommandStatus.SUCCESS, "Created trajectory '{}'".format(req.name)
-            except Exception as e:
+                self.create_dynamic_frame_from_poses(frame.name, frame.description, frame.poses)
+                return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
+            except NiryoRobotFileException as e:
+                return CommandStatus.FILE_ALREADY_EXISTS, str(e)
+            except (ValueError, Exception) as e:
+                return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
+        if cmd == req.SAVE_WITH_POINTS:
+            if len(frame.points) != 3:
+                return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
+                    len(frame.points))
+            try:
+                self.create_dynamic_frame_from_points(frame.name, frame.description, frame.points)
+                return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
+            except NiryoRobotFileException as e:
+                return CommandStatus.FILE_ALREADY_EXISTS, str(e)
+            except (ValueError, Exception) as e:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
             try:
-                self.remove_trajectory(req.name)
-                return CommandStatus.SUCCESS, "Removed trajectory '{}'".format(req.name)
+                self.remove_dynamic_frame(frame.name)
+                return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
+        elif cmd == req.EDIT:
+            try:
+                self.edit_dynamic_frame(frame.name, frame.new_name, frame.description)
+                return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
+            except Exception as e:
+                return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
         else:
-            return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(req.cmd)
+            return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(frame.cmd)
 
-    # Trajectories
-    def __callback_get_trajectory_list(self, _):
+    def __callback_get_dynamic_frame(self, req):
         try:
-            trajectory_list, description_list = self.get_available_trajectories_w_description()
+            dyn_frame = self.get_dynamic_frame(req.name)
+            return CommandStatus.SUCCESS, "Success", dyn_frame
         except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting trajectories list: {}".format(e))
-            trajectory_list = description_list = []
-        return {"name_list": trajectory_list, "description_list": description_list}
+            return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), None
 
-    def __callback_get_trajectory(self, req):
+    def __callback_get_dynamic_frame_list(self, _):
         try:
-            traj_list_poses = self.get_trajectory(req.name)
-            return CommandStatus.SUCCESS, "Success", traj_list_poses
+            dynamic_frame_list, description_list = self.get_available_dynamic_frame_w_description()
         except Exception as e:
-            return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), []
+            rospy.logerr("Poses Handlers - Error occured when getting dynamic frames list: {}".format(e))
+            dynamic_frame_list = description_list = []
+        return {"name_list": dynamic_frame_list, "description_list": description_list}
+
+    def __callback_get_transform_pose(self, req):
+        try:
+            pose = [req.position.x, req.position.y, req.position.z, req.rpy.roll, req.rpy.pitch, req.rpy.yaw]
+            position, rpy = self.get_transform_pose(pose, req.source_frame, req.local_frame)
+            return CommandStatus.SUCCESS, "Success", position, rpy
+
+        except Exception as e:
+            rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
+            position = rpy = []
+            return CommandStatus.CONVERT_FAILED, str(e), position, rpy
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
+
     def create_workspace(self, name, description, robot_poses):
         """
         Creates a new workspace based on 4 recorded robot poses. The 0th point
@@ -405,61 +448,150 @@ class PoseHandlerNode:
         """
         return self.__pos_manager.get_all_names_w_description()
 
-    # -- Trajectories
-    def create_trajectory(self, name, description, poses):
+    # Dynamic frame
+    def create_dynamic_frame_from_poses(self, name, description, poses):
         """
-        Create a pose from ManageTrajectory message fields
+        Create a dynamic frame from ManageDynamicFrame message fields
 
+        :param name: nom de la frame
         :type name: str
+        :param description : description
         :type description: str
-        :type poses: list[Pose]
+        :param poses: list of poses to create the frame
+        :type poses: niryo_robot_msgs/RobotState
         :return: None
         """
-        poses_raw = []
-        for pose in poses:
-            point_raw = [pose.position.x, pose.position.y, pose.position.z]
-            quaternion_raw = [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w]
-            pose_raw = [point_raw, quaternion_raw]
-            poses_raw.append(pose_raw)
-        self.traj_manager.create(name, poses_raw, description)
+        points = []
 
-    def get_trajectory(self, name):
+        for pose in poses:
+            rospy.loginfo("Robot point\n{}".format(pose.position))
+            point = self.__transform_handler.get_calibration_tip_position(pose)
+            rospy.loginfo("Tip point\n{}".format(point))
+            points.append([point.x, point.y, point.z])
+
+        self.dynamic_frame_manager.create(name, points, description)
+
+    def create_dynamic_frame_from_points(self, name, description, points):
         """
-        Get trajectory from trajectories manager and return list of NiryoPose
+        Create a dynamic frame from ManageDynamicFrame message fields
+
+        :param name: nom de la frame
+        :type name: str
+        :param description : description
+        :type description: str
+        :param points: list of points to create the frame
+        :type points: geometry_msg/Point
+        :return: None
+        """
+        points_raw = []
+        for point in points:
+            points_raw.append([point.x, point.y, point.z])
+
+        self.dynamic_frame_manager.create(name, points_raw, description)
+
+    def remove_dynamic_frame(self, name):
+        """
+        Asks dynamic frame manager to remove dynamic frame
+
+        :param name: dynamic frame name
+        :type name: str
+        :return: None
+        """
+        self.dynamic_frame_manager.remove(name)
+
+    def edit_dynamic_frame(self, name, new_name, description):
+        """
+        Asks dynamic frame manager to modify dynamic frame
+
+        :param name: dynamic frame name
+        :type name: str
+        :param new_name: new dynamic frame name
+        :type new_name: str
+        :param description: new description
+        :type description: str
+        :type name: str
+        :return: None
+        """
+        self.dynamic_frame_manager.edit_frame(name, new_name, description)
+
+    def get_dynamic_frame(self, name):
+        """
+        Get dynamic frame from dynamic frame manager and return pose of the frame
 
         :param name: pose name
         :type name: str
-        :return: The trajectory object
-        :rtype: list[NiryoPose]
+        :return: Pose of the dynamic frame object
+        :rtype: Pose
         """
-        traj_read = self.traj_manager.read(name)
-        list_poses_raw = traj_read.list_poses
-        list_poses = []
-        for pose_raw in list_poses_raw:
-            point = Point(*pose_raw[0])
-            quaternion = Quaternion(*pose_raw[1])
-            pose = Pose(point, quaternion)
-            list_poses.append(pose)
-        return list_poses
+        frame_read = self.dynamic_frame_manager.read(name)
+        pose_raw = frame_read.static_transform_stamped
 
-    def remove_trajectory(self, name):
+        frame = DynamicFrame()
+        frame.name = frame_read.name
+        frame.description = frame_read.description
+        point = Point(*pose_raw[0])
+        quaternion = Quaternion(*pose_raw[1])
+        roll, pitch, yaw = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
+        rpy = RPY(roll, pitch, yaw)
+
+        frame.position = point
+        frame.orientation = quaternion
+        frame.rpy = rpy
+
+        return frame
+
+    def get_available_dynamic_frame_w_description(self):
         """
-        Asks trajectories manager to remove pose
+        Ask the dynamic frame manager which dynamic frame are available
 
-        :param name: trajectory name
-        :type name: str
-        :return: None
-        """
-        self.traj_manager.remove(name)
-
-    def get_available_trajectories_w_description(self):
-        """
-        Ask the trajectories manager which trajectories are available
-
-        :return: list of trajectories name
+        :return: list of dynamic frame name
         :rtype: list[str]
         """
-        return self.traj_manager.get_all_names_w_description()
+        return self.dynamic_frame_manager.get_all_names_w_description()
+
+    def get_transform_pose(self, pose, source_frame, local_frame):
+        """
+        Get the transform pose in source_frame from local_frame
+
+        :return: transform pose
+        :rtype : list[float]
+        """
+        import tf2_ros
+        import tf2_geometry_msgs
+        import tf
+
+        if self.__tf_buffer is None or self.__tf_listener is None:
+            self.__tf_buffer = tf2_ros.Buffer()
+            self.__tf_listener = tf2_ros.TransformListener(self.__tf_buffer)
+
+        # Get transform
+        try:
+            transform = self.__tf_buffer.lookup_transform(source_frame, local_frame, rospy.Time(), rospy.Duration(4.0))
+        except Exception as e:
+            return str(e)
+
+        # Pose in local_frame
+        pose_stamped = tf2_geometry_msgs.PoseStamped()
+        pose_stamped.pose.position = Point(*pose[:3])
+        quaternion = tf.transformations.quaternion_from_euler(*pose[3:])
+        pose_stamped.pose.orientation = Quaternion(*quaternion)
+        pose_stamped.header.frame_id = local_frame
+        pose_stamped.header.stamp = rospy.Time.now()
+
+        # Calculate pose in world frame
+        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, transform)
+
+        quaternion = transform_pose.pose.orientation
+        euler = tf.transformations.euler_from_quaternion(self.quaternion_to_list(quaternion))
+        position = transform_pose.pose.position
+
+        rpy = RPY(*euler)
+
+        return position, rpy
+
+    @staticmethod
+    def quaternion_to_list(quaternion):
+        return [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
 
 
 if __name__ == "__main__":

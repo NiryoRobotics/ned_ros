@@ -68,6 +68,7 @@ void ToolState::reset()
 {
     DxlMotorState::reset();
     _tool_name = "No Tool";
+    _state = TOOL_STATE_PING_ERROR;
 }
 
 /**

@@ -44,6 +44,7 @@ enum class EDxlCommandType { CMD_TYPE_POSITION=1,
                              CMD_TYPE_CONTROL_MODE=8,
                              CMD_TYPE_LED_STATE=9,
                              CMD_TYPE_PROFILE=10,
+                             CMD_TYPE_STARTUP=20,
                              CMD_TYPE_UNKNOWN=100
                            };
 

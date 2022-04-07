@@ -1,0 +1,18 @@
+<launch>
+    <include
+            file="$(find gazebo_ros)/launch/empty_world.launch"/>
+    <node name="tf_footprint_base" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 0 0 0 base_link base_footprint 40"/>
+    <!-- Spawn URDF in Gazebo -->
+    <arg name="hardware_version" default="ned"/>
+
+    <arg name="urdf_path"
+         value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro"/>
+
+    <param name="robot_description"
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" respawn="false"
+          args="-urdf -model niryo_robot -param robot_description" output="log"/>
+    <node name="fake_joint_calibration" pkg="rostopic" type="rostopic" args="pub /calibrated std_msgs/Bool true"/>
+</launch>

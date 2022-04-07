@@ -75,6 +75,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool needCalibration() const;
         bool isCalibrationInProgress() const;
+        bool isFreeMotion() const;
 
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
@@ -124,6 +125,8 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         ros::ServiceServer _activate_learning_mode_server;
 
         std::string _hardware_version;
+        bool _simulation_mode{false};
+
         int _lock_write_cnt{-1};
 };
 
@@ -146,6 +149,17 @@ bool JointsInterfaceCore::isCalibrationInProgress() const
 {
     return _robot->isCalibrationInProgress();
 }
+
+/**
+ * @brief JointsInterfaceCore::isFreeMotion
+ * @return
+ */
+inline
+bool JointsInterfaceCore::isFreeMotion() const
+{
+    return _previous_state_learning_mode;
+}
+
 /**
  * @brief JointsInterfaceCore::getJointsState
  * @return
@@ -155,6 +169,7 @@ const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceC
 {
     return _robot->getJointsState();
 }
+
 
 } // JointsInterface
 #endif

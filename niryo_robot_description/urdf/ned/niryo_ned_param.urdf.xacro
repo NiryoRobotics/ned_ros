@@ -9,7 +9,7 @@
 
     <xacro:property name="limit_low_shoulder_rotation" value="-170.0"/>
     <xacro:property name="limit_up_shoulder_rotation" value="170.0"/>
-    <xacro:property name="limit_low_arm_rotation" value="-119.75"/>
+    <xacro:property name="limit_low_arm_rotation" value="-109.44"/>
     <xacro:property name="limit_up_arm_rotation" value="34.96"/>
     <xacro:property name="limit_low_elbow_rotation" value="-76.78"/>
     <xacro:property name="limit_up_elbow_rotation" value="89.96"/>

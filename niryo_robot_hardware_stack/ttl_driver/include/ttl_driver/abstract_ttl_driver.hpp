@@ -84,33 +84,19 @@ protected:
     template<typename T>
     int read(uint16_t address, uint8_t id, T& data);
 
-    int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-
     template<typename T>
-    int syncRead(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<T>& data_list);
-
-    template<typename T>
-    int syncRead_32(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
-
-    int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
+    int syncRead(uint16_t address, const std::vector<uint8_t>& id_list, std::vector<T>& data_list);
 
     template<typename T, const size_t N>
     int syncReadConsecutiveBytes(uint16_t address,
                                  const std::vector<uint8_t> &id_list,
                                  std::vector<std::array<T, N> >& data_list);
 
-    int bulkRead(std::vector<uint16_t> address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
-
     template<typename T>
     int write(uint16_t address, uint8_t id, T data);
 
-    int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
-
     template<typename T>
-    int syncWrite(uint8_t address, const std::vector<uint8_t>& id_list, const std::vector<T>& data_list);
-
-    int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
-
+    int syncWrite(uint16_t address, const std::vector<uint8_t>& id_list, const std::vector<T>& data_list);
 
     static constexpr int PING_WRONG_MODEL_NUMBER = 30;
 
@@ -263,68 +249,9 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
  * @return
  */
 template<typename T>
-int AbstractTtlDriver::syncRead(uint8_t address,
+int AbstractTtlDriver::syncRead(uint16_t address,
                                 const std::vector<uint8_t> &id_list,
                                 std::vector<T> &data_list)
-{
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    data_list.clear();
-    uint8_t data_len = sizeof(T);
-    if(data_len <= 4)
-    {
-        dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
-
-        for (auto const& id : id_list)
-        {
-            if (!groupSyncRead.addParam(id))
-            {
-                groupSyncRead.clearParam();
-                return GROUP_SYNC_REDONDANT_ID;
-            }
-        }
-
-        dxl_comm_result = groupSyncRead.txRxPacket();
-
-        if (COMM_SUCCESS == dxl_comm_result)
-        {
-            for (auto const& id : id_list)
-            {
-                if (groupSyncRead.isAvailable(id, address, data_len))
-                {
-                    T data = static_cast<T>(groupSyncRead.getData(id, address, data_len));
-                    data_list.emplace_back(data);
-                }
-                else
-                {
-                    dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
-                    break;
-                }
-            }
-        }
-
-        groupSyncRead.clearParam();
-    }
-    else
-    {
-        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
-    }
-
-    return dxl_comm_result;
-}
-
-
-/**
- * @brief AbstractTtlDriver::syncRead_32
- * @param address
- * @param id_list
- * @param data_list
- * @return
- */
-template<typename T>
-int AbstractTtlDriver::syncRead_32(uint8_t address,
-                                   const std::vector<uint8_t> &id_list,
-                                   std::vector<uint32_t> &data_list)
 {
     int dxl_comm_result = COMM_TX_FAIL;
 
@@ -407,7 +334,7 @@ int AbstractTtlDriver::write(uint16_t address, uint8_t id, T data)
 }
 
 template<typename T>
-int AbstractTtlDriver::syncWrite(uint8_t address, const std::vector<uint8_t>& id_list, const std::vector<T>& data_list)
+int AbstractTtlDriver::syncWrite(uint16_t address, const std::vector<uint8_t>& id_list, const std::vector<T>& data_list)
 {
     int dxl_comm_result = COMM_SUCCESS;
     uint8_t data_len = sizeof(T);

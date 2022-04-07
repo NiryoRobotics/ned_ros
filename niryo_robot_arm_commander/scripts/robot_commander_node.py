@@ -70,6 +70,7 @@ class RobotCommanderNode:
 
             # Trajectory
             ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.compute_and_execute_waypointed_trajectory,
+            ArmMoveCommand.EXECUTE_RAW_TRAJ: self.__arm_commander.execute_raw_waypointed_trajectory,
             ArmMoveCommand.EXECUTE_FULL_TRAJ: self.__arm_commander.execute_waypointed_trajectory,
 
             # Add-Ons
@@ -268,13 +269,16 @@ class RobotCommanderNode:
     def __cancel_due_to_pause(self):
         # Check if plan is paused
         if not self.__pause_finished_event.wait(timeout=self.__pause_timeout):
-            self.__current_goal_handle.set_canceled()
-            rospy.logwarn("Commander Action Serv - Goal has been paused since too long, "
-                          "cancelling it")
+            result = self.create_result(CommandStatus.PAUSE_TIMEOUT,
+                                        "Goal has been paused since too long, cancelling it")
+            self.__current_goal_handle.set_canceled(result=result)
+
+            rospy.logwarn("Commander Action Serv - {}".format(result.message))
             return True
 
         if self.__pause_state == PausePlanExecution.CANCEL:
-            self.__current_goal_handle.set_canceled()
+            result = self.create_result(CommandStatus.CANCEL_PAUSE, "Paused as been canceled")
+            self.__current_goal_handle.set_canceled(result)
             rospy.loginfo("Commander Action Serv - Goal has been successfully canceled")
             return True
 
@@ -344,7 +348,7 @@ class RobotCommanderNode:
         return self.dict_interpreter_move_cmd[cmd_type](cmd)
 
     def __cancel_command(self):
-        self.__arm_commander.trajectories_executor.stop_current_plan()  # Send a cancel signal to Moveit interface
+        self.__arm_commander.trajectories_executor.cancel_goal()  # Send a cancel signal to Moveit interface
 
     @staticmethod
     def create_result(status, message):

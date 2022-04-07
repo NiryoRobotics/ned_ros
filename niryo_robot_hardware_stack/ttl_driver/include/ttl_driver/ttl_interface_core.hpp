@@ -145,7 +145,7 @@ public:
     common::model::EBusProtocol getBusProtocol() const override;
 
     // read Collision Status from motors
-    bool readCollisionStatus() const;
+    bool getCollisionStatus() const;
     void waitSyncQueueFree();
     void waitSingleQueueFree();
 
@@ -178,6 +178,8 @@ private:
     ros::Publisher _collision_status_publisher;
     ros::Timer     _collision_status_publisher_timer;
     ros::Duration  _collision_status_publisher_duration{0.01};
+
+    std::string _hardware_version;
 
     bool _control_loop_flag{false};
     bool _debug_flag{false};
@@ -274,9 +276,9 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
  * @return false 
  */
 inline
-bool TtlInterfaceCore::readCollisionStatus() const
+bool TtlInterfaceCore::getCollisionStatus() const
 {
-    return _ttl_manager->readCollisionStatus();
+    return _ttl_manager->getCollisionStatus();
 }
 
 /**

@@ -42,7 +42,6 @@ public:
     AbstractMotorState(EHardwareType type, EComponentType component_type,
                        EBusProtocol bus_proto, uint8_t id);
 
-
     ~AbstractMotorState() override = default;
 
     // getters
@@ -58,6 +57,7 @@ public:
     // tests
     bool isStepper() const;
     bool isDynamixel() const;
+    bool isClosed() const;
 
     // IObject interface
     void reset() override;
@@ -131,6 +131,7 @@ bool AbstractMotorState::isDynamixel() const
            (EHardwareType::XL320 == _hw_type) ||
            (EHardwareType::XL330 == _hw_type) ||
            (EHardwareType::XL430 == _hw_type) ||
+           (EHardwareType::XM430 == _hw_type) ||
            (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
 }
 

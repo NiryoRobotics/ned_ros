@@ -4,6 +4,7 @@ from niryo_robot_python_ros_wrapper.ros_wrapper import *
 import rospy
 import random
 import copy
+import sys
 
 
 def create_wks_gazebo(niryo):
@@ -58,6 +59,7 @@ if __name__ == '__main__':
                 tmp = copy.deepcopy(center_pose_g2)
                 tmp.position.x += delta_x
                 tmp.position.y += delta_y
+                tmp.position.z += 0.13
                 g2_poses.append(copy.deepcopy(tmp))
 
         obs_joints = [0, 0.4, -0.4, 0, -1.57, 0]
@@ -81,8 +83,10 @@ if __name__ == '__main__':
                     print "Place randomly on the restricted workspace area ..."
                     n.place_from_pose(pose.position.x, pose.position.y, pose.position.z,
                                       pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw)
-            except Exception:
-                pass
+            except NiryoRosWrapperException:
+                break
+            except Exception as e:
+                print e
 
     except Exception as e:
         print e

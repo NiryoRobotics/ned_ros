@@ -22,3 +22,20 @@ CREATE TABLE IF NOT EXISTS file_path(
     date TEXT NOT NULL,
     path TEXT NOT NULL
 );
+
+DROP TABLE IF EXISTS robot_version;
+CREATE TABLE IF NOT EXISTS robot_version(
+    id          TEXT   NOT NULL   PRIMARY KEY,
+    name        TEXT   NOT NULL,
+    value       TEXT,
+    update_date TEXT   NOT NULL
+);
+
+DROP TABLE IF EXISTS joints;
+CREATE TABLE IF NOT EXISTS joints(
+    joint_name          TEXT   NOT NULL   PRIMARY KEY,
+    motor               TEXT   NOT NULL,
+    firmware_version    TEXT   NOT NULL,
+    error_code          TEXT,
+    update_date         TEXT   NOT NULL
+);

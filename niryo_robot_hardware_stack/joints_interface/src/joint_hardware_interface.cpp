@@ -581,8 +581,6 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
 
     if (motor_state)
     {
-        uint8_t motor_id = motor_state->getId();
-
         if (motor_state->isStepper())
         {
             auto stepperState = std::dynamic_pointer_cast<common::model::StepperMotorState>(motor_state);
@@ -614,7 +612,8 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                                                                                   stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
                     _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                    motor_id, std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
+                                                                                    stepperState->getId(),
+                                                                                    std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
                 }
             }
         }
@@ -623,6 +622,10 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
             auto dxlState = std::dynamic_pointer_cast<common::model::DxlMotorState>(motor_state);
             if (dxlState)
             {
+                // TORQUE cmd off to ensure command can be written on the motor
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                    dxlState->getId(), {false})));
+
                 // set PID
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                                                        dxlState->getId(),
@@ -641,9 +644,14 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                                                                                        std::initializer_list<uint32_t>({dxlState->getVelProfile(),
                                                                                                                         dxlState->getAccProfile()})));
 
+                // set startup configuration so that torque is on when motor is alimented
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_STARTUP,
+                                                                                       dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({1})));
+
                 // TORQUE cmd on if ned2, off otherwise
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                    motor_id, {torque_on})));
+                                                                                    dxlState->getId(), {torque_on})));
             }
         }
     }

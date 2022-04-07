@@ -123,12 +123,14 @@ public:
     int sendCustomCommand(uint8_t id, int reg_address, int value, int byte_number);
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
+    void resetTorques();
+
     // read status
     bool readHardwareStatus();
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
     bool readJointsStatus();
-    bool checkCollision();
+    bool readCollisionStatus();
 
     int readMotorPID(uint8_t id,
                      uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
@@ -162,10 +164,9 @@ public:
 
     std::vector<uint8_t> getRemovedMotorList() const override;
 
-    bool hasEndEffector() const;
+    bool getCollisionStatus() const;
 
-    // get collision status of motors
-    bool readCollisionStatus() const;
+    bool hasEndEffector() const;
 
 private:
     // IBusManager Interface
@@ -436,12 +437,11 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
 }
 
 /**
- * @brief TtlManager::readCollisionStatus
- * @return true
- * @return false
+ * @brief TtlManager::getCollisionStatus
+ * @return
  */
 inline
-bool TtlManager::readCollisionStatus() const
+bool TtlManager::getCollisionStatus() const
 {
     return _collision_status;
 }

@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_gazebo</name>
-  <version>4.0.1</version>
+  <version>4.1.0</version>
   <description>Gazebo simulation for Ned</description>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>

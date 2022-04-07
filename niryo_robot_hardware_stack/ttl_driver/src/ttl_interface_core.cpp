@@ -130,11 +130,15 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("ttl_hardware_read_status_frequency",
                  read_status_frequency);
 
+    nh.getParam("hardware_version",
+                _hardware_version);
+
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", write_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", read_data_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_end_effector_frequency : %f", read_end_effector_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_status_frequency : %f", read_status_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - hardware_version : %s", _hardware_version.c_str());
 
     _delta_time_data_read = 1.0 / read_data_frequency;
     _delta_time_end_effector_read = 1.0 / read_end_effector_frequency;
@@ -180,7 +184,8 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void TtlInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/hardware_interface/collision_detected", 1, true);
+    _collision_status_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/end_effector_interface/collision_detected",
+                                                               1, true);
     _collision_status_publisher_timer = nh.createTimer(_collision_status_publisher_duration,
                                                       &TtlInterfaceCore::_publishCollisionStatus,
                                                       this);
@@ -643,6 +648,9 @@ void TtlInterfaceCore::controlLoop()
         // essential to allow publishers and subscribers to do their job
         ros::spinOnce();
     }
+
+    if ("ned2" == _hardware_version)
+        _ttl_manager->resetTorques();
 }
 
 /**
@@ -1284,12 +1292,8 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {
     std_msgs::Bool msg;
-    msg.data = readCollisionStatus();
-    if (msg.data != _collision_detected)
-    {
-        _collision_detected = msg.data;
-        _collision_status_publisher.publish(msg);
-    }
+    msg.data = getCollisionStatus();
+    _collision_status_publisher.publish(msg);
 }
 
 }  // namespace ttl_driver

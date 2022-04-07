@@ -106,8 +106,7 @@ class SoundRosWrapper(object):
         :rtype: (int, str)
         """
         self.__check_ned_2_version()
-        result = self.__call_service('/niryo_robot_sound/set_volume',
-                                     SetInt, sound_volume)
+        result = self.__call_service('/niryo_robot_sound/set_volume', SetInt, sound_volume)
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
