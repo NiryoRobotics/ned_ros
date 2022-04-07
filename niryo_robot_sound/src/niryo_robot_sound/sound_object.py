@@ -56,10 +56,15 @@ class Sound(object):
 
     def __get_sound_duration(self):
         args = ("ffprobe", "-loglevel", "quiet", "-show_entries", "format=duration", "-i", self.__path)
-        popen = subprocess.Popen(args, stdout=subprocess.PIPE)
-        popen.wait()
-        output = popen.stdout.read()
+
         try:
-            return float(output.replace("[FORMAT]\nduration=", "").replace("\n[/FORMAT]\n", ""))
-        except ValueError:
-            raise SoundFormatException()
+            popen = subprocess.Popen(args, stdout=subprocess.PIPE)
+            popen.wait()
+            output = popen.stdout.read()
+            try:
+                return float(output.replace("[FORMAT]\nduration=", "").replace("\n[/FORMAT]\n", ""))
+            except ValueError:
+                raise SoundFormatException()
+        except OSError:
+            rospy.logerr('Please install ffmpeg with "sudo apt install ffmpeg" to use the sound interface.')
+            return 0

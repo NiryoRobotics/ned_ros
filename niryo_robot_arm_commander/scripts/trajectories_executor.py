@@ -17,6 +17,7 @@ from control_msgs.msg import FollowJointTrajectoryActionGoal
 from control_msgs.msg import FollowJointTrajectoryActionResult
 from control_msgs.msg import FollowJointTrajectoryActionFeedback
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
+from moveit_msgs.msg import RobotTrajectory
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import Bool
@@ -45,6 +46,7 @@ class TrajectoriesExecutor:
         self.__current_feedback = None
         self.__current_goal_result = GoalStatus.LOST
         self.__collision_detected = False
+        self.__cancel_goal = False
 
         # Event which allows to timeout if trajectory take too long
         self.__traj_finished_event = threading.Event()
@@ -84,7 +86,7 @@ class TrajectoriesExecutor:
 
         self.__collision_detected_publisher = rospy.Publisher('/niryo_robot/collision_detected', Bool, queue_size=10)
 
-        rospy.on_shutdown(self.stop_current_plan)
+        rospy.on_shutdown(self.cancel_goal)
 
     def __set_position_hold_mode(self):
         """
@@ -115,15 +117,13 @@ class TrajectoriesExecutor:
 
     def __callback_current_feedback(self, msg):
         self.__current_feedback = msg
-        self.__collision_detected = False
-        for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
+        feedback = msg.feedback
+        for joint_name, error, tolerance in zip(feedback.joint_names, feedback.error.positions,
+                                                self.__error_tolerance):
             if abs(error) > tolerance:
-                self.__collision_detected = True
-                self.__set_learning_mode(True)
-                abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
-                rospy.logwarn(abort_str)
-                return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+                self.stop_current_plan()
+                rospy.logwarn("Arm commander - Collision detected {}".format(joint_name))
+                break
 
     def __callback_collision_detected(self, msg):
         # The collision detected by EE is used only here. It just means if there is a movement.
@@ -259,39 +259,37 @@ class TrajectoriesExecutor:
                                         "You are trying to execute a plan which doesn't exist")
         # Reset
         self.__traj_finished_event.clear()
-        self.__current_goal_id = None
-        self.__current_goal_result = GoalStatus.LOST
 
         trajectory_time_out = max(1.5 * self.__get_plan_time(plan), self.__trajectory_minimum_timeout)
 
+        self.__current_goal_id = None
+        self.__current_goal_result = GoalStatus.LOST
+        self.__cancel_goal = False
+
         # Send trajectory and wait
-        self.__collision_detected = False
         self.__arm.execute(plan, wait=False)
         if self.__traj_finished_event.wait(trajectory_time_out):
             if self.__current_goal_result == GoalStatus.SUCCEEDED:
                 return CommandStatus.SUCCESS, "Command has been successfully processed"
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
-                # a collision detected by EE or by the calculation of errors by moveit
-                if self.__collision_detected:
-                    self.__collision_detected = False
-                    self.__collision_detected_publisher.publish(True)
-                    if self.__hardware_version != "ned2":
-                        self.__set_learning_mode(True)
-                    return (CommandStatus.STOPPED, "Command has been aborted due to a collision "
-                            "or a motor not able to follow the given trajectory")
-                else:
+                if self.__cancel_goal:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
+
+                self.__collision_detected_publisher.publish(True)
+                self.__set_learning_mode(True)
+                msg = "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                return CommandStatus.COLLISION, msg
+
             elif self.__current_goal_result == GoalStatus.ABORTED:
                 # if joint_trajectory_controller aborts the goal, it will still try to
                 # finish executing the trajectory --> so we ask it to stop from here
                 # http://wiki.ros.org/joint_trajectory_controller -> preemption policy
                 # Send an empty trajectory from the topic interface
                 self.__set_position_hold_mode()
-                abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
                 self.__set_learning_mode(True)
                 self.__collision_detected_publisher.publish(True)
-                return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+                msg = "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                return CommandStatus.COLLISION, msg
 
             else:  # problem from ros_control itself
                 self.__current_goal_id = None
@@ -310,6 +308,20 @@ class TrajectoriesExecutor:
         else:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "No trajectory found.")
 
+    def execute_joint_trajectory(self, joint_trajectory):
+        """
+
+        :param joint_trajectory:
+        :type joint_trajectory: JointTrajectory
+        :return:
+        :rtype:
+        """
+        moveit_plan = RobotTrajectory(joint_trajectory=joint_trajectory)
+        self.__arm.set_joint_value_target(moveit_plan.joint_trajectory.points[0].positions)
+        partial_plan = self.plan()
+        plan = self.link_plans(partial_plan, moveit_plan)
+        return self.execute_plan(plan)
+
     # --- Callable functions
     def stop_arm(self):
         rospy.loginfo("Arm commander - Send STOP to arm")
@@ -319,6 +331,10 @@ class TrajectoriesExecutor:
         rospy.loginfo("Arm commander - Send STOP to arm and RESET to controller")
         self.__arm.stop()
         self.__reset_controller()
+
+    def cancel_goal(self):
+        self.__cancel_goal = True
+        self.stop_current_plan()
 
     def retime_plan(self, plan, velocity_scaling_factor=1.0, acceleration_scaling_factor=1.0, optimize=False):
         """
@@ -360,6 +376,33 @@ class TrajectoriesExecutor:
         else:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
                                         "No current plan found")
+
+    def link_plans(self, *plans):
+        # Link plans
+        final_plan = plans[0]
+
+        for plan in plans[1:]:
+            final_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
+
+        # Retime plan et recompute velocities
+        final_plan = self.retime_plan(final_plan, optimize=True)
+        return self.filtering_plan(final_plan)
+
+    @staticmethod
+    def filtering_plan(plan):
+        if plan is None:
+            return None
+
+        new_plan = RobotTrajectory()
+        new_plan.joint_trajectory.header = plan.joint_trajectory.header
+        new_plan.joint_trajectory.joint_names = plan.joint_trajectory.joint_names
+        new_plan.joint_trajectory.points = []
+
+        for i, point in enumerate(plan.joint_trajectory.points[:-1]):
+            if point.time_from_start != plan.joint_trajectory.points[i + 1].time_from_start:
+                new_plan.joint_trajectory.points.append(point)
+        new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[-1])
+        return new_plan
 
     def __set_learning_mode(self, set_bool):
         """

@@ -30,7 +30,7 @@
         <group ns="python_ros_wrapper">
             <param name="service_timeout" type="int" value="2"/>
             <param name="action_connection_timeout" type="int" value="20"/>
-            <param name="action_execute_timeout" type="int" value="60"/>
+            <param name="action_execute_timeout" type="int" value="3600"/>
             <param name="action_preempt_timeout" type="int" value="60"/>
         </group>
     </group>

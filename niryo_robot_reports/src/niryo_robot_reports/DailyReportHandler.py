@@ -57,9 +57,13 @@ class DailyReportHandler:
         if req.logs_status_str.lower() not in ['error', 'critical']:
             return
         log_io = StringIO(req.logs_message)
-        level, from_node, msg, from_file, function, line = map(
-            lambda x: x[x.index(':') + 2:], log_io.readlines()
-        )
+        try:
+            level, from_node, msg, from_file, function, line = map(
+                lambda x: x[((x.index(':') + 2) if ':' in x else 0):], log_io.readlines()
+            )
+        except ValueError:
+            return
+
         formatted_log = '{} - {}: {} in {}.{}:{}'.format(
             level, from_node, msg, from_file, function, line
         )
@@ -78,4 +82,8 @@ class DailyReportHandler:
                     report_handler.delete()
                     self.__rm_report_db(report.id)
                 else:
-                    rospy.logerr('Unable to send the report')
+                    rospy.logerr('Unable to send the daily report')
+                    if (date.today() - datetime.strptime(report.date, '%Y-%m-%d').date()).days > 2:
+                        rospy.loginfo('Deleting the outdated daily report of {}'.format(report.date))
+                        report_handler.delete()
+                        self.__rm_report_db(report.id)

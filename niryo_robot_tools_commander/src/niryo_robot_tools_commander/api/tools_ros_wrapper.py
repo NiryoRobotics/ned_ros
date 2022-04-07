@@ -29,9 +29,8 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         # -- Subscribers
         self.__current_tool_id_ntv = NiryoTopicValue('/niryo_robot_tools_commander/current_id', Int32)
 
-        # Tool action
-        self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction,
-                                                   ToolGoal)
+        # -- Tool action
+        self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction, ToolGoal)
 
     def get_current_tool_id(self):
         """
@@ -175,8 +174,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        result = self._call_service('/niryo_robot_tools_commander/equip_electromagnet',
-                                    SetInt, ToolID.ELECTROMAGNET_1)
+        result = self._call_service('/niryo_robot_tools_commander/equip_electromagnet', SetInt, ToolID.ELECTROMAGNET_1)
 
         if result.status != CommandStatus.SUCCESS:
             return result.status, result.message

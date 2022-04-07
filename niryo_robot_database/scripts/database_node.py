@@ -11,6 +11,7 @@ from sqlite3 import OperationalError
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
 from niryo_robot_database.Settings import Settings, UnknownSettingsException
 from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
+from niryo_robot_database.RobotDatabase import RobotDatabase
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
@@ -39,6 +40,7 @@ class DatabaseNode:
 
         self.__settings = Settings(sqlite_dao)
         self.__file_paths = FilePath(sqlite_dao)
+        self.__robot_db = RobotDatabase(sqlite_dao)
 
         rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
         rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)

@@ -68,8 +68,6 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
 
         bool isInitialized();
 
-        tools_interface::Tool pubToolId(int id, EHardwareType motor_type);
-
         // getters
         std::shared_ptr<common::model::ToolState> getToolState() const;
 

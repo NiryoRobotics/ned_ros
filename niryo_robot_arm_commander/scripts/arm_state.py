@@ -215,7 +215,21 @@ class ArmState(object):
         """
         if set_bool and self.__hardware_version == 'ned2':
             return True
+        try:
+            return self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS
+        except (rospy.ServiceException, rospy.ROSException):
+            return False
 
+    def force_learning_mode(self, set_bool):
+        """
+        Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
+
+        :param set_bool:
+        :type set_bool: bool
+
+        :return: Success if the learning mode was properly activate or deactivate, False if not
+        :rtype: bool
+        """
         try:
             return self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS
         except (rospy.ServiceException, rospy.ROSException):

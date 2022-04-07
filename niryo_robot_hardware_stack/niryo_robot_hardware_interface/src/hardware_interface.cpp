@@ -478,7 +478,7 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
         {
             if (cState && cState->isValid())
             {
-                motor_names.emplace_back("Conveyor");
+                motor_names.emplace_back("Conveyor_" + std::to_string(cState->getId()));
                 voltages.emplace_back(cState->getVoltage());
                 temperatures.emplace_back(cState->getTemperature());
                 hw_errors.emplace_back(cState->getHardwareError());

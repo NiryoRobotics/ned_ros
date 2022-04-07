@@ -36,6 +36,7 @@ class RobotStatusObserver(object):
         self.pause_state = PausePlanExecution.STANDBY
         self.collision_detected = False
         self.rpi_overheating = False
+        self.learning_trajectory = False
 
         self.rpi_overheating_temperature = rospy.get_param(
             "niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold", 75)
@@ -69,6 +70,9 @@ class RobotStatusObserver(object):
                                                          Bool, self.__callback_collision_detected)
 
         self.__joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
+
+        self.__learning_trajectory_sub = rospy.Subscriber('/niryo_robot_arm_commander/learning_trajectory',
+                                                          Bool, self.__callback_learning_trajectory)
 
     def __callback_pause(self, msg):
         if self.pause_state != msg.state:
@@ -134,6 +138,11 @@ class RobotStatusObserver(object):
     def __callback_collision_detected(self, msg):
         self.collision_detected = msg.data
         if self.collision_detected:
+            self.__robot_status_handler.advertise_new_state()
+
+    def __callback_learning_trajectory(self, msg):
+        if self.learning_trajectory != msg.data:
+            self.learning_trajectory = msg.data
             self.__robot_status_handler.advertise_new_state()
 
     def __callback_joint_states(self, msg):

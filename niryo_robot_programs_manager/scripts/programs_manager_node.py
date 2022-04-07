@@ -159,7 +159,7 @@ class ProgramManagerNode:
 
     def __callback_execute_program(self, req):
         if self.__program_is_running.program_is_running:
-            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running"
+            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running", ""
         language = req.language.used
         if req.execute_from_string:
             name = None
@@ -242,10 +242,10 @@ class ProgramManagerNode:
 
     def __execute_program(self, language_used, name=None, code_string=None):
         if language_used not in self._manager_map:
-            return CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE, "Unknown Language"
+            return CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE, "Unknown Language", ""
         manager = self._manager_map[language_used]
         if not manager.runnable:
-            return CommandStatus.PROGRAMS_MANAGER_NOT_RUNNABLE_LANGUAGE, "Not Runnable Language"
+            return CommandStatus.PROGRAMS_MANAGER_NOT_RUNNABLE_LANGUAGE, "Not Runnable Language", ""
 
         if code_string:
             prog_name = self.__execute_from_string_program_name

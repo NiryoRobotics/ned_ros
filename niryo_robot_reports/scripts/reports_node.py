@@ -29,7 +29,7 @@ class ReportsNode:
         rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
         self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
-        cloud_domain = rospy.get_param('~cloud_domain')
+        get_cloud_domain_response = self.__get_setting('cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
         get_api_key_response = self.__get_setting('api_key')
         get_sharing_allowed_response = self.__get_setting('sharing_allowed')
@@ -42,7 +42,7 @@ class ReportsNode:
             get_sharing_allowed_response.value = False
 
         self.__cloud_api = CloudAPI(
-            cloud_domain,
+            get_cloud_domain_response.value,
             get_serial_number_response.value,
             get_api_key_response.value,
             get_sharing_allowed_response.value,
@@ -63,7 +63,8 @@ class ReportsNode:
 
         DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        AlertReportHandler(self.__cloud_api)
+        # TODO to be reactivated if needed
+        # AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 # To use the API, copy these 4 lines on each Python file you create
+import sys
+
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
 from niryo_robot_arm_commander.msg import PausePlanExecution
 import rospy
@@ -23,6 +25,7 @@ def callback_pause_movement(msg):
     global state
     state = msg.state
 
+
 rospy.Subscriber('/niryo_robot_rpi/pause_state', PausePlanExecution, callback_pause_movement)
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
 print "--- Start"
@@ -36,11 +39,12 @@ n.wait(1)
 
 def french_flag():
     colors = []
-    colors += [[255, 0, 0] for _ in range(5)]
-    colors += [[255, 255, 255] for _ in range(5)]
-    colors += [[0, 0, 255] for _ in range(10)]
-    colors += [[255, 255, 255] for _ in range(5)]
-    colors += [[255, 0, 0] for _ in range(5)]
+    colors += [[255, 255, 255] for _ in range(2)]
+    colors += [[0, 0, 255] for _ in range(11)]
+    colors += [[255, 255, 255] for _ in range(4)]
+    colors += [[255, 0, 0] for _ in range(11)]
+    colors += [[255, 255, 255] for _ in range(2)]
+
     n.led_ring.custom(colors)
 
 
@@ -49,11 +53,12 @@ run_flag = True
 
 def french_flag_moving():
     colors = []
-    colors += [[255, 0, 0] for _ in range(5)]
-    colors += [[255, 255, 255] for _ in range(5)]
-    colors += [[0, 0, 255] for _ in range(10)]
-    colors += [[255, 255, 255] for _ in range(5)]
-    colors += [[255, 0, 0] for _ in range(5)]
+    colors += [[255, 255, 255] for _ in range(2)]
+    colors += [[0, 0, 255] for _ in range(11)]
+    colors += [[255, 255, 255] for _ in range(4)]
+    colors += [[255, 0, 0] for _ in range(11)]
+    colors += [[255, 255, 255] for _ in range(2)]
+
     rate = rospy.Rate(10)
     while not rospy.is_shutdown() and run_flag:
         for i in range(len(colors)):
@@ -90,8 +95,7 @@ def open_gripper():
 
 
 def random_sounds():
-    random_sounds = ["connected.wav", "start2b.wav", "start4abis.wav", "start4a.wav", "connected3.wav",
-                     "connected2.wav"]
+    random_sounds = ["connected.wav", "start2b.wav", "start4abis.wav"]
     global state
     while not (rospy.is_shutdown() or state == PausePlanExecution.CANCEL):
         if not (state == PausePlanExecution.PAUSE):
@@ -221,7 +225,6 @@ while True:
         threading.Timer(2, close_gripper).start()
         threading.Timer(3.4, close_gripper).start()
         threading.Timer(6, open_gripper).start()
-        n.move_pose(*[0.094, -0.085, 0.3, 0.927, 1.157, 0.899])
         n.move_pose(*[0.029, 0.217, 0.3, 2.254, 1.476, -2.38])
         n.execute_moveit_robot_trajectory(traj1)
         n.move_pose(*[0.179, 0.001, 0.264, 2.532, 1.532, 2.618])
@@ -333,3 +336,4 @@ while True:
         # you can also make a try/except for each command separately
 
 print "--- End"
+sys.exit()

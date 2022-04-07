@@ -34,12 +34,12 @@ add_definitions(-Wall  -Werror -Os)
 find_package(catkin REQUIRED
     COMPONENTS
       can_driver
+      common
       message_generation
       niryo_robot_msgs
       roscpp
       std_msgs
       ttl_driver
-      common
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -86,11 +86,11 @@ catkin_package(
       ${PROJECT_NAME}
   CATKIN_DEPENDS
       can_driver
+      common
       message_runtime
       roscpp
       std_msgs
       ttl_driver
-      common
 )
 
 ###########

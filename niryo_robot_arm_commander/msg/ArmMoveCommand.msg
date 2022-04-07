@@ -10,6 +10,7 @@ int32 EXECUTE_TRAJ = 8      # uses dist_smoothing, list_poses
 int32 DRAW_SPIRAL = 9
 int32 DRAW_CIRCLE = 10
 int32 EXECUTE_FULL_TRAJ = 11
+int32 EXECUTE_RAW_TRAJ = 12
 
 int32 cmd_type
 

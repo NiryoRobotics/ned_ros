@@ -31,4 +31,9 @@ INSERT INTO settings VALUES (
     'test_report_done',
     'False',
     'bool'
+), (
+    lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
+    'cloud_domain',
+    'api-rfm.niryo.com',
+    'str'
 );

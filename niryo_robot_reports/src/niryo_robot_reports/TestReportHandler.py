@@ -1,6 +1,7 @@
 import json
 import rospy
 from datetime import datetime
+from dateutil import parser
 
 from niryo_robot_reports.TestReport import TestReport
 
@@ -51,4 +52,8 @@ class TestReportHandler:
                     report_handler.delete()
                     self.__rm_report_db(report.id)
                 else:
-                    rospy.logerr('Unable to send the report')
+                    rospy.logerr('Unable to send the test report')
+                    if (datetime.now() - parser.parse(report_handler.content['date'])).days > 2:
+                        rospy.loginfo('Deleting the outdated test report of {}'.format(report_handler.content['date']))
+                        report_handler.delete()
+                        self.__rm_report_db(report.id)

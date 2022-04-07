@@ -114,6 +114,10 @@ class SoundManager:
             elif new_robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
                 self.play_sound(self.__sound_database.calibration_sound)
                 return True
+            elif last_status == RobotStatus.LEARNING_TRAJECTORY and \
+                    new_robot_status != RobotStatus.LEARNING_TRAJECTORY:
+                self.play_sound(self.__sound_database.learning_trajectory_sound)
+                return True
             elif new_robot_status == RobotStatus.REBOOT_MOTOR:
                 self.play_sound(self.__sound_database.reboot_sound)
                 return True
@@ -152,7 +156,7 @@ class SoundManager:
     def play_shutdown_sound(self):
         with self.__lock:
             if not self.__shutdown:
-                self.__shutdown = False
+                self.__shutdown = True
 
                 if self.__overheat_timer is not None:
                     self.__overheat_timer.shutdown()

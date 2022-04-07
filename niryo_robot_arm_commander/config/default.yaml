@@ -24,3 +24,5 @@ jump_threshold: 0.0
 active_publish_rate_sec: 0.1
 command_still_active_max_tries : 3
 
+# - Trajectory Acquisition Param
+trajectory_frequency: 7

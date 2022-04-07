@@ -33,7 +33,9 @@ from end_effector_interface.msg import EEIOState
 
 
 class NiryoEndEffectorPanel:
+
     def __init__(self, on_change_callback):
+
         rospy.logdebug("Niryo end effector panel - Entering in Init")
 
         # - Init
@@ -44,12 +46,18 @@ class NiryoEndEffectorPanel:
         self.__custom_button_state = EEButtonStatus.NO_ACTION
         self.__save_pos_button_state = False
 
-        self.__learning_mode_on = False
         self.__tool = ToolsRosWrapper()
         self.__tool_state = False
 
         self.digital_input = DigitalInput(rospy.get_param("~end_effector_ios/digital_input"))
         self.digital_output = DigitalOutput(rospy.get_param("~end_effector_ios/digital_output"))
+
+        # - Publishers
+        self.save_point_publisher = rospy.Publisher(
+            "/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
+
+        self.__button_state_publisher = rospy.Publisher(
+            "/niryo_robot/rpi/is_button_pressed", Bool, latch=True, queue_size=1)
 
         # - Subscribers
         rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self._callback_robot_status)
@@ -66,18 +74,9 @@ class NiryoEndEffectorPanel:
             '/niryo_robot_hardware_interface/end_effector_interface/custom_button_status',
             EEButtonStatus, self.__callback_custom_pos_button_status)
 
-        self.__learning_mode_topic = rospy.Subscriber('/niryo_robot/learning_mode/state', Bool,
-                                                      self.__callback_sub_learning_mode)
-
-        self.__ee_io_state_topic = rospy.Subscriber('/niryo_robot_hardware_interface/end_effector_interface/io_state',
-                                                    EEIOState, self.__callback_ee_io_state)
-
-        # - Publishers
-        self.save_point_publisher = rospy.Publisher(
-            "/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
-
-        self.__button_state_publisher = rospy.Publisher(
-            "/niryo_robot/rpi/is_button_pressed", Bool, latch=True, queue_size=1)
+        self.__ee_io_state_topic = rospy.Subscriber(
+            '/niryo_robot_hardware_interface/end_effector_interface/io_state',
+            EEIOState, self.__callback_ee_io_state)
 
         rospy.loginfo("Niryo end effector panel started")
 
@@ -89,7 +88,6 @@ class NiryoEndEffectorPanel:
     def on_shutdown(self):
         self.__learning_mode_button_topic.unregister()
         self.__save_pos_button_topic.unregister()
-        self.__learning_mode_topic.unregister()
 
     def _callback_robot_status(self, msg):
         self.__robot_status = msg.robot_status
@@ -105,15 +103,16 @@ class NiryoEndEffectorPanel:
                 self.__learning_mode_button_state = msg.action
 
     def __callback_save_pos_button_status(self, msg):
-        if msg.action in [EEButtonStatus.NO_ACTION]:
+        if msg.action in [EEButtonStatus.NO_ACTION, EEButtonStatus.LONG_PUSH_ACTION,
+                          EEButtonStatus.HANDLE_HELD_ACTION]:
             pressed = False
-        elif msg.action in [EEButtonStatus.SINGLE_PUSH_ACTION, EEButtonStatus.LONG_PUSH_ACTION]:
+        elif msg.action in [EEButtonStatus.SINGLE_PUSH_ACTION]:
             pressed = True
         else:
             return
-
         if pressed != self.__save_pos_button_state:
             self.__save_pos_button_state = pressed
+            self.__button_state_publisher.publish(pressed)
             if pressed:
                 self.blockly_save_current_point()
 
@@ -133,6 +132,10 @@ class NiryoEndEffectorPanel:
         if custom_button_pressed is not None:
             self.__button_state_publisher.publish(custom_button_pressed)
 
+            if self.__robot_status in [RobotStatus.RUNNING_AUTONOMOUS, RobotStatus.RUNNING_DEBUG,
+                                       RobotStatus.PAUSE, RobotStatus.REBOOT_MOTOR]:
+                return
+
             try:
                 if old_button_state != EEButtonStatus.NO_ACTION == self.__custom_button_state:
                     if self.__robot_status == RobotStatus.CALIBRATION_NEEDED:
@@ -145,11 +148,12 @@ class NiryoEndEffectorPanel:
                         self.__tool_state = not self.__tool_state
                     else:
                         self.__tool.update_tool()
+                        if self.__tool.get_current_tool_id():
+                            rospy.sleep(0.1)
+                            self.__tool.release_with_tool()
+                            self.__tool_state = False
             except NiryoRosWrapperException:
                 pass
-
-    def __callback_sub_learning_mode(self, msg):
-        self.__learning_mode_on = msg.data
 
     def __callback_ee_io_state(self, msg):
         if self.digital_input.value != msg.digital_input or self.digital_output.value != msg.digital_output:

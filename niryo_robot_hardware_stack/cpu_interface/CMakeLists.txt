@@ -101,7 +101,7 @@ endif()
 if(CATKIN_ENABLE_TESTING)
     catkin_add_gtest(
       ${PROJECT_NAME}_unit_tests
-      test/cpu_interface_unit_tests.cpp
+      test/${PROJECT_NAME}_unit_tests.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(

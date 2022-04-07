@@ -30,9 +30,11 @@ BLUE = [15, 50, 255]
 PURPLE = [153, 51, 153]
 PINK = [255, 0, 255]
 RED = [255, 0, 0]
+YELLOW = [255, 255, 0]
 
-USE_BUTTON = False
-VOLUME = 100
+USE_BUTTON = True
+VOLUME = 50
+USE_VOCAL = False
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -64,7 +66,7 @@ class TestReport(object):
 
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
-        print(new_line)
+        rospy.loginfo('\033[96;24;23m ' + new_line + ' \033[0m')
         self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
@@ -128,12 +130,12 @@ class TestProduction:
         self.__success = False
 
         self.__sub_tests = [
-            TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
+            # TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
             TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
-            TestStep(self.__functions.test_sound, "Test sound", critical=False),
+            # TestStep(self.__functions.test_sound, "Test sound", critical=False),
             TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
             TestStep(self.__functions.test_led_ring, "Test led ring", critical=False),
-            TestStep(self.__functions.test_freedrive, "Test free motion", critical=False),
+            # TestStep(self.__functions.test_freedrive, "Test free motion", critical=False),
             TestStep(self.__functions.test_joint_limits, "Test move", critical=True),
             TestStep(self.__functions.test_spiral, "Test move", critical=True),
             TestStep(self.__functions.test_fun_poses, "Test move", critical=True),
@@ -186,6 +188,7 @@ class TestFunctions(object):
         rospy.sleep(2)
         self.__robot = robot
         self.__hardware_version = self.__robot.get_hardware_version()
+
         self.__robot.set_arm_max_velocity(SPEED)
         self.__robot.set_arm_max_acceleration(ACCELERATION)
         self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
@@ -196,15 +199,19 @@ class TestFunctions(object):
         self.__robot.set_arm_max_acceleration(100)
 
     def led_error(self, duration=360):
-        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode:
+        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode():
             self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, duration)
 
     def led_stop(self):
-        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode:
+        if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode():
             self.__set_led_state_service(False, 0, 0, 0)
 
+    def say(self, text):
+        if USE_VOCAL and self.__hardware_version in ['ned2']:
+            self.__robot.sound.say(text, 1)
+
     def test_cloud_connection(self, report):
-        if self.__robot.get_simulation_mode:
+        if self.__robot.get_simulation_mode():
             report.append("Test Cloud connection - Skipped in simulation mode")
             return
 
@@ -287,7 +294,7 @@ class TestFunctions(object):
             if self.__hardware_version in ['ned2']:
                 self.__robot.led_ring.flashing(BLUE)
 
-                self.__robot.sound.say("Validez la position du robot", 1)
+                self.say("Validez la position du robot")
                 report.execute(self.wait_save_button_press, "Wait save button press to validate")
 
             self.__robot.move_to_sleep_pose()
@@ -299,15 +306,15 @@ class TestFunctions(object):
 
         self.__robot.led_ring.solid(WHITE)
 
-        self.__robot.sound.say("Premier test du ruban led", 1)
+        self.say("Premier test du ruban led")
         report.append("Led ring color set to WHITE")
-        self.__robot.sound.say("Validez le test", 1)
+        self.say("Validez le test")
         report.execute(self.wait_custom_button_press, "Wait custom button press to continue", args=[60, ])
 
         self.__robot.led_ring.rainbow_cycle()
         report.append("Led ring color set to RAINBOW")
-        self.__robot.sound.say("Second test du ruban led", 1)
-        self.__robot.sound.say("Validez le test", 1)
+        self.say("Second test du ruban led")
+        self.say("Validez le test")
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate", args=[60, ])
 
     def test_sound(self, report):
@@ -321,7 +328,7 @@ class TestFunctions(object):
         report.execute(self.__robot.sound.set_volume, "Set volume", [VOLUME])
         report.append("Volume set to {}%".format(VOLUME))
 
-        self.__robot.sound.say("Test de son", 1)
+        self.say("Test de son")
 
         sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/calibration_sound")
         report.execute(self.__robot.sound.play, "Play {} sound".format(sound_name), [sound_name, True])
@@ -335,7 +342,7 @@ class TestFunctions(object):
         report.execute(self.__robot.sound.play, "Play {} sound".format(sound_name), [sound_name, True])
 
         self.__robot.led_ring.flashing(PURPLE)
-        self.__robot.sound.say("Validez le test", 1)
+        self.say("Validez le test")
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
     def test_freedrive(self, report):
@@ -352,7 +359,7 @@ class TestFunctions(object):
 
             return 1, "Learning mode".format("enabled" if value else "disabled")
 
-        self.__robot.sound.say("Test de free motion", 1)
+        self.say("Test de free motion")
 
         joint_limit = self.__robot.get_axis_limits()[1]['joint_limits']
 
@@ -373,7 +380,7 @@ class TestFunctions(object):
                 report.append("Joint1 minimum limit not reached")
                 break
         else:
-            self.__robot.sound.say("Limite validee", 1)
+            self.say("Limite validee")
             report.append("Joint1 minimum limit reached")
 
         for i in range(2, 30, 6):
@@ -387,7 +394,7 @@ class TestFunctions(object):
                 report.append("Joint1 maximum limit not reached")
                 break
         else:
-            self.__robot.sound.say("Limite validee", 1)
+            self.say("Limite validee")
             report.append("Joint1 maximum limit reached")
 
         for i in range(4, 30, 6):
@@ -451,7 +458,7 @@ class TestFunctions(object):
     def test_joint_limits(self, report):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.rainbow_cycle()
-            self.__robot.sound.say("Test des limites des joints", 1)
+            self.say("Test des limites des joints")
 
         self.__robot.set_learning_mode(False)
         rospy.sleep(1)
@@ -475,20 +482,25 @@ class TestFunctions(object):
         last_target[2] = joint_limit[joint_names[2]]['max'] - 0.1
         last_target[4] = joint_limit[joint_names[4]]['min'] + 0.1
 
-        poses = [default_joint_pose, first_target,
-                 default_joint_pose, second_target,
-                 default_joint_pose, third_target, last_target]
+        poses = [(default_joint_pose, 1, 3),
+                 (first_target, 1, 4),
+                 (default_joint_pose, 1, 4),
+                 (second_target, 1, 3),
+                 (default_joint_pose, 1, 3),
+                 (third_target, 1, 4),
+                 (last_target, 1, 4)]
 
         for loop_index in range(LOOPS):
-            for position_index, joint_position in enumerate(poses):
+            for position_index, step in enumerate(poses):
+                joint_position, precision, duration = step
                 report.execute(self.move_and_compare_without_moveit,
                                "Move number {}.{}".format(loop_index, position_index),
-                               args=[joint_position, 1, 4])
+                               args=[joint_position, precision, duration])
 
     def test_spiral(self, report):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.rainbow_cycle()
-            self.__robot.sound.say("Test des spirales", 1)
+            self.say("Test des spirales")
 
         for loop_index in range(SPIRAL_LOOPS):
             report.execute(self.__robot.move_pose, "Loop {} - Move to spiral center".format(loop_index),
@@ -499,7 +511,7 @@ class TestFunctions(object):
     def test_fun_poses(self, report):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.rainbow_cycle()
-            self.__robot.sound.say("Test de divers movements", 1)
+            self.say("Test de divers movements")
 
         waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26],
                      [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
@@ -517,9 +529,11 @@ class TestFunctions(object):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
 
         if self.__hardware_version in ['ned2']:
-            self.__robot.sound.say("Changez d'outil", 1)
-            self.wait_custom_button_press()
-            self.__robot.sound.say("Test de pick and place", 1)
+            self.say("Changez d'outil")
+            self.__robot.led_ring.flashing(YELLOW)
+            self.wait_custom_button_press(timeout=120)
+            self.__robot.led_ring.solid(YELLOW)
+            self.say("Test de pick and place")
 
         report.execute(self.__robot.update_tool, "Scan tool")
         report.append("Detected tool: {}".format(self.__robot.get_current_tool_id()))
@@ -565,7 +579,7 @@ class TestFunctions(object):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.flashing(BLUE)
             report.append("End")
-            self.__robot.sound.say("Fin du test, validez la position 0", 1)
+            self.say("Fin du test, validez la position 0")
             report.execute(self.wait_save_button_press, "Wait save button press to validate")
 
         self.__robot.move_to_sleep_pose()
@@ -577,7 +591,7 @@ class TestFunctions(object):
             raw_input('Enter to continue')
             return 1, "Press custom button step skipped"
 
-        action = self.__robot.__custom_button.wait_for_any_action(timeout=timeout)
+        action = self.__robot.custom_button.wait_for_any_action(timeout=timeout)
 
         if action == ButtonAction.NO_ACTION:
             return -1, "Timeout: no press detected"
@@ -633,3 +647,5 @@ if __name__ == '__main__':
         set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
         # set_setting('sharing_allowed', 'False', 'bool')
         set_setting('test_report_done', 'True', 'bool')
+    else:
+        raise TestFailure()

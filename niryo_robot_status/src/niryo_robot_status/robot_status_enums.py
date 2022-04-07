@@ -36,6 +36,7 @@ ROBOT_STATUS_TO_STR = {
     RobotStatus.RUNNING_DEBUG: 'Running debug',
     RobotStatus.PAUSE: 'Pause',
     RobotStatus.LEARNING_MODE_AUTONOMOUS: 'Learning mode autonomous',
+    RobotStatus.LEARNING_TRAJECTORY: 'Executing Trajectory',
     RobotStatus.REBOOT_MOTOR: 'Reboot motor'
 }
 
@@ -54,6 +55,7 @@ ROBOT_STATUS_TO_MESSAGE = {
     RobotStatus.RUNNING_AUTONOMOUS: "Program is running",
     RobotStatus.RUNNING_DEBUG: "Debug program is running",
     RobotStatus.PAUSE: "Program paused",
+    RobotStatus.LEARNING_TRAJECTORY: "User is leaning the arm a trajectory",
     RobotStatus.LEARNING_MODE_AUTONOMOUS: "Program is running and learning_mode active",
     RobotStatus.REBOOT_MOTOR: 'Reboot motor'
 }

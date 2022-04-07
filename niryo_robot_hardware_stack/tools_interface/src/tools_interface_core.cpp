@@ -59,9 +59,10 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
-    init(nh);
+    // init tool state with unconnected state
+    _toolState = std::make_shared<ToolState>();
 
-    pubToolId(-1, EHardwareType::UNKNOWN);
+    init(nh);
 }
 
 /**
@@ -123,13 +124,6 @@ int ToolsInterfaceCore::initHardware(bool torque_on)
             _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
                                                                                 motor_id, std::initializer_list<uint32_t>{new_mode}));
         }
-        /* else
-        {
-            // update leds
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
-                                                                            motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
-            ros::Duration(0.01).sleep();
-        } */ 
 
         // TORQUE cmd on if ned2, off otherwise
         _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
@@ -259,48 +253,6 @@ bool ToolsInterfaceCore::isInitialized()
 }
 
 /**
- * @brief ToolsInterfaceCore::pubToolId
- * @param id
- * @param motor_type
- */
-tools_interface::Tool ToolsInterfaceCore::pubToolId(int id, EHardwareType motor_type)
-{
-    tools_interface::Tool msg;
-    msg.id = static_cast<int8_t>(id);
-
-    switch (motor_type)
-    {
-    case EHardwareType::STEPPER:
-        msg.motor_type = tools_interface::Tool::STEPPER;
-        break;
-    case EHardwareType::XL430:
-        msg.motor_type = tools_interface::Tool::XL430;
-        break;
-    case EHardwareType::XC430:
-        msg.motor_type = tools_interface::Tool::XC430;
-        break;
-    case EHardwareType::XL320:
-        msg.motor_type = tools_interface::Tool::XL320;
-        break;
-    case EHardwareType::XL330:
-        msg.motor_type = tools_interface::Tool::XL330;
-        break;
-    case EHardwareType::FAKE_DXL_MOTOR:
-        msg.motor_type = tools_interface::Tool::FAKE_DXL_MOTOR;
-        break;
-    case EHardwareType::FAKE_STEPPER_MOTOR:
-        msg.motor_type = tools_interface::Tool::STEPPER;
-        break;
-    default:
-        msg.motor_type = tools_interface::Tool::NO_MOTOR;
-        break;
-    }
-
-    _tool_connection_publisher.publish(msg);
-    return msg;
-}
-
-/**
  * @brief ToolsInterfaceCore::_callbackPingAndSetDxlTool
  * @param res
  * @return
@@ -309,17 +261,21 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
                                                  tools_interface::PingDxlTool::Response &res)
 {
     res.tool.id = -1;
-    res.tool.motor_type = tools_interface::Tool::NO_MOTOR;
-    res.state = ToolState::TOOL_STATE_PING_ERROR;
+    res.tool.motor_type = Tool::NO_MOTOR;
+
+    res.tool.position = 0;
+    res.tool.state = ToolState::TOOL_STATE_PING_ERROR;
+
+    res.state = res.tool.state;
 
     std::lock_guard<mutex> lck(_tool_mutex);
     // Unequip tool
     if (_toolState && _toolState->isValid())
     {
+        // unmanage tool
         _ttl_interface->unsetTool(_toolState->getId());
-        res.tool = pubToolId(-1, EHardwareType::UNKNOWN);
 
-        // reset tool as default = no tool
+        // reset tool state as default = no tool
         _toolState->reset();
     }
 
@@ -330,53 +286,62 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     {
         if (_available_tools_map.count(m_id))
         {
-            _toolState = std::make_shared<ToolState>(_available_tools_map.at(m_id).name, _available_tools_map.at(m_id).type, m_id);
+            // reset tool state
+            _toolState = std::make_shared<ToolState>(_available_tools_map.at(m_id).name,
+                                                     _available_tools_map.at(m_id).type, m_id);
             break;
         }
     }
 
     // if new tool has been found
-    if (_toolState && _toolState->isValid())
+    if (_toolState)
     {
-        // Try 3 times
-        for (int tries = 0; tries < 3; tries++)
-        {
-            int result = _ttl_interface->setTool(_toolState);
+      if (_toolState->isValid())
+      {
+          // Try 3 times
+          for (int tries = 0; tries < 3; tries++)
+          {
+              int result = _ttl_interface->setTool(_toolState);
 
-            // on success, tool is set, we initialize it and go out of loop
-            if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
-            {
-                res.tool = pubToolId(_toolState->getId(), _toolState->getHardwareType());
-                res.state = ToolState::TOOL_STATE_PING_OK;
+              // on success, tool is set, we initialize it and go out of loop
+              if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
+                  niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
+              {
+                  _toolState->setState(ToolState::TOOL_STATE_PING_OK);
 
-                ros::Duration(0.05).sleep();
-                ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success");
+                  ros::Duration(0.05).sleep();
+                  ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success !");
 
-                break;
-            }
+                  break;
+              }
 
-            ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
-                     "Set tool failure, return : %d. Retrying (%d)...",
-                     result, tries);
-        }
+              ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                       "Set tool failure, return : %d. Retrying (%d)...",
+                       result, tries);
+          }
 
-        // on failure after three tries
-        if (ToolState::TOOL_STATE_PING_OK != res.state)
-        {
-            ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set tool, return : %d",
-                      res.state);
+          // on failure after three tries
+          if (ToolState::TOOL_STATE_PING_OK != _toolState->getState())
+          {
+              ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set tool, return : %d",
+                        _toolState->getState());
 
-            res.tool = pubToolId(-1, EHardwareType::UNKNOWN);
-            ros::Duration(0.05).sleep();
-        }
+              // reset toolstate to indicate that it is not usable
+              _toolState->reset();
+
+              ros::Duration(0.05).sleep();
+          }
+      }
+      else  // no tool found, no tool set (it is not an error, the tool does not exists)
+      {
+          _toolState->setState(ToolState::TOOL_STATE_PING_OK);
+
+          ros::Duration(0.05).sleep();
+      }
+
+      res.state = _toolState->getState();
     }
-    else  // no tool found, no tool set (it is not an error, the tool does not exists)
-    {
-        res.tool = pubToolId(-1, EHardwareType::UNKNOWN);
-        res.state = ToolState::TOOL_STATE_PING_OK;
-        ros::Duration(0.05).sleep();
-    }
+
     return true;
 }
 
@@ -385,7 +350,8 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
  * @param res
  * @return
  */
-bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/, std_srvs::Trigger::Response &res)
+bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/,
+                                             std_srvs::Trigger::Response &res)
 {
     res.success = false;
 
@@ -428,7 +394,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Requ
             seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         }
 
-        ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
+        ROS_DEBUG("ToolsInterfaceCore::_callbackOpenGripper : Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
 
         // TODO(cc) find a way to have feedback on this instead of a delay waiting
@@ -436,8 +402,10 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Requ
         // set hold torque
         _toolCommand(req.position, req.hold_torque, req.speed);
 
-        res.state = ToolState::GRIPPER_STATE_OPEN;
-        ROS_DEBUG("Opened !");
+        _toolState->setState(ToolState::GRIPPER_STATE_OPEN);
+
+        ROS_DEBUG("ToolsInterfaceCore::_callbackOpenGripper : Opened !");
+        res.state = _toolState->getState();
     }
 
     return true;
@@ -465,7 +433,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Req
         if (EHardwareType::XL320 == _toolState->getHardwareType())
         {
             // calculate close duration
-            // cc to be removed => acknowledge instead
+            // cc to be removed => acknowledge instead ?
             auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
@@ -481,8 +449,10 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Req
         // set hold torque
         _toolCommand(position_command, req.hold_torque, req.speed);
 
-        res.state = ToolState::GRIPPER_STATE_CLOSE;
+        _toolState->setState(ToolState::GRIPPER_STATE_CLOSE);
         ROS_DEBUG("Closed !");
+
+        res.state = _toolState->getState();
     }
 
     return true;
@@ -501,39 +471,42 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::ToolCommand
     res.state = ToolState::TOOL_STATE_WRONG_ID;
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
+    if (_toolState)
     {
-        // to be put in tool state
-        auto pull_air_velocity = static_cast<uint32_t>(req.speed);
-        auto pull_air_position = static_cast<uint32_t>(req.position);
-        int pull_air_hold_torque = req.hold_torque;
-        int pull_air_max_torque = req.max_torque;
-        // set vacuum pump pos, vel and torque
-        if (_ttl_interface)
-        {
-            _toolCommand(pull_air_position, pull_air_max_torque, pull_air_velocity);
+      if (_toolState->isValid() && req.id == _toolState->getId())
+      {
+          // to be put in tool state
+          auto pull_air_velocity = static_cast<uint32_t>(req.speed);
+          auto pull_air_position = static_cast<uint32_t>(req.position);
+          int pull_air_hold_torque = req.hold_torque;
+          int pull_air_max_torque = req.max_torque;
+          // set vacuum pump pos, vel and torque
+          if (_ttl_interface)
+          {
+              _toolCommand(pull_air_position, pull_air_max_torque, pull_air_velocity);
 
-            double seconds_to_wait = 1;
-            if (EHardwareType::XL320 == _toolState->getHardwareType())
-            {
-                // calculate close duration
-                // cc to be removed => acknoledge instead
-                auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-                assert(dxl_speed != 0.0);
+              double seconds_to_wait = 1;
+              if (EHardwareType::XL320 == _toolState->getHardwareType())
+              {
+                  // calculate close duration
+                  // cc to be removed => acknoledge instead
+                  auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+                  assert(dxl_speed != 0.0);
 
-                // position
-                double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-                seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
-            }
-            ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
+                  // position
+                  double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
+                  seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
+              }
+              ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
-            ros::Duration(seconds_to_wait).sleep();
+              ros::Duration(seconds_to_wait).sleep();
 
-            // set hold torque
-            _toolCommand(pull_air_position, pull_air_hold_torque, pull_air_velocity);
-        }
-
-        res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
+              // set hold torque
+              _toolCommand(pull_air_position, pull_air_hold_torque, pull_air_velocity);
+              _toolState->setState(ToolState::VACUUM_PUMP_STATE_PULLED);
+          }
+      }
+      res.state = _toolState->getState();
     }
 
     return true;
@@ -552,36 +525,42 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::ToolComman
     res.state = ToolState::TOOL_STATE_WRONG_ID;
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
+    if (_toolState)
     {
-        // to be defined in the toolstate
-        auto push_air_velocity = static_cast<uint32_t>(req.speed);
-        auto push_air_position = static_cast<uint32_t>(req.position);
+      if (_toolState->isValid() && req.id == _toolState->getId())
+      {
+          // to be defined in the toolstate
+          auto push_air_velocity = static_cast<uint32_t>(req.speed);
+          auto push_air_position = static_cast<uint32_t>(req.position);
 
-        // set vacuum pump pos, vel and torque
-        if (_ttl_interface)
-        {
-            _toolCommand(push_air_position, req.max_torque, push_air_velocity);
+          // set vacuum pump pos, vel and torque
+          if (_ttl_interface)
+          {
+              _toolCommand(push_air_position, req.max_torque, push_air_velocity);
 
-            // cc to be removed => acknowledge instead
-            double seconds_to_wait = 1;
-            if (EHardwareType::XL320 == _toolState->getHardwareType())
-            {
-                auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-                assert(dxl_speed != 0.0);
+              // cc to be removed => acknowledge instead
+              double seconds_to_wait = 1;
+              if (EHardwareType::XL320 == _toolState->getHardwareType())
+              {
+                  auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+                  assert(dxl_speed != 0.0);
 
-                // position
-                double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-                seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
-            }
-            ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
-            ros::Duration(seconds_to_wait).sleep();
+                  // position
+                  double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
+                  seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
+              }
+              ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
+              ros::Duration(seconds_to_wait).sleep();
 
-            // set torque to 0
-            _toolCommand(push_air_position, 0, push_air_velocity);
-        }
-        res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
+              // set torque to 0
+              _toolCommand(push_air_position, 0, push_air_velocity);
+
+              _toolState->setState(ToolState::VACUUM_PUMP_STATE_PUSHED);
+          }
+      }
+      res.state = _toolState->getState();
     }
+
 
     return true;
 }
@@ -603,7 +582,6 @@ void ToolsInterfaceCore::_toolCommand(uint32_t position, int torque, uint32_t ve
         _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                             tool_id, std::initializer_list<uint32_t>{velocity}));
 
-    // cmd.setParam(req.open_max_torque);  // cc adapt niryo studio and srv for that
     // need to set max torque. It makes cmd changing speed take effect
     _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                         tool_id, std::initializer_list<uint32_t>{static_cast<uint16_t>(torque)}));
@@ -618,37 +596,79 @@ void ToolsInterfaceCore::_toolCommand(uint32_t position, int torque, uint32_t ve
  */
 void ToolsInterfaceCore::_publishToolConnection(const ros::TimerEvent&)
 {
-    std_msgs::Int32 msg;
-
     lock_guard<mutex> lck(_tool_mutex);
 
-    if (_toolState && _toolState->isValid())
-    {
-        if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
-        {
-            // try 3 times to ping tool, ttl failed to ping tool sometimes
-            if (3 == _tool_ping_failed_cnt)
-            {
-                ROS_INFO("Tools Interface - Unset Current Tools");
-                _ttl_interface->unsetTool(_toolState->getId());
-                _toolState->reset();
-                _tool_ping_failed_cnt = 0;
+    ROS_DEBUG("ToolsInterfaceCore::_publishToolConnection : publishing");
 
-                // publish message
-                pubToolId(-1, EHardwareType::UNKNOWN);
-            }
-            else
-                _tool_ping_failed_cnt++;
-        }
-        else
-        {
-            _tool_ping_failed_cnt = 0;
-        }
-    }
-    else
+    tools_interface::Tool msg;
+
+    if (_toolState)
     {
-        pubToolId(-1, EHardwareType::UNKNOWN);
+      // check that current managed tool is still connected
+      if (_toolState->isValid())
+      {
+          if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
+          {
+              // try 3 times to ping tool, ttl failed to ping tool sometimes
+              if (3 == _tool_ping_failed_cnt)
+              {
+                  ROS_INFO("Tools Interface - Unset Current Tools");
+                  _ttl_interface->unsetTool(_toolState->getId());
+
+                  // reset state
+                  _toolState->reset();
+                  _tool_ping_failed_cnt = 0;
+              }
+              else
+                  _tool_ping_failed_cnt++;
+          }
+          else
+          {
+              _tool_ping_failed_cnt = 0;
+          }
+      }
+
+    // publish message
+
+      int id = _toolState->getId();
+      EHardwareType motor_type = _toolState->getHardwareType();
+
+      msg.id = static_cast<int8_t>(id);
+      msg.position = _toolState->getPosition();
+      msg.state = _toolState->getState();
+
+      switch (motor_type)
+      {
+      case EHardwareType::STEPPER:
+          msg.motor_type = tools_interface::Tool::STEPPER;
+          break;
+      case EHardwareType::XL430:
+          msg.motor_type = tools_interface::Tool::XL430;
+          break;
+      case EHardwareType::XC430:
+          msg.motor_type = tools_interface::Tool::XC430;
+          break;
+      case EHardwareType::XM430:
+          msg.motor_type = tools_interface::Tool::XM430;
+          break;
+      case EHardwareType::XL320:
+          msg.motor_type = tools_interface::Tool::XL320;
+          break;
+      case EHardwareType::XL330:
+          msg.motor_type = tools_interface::Tool::XL330;
+          break;
+      case EHardwareType::FAKE_DXL_MOTOR:
+          msg.motor_type = tools_interface::Tool::FAKE_DXL_MOTOR;
+          break;
+      case EHardwareType::FAKE_STEPPER_MOTOR:
+          msg.motor_type = tools_interface::Tool::STEPPER;
+          break;
+      default:
+          msg.motor_type = tools_interface::Tool::NO_MOTOR;
+          break;
+      }
     }
+
+    _tool_connection_publisher.publish(msg);
 }
-
 }  // namespace tools_interface

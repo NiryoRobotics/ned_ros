@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+import os
 import rospy
 import rostest
+import shutil
+import unittest
 
 from niryo_robot_poses_handlers.test_pure_python_poses_handlers import *
 
@@ -12,13 +15,11 @@ from niryo_robot_msgs.srv import GetNameDescriptionList
 
 from niryo_robot_poses_handlers.srv import GetPose
 from niryo_robot_poses_handlers.srv import ManagePose, ManagePoseRequest
-from niryo_robot_poses_handlers.srv import GetTrajectory
-from niryo_robot_poses_handlers.srv import ManageTrajectory, ManageTrajectoryRequest
 from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses
 from niryo_robot_poses_handlers.srv import ManageWorkspace, ManageWorkspaceRequest
 
 service_timeout = 3
-position_dir = trajectory_dir = workspace_dir = None
+position_dir = workspace_dir = None
 
 
 def call_service(service_name, service_msg_type, *args):
@@ -31,7 +32,7 @@ def call_service(service_name, service_msg_type, *args):
 
 
 def clean_folders():
-    folders_list_raw = [position_dir, trajectory_dir, workspace_dir]
+    folders_list_raw = [position_dir, workspace_dir]
     folders_list = [os.path.expanduser(folder) for folder in folders_list_raw]
     for folder in folders_list:
         if os.path.isdir(folder):
@@ -124,69 +125,6 @@ class TestServicePose(TestPoseHandlerAbstract):
         self.assertEqual(self.get_pose_list(), [], "Read All Failed")
 
 
-class TestServiceTrajetory(TestPoseHandlerAbstract):
-    file_dir = trajectory_dir
-
-    @staticmethod
-    def get_trajectory_list():
-        return call_service('/niryo_robot_poses_handlers/get_trajectory_list', GetNameDescriptionList).name_list
-
-    @staticmethod
-    def get_trajectory(name):
-        ret = call_service('/niryo_robot_poses_handlers/get_trajectory', GetTrajectory, name)
-        list_p = ret.list_poses
-        list_p_raw = []
-        for p in list_p:
-            pose = [[p.position.x, p.position.y, p.position.z],
-                    [p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w]]
-            list_p_raw.append(pose)
-        return ret, list_p_raw
-
-    @staticmethod
-    def save_trajectory(name, list_poses_raw):
-        req = ManageTrajectoryRequest()
-        req.name = name
-        req.cmd = ManageTrajectoryRequest.SAVE
-        list_poses = []
-        for p in list_poses_raw:
-            point = Point(*p[0])
-            orientation = Quaternion(*p[1])
-            list_poses.append(Pose(point, orientation))
-        req.poses = list_poses
-        return call_service('/niryo_robot_poses_handlers/manage_trajectory', ManageTrajectory, req)
-
-    @staticmethod
-    def delete_trajectory(name):
-        req = ManageTrajectoryRequest()
-        req.cmd = ManageTrajectoryRequest.DELETE
-        req.name = name
-        return call_service('/niryo_robot_poses_handlers/manage_trajectory', ManageTrajectory, req)
-
-    def test_service_get_saved_traj_list(self):
-        self.assertEqual(self.get_trajectory_list(), [])
-        self.assertNotStatus(self.get_trajectory("Some Traj")[0])  # Do not exist
-        self.assertNotStatus(self.delete_trajectory("Some Traj"))  # Do not exist
-
-    def test_service_creation_traj_pos(self):
-        self.assertEqual(self.get_trajectory_list(), [])
-        list_names = []
-        poses = [[[1, 2, 3], [1, 0, 0, 0]],
-                 [[1, 2, 3], [1, 0, 0, 0]]]
-        for i in range(5):
-            name = "Test{}".format(i)
-            self.assertStatus(self.save_trajectory(name, poses))
-            ret_get_pos = self.get_trajectory(name)
-            self.assertStatus(ret_get_pos[0])
-
-            self.assertEqual(ret_get_pos[1], poses)
-
-            list_names.append(name)
-            self.assertEqual(self.get_trajectory_list(), list_names, "Read All Failed")
-        for name in list_names:
-            self.assertStatus(self.delete_trajectory(name))
-        self.assertEqual(self.get_trajectory_list(), [], "Read All Failed")
-
-
 class TestServiceWorkspace(TestPoseHandlerAbstract):
     file_dir = workspace_dir
 
@@ -269,7 +207,6 @@ if __name__ == '__main__':
         rospy.sleep(0.10)
 
     position_dir = os.path.expanduser(rospy.get_param('/niryo_robot_poses_handlers/poses_dir'))
-    trajectory_dir = os.path.expanduser(rospy.get_param('/niryo_robot_poses_handlers/trajectories_dir'))
     workspace_dir = os.path.expanduser(rospy.get_param('/niryo_robot_poses_handlers/workspace_dir'))
     # Going to execute all unittest.TestCase subclasses in the file -> Import are also concerned
     rostest.rosrun("poses_handlers", "test_poses_handlers", __name__)

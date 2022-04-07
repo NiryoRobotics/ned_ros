@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 08:13+0000\n"
+"POT-Creation-Date: 2022-03-24 14:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,12 +81,14 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
@@ -102,6 +104,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_as_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_cam
@@ -117,8 +121,10 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.led_ring
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_pose
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_sleep_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper
@@ -129,6 +135,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
@@ -158,10 +166,12 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor:12
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:11
@@ -170,9 +180,11 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_joints_shift:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints:15
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_pose:15
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose:15
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_pose:18
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose:18
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose_saved:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_sleep_pose:4
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pick_and_place:10
@@ -182,6 +194,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:4
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:9
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose:17
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points:7
@@ -214,12 +228,14 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.custom_button
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
@@ -235,6 +251,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_as_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_cam
@@ -250,8 +268,10 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.led_ring
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_pose
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_sleep_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper
@@ -262,6 +282,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
@@ -309,18 +331,21 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_cam
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_rel
@@ -333,14 +358,18 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_pose
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose_saved
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_to_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.open_gripper
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pick_and_place
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pick_from_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.place_from_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
@@ -420,7 +449,9 @@ msgid ""
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose:1 of
-msgid "Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose."
+msgid ""
+"Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, in a"
+" particular frame if defined"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose:1 of
@@ -446,7 +477,7 @@ msgstr ""
 #: of
 msgid ""
 "Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, with"
-" a linear trajectory"
+" a linear trajectory, in a particular frame if defined"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state:1
@@ -530,7 +561,7 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list:3
 #: of
-msgid "If it returns the poses descriptions"
+msgid "If True it returns the poses descriptions"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_pose_list:5
@@ -546,7 +577,7 @@ msgstr ""
 #: of
 msgid ""
 "Executes a picking from a position. If an error happens during the "
-"movement, error will be raised. A picking is described as : - going over "
+"movement, error will be raised A picking is described as : - going over "
 "the object - going down until height = z - grasping with tool - going "
 "back over the object"
 msgstr ""
@@ -555,7 +586,7 @@ msgstr ""
 #: of
 msgid ""
 "Executes a placing from a position. If an error happens during the "
-"movement, error will be raised. A placing is described as : - going over "
+"movement, error will be raised A placing is described as : - going over "
 "the place - going down until height = z - releasing the object with tool "
 "- going back over the place"
 msgstr ""
@@ -564,7 +595,7 @@ msgstr ""
 #: of
 msgid ""
 "Executes a pick and place. If an error happens during the movement, error"
-" will be raised. -> Args param is for development purposes"
+" will be raised -> Args param is for development purposes"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:5
@@ -668,6 +699,111 @@ msgid "list of trajectory name"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:70
+msgid "Dynamic frames"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:1
+#: of
+msgid "Create a dynamic frame with 3 poses (origin, x, y)"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:3
+#: of
+msgid "name of the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:5
+#: of
+msgid "description of the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:7
+#: of
+msgid "3 poses needed to create the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:1
+#: of
+msgid "Create a dynamic frame with 3 points (origin, x, y)"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:7
+#: of
+msgid "3 points needed to create the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame:1
+#: of
+msgid "Modify a dynamic frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame:5
+#: of
+msgid "new name of the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.edit_dynamic_frame:7
+#: of
+msgid "new description of the frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:1
+#: of
+msgid "Delete a dynamic frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:3
+#: of
+msgid "name of the frame to remove"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame:1
+#: of
+msgid "Get name, description and pose of a dynamic frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame:5
+#: of
+msgid "name, description, position and orientation of a frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame_list:1
+#: of
+msgid "Get list of saved dynamic frames"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame_list:3
+#: of
+msgid "list of dynamic frames name, list of description of dynamic frames"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:1
+#: of
+msgid "Move robot end of a offset in a frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:3
+#: of
+msgid "name of local frame"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:5
+#: of
+msgid "list which contains offset of x, y, z, roll, pitch, yaw"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:1
+#: of
+msgid "Move robot end of a offset by a linear movement in a frame"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:78
 msgid "Tools"
 msgstr ""
 
@@ -688,8 +824,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool:1
 #: of
 msgid ""
-"Grasps with the tool linked to tool_id. This action corresponds to - "
-"Close gripper for Grippers - Pull Air for Vacuum pump - Activate for "
+"Grasps with the tool linked to tool_id This action corresponds to - Close"
+" gripper for Grippers - Pull Air for Vacuum pump - Activate for "
 "Electromagnet"
 msgstr ""
 
@@ -702,8 +838,8 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:1
 #: of
 msgid ""
-"Releases with the tool associated to tool_id. This action corresponds to "
-"- Open gripper for Grippers - Push Air for Vacuum pump - Deactivate for "
+"Releases with the tool associated to tool_id This action corresponds to -"
+" Open gripper for Grippers - Push Air for Vacuum pump - Deactivate for "
 "Electromagnet"
 msgstr ""
 
@@ -764,7 +900,7 @@ msgid ""
 "Enables or disables the TCP function (Tool Center Point). If activation "
 "is requested, the last recorded TCP value will be applied. The default "
 "value depends on the gripper equipped. If deactivation is requested, the "
-"TCP will be coincident with the tool_link."
+"TCP will be coincident with the tool_link"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:6 of
@@ -774,16 +910,16 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp:1 of
 msgid ""
 "Activates the TCP function (Tool Center Point) and defines the "
-"transformation between the tool_link frame and the TCP frame."
+"transformation between the tool_link frame and the TCP frame"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:1 of
 msgid ""
 "Resets the TCP (Tool Center Point) transformation. The TCP will be reset "
-"according to the tool equipped."
+"according to the tool equipped"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:80
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
 msgid "Hardware"
 msgstr ""
 
@@ -832,7 +968,7 @@ msgstr ""
 msgid "Infos contains in a HardwareStatus object (see niryo_robot_msgs)"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:96
 msgid "Conveyor Belt"
 msgstr ""
 
@@ -848,7 +984,7 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.unset_conveyor:1
 #: of
-msgid "Removes specific conveyor."
+msgid "Removes specific conveyor"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.unset_conveyor:3
@@ -883,7 +1019,7 @@ msgstr ""
 msgid "Target direction"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:95
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:103
 msgid "Vision"
 msgstr ""
 
@@ -1099,11 +1235,11 @@ msgstr ""
 msgid "list of workspaces name"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:106
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:114
 msgid "Sound"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:108
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:116
 msgid ""
 "For more function, please refer to: :ref:`Sound API "
 "functions<source/stack/high_level/niryo_robot_sound:Sound API functions>`"
@@ -1123,11 +1259,11 @@ msgstr ""
 msgid "SoundRosWrapper API instance"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:115
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:123
 msgid "Led Ring"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:117
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:125
 msgid ""
 "For more function, please refer to: :ref:`Led Ring API "
 "functions<source/stack/high_level/niryo_robot_led_ring:Led Ring API "
@@ -1142,7 +1278,7 @@ msgstr ""
 msgid "LedRingRosWrapper API instance"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:124
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:132
 msgid "Custom Button"
 msgstr ""
 
@@ -1205,7 +1341,7 @@ msgid ""
 "if no press is detected after the timeout duration."
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:138
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:146
 msgid "Enums"
 msgstr ""
 
@@ -1924,5 +2060,129 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Manage the custom button"
+#~ msgstr ""
+
+#~ msgid "Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose."
+#~ msgstr ""
+
+#~ msgid "is defined, the frame to move in"
+#~ msgstr ""
+
+#~ msgid ":type frame : str :return: status, message :rtype: (int, str)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, in a frame if defined."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory, in "
+#~ "a frame if defined"
+#~ msgstr ""
+
+#~ msgid "Create a dynamic frame"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":param frame_name : name of local "
+#~ "frame :type frame_name: str :param "
+#~ "offset: list which contains offset of"
+#~ " x, y, z, roll, pitch, yaw "
+#~ ":type offset: list[float] :return: status, "
+#~ "message :rtype: (int, str)"
+#~ msgstr ""
+
+#~ msgid "Frames"
+#~ msgstr ""
+
+#~ msgid "pose of a frame"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose,  in a particular frame if "
+#~ "defined."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory,  in "
+#~ "a particular frame if defined"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Moves robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, in a particular frame if "
+#~ "defined."
+#~ msgstr ""
+
+#~ msgid "If ''True'' it returns the poses descriptions"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a picking from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "picking is described as : - going"
+#~ " over the object - going down "
+#~ "until height = z - grasping with"
+#~ " tool - going back over the "
+#~ "object"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a placing from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "placing is described as : - going"
+#~ " over the place - going down "
+#~ "until height = z - releasing the"
+#~ " object with tool - going back "
+#~ "over the place"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Executes a pick and place. If an"
+#~ " error happens during the movement, "
+#~ "error will be raised. -> Args "
+#~ "param is for development purposes"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Grasps with the tool linked to "
+#~ "tool_id. This action corresponds to -"
+#~ " Close gripper for Grippers - Pull"
+#~ " Air for Vacuum pump - Activate "
+#~ "for Electromagnet"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Releases with the tool associated to "
+#~ "tool_id. This action corresponds to -"
+#~ " Open gripper for Grippers - Push "
+#~ "Air for Vacuum pump - Deactivate "
+#~ "for Electromagnet"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Resets the TCP (Tool Center Point) "
+#~ "transformation. The TCP will be reset"
+#~ " according to the tool equipped."
+#~ msgstr ""
+
+#~ msgid "Removes specific conveyor."
 #~ msgstr ""
 

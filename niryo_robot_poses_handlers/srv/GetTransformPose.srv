@@ -1,0 +1,10 @@
+string source_frame
+string local_frame
+
+geometry_msgs/Point position
+niryo_robot_msgs/RPY rpy
+---
+int32 status
+string message
+geometry_msgs/Point position
+niryo_robot_msgs/RPY rpy

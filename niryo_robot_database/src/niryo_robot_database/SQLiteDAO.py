@@ -1,8 +1,10 @@
 import sqlite3
+from threading import Lock
 
 
 class SQLiteDAO:
     def __init__(self, db_path):
+        self.__lock = Lock()
         self.__con = sqlite3.connect(db_path, check_same_thread=False)
         self.__con.row_factory = self.dict_factory
         self.__cursor = self.__con.cursor()
@@ -29,6 +31,7 @@ class SQLiteDAO:
         return self.__cursor.lastrowid
 
     def execute(self, *args, **kwargs):
-        exec_result = self.__cursor.execute(*args, **kwargs)
-        self.__con.commit()
+        with self.__lock:
+            exec_result = self.__cursor.execute(*args, **kwargs)
+            self.__con.commit()
         return exec_result

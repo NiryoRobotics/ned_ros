@@ -41,7 +41,7 @@ class SoundDatabase:
         self.__calibration_sound = rospy.get_param("~robot_sounds/calibration_sound")
         self.__warning_sound = rospy.get_param("~robot_sounds/warn_sound")
         self.__reboot_sound = rospy.get_param("~robot_sounds/reboot_sound")
-
+        self.__learning_trajectory_sound = rospy.get_param("~robot_sounds/learning_trajectory_sound")
         self.__robot_sounds = {}
         self.__user_sounds = {}
 
@@ -54,7 +54,8 @@ class SoundDatabase:
         self.__publish_sounds()
 
         # - Services
-        rospy.Service('/niryo_robot_sound/manage', ManageSound, self.__callback_manage_sound)
+        rospy.Service('/niryo_robot_sound/manage', ManageSound,
+                      self.__callback_manage_sound)
 
     def __call__(self, *args, **kwargs):
         if len(args) >= 1:
@@ -101,6 +102,10 @@ class SoundDatabase:
     @property
     def warning_sound(self):
         return self.__robot_sounds[self.__warning_sound]
+
+    @property
+    def learning_trajectory_sound(self):
+        return self.__robot_sounds[self.__learning_trajectory_sound]
 
     @property
     def state_sound_directory_path(self):
@@ -155,8 +160,11 @@ class SoundDatabase:
             return CommandStatus.FAILURE, "Failure to write the {} sound, this name is protected".format(sound_name)
 
         # Split the sound_data to keep just the encoded data that we need
+        try:
+            sound_data_list = sound_data.split("base64,")[1]
+        except IndexError:
+            sound_data_list = sound_data
 
-        sound_data_list = sound_data.split("base64,")[1]
         # delete the padding to be able to decode the sound_data properly
         missing_padding = len(sound_data_list) % 4
         if missing_padding != 0:

@@ -46,6 +46,9 @@ class ToolState : public DxlMotorState
         std::string getToolName() const;
         int getLedState() const;
 
+        int getState() const;
+        void setState(int s);
+
         bool isConnected() const;
 
         // DxlMotorState interface
@@ -67,9 +70,32 @@ class ToolState : public DxlMotorState
     protected:
         std::string _tool_name;
 
-        bool _connected{true};
+        // state of the tool (based on public static constexpr state above)
+        int _state{TOOL_STATE_PING_ERROR};
+
+        bool _connected{false};
         int _led_state{-1};
 };
+
+/**
+ * @brief getState
+ * @return
+ */
+inline
+int ToolState::getState() const
+{
+  return _state;
+}
+
+/**
+ * @brief setState
+ * @param s
+ */
+inline
+void ToolState::setState(int s)
+{
+  _state = s;
+}
 
 /**
  * @brief ToolState::getName

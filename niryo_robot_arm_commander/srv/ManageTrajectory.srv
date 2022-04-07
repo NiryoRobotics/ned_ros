@@ -1,0 +1,19 @@
+int32 cmd
+int32 DELETE_ALL = -2
+int32 DELETE = -1
+int32 SAVE = 1
+int32 SAVE_LAST_LEARNED = 2
+int32 UPDATE = 3
+int32 EXECUTE = 4
+int32 EXECUTE_REGISTERED = 5
+int32 GO_TO_FIRST_POINT = 6
+
+string name
+string new_name
+string description
+
+trajectory_msgs/JointTrajectory trajectory
+---
+int32 status
+string message
+

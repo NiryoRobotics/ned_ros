@@ -1,4 +1,4 @@
-Examples: tool action
+Examples: Tool action
 ========================
 
 This page shows how to control Ned's tools via the Python ROS Wrapper.

@@ -19,6 +19,7 @@
         <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_workspaces/"  />
         <param name="poses_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_poses/"/>
         <param name="trajectories_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_trajectories/"/>
+        <param name="dynamic_frame_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_dynamic_frame/"/>
     </node>
 
 </launch>

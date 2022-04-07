@@ -26,7 +26,9 @@ add_service_files(
   GetFK.srv
   GetIK.srv
   GetJointLimits.srv
+  GetTrajectory.srv
   JogShift.srv
+  ManageTrajectory.srv
 )
 
 add_action_files(
@@ -104,6 +106,7 @@ catkin_install_python(PROGRAMS
     scripts/robot_commander_node.py
     scripts/trajectories_executor.py
     scripts/transform_handler.py
+    scripts/trajectory_handler.py
     scripts/robot_state_publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

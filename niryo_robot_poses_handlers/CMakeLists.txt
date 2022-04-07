@@ -19,21 +19,22 @@ find_package(catkin REQUIRED
 
 add_message_files(
   FILES
+  DynamicFrame.msg
   NiryoPose.msg
-  Trajectory.msg
   Workspace.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
+  GetDynamicFrame.srv
   GetPose.srv
   GetTargetPose.srv
-  GetTrajectory.srv
+  GetTransformPose.srv
   GetWorkspaceRatio.srv
   GetWorkspaceRobotPoses.srv
+  ManageDynamicFrame.srv
   ManagePose.srv
-  ManageTrajectory.srv
   ManageWorkspace.srv
 )
 

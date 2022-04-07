@@ -1,4 +1,4 @@
-image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.1:amd64
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.1.0:amd64
 
 variables:
   ROS_LANG_DISABLE: genlisp:geneus:gennodejs
@@ -89,7 +89,7 @@ catkin_make_amd:
     CATKIN_PROFILE_NAME: ${GITLAB_CATKIN_PROFILE_NAME}
 
 build_arm_niryo_one:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.1:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.1.0:arm64
   extends: .abstract_catkin_build
   variables:
     CATKIN_PROFILE_NAME: release_one
@@ -99,7 +99,7 @@ build_arm_niryo_one:
       allow_failure: true
 
 build_arm_ned:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.1:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.1.0:arm64
   extends: .abstract_catkin_build
   variables:
     CATKIN_PROFILE_NAME: release_ned
@@ -109,7 +109,7 @@ build_arm_ned:
       allow_failure: true
 
 build_arm_ned2:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.0.1:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v4.1.0:arm64
   extends: .abstract_catkin_build
   variables:
     CATKIN_PROFILE_NAME: release_ned2

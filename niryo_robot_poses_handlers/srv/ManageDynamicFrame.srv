@@ -1,0 +1,12 @@
+int32 SAVE = 1
+int32 SAVE_WITH_POINTS = 2
+int32 EDIT = 3
+int32 DELETE = -1
+
+int32 cmd
+
+niryo_robot_poses_handlers/DynamicFrame dynamic_frame
+
+---
+int32 status
+string message
