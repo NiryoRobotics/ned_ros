@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 14:50+0000\n"
+"POT-Creation-Date: 2022-04-12 09:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,7 +99,6 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_camera_intrinsics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_compressed_image
@@ -182,7 +181,6 @@ msgstr "Renvoie"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:11
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_joints_shift:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:5
@@ -246,7 +244,6 @@ msgstr "Statut, message"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_camera_intrinsics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_compressed_image
@@ -354,7 +351,6 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_dynamic_frame
@@ -665,10 +661,15 @@ msgstr "si la trajectoire n'existe pas"
 msgid "list of [x, y, z, qx, qy, qz, qw]"
 msgstr "Liste de [x, y, z, qx, qy, qz, qw]"
 
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved:1
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list:1
 #: of
-msgid "Executes trajectory saved in Robot internal storage"
-msgstr "Réalise une trajectoire sauvegardées dans le robot"
+msgid "Asks the pose trajectory service which trajectories are available"
+msgstr "Renvoie la liste des trajectoires sauvegardées"
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list:3
+#: of
+msgid "list of trajectory name"
+msgstr "Liste des noms des trajectoires"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:1
 #: of
@@ -676,7 +677,6 @@ msgid "Executes trajectory from a list of pose"
 msgstr "Réalise un trajectoire à partir d'une liste de position"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:3
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
 #: of
 msgid "list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]"
 msgstr "Liste de [x, y, z, qx, qy, qz, qw] ou liste de [x, y, z, roll, pitch, yaw]"
@@ -716,6 +716,11 @@ msgstr "Sauvegarde de la trajectoire"
 msgid "name which will have the trajectory"
 msgstr "Nom de la trajectoire"
 
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
+#: of
+msgid "list of trajectory_msgs/JointTrajectoryPoint"
+msgstr "Liste des trajectory_msgs/JointTrajectoryPoint"
+
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory:1
 #: of
 msgid "Sends delete command to the trajectory manager service"
@@ -725,16 +730,6 @@ msgstr "Supprime une trajectoire"
 #: of
 msgid "name"
 msgstr "nom"
-
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list:1
-#: of
-msgid "Asks the pose trajectory service which trajectories are available"
-msgstr "Renvoie la liste des trajectoires sauvegardées"
-
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_saved_trajectory_list:3
-#: of
-msgid "list of trajectory name"
-msgstr "Liste des noms des trajectoires"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:70
 msgid "Dynamic frames"
@@ -1519,4 +1514,7 @@ msgstr "ConveyorID afin de contrôler les convoyeurs avec une interface CAN"
 
 #~ msgid "pose of a frame"
 #~ msgstr "nom du repère"
+
+#~ msgid "Executes trajectory saved in Robot internal storage"
+#~ msgstr "Réalise une trajectoire sauvegardées dans le robot"
 
