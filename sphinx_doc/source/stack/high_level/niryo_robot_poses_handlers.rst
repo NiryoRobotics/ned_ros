@@ -65,8 +65,9 @@ Parameters - Poses handlers
       -  Path to the Grip storage mother folder
    *  -  ``poses_dir``
       -  Path to the Poses storage mother folder
-   *  -  ``trajectories_dir``
-      -  Path to the Trajectory storage mother folder
+   *  -  ``dynamic_frame_dir``
+      -  Path to the dynamic frames storage mother folder
+
 
 Services - Poses handlers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -108,15 +109,18 @@ Services - Poses handlers
       -  :ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`
       -  Get list of poses name & description
 
-   *  -  ``manage_trajectory``
-      -  :ref:`ManageTrajectory<source/stack/high_level/niryo_robot_poses_handlers:ManageTrajectory (Service)>`
-      -  Save/Delete a Trajectory
-   *  -  ``get_trajectory``
-      -  :ref:`GetTrajectory<source/stack/high_level/niryo_robot_poses_handlers:GetTrajectory (Service)>`
-      -  Get Trajectory
-   *  -  ``get_trajectory_list``
+   *  -  ``manage_dynamic_frame``
+      -  :ref:`ManageDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:ManageDynamicFrame (Service)>`
+      -  Save/Edit/Delete a dynamic frame
+   *  -  ``get_dynamic_frame_list``
       -  :ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`
-      -  Get list of trajectories name & description
+      -  Get list of dynamic frame
+   *  -  ``get_dynamic_frame``
+      -  :ref:`GetDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:GetDynamicFrame (Service)>`
+      -  Get dynamic frame
+   *  -  ``get_transform_pose``
+      -  :ref:`GetTransformPose<source/stack/high_level/niryo_robot_poses_handlers:GetTransformPose (Service)>`
+      -  Get transform between two frames
 
 
 All these services are available as soon as the node is started.
@@ -133,6 +137,13 @@ Dependencies - Poses handlers
 Services & messages files - Poses handlers
 ----------------------------------------------
 
+GetDynamicFrame (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetDynamicFrame.srv
+   :language: rostype
+
+
 GetPose (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -147,10 +158,10 @@ GetTargetPose (Service)
    :language: rostype
 
 
-GetTrajectory (Service)
+GetTransformPose (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetTrajectory.srv
+.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetTransformPose.srv
    :language: rostype
 
 
@@ -168,17 +179,17 @@ GetWorkspaceRobotPoses (Service)
    :language: rostype
 
 
+ManageDynamicFrame (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/ManageDynamicFrame.srv
+   :language: rostype
+
+
 ManagePose (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/ManagePose.srv
-   :language: rostype
-
-
-ManageTrajectory (Service)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/ManageTrajectory.srv
    :language: rostype
 
 
@@ -193,13 +204,6 @@ NiryoPose (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_poses_handlers/msg/NiryoPose.msg
-   :language: rostype
-
-
-Trajectory (Message)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../../niryo_robot_poses_handlers/msg/Trajectory.msg
    :language: rostype
 
 

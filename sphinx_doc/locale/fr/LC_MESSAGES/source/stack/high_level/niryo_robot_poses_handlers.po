@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 12:19+0100\n"
+"POT-Creation-Date: 2022-04-12 09:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,8 +100,8 @@ msgid ""
 "interface because it would add an extra layer of complexity that is not "
 "really necessary for the moment."
 msgstr ""
-"Actuellement, la notion de prise ne fait pas partie de l'interface"
-"python / tcp / Blockly car cela nécessiterait une couche de difficultés "
+"Actuellement, la notion de prise ne fait pas partie de l'interfacepython "
+"/ tcp / Blockly car cela nécessiterait une couche de difficultés "
 "supplémentaire qui n'est, pour le moment, pas nécessaire."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:36
@@ -113,8 +113,8 @@ msgid ""
 msgstr ""
 "Toutefois, nous proposons une prise par défaut pour tous les outils qui "
 "sont automatiquement en fonction de l'ID de l'outil. Toutefois, tout est "
-"prêt pour vous permettre de définir votre propre prise sur mesure, pour les"
-" outils personnalisés ou pour des position de saisie particulières."
+"prêt pour vous permettre de définir votre propre prise sur mesure, pour "
+"les outils personnalisés ou pour des position de saisie particulières."
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:41
 msgid "The vision pick loop"
@@ -161,12 +161,12 @@ msgid "Poses Handlers' Parameters"
 msgstr "Les paramètres poses handler"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:60
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:80
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:81
 msgid "Name"
 msgstr "Nom"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:61
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:82
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:83
 msgid "Description"
 msgstr "Description"
 
@@ -195,30 +195,30 @@ msgid "Path to the Poses storage mother folder"
 msgstr "Chemin vers le dossier mère de stockage des positions"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:68
-msgid "``trajectories_dir``"
-msgstr "``trajectories_dir``"
+msgid "``dynamic_frame_dir``"
+msgstr "``dynamic_frame_dir``"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:69
-msgid "Path to the Trajectory storage mother folder"
-msgstr "Chemin vers le dossier mère de stockage des trajectoires"
+msgid "Path to the dynamic frames storage mother folder"
+msgstr "Chemin vers le dossier mère de stockage des repères dynamiques"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:72
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:73
 msgid "Services - Poses handlers"
 msgstr "Les services - Poses handlers"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:74
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:75
 msgid "Poses Handlers' Services"
 msgstr "Les services poses handlers"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:81
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:82
 msgid "Message Type"
 msgstr "Type du message"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:84
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:85
 msgid "``manage_workspace``"
 msgstr "``manage_workspace``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:85
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:86
 msgid ""
 ":ref:`ManageWorkspace<source/stack/high_level/niryo_robot_poses_handlers:ManageWorkspace"
 " (Service)>`"
@@ -226,15 +226,15 @@ msgstr ""
 ":ref:`ManageWorkspace<source/stack/high_level/niryo_robot_poses_handlers:ManageWorkspace"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:86
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:87
 msgid "Save/Delete a workspace"
 msgstr "Sauvegarder/Supprimer un espace de travail"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:87
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:88
 msgid "``get_workspace_ratio``"
 msgstr "``get_workspace_ratio``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:88
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:89
 msgid ""
 ":ref:`GetWorkspaceRatio<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRatio"
 " (Service)>`"
@@ -242,29 +242,29 @@ msgstr ""
 ":ref:`GetWorkspaceRatio<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRatio"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:89
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:90
 msgid "Get ratio of a workspace"
 msgstr "Obtenir le ratio d'un espace de travail"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:90
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:91
 msgid "``get_workspace_list``"
 msgstr "``get_workspace_list``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:91
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:108
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:118
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:92
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:109
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:116
 msgid ":ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`"
 msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:GetNameDescriptionList`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:92
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:93
 msgid "Get list of workspaces name & description"
 msgstr "Obtenir le nom et la description de la liste des espaces de travail"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:93
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:94
 msgid "``get_workspace_poses``"
 msgstr "``get_workspace_poses``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:94
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:95
 msgid ""
 ":ref:`GetWorkspaceRobotPoses<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
 " (Service)>`"
@@ -272,15 +272,15 @@ msgstr ""
 ":ref:`GetWorkspaceRobotPoses<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:95
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:96
 msgid "Get workspace's robot poses"
 msgstr "Obtenir les positions de l'espace de travail du robot"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:97
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:98
 msgid "``get_target_pose``"
 msgstr "``get_target_pose``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:98
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:99
 msgid ""
 ":ref:`GetTargetPose<source/stack/high_level/niryo_robot_poses_handlers:GetTargetPose"
 " (Service)>`"
@@ -288,15 +288,15 @@ msgstr ""
 ":ref:`GetTargetPose<source/stack/high_level/niryo_robot_poses_handlers:GetTargetPose"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:99
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:100
 msgid "Get saved programs name"
 msgstr "Obtenir le nom des programmes enregistrés"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:101
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:102
 msgid "``manage_pose``"
 msgstr "``manage_pose``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:102
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:103
 msgid ""
 ":ref:`ManagePose<source/stack/high_level/niryo_robot_poses_handlers:ManagePose"
 " (Service)>`"
@@ -304,15 +304,15 @@ msgstr ""
 ":ref:`ManagePose<source/stack/high_level/niryo_robot_poses_handlers:ManagePose"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:103
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:104
 msgid "Save/Delete a Pose"
 msgstr "Sauvegarder/Supprimer une position"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:104
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:105
 msgid "``get_pose``"
 msgstr "``get_pose``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:105
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:106
 msgid ""
 ":ref:`GetPose<source/stack/high_level/niryo_robot_poses_handlers:GetPose "
 "(Service)>`"
@@ -320,297 +320,142 @@ msgstr ""
 ":ref:`GetPose<source/stack/high_level/niryo_robot_poses_handlers:GetPose "
 "(Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:106
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:107
 msgid "Get Pose"
 msgstr "Obtenir une position"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:107
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:108
 msgid "``get_pose_list``"
 msgstr "``get_pose_list``"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:109
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:110
 msgid "Get list of poses name & description"
 msgstr "Obtenir la liste des noms et des descriptions des positions"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:111
-msgid "``manage_trajectory``"
-msgstr "``manage_trajectory``"
-
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:112
-msgid ""
-":ref:`ManageTrajectory<source/stack/high_level/niryo_robot_poses_handlers:ManageTrajectory"
-" (Service)>`"
-msgstr ""
-":ref:`ManageTrajectory<source/stack/high_level/niryo_robot_poses_handlers:ManageTrajectory"
-" (Service)>`"
+msgid "``manage_dynamic_frame``"
+msgstr "``manage_dynamic_frame``"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:113
-msgid "Save/Delete a Trajectory"
-msgstr "Sauvegarder/Supprimer une trajectoire"
-
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:114
-msgid "``get_trajectory``"
-msgstr "``get_trajectory``"
-
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:115
 msgid ""
-":ref:`GetTrajectory<source/stack/high_level/niryo_robot_poses_handlers:GetTrajectory"
+":ref:`ManageDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:ManageDynamicFrame"
 " (Service)>`"
 msgstr ""
-":ref:`GetTrajectory<source/stack/high_level/niryo_robot_poses_handlers:GetTrajectory"
+":ref:`ManageDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:ManageDynamicFrame"
 " (Service)>`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:116
-msgid "Get Trajectory"
-msgstr "Obtenir une trajectoire"
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:114
+msgid "Save/Edit/Delete a dynamic frame"
+msgstr "Sauvegarde/Modifie/Supprime un repère dynamique"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:115
+msgid "``get_dynamic_frame_list``"
+msgstr "``get_dynamic_frame_list``"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:117
-msgid "``get_trajectory_list``"
-msgstr "``get_trajectory_list``"
+msgid "Get list of dynamic frame"
+msgstr "Obtient la liste des repères dynamiques"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:118
+msgid "``get_dynamic_frame``"
+msgstr "``get_dynamic_frame``"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:119
-msgid "Get list of trajectories name & description"
-msgstr "Obtenir la liste des noms et descriptions des trajectoires"
+msgid ""
+":ref:`GetDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:GetDynamicFrame"
+" (Service)>`"
+msgstr ""
+":ref:`GetDynamicFrame<source/stack/high_level/niryo_robot_poses_handlers:GetDynamicFrame"
+" (Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:120
+msgid "Get dynamic frame"
+msgstr "Obtient le repère dynamique"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:121
+msgid "``get_transform_pose``"
+msgstr "``get_transform_pose``"
 
 #: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:122
+msgid ""
+":ref:`GetTransformPose<source/stack/high_level/niryo_robot_poses_handlers:GetTransformPose"
+" (Service)>`"
+msgstr ""
+":ref:`GetTransformPose<source/stack/high_level/niryo_robot_poses_handlers:GetTransformPose"
+" (Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:123
+msgid "Get transform between two frames"
+msgstr "Obtient la transformation entre deux repères"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:126
 msgid "All these services are available as soon as the node is started."
 msgstr "Tous ces services sont disponibles dès le démarrage du nœud."
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:125
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:129
 msgid "Dependencies - Poses handlers"
 msgstr "Dépendances - Poses handlers"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:127
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:131
 msgid ":msgs_index:`geometry_msgs`"
 msgstr ":msgs_index:`geometry_msgs`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:128
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:132
 msgid ":msgs_index:`moveit_msgs`"
 msgstr ":msgs_index:`moveit_msgs`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:129
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:133
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ":doc:`niryo_robot_msgs`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:130
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:134
 msgid ":wiki_ros:`tf`"
 msgstr ":wiki_ros:`tf`"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:134
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:138
 msgid "Services & messages files - Poses handlers"
 msgstr "Fichiers de services et de messages - Poses handlers"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:137
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:141
+msgid "GetDynamicFrame (Service)"
+msgstr "GetDynamicFrame (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:148
 msgid "GetPose (Service)"
 msgstr "GetPose (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:144
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:155
 msgid "GetTargetPose (Service)"
 msgstr "GetTargetPose (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:151
-msgid "GetTrajectory (Service)"
-msgstr "GetTrajectory (Service)"
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:162
+msgid "GetTransformPose (Service)"
+msgstr "GetTransformPose (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:158
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:169
 msgid "GetWorkspaceRatio (Service)"
 msgstr "GetWorkspaceRatio (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:165
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:176
 msgid "GetWorkspaceRobotPoses (Service)"
 msgstr "GetWorkspaceRobotPoses (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:172
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:183
+msgid "ManageDynamicFrame (Service)"
+msgstr "ManageDynamicFrame (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:190
 msgid "ManagePose (Service)"
 msgstr "ManagePose (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:179
-msgid "ManageTrajectory (Service)"
-msgstr "ManageTrajectory (Service)"
-
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:186
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:197
 msgid "ManageWorkspace (Service)"
 msgstr "ManageWorkspace (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:193
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:204
 msgid "NiryoPose (Message)"
 msgstr "NiryoPose (Message)"
 
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:200
-msgid "Trajectory (Message)"
-msgstr "Trajectory (Message)"
-
-#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:207
+#: ../../source/stack/high_level/niryo_robot_poses_handlers.rst:211
 msgid "Workspace (Message)"
 msgstr "Workspace (Message)"
-
-#~ msgid "Niryo Robot Poses Handlers Package"
-#~ msgstr ""
-
-#~ msgid "Poses Handlers Node"
-#~ msgstr ""
-
-#~ msgid "Description - Poses Handlers"
-#~ msgstr ""
-
-#~ msgid "The namespace used is : |namespace_emphasize|"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A workspace is defined by 4 "
-#~ "markers that form a rectangle. With "
-#~ "the help of the robot's calibration "
-#~ "tip, the marker positions are learnt."
-#~ " The camera returns poses (x, y, "
-#~ "yaw) relative to the workspace. We "
-#~ "can then infer the absolute object "
-#~ "pose in robot coordinates."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Camera detects object relative to "
-#~ "markers and sends x<sub>rel</sub>, "
-#~ "y<sub>rel</sub>, yaw<sub>rel</sub>"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The object is placed on the "
-#~ "workspace, revealing the object pose in"
-#~ " robot coordinates x, y, z, roll, "
-#~ "pitch, yaw"
-#~ msgstr ""
-
-#~ msgid "Poses & Trajectories"
-#~ msgstr ""
-
-#~ msgid "List of Poses"
-#~ msgstr ""
-
-#~ msgid "Parameters - Poses Handlers"
-#~ msgstr ""
-
-#~ msgid "Services - Poses Handlers"
-#~ msgstr ""
-
-#~ msgid "All these services are available as soon as the node is started"
-#~ msgstr ""
-
-#~ msgid "Dependencies - Poses Handlers"
-#~ msgstr ""
-
-#~ msgid "Services & Messages files - Poses Handlers"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Camera detects object relative to "
-#~ "markers and sends x<sub>rel</sub>, "
-#~ "y<sub>rel</sub>, yaw<sub>rel</sub>."
-#~ msgstr ""
-#~ "La caméra détecte l'objet par rapport"
-#~ " aux marqueurs et envoie x<sub>rel</sub>,"
-#~ " y<sub>rel</sub>, yaw<sub>rel</sub>."
-
-#~ msgid ""
-#~ "Camera detects object relative to "
-#~ "markers and sends .. raw:: html "
-#~ "<embed> x<sub>rel</sub>, y<sub>rel</sub>, "
-#~ "yaw<sub>rel</sub> </embed> ."
-#~ msgstr ""
-#~ "La caméra détecte l'objet par rapport"
-#~ " aux marqueurs et envoie x<sub>rel</sub>,"
-#~ " y<sub>rel</sub>, yaw<sub>rel</sub>."
-
-#~ msgid "Camera detects object relative to markers and sends"
-#~ msgstr ""
-
-#~ msgid "1. Camera detects object relative to markers and sends .. raw:: html"
-#~ msgstr ""
-
-#~ msgid "<embed>"
-#~ msgstr ""
-
-#~ msgid "x<sub>rel</sub>, y<sub>rel</sub>, yaw<sub>rel</sub>."
-#~ msgstr ""
-
-#~ msgid ":ref:`ManageWorkspace<ManageWorkspace (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetWorkspaceRatio<GetWorkspaceRatio (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetNameDescriptionList`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetTargetPose<GetTargetPose (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`ManagePose<ManagePose (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetPose<GetPose (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`ManageTrajectory<ManageTrajectory (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetTrajectory<GetTrajectory (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
-#~ "Robot Messages Package>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
-#~ msgstr ""
-
-#~ msgid ":doc:`ros/niryo_robot_msgs`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`ManageWorkspace<source/ros/niryo_robot_poses_handlers:ManageWorkspace"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`GetWorkspaceRatio<source/ros/niryo_robot_poses_handlers:GetWorkspaceRatio"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`GetWorkspaceRobotPoses<source/ros/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`GetTargetPose<source/ros/niryo_robot_poses_handlers:GetTargetPose"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`ManagePose<source/ros/niryo_robot_poses_handlers:ManagePose "
-#~ "(Service)>`"
-#~ msgstr ""
-
-#~ msgid ":ref:`GetPose<source/ros/niryo_robot_poses_handlers:GetPose (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`ManageTrajectory<source/ros/niryo_robot_poses_handlers:ManageTrajectory"
-#~ " (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`GetTrajectory<source/ros/niryo_robot_poses_handlers:GetTrajectory"
-#~ " (Service)>`"
-#~ msgstr ""
-

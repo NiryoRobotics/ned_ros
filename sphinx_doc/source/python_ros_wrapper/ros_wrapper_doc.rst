@@ -62,7 +62,7 @@ Trajectories
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper
-    :members: execute_trajectory_from_poses, execute_trajectory_from_poses_and_joints, execute_trajectory_saved, get_trajectory_saved,
+    :members: execute_trajectory_from_poses, execute_trajectory_from_poses_and_joints, get_trajectory_saved,
               save_trajectory, delete_trajectory, get_saved_trajectory_list
     :member-order: bysource
 
