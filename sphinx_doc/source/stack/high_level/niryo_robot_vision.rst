@@ -100,6 +100,9 @@ Services - Vision
    *  -  ``set_saturation``
       -  :ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter (Service)>`
       -  Sets the saturation of the video stream
+   *  -  ``visualization``
+      -  :ref:`Visualization<source/stack/high_level/niryo_robot_vision:Visualization (Service)>`
+      -  Add visuals markers of objects detected by the vision kit to rviz
 
 
 All these services are available as soon as the node is started.
@@ -152,10 +155,18 @@ TakePicture (Service)
 .. literalinclude:: ../../../../niryo_robot_vision/srv/TakePicture.srv
    :language: rostype
 
+
 SetImageParameter (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_vision/srv/SetImageParameter.srv
+   :language: rostype
+
+
+Visualization (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_vision/srv/Visualization.srv
    :language: rostype
 
 

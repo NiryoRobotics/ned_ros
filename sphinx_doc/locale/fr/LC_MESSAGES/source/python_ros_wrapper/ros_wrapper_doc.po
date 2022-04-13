@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-12 14:10+0000\n"
+"POT-Creation-Date: 2022-04-13 14:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -172,7 +172,7 @@ msgstr "Renvoie"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.control_conveyor:12
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.deactivate_electromagnet:5
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_pose:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:5
@@ -199,8 +199,8 @@ msgstr "Renvoie"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:4
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:9
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:9
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:11
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:11
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose:17
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points:7
@@ -758,6 +758,13 @@ msgstr "description du repère"
 #: of
 msgid "3 poses needed to create the frame"
 msgstr "3 positions nécessaires pour créer le repère"
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_dynamic_frame:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:9
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_poses:9
+#: of
+msgid "indicate if the frame belong to a workspace"
+msgstr "indique si le repère appartient à un espace de travail"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_dynamic_frame_from_points:1
 #: of

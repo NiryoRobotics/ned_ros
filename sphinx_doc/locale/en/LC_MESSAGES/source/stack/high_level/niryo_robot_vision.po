@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-04-13 14:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -275,52 +275,70 @@ msgstr ""
 msgid "Sets the saturation of the video stream"
 msgstr ""
 
+#: ../../source/stack/high_level/niryo_robot_vision.rst:103
+msgid "``visualization``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:104
+msgid ""
+":ref:`Visualization<source/stack/high_level/niryo_robot_vision:Visualization"
+" (Service)>`"
+msgstr ""
+
 #: ../../source/stack/high_level/niryo_robot_vision.rst:105
+msgid "Add visuals markers of objects detected by the vision kit to rviz"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:108
 msgid "All these services are available as soon as the node is started."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:109
+#: ../../source/stack/high_level/niryo_robot_vision.rst:112
 msgid "Dependencies - Vision"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:110
+#: ../../source/stack/high_level/niryo_robot_vision.rst:113
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:111
+#: ../../source/stack/high_level/niryo_robot_vision.rst:114
 msgid ":msgs_index:`sensor_msgs`"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:115
+#: ../../source/stack/high_level/niryo_robot_vision.rst:118
 msgid "Topics files - Vision"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:118
+#: ../../source/stack/high_level/niryo_robot_vision.rst:121
 msgid "ImageParameters (Topic)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:126
+#: ../../source/stack/high_level/niryo_robot_vision.rst:129
 msgid "Services files - Vision"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:129
+#: ../../source/stack/high_level/niryo_robot_vision.rst:132
 msgid "DebugColorDetection (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:136
+#: ../../source/stack/high_level/niryo_robot_vision.rst:139
 msgid "DebugMarkers (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:143
+#: ../../source/stack/high_level/niryo_robot_vision.rst:146
 msgid "ObjDetection (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:150
+#: ../../source/stack/high_level/niryo_robot_vision.rst:153
 msgid "TakePicture (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:156
+#: ../../source/stack/high_level/niryo_robot_vision.rst:160
 msgid "SetImageParameter (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:167
+msgid "Visualization (Service)"
 msgstr ""
 
 #~ msgid "Niryo Robot Vision Package"
@@ -475,5 +493,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The namespace used is: |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Add visual marker of object detected by the vision kit to rviz"
 #~ msgstr ""
 

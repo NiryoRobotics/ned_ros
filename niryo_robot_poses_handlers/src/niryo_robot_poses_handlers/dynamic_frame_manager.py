@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from asyncore import read
 from niryo_robot_poses_handlers.file_manager import FileManager, NiryoRobotFileException
 from niryo_robot_poses_handlers.transform_functions import euler_from_matrix, quaternion_from_euler
 
@@ -17,6 +18,7 @@ class DynamicFrame(object):
     def __init__(self, name, description):
         self.name = name
         self.description = description
+        self.belong_to_workspace = False
         self.robot_poses = []
         self.points = []
         self.static_transform_stamped = []
@@ -25,6 +27,7 @@ class DynamicFrame(object):
         dict_ = dict()
         dict_["name"] = self.name
         dict_["description"] = self.description
+        dict_["belong_to_workspace"] = self.belong_to_workspace
         dict_["points"] = self.points
         dict_["static_transform_stamped"] = self.static_transform_stamped
         return dict_
@@ -33,6 +36,7 @@ class DynamicFrame(object):
     def from_dict(cls, dict_):
         dyn_frame = cls(dict_["name"], dict_["description"])
         dyn_frame.points = dict_["points"]
+        dyn_frame.belong_to_workspace = dict_["belong_to_workspace"]
         dyn_frame.static_transform_stamped = dict_["static_transform_stamped"]
 
         return dyn_frame
@@ -92,10 +96,11 @@ class DynamicFrameManager(FileManager):
 
         return point_o, point_vx, point_vy, q
 
-    def create(self, frame_name, points, description=""):
+    def create(self, frame_name, points, description="", belong_to_workspace=False):
         """
         Create a new local frame
         """
+        print(points)
         if self.exists(frame_name):
             raise NiryoRobotFileException("Frame {} already exists".format(frame_name))
 
@@ -115,6 +120,7 @@ class DynamicFrameManager(FileManager):
 
         dynamic_frame = DynamicFrame(frame_name, description)
         dynamic_frame.points = points
+        dynamic_frame.belong_to_workspace = belong_to_workspace
         dynamic_frame.static_transform_stamped = [[point_o.x, point_o.y, point_o.z], q.tolist()]
 
         self._write(frame_name, dynamic_frame)
@@ -148,6 +154,7 @@ class DynamicFrameManager(FileManager):
 
         dynamic_frame = DynamicFrame(new_frame_name, description)
         dynamic_frame.points = points
+        dynamic_frame.belong_to_workspace = dynamic_frame.belong_to_workspace
         dynamic_frame.static_transform_stamped = [[point_o.x, point_o.y, point_o.z], q.tolist()]
 
         self._write(new_frame_name, dynamic_frame)
@@ -156,10 +163,16 @@ class DynamicFrameManager(FileManager):
         if (frame_name != new_frame_name):
             FileManager.remove(self, frame_name)
 
-    def remove(self, frame_name):
+    def remove(self, frame_name, belong_to_workspace=False):
         """
         Remove a frame
         """
+        if not belong_to_workspace:
+            frame = self.read(frame_name)
+            if frame.belong_to_workspace:
+                raise NiryoRobotFileException("Frame {} can't be removed because it belong to a workspace".format(
+                    frame_name))
+
         if not self.exists(frame_name):
             raise NiryoRobotFileException("Frame {} not already exists".format(frame_name))
 
