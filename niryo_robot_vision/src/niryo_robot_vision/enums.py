@@ -51,7 +51,6 @@ class ColorHSVPrime(Enum):
 @unique
 class ObjectType(Enum):
     SQUARE = 4
-    TRIANGLE = 3
     CIRCLE = -1
     ANY = 0
 

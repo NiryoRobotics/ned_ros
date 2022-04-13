@@ -21,6 +21,7 @@ add_service_files(
   ObjDetection.srv
   SetImageParameter.srv
   TakePicture.srv
+  Visualization.srv
 )
 
 # enable python module support

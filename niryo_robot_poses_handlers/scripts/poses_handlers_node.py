@@ -29,7 +29,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList
 
 from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
-from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses
+from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses, GetWorkspaceMatrixPoses, GetWorkspacePoints
 from niryo_robot_poses_handlers.srv import GetDynamicFrame, ManageWorkspace
 from niryo_robot_poses_handlers.srv import GetPose, ManagePose
 from niryo_robot_poses_handlers.srv import ManageDynamicFrame
@@ -62,6 +62,8 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
         rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
+        rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
+        rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
 
         if rospy.has_param('~gazebo_workspaces'):
             for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
@@ -178,6 +180,20 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", poses
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), 4 * [RobotState()]
+
+    def __callback_get_workspace_points(self, req):
+        try:
+            points = self.get_workspace_points(req.name)
+            return CommandStatus.SUCCESS, "Success", points
+        except Exception as e:
+            return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), 4 * [Point()]
+
+    def __callback_get_workspace_matrix(self, req):
+        try:
+            position_matrix, orientation_matrix = self.get_workspace_matrix_poses(req.name)
+            return CommandStatus.SUCCESS, "Success", position_matrix, orientation_matrix
+        except Exception as e:
+            return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), [], []
 
     # Grips
     def __callback_target_pose(self, req):
@@ -346,6 +362,24 @@ class PoseHandlerNode:
         poses = [RobotState(position=Point(*pose[0]), rpy=RPY(*pose[1]))
                  for pose in ws_raw.robot_poses]
         return poses
+
+    def get_workspace_points(self, name):
+        ws_raw = self.__ws_manager.read(name)
+        points = [Point(*pose) for pose in ws_raw.points]
+        return points
+
+    def get_workspace_matrix_poses(self, name):
+        """
+        Returns position and orientation matrix of a workspace
+        """
+        ws_raw = self.__ws_manager.read(name)
+
+        position_raw = ws_raw.position_matrix.tolist()
+        orientation_raw = ws_raw.rotation_matrix.tolist()
+
+        position_matrix = [Point(*pose) for pose in position_raw]
+        orientation_matrix = [Quaternion(*pose) for pose in orientation_raw]
+        return position_matrix, orientation_matrix
 
     def get_workspace_ratio(self, workspace):
         """

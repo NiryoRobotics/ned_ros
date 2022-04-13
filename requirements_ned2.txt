@@ -1,4 +1,4 @@
-rpi_ws281x==4.3.0
+rpi_ws281x==4.3.4
 Adafruit-GPIO==1.0.3
 Adafruit-PureIO==1.0.1
 Adafruit-BBIO==1.0.9

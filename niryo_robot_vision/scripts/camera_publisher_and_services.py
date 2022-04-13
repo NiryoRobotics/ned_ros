@@ -13,21 +13,28 @@ import numpy as np
 
 from niryo_robot_vision.enums import ObjectType, ColorHSV
 from niryo_robot_vision.image_functions import debug_threshold_color, debug_markers
+from niryo_robot_vision.math_functions import euclidean_3d_dist, calculate_barycenter
+from niryo_robot_vision.visualization_functions import *
 from niryo_robot_vision.CalibrationObject import CalibrationObject
 from ObjectDetector import ObjectDetector
 from fonctions_camera import generate_msg_from_image
 from VideoStream import WebcamStream, GazeboStream
+from tf.transformations import quaternion_from_matrix
 
 # Messages
+from visualization_msgs.msg import Marker, MarkerArray
 from sensor_msgs.msg import CameraInfo, CompressedImage
+from geometry_msgs.msg import Point
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_msgs.msg import ObjectPose
+from niryo_robot_poses_handlers.srv import GetWorkspaceMatrixPoses, GetWorkspacePoints, GetWorkspaceRatio
 
 # Services
 from niryo_robot_vision.srv import DebugColorDetection
 from niryo_robot_vision.srv import DebugMarkers
 from niryo_robot_vision.srv import ObjDetection
 from niryo_robot_vision.srv import TakePicture
+from niryo_robot_vision.srv import Visualization
 
 
 class VisionNode:
@@ -46,6 +53,7 @@ class VisionNode:
 
         # PUBLISHERS
         self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream', CompressedImage, queue_size=1)
+        self.__publisher_rviz = rospy.Publisher('~visualization_marker', MarkerArray, queue_size=10, latch=True)
 
         # OBJECT DETECTION
         rospy.Service('~obj_detection_rel', ObjDetection, self.__callback_get_obj_relative_pose)
@@ -64,6 +72,10 @@ class VisionNode:
         rospy.Service('~take_picture', TakePicture, self.__callback_take_picture)
         rospy.Service('~debug_markers', DebugMarkers, self.__callback_debug_markers)
         rospy.Service('~debug_colors', DebugColorDetection, self.__callback_debug_color)
+        rospy.Service('~visualization', Visualization, self.__callback_visualization)
+
+        self.__visualization_workspace = None
+        self.__time_add_object = rospy.Time.now()
 
         # -- VIDEO STREAM
         rospy.logdebug("Vision Node - Creating Video Stream object")
@@ -154,6 +166,7 @@ class VisionNode:
         if img is None:
             rospy.logwarn_throttle(2.0, "Vision Node - Try to get debug markers while stream is not running !")
             return False, CompressedImage()
+
         markers_detected, img_res = debug_markers(img)
         _, msg_img = generate_msg_from_image(img_res, compression_quality=self.__debug_compression_quality)
 
@@ -169,6 +182,132 @@ class VisionNode:
         _, msg_img = generate_msg_from_image(img_res, compression_quality=self.__debug_compression_quality)
 
         return msg_img
+
+    def __callback_visualization(self, req):
+        if req.clearing:
+            marker = create_clear_all_marker(rospy.Time.now())
+            self.__publisher_rviz.publish([marker])
+            return CommandStatus.SUCCESS
+        else:
+            # Get workspace matrix
+            rospy.wait_for_service('/niryo_robot_poses_handlers/get_workspace_matrix_poses')
+            try:
+                get_matrix = rospy.ServiceProxy('/niryo_robot_poses_handlers/get_workspace_matrix_poses',
+                                                GetWorkspaceMatrixPoses)
+                response = get_matrix(req.workspace)
+
+                position_matrix = np.empty(shape=[0, 3])
+                for elem in response.matrix_position:
+                    position_matrix = np.append(position_matrix, [[elem.x, elem.y, elem.z]], axis=0)
+                rotation_matrix = np.empty(shape=[0, 4])
+                for elem in response.matrix_orientation:
+                    rotation_matrix = np.append(rotation_matrix, [[elem.x, elem.y, elem.z, elem.w]], axis=0)
+                workspace = {"name": req.workspace, "matrix_position": position_matrix,
+                             "matrix_rotation": rotation_matrix}
+            except rospy.ServiceException as e:
+                workspace = None
+                print("Service call failed: %s" % e)
+
+            # Get workspace ratio
+            rospy.wait_for_service('/niryo_robot_poses_handlers/get_workspace_ratio')
+            try:
+                get_ratio = rospy.ServiceProxy('/niryo_robot_poses_handlers/get_workspace_ratio', GetWorkspaceRatio)
+                response = get_ratio(req.workspace)
+
+                workspace["ratio"] = response.ratio
+            except rospy.ServiceException as e:
+                workspace = None
+                print("Service call failed: %s" % e)
+
+            # Publish marker's workspace
+            rospy.wait_for_service('/niryo_robot_poses_handlers/get_workspace_points')
+            try:
+                get_points = rospy.ServiceProxy('/niryo_robot_poses_handlers/get_workspace_points', GetWorkspacePoints)
+                response = get_points(req.workspace)
+
+                index = 1
+                time_workspace = rospy.Time.now()
+                list_marker = []
+                for point in response.points:
+                    list_marker.append(
+                        create_marker_rviz([point.x, point.y, point.z], [0, 0, 0, 1], index, time_workspace))
+                    list_marker.append(
+                        create_text_marker(4 + index, str(index), time_workspace, [point.x, point.y, point.z],
+                                           [0, 0, 0, 1], 0.035))
+                    index += 1
+
+                # Title workspace
+                middle_text = Point((response.points[0].x + response.points[1].x) / 2,
+                                    (response.points[0].y + response.points[1].y) / 2,
+                                    (response.points[0].z + response.points[1].z) / 2)
+
+                list_marker.append(create_text_marker(9, str(workspace["name"]), time_workspace,
+                                                      [middle_text.x, middle_text.y, middle_text.z], [0, 0, 0, 1],
+                                                      0.035))
+
+                self.__publisher_rviz.publish(list_marker)
+
+                # Publish workspace plane
+                bary_center = calculate_barycenter(response.points)
+                sizeX = euclidean_3d_dist(response.points[0], response.points[1]) + 0.03
+                sizeY = euclidean_3d_dist(response.points[1], response.points[2]) + 0.03
+
+                quaternion = quaternion_from_matrix(workspace["matrix_rotation"])
+                marker = create_workspace(10, time_workspace, [bary_center.x, bary_center.y, bary_center.z],
+                                          quaternion, sizeX, sizeY, 0.0005)
+                self.__publisher_rviz.publish([marker])
+
+            except rospy.ServiceException as e:
+                print("Service call failed: %s" % e)
+
+            # Reading last image
+            img = self.__video_stream.read_undistorted()
+            if img is None:
+                rospy.logwarn("Vision Node - Try to get object relative pose while stream is not running !")
+                return CommandStatus.VIDEO_STREAM_NOT_RUNNING, ObjectPose(), "", "", CompressedImage()
+
+            # Detect  object
+            index = 11
+            index_max = 50
+            obj_type = ObjectType["ANY"]
+            obj_color = ColorHSV["ANY"]
+            workspace_ratio = workspace["ratio"]
+            self.__object_detector = ObjectDetector(
+                obj_type=obj_type, obj_color=obj_color,
+                workspace_ratio=workspace_ratio,
+                ret_image_bool=False,
+            )
+            # Launching pipeline
+            status, cx_list, cy_list, list_size, angle_list, color_list, \
+                object_type_list = self.__object_detector.extract_all_object_with_hsv(img, workspace)
+
+            time_object = rospy.Time.now()
+            if workspace and status == CommandStatus.SUCCESS:
+                self.__time_add_object = time_object
+                for cx, cy, size, angle, obj_color, obj_type in zip(cx_list, cy_list, list_size, angle_list, color_list,
+                                                                    object_type_list):
+                    position, orientation = get_pose(workspace, cx, cy, angle)
+                    publish_object_rviz(position, orientation, size, obj_type, obj_color, index, self.__publisher_rviz,
+                                        time_object, rospy.Duration.from_sec(3))
+
+                    if index < index_max:
+                        index += 1
+
+                # Clearing
+                list_clear_marker = []
+                for i in range(index, index_max+1):
+                    list_clear_marker.append(create_clear_marker(i, time_object))
+                self.__publisher_rviz.publish(list_clear_marker)
+
+            else:
+                if self.__time_add_object + rospy.Duration(3) < rospy.Time.now():
+                    # Reset
+                    list_clear_marker = []
+                    for i in range(index, index_max + 1):
+                        list_clear_marker.append(create_clear_marker(i, time_object))
+                    self.__publisher_rviz.publish(list_clear_marker)
+
+        return status
 
 
 if __name__ == '__main__':
