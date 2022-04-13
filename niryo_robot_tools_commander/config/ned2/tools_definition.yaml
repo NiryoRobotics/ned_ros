@@ -12,7 +12,7 @@ tool_list:
     available_commands:
       [ ]
     transformation:
-      translation: [0.007, 0.0, 0.0]
+      translation: [0.00, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Gripper 1"
     type: "gripper"
@@ -33,7 +33,7 @@ tool_list:
         min: -1400
         max: 1400
     transformation:
-      translation: [0.095, 0.0, 0.0]
+      translation: [0.085, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Gripper 2"
     type: "gripper"
@@ -54,7 +54,7 @@ tool_list:
         min: -1000
         max: 1000
     transformation:
-      translation: [0.120, 0.0, 0.0]
+      translation: [0.110, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Gripper 3"
     type: "gripper"
@@ -73,7 +73,7 @@ tool_list:
         min: -1000
         max: 1000
     transformation:
-      translation: [0.125, 0.0, 0.0]
+      translation: [0.114, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Electromagnet 1"
     type: "electromagnet"
@@ -85,7 +85,7 @@ tool_list:
     specs:
       [ ]
     transformation:
-      translation: [0.035, 0.0, 0.0]
+      translation: [0.027, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Vacuum Pump 1"
     type: "vacuum_pump"
@@ -103,7 +103,7 @@ tool_list:
         min: -1000
         max: 1000
     transformation:
-      translation: [0.043, 0.0, 0.0]
+      translation: [0.045, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
 
 
