@@ -54,23 +54,6 @@ class PoseHandlerNode:
         self.__tool_id = 0
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32, self.__callback_tool_id)
 
-        # Workspaces
-        ws_dir = rospy.get_param("~workspace_dir")
-
-        self.__ws_manager = WorkspaceManager(ws_dir)
-        rospy.Service('~manage_workspace', ManageWorkspace, self.__callback_manage_workspace)
-        rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
-        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
-        rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
-        rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
-        rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
-
-        if rospy.has_param('~gazebo_workspaces'):
-            for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
-                if ws_name not in self.get_available_workspaces()[0]:
-                    rospy.loginfo("Poses Handler - Adding the {} workspace...".format(ws_name))
-                    self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
-
         # Grips
         tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
         self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
@@ -107,6 +90,23 @@ class PoseHandlerNode:
         self.dynamic_frame_manager.restore_publisher()
         # Publisher dynamic frames
         thread.start_new_thread(self.dynamic_frame_manager.publish_frames, ())
+
+        # Workspaces
+        ws_dir = rospy.get_param("~workspace_dir")
+
+        self.__ws_manager = WorkspaceManager(ws_dir)
+        rospy.Service('~manage_workspace', ManageWorkspace, self.__callback_manage_workspace)
+        rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
+        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
+        rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
+        rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
+        rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
+
+        if rospy.has_param('~gazebo_workspaces'):
+            for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
+                if ws_name not in self.get_available_workspaces()[0]:
+                    rospy.loginfo("Poses Handler - Adding the {} workspace...".format(ws_name))
+                    self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -249,7 +249,8 @@ class PoseHandlerNode:
                 return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
                     len(frame.poses))
             try:
-                self.create_dynamic_frame_from_poses(frame.name, frame.description, frame.poses)
+                self.create_dynamic_frame_from_poses(frame.name, frame.description, frame.poses,
+                                                     frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -260,7 +261,8 @@ class PoseHandlerNode:
                 return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
                     len(frame.points))
             try:
-                self.create_dynamic_frame_from_points(frame.name, frame.description, frame.points)
+                self.create_dynamic_frame_from_points(frame.name, frame.description, frame.points,
+                                                      frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -268,7 +270,7 @@ class PoseHandlerNode:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
             try:
-                self.remove_dynamic_frame(frame.name)
+                self.remove_dynamic_frame(frame.name, frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -330,7 +332,11 @@ class PoseHandlerNode:
             pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
             robot_poses_raw.append(pose_raw)
+
         self.__ws_manager.create(name, points, robot_poses_raw, description)
+
+        # Asssociate frame
+        self.dynamic_frame_manager.create(name, [points[0]] + [points[3]] + [points[1]], description, True)
 
     def create_workspace_from_points(self, name, description, points):
         """
@@ -344,12 +350,17 @@ class PoseHandlerNode:
             points_raw.append([point.x, point.y, point.z])
         self.__ws_manager.create(name, points_raw, description)
 
+        # Asssociate frame
+        self.dynamic_frame_manager.create(name, [points_raw[0]] + [points_raw[3]] + [points_raw[1]], description, True)
+
     def remove_workspace(self, name):
         """
         Removes a workspace
         :param name: name of the workspace to remove
         """
         self.__ws_manager.remove(name)
+
+        self.dynamic_frame_manager.remove(name, True)
 
     def get_available_workspaces(self):
         """
@@ -483,7 +494,7 @@ class PoseHandlerNode:
         return self.__pos_manager.get_all_names_w_description()
 
     # Dynamic frame
-    def create_dynamic_frame_from_poses(self, name, description, poses):
+    def create_dynamic_frame_from_poses(self, name, description, poses, belong_to_workspace=False):
         """
         Create a dynamic frame from ManageDynamicFrame message fields
 
@@ -503,9 +514,9 @@ class PoseHandlerNode:
             rospy.loginfo("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
 
-        self.dynamic_frame_manager.create(name, points, description)
+        self.dynamic_frame_manager.create(name, points, description, belong_to_workspace)
 
-    def create_dynamic_frame_from_points(self, name, description, points):
+    def create_dynamic_frame_from_points(self, name, description, points, belong_to_workspace=False):
         """
         Create a dynamic frame from ManageDynamicFrame message fields
 
@@ -521,9 +532,9 @@ class PoseHandlerNode:
         for point in points:
             points_raw.append([point.x, point.y, point.z])
 
-        self.dynamic_frame_manager.create(name, points_raw, description)
+        self.dynamic_frame_manager.create(name, points_raw, description, belong_to_workspace)
 
-    def remove_dynamic_frame(self, name):
+    def remove_dynamic_frame(self, name, belong_to_workspace=False):
         """
         Asks dynamic frame manager to remove dynamic frame
 
@@ -531,7 +542,7 @@ class PoseHandlerNode:
         :type name: str
         :return: None
         """
-        self.dynamic_frame_manager.remove(name)
+        self.dynamic_frame_manager.remove(name, belong_to_workspace)
 
     def edit_dynamic_frame(self, name, new_name, description):
         """

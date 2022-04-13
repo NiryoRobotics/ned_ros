@@ -1044,7 +1044,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     # - Dynamic frame
 
-    def save_dynamic_frame_from_poses(self, frame_name, description, list_robot_poses):
+    def save_dynamic_frame_from_poses(self, frame_name, description, list_robot_poses, belong_to_workspace=False):
         """
         Create a dynamic frame with 3 poses (origin, x, y)
 
@@ -1054,6 +1054,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type description: str
         :param list_robot_poses: 3 poses needed to create the frame
         :type list_robot_poses: list[list[float]]
+        :param belong_to_workspace: indicate if the frame belong to a workspace
+        :type belong_to_workspace: boolean
         :return: status, message
         :rtype: (int, str)
         """
@@ -1066,6 +1068,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req.dynamic_frame.name = frame_name
         req.dynamic_frame.description = description
         req.dynamic_frame.poses = list_poses
+        req.dynamic_frame.belong_to_workspace = belong_to_workspace
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_dynamic_frame', ManageDynamicFrame, req)
 
@@ -1073,7 +1076,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self._classic_return_w_check(result)
 
-    def save_dynamic_frame_from_points(self, frame_name, description, list_points):
+    def save_dynamic_frame_from_points(self, frame_name, description, list_points, belong_to_workspace=False):
         """
         Create a dynamic frame with 3 points (origin, x, y)
 
@@ -1083,6 +1086,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type description: str
         :param list_points: 3 points needed to create the frame
         :type list_points: list[list[float]]
+        :param belong_to_workspace: indicate if the frame belong to a workspace
+        :type belong_to_workspace: boolean
         :return: status, message
         :rtype: (int, str)
         """
@@ -1095,6 +1100,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req.dynamic_frame.name = frame_name
         req.dynamic_frame.description = description
         req.dynamic_frame.points = points
+        req.dynamic_frame.belong_to_workspace = belong_to_workspace
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_dynamic_frame', ManageDynamicFrame, req)
 
@@ -1129,12 +1135,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self._classic_return_w_check(result)
 
-    def delete_dynamic_frame(self, frame_name):
+    def delete_dynamic_frame(self, frame_name, belong_to_workspace=False):
         """
         Delete a dynamic frame
 
         :param frame_name: name of the frame to remove
         :type frame_name: str
+        :param belong_to_workspace: indicate if the frame belong to a workspace
+        :type belong_to_workspace: boolean
         :return: status, message
         :rtype: (int, str)
         """
@@ -1143,6 +1151,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req = ManageDynamicFrameRequest()
         req.cmd = ManageDynamicFrameRequest.DELETE
         req.dynamic_frame.name = frame_name
+        req.dynamic_frame.belong_to_workspace = belong_to_workspace
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_dynamic_frame', ManageDynamicFrame, req)
 

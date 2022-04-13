@@ -10,17 +10,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-23 15:17+0100\n"
+"POT-Creation-Date: 2022-04-13 14:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:2
 msgid "Niryo_robot_vision"
@@ -37,37 +34,34 @@ msgstr "Noeud Vision"
 #: ../../source/stack/high_level/niryo_robot_vision.rst:9
 msgid ""
 "The ROS Node is made of several services to deal with video streaming, "
-"object detection... The node is working exactly the same way if you chose to "
-"use it on simulation or reality."
+"object detection... The node is working exactly the same way if you chose"
+" to use it on simulation or reality."
 msgstr ""
-"Le nœud ROS est composé de plusieurs services pour gérer le streaming vidéo, "
-"la détection d'objets... Le nœud fonctionne exactement de la même manière si "
-"vous avez choisi de l'utiliser sur la simulation ou la réalité."
+"Le nœud ROS est composé de plusieurs services pour gérer le streaming "
+"vidéo, la détection d'objets... Le nœud fonctionne exactement de la même "
+"manière si vous avez choisi de l'utiliser sur la simulation ou la "
+"réalité."
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:12
-msgid ""
-"This node can be launched locally in a standalone mode via the command: ::"
-msgstr ""
-"Ce nœud peut être lancé localement en mode autonome via la commande : ::"
+msgid "This node can be launched locally in a standalone mode via the command: ::"
+msgstr "Ce nœud peut être lancé localement en mode autonome via la commande : ::"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:16
 msgid ""
 "Configuration (Frame Per Second, Camera Port, Video Resolution) can be "
 "edited in the config file:"
 msgstr ""
-"La configuration (image par seconde, port de caméra, résolution vidéo) peut "
-"être modifiée dans le fichier de configuration :"
+"La configuration (image par seconde, port de caméra, résolution vidéo) "
+"peut être modifiée dans le fichier de configuration :"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:19
-msgid ""
-"For \"standard\" Node: *niryo_robot_vision/config/video_server_setup.yaml*"
+msgid "For \"standard\" Node: *niryo_robot_vision/config/video_server_setup.yaml*"
 msgstr ""
 "Pour un nœud \"standard\" : "
 "*niryo_robot_vision/config/video_server_setup.yaml*"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:20
-msgid ""
-"For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*"
+msgid "For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*"
 msgstr ""
 "Pour un nœud local : "
 "*niryo_robot_vision/config/video_server_setup_local.yaml*"
@@ -171,18 +165,19 @@ msgstr "``video_stream_parameters``"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:64
 msgid ""
-":ref:`ImageParameters<source/stack/high_level/niryo_robot_vision:ImageParameters "
-"(Topic)>`"
+":ref:`ImageParameters<source/stack/high_level/niryo_robot_vision:ImageParameters"
+" (Topic)>`"
 msgstr ""
-":ref:`ImageParameters<source/stack/high_level/niryo_robot_vision:ImageParameters "
-"(Topic)>`"
+":ref:`ImageParameters<source/stack/high_level/niryo_robot_vision:ImageParameters"
+" (Topic)>`"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:65
 msgid ""
 "Publishes the brightness, contrast and saturation settings of the video "
 "stream"
 msgstr ""
-"Publie les paramètres de luminosité, contraste et saturation du stream vidéo"
+"Publie les paramètres de luminosité, contraste et saturation du stream "
+"vidéo"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:68
 msgid "Services - Vision"
@@ -198,15 +193,14 @@ msgstr "``debug_colors``"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:80
 msgid ""
-":ref:`DebugColorDetection<source/stack/high_level/niryo_robot_vision:DebugColorDetection "
-"(Service)>`"
+":ref:`DebugColorDetection<source/stack/high_level/niryo_robot_vision:DebugColorDetection"
+" (Service)>`"
 msgstr ""
-":ref:`DebugColorDetection<source/stack/high_level/niryo_robot_vision:DebugColorDetection "
-"(Service)>`"
+":ref:`DebugColorDetection<source/stack/high_level/niryo_robot_vision:DebugColorDetection"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:81
-msgid ""
-"Returns an annotated image to emphasize what happened with color detection"
+msgid "Returns an annotated image to emphasize what happened with color detection"
 msgstr ""
 "Renvoie une image annotée pour souligner ce qu'il s'est passé avec la "
 "détection des couleurs"
@@ -217,15 +211,16 @@ msgstr "``debug_markers``"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:83
 msgid ""
-":ref:`DebugMarkers<source/stack/high_level/niryo_robot_vision:DebugMarkers "
-"(Service)>`"
+":ref:`DebugMarkers<source/stack/high_level/niryo_robot_vision:DebugMarkers"
+" (Service)>`"
 msgstr ""
-":ref:`DebugMarkers<source/stack/high_level/niryo_robot_vision:DebugMarkers "
-"(Service)>`"
+":ref:`DebugMarkers<source/stack/high_level/niryo_robot_vision:DebugMarkers"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:84
 msgid ""
-"Returns an annotated image to emphasize what happened with markers detection"
+"Returns an annotated image to emphasize what happened with markers "
+"detection"
 msgstr ""
 "Renvoie une image annotée pour souligner ce qu'il s'est passé avec la "
 "détection des marqueurs"
@@ -236,11 +231,11 @@ msgstr "``obj_detection_rel``"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:86
 msgid ""
-":ref:`ObjDetection<source/stack/high_level/niryo_robot_vision:ObjDetection "
-"(Service)>`"
+":ref:`ObjDetection<source/stack/high_level/niryo_robot_vision:ObjDetection"
+" (Service)>`"
 msgstr ""
-":ref:`ObjDetection<source/stack/high_level/niryo_robot_vision:ObjDetection "
-"(Service)>`"
+":ref:`ObjDetection<source/stack/high_level/niryo_robot_vision:ObjDetection"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:87
 msgid "Object detection service"
@@ -282,11 +277,11 @@ msgstr "``set_brightness``"
 #: ../../source/stack/high_level/niryo_robot_vision.rst:98
 #: ../../source/stack/high_level/niryo_robot_vision.rst:101
 msgid ""
-":ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter "
-"(Service)>`"
+":ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter"
+" (Service)>`"
 msgstr ""
-":ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter "
-"(Service)>`"
+":ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter"
+" (Service)>`"
 
 #: ../../source/stack/high_level/niryo_robot_vision.rst:96
 msgid "Sets the brightness of the video stream"
@@ -308,53 +303,73 @@ msgstr "``set_saturation``"
 msgid "Sets the saturation of the video stream"
 msgstr "Définir la saturation du stream vidéo"
 
+#: ../../source/stack/high_level/niryo_robot_vision.rst:103
+msgid "``visualization``"
+msgstr "``visualization``"
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:104
+msgid ""
+":ref:`Visualization<source/stack/high_level/niryo_robot_vision:Visualization"
+" (Service)>`"
+msgstr ""
+":ref:`Visualization<source/stack/high_level/niryo_robot_vision:Visualization"
+" (Service)>`"
+
 #: ../../source/stack/high_level/niryo_robot_vision.rst:105
+msgid "Add visuals markers of objects detected by the vision kit to rviz"
+msgstr "Ajoute des marqueurs sur rviz des objects détectés par le kit vision"
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:108
 msgid "All these services are available as soon as the node is started."
 msgstr "Tous ces services sont disponibles dès le démarrage du nœud."
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:109
+#: ../../source/stack/high_level/niryo_robot_vision.rst:112
 msgid "Dependencies - Vision"
 msgstr "Dépendances - Vision"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:110
+#: ../../source/stack/high_level/niryo_robot_vision.rst:113
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ":doc:`niryo_robot_msgs`"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:111
+#: ../../source/stack/high_level/niryo_robot_vision.rst:114
 msgid ":msgs_index:`sensor_msgs`"
 msgstr ":msgs_index:`sensor_msgs`"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:115
+#: ../../source/stack/high_level/niryo_robot_vision.rst:118
 msgid "Topics files - Vision"
 msgstr "Fichiers de services - Vision"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:118
+#: ../../source/stack/high_level/niryo_robot_vision.rst:121
 msgid "ImageParameters (Topic)"
 msgstr "ImageParameters (Topic)"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:126
+#: ../../source/stack/high_level/niryo_robot_vision.rst:129
 msgid "Services files - Vision"
 msgstr "Fichiers de services - Vision"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:129
+#: ../../source/stack/high_level/niryo_robot_vision.rst:132
 msgid "DebugColorDetection (Service)"
 msgstr "DebugColorDetection (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:136
+#: ../../source/stack/high_level/niryo_robot_vision.rst:139
 msgid "DebugMarkers (Service)"
 msgstr "DebugMarkers (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:143
+#: ../../source/stack/high_level/niryo_robot_vision.rst:146
 msgid "ObjDetection (Service)"
 msgstr "ObjDetection (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:150
+#: ../../source/stack/high_level/niryo_robot_vision.rst:153
 msgid "TakePicture (Service)"
 msgstr "TakePicture (Service)"
 
-#: ../../source/stack/high_level/niryo_robot_vision.rst:156
+#: ../../source/stack/high_level/niryo_robot_vision.rst:160
 msgid "SetImageParameter (Service)"
 msgstr "SetImageParameter (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:167
+msgid "Visualization (Service)"
+msgstr "Visualization (Service)"
 
 #~ msgid "Niryo Robot Vision Package"
 #~ msgstr "Package de vision du robot Niryo"
@@ -367,7 +382,8 @@ msgstr "SetImageParameter (Service)"
 #~ "*niryo_robot_vision/config/video_server_setup.yaml*"
 
 #~ msgid ""
-#~ "For local Node : *niryo_robot_vision/config/video_server_setup_local.yaml*"
+#~ "For local Node : "
+#~ "*niryo_robot_vision/config/video_server_setup_local.yaml*"
 #~ msgstr ""
 #~ "Pour un noeud local : "
 #~ "*niryo_robot_vision/config/video_server_setup_local.yaml*"
@@ -397,36 +413,41 @@ msgstr "SetImageParameter (Service)"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-#~ "Package>`"
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`ImageParameters<source/ros/niryo_robot_vision:ImageParameters "
-#~ "(Topic)>`"
+#~ ":ref:`ImageParameters<source/ros/niryo_robot_vision:ImageParameters"
+#~ " (Topic)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection "
+#~ ":ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers "
 #~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers (Service)>`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ ":ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection (Service)>`"
+#~ ":ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection "
+#~ "(Service)>`"
 #~ msgstr ""
 
 #~ msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
 #~ msgstr ""
 
-#~ msgid ""
-#~ ":ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`"
+#~ msgid ":ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`"
 #~ msgstr ""
 
 #~ msgid ""
-#~ ":ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter "
-#~ "(Service)>`"
+#~ ":ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter"
+#~ " (Service)>`"
 #~ msgstr ""
+
+#~ msgid "Add visual marker of object detected by the vision kit to rviz"
+#~ msgstr ""
+

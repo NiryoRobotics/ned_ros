@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import rospy
-
 from enum import Enum
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ShiftPose, PinMode, PinState, PinID, \
     ToolID, ConveyorID, ConveyorDirection, CommandEnum, ConveyorTTL, ConveyorCan
@@ -553,22 +552,26 @@ class CommandInterpreter:
         frame = self.__niryo_robot.get_saved_dynamic_frame(*param_list)
         return self.__send_answer(*frame)
 
-    @check_nb_args(5)
+    @check_nb_args(6)
     def __save_dynamic_frame_from_poses(self, *param_list):
         name = param_list[0]
         description = param_list[1]
-        list_poses = list(param_list[2:])
+        list_poses = list(param_list[2:-1])
+        belong_to_workspace = bool(param_list[-1])
 
-        self.__niryo_robot.save_dynamic_frame_from_poses(name, description, list_poses)
+        print(belong_to_workspace)
+
+        self.__niryo_robot.save_dynamic_frame_from_poses(name, description, list_poses, belong_to_workspace)
         return self.__send_answer()
 
-    @check_nb_args(5)
+    @check_nb_args(6)
     def __save_dynamic_frame_from_points(self, *param_list):
         name = param_list[0]
         description = param_list[1]
-        list_poses = list(param_list[2:])
+        list_poses = list(param_list[2:-1])
+        belong_to_workspace = bool(param_list[-1])
 
-        self.__niryo_robot.save_dynamic_frame_from_points(name, description, list_poses)
+        self.__niryo_robot.save_dynamic_frame_from_points(name, description, list_poses, belong_to_workspace)
         return self.__send_answer()
 
     @check_nb_args(3)
@@ -576,9 +579,11 @@ class CommandInterpreter:
         self.__niryo_robot.edit_dynamic_frame(*param_list)
         return self.__send_answer()
 
-    @check_nb_args(1)
+    @check_nb_args(2)
     def __delete_dynamic_frame(self, *param_list):
-        self.__niryo_robot.delete_dynamic_frame(*param_list)
+        name = param_list[0]
+        belong_to_workspace = bool(param_list[1])
+        self.__niryo_robot.delete_dynamic_frame(name, belong_to_workspace)
         return self.__send_answer()
 
     @check_nb_args(2)
