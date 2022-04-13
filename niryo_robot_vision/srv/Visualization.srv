@@ -1,0 +1,4 @@
+string workspace
+bool clearing
+---
+int32 status

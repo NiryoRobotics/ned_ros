@@ -1296,18 +1296,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         rot = RPY(*euler)
         return point, rot
 
-    def move_relative(self, frame_name, offset):
+    def move_relative(self, offset, frame="world"):
         """
         Move robot end of a offset in a frame
 
-        :param frame_name: name of local frame
-        :type frame_name: str
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
+        :param frame: name of local frame
+        :type frame: str
         :return: status, message
         :rtype: (int, str)
         """
-        point, rot = self.__calculate_relative(frame_name, offset)
+        point, rot = self.__calculate_relative(frame, offset)
 
         # Move arm
         cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.POSE, position=point, rpy=rot)
@@ -1315,18 +1315,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self.__robot_action_nac.execute(goal)
 
-    def move_linear_relative(self, frame_name, offset):
+    def move_linear_relative(self, offset, frame="world"):
         """
         Move robot end of a offset by a linear movement in a frame
 
-        :param frame_name: name of local frame
-        :type frame_name: str
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
+        :param frame: name of local frame
+        :type frame: str
         :return: status, message
         :rtype: (int, str)
         """
-        point, rot = self.__calculate_relative(frame_name, offset)
+        point, rot = self.__calculate_relative(frame, offset)
 
         # Move arm
         cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.LINEAR_POSE, position=point, rpy=rot)

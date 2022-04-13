@@ -1,12 +1,9 @@
 #!/usr/bin/env python
-from cgitb import reset
-
-from urllib3 import Retry
 import rospy
 
 from enum import Enum
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ShiftPose, PinMode, PinState, PinID, \
-    ToolID, ConveyorID, ConveyorDirection, CommandEnum
+    ToolID, ConveyorID, ConveyorDirection, CommandEnum, ConveyorTTL, ConveyorCan
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from .communication_functions import dict_to_packet
 
@@ -99,8 +96,15 @@ class CommandInterpreter:
             "ID_1": ConveyorID.ID_1,
             "ID_2": ConveyorID.ID_2,
         }
-        self.__conveyor_id_string_dict_convertor_inv = {index: string for string, index
-                                                        in self.__conveyor_id_string_dict_convertor.iteritems()}
+
+        self.__conveyor_id_string_dict_convertor_inv = {
+            ConveyorID.NONE: "NONE",
+            ConveyorID.ID_1: "ID_1",
+            ConveyorID.ID_2: "ID_2",
+            ConveyorTTL.ID_1: "ID_1",
+            ConveyorTTL.ID_2: "ID_2",
+            ConveyorCan.ID_1: "ID_1",
+            ConveyorCan.ID_2: "ID_2"}
 
         self.__conveyor_direction_string_dict_convertor = {
             "FORWARD": ConveyorDirection.FORWARD,

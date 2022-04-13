@@ -31,6 +31,8 @@ add_service_files(
   GetPose.srv
   GetTargetPose.srv
   GetTransformPose.srv
+  GetWorkspaceMatrixPoses.srv
+  GetWorkspacePoints.srv
   GetWorkspaceRatio.srv
   GetWorkspaceRobotPoses.srv
   ManageDynamicFrame.srv

@@ -43,3 +43,34 @@ def euclidean_dist_2_pts(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
     return math.sqrt((float(x1) - float(x2)) ** 2 + (float(y1) - float(y2)) ** 2)
+
+
+def euclidean_3d_dist(p1, p2):
+    """
+    Return euclidean 3d distance between 2 points
+    :param p1: Point of the first point's coordinates
+    :param p2: Point of the second point's coordinates
+    :return: distance in the same metrics as the points
+    """
+    return math.sqrt(
+        (float(p1.x) - float(p2.x)) ** 2 + (float(p1.y) - float(p2.y)) ** 2 + (float(p1.z) - float(p2.z)) ** 2)
+
+
+def calculate_barycenter(list_points):
+    """
+    Return barycenter of a list of points
+
+    :param list_points: list of Point
+    """
+    from geometry_msgs.msg import Point
+    barycenter = Point()
+    for point in list_points:
+        barycenter.x += point.x
+        barycenter.y += point.y
+        barycenter.z += point.z
+
+    barycenter.x = barycenter.x / len(list_points)
+    barycenter.y = barycenter.y / len(list_points)
+    barycenter.z = barycenter.z / len(list_points)
+
+    return barycenter

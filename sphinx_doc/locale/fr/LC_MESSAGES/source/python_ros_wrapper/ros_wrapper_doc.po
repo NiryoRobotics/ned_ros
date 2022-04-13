@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-12 09:39+0000\n"
+"POT-Creation-Date: 2022-04-12 14:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -824,14 +824,14 @@ msgstr "Déplace l'effecteur d'un offset dans un repère"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:3
 #: of
-msgid "name of local frame"
-msgstr "nom du repère"
+msgid "list which contains offset of x, y, z, roll, pitch, yaw"
+msgstr "Une liste correspondant à [x, y, z, roll, pitch, yaw]"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_relative:5
 #: of
-msgid "list which contains offset of x, y, z, roll, pitch, yaw"
-msgstr "Une liste correspondant à [x, y, z, roll, pitch, yaw]"
+msgid "name of local frame"
+msgstr "nom du repère"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_linear_relative:1
 #: of

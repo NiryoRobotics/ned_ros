@@ -94,6 +94,12 @@ Services - Poses handlers
    *  -  ``get_workspace_poses``
       -  :ref:`GetWorkspaceRobotPoses<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceRobotPoses (Service)>`
       -  Get workspace's robot poses
+   *  -  ``get_workspace_points``
+      -  :ref:`GetWorkspacePoints<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspacePoints (Service)>`
+      -  Get workspace's robot points
+   *  -  ``get_workspace_matrix_poses``
+      -  :ref:`GetWorkspaceMatrixPoses<source/stack/high_level/niryo_robot_poses_handlers:GetWorkspaceMatrixPoses (Service)>`
+      -  Get workspace's robot matrix poses
 
    *  -  ``get_target_pose``
       -  :ref:`GetTargetPose<source/stack/high_level/niryo_robot_poses_handlers:GetTargetPose (Service)>`
@@ -162,6 +168,20 @@ GetTransformPose (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetTransformPose.srv
+   :language: rostype
+
+
+GetWorkspaceMatrixPoses (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetWorkspaceMatrixPoses.srv
+   :language: rostype
+
+
+GetWorkspacePoints (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_poses_handlers/srv/GetWorkspacePoints.srv
    :language: rostype
 
 
