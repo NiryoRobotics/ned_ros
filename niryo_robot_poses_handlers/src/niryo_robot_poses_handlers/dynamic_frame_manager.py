@@ -4,7 +4,7 @@ from asyncore import read
 from niryo_robot_poses_handlers.file_manager import FileManager, NiryoRobotFileException
 from niryo_robot_poses_handlers.transform_functions import euler_from_matrix, quaternion_from_euler
 
-from geometry_msgs.msg import Point, TransformStamped, Pose, Quaternion
+from geometry_msgs.msg import Point, Vector3, TransformStamped, Pose, Quaternion
 
 import tf2_ros
 import numpy as np
@@ -111,7 +111,7 @@ class DynamicFrameManager(FileManager):
         static_transform_stamped.header.frame_id = "world"
         static_transform_stamped.child_frame_id = frame_name
         # Position
-        static_transform_stamped.transform.translation = Point(*[point_o.x, point_o.y, point_o.z])
+        static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
         # Orientation
         static_transform_stamped.transform.rotation = Quaternion(*q)
 
@@ -145,7 +145,7 @@ class DynamicFrameManager(FileManager):
         static_transform_stamped.header.frame_id = "world"
         static_transform_stamped.child_frame_id = new_frame_name
         # Position
-        static_transform_stamped.transform.translation = Point(*[point_o.x, point_o.y, point_o.z])
+        static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
         # Orientation
         static_transform_stamped.transform.rotation = Quaternion(*q)
 
@@ -196,9 +196,9 @@ class DynamicFrameManager(FileManager):
             # Create frame
             static_transform_stamped = TransformStamped()
             static_transform_stamped.header.frame_id = "world"
-            static_transform_stamped.child_frame_id = frame.name
+            static_transform_stamped.child_frame_id = str(frame.name)
             # Position
-            static_transform_stamped.transform.translation = Point(*[point_o.x, point_o.y, point_o.z])
+            static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
             # Orientation
             static_transform_stamped.transform.rotation = Quaternion(*q)
 

@@ -65,7 +65,7 @@ class PoseHandlerNode:
         rospy.Service('~get_target_pose', GetTargetPose, self.__callback_target_pose)
 
         # Transform Handlers
-        self.__transform_handler = PosesTransformHandler(self.__grip_manager)
+        self.__transform_handler = PosesTransformHandler(self.__grip_manager, self)
 
         rospy.logdebug("Poses Handlers - Transform Handler created")
 
@@ -417,6 +417,7 @@ class PoseHandlerNode:
         current_ws = self.__ws_manager.read(workspace)
         self.__transform_handler.set_relative_pose_object(current_ws, x_rel, y_rel, yaw_rel,
                                                           yaw_center=current_ws.yaw_center)
+
         if self.__tcp_enabled:
             base_link_to_tool_target = self.__transform_handler.get_object_transform(z_off=height_offset)
         else:

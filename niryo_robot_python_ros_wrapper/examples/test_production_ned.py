@@ -582,13 +582,14 @@ class TestFunctions(object):
             self.say("Fin du test, validez la position 0")
             report.execute(self.wait_save_button_press, "Wait save button press to validate")
 
+        self.__robot.led_ring.solid(BLUE)
         self.__robot.move_to_sleep_pose()
         self.__robot.set_arm_max_velocity(100)
         self.__robot.set_arm_max_acceleration(100)
 
     def wait_custom_button_press(self, timeout=20):
         if not USE_BUTTON:
-            raw_input('Enter to continue')
+            # raw_input('Enter to continue')
             return 1, "Press custom button step skipped"
 
         action = self.__robot.custom_button.wait_for_any_action(timeout=timeout)
@@ -601,7 +602,7 @@ class TestFunctions(object):
     @staticmethod
     def wait_save_button_press():
         if not USE_BUTTON:
-            raw_input('Enter to continue')
+            # raw_input('Enter to continue')
             return 1, "Press save button step skipped"
 
         try:
@@ -634,18 +635,23 @@ class TestFunctions(object):
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
-    # robot.system_api_client.set_ethernet_auto()
+
     print("----- START -----")
     test = TestProduction()
     test.run()
     print("----- END -----")
     test.print_report()
-    test.send_report()
-    # robot.system_api_client.set_ethernet_static()
 
-    if test.get_report()['success']:
+    try:
+        robot.system_api_client.set_ethernet_auto()
+        rospy.sleep(10)
+
+        test.send_report()
+
         set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
         # set_setting('sharing_allowed', 'False', 'bool')
         set_setting('test_report_done', 'True', 'bool')
-    else:
-        raise TestFailure()
+    except Exception as _e:
+        TestFailure()
+
+    robot.system_api_client.set_ethernet_static()
