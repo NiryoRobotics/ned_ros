@@ -45,8 +45,8 @@ def euler_matrix(ai, aj, ak, axes='sxyz'):
         firstaxis, parity, repetition, frame = axes
 
     i = firstaxis
-    j = _NEXT_AXIS[i+parity]
-    k = _NEXT_AXIS[i-parity+1]
+    j = _NEXT_AXIS[i + parity]
+    k = _NEXT_AXIS[i - parity + 1]
 
     if frame:
         ai, ak = ak, ai
@@ -55,30 +55,30 @@ def euler_matrix(ai, aj, ak, axes='sxyz'):
 
     si, sj, sk = math.sin(ai), math.sin(aj), math.sin(ak)
     ci, cj, ck = math.cos(ai), math.cos(aj), math.cos(ak)
-    cc, cs = ci*ck, ci*sk
-    sc, ss = si*ck, si*sk
+    cc, cs = ci * ck, ci * sk
+    sc, ss = si * ck, si * sk
 
     M = np.identity(4)
     if repetition:
         M[i, i] = cj
-        M[i, j] = sj*si
-        M[i, k] = sj*ci
-        M[j, i] = sj*sk
-        M[j, j] = -cj*ss+cc
-        M[j, k] = -cj*cs-sc
-        M[k, i] = -sj*ck
-        M[k, j] = cj*sc+cs
-        M[k, k] = cj*cc-ss
+        M[i, j] = sj * si
+        M[i, k] = sj * ci
+        M[j, i] = sj * sk
+        M[j, j] = -cj * ss + cc
+        M[j, k] = -cj * cs - sc
+        M[k, i] = -sj * ck
+        M[k, j] = cj * sc + cs
+        M[k, k] = cj * cc - ss
     else:
-        M[i, i] = cj*ck
-        M[i, j] = sj*sc-cs
-        M[i, k] = sj*cc+ss
-        M[j, i] = cj*sk
-        M[j, j] = sj*ss+cc
-        M[j, k] = sj*cs-sc
+        M[i, i] = cj * ck
+        M[i, j] = sj * sc - cs
+        M[i, k] = sj * cc + ss
+        M[j, i] = cj * sk
+        M[j, j] = sj * ss + cc
+        M[j, k] = sj * cs - sc
         M[k, i] = -sj
-        M[k, j] = cj*si
-        M[k, k] = cj*ci
+        M[k, j] = cj * si
+        M[k, k] = cj * ci
     return M
 
 
@@ -134,9 +134,9 @@ def quaternion_matrix(quaternion):
     q *= math.sqrt(2.0 / nq)
     q = np.outer(q, q)
     return np.array((
-        (1.0-q[1, 1]-q[2, 2], 0.0+q[0, 1]-q[2, 3], 0.0+q[0, 2]+q[1, 3], 0.0),
-        (0.0+q[0, 1]+q[2, 3], 1.0-q[0, 0]-q[2, 2], 0.0+q[1, 2]-q[0, 3], 0.0),
-        (0.0+q[0, 2]-q[1, 3], 0.0+q[1, 2]+q[0, 3], 1.0-q[0, 0]-q[1, 1], 0.0),
+        (1.0 - q[1, 1] - q[2, 2], 0.0 + q[0, 1] - q[2, 3], 0.0 + q[0, 2] + q[1, 3], 0.0),
+        (0.0 + q[0, 1] + q[2, 3], 1.0 - q[0, 0] - q[2, 2], 0.0 + q[1, 2] - q[0, 3], 0.0),
+        (0.0 + q[0, 2] - q[1, 3], 0.0 + q[1, 2] + q[0, 3], 1.0 - q[0, 0] - q[1, 1], 0.0),
         (0.0, 0.0, 0.0, 1.0)
     ), dtype=np.float64)
 
@@ -186,3 +186,7 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
         quaternion[j] *= -1
 
     return quaternion
+
+
+def euclidian_dist(point_a, point_b):
+    return np.linalg.norm(np.array(point_a) - np.array(point_b))

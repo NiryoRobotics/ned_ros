@@ -9,16 +9,27 @@ find_package(catkin REQUIRED COMPONENTS
 # enable python module support
 catkin_python_setup()
 
+file(
+  GLOB msg_files
+  RELATIVE  ${CMAKE_CURRENT_SOURCE_DIR}/msg
+  msg/*.msg
+)
+
 add_message_files(
   FILES
-  WifiStatus.msg
+  ${msg_files}
+)
+
+file(
+  GLOB srv_files
+  RELATIVE  ${CMAKE_CURRENT_SOURCE_DIR}/srv
+  srv/*.srv
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
-  ManageEthernet.srv
-  ManageWifi.srv
+  ${srv_files}
 )
 
 generate_messages(

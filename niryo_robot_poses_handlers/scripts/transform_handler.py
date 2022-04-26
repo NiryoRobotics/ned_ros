@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 # Libs
+import copy
+
 import rospy
 import tf2_ros
-
 import niryo_robot_poses_handlers.transform_functions as transformations
-
+from tf2_ros import StaticTransformBroadcaster
 import threading
 import numpy as np
 
 # Messages
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, Vector3, Quaternion
 from visualization_msgs.msg import Marker
 
 
@@ -19,12 +20,12 @@ class PosesTransformHandler:
     This class uses a tfBuffer to handle transforms related to the vision kit.
     """
 
-    def __init__(self, grip_manager):
+    def __init__(self, grip_manager, pose_handler_node):
         self.__tf_buffer = tf2_ros.Buffer()
         self.__debug_stop_event = threading.Event()
         self.__debug_thread = None
         self.__debug_current_ws = None  # only for debugging purposes
-
+        self.__pose_handler_node = pose_handler_node
         self.__grip_manager = grip_manager
 
     def __del__(self):
@@ -40,41 +41,35 @@ class PosesTransformHandler:
         :param yaw_rel: object base rotation on z relative to workspace
         :param yaw_center: Avoid over rotation
         """
-        position = np.dot(workspace.position_matrix, np.array([x_rel, y_rel, 1]))
-        camera_rotation = transformations.euler_matrix(0, 0, yaw_rel)
-        # Here we correct the object orientation to be similar to base_link if
-        # the object in on the ground. Not neccessarily needed to be honest...
-        convention_rotation = np.array([[0, -1, 0, 0],
-                                        [-1, 0, 0, 0],
-                                        [0, 0, -1, 0],
-                                        [0, 0, 0, 1]])
+        tmp_buffer = tf2_ros.Buffer()
+        delta_x = transformations.euclidian_dist(workspace.points[1], workspace.points[0]) * x_rel
+        delta_y = transformations.euclidian_dist(workspace.points[3], workspace.points[0]) * y_rel
 
-        object_rotation = transformations.concatenate_matrices(
-            workspace.rotation_matrix, camera_rotation, convention_rotation)
-        roll, pitch, yaw = transformations.euler_from_matrix(object_rotation)
+        t = TransformStamped()
+        t.transform.translation = Vector3(delta_y, delta_x, 0)
+        t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(0, 0, yaw_rel))
+        t.header.frame_id = str(workspace.name)
+        t.child_frame_id = "object_base"
+        tmp_buffer.set_transform(t, "default_authority")
+        t.child_frame_id = "object_base_bis"
+
+        transform_frame = self.__pose_handler_node.dynamic_frame_manager.dict_dynamic_frame[workspace.name]["transform"]
+        transform = copy.deepcopy(transform_frame)
+        transform.header.frame_id = "base_link"
+        transform.header.stamp = rospy.Time(0)
+        tmp_buffer.set_transform(transform, "default_authority")
 
         # Correcting yaw to avoid out of reach targets
+        t = tmp_buffer.lookup_transform("base_link", "object_base", rospy.Time(0))
+        roll, pitch, yaw = transformations.euler_from_quaternion([t.transform.rotation.x, t.transform.rotation.y,
+                                                                  t.transform.rotation.z, t.transform.rotation.w])
         if yaw_center is not None:
             if yaw < yaw_center - np.pi / 2:
                 yaw += np.pi
             elif yaw > yaw_center + np.pi / 2:
                 yaw -= np.pi
 
-        q = transformations.quaternion_from_euler(roll, pitch, yaw)
-
-        t = TransformStamped()
-        t.transform.translation.x = position[0]
-        t.transform.translation.y = position[1]
-        t.transform.translation.z = position[2]
-
-        t.transform.rotation.x = q[0]
-        t.transform.rotation.y = q[1]
-        t.transform.rotation.z = q[2]
-        t.transform.rotation.w = q[3]
-
-        t.header.frame_id = "base_link"
-        t.child_frame_id = "object_base"
-
+        t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(roll, pitch, yaw))
         self.__tf_buffer.set_transform(t, "default_authority")
 
     def set_grip(self, grip):

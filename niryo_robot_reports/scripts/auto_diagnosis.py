@@ -49,7 +49,7 @@ class TestReport(object):
 
     def append(self, message):
         new_line = "[{}] - {} - {}.".format(self._header, datetime.now(), message)
-        print(new_line)
+        rospy.loginfo('[Test Report]' + new_line)
         self._report += new_line + "\\n"
 
     def execute(self, function, prefix="", args=None):
@@ -156,9 +156,10 @@ class TestFunctions(object):
         self.__robot.set_arm_max_acceleration(ACCELERATION)
 
         if self.__robot_version in ['ned2']:
+            rospy.sleep(2)
             self.__robot.led_ring.rainbow()
-            self.__robot.sound.set_volume(100)
-            self.__robot.sound.say('Initialization of the auto-diagnosis')
+            # self.__robot.sound.set_volume(100)
+            # self.__robot.sound.say('Initialization of the auto-diagnosis')
             rospy.sleep(3)
         else:
             self.led_stop()
