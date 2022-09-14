@@ -1,6 +1,7 @@
 calibration_timeout: 30
 
-calibration_file:  "/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt"
+calibration_file: "/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt"  
+homing_offset_file: "/home/niryo/niryo_robot_saved_files/stepper_motor_homing_offsets.txt"
 
 calibration_params:
     stepper_1:

@@ -37,80 +37,84 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace joints_interface
 {
 
-class CalibrationManager
-{
-
-public:
-    CalibrationManager(ros::NodeHandle& nh,
-                       std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                       std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
-                       std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-
-    ~CalibrationManager() = default;
-
-    // non copyable class
-    CalibrationManager( const CalibrationManager& ) = delete;
-    CalibrationManager( CalibrationManager&& ) = delete;
-
-    CalibrationManager& operator= ( CalibrationManager && ) = delete;
-    CalibrationManager& operator= ( const CalibrationManager& ) = delete;
-
-    int startCalibration(int mode, std::string &result_message);
-
-    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-
-private:
-    void initParameters(ros::NodeHandle& nh);
-    void initCalibrationParams(ros::NodeHandle &nh);
-
-    common::model::EStepperCalibrationStatus autoCalibration();
-    common::model::EStepperCalibrationStatus manualCalibration();
-
-    // tests
-    bool canProcessManualCalibration(std::string &result_message);
-    bool steppersConnected();
-
-    // commands
-    void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState>& pState, bool status);
-
-    void initVelocityProfiles();
-    void resetVelocityProfiles();
-    void moveRobotBeforeCalibration();
-    void moveSteppersToHome();
-    void sendCalibrationToSteppers();
-    void activateTorque(bool activated);
-
-    // file operations
-    bool saveCalibrationOffsetsToFile(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
-    bool readCalibrationOffsetsFromFile(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
-
-private:
-    struct CalibrationConfig
+    class CalibrationManager
     {
-        uint8_t stall_threshold{0};
-        int8_t direction{0};
-        int32_t delay{0};
-        common::model::VelocityProfile profile;
+
+    public:
+        CalibrationManager(ros::NodeHandle &nh,
+                           std::vector<std::shared_ptr<common::model::JointState>> joint_list,
+                           std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                           std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
+
+        ~CalibrationManager() = default;
+
+        // non copyable class
+        CalibrationManager(const CalibrationManager &) = delete;
+        CalibrationManager(CalibrationManager &&) = delete;
+
+        CalibrationManager &operator=(CalibrationManager &&) = delete;
+        CalibrationManager &operator=(const CalibrationManager &) = delete;
+
+        int startCalibration(int mode, std::string &result_message);
+
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+
+    private:
+        void initParameters(ros::NodeHandle &nh);
+        void initCalibrationParams(ros::NodeHandle &nh);
+
+        common::model::EStepperCalibrationStatus autoCalibration();
+        common::model::EStepperCalibrationStatus manualCalibration();
+
+        // tests
+        bool canProcessManualCalibration(std::string &result_message);
+        bool steppersConnected();
+
+        // commands
+        void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState> &pState, bool status);
+
+        void initVelocityProfiles();
+        void resetVelocityProfiles();
+        void moveRobotBeforeCalibration();
+        void moveSteppersToHome();
+        void sendCalibrationToSteppers();
+        void activateTorque(bool activated);
+        void writeHomingAbsPosition(const std::vector<int> &homing_abs_position_ids, const std::vector<int> &homing_abs_position_results);
+        void readHomingAbsPosition(std::vector<int> &homing_abs_position_ids, std::vector<int> &homing_abs_position_results);
+
+        // file operations
+        bool saveCalibrationOffsetsToFile(const std::vector<int> &motor_id_list, const std::vector<int> &steps_list);
+        bool readCalibrationOffsetsFromFile(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
+        bool saveHomingAbsPosition(const std::vector<int> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results);
+        bool retrieveHomingAbsPosition(std::vector<int> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results);
+
+    private:
+        struct CalibrationConfig
+        {
+            uint8_t stall_threshold{0};
+            int8_t direction{0};
+            int32_t delay{0};
+            common::model::VelocityProfile profile;
+        };
+
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+        // one of the above interface, responsible for steppers
+        std::shared_ptr<common::util::IDriverCore> _stepper_bus_interface;
+
+        std::vector<std::shared_ptr<common::model::JointState>> _joint_states_list;
+        std::map<uint8_t, CalibrationConfig> _calibration_params_map;
+
+        int _calibration_timeout{0};
+        bool _simulation_mode{false};
+
+        std::string _calibration_file_name;
+        std::string _homing_offset_file_name;
+        std::string _hardware_version;
+
+        static constexpr int AUTO_CALIBRATION = 1;
+        static constexpr int MANUAL_CALIBRATION = 2;
     };
-
-    std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-    std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
-    // one of the above interface, responsible for steppers
-    std::shared_ptr<common::util::IDriverCore> _stepper_bus_interface;
-
-    std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
-    std::map<uint8_t, CalibrationConfig > _calibration_params_map;
-
-    int _calibration_timeout{0};
-    bool _simulation_mode{false};
-
-    std::string _calibration_file_name;
-    std::string _hardware_version;
-
-    static constexpr int AUTO_CALIBRATION = 1;
-    static constexpr int MANUAL_CALIBRATION = 2;
-
-};
 
 } // JointsInterface
 #endif

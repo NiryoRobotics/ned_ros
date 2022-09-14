@@ -27,198 +27,193 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace common
 {
-namespace model
-{
-
-struct VelocityProfile
-{
-    uint32_t v_start{1};
-    uint32_t a_1{0};
-    uint32_t v_1{0};
-    uint32_t a_max{6000};
-    uint32_t v_max{6};
-    uint32_t d_max{6000};
-    uint32_t d_1{0};
-    uint32_t v_stop{2};
-
-    std::vector<uint32_t> to_list() const
+    namespace model
     {
-      return {v_start,
-              a_1,
-              v_1,
-              a_max,
-              v_max,
-              d_max,
-              d_1,
-              v_stop};
-    }
-};
 
-/**
- * @brief The StepperMotorState class
- */
-class StepperMotorState : public JointState
-{
+        struct VelocityProfile
+        {
+            uint32_t v_start{1};
+            uint32_t a_1{0};
+            uint32_t v_1{0};
+            uint32_t a_max{6000};
+            uint32_t v_max{6};
+            uint32_t d_max{6000};
+            uint32_t d_1{0};
+            uint32_t v_stop{2};
 
-public:
-    StepperMotorState() = default;
-    StepperMotorState(EHardwareType type, EComponentType component_type,
-                      EBusProtocol bus_proto, uint8_t id);
-    StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
-                      EBusProtocol bus_proto, uint8_t id);
+            std::vector<uint32_t> to_list() const
+            {
+                return {v_start,
+                        a_1,
+                        v_1,
+                        a_max,
+                        v_max,
+                        d_max,
+                        d_1,
+                        v_stop};
+            }
+        };
 
-    int stepsPerRev();
+        /**
+         * @brief The StepperMotorState class
+         */
+        class StepperMotorState : public JointState
+        {
 
-    // setters
-    void updateLastTimeRead();
-    void setHwFailCounter(double fail_counter);
-    void setMaxEffort(double max_effort);
-    void setGearRatio(double gear_ratio);
+        public:
+            StepperMotorState() = default;
+            StepperMotorState(EHardwareType type, EComponentType component_type,
+                              EBusProtocol bus_proto, uint8_t id);
+            StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
+                              EBusProtocol bus_proto, uint8_t id);
 
-    void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
-                        const int32_t &calibration_value);
-    void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
-    void setMicroSteps(double micro_steps);
-    void setMotorRatio(double motor_ratio);
+            int stepsPerRev();
 
-    // getters
-    double getLastTimeRead() const;
-    double getHwFailCounter() const;
+            // setters
+            void updateLastTimeRead();
+            void setHwFailCounter(double fail_counter);
+            void setMaxEffort(double max_effort);
+            void setGearRatio(double gear_ratio);
 
-    double getMaxEffort() const;
-    double getMicroSteps() const;
+            void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
+                                const int32_t &calibration_value);
+            void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
+            void setMicroSteps(double micro_steps);
+            void setMotorRatio(double motor_ratio);
 
-    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-    int32_t getCalibrationValue() const;
+            // getters
+            double getLastTimeRead() const;
+            double getHwFailCounter() const;
 
-    VelocityProfile getVelocityProfile() const;
-    void setVelocityProfile(const VelocityProfile& profile);
+            double getMaxEffort() const;
+            double getMicroSteps() const;
 
-    // tests
-    bool isConveyor() const;
-    bool isTimeout() const;
+            common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+            int32_t getCalibrationValue() const;
 
-    // JointState interface
-    void reset() override;
-    bool isValid() const override;
-    std::string str() const override;
+            VelocityProfile getVelocityProfile() const;
+            void setVelocityProfile(const VelocityProfile &profile);
 
-    int to_motor_pos(double rad_pos) override;
-    double to_rad_pos(int motor_pos) override;
+            // tests
+            bool isConveyor() const;
+            bool isTimeout() const;
 
-    int to_motor_vel(double rad_vel) override;
-    double to_rad_vel(int motor_vel) override;
+            // JointState interface
+            void reset() override;
+            bool isValid() const override;
+            std::string str() const override;
 
-    void updateMultiplierRatio();
-protected:
-    double _last_time_read{-1.0};
-    double _hw_fail_counter{0.0};
+            int to_motor_pos(double rad_pos) override;
+            double to_rad_pos(int motor_pos) override;
 
-    double _max_effort{0.0};
-    double _micro_steps{8.0};
-    double _gear_ratio{1.0};
-    double _motor_ratio{1.0};  // ned2
+            int to_motor_vel(double rad_vel) override;
+            double to_rad_vel(int motor_vel) override;
 
-    // profile
-    VelocityProfile _profile;
+            void updateMultiplierRatio();
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
-    int32_t _calibration_value{0};
+        public:
+            int32_t homing_abs_position{0.0};
 
-private:
-    double _pos_multiplier_ratio{1.0};
-    double _vel_multiplier_ratio{1.0};
+        protected:
+            double _last_time_read{-1.0};
+            double _hw_fail_counter{0.0};
 
-    static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
-};
+            double _max_effort{0.0};
+            double _micro_steps{8.0};
+            double _gear_ratio{1.0};
+            double _motor_ratio{1.0}; // ned2
 
-/**
- * @brief StepperMotorState::getMaxEffort
- * @return
- */
-inline
-double StepperMotorState::getMaxEffort() const
-{
-    return _max_effort;
-}
+            // profile
+            VelocityProfile _profile;
 
-/**
- * @brief StepperMotorState::getCalibrationState
- * @return
- */
-inline
-EStepperCalibrationStatus StepperMotorState::getCalibrationStatus() const
-{
-    return _calibration_status;
-}
+            common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+            int32_t _calibration_value{0};
 
-/**
- * @brief StepperMotorState::getCalibrationValue
- * @return
- */
-inline
-int32_t StepperMotorState::getCalibrationValue() const
-{
-    return _calibration_value;
-}
+        private:
+            double _pos_multiplier_ratio{1.0};
+            double _vel_multiplier_ratio{1.0};
 
-/**
- * @brief StepperMotorState::isConveyor
- * @return
- */
-inline
-bool StepperMotorState::isConveyor() const
-{
-    return (getComponentType() == common::model::EComponentType::CONVEYOR);
-}
+            static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
+        };
 
-/**
- * @brief StepperMotorState::getVelocityProfile
- * @return
- */
-inline
-VelocityProfile StepperMotorState::getVelocityProfile() const
-{
-    return _profile;
-}
+        /**
+         * @brief StepperMotorState::getMaxEffort
+         * @return
+         */
+        inline double StepperMotorState::getMaxEffort() const
+        {
+            return _max_effort;
+        }
 
-/**
- * @brief StepperMotorState::getMicroSteps
- * @return
- */
-inline
-double StepperMotorState::getMicroSteps() const
-{
-  return _micro_steps;
-}
+        /**
+         * @brief StepperMotorState::getCalibrationState
+         * @return
+         */
+        inline EStepperCalibrationStatus StepperMotorState::getCalibrationStatus() const
+        {
+            return _calibration_status;
+        }
 
-/**
- * @brief StepperMotorState::getLastTimeRead
- * @return
- */
-inline
-int StepperMotorState::stepsPerRev() {
-    return int(_micro_steps * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
-}
+        /**
+         * @brief StepperMotorState::getCalibrationValue
+         * @return
+         */
+        inline int32_t StepperMotorState::getCalibrationValue() const
+        {
+            return _calibration_value;
+        }
 
-inline
-double StepperMotorState::getLastTimeRead() const
-{
-    return _last_time_read;
-}
+        /**
+         * @brief StepperMotorState::isConveyor
+         * @return
+         */
+        inline bool StepperMotorState::isConveyor() const
+        {
+            return (getComponentType() == common::model::EComponentType::CONVEYOR);
+        }
 
-/**
- * @brief StepperMotorState::getHwFailCounter
- * @return
- */
-inline
-double StepperMotorState::getHwFailCounter() const
-{
-    return _hw_fail_counter;
-}
+        /**
+         * @brief StepperMotorState::getVelocityProfile
+         * @return
+         */
+        inline VelocityProfile StepperMotorState::getVelocityProfile() const
+        {
+            return _profile;
+        }
 
+        /**
+         * @brief StepperMotorState::getMicroSteps
+         * @return
+         */
+        inline double StepperMotorState::getMicroSteps() const
+        {
+            return _micro_steps;
+        }
 
-} // model
+        /**
+         * @brief StepperMotorState::getLastTimeRead
+         * @return
+         */
+        inline int StepperMotorState::stepsPerRev()
+        {
+            return int(_micro_steps * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
+        }
+
+        inline double StepperMotorState::getLastTimeRead() const
+        {
+            return _last_time_read;
+        }
+
+        /**
+         * @brief StepperMotorState::getHwFailCounter
+         * @return
+         */
+        inline double StepperMotorState::getHwFailCounter() const
+        {
+            return _hw_fail_counter;
+        }
+
+    } // model
 } // common
 
 #endif
