@@ -85,8 +85,8 @@ namespace joints_interface
         // file operations
         bool saveCalibrationOffsetsToFile(const std::vector<int> &motor_id_list, const std::vector<int> &steps_list);
         bool readCalibrationOffsetsFromFile(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
-        bool saveHomingAbsPosition(const std::vector<int> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results);
-        bool retrieveHomingAbsPosition(std::vector<int> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results);
+        bool saveHomingAbsPositionToFile(const std::vector<int> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results);
+        bool readHomingAbsPositionFromFile(std::vector<int> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results);
 
     private:
         struct CalibrationConfig

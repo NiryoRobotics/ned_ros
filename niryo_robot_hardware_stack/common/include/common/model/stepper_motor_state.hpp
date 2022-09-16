@@ -80,6 +80,7 @@ namespace common
             void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
             void setMicroSteps(double micro_steps);
             void setMotorRatio(double motor_ratio);
+            void setHomingAbsPosition(int32_t homing_abs_position);
 
             // getters
             double getLastTimeRead() const;
@@ -87,6 +88,7 @@ namespace common
 
             double getMaxEffort() const;
             double getMicroSteps() const;
+            int32_t getHomingAbsPosition() const;
 
             common::model::EStepperCalibrationStatus getCalibrationStatus() const;
             int32_t getCalibrationValue() const;
@@ -111,9 +113,6 @@ namespace common
 
             void updateMultiplierRatio();
 
-        public:
-            int32_t homing_abs_position{0.0};
-
         protected:
             double _last_time_read{-1.0};
             double _hw_fail_counter{0.0};
@@ -122,6 +121,7 @@ namespace common
             double _micro_steps{8.0};
             double _gear_ratio{1.0};
             double _motor_ratio{1.0}; // ned2
+            int32_t _homing_abs_position{0};
 
             // profile
             VelocityProfile _profile;
@@ -188,6 +188,15 @@ namespace common
         inline double StepperMotorState::getMicroSteps() const
         {
             return _micro_steps;
+        }
+
+        /**
+         * @brief StepperMotorState::getMicroSteps
+         * @return
+         */
+        inline int32_t StepperMotorState::getHomingAbsPosition() const
+        {
+            return _homing_abs_position;
         }
 
         /**

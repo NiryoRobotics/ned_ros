@@ -570,6 +570,74 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
     return position;
 }
 
+bool TtlManager::readHomingAbsPosition()
+{
+    for (auto const &it : _driver_map)
+    {                
+        if(common::model::EHardwareType::STEPPER == it.first)
+        {
+            auto hw_type = it.first;
+            auto driver = std::dynamic_pointer_cast<ttl_driver::StepperDriver<ttl_driver::StepperReg>>(it.second);
+            if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
+            {
+                // we retrieve all the associated id for the type of the current driver
+                vector<uint8_t> ids_list = _ids_map.at(hw_type);
+
+                // we retrieve all the associated id for the type of the current driver
+                vector<int32_t> homing_abs_position_list;
+
+                // retrieve joint status
+                int res = driver->readHomingAbsPosition(ids_list, homing_abs_position_list);
+                if (COMM_SUCCESS == res)
+                {
+                    if (ids_list.size() == homing_abs_position_list.size())
+                    {
+                        // set motors states accordingly
+                        for (size_t i = 0; i < ids_list.size(); ++i)
+                        {
+                            uint8_t id = ids_list.at(i);
+
+                            if (_state_map.count(id))
+                            {
+                                auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_state_map.at(id));
+                                if (state)
+                                {
+                                    state->setHomingAbsPosition(static_cast<int32_t>(homing_abs_position_list.at(i)));                                   
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }       
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * @brief TtlManager::readJointsStatus
  * @return

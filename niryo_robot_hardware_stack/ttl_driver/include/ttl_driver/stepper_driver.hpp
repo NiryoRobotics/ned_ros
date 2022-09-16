@@ -99,7 +99,7 @@ namespace ttl_driver
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
-        int readHomingAbsPosition(uint8_t id, int32_t &abs_position) override;
+        int readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position) override;
         int writeHomingAbsPosition(uint8_t id, const int32_t &abs_position) override;
 
     private:
@@ -784,9 +784,9 @@ namespace ttl_driver
      * @return
      */
     template <typename reg_type>
-    int StepperDriver<reg_type>::readHomingAbsPosition(uint8_t id, int32_t &abs_position)
+    int StepperDriver<reg_type>::readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position)
     {
-        return read<typename reg_type::TYPE_HOMING_ABS_POSITION>(reg_type::ADDR_HOMING_ABS_POSITION, id, abs_position);
+        return syncRead<typename reg_type::TYPE_HOMING_ABS_POSITION>(reg_type::ADDR_HOMING_ABS_POSITION, id_list, abs_position);
     }
 
     // private

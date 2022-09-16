@@ -220,7 +220,7 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
     _tool_reboot_server = nh.advertiseService("/niryo_robot/tools/reboot",
                                                &ToolsInterfaceCore::_callbackToolReboot, this);
 }
-
+ 
 /**
  * @brief ToolsInterfaceCore::startPublishers
  * @param nh

@@ -121,6 +121,7 @@ public:
     // getters
     std::vector<uint8_t> getRemovedMotorList() const override;
     double getPosition(uint8_t id) const;
+    
 
     std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
     std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
@@ -148,6 +149,8 @@ public:
     bool getCollisionStatus() const;
     void waitSyncQueueFree();
     void waitSingleQueueFree();
+
+    bool readHomingAbsPosition();
 
 private:
     void initParameters(ros::NodeHandle& nh) override;
@@ -288,6 +291,15 @@ inline
 void TtlInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
 {
     ROS_INFO("Set calibration status is not availble for TTL");
+}
+
+/**
+ * @brief TtlInterfaceCore::readHomingAbsPosition
+ */
+inline
+bool TtlInterfaceCore::readHomingAbsPosition()
+{
+    return _ttl_manager->readHomingAbsPosition();
 }
 
 } // ttl_driver

@@ -840,4 +840,12 @@ int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
     return COMM_SUCCESS;
 }
 
+
+int MockStepperDriver::readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position){
+    return 1;
+}
+int MockStepperDriver::writeHomingAbsPosition(uint8_t id, const int32_t &abs_position){
+    return 1;
+}
+
 }  // namespace ttl_driver

@@ -90,9 +90,7 @@ namespace ttl_driver
             case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
                 return writeVelocityProfile(cmd->getId(), cmd->getParams());
             case EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION:
-                return writeHomingAbsPosition(cmd->getId(), cmd->getParam());
-            case EStepperCommandType::CMD_TYPE_READ_HOMING_ABS_POSITION:
-                return readHomingAbsPosition(cmd->getId(), cmd->getParam());
+                return writeHomingAbsPosition(cmd->getId(), cmd->getParam());            
             default:
                 std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
             }

@@ -69,7 +69,8 @@ namespace common
             m[EStepperCommandType::CMD_TYPE_PING] = "ping";
             m[EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP] = "calibration setup";
             m[EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE] = "velocity profile";
-            m[EStepperCommandType::CMD_TYPE_HOMING_ABS_POSITION] = "homing abs position";
+            m[EStepperCommandType::CMD_TYPE_READ_HOMING_ABS_POSITION] = "homing abs read position";
+            m[EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION] = "homing abs write position";
             m[EStepperCommandType::CMD_TYPE_UNKNOWN] = "unknown type";
 
             return m;
