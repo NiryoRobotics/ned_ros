@@ -37,6 +37,7 @@
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "common/util/util_defs.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 #include "ttl_driver/stepper_driver.hpp"
 
@@ -372,12 +373,15 @@ namespace joints_interface
     {
         // 0. Init velocity profile
         initVelocityProfiles();
+        ROS_INFO("initVelocityProfiles");
 
         // 1. Place robot in position
         moveRobotBeforeCalibration();
+        ROS_INFO("moveRobotBeforeCalibration");
 
         // 2. Send calibration cmd 1 + 2 + 3 (from can or ttl depending of which interface is instanciated)
         sendCalibrationToSteppers();
+        ROS_INFO("sendCalibrationToSteppers");
 
         double timeout = 0.0;
         // 3. wait for calibration status to change
@@ -429,16 +433,22 @@ namespace joints_interface
 
             // 5. put back velocity profiles to normal
             resetVelocityProfiles();
+            ROS_INFO("resetVelocityProfiles");
+
 
             // 6. Move steppers to home
             std::vector<int> homing_abs_position_results;
             std::vector<int> homing_abs_position_ids;
-            if ("ned2" == _hardware_version && readHomingAbsPositionFromFile(homing_abs_position_ids, homing_abs_position_results))
+            if ("ned2" == _hardware_version && readHomingAbsPositionFromFile())
             {
-                writeHomingAbsPosition(homing_abs_position_ids, homing_abs_position_results);
+                writeHomingAbsPosition();
+                ROS_INFO("writeHomingAbsPosition");
+
             }
 
             moveSteppersToHome();
+            ROS_INFO("moveSteppersToHome");
+
 
             ros::Duration(("ned2" == _hardware_version) ? 3.5 : 4).sleep();
 
@@ -449,7 +459,11 @@ namespace joints_interface
             if ("ned2" == _hardware_version)
             {
                 readHomingAbsPosition(homing_abs_position_ids, homing_abs_position_results);
+                ROS_INFO("readHomingAbsPosition");
+
                 saveHomingAbsPositionToFile(homing_abs_position_ids, homing_abs_position_results);
+                ROS_INFO("saveHomingAbsPositionToFile");
+
             }
         }
         else
@@ -586,6 +600,8 @@ namespace joints_interface
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
             }
         }
+
+        _ttl_interface->waitSingleQueueFree();
     }
 
     /**
@@ -848,21 +864,26 @@ namespace joints_interface
      * @param homing_abs_position_ids
      * @param homing_abs_position_results
      */
-    void CalibrationManager::writeHomingAbsPosition(const std::vector<int> &homing_abs_position_ids, const std::vector<int> &homing_abs_position_results)
+    void CalibrationManager::writeHomingAbsPosition()
     {
-        if (homing_abs_position_ids.size() == 3)
+        if(_ttl_interface)
         {
-            _ttl_interface->waitSingleQueueFree();
+            // CMD_TYPE_READ_HOMING_ABS_POSITION cmd
+            StepperSyncCmd stepper_cmd (EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION);
 
-            for (size_t i = 0; i < homing_abs_position_ids.size(); ++i)
+            for (auto const &jState : _joint_states_list)
             {
-                // CMD_TYPE_READ_HOMING_ABS_POSITION cmd
-                StepperSingleCmd cmd(
-                    EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION,
-                    homing_abs_position_ids.at(i),
-                    {homing_abs_position_results.at(i)});
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd));
+                if (jState && jState->isStepper())
+                {
+                    auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(jState);
+                    // stepper_cmd.addMotorParam(state->getHardwareType(), state->getId(), static_cast<int32_t>(state->getHomingAbsPosition()));
+                }
             }
+
+            _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperSyncCmd>(stepper_cmd));
+
+            // Wait for all stepper commands are executed
+            _ttl_interface->waitSyncQueueFree();
         }
     }
 
@@ -1013,7 +1034,7 @@ namespace joints_interface
     }
 
     /**
-     * @brief CalibrationManager::writeHomingAbsPosition
+     * @brief CalibrationManager::saveHomingAbsPositionToFile
      * @param abs_position
      * @return
      */
@@ -1078,14 +1099,13 @@ namespace joints_interface
      * @param abs_position
      * @return
      */
-    bool CalibrationManager::readHomingAbsPositionFromFile(std::vector<int> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results)
+    bool CalibrationManager::readHomingAbsPositionFromFile()
     {
         bool res = false;
 
         std::string current_line;
 
-        homing_abs_position_ids.clear();
-        homing_abs_position_results.clear();
+        std::map<uint8_t, int32_t> id_homing_map;
 
         std::ifstream offset_file(_homing_offset_file_name.c_str());
 
@@ -1097,8 +1117,8 @@ namespace joints_interface
                 try
                 {
                     size_t index = current_line.find(':');
-                    homing_abs_position_ids.emplace_back(stoi(current_line.substr(0, index)));
-                    homing_abs_position_results.emplace_back(stoi(current_line.erase(0, index + 1)));
+                    ROS_INFO("read SD card values: %s", current_line.c_str());
+                    id_homing_map[stoi(current_line.substr(0, index))] = stoi(current_line.erase(0, index + 1)); // TODO: verify stoi(current_line.erase(0, index + 1) is the correct value
                 }
                 catch (...)
                 {
@@ -1106,9 +1126,20 @@ namespace joints_interface
                 }
             }
 
-            offset_file.close();
-            if(3 == homing_abs_position_ids.size() && 3 == homing_abs_position_results.size())  // TODO: instead of hardcoded 3 use number of steppers to calibrate
+            if(id_homing_map.size() == _calibration_params_map.size())
+            {
+                for (auto const &jState : _joint_states_list)
+                {
+                    if (jState && jState->isStepper())
+                    {
+                        auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(jState);
+                        state->setHomingAbsPosition(id_homing_map[state->getId()]);
+                    }                    
+                }
                 res = true;
+            }
+
+            offset_file.close();
         }
         else
         {

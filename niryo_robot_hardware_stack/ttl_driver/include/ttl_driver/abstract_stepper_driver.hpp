@@ -65,8 +65,8 @@ namespace ttl_driver
 
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
 
-        virtual int readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position) = 0;
-        virtual int writeHomingAbsPosition(uint8_t id, const int32_t &abs_position) = 0;
+        virtual int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) = 0;
+        virtual int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) = 0;
     };
 
 } // ttl_driver

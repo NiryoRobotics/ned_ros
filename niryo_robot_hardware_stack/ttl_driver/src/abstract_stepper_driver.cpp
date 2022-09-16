@@ -88,9 +88,7 @@ namespace ttl_driver
                 return writeVelocityGoal(cmd->getId(), speed);
             }
             case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
-                return writeVelocityProfile(cmd->getId(), cmd->getParams());
-            case EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION:
-                return writeHomingAbsPosition(cmd->getId(), cmd->getParam());            
+                return writeVelocityProfile(cmd->getId(), cmd->getParams());                       
             default:
                 std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
             }
@@ -137,6 +135,8 @@ namespace ttl_driver
             }
             return syncWriteTorqueEnable(ids, params_inv);
         }
+        case EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION:
+            return syncWriteHomingAbsPosition(ids, params);
         default:
             std::cout << "Command not implemented " << type << std::endl;
         }

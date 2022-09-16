@@ -99,8 +99,8 @@ namespace ttl_driver
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
-        int readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position) override;
-        int writeHomingAbsPosition(uint8_t id, const int32_t &abs_position) override;
+        int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) override;
+        int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) override;
 
     private:
         int writeVStart(uint8_t id, uint32_t v_start);
@@ -766,25 +766,25 @@ namespace ttl_driver
     }
 
     /**
-     * @brief StepperDriver<reg_type>::writeHomingAbsPosition
+     * @brief StepperDriver<reg_type>::syncWriteHomingAbsPosition
      * @param id
      * @param abs_position
      * @return
      */
     template <typename reg_type>
-    int StepperDriver<reg_type>::writeHomingAbsPosition(uint8_t id, const int32_t &abs_position)
+    int StepperDriver<reg_type>::syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position)
     {
-        return write<typename reg_type::TYPE_HOMING_ABS_POSITION>(reg_type::ADDR_HOMING_ABS_POSITION, id, abs_position);
+        return syncWrite<typename reg_type::TYPE_HOMING_ABS_POSITION>(reg_type::ADDR_HOMING_ABS_POSITION, id_list, abs_position);
     }
 
     /**
-     * @brief StepperDriver<reg_type>::readHomingAbsPosition
+     * @brief StepperDriver<reg_type>::syncReadHomingAbsPosition
      * @param id
      * @param abs_position
      * @return
      */
     template <typename reg_type>
-    int StepperDriver<reg_type>::readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position)
+    int StepperDriver<reg_type>::syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position)
     {
         return syncRead<typename reg_type::TYPE_HOMING_ABS_POSITION>(reg_type::ADDR_HOMING_ABS_POSITION, id_list, abs_position);
     }

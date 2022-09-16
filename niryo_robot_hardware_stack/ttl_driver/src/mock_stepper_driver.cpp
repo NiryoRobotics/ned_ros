@@ -841,10 +841,10 @@ int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
 }
 
 
-int MockStepperDriver::readHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<int32_t> &abs_position){
+int MockStepperDriver::syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position){
     return 1;
 }
-int MockStepperDriver::writeHomingAbsPosition(uint8_t id, const int32_t &abs_position){
+int MockStepperDriver::syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position){
     return 1;
 }
 

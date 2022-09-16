@@ -94,7 +94,7 @@ namespace ttl_driver
         using TYPE_HOMING_STALL_THRESHOLD = uint8_t;
 
         static constexpr uint16_t ADDR_HOMING_ABS_POSITION = 151;
-        using TYPE_HOMING_ABS_POSITION = int32_t;
+        using TYPE_HOMING_ABS_POSITION = uint32_t;
 
         // acceleration profile
         using TYPE_PROFILE = uint32_t;
