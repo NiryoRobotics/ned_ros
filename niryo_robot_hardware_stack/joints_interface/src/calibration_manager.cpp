@@ -383,7 +383,6 @@ namespace joints_interface
         {
             writeHomingAbsPosition();
             ROS_DEBUG("CalibrationManager::autoCalibration - writeHomingAbsPosition");
-            ros::Duration(10).sleep();  // TODO: erase line when finished testing
         }
 
         // 2. Send calibration cmd 1 + 2 + 3 (from can or ttl depending of which interface is instanciated)
@@ -877,7 +876,7 @@ namespace joints_interface
                 {
                     auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(jState);
                     stepper_cmd.addMotorParam(state->getHardwareType(), state->getId(), static_cast<int32_t>(state->getHomingAbsPosition()));
-                    ROS_DEBUG("CalibrationManager::writeHomingAbsPosition - id: %d, homing: %ud", state->getId(), static_cast<int32_t>(state->getHomingAbsPosition()));
+                    ROS_DEBUG("CalibrationManager::writeHomingAbsPosition - id: %d, homing: %u", state->getId(), static_cast<int32_t>(state->getHomingAbsPosition()));
                 }
             }
 
@@ -1119,8 +1118,10 @@ namespace joints_interface
                 try
                 {
                     size_t index = current_line.find(':');
-                    ROS_DEBUG("read SD card values: %s", current_line.c_str());
-                    id_homing_map[stoi(current_line.substr(0, index))] = stoi(current_line.erase(0, index + 1)); // TODO: verify stoi(current_line.erase(0, index + 1) is the correct value
+                    uint8_t id = stoi(current_line.substr(0, index));
+                    int32_t homing_pos = stoi(current_line.erase(0, index + 1));
+                    ROS_DEBUG("read SD card values: id: %d, homing: %d", id, homing_pos);
+                    id_homing_map[id] = homing_pos; // TODO: verify stoi(current_line.erase(0, index + 1) is the correct value
                 }
                 catch (...)
                 {
@@ -1137,7 +1138,8 @@ namespace joints_interface
                     {
                         auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(jState);
                         state->setHomingAbsPosition(id_homing_map[state->getId()]);
-                    }                    
+                        ROS_DEBUG("CalibrationManager::readHomingAbsPositionFromFile - id: %d, homing_pos: %u", state->getId(), state->getHomingAbsPosition());
+                    }
                 }
                 res = true;
             }
