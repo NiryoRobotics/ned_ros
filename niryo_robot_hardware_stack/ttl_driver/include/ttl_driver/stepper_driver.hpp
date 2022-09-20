@@ -713,9 +713,9 @@ namespace ttl_driver
             res++;
         ros::Duration(wait_duration).sleep();
 
-        if (COMM_SUCCESS != write<typename reg_type::TYPE_HOMING_STALL_THRESHOLD>(reg_type::ADDR_HOMING_STALL_THRESHOLD, id, stall_threshold))
-            res++;
-        ros::Duration(wait_duration).sleep();
+        // if (COMM_SUCCESS != write<typename reg_type::TYPE_HOMING_STALL_THRESHOLD>(reg_type::ADDR_HOMING_STALL_THRESHOLD, id, stall_threshold))
+        //     res++;
+        // ros::Duration(wait_duration).sleep();
 
         if (res > 0)
         {

@@ -802,6 +802,7 @@ namespace joints_interface
                         _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
                             StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION,
                                                 id)));
+                        ROS_DEBUG("CalibrationManager::sendCalibrationToSteppers - %d", id);
                     }
                 }
             }
