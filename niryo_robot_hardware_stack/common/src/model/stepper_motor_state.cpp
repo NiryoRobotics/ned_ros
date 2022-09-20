@@ -229,7 +229,7 @@ void StepperMotorState::setMotorRatio(double motor_ratio)
  * @brief StepperMotorState::setHomingAbsPosition
  * @param homing_abs_position   
  */
-void StepperMotorState::setHomingAbsPosition(uint32_t homing_abs_position)
+void StepperMotorState::setHomingAbsPosition(int32_t homing_abs_position)
 {
     _homing_abs_position = homing_abs_position;
 }

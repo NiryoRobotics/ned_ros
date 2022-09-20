@@ -453,8 +453,8 @@ namespace joints_interface
             // 8. Write homing_abs_position to file
             if ("ned2" == _hardware_version)
             {
-                std::vector<int> homing_abs_position_results;
-                std::vector<int> homing_abs_position_ids;
+                std::vector<uint8_t> homing_abs_position_ids;
+                std::vector<int32_t> homing_abs_position_results;
 
                 readHomingAbsPosition(homing_abs_position_ids, homing_abs_position_results);
                 ROS_DEBUG("CalibrationManager::autoCalibration - readHomingAbsPosition");   
@@ -892,7 +892,7 @@ namespace joints_interface
      * @param homing_abs_position_ids
      * @param homing_abs_position_results
      */
-    void CalibrationManager::readHomingAbsPosition(std::vector<int> &homing_abs_position_ids, std::vector<int> &homing_abs_position_results)
+    void CalibrationManager::readHomingAbsPosition(std::vector<uint8_t> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results)
     {
         _ttl_interface->waitSyncQueueFree();
 
@@ -908,7 +908,7 @@ namespace joints_interface
                 auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(jState);
                 homing_abs_position_ids.emplace_back(state->getId());                
                 homing_abs_position_results.emplace_back(state->getHomingAbsPosition());
-                ROS_DEBUG("CalibrationManager::readHomingAbsPosition - id: %d, homing: %u", homing_abs_position_ids.back(), homing_abs_position_results.back());
+                ROS_DEBUG("CalibrationManager::readHomingAbsPosition - id: %d, homing: %d", homing_abs_position_ids.back(), homing_abs_position_results.back());
             }
         }
     }
@@ -1039,7 +1039,7 @@ namespace joints_interface
      * @param abs_position
      * @return
      */
-    bool CalibrationManager::saveHomingAbsPositionToFile(const std::vector<int> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results)
+    bool CalibrationManager::saveHomingAbsPositionToFile(const std::vector<uint8_t> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results)
     {
         bool res = false;
 
