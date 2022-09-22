@@ -79,13 +79,13 @@ namespace joints_interface
         void moveSteppersToHome();
         void sendCalibrationToSteppers();
         void activateTorque(bool activated);
-        void writeHomingAbsPosition();
-        void readHomingAbsPosition(std::vector<uint8_t> &homing_abs_position_ids, std::vector<int32_t> &homing_abs_position_results);
+        bool writeHomingAbsPosition();
+        bool readHomingAbsPosition();
 
         // file operations
         bool saveCalibrationOffsetsToFile(const std::vector<int> &motor_id_list, const std::vector<int> &steps_list);
         bool readCalibrationOffsetsFromFile(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
-        bool saveHomingAbsPositionToFile(const std::vector<uint8_t> &homing_abs_position_ids, const std::vector<int32_t> &homing_abs_position_results);
+        bool saveHomingAbsPositionToFile();
         bool readHomingAbsPositionFromFile();
 
     private:

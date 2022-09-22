@@ -298,7 +298,7 @@ void TtlInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibra
  */
 inline
 bool TtlInterfaceCore::readHomingAbsPosition()
-{
+{    
     return _ttl_manager->readHomingAbsPosition();
 }
 

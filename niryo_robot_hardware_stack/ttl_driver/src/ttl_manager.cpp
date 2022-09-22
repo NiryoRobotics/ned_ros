@@ -603,27 +603,34 @@ bool TtlManager::readHomingAbsPosition()
                         }
                         else
                         {
+                            ROS_ERROR("TtlManager::readHomingAbsPosition - null pointer");
                             return false;
                         }
                     }
                     else
                     {
+                        ROS_ERROR("TtlManager::readHomingAbsPosition - No hardware state assossiated to ID: %d", static_cast<int>(id));
                         return false;
                     }
                 }
             }
             else
             {
+                ROS_ERROR("TtlManager::readHomingAbsPosition - size of requested id %d mismatch size of retrieved homing position %d", 
+                        static_cast<int>(ids_list.size()), static_cast<int>(homing_abs_position_list.size()));
                 return false;
             }
         }
         else
         {
+            ROS_ERROR("TtlManager::readHomingAbsPosition - communication error: %d", static_cast<int>(res));
             return false;
         }
     }
     else
     {
+        ROS_ERROR("TtlManager::readHomingAbsPosition - null pointer or no hardware type in map %d or empty vector of ids: %d", 
+                static_cast<int>(_ids_map.count(hw_type)), static_cast<int>(_ids_map.at(hw_type).empty()));
         return false;
     }
 
