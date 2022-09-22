@@ -840,12 +840,55 @@ int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
     return COMM_SUCCESS;
 }
 
-
+/**
+ * @brief MockStepperDriver::syncReadHomingAbsPosition
+ * @param id_list
+ * @param abs_position
+ * @return
+ */
 int MockStepperDriver::syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position){
-    return 1;
+    std::set<uint8_t> countSet;
+
+    abs_position.clear();
+    for (auto & id : id_list)
+    {
+        if (_fake_data->stepper_registers.count(id))
+            abs_position.emplace_back(_fake_data->stepper_registers.at(id).homing_abs_position);
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
 }
+
+/**
+ * @brief MockStepperDriver::syncWriteHomingAbsPosition
+ * @param id_list
+ * @param abs_position
+ * @return
+ */
 int MockStepperDriver::syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position){
-    return 1;
+    
+    if (id_list.size() != abs_position.size())
+        return LEN_ID_DATA_NOT_SAME;
+
+    std::set<uint8_t> countSet;
+
+    for (size_t i = 0; i < id_list.size(); ++i)
+    {
+        if (_fake_data->stepper_registers.count(id_list.at(i)))
+            _fake_data->stepper_registers.at(id_list.at(i)).homing_abs_position = abs_position.at(i);
+        else
+            return COMM_TX_ERROR;
+
+        auto result = countSet.insert(id_list.at(i));
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
 }
 
 }  // namespace ttl_driver
