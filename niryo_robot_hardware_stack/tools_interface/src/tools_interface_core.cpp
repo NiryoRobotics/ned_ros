@@ -118,15 +118,18 @@ namespace tools_interface
         {
             motor_id = _toolState->getId();
             if (EHardwareType::XL330 == _toolState->getHardwareType())
-            {
-                uint8_t control_mode = 5; // torque + position
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
-                                                                                       motor_id, std::initializer_list<uint32_t>{control_mode}));
+            {           
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                       motor_id, std::initializer_list<uint32_t>{false}));
 
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TEMPERATURE_LIMIT,
                                                                                        motor_id, std::initializer_list<uint32_t>{temperature_limit}));
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_SHUTDOWN,
                                                                                        motor_id, std::initializer_list<uint32_t>{shutdown_configuration}));
+                
+                uint8_t control_mode = 5; // torque + position
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
+                                                                                       motor_id, std::initializer_list<uint32_t>{control_mode}));
             }
 
             // TORQUE cmd on if ned2, off otherwise
@@ -159,7 +162,7 @@ namespace tools_interface
         nh.getParam("tools_params/type_list", typeList);
         nh.getParam("tools_params/name_list", nameList);
         nh.getParam("tools_params/temperature_limit", _temperature_limit);
-        nh.getParam("tools_params/temperature_limit", _shutdown_configuration);
+        nh.getParam("tools_params/shutdown_configuration", _shutdown_configuration);
 
         // check that the three lists have the same size
         if (idList.size() == typeList.size() && idList.size() == nameList.size())

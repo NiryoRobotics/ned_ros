@@ -117,6 +117,8 @@ namespace tools_interface
         ros::ServiceServer _pull_air_vacuum_pump_server;
         ros::ServiceServer _push_air_vacuum_pump_server;
 
+        ros::ServiceServer _reboot_motor_server;
+
         std::shared_ptr<common::model::ToolState> _toolState;
         std::map<uint8_t, ToolConfig> _available_tools_map;
     };
