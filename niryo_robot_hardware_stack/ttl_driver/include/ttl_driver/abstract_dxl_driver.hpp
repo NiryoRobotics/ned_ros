@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // ttl
 #include "abstract_motor_driver.hpp"
 
-//std
+// std
 #include <memory>
 
 // common
@@ -30,8 +30,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace ttl_driver
 {
 
-class AbstractDxlDriver : public AbstractMotorDriver
-{
+    class AbstractDxlDriver : public AbstractMotorDriver
+    {
     public:
         AbstractDxlDriver() = default;
         AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
@@ -49,24 +49,26 @@ class AbstractDxlDriver : public AbstractMotorDriver
 
         // eeprom write
         virtual int writeStartupConfiguration(uint8_t id, uint8_t config) = 0;
+        virtual int writeTemperatureLimit(uint8_t id, uint8_t temperature_limit) = 0;
+        virtual int writeShutdownConfiguration(uint8_t id, uint8_t configuration) = 0;
 
         // ram read
-        virtual int readLoad(uint8_t id, uint16_t& present_load ) = 0;
-        virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint16_t>& load_list ) = 0;
+        virtual int readLoad(uint8_t id, uint16_t &present_load) = 0;
+        virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) = 0;
 
-        virtual int readPID(uint8_t id, std::vector<uint16_t>& data) = 0;
-        virtual int readControlMode(uint8_t id, uint8_t& control_mode) = 0;
+        virtual int readPID(uint8_t id, std::vector<uint16_t> &data) = 0;
+        virtual int readControlMode(uint8_t id, uint8_t &control_mode) = 0;
 
         // ram write
-        virtual int writePID(uint8_t id, const std::vector<uint16_t>& data) = 0;
+        virtual int writePID(uint8_t id, const std::vector<uint16_t> &data) = 0;
         virtual int writeControlMode(uint8_t id, uint8_t data) = 0;
 
-        virtual int writeLed(uint8_t id, uint8_t led_value ) = 0;
-        virtual int syncWriteLed(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& led_list ) = 0;
+        virtual int writeLed(uint8_t id, uint8_t led_value) = 0;
+        virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) = 0;
 
-        virtual int writeTorqueGoal(uint8_t id, uint16_t torque ) = 0;
-        virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint16_t>& torque_list ) = 0;
-};
+        virtual int writeTorqueGoal(uint8_t id, uint16_t torque) = 0;
+        virtual int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t> &torque_list) = 0;
+    };
 
 } // ttl_driver
 
