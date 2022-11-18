@@ -102,6 +102,9 @@ class MockStepperDriver : public AbstractStepperDriver
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
+        int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) override;
+        int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) override;
+
     private:
         bool init();
 
