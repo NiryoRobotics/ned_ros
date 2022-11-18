@@ -570,6 +570,73 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
     return position;
 }
 
+bool TtlManager::readHomingAbsPosition()
+{
+    EHardwareType hw_type(EHardwareType::STEPPER);
+    auto driver = std::dynamic_pointer_cast<ttl_driver::StepperDriver<ttl_driver::StepperReg>>(_driver_map[hw_type]);
+
+    if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
+    {
+        // we retrieve all the associated id for the type of the current driver
+        vector<uint8_t> ids_list = _ids_map.at(hw_type);
+
+        // we retrieve all the associated id for the type of the current driver
+        vector<uint32_t> homing_abs_position_list;
+
+        // retrieve joint status
+        int res = driver->syncReadHomingAbsPosition(ids_list, homing_abs_position_list);
+        if (COMM_SUCCESS == res)
+        {
+            if (ids_list.size() == homing_abs_position_list.size())
+            {
+                // set motors states accordingly
+                for (size_t i = 0; i < ids_list.size(); ++i)
+                {
+                    uint8_t id = ids_list.at(i);
+
+                    if (_state_map.count(id))
+                    {
+                        auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_state_map.at(id));
+                        if (state)
+                        {
+                            state->setHomingAbsPosition(static_cast<uint32_t>(homing_abs_position_list.at(i)));                                   
+                        }
+                        else
+                        {
+                            ROS_ERROR("TtlManager::readHomingAbsPosition - null pointer");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        ROS_ERROR("TtlManager::readHomingAbsPosition - No hardware state assossiated to ID: %d", static_cast<int>(id));
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                ROS_ERROR("TtlManager::readHomingAbsPosition - size of requested id %d mismatch size of retrieved homing position %d", 
+                        static_cast<int>(ids_list.size()), static_cast<int>(homing_abs_position_list.size()));
+                return false;
+            }
+        }
+        else
+        {
+            ROS_ERROR("TtlManager::readHomingAbsPosition - communication error: %d", static_cast<int>(res));
+            return false;
+        }
+    }
+    else
+    {
+        ROS_ERROR("TtlManager::readHomingAbsPosition - null pointer or no hardware type in map %d or empty vector of ids: %d", 
+                static_cast<int>(_ids_map.count(hw_type)), static_cast<int>(_ids_map.at(hw_type).empty()));
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * @brief TtlManager::readJointsStatus
  * @return

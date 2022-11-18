@@ -28,47 +28,51 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace common
 {
-namespace model
-{
+    namespace model
+    {
 
-/**
- * @brief The EStepperCommandType enum
- */
-enum class EStepperCommandType { CMD_TYPE_NONE=0,
-                                 CMD_TYPE_POSITION=1,
-                                 CMD_TYPE_VELOCITY=2,
-                                 CMD_TYPE_EFFORT=3,
-                                 CMD_TYPE_TORQUE=4,
-                                 CMD_TYPE_SYNCHRONIZE=5,
-                                 CMD_TYPE_RELATIVE_MOVE=6,
-                                 CMD_TYPE_MAX_EFFORT=7,
-                                 CMD_TYPE_MICRO_STEPS=8,
-                                 CMD_TYPE_POSITION_OFFSET=9,
-                                 CMD_TYPE_CALIBRATION=10,
-                                 CMD_TYPE_CONVEYOR=11,
-                                 CMD_TYPE_UPDATE_CONVEYOR=12,
-                                 CMD_TYPE_LEARNING_MODE=13,
-                                 CMD_TYPE_PING=14,
-                                 CMD_TYPE_CALIBRATION_SETUP=15,
-                                 CMD_TYPE_VELOCITY_PROFILE=16,
-                                 CMD_TYPE_UNKNOWN=100
-                               };
+        /**
+         * @brief The EStepperCommandType enum
+         */
+        enum class EStepperCommandType
+        {
+            CMD_TYPE_NONE = 0,
+            CMD_TYPE_POSITION = 1,
+            CMD_TYPE_VELOCITY = 2,
+            CMD_TYPE_EFFORT = 3,
+            CMD_TYPE_TORQUE = 4,
+            CMD_TYPE_SYNCHRONIZE = 5,
+            CMD_TYPE_RELATIVE_MOVE = 6,
+            CMD_TYPE_MAX_EFFORT = 7,
+            CMD_TYPE_MICRO_STEPS = 8,
+            CMD_TYPE_POSITION_OFFSET = 9,
+            CMD_TYPE_CALIBRATION = 10,
+            CMD_TYPE_CONVEYOR = 11,
+            CMD_TYPE_UPDATE_CONVEYOR = 12,
+            CMD_TYPE_LEARNING_MODE = 13,
+            CMD_TYPE_PING = 14,
+            CMD_TYPE_CALIBRATION_SETUP = 15,
+            CMD_TYPE_VELOCITY_PROFILE = 16,
+            CMD_TYPE_WRITE_HOMING_ABS_POSITION = 17,
+            CMD_TYPE_READ_HOMING_ABS_POSITION = 18,
+            CMD_TYPE_UNKNOWN = 100
+        };
 
-/**
- * @brief Specialization of AbstractEnum for Acknowledge status enum
- */
-class StepperCommandTypeEnum : public AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>
-{
-public:
-    StepperCommandTypeEnum(EStepperCommandType e=EStepperCommandType::CMD_TYPE_UNKNOWN);
-    StepperCommandTypeEnum(const char* str);
+        /**
+         * @brief Specialization of AbstractEnum for Acknowledge status enum
+         */
+        class StepperCommandTypeEnum : public AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>
+        {
+        public:
+            StepperCommandTypeEnum(EStepperCommandType e = EStepperCommandType::CMD_TYPE_UNKNOWN);
+            StepperCommandTypeEnum(const char *str);
 
-private:
-    friend class AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>;
-    static std::map<EStepperCommandType, std::string> initialize();
-};
+        private:
+            friend class AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>;
+            static std::map<EStepperCommandType, std::string> initialize();
+        };
 
-} // model
+    } // model
 } // common
 
 #endif // STEPPER_COMMAND_TYPE_ENUM_H

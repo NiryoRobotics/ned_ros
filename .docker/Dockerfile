@@ -1,31 +1,23 @@
 ARG ROS_DISTRO=melodic
 FROM ros:${ROS_DISTRO}-perception AS BUILD_DEPENDENCIES
 
-ENV HOME=/home/niryo
-WORKDIR ${HOME}
-
-ENV FOLDER_DEPENDENCIES_NAME=docker_ros_folder_dependencies
-
 RUN apt update \
-    && apt install -y --no-install-recommends python-pip python-catkin-tools \
+    && apt install -y --no-install-recommends python-pip python-catkin-tools cpio\
     && rm -rf /var/lib/apt/lists/*
 
-# Copy folder with only folders dependencies and package.xml as file (no other file)
-COPY ${FOLDER_DEPENDENCIES_NAME} ${FOLDER_DEPENDENCIES_NAME}
-
+RUN find . -type f -name "package.xml" | cpio -pdm docker_ros_folder_dependencies
 # Install rosdep
 RUN if [ "$(arch)" = "x86_64" ]; then export SKIPPED_ROS_KEYS="python-rpi.gpio"; fi \
     && apt update \
-    && rosdep update && rosdep install --rosdistro ${ROS_DISTRO} --from-paths ${FOLDER_DEPENDENCIES_NAME} --ignore-src --default-yes --skip-keys "${SKIPPED_ROS_KEYS}" \
+    && rosdep update  \
+    && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys "${SKIPPED_ROS_KEYS}" \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Install additionnal dependencies
 RUN apt update \
     && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl\
     && rm -rf /var/lib/apt/lists/*
-
-# Clean tmp dependencies folder
-RUN rm -rf ${FOLDER_DEPENDENCIES_NAME}
 
 COPY .docker/install_wiringpi.sh /opt/install_wiringpi.sh
 
