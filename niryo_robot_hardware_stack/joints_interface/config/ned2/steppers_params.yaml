@@ -7,7 +7,7 @@ steppers:
         # gear_ratio, max_effort and micro_steps not used for ttl steppers
         motor_ratio: 0.0872
         # assembly offset position (rad)
-        offset_position: -2.966
+        offset_position: -2.950
         # home position (rad)
         home_position: 0.0
         limit_position_min: -2.949  # joint limit min

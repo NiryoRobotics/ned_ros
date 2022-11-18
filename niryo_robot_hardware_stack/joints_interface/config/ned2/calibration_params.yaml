@@ -24,7 +24,7 @@ calibration_params:
         a_1: 0.524
         v_1: 0.314
         a_max: 1.047
-        v_max: 0.628
+        v_max: 0.1
         d_max: 1.047
         d_1: 0.524
         v_stop: 0.0209
@@ -38,7 +38,7 @@ calibration_params:
         a_1: 0.785
         v_1: 0.314
         a_max: 1.309
-        v_max: 0.628
+        v_max: 0.1
         d_max: 1.309
         d_1: 0.785
         v_stop: 0.0209
