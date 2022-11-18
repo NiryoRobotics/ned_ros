@@ -84,7 +84,7 @@ namespace ttl_driver
                 // normal warning : we need to put an int32 inside an uint32_t
                 // param received from user/app is in percentage. It have to be converted to speed (unit 0.01 rpm) accepted by ttl conveyor
                 // TODO(Thuc) avoid hardcode 6000 here
-                uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir * 6000 / 100);
+                uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir * 5000 / 100);
                 return writeVelocityGoal(cmd->getId(), speed);
             }
             case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
