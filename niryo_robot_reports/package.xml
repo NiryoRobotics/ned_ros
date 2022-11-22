@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
     <package format="3">
     <name>niryo_robot_reports</name>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
     <description>
         Takes care of reports
     </description>
