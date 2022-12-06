@@ -16,12 +16,12 @@ from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
 
-LOOPS = 5
-CALIBRATION_LOOPS = 2
-SPIRAL_LOOPS = 5
+LOOPS = 1
+CALIBRATION_LOOPS = 1
+SPIRAL_LOOPS = 1
 
-SPEED = 80  # %
-ACCELERATION = 50  # %
+SPEED = 200  # %
+ACCELERATION = 100  # %
 
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
@@ -32,7 +32,7 @@ PINK = [255, 0, 255]
 RED = [255, 0, 0]
 YELLOW = [255, 255, 0]
 
-USE_BUTTON = True
+USE_BUTTON = False
 VOLUME = 50
 USE_VOCAL = False
 
@@ -125,23 +125,33 @@ class TestStep(object):
 
 class TestProduction:
 
-    def __init__(self):
+    def __init__(self, full=True):
         self.__functions = TestFunctions()
         self.__success = False
 
-        self.__sub_tests = [
-            # TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
-            TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
-            # TestStep(self.__functions.test_sound, "Test sound", critical=False),
-            TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
-            TestStep(self.__functions.test_led_ring, "Test led ring", critical=False),
-            # TestStep(self.__functions.test_freedrive, "Test free motion", critical=False),
-            TestStep(self.__functions.test_joint_limits, "Test move", critical=True),
-            TestStep(self.__functions.test_spiral, "Test move", critical=True),
-            TestStep(self.__functions.test_fun_poses, "Test move", critical=True),
-            TestStep(self.__functions.test_pick_and_place, "Test pick and place", critical=True),
-            TestStep(self.__functions.end_test, "Test final check", critical=True),
-        ]
+        if full:
+            self.__sub_tests = [
+                # TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
+                TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
+                # TestStep(self.__functions.test_sound, "Test sound", critical=False),
+                TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
+                TestStep(self.__functions.test_led_ring, "Test led ring", critical=False),
+                # TestStep(self.__functions.test_freedrive, "Test free motion", critical=False),
+                TestStep(self.__functions.test_joint_limits, "Test move", critical=True),
+                TestStep(self.__functions.test_spiral, "Test move", critical=True),
+                TestStep(self.__functions.test_fun_poses, "Test move", critical=True),
+                TestStep(self.__functions.test_pick_and_place, "Test pick and place", critical=True),
+                TestStep(self.__functions.end_test, "Test final check", critical=True),
+            ]
+        else:
+            self.__sub_tests = [
+                TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
+                TestStep(self.__functions.test_spiral, "Test move", critical=True),
+                TestStep(self.__functions.test_joint_limits, "Test move", critical=True),
+                TestStep(self.__functions.test_fun_poses, "Test move", critical=True),
+                TestStep(self.__functions.test_pick_and_place, "Test pick and place", critical=True),
+                TestStep(self.__functions.end_test, "Test final check", critical=True),
+            ]
 
     def run(self):
         rospy.sleep(1)
@@ -169,17 +179,21 @@ class TestProduction:
 
     def send_report(self):
         new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
+        rospy.sleep(0.5)
 
         # Wait for the publisher initialization
         start_time = rospy.Time.now()
         while not rospy.is_shutdown() and new_report_publisher.get_num_connections() == 0:
             if (rospy.Time.now() - start_time).to_sec() > 1:
                 rospy.logerr('Unable to publish the new report')
-                return
+                return False
             rospy.sleep(0.1)
 
         new_report_publisher.publish(json.dumps(self.get_report()))
+        rospy.sleep(1)
+        new_report_publisher.publish('')
         rospy.logdebug('test report published')
+        return True
 
 
 class TestFunctions(object):
@@ -580,7 +594,7 @@ class TestFunctions(object):
             self.__robot.led_ring.flashing(BLUE)
             report.append("End")
             self.say("Fin du test, validez la position 0")
-            report.execute(self.wait_save_button_press, "Wait save button press to validate")
+            report.execute(self.wait_save_button_press, "Wait save button press to validate", args=[600, ])
 
         self.__robot.led_ring.solid(BLUE)
         self.__robot.move_to_sleep_pose()
@@ -600,13 +614,13 @@ class TestFunctions(object):
         return 1, "Press detected"
 
     @staticmethod
-    def wait_save_button_press():
+    def wait_save_button_press(timeout=20):
         if not USE_BUTTON:
             # raw_input('Enter to continue')
             return 1, "Press save button step skipped"
 
         try:
-            rospy.wait_for_message("/niryo_robot/blockly/save_current_point", Int32, timeout=20)
+            rospy.wait_for_message("/niryo_robot/blockly/save_current_point", Int32, timeout=timeout)
             return 1, "Press detected"
         except rospy.ROSException:
 
@@ -635,23 +649,43 @@ class TestFunctions(object):
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
+    if robot.get_learning_mode():
+        LOOPS = 5
+        CALIBRATION_LOOPS = 2
+        SPIRAL_LOOPS = 5
+        USE_BUTTON = True
+        SPEED = 80  # %
+        ACCELERATION = 50  # %
 
-    print("----- START -----")
-    test = TestProduction()
-    test.run()
-    print("----- END -----")
-    test.print_report()
+        robot.sound.play('ready.wav')
 
-    try:
-        robot.system_api_client.set_ethernet_auto()
-        rospy.sleep(10)
+        print("----- START -----")
+        test = TestProduction()
+        test.run()
+        print("----- END -----")
+        test.print_report()
 
-        test.send_report()
+        if test.get_report()['success']:
+            try:
+                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+                set_setting('sharing_allowed', 'True', 'bool')
+                set_setting('test_report_done', 'True', 'bool')
+                try:
+                    robot.system_api_client.set_ethernet_auto()
+                    rospy.sleep(7)
 
-        set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        # set_setting('sharing_allowed', 'False', 'bool')
-        set_setting('test_report_done', 'True', 'bool')
-    except Exception as _e:
-        TestFailure()
+                    test.send_report()
+                except Exception as _e:
+                    pass
+                rospy.sleep(3)
+                set_setting('sharing_allowed', 'False', 'bool')
+            except Exception as _e:
+                pass
 
-    robot.system_api_client.set_ethernet_static()
+            robot.system_api_client.set_ethernet_static()
+        else:
+            raise TestFailure('Test failure')
+    else:
+        test = TestProduction(full=False)
+        if not test.run():
+            raise TestFailure('Program failure')
