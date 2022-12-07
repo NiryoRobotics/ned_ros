@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ttl_debug_tools</name>
-  <version>4.1.0</version>
+  <version>4.1.1</version>
   <description>Ned's debug tools</description>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
