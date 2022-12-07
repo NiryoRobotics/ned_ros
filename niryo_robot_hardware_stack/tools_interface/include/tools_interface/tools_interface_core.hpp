@@ -45,22 +45,22 @@ using ::common::model::EHardwareType;
 namespace tools_interface
 {
 
-/**
- * @brief The ToolsInterfaceCore class
- */
-class ToolsInterfaceCore : public common::util::IInterfaceCore
-{
+    /**
+     * @brief The ToolsInterfaceCore class
+     */
+    class ToolsInterfaceCore : public common::util::IInterfaceCore
+    {
     public:
-        ToolsInterfaceCore(ros::NodeHandle& nh,
+        ToolsInterfaceCore(ros::NodeHandle &nh,
                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
         ~ToolsInterfaceCore() override = default;
 
         // non copyable class
-        ToolsInterfaceCore( const ToolsInterfaceCore& ) = delete;
-        ToolsInterfaceCore( ToolsInterfaceCore&& ) = delete;
+        ToolsInterfaceCore(const ToolsInterfaceCore &) = delete;
+        ToolsInterfaceCore(ToolsInterfaceCore &&) = delete;
 
-        ToolsInterfaceCore& operator= ( ToolsInterfaceCore && ) = delete;
-        ToolsInterfaceCore& operator= ( const ToolsInterfaceCore& ) = delete;
+        ToolsInterfaceCore &operator=(ToolsInterfaceCore &&) = delete;
+        ToolsInterfaceCore &operator=(const ToolsInterfaceCore &) = delete;
 
         bool init(ros::NodeHandle &nh) override;
 
@@ -72,12 +72,12 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         std::shared_ptr<common::model::ToolState> getToolState() const;
 
     private:
-        void initParameters(ros::NodeHandle& nh) override;
-        void startServices(ros::NodeHandle& nh) override;
-        void startPublishers(ros::NodeHandle& nh) override;
-        void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
-        int initHardware(bool torque_on = true);
+        int initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration);
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
@@ -90,7 +90,7 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
         void _toolCommand(uint32_t position, int torque, uint32_t velocity);
-        void _publishToolConnection(const ros::TimerEvent&);
+        void _publishToolConnection(const ros::TimerEvent &);
 
     private:
         struct ToolConfig
@@ -98,13 +98,15 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
             std::string name;
             common::model::EHardwareType type;
         };
+        int _temperature_limit{60};
+        int _shutdown_configuration{53};
 
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;
-        ros::Timer     _tool_connection_publisher_timer;
-        ros::Duration  _tool_connection_publisher_duration{1.0};
-        uint8_t        _tool_ping_failed_cnt{0};
+        ros::Timer _tool_connection_publisher_timer;
+        ros::Duration _tool_connection_publisher_duration{1.0};
+        uint8_t _tool_ping_failed_cnt{0};
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
@@ -117,18 +119,17 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
 
         std::shared_ptr<common::model::ToolState> _toolState;
         std::map<uint8_t, ToolConfig> _available_tools_map;
-};
+    };
 
-/**
- * @brief ToolsInterfaceCore::getToolState
- * @return
- */
-inline
-std::shared_ptr<common::model::ToolState>
-ToolsInterfaceCore::getToolState() const
-{
-    return _toolState;
-}
+    /**
+     * @brief ToolsInterfaceCore::getToolState
+     * @return
+     */
+    inline std::shared_ptr<common::model::ToolState>
+    ToolsInterfaceCore::getToolState() const
+    {
+        return _toolState;
+    }
 
 } // ToolsInterface
 

@@ -20,10 +20,10 @@
 #include "common/model/single_motor_cmd.hpp"
 
 #include <cassert>
+#include <ros/ros.h>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
-#include <ros/ros.h>
 
 using ::common::model::EDxlCommandType;
 
@@ -32,22 +32,19 @@ namespace ttl_driver
 
 /**
  * @brief AbstractDxlDriver::AbstractDxlDriver
-*/
-AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                                     std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
-{}
-
-std::string AbstractDxlDriver::str() const
+ */
+AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler)
+    : AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {
-    return "Dynamixel Driver (" + AbstractMotorDriver::str() + ")";
 }
+
+std::string AbstractDxlDriver::str() const { return "Dynamixel Driver (" + AbstractMotorDriver::str() + ")"; }
 
 /**
  * @brief AbstractDxlDriver::writeSingleCmd
  * @param cmd
-*/
-int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
+ */
+int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd)
 {
     if (cmd && cmd->isValid() && cmd->isDxlCmd())
     {
@@ -82,6 +79,10 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
             return writeLed(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         case EDxlCommandType::CMD_TYPE_STARTUP:
             return writeStartupConfiguration(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+        case EDxlCommandType::CMD_TYPE_TEMPERATURE_LIMIT:
+            return writeTemperatureLimit(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+        case EDxlCommandType::CMD_TYPE_SHUTDOWN:
+            return writeShutdownConfiguration(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
@@ -96,8 +97,8 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
  * @param type
  * @param ids
  * @param params
-*/
-int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params)
+ */
+int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params)
 {
     assert(!ids.empty() && "AbstractDxlDriver::writeSyncCmd: ids is empty");
     assert(!params.empty() && "AbstractDxlDriver::writeSyncCmd: params is empty");
@@ -112,7 +113,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     {
         std::vector<uint16_t> params_conv;
         params_conv.reserve(params.size());
-        for (auto const& p : params)
+        for (auto const &p : params)
         {
             params_conv.emplace_back(static_cast<uint16_t>(p));
         }
@@ -122,7 +123,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     {
         std::vector<uint8_t> params_conv;
         params_conv.reserve(params.size());
-        for (auto const& p : params)
+        for (auto const &p : params)
         {
             params_conv.emplace_back(static_cast<uint8_t>(p));
         }
@@ -132,7 +133,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     {
         std::vector<uint8_t> params_inv;
         params_inv.reserve(params.size());
-        for (auto const& p : params)
+        for (auto const &p : params)
         {
             params_inv.emplace_back(!p);
         }

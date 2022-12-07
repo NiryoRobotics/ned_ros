@@ -31,43 +31,39 @@ namespace model
  * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
  * @param e
  */
-DxlCommandTypeEnum::DxlCommandTypeEnum(EDxlCommandType e):
-    AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(e)
-{}
+DxlCommandTypeEnum::DxlCommandTypeEnum(EDxlCommandType e) : AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(e) {}
 
 /**
  * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
  * @param str
  */
-DxlCommandTypeEnum::DxlCommandTypeEnum(const char* const str):
-    AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(str)
-{}
+DxlCommandTypeEnum::DxlCommandTypeEnum(const char *const str) : AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(str) {}
 
 /**
  * @brief DxlCommandTypeEnum::initialize
  * @return
  */
-std::map<EDxlCommandType, std::string>
-DxlCommandTypeEnum::initialize()
+std::map<EDxlCommandType, std::string> DxlCommandTypeEnum::initialize()
 {
     std::map<EDxlCommandType, std::string> m;
 
     m[EDxlCommandType::CMD_TYPE_POSITION] = "position";
-    m[EDxlCommandType::CMD_TYPE_VELOCITY]    = "velocity";
-    m[EDxlCommandType::CMD_TYPE_EFFORT]     = "effort";
-    m[EDxlCommandType::CMD_TYPE_TORQUE]    = "torque";
+    m[EDxlCommandType::CMD_TYPE_VELOCITY] = "velocity";
+    m[EDxlCommandType::CMD_TYPE_EFFORT] = "effort";
+    m[EDxlCommandType::CMD_TYPE_TORQUE] = "torque";
     m[EDxlCommandType::CMD_TYPE_PING] = "ping";
-    m[EDxlCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
+    m[EDxlCommandType::CMD_TYPE_LEARNING_MODE] = "learning mode";
     m[EDxlCommandType::CMD_TYPE_PID] = "PID";
     m[EDxlCommandType::CMD_TYPE_CONTROL_MODE] = "Control Mode";
     m[EDxlCommandType::CMD_TYPE_LED_STATE] = "Led State";
     m[EDxlCommandType::CMD_TYPE_PROFILE] = "Velocity and Acceleration profile";
     m[EDxlCommandType::CMD_TYPE_STARTUP] = "Startup Configuration";
-    m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
+    m[EDxlCommandType::CMD_TYPE_TEMPERATURE_LIMIT] = "Temperature limit";
+    m[EDxlCommandType::CMD_TYPE_SHUTDOWN] = "Shutdown when error occurs";
+    m[EDxlCommandType::CMD_TYPE_UNKNOWN] = "unknown type";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-
