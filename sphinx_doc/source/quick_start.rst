@@ -104,7 +104,7 @@ There are 6 ways to program Niryo's robots:
    *  - MODBUS
       - Any
       - :red:`Advanced`
-      - `MODBUS <https://docs.niryo.com/dev/ros/source/modbus_tcp_server.html>`_
+      - `MODBUS <https://docs.niryo.com/dev/ros/source/modbus.html>`_
       - | Programs can communicate through network MODBUS
         | with the robots in any language available.
 
