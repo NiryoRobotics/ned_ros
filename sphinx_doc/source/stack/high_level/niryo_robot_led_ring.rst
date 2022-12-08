@@ -19,8 +19,8 @@ The LED Ring can either be:
 
 - in **ROBOT STATUS** mode: the LED is displaying the status of the robot.
 - in **USER** mode: the user can control the LED Ring with the several methods implemented, through
-    `Blockly <https://docs.niryo.com/product/niryo-studio/v3.2.1/en/source/blockly_api.html>`_ ,
-    `Pyniryo <https://docs.niryo.com/dev/pyniryo/v1.0.5/en/index.html>`_ or 
+    `Blockly <https://docs.niryo.com/product/niryo-studio/source/blockly_api.html>`_ ,
+    `Pyniryo <https://docs.niryo.com/dev/pyniryo/index.html>`_ or 
     :ref:`Python ROS Wrapper <source/python_ros_wrapper/ros_wrapper_doc:Python ROS Wrapper documentation>` .
 
 
