@@ -201,7 +201,7 @@ When a program is paused:
 When the program is paused, the LED at the back flashes white.
 
 When no program is running you can also start a program by pressing the same button once.
-To set it up, go to the `Program Autorun <https://docs.niryo.com/product/niryo-studio/en/source/programs.html#program-autorun>`_.
+To set it up, go to the `Program Autorun <https://docs.niryo.com/product/niryo-studio/source/programs.html#program-autorun>`_.
 
 
 .. |br| raw:: html
