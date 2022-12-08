@@ -165,7 +165,7 @@ Subscribers - Robot Status
       - :std_msgs:`std_msgs/Bool<Bool>`
       - Detection of collision
    *  - ``/joint_states``
-      -  :std_msgs:`sensor_msgs/JointState<JointState>`
+      -  :sensor_msgs:`sensor_msgs/JointState<JointState>`
       - Get the joint state in order to detect an out of bounds
    *  - ``/ping_pyniryo``
       - :std_msgs:`std_msgs/Bool<Bool>`
