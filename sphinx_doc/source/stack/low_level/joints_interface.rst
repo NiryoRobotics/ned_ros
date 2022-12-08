@@ -371,7 +371,7 @@ Subscribed topics
       -  Message Type
       -  Description
    *  -  ``niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result``
-      -  :control_msgs:`FollowJointTrajectoryActionResult`
+      -  :control_actions:`control_msgs/FollowJointTrajectory Action<FollowJointTrajectory>`
       -  Trajectory results from controller
 
 Published topics
