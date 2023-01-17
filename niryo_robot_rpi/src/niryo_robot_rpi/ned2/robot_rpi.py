@@ -22,7 +22,7 @@ from niryo_robot_status.msg import RobotStatus
 
 from niryo_robot_rpi.common.ros_log_manager import RosLogManager
 
-from hardware.MCP23017 import MCP23017
+from .hardware.MCP23017 import MCP23017
 
 from .top_button import TopButton
 from .io_panel import IOPanel

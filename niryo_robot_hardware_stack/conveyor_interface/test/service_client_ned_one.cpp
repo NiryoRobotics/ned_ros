@@ -17,11 +17,10 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-
-#include <ros/ros.h>
-#include <ros/service_client.h>
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include <gtest/gtest.h>
+#include <ros/ros.h>
+#include <ros/service_client.h>
 
 #include <string>
 
@@ -110,7 +109,6 @@ TEST(TESTSuiteNedAndOne, controlConveyor2)
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
-
 
 TEST(TESTSuiteNedAndOne, controlConveyor3)
 {

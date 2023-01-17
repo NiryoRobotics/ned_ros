@@ -32,7 +32,6 @@ from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
 
 
 class NiryoRosWrapper(AbstractNiryoRosWrapper):
-
     def __init__(self):
         super(NiryoRosWrapper, self).__init__()
         # - Getting ROS parameters
@@ -50,7 +49,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
-        self.__highlight_block_publisher = rospy.Publisher('/niryo_robot_blockly/highlight_block', String,
+        self.__highlight_block_publisher = rospy.Publisher('/niryo_robot_blockly/highlight_block',
+                                                           String,
                                                            queue_size=10)
 
         # Break point publisher (for break point blocks in Blockly interface)
@@ -70,9 +70,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
-                                                              CompressedImage, queue_size=1)
+                                                              CompressedImage,
+                                                              queue_size=1)
         self.__camera_intrinsics_message_ntv = NiryoTopicValue('/niryo_robot_vision/camera_intrinsics',
-                                                               CameraInfo, queue_size=1)
+                                                               CameraInfo,
+                                                               queue_size=1)
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
@@ -84,11 +86,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Action server
         # Robot action
         self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action',
-                                                    RobotMoveAction, RobotMoveGoal)
+                                                    RobotMoveAction,
+                                                    RobotMoveGoal)
 
         self.__follow_joint_traj_nac = NiryoActionClient(
             rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory",
-            FollowJointTrajectoryAction, FollowJointTrajectoryGoal)
+            FollowJointTrajectoryAction,
+            FollowJointTrajectoryGoal)
 
         self.__tools = ToolsRosWrapper(self.__service_timeout)
 
@@ -200,8 +204,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if not hw_status.calibration_needed:
             return self.return_success("Calibration not needed")
 
-        result = self._call_service('/niryo_robot/joints_interface/calibrate_motors',
-                                    SetInt, calib_type_int)
+        result = self._call_service('/niryo_robot/joints_interface/calibrate_motors', SetInt, calib_type_int)
         self._check_result_status(result)
         # Wait until calibration start
         rospy.sleep(0.2)
@@ -237,8 +240,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        result = self._call_service('/niryo_robot/learning_mode/activate',
-                                    SetBool, set_bool)
+        result = self._call_service('/niryo_robot/learning_mode/activate', SetBool, set_bool)
         rospy.sleep(0.1)
         return self._classic_return_w_check(result)
 
@@ -259,8 +261,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        result = self._call_service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor',
-                                    SetInt, percentage)
+        result = self._call_service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor', SetInt, percentage)
         return self._classic_return_w_check(result)
 
     def set_arm_max_acceleration(self, percentage):
@@ -379,8 +380,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if frame != '':
             point, rot = self.__calculate_transform_in_frame(frame, x, y, z, roll, pitch, yaw)
 
-            return self.__move_pose_with_cmd(ArmMoveCommand.POSE, point.x, point.y, point.z,
-                                             rot.roll, rot.pitch, rot.yaw)
+            return self.__move_pose_with_cmd(ArmMoveCommand.POSE,
+                                             point.x,
+                                             point.y,
+                                             point.z,
+                                             rot.roll,
+                                             rot.pitch,
+                                             rot.yaw)
 
         return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
 
@@ -471,8 +477,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if frame != '':
             point, rot = self.__calculate_transform_in_frame(frame, x, y, z, roll, pitch, yaw)
 
-            return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, point.x, point.y, point.z,
-                                             rot.roll, rot.pitch, rot.yaw)
+            return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE,
+                                             point.x,
+                                             point.y,
+                                             point.z,
+                                             rot.roll,
+                                             rot.pitch,
+                                             rot.yaw)
 
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
@@ -505,12 +516,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
 
-        msg_dict = {result.SUCCESSFUL: "Successful",
-                    result.INVALID_GOAL: "Invalid goal",
-                    result.INVALID_JOINTS: "Invalid joints",
-                    result.OLD_HEADER_TIMESTAMP: "Old header timestamp",
-                    result.PATH_TOLERANCE_VIOLATED: "Path tolerance violated",
-                    result.GOAL_TOLERANCE_VIOLATED: "Goal tolerance violated"}
+        msg_dict = {
+            result.SUCCESSFUL: "Successful",
+            result.INVALID_GOAL: "Invalid goal",
+            result.INVALID_JOINTS: "Invalid joints",
+            result.OLD_HEADER_TIMESTAMP: "Old header timestamp",
+            result.PATH_TOLERANCE_VIOLATED: "Path tolerance violated",
+            result.GOAL_TOLERANCE_VIOLATED: "Goal tolerance violated"
+        }
 
         return result.error_code, msg_dict[result.error_code]
 
@@ -676,8 +689,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req.pose.position = Point(x, y, z)
         req.pose.rpy = RPY(roll, pitch, yaw)
 
-        result = self._call_service('/niryo_robot_poses_handlers/manage_pose',
-                                    ManagePose, req)
+        result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
 
     def delete_pose(self, name):
@@ -694,8 +706,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req = ManagePoseRequest()
         req.cmd = ManagePoseRequest.DELETE
         req.pose.name = name
-        result = self._call_service('/niryo_robot_poses_handlers/manage_pose',
-                                    ManagePose, req)
+        result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
 
     def get_saved_pose_list(self, with_desc=False):
@@ -707,8 +718,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of positions name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_pose_list',
-                                    GetNameDescriptionList)
+        result = self._call_service('/niryo_robot_poses_handlers/get_pose_list', GetNameDescriptionList)
         if with_desc:
             return result.name_list, result.description_list
 
@@ -876,7 +886,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
 
         result = self._call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
-                                    ComputeTrajectory, list_poses, dist_smoothing)
+                                    ComputeTrajectory,
+                                    list_poses,
+                                    dist_smoothing)
         self._classic_return_w_check(result)
         return result.trajectory
 
@@ -930,8 +942,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
             else:
                 raise NiryoRosWrapperException(
-                    "Executes trajectory from poses and joints - Wrong list_type argument : got " +
-                    list_type[0] +
+                    "Executes trajectory from poses and joints - Wrong list_type argument : got " + list_type[0] +
                     ", expected 'pose' or 'joint'")
 
         elif len(list_type) == len(list_pose_joints):
@@ -944,13 +955,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                     list_pose_waypoints.append(target)
                 else:
                     raise NiryoRosWrapperException(
-                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
+                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' +
+                        str(i) +  # TODO: check non existant variable i
                         ' got ' + type_ + ", expected 'pose' or 'joint'")
 
         else:
-            raise NiryoRosWrapperException(
-                'Executes trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
-                ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
+            raise NiryoRosWrapperException('Executes trajectory from poses and joints - List of waypoints (size ' +
+                                           str(len(list_pose_joints)) + ') and list of type (size ' +
+                                           str(len(list_type)) + ') must be the same size.')
 
         return list_pose_waypoints
 
@@ -971,7 +983,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req.cmd = ManageTrajectoryRequest.SAVE
         req.name = trajectory_name
         req.trajectory = JointTrajectory(header=Header(stamp=rospy.Time.now()),
-                                         joint_names=self.get_joint_names(), points=trajectory_points)
+                                         joint_names=self.get_joint_names(),
+                                         points=trajectory_points)
         req.description = trajectory_description
         result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
         return self._classic_return_w_check(result)
@@ -997,7 +1010,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def update_trajectory_infos(self, name, new_name, new_description):
         from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest
-        req = ManageTrajectoryRequest(cmd=ManageTrajectoryRequest.UPDATE, name=name, new_name=new_name,
+        req = ManageTrajectoryRequest(cmd=ManageTrajectoryRequest.UPDATE,
+                                      name=name,
+                                      new_name=new_name,
                                       description=new_description)
         result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
         return self._classic_return_w_check(result)
@@ -1376,8 +1391,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Translates a RobotState Object to (x, y, z, roll, pitch, yaw)
         """
-        return (robot_state.position.x, robot_state.position.y, robot_state.position.z,
-                robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
+        return (robot_state.position.x,
+                robot_state.position.y,
+                robot_state.position.z,
+                robot_state.rpy.roll,
+                robot_state.rpy.pitch,
+                robot_state.rpy.yaw)
 
     # -- Tools
     def get_current_tool_id(self):
@@ -1790,7 +1809,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from conveyor_interface.srv import ControlConveyor, ControlConveyorRequest
 
         req = ControlConveyorRequest(id=self.__conveyor_number_to_conveyor_id(conveyor_id),
-                                     control_on=bool_control_on, speed=speed, direction=direction)
+                                     control_on=bool_control_on,
+                                     speed=speed,
+                                     direction=direction)
         result = self._call_service('/niryo_robot/conveyor/control_conveyor', ControlConveyor, req)
         return self._classic_return_w_check(result)
 
@@ -1902,7 +1923,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_vision.msg import ImageParameters
 
         try:
-            img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters', ImageParameters,
+            img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters',
+                                                   ImageParameters,
                                                    timeout=5)
         except rospy.ROSException:
             raise NiryoRosWrapperException(
@@ -1932,8 +1954,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import GetTargetPose, GetTargetPoseRequest
 
-        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose', GetTargetPose,
-                                    workspace_name, height_offset, x_rel, y_rel, yaw_rel)
+        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose',
+                                    GetTargetPose,
+                                    workspace_name,
+                                    height_offset,
+                                    x_rel,
+                                    y_rel,
+                                    yaw_rel)
         self._check_result_status(result)
         return result.target_pose
 
@@ -1998,10 +2025,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if not object_found:
             return False, "", ""
 
-        pick_pose = self.get_target_pose_from_rel(
-            workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
-        approach_pose = self.get_target_pose_from_rel(
-            workspace_name, height_offset + 0.05, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        pick_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        approach_pose = self.get_target_pose_from_rel(workspace_name,
+                                                      height_offset + 0.05,
+                                                      rel_pose.x,
+                                                      rel_pose.y,
+                                                      rel_pose.yaw)
 
         self.release_with_tool()
 
@@ -2050,8 +2079,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_vision.srv import ObjDetection
 
         ratio = self.get_workspace_ratio(workspace_name)
-        response = self._call_service("/niryo_robot_vision/obj_detection_rel", ObjDetection,
-                                      shape, color, ratio, False)
+        response = self._call_service("/niryo_robot_vision/obj_detection_rel", ObjDetection, shape, color, ratio, False)
         if response.status == CommandStatus.SUCCESS:
             return True, response.obj_pose, response.obj_type, response.obj_color
         elif response.status == CommandStatus.MARKERS_NOT_FOUND:
@@ -2104,8 +2132,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
         req.workspace.name = name[:30]
         req.workspace.poses = list_poses
-        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace',
-                                    ManageWorkspace, req)
+        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace', ManageWorkspace, req)
         return self._classic_return_w_check(result)
 
     def save_workspace_from_points(self, name, list_points_raw):
@@ -2128,8 +2155,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
         req.workspace.name = name[:30]
         req.workspace.points = list_points
-        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace',
-                                    ManageWorkspace, req)
+        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace', ManageWorkspace, req)
         return self._classic_return_w_check(result)
 
     def delete_workspace(self, name):
@@ -2146,8 +2172,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.DELETE
         req.workspace.name = name
-        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace',
-                                    ManageWorkspace, req)
+        result = self._call_service('/niryo_robot_poses_handlers/manage_workspace', ManageWorkspace, req)
         return self._classic_return_w_check(result)
 
     def get_workspace_poses(self, name):
@@ -2182,8 +2207,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
 
-        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_ratio',
-                                    GetWorkspaceRatio, name)
+        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_ratio', GetWorkspaceRatio, name)
         self._check_result_status(result)
         return result.ratio
 
@@ -2194,8 +2218,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of workspaces name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_list',
-                                    GetNameDescriptionList)
+        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_list', GetNameDescriptionList)
         if with_desc:
             return result.name_list, result.description_list
         return result.name_list

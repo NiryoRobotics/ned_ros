@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
   <package format="3">
   <name>niryo_robot_status</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>
     Handle robot status
   </description>

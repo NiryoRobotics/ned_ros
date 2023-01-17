@@ -29,9 +29,7 @@ namespace ttl_driver
 /**
  * @brief MockEndEffectorDriver::EndEffectorDriver
  */
-MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) :
-  _fake_data(std::move(data))
-{}
+MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) : _fake_data(std::move(data)) {}
 
 //*****************************
 // AbstractTtlDriver interface
@@ -43,8 +41,7 @@ MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) 
  */
 std::string MockEndEffectorDriver::str() const
 {
-    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : "
-        + ttl_driver::AbstractEndEffectorDriver::str();
+    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
 }
 
 /**
@@ -111,10 +108,7 @@ int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
  * @param id
  * @return
  */
-int MockEndEffectorDriver::reboot(uint8_t id)
-{
-    return ping(id);
-}
+int MockEndEffectorDriver::reboot(uint8_t id) { return ping(id); }
 
 /**
  * @brief MockEndEffectorDriver::readFirmwareVersion
@@ -139,7 +133,7 @@ int MockEndEffectorDriver::readFirmwareVersion(uint8_t id, std::string &version)
  * @param temperature
  * @return
  */
-int MockEndEffectorDriver::readTemperature(uint8_t id, uint8_t& temperature)
+int MockEndEffectorDriver::readTemperature(uint8_t id, uint8_t &temperature)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -154,7 +148,7 @@ int MockEndEffectorDriver::readTemperature(uint8_t id, uint8_t& temperature)
  * @param voltage
  * @return
  */
-int MockEndEffectorDriver::readVoltage(uint8_t id, double& voltage)
+int MockEndEffectorDriver::readVoltage(uint8_t id, double &voltage)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -169,7 +163,7 @@ int MockEndEffectorDriver::readVoltage(uint8_t id, double& voltage)
  * @param hardware_error_status
  * @return
  */
-int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
+int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -199,7 +193,7 @@ int MockEndEffectorDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &i
  * @param temperature_list
  * @return
  */
-int MockEndEffectorDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
+int MockEndEffectorDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &temperature_list)
 {
     temperature_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
@@ -229,10 +223,10 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
  */
 int MockEndEffectorDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-  voltage_list.clear();
-  for (size_t i = 0; i < id_list.size(); i++)
-      voltage_list.emplace_back(static_cast<double>(_fake_data->end_effector.voltage));
-  return COMM_SUCCESS;
+    voltage_list.clear();
+    for (size_t i = 0; i < id_list.size(); i++)
+        voltage_list.emplace_back(static_cast<double>(_fake_data->end_effector.voltage));
+    return COMM_SUCCESS;
 }
 
 /**
@@ -241,8 +235,7 @@ int MockEndEffectorDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_lis
  * @param data_list
  * @return
  */
-int MockEndEffectorDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
-                                            std::vector<std::pair<double, uint8_t> >& data_list)
+int MockEndEffectorDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t>> &data_list)
 {
     data_list.clear();
 
@@ -261,13 +254,12 @@ int MockEndEffectorDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
  * @param hw_error_list
  * @return
  */
-int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*id_list*/, std::vector<uint8_t> &hw_error_list)
+int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> & /*id_list*/, std::vector<uint8_t> &hw_error_list)
 {
     hw_error_list.clear();
     hw_error_list.emplace_back(0);
     return COMM_SUCCESS;
 }
-
 
 // buttons status
 
@@ -277,7 +269,7 @@ int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*i
  * @param action
  * @return
  */
-int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionType& action)
+int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionType &action)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -292,7 +284,7 @@ int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionT
  * @param action
  * @return
  */
-int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionType& action)
+int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionType &action)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -307,7 +299,7 @@ int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionT
  * @param action
  * @return
  */
-int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionType& action)
+int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionType &action)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -344,7 +336,7 @@ int MockEndEffectorDriver::syncReadButtonsStatus(const uint8_t &id, std::vector<
  * @param x_value
  * @return
  */
-int MockEndEffectorDriver::readAccelerometerXValue(uint8_t id, uint32_t& x_value)
+int MockEndEffectorDriver::readAccelerometerXValue(uint8_t id, uint32_t &x_value)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -359,7 +351,7 @@ int MockEndEffectorDriver::readAccelerometerXValue(uint8_t id, uint32_t& x_value
  * @param y_value
  * @return
  */
-int MockEndEffectorDriver::readAccelerometerYValue(uint8_t id, uint32_t& y_value)
+int MockEndEffectorDriver::readAccelerometerYValue(uint8_t id, uint32_t &y_value)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -374,7 +366,7 @@ int MockEndEffectorDriver::readAccelerometerYValue(uint8_t id, uint32_t& y_value
  * @param z_value
  * @return
  */
-int MockEndEffectorDriver::readAccelerometerZValue(uint8_t id, uint32_t& z_value)
+int MockEndEffectorDriver::readAccelerometerZValue(uint8_t id, uint32_t &z_value)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -389,7 +381,7 @@ int MockEndEffectorDriver::readAccelerometerZValue(uint8_t id, uint32_t& z_value
  * @param status
  * @return
  */
-int MockEndEffectorDriver::readCollisionStatus(uint8_t id, bool& status)
+int MockEndEffectorDriver::readCollisionStatus(uint8_t id, bool &status)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -417,7 +409,7 @@ int MockEndEffectorDriver::writeCollisionThresh(uint8_t id, int thresh)
  * @param in
  * @return
  */
-int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool& in)
+int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool &in)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -440,7 +432,5 @@ int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, bool out)
     _fake_data->end_effector.DigitalOutput = out;
     return COMM_SUCCESS;
 }
-
-
 
 }  // namespace ttl_driver

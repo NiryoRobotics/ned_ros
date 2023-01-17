@@ -20,7 +20,9 @@ class SQLiteDAO:
         d = {}
         for idx, col in enumerate(cursor.description):
             value = row[idx]
-            if isinstance(value, unicode):
+            if value is None:
+                value = ''
+            elif not isinstance(value, str):
                 value = value.encode('utf-8')
 
             d[col[0]] = value

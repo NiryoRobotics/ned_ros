@@ -7,7 +7,7 @@
 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
 
     <node
             name="joint_state_publisher_gui"

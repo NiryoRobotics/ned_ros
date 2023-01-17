@@ -58,9 +58,7 @@ class Sound(object):
         args = ("ffprobe", "-loglevel", "quiet", "-show_entries", "format=duration", "-i", self.__path)
 
         try:
-            popen = subprocess.Popen(args, stdout=subprocess.PIPE)
-            popen.wait()
-            output = popen.stdout.read()
+            output = subprocess.check_output(args).decode()
             try:
                 return float(output.replace("[FORMAT]\nduration=", "").replace("\n[/FORMAT]\n", ""))
             except ValueError:

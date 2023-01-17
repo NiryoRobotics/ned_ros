@@ -1,6 +1,14 @@
 import json
 import urllib
-import urllib2
+import sys
+
+if sys.version_info[0] == 3:
+    from urllib.request import urlopen
+else:
+    # Not Python 3 - today, it is most likely to be Python 2
+    # But note that this might need an update when Python 4
+    # might be around one day
+    from urllib import urlopen
 
 
 class HttpClient:
@@ -34,7 +42,7 @@ class HttpClient:
         url = self.__url_builder(uri, params)
 
         try:
-            u = urllib2.urlopen(url)
+            u = urlopen(url)
         except IOError:
             return False, False
 
@@ -45,11 +53,11 @@ class HttpClient:
             # Important otherwise the request will be GET instead of POST
             params = {}
 
-        url = self.__url_builder(uri)
+        url = self.__url_builder(uri).encode()
         try:
-            request = urllib2.Request(url)
+            request = urllib.request.Request(url)
             request.add_header('Content-Type', 'application/json')
-            executed = urllib2.urlopen(request, json.dumps(params))
+            executed = urlopen(request, json.dumps(params))
         except IOError:
             return False, False
 

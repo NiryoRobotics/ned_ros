@@ -22,8 +22,8 @@
 #include <string>
 #include <utility>
 
-#include "joints_interface/joints_interface_core.hpp"
 #include "common/util/util_defs.hpp"
+#include "joints_interface/joints_interface_core.hpp"
 
 namespace joints_interface
 {
@@ -35,13 +35,9 @@ namespace joints_interface
  * @param ttl_interface
  * @param can_interface
  */
-JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
-                                         ros::NodeHandle& robot_hwnh,
-                                         std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
-                                         std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller"),
-    _ttl_interface(std::move(ttl_interface)),
-    _can_interface(std::move(can_interface))
+JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh, std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                                         std::shared_ptr<can_driver::CanInterfaceCore> can_interface)
+    : _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller"), _ttl_interface(std::move(ttl_interface)), _can_interface(std::move(can_interface))
 {
     init(robot_hwnh);
 
@@ -72,13 +68,13 @@ JointsInterfaceCore::~JointsInterfaceCore()
  * @param nh
  * @return
  */
-bool JointsInterfaceCore::init(ros::NodeHandle& nh)
+bool JointsInterfaceCore::init(ros::NodeHandle &nh)
 {
     ROS_DEBUG("JointsInterfaceCore::init - Initializing parameters...");
     initParameters(nh);
 
     // in ned2, mode is not learning mode in the first time
-    _previous_state_learning_mode = ("ned2" != _hardware_version  && !_simulation_mode);
+    _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
     startServices(nh);
@@ -96,7 +92,7 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
  * @brief JointsInterfaceCore::initParameters
  * @param nh
  */
-void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
+void JointsInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     double control_loop_frequency{1.0};
 
@@ -104,10 +100,8 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
     nh.getParam("simulation_mode", _simulation_mode);
 
-    ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
-              control_loop_frequency);
-    ROS_DEBUG("Joint Hardware Interface - hardware_version %s",
-              _hardware_version.c_str());
+    ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f", control_loop_frequency);
+    ROS_DEBUG("Joint Hardware Interface - hardware_version %s", _hardware_version.c_str());
 
     _control_loop_rate = ros::Rate(control_loop_frequency);
 }
@@ -116,26 +110,22 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
  * @brief JointsInterfaceCore::startServices
  * @param nh
  */
-void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
+void JointsInterfaceCore::startServices(ros::NodeHandle &nh)
 {
-    _calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
-                                                    &JointsInterfaceCore::_callbackCalibrateMotors, this);
+    _calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors", &JointsInterfaceCore::_callbackCalibrateMotors, this);
 
-    _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
-                                                           &JointsInterfaceCore::_callbackRequestNewCalibration, this);
+    _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration", &JointsInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate",
-                                                          &JointsInterfaceCore::_callbackActivateLearningMode, this);
+    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate", &JointsInterfaceCore::_callbackActivateLearningMode, this);
 
-    _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
-                                                    &JointsInterfaceCore::_callbackResetController, this);
+    _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller", &JointsInterfaceCore::_callbackResetController, this);
 }
 
 /**
  * @brief JointsInterfaceCore::startPublishers
  * @param nh
  */
-void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
+void JointsInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
     _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10, true);
     _publishLearningMode();
@@ -145,10 +135,9 @@ void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
  * @brief JointsInterfaceCore::startSubscribers
  * @param nh
  */
-void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
+void JointsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
 {
-    _trajectory_result_subscriber = nh.subscribe(_joint_controller_name + "/follow_joint_trajectory/result",
-                                                  10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
+    _trajectory_result_subscriber = nh.subscribe(_joint_controller_name + "/follow_joint_trajectory/result", 10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
 }
 
 // *********************
@@ -186,8 +175,7 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
         }
         else
         {
-            omessage = activate ? "Learning mode already activated"
-                                              : "Learning mode already deactivating";
+            omessage = activate ? "Learning mode already activated" : "Learning mode already deactivating";
         }
         ostatus = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
@@ -207,8 +195,8 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     std::string result_message;
-    activateLearningMode(("ned2" != _hardware_version  && !_simulation_mode) , result, result_message);
-    _previous_state_learning_mode = ("ned2" != _hardware_version  && !_simulation_mode);
+    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
+    _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
 
     _enable_control_loop = false;
     bool res = _robot->rebootAll(torque_on);
@@ -218,8 +206,8 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
     _reset_controller = true;
 
     // need calibration after reset joints (ned2 only)
-    if ("ned2" == _hardware_version  && !_simulation_mode)
-      _robot->setNeedCalibration();
+    if ("ned2" == _hardware_version && !_simulation_mode)
+        _robot->setNeedCalibration();
 
     return res;
 }
@@ -283,22 +271,20 @@ void JointsInterfaceCore::rosControlLoop()
                 _reset_controller = true;
             }
             bool isFreqMet = _control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet,
-                          "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
-                          _control_loop_rate.expectedCycleTime().toSec(),
-                          _control_loop_rate.cycleTime().toSec());
+            ROS_DEBUG_COND(!isFreqMet, "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", _control_loop_rate.expectedCycleTime().toSec(),
+                           _control_loop_rate.cycleTime().toSec());
         }
     }
 }
 
 /**
- * @brief JointsInterfaceCore::resetController 
+ * @brief JointsInterfaceCore::resetController
  */
 void JointsInterfaceCore::resetController()
 {
     _robot->setCommandToCurrentPosition();
     // set pos and command equal
-    if ("ned2" == _hardware_version )
+    if ("ned2" == _hardware_version)
     {
         _robot->write(ros::Time::now(), ros::Duration(0.0));
         _lock_write_cnt = 150;
@@ -332,15 +318,14 @@ void JointsInterfaceCore::resetController()
  *  send a new goal, be sure to send a message on /joints_interface/steppers_reset_controller BEFORE sending the goal.
  *
  *  This behavior is used in robot_commander node.
- * 
+ *
  * NED2
- * Callback call when we have to make a discontinuity of position command in ros control (like if we have a collision, we have 
+ * Callback call when we have to make a discontinuity of position command in ros control (like if we have a collision, we have
  * to update the position command to be equal with the position actual to avoid joints continue moving)
  * This way is a treat to block the write function of robot and wait a little bit and then reset controller to make ros controller
  * update cmd. If ros controller is reset rapidly, The pid return unvalid position.
  */
-bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &/*req*/,
-                                                   niryo_robot_msgs::Trigger::Response &res)
+bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request & /*req*/, niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
@@ -361,8 +346,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
  * @param res
  * @return
  */
-bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req,
-                                                   niryo_robot_msgs::SetInt::Response &res)
+bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackCalibrateMotors - Received a calibration request");
     int calibration_mode = req.value;
@@ -370,7 +354,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     _enable_control_loop = false;
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     // first activate learning mode for ned and one
-    activateLearningMode(("ned2" != _hardware_version  && !_simulation_mode), result, result_message);
+    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
 
     result = _robot->calibrateJoints(calibration_mode, result_message);
     res.status = result;
@@ -381,7 +365,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         // we have to reset controller to avoid ros controller set command to the previous position
         // before the calibration
         _reset_controller = true;
-        _previous_state_learning_mode = ("ned2" != _hardware_version  && !_simulation_mode);
+        _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
         _enable_control_loop = true;
     }
 
@@ -394,8 +378,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
  * @param res
  * @return
  */
-bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &/*req*/,
-                                                         niryo_robot_msgs::Trigger::Response &res)
+bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request & /*req*/, niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
     std::string result_message;
@@ -417,8 +400,7 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
  * Deactivating learning mode (= activating motors) is possible only if motors are calibrated
  * Activating learning mode is also possible when waiting for calibration
  */
-bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req,
-                                                        niryo_robot_msgs::SetBool::Response &res)
+bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackActivateLearningMode - activate learning mode");
 

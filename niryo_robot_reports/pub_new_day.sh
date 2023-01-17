@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source /opt/ros/melodic/setup.bash
-source /home/niryo/catkin_ws/devel/setup.bash
+source /opt/ros/noetic/setup.bash
+source /home/niryo/catkin_ws/install/release/setup.bash
 
 # wait for node initialization
 get_param="rosparam get /niryo_robot_reports/initialized"

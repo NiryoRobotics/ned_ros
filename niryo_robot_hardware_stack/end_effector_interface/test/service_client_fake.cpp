@@ -17,9 +17,9 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
-#include <gtest/gtest.h>
 
 #include "common/model/tool_state.hpp"
 
@@ -33,7 +33,7 @@ struct HandleMsgReturn
 {
     static constexpr int max_failures = 200;
 
-    static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr& data, int value)
+    static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr &data, int value)
     {
         bool data_received = false;
         for (int i = 0; i < max_failures; i++)
@@ -50,8 +50,7 @@ struct HandleMsgReturn
         return data_received;
     }
 
-    template<class T>
-    static bool publisherIsOn(const boost::shared_ptr<T const>& data)
+    template <class T> static bool publisherIsOn(const boost::shared_ptr<T const> &data)
     {
         bool data_received = false;
         for (int i = 0; i < max_failures; i++)
@@ -91,7 +90,7 @@ TEST(EndEffectorTestSuite, publisherTestButtonCustom)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/custom_button_status", 10,
-                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                                                                                [&data](const end_effector_interface::EEButtonStatusConstPtr msg) { data = msg; });
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::getCorrectMsg(data, 0);
@@ -107,7 +106,7 @@ TEST(EndEffectorTestSuite, publisherTestButtonFreeDriver)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/free_drive_button_status", 10,
-                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                                                                                [&data](const end_effector_interface::EEButtonStatusConstPtr msg) { data = msg; });
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::getCorrectMsg(data, 2);
@@ -123,7 +122,7 @@ TEST(EndEffectorTestSuite, publisherTestSavePosition)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/save_pos_button_status", 10,
-                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                                                                                [&data](const end_effector_interface::EEButtonStatusConstPtr msg) { data = msg; });
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::getCorrectMsg(data, 3);
@@ -138,8 +137,8 @@ TEST(EndEffectorTestSuite, publisherTestSavePosition)
 TEST(EndEffectorTestSuite, publisherDigitalIO)
 {
     end_effector_interface::EEIOStateConstPtr data;
-    ros::Subscriber sub = nh->subscribe<end_effector_interface::EEIOState>("end_effector_interface/io_state", 10,
-                            [&data](const end_effector_interface::EEIOStateConstPtr msg) {data = msg;});
+    ros::Subscriber sub =
+        nh->subscribe<end_effector_interface::EEIOState>("end_effector_interface/io_state", 10, [&data](const end_effector_interface::EEIOStateConstPtr msg) { data = msg; });
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEIOState>(data);

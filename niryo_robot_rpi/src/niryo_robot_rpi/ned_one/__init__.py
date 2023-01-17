@@ -1,1 +1,1 @@
-from robot_rpi import RobotRpi
+from ned_one.robot_rpi import RobotRpi

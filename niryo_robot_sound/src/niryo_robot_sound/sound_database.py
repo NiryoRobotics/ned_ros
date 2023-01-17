@@ -5,7 +5,7 @@ import os
 import base64
 
 # Messages
-from niryo_robot_sound.msg import SoundList, SoundObject
+from niryo_robot_sound.msg import SoundList
 
 # Services
 from niryo_robot_sound.srv import ManageSound
@@ -212,7 +212,8 @@ class SoundDatabase:
 
     def __publish_sounds(self):
         msg = SoundList()
-        msg.sounds = [sound.to_msg() for sound in self.__user_sounds.values() + self.__robot_sounds.values()]
+        msg.sounds = [sound.to_msg() for sound in list(self.__user_sounds.values()) +
+                      list(self.__robot_sounds.values())]
 
         try:
             self.__sound_database_publisher.publish(msg)

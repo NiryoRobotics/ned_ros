@@ -14,8 +14,8 @@ from niryo_robot_status.msg import RobotStatus
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
 
-from led_ring_animations import LedRingAnimations
-from led_ring_enums import *
+from niryo_robot_led_ring.led_ring_animations import LedRingAnimations
+from niryo_robot_led_ring.led_ring_enums import *
 
 
 class LedRingCommander(object):
@@ -23,7 +23,6 @@ class LedRingCommander(object):
     This class is in charge of the Led Ring Node
     Its main goal is to interpret commands, and use methods from the LedRingCommander class according to this command
     """
-
     def __init__(self):
         rospy.loginfo("Led Ring Commander - Initialisation")
         self.__is_shutdown = False
@@ -82,7 +81,9 @@ class LedRingCommander(object):
 
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
-                                                        RobotStatus, self.__callback_robot_status, queue_size=1)
+                                                        RobotStatus,
+                                                        self.__callback_robot_status,
+                                                        queue_size=1)
         rospy.Subscriber("/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
         rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
 
@@ -140,17 +141,18 @@ class LedRingCommander(object):
         elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
             rospy.sleep(3.5)  # because no fade
             if not self.__is_simulation:
-                from led_ring_utils import enable_led_ring
+                from niryo_robot_led_ring.led_ring_utils import enable_led_ring
                 enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
                 self.led_ring_anim.init_led_ring()
             #    self.led_ring_anim.fade(BLUE)
 
-        if (self.robot_status != msg.robot_status or
-                self.robot_out_of_bounds != msg.out_of_bounds or
-                self.rpi_overheating != msg.rpi_overheating):
+        new_robot_status = self.robot_status != msg.robot_status
+        new_robot_out_of_bound = self.robot_out_of_bounds != msg.out_of_bounds
+        new_rpi_overheating = self.rpi_overheating != msg.rpi_overheating
 
-            if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS == msg.robot_status \
-                    or self.robot_status != RobotStatus.REBOOT_MOTOR == msg.robot_status:
+        if new_robot_status or new_robot_out_of_bound or new_rpi_overheating:
+
+            if new_robot_status and msg.robot_status in [RobotStatus.CALIBRATION_IN_PROGRESS, RobotStatus.REBOOT_MOTOR]:
                 rospy.sleep(0.5)  # for synchro
                 self.blink(YELLOW, 3, 1)
 
@@ -199,8 +201,10 @@ class LedRingCommander(object):
 
         self.led_ring_anim.set_led_color(req.led_id, req.color)
 
-        return CommandStatus.SUCCESS, "Successfully set led {} at color {}" \
-            .format(req.led_id, [req.color.r, req.color.g, req.color.b])
+        return CommandStatus.SUCCESS, "Successfully set led {} at color {}" .format(req.led_id,
+                                                                                    [req.color.r,
+                                                                                     req.color.g,
+                                                                                     req.color.b])
 
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
@@ -319,15 +323,15 @@ class LedRingCommander(object):
             self._publish_led_ring_status()
 
     def display_user_mode(self):
-        # print 'displayyyyyyyyyy'
         if RobotStatus.BOOTING == self.robot_status:
             return
 
         command = self.get_robot_status_led_ring_cmd()
         if command == self.running_status_command or self.__is_shutdown:
             return
-        elif self.user_animation_lock.locked() and self.robot_status in [RobotStatus.RUNNING_AUTONOMOUS,
-                                                                         RobotStatus.LEARNING_MODE_AUTONOMOUS]:
+        elif self.user_animation_lock.locked() and self.robot_status in [
+                RobotStatus.RUNNING_AUTONOMOUS, RobotStatus.LEARNING_MODE_AUTONOMOUS
+        ]:
             return
 
         self.start_led_ring_thread(command)
@@ -341,9 +345,8 @@ class LedRingCommander(object):
             animation, colors = ROBOT_STATUS_TO_ANIM[self.robot_status]
         else:
             # If no method defined (no entry for this key in dictionnay), turn off led rings
-            rospy.logdebug(
-                'Led ring - No Led control method defined for {} status and {} log'.format(self.robot_status,
-                                                                                           self.robot_status_str))
+            rospy.logdebug('Led ring - No Led control method defined for {} status and {} log'.format(
+                self.robot_status, self.robot_status_str))
             animation, colors = ROBOT_STATUS_TO_ANIM[RobotStatus.UNKNOWN]
 
         command = LedUserRequest()
@@ -358,10 +361,14 @@ class LedRingCommander(object):
             self.running_status_command = None
             self.dict_led_ring_methods[animation_id](cmd)
 
-            if not self.led_ring_anim.was_function_interrupted() and animation_id not in [LedRingAnimation.NONE,
-                                                                                          LedRingAnimation.COLOR_WIPE,
-                                                                                          LedRingAnimation.SOLID,
-                                                                                          LedRingAnimation.CUSTOM, ]:
+            # Pour certaines animation, on laisse la couleur,
+            # pour les autre on affiche l'etat du robot a la fin de l'animation
+            if not self.led_ring_anim.was_function_interrupted() and animation_id not in [
+                    LedRingAnimation.NONE,
+                    LedRingAnimation.COLOR_WIPE,
+                    LedRingAnimation.SOLID,
+                    LedRingAnimation.CUSTOM,
+            ]:
                 robot_status_command = self.get_robot_status_led_ring_cmd()
                 self.running_status_command = robot_status_command
                 self.dict_led_ring_methods[robot_status_command.animation_mode.animation](robot_status_command)

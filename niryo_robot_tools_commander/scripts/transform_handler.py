@@ -3,7 +3,7 @@
 # Libs
 import rospy
 import copy
-from tf2_ros import Buffer, StaticTransformBroadcaster, TransformListener
+from tf2_ros import Buffer, StaticTransformBroadcaster, TransformListener, ConnectivityException, LookupException
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 # Messages
@@ -80,6 +80,7 @@ class ToolTransformHandler:
 
         """
         self.__tcp_transform = tcp_transform
+        self.__tcp_transform.header.stamp = rospy.Time.now()
         self.__tf_buffer.set_transform(self.__tcp_transform, "default_authority")
         self.__send_tcp_transform(None)
         self.__publish_tcp_transform()
@@ -102,7 +103,13 @@ class ToolTransformHandler:
         self.__tcp_publisher.publish(msg)
 
     def __send_tcp_transform(self, _):
-        self.__static_broadcaster.sendTransform(self.__tcp_transform if self.__enable_tcp else self.empty_transform())
+        t = self.__tcp_transform if self.__enable_tcp else self.empty_transform()
+        try:
+            t.header.stamp = self.__tf_buffer.lookup_transform('base_link', 'tool_link', rospy.Time(0)).header.stamp
+        except (ConnectivityException, LookupException):
+            t.header.stamp = rospy.Time.now()
+
+        self.__static_broadcaster.sendTransform(t)
 
     @staticmethod
     def transform_from_dict(dict_):
@@ -126,5 +133,6 @@ class ToolTransformHandler:
         t = TransformStamped()
         t.transform.rotation = Quaternion(0, 0, 0, 1)
         t.header.frame_id = "tool_link"
+        t.header.stamp = rospy.Time.now()
         t.child_frame_id = "TCP"
         return t

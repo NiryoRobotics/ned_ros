@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, SoftwareVersion
 
-VERSION = '4.1.1'
+VERSION = '5.0.0'
 
 
 class UnknownRobotDatabaseException(Exception):

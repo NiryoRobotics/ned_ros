@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_modbus</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>Ned Modbus Server</description>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
 
@@ -25,8 +25,8 @@
   <exec_depend>std_msgs</exec_depend>
 
   <!-- Python Dependencies -->
-  <exec_depend>python-pymodbus</exec_depend>
+  <exec_depend>python3-pymodbus</exec_depend>
 
-  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

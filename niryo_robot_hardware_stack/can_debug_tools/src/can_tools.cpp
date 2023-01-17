@@ -17,12 +17,12 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <iomanip>
 
 #include "can_debug_tools/can_tools.hpp"
 
@@ -33,17 +33,14 @@ namespace can_debug_tools
  * @brief CanTools::CanTools
  * @param mcp_can
  */
-CanTools::CanTools(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-    _mcp_can(std::move(mcp_can))
-{
-}
+CanTools::CanTools(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) : _mcp_can(std::move(mcp_can)) {}
 
 CanTools::~CanTools()
 {
-  _control_loop_ok = false;
+    _control_loop_ok = false;
 
-  if (_control_loop_thread.joinable())
-      _control_loop_thread.join();
+    if (_control_loop_thread.joinable())
+        _control_loop_thread.join();
 }
 
 /**
@@ -59,12 +56,12 @@ int CanTools::setupCommunication()
     {
         if (_mcp_can->setupInterruptGpio())
         {
-          std::cout << "CanTools::setupCommunication - Setup Interrupt GPIO successfull" << std::endl;
+            std::cout << "CanTools::setupCommunication - Setup Interrupt GPIO successfull" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
             if (_mcp_can->setupSpi())
             {
-              std::cout << "CanTools::setupCommunication - Setup SPI successfull" << std::endl;
+                std::cout << "CanTools::setupCommunication - Setup SPI successfull" << std::endl;
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
@@ -75,7 +72,7 @@ int CanTools::setupCommunication()
 
                 if (CAN_OK == ret)
                 {
-                  std::cout << "CanTools::setupCommunication - MCP can initialized" << std::endl;
+                    std::cout << "CanTools::setupCommunication - MCP can initialized" << std::endl;
 
                     // set mode to normal
                     _mcp_can->setMode(MCP_NORMAL);
@@ -101,7 +98,6 @@ int CanTools::setupCommunication()
     else
         std::cout << "CanTools::setupCommunication - Invalid CAN handler" << std::endl;
 
-
     return ret;
 }
 
@@ -120,19 +116,21 @@ void CanTools::startDump(double check_data_freq)
  */
 void can_debug_tools::CanTools::controlLoop()
 {
-    std::cout << "no " << ":\t"
-              << "status " << "|\t"
-              << "id " << "|\t"
-              << "control_byte" << "|\t"
-              << "[0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07]"
-              << std::endl;
+    std::cout << "no "
+              << ":\t"
+              << "status "
+              << "|\t"
+              << "id "
+              << "|\t"
+              << "control_byte"
+              << "|\t"
+              << "[0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07]" << std::endl;
 
     for (int i = 0; _control_loop_ok; ++i)
     {
         if (_mcp_can->canReadData())
         {
-                std::cout << std::setfill ('0') << std::setw(sizeof(int)*2) << i
-                          << ":\t" << dumpData() << std::endl;
+            std::cout << std::setfill('0') << std::setw(sizeof(int) * 2) << i << ":\t" << dumpData() << std::endl;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(_check_data_delay_ms));
     }
@@ -153,18 +151,12 @@ std::string CanTools::dumpData()
     int control_byte = rxBuf[0];
 
     std::ostringstream ss;
-    ss << std::to_string(status) << "\t|"
-       << std::to_string(id) << "\t|"
-       << control_byte << "\t"
+    ss << std::to_string(status) << "\t|" << std::to_string(id) << "\t|" << control_byte << "\t"
        << "[";
 
-    for (auto const& d : rxBuf)
+    for (auto const &d : rxBuf)
     {
-        ss << "0x"
-           << std::setfill('0')
-           << std::setw(sizeof(uint8_t)*2)
-           << std::uppercase
-           << std::hex << static_cast<int>(d) << ",";
+        ss << "0x" << std::setfill('0') << std::setw(sizeof(uint8_t) * 2) << std::uppercase << std::hex << static_cast<int>(d) << ",";
     }
 
     std::string dump_data = ss.str();

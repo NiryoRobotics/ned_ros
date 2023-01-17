@@ -15,8 +15,8 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "can_driver/can_manager.hpp"
 #include "can_driver/can_interface_core.hpp"
+#include "can_driver/can_manager.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/model/component_type_enum.hpp"
 #include "common/model/hardware_type_enum.hpp"
@@ -28,25 +28,23 @@
 #include <ros/console.h>
 #include <string>
 
-using ::std::to_string;
-using ::std::string;
-using ::common::model::HardwareTypeEnum;
 using ::common::model::BusProtocolEnum;
-using ::common::model::EHardwareType;
-using ::common::model::StepperMotorState;
 using ::common::model::EBusProtocol;
+using ::common::model::EHardwareType;
+using ::common::model::HardwareTypeEnum;
+using ::common::model::StepperMotorState;
+using ::std::string;
+using ::std::to_string;
 
 // Method add joints
 void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_interface)
 {
-      size_t nb_joints = 0;
+    size_t nb_joints = 0;
 
     ros::NodeHandle robot_hwnh("joints_interface");
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -71,11 +69,7 @@ void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_in
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
-            auto stepperState = std::make_shared<StepperMotorState>(joint_name,
-                                                                    eType,
-                                                                    common::model::EComponentType::JOINT,
-                                                                    eBusProto,
-                                                                    static_cast<uint8_t>(joint_id_config));
+            auto stepperState = std::make_shared<StepperMotorState>(joint_name, eType, common::model::EComponentType::JOINT, eBusProto, static_cast<uint8_t>(joint_id_config));
             if (stepperState)
             {
                 double offsetPos = 0.0;
@@ -95,7 +89,7 @@ void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_in
                 stepperState->setMaxEffort(max_effort);
 
                 if (eBusProto == EBusProtocol::CAN)
-                  can_interface->addJoint(stepperState);
+                    can_interface->addJoint(stepperState);
 
                 currentIdStepper++;
             }
@@ -109,10 +103,8 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
 
     ros::NodeHandle robot_hwnh("joints_interface");
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -137,11 +129,7 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
-            auto stepperState = std::make_shared<StepperMotorState>(joint_name,
-                                                                    eType,
-                                                                    common::model::EComponentType::JOINT,
-                                                                    eBusProto,
-                                                                    static_cast<uint8_t>(joint_id_config));
+            auto stepperState = std::make_shared<StepperMotorState>(joint_name, eType, common::model::EComponentType::JOINT, eBusProto, static_cast<uint8_t>(joint_id_config));
             if (stepperState)
             {
                 double offsetPos = 0.0;
@@ -161,7 +149,7 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
                 stepperState->setMaxEffort(max_effort);
 
                 if (eBusProto == EBusProtocol::CAN)
-                  can_drv->addHardwareComponent(stepperState);
+                    can_drv->addHardwareComponent(stepperState);
 
                 currentIdStepper++;
             }
@@ -169,54 +157,47 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
-class CanInterfaceTestSuite : public ::testing::Test {
+class CanInterfaceTestSuite : public ::testing::Test
+{
   protected:
     static void SetUpTestCase()
     {
-      ros::NodeHandle nh("can_driver");
-      can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh);
+        ros::NodeHandle nh("can_driver");
+        can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh);
 
-      addJointToCanInterface(can_interface);
+        addJointToCanInterface(can_interface);
 
-      ros::Duration(1.0).sleep();
+        ros::Duration(1.0).sleep();
     }
 
-    static void TearDownTestCase()
-    {
-      ros::shutdown();
-    }
+    static void TearDownTestCase() { ros::shutdown(); }
 
     static std::shared_ptr<can_driver::CanInterfaceCore> can_interface;
 };
 
 std::shared_ptr<can_driver::CanInterfaceCore> CanInterfaceTestSuite::can_interface;
 // Declare a test
-TEST_F(CanInterfaceTestSuite, testConnection)
-{
-    EXPECT_TRUE(can_interface->isConnectionOk());
-}
+TEST_F(CanInterfaceTestSuite, testConnection) { EXPECT_TRUE(can_interface->isConnectionOk()); }
 
 // Apply for NED1
-class CanManagerTestSuite : public ::testing::Test {
+class CanManagerTestSuite : public ::testing::Test
+{
   protected:
     static void SetUpTestCase()
     {
-      ros::NodeHandle nh("can_driver");
-      can_manager = std::make_shared<can_driver::CanManager>(nh);
+        ros::NodeHandle nh("can_driver");
+        can_manager = std::make_shared<can_driver::CanManager>(nh);
 
-      addJointToCanManager(can_manager);
-      // check connections
-      EXPECT_TRUE(can_manager->isConnectionOk());
-      EXPECT_EQ(static_cast<int>(can_manager->getNbMotors()), 3);
-      EXPECT_TRUE(can_manager->ping(1));
-      EXPECT_TRUE(can_manager->ping(2));
-      EXPECT_TRUE(can_manager->ping(3));
+        addJointToCanManager(can_manager);
+        // check connections
+        EXPECT_TRUE(can_manager->isConnectionOk());
+        EXPECT_EQ(static_cast<int>(can_manager->getNbMotors()), 3);
+        EXPECT_TRUE(can_manager->ping(1));
+        EXPECT_TRUE(can_manager->ping(2));
+        EXPECT_TRUE(can_manager->ping(3));
     }
 
-    static void TearDownTestCase()
-    {
-      ros::shutdown();
-    }
+    static void TearDownTestCase() { ros::shutdown(); }
 
     static std::shared_ptr<can_driver::CanManager> can_manager;
 };
@@ -228,9 +209,7 @@ TEST_F(CanManagerTestSuite, addAndRemoveMotor)
     common::model::StepperMotorState state;
     EXPECT_THROW(can_manager->getPosition(state), std::out_of_range);
 
-    common::model::StepperMotorState new_state(common::model::EHardwareType::STEPPER,
-                                                common::model::EComponentType::JOINT,
-                                                common::model::EBusProtocol::CAN, 10);
+    common::model::StepperMotorState new_state(common::model::EHardwareType::STEPPER, common::model::EComponentType::JOINT, common::model::EBusProtocol::CAN, 10);
     can_manager->addHardwareComponent(std::make_shared<common::model::StepperMotorState>(new_state));
     EXPECT_EQ(can_manager->getPosition(new_state), 0);
 
@@ -240,34 +219,22 @@ TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 
 TEST_F(CanManagerTestSuite, testSingleCmds)
 {
-    auto cmd_1 = std::make_unique<common::model::StepperSingleCmd>(
-                                                                    common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                    2,
-                                                                    std::initializer_list<int32_t>{1});
+    auto cmd_1 = std::make_unique<common::model::StepperSingleCmd>(common::model::EStepperCommandType::CMD_TYPE_TORQUE, 2, std::initializer_list<int32_t>{1});
     EXPECT_EQ(can_manager->writeSingleCommand(std::move(cmd_1)), CAN_OK);
     ros::Duration(0.01).sleep();
 
-    auto cmd_2 = std::make_unique<common::model::StepperSingleCmd>(
-                                                                    common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                    2,
-                                                                    std::initializer_list<int32_t>{0});
+    auto cmd_2 = std::make_unique<common::model::StepperSingleCmd>(common::model::EStepperCommandType::CMD_TYPE_TORQUE, 2, std::initializer_list<int32_t>{0});
     EXPECT_EQ(can_manager->writeSingleCommand(std::move(cmd_2)), CAN_OK);
 
     ros::Duration(0.01).sleep();
 
     // wrong id
-    auto cmd_3 = std::make_unique<common::model::StepperSingleCmd>(
-                                                                            common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                            7,
-                                                                            std::initializer_list<int32_t>{1});
+    auto cmd_3 = std::make_unique<common::model::StepperSingleCmd>(common::model::EStepperCommandType::CMD_TYPE_TORQUE, 7, std::initializer_list<int32_t>{1});
     EXPECT_NE(can_manager->writeSingleCommand(std::move(cmd_3)), CAN_OK);
     ros::Duration(0.01).sleep();
 
     // wrong type cmd
-    auto cmd_4 = std::make_unique<common::model::StepperSingleCmd>(
-                                                                            common::model::EStepperCommandType::CMD_TYPE_UNKNOWN,
-                                                                            2,
-                                                                            std::initializer_list<int32_t>{1});
+    auto cmd_4 = std::make_unique<common::model::StepperSingleCmd>(common::model::EStepperCommandType::CMD_TYPE_UNKNOWN, 2, std::initializer_list<int32_t>{1});
     EXPECT_NE(can_manager->writeSingleCommand(std::move(cmd_4)), CAN_OK);
     ros::Duration(0.01).sleep();
 }
@@ -275,8 +242,8 @@ TEST_F(CanManagerTestSuite, testSingleCmds)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "can_driver_unit_tests");
+    testing::InitGoogleTest(&argc, argv);
+    ros::init(argc, argv, "can_driver_unit_tests");
 
-  return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }

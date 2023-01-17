@@ -1,4 +1,4 @@
-from Adafruit_I2C import Adafruit_I2C
+import sys
 from enum import Enum
 
 
@@ -37,7 +37,13 @@ class MCP23017(object):
         self.__num_gpios = 16
         self.__direction = 0x00
 
-        self.i2c = Adafruit_I2C(address=address, busnum=busnum)
+        if sys.version[0] == '3':
+            import Adafruit_GPIO.I2C as I2C
+            self.i2c = I2C.Device(self.__address, self.__bus)
+        else:
+            from Adafruit_I2C import Adafruit_I2C
+            self.i2c = Adafruit_I2C(self.__address, self.__bus)
+
         self.init_config()
 
     def __str__(self):

@@ -66,9 +66,9 @@ class RosLogManager:
         try:
             process = subprocess.Popen(['df', '--output=avail', '/'], stdout=subprocess.PIPE)
             output, error = process.communicate()
-            lines = output.split(os.linesep)
+            lines = output.decode().split(os.linesep)
             if len(lines) >= 2:
-                return int(lines[1]) / 1024
+                return int(int(lines[1]) / 1024)
             return -1
         except subprocess.CalledProcessError:
             return -1
@@ -78,7 +78,7 @@ class RosLogManager:
             if not os.path.isdir(self.log_path):
                 return -1
             output = subprocess.check_output(['du', '-sBM', self.log_path])
-            output_array = output.split()
+            output_array = output.decode().split()
             if len(output_array) >= 1:
                 return int(output_array[0].replace('M', ''))
             return -1

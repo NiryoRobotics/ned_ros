@@ -19,8 +19,8 @@
 
 #include <ros/service_client.h>
 
-#include <ros/ros.h>
 #include <gtest/gtest.h>
+#include <ros/ros.h>
 
 #include "ros/duration.h"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -161,7 +161,7 @@ TEST(TESTSuite, ReadPIDValueWrongParam)
 
     ttl_driver::ReadPIDValue srv;
 
-    srv.request.id =  20;
+    srv.request.id = 20;
 
     client.call(srv);
 

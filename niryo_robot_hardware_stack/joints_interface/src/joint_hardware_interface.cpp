@@ -20,38 +20,38 @@
 #include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
-#include <utility>
-#include <vector>
 #include <string>
 #include <typeinfo>
+#include <utility>
+#include <vector>
 
 // niryo
+#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/component_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
-#include "common/model/hardware_type_enum.hpp"
-#include "common/model/component_type_enum.hpp"
-#include "common/model/bus_protocol_enum.hpp"
 #include "common/util/util_defs.hpp"
 
+using ::std::dynamic_pointer_cast;
 using ::std::shared_ptr;
 using ::std::string;
 using ::std::to_string;
-using ::std::dynamic_pointer_cast;
 
-using ::common::model::HardwareTypeEnum;
-using ::common::model::EHardwareType;
-using ::common::model::EBusProtocol;
 using ::common::model::BusProtocolEnum;
-using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
-using ::common::model::DxlSyncCmd;
 using ::common::model::DxlSingleCmd;
-using ::common::model::StepperSingleCmd;
-using ::common::model::StepperTtlSyncCmd;
-using ::common::model::StepperTtlSingleCmd;
+using ::common::model::DxlSyncCmd;
+using ::common::model::EBusProtocol;
+using ::common::model::EDxlCommandType;
+using ::common::model::EHardwareType;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
-using ::common::model::EDxlCommandType;
+using ::common::model::HardwareTypeEnum;
+using ::common::model::StepperMotorState;
+using ::common::model::StepperSingleCmd;
+using ::common::model::StepperTtlSingleCmd;
+using ::common::model::StepperTtlSyncCmd;
 
 namespace joints_interface
 {
@@ -63,27 +63,22 @@ namespace joints_interface
  * @param ttl_interface
  * @param can_interface
  */
-JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
-                                               ros::NodeHandle& robot_hwnh,
-                                               std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
-                                               std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _ttl_interface(std::move(ttl_interface)),
-    _can_interface(std::move(can_interface))
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh, std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                                               std::shared_ptr<can_driver::CanInterfaceCore> can_interface)
+    : _ttl_interface(std::move(ttl_interface)), _can_interface(std::move(can_interface))
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
     init(rootnh, robot_hwnh);
 
-    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_state_list,
-                                                                _ttl_interface,
-                                                                _can_interface);
+    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_state_list, _ttl_interface, _can_interface);
 }
 
 /**
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
  */
-bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &robot_hwnh)
+bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
     bool torque_status{false};
 
@@ -96,10 +91,8 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -130,11 +123,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
             // stepper
             std::string currentNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
-            auto stepperState = std::make_shared<StepperMotorState>(joint_name,
-                                                                    eType,
-                                                                    common::model::EComponentType::JOINT,
-                                                                    eBusProto,
-                                                                    static_cast<uint8_t>(joint_id_config));
+            auto stepperState = std::make_shared<StepperMotorState>(joint_name, eType, common::model::EComponentType::JOINT, eBusProto, static_cast<uint8_t>(joint_id_config));
 
             if (initStepperState(robot_hwnh, stepperState, currentNamespace))
             {
@@ -167,9 +156,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                     }
                     else
                     {
-                      ROS_WARN("JointHardwareInterface::init - "
-                               "add stepper joint failure, return : %d. Retrying (%d)...",
-                               result, tries);
+                        ROS_WARN("JointHardwareInterface::init - "
+                                 "add stepper joint failure, return : %d. Retrying (%d)...",
+                                 result, tries);
                     }
                 }
 
@@ -192,10 +181,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
             // dynamixel
             std::string currentNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
-            auto dxlState = std::make_shared<DxlMotorState>(joint_name,
-                                                            eType,
-                                                            common::model::EComponentType::JOINT,
-                                                            static_cast<uint8_t>(joint_id_config));
+            auto dxlState = std::make_shared<DxlMotorState>(joint_name, eType, common::model::EComponentType::JOINT, static_cast<uint8_t>(joint_id_config));
 
             if (initDxlState(robot_hwnh, dxlState, currentNamespace))
             {
@@ -257,16 +243,11 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
             {
                 ROS_DEBUG("JointHardwareInterface::initJoints - New Joints config found : %s", jState->str().c_str());
 
-                hardware_interface::JointStateHandle jStateHandle(jState->getName(),
-                                                                  &_joint_state_list.at(j)->pos,
-                                                                  &_joint_state_list.at(j)->vel,
-                                                                  &_joint_state_list.at(j)->eff);
+                hardware_interface::JointStateHandle jStateHandle(jState->getName(), &_joint_state_list.at(j)->pos, &_joint_state_list.at(j)->vel, &_joint_state_list.at(j)->eff);
 
                 _joint_state_interface.registerHandle(jStateHandle);
 
-
-                hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()),
-                                                           &_joint_state_list.at(j)->cmd);
+                hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()), &_joint_state_list.at(j)->cmd);
 
                 _joint_position_interface.registerHandle(jPosHandle);
             }
@@ -287,9 +268,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
-                                              const std::shared_ptr<StepperMotorState>& stepperState,
-                                              const std::string& currentNamespace) const
+bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const std::shared_ptr<StepperMotorState> &stepperState, const std::string &currentNamespace) const
 {
     bool res = false;
     if (stepperState)
@@ -383,9 +362,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
-                                     const std::shared_ptr<DxlMotorState>& dxlState,
-                                     const std::string& currentNamespace) const
+bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh, const std::shared_ptr<DxlMotorState> &dxlState, const std::string &currentNamespace) const
 {
     bool res = false;
     if (dxlState)
@@ -425,7 +402,6 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
 
-
         dxlState->setOffsetPosition(offsetPos);
         dxlState->setHomePosition(home_position);
         dxlState->setDirection(static_cast<int8_t>(direction));
@@ -456,9 +432,9 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
  * @brief JointHardwareInterface::read
  * Reads the current state of the robot and update pos and vel of
  */
-void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+void JointHardwareInterface::read(const ros::Time & /*time*/, const ros::Duration & /*period*/)
 {
-    for (auto& jState : _joint_state_list)
+    for (auto &jState : _joint_state_list)
     {
         if (jState && jState->isValid())
         {
@@ -474,12 +450,12 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
 /**
  * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
  */
-void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+void JointHardwareInterface::write(const ros::Time & /*time*/, const ros::Duration & /*period*/)
 {
-    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
-    std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
+    std::vector<std::pair<uint8_t, int32_t>> can_cmd;
+    std::vector<std::pair<uint8_t, uint32_t>> ttl_cmd;
 
-    for (auto const& jState : _joint_state_list)
+    for (auto const &jState : _joint_state_list)
     {
         if (jState && jState->isValid())
         {
@@ -494,7 +470,7 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
         _can_interface->setTrajectoryControllerCommands(std::move(can_cmd));
 
     if (_ttl_interface)
-      _ttl_interface->setTrajectoryControllerCommands(std::move(ttl_cmd));
+        _ttl_interface->setTrajectoryControllerCommands(std::move(ttl_cmd));
 }
 
 /**
@@ -503,7 +479,7 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
 void JointHardwareInterface::setCommandToCurrentPosition()
 {
     ROS_DEBUG("Joints Hardware Interface - Set command to current position called");
-    for (auto const& jState : _joint_state_list)
+    for (auto const &jState : _joint_state_list)
     {
         if (jState)
             _joint_position_interface.getHandle(jState->getName()).setCommand(jState->pos);
@@ -524,10 +500,7 @@ bool JointHardwareInterface::needCalibration() const
  * @brief JointHardwareInterface::isCalibrationInProgress
  * @return
  */
-bool JointHardwareInterface::isCalibrationInProgress() const
-{
-  return (EStepperCalibrationStatus::IN_PROGRESS == _calibration_manager->getCalibrationStatus());
-}
+bool JointHardwareInterface::isCalibrationInProgress() const { return (EStepperCalibrationStatus::IN_PROGRESS == _calibration_manager->getCalibrationStatus()); }
 
 /**
  * @brief JointHardwareInterface::rebootAll
@@ -539,14 +512,14 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     _ttl_interface->waitSingleQueueFree();
 
     bool res = true;
-    for (auto const& jState : _joint_state_list)
+    for (auto const &jState : _joint_state_list)
     {
         if (jState->getBusProtocol() == EBusProtocol::TTL)
         {
             // first set torque state
             if (jState->isStepper())
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                jState->getId(), std::initializer_list<uint32_t>{torque_on}));
+                _ttl_interface->addSingleCommandToQueue(
+                    std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{torque_on}));
 
             ros::Duration(0.2).sleep();
 
@@ -575,7 +548,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
  * @param torque_on
  * initializes all joints
  */
-int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::JointState>& motor_state, bool torque_on)
+int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::JointState> &motor_state, bool torque_on)
 {
     ROS_DEBUG("TtlInterfaceCore::initHardware");
 
@@ -588,32 +561,24 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
             {
                 if (motor_state->getBusProtocol() == EBusProtocol::CAN)
                 {
-                  // CMD_TYPE_MICRO_STEPS cmd
-                  StepperSingleCmd cmd_micro(
-                              EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                              motor_state->getId(),
-                              {static_cast<int32_t>(stepperState->getMicroSteps())});
-                  _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_micro));
-                  ros::Duration(0.05).sleep();
+                    // CMD_TYPE_MICRO_STEPS cmd
+                    StepperSingleCmd cmd_micro(EStepperCommandType::CMD_TYPE_MICRO_STEPS, motor_state->getId(), {static_cast<int32_t>(stepperState->getMicroSteps())});
+                    _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_micro));
+                    ros::Duration(0.05).sleep();
 
-                  // CMD_TYPE_MAX_EFFORT cmd
-                  StepperSingleCmd cmd_max_effort(
-                              EStepperCommandType::CMD_TYPE_MAX_EFFORT,
-                              motor_state->getId(),
-                              {static_cast<int32_t>(stepperState->getMaxEffort())});
-                  _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_max_effort));
-                  ros::Duration(0.05).sleep();
+                    // CMD_TYPE_MAX_EFFORT cmd
+                    StepperSingleCmd cmd_max_effort(EStepperCommandType::CMD_TYPE_MAX_EFFORT, motor_state->getId(), {static_cast<int32_t>(stepperState->getMaxEffort())});
+                    _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_max_effort));
+                    ros::Duration(0.05).sleep();
                 }
                 else if (motor_state->getBusProtocol() == EBusProtocol::TTL)
                 {
                     // CMD_TYPE_VELOCITY_PROFILE cmd
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                                                                                  stepperState->getId(),
-                                                                                  stepperState->getVelocityProfile().to_list()));
+                    _ttl_interface->addSingleCommandToQueue(
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, stepperState->getId(), stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                    stepperState->getId(),
-                                                                                    std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
+                                                                                                  std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
                 }
             }
         }
@@ -623,41 +588,29 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
             if (dxlState)
             {
                 // TORQUE cmd off to ensure command can be written on the motor
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                    dxlState->getId(), {false})));
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE, dxlState->getId(), {false})));
 
                 // set PID
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
-                                                                                       dxlState->getId(),
-                                                                                       std::initializer_list<uint32_t>({dxlState->getPositionPGain(),
-                                                                                                                        dxlState->getPositionIGain(),
-                                                                                                                        dxlState->getPositionDGain(),
-                                                                                                                        dxlState->getVelocityPGain(),
-                                                                                                                        dxlState->getVelocityIGain(),
-                                                                                                                        dxlState->getFF1Gain(),
-                                                                                                                        dxlState->getFF2Gain(),
-                                                                                                                        dxlState->getVelProfile(),
-                                                                                                                        dxlState->getAccProfile()})));
+                _ttl_interface->addSingleCommandToQueue(
+                    std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID, dxlState->getId(),
+                                                   std::initializer_list<uint32_t>({dxlState->getPositionPGain(), dxlState->getPositionIGain(), dxlState->getPositionDGain(),
+                                                                                    dxlState->getVelocityPGain(), dxlState->getVelocityIGain(), dxlState->getFF1Gain(),
+                                                                                    dxlState->getFF2Gain(), dxlState->getVelProfile(), dxlState->getAccProfile()})));
                 // set velocity and acceleration profile
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE,
-                                                                                       dxlState->getId(),
-                                                                                       std::initializer_list<uint32_t>({dxlState->getVelProfile(),
-                                                                                                                        dxlState->getAccProfile()})));
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE, dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({dxlState->getVelProfile(), dxlState->getAccProfile()})));
 
                 // set startup configuration so that torque is on when motor is alimented
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_STARTUP,
-                                                                                       dxlState->getId(),
-                                                                                       std::initializer_list<uint32_t>({1})));
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_STARTUP, dxlState->getId(), std::initializer_list<uint32_t>({1})));
 
                 // TORQUE cmd on if ned2, off otherwise
-                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                    dxlState->getId(), {torque_on})));
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE, dxlState->getId(), {torque_on})));
             }
         }
     }
     else
     {
-      return niryo_robot_msgs::CommandStatus::FAILURE;
+        return niryo_robot_msgs::CommandStatus::FAILURE;
     }
 
     // wait for empty cmd queue (all init cmd processed correctly)
@@ -703,7 +656,6 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
         result_message = "JointHardwareInterface::calibrateJoints - Calibration already in process";
     }
 
-
     return calib_res;
 }
 
@@ -730,16 +682,16 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
-    for (auto const& jState : _joint_state_list)
+    for (auto const &jState : _joint_state_list)
     {
         if (jState)
         {
             if (jState->getBusProtocol() == EBusProtocol::TTL)
             {
                 if (jState->isDynamixel())
-                  dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                    dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
                 else
-                  stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                    stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else
             {
@@ -756,10 +708,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     if (_ttl_interface)
     {
         if (dxl_cmd.isValid())
-          _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
+            _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
 
         if (stepper_ttl_cmd.isValid())
-          _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperTtlSyncCmd>(stepper_ttl_cmd));
+            _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperTtlSyncCmd>(stepper_ttl_cmd));
     }
 }
 
@@ -771,12 +723,12 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
 {
     ROS_DEBUG("JointHardwareInterface::synchronizeMotors");
 
-    for (auto const& jState : _joint_state_list)
+    for (auto const &jState : _joint_state_list)
     {
         if (jState && jState->isValid() && jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
         {
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
-                _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
+            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
     }
 }

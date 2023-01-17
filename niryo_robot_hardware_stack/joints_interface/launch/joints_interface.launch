@@ -8,7 +8,7 @@
   <arg name="hardware_version" default="ned"/>
   <arg name="simulation_mode" default="true"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
   <!-- Launch controllers -->
   <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>

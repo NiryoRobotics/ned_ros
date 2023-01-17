@@ -19,11 +19,11 @@
 
 #include "common/model/abstract_motor_state.hpp"
 
-#include <string>
 #include <sstream>
+#include <string>
 
-using ::std::string;
 using ::std::ostringstream;
+using ::std::string;
 
 namespace common
 {
@@ -32,10 +32,7 @@ namespace model
 /**
  * @brief AbstractMotorState::AbstractMotorState
  */
-AbstractMotorState::AbstractMotorState()
-{
-    reset();
-}
+AbstractMotorState::AbstractMotorState() { reset(); }
 
 /**
  * @brief AbstractMotorState::AbstractMotorState
@@ -44,9 +41,8 @@ AbstractMotorState::AbstractMotorState()
  * @param bus_proto
  * @param id
  */
-AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type,
-                                       EBusProtocol bus_proto, uint8_t id) :
-      AbstractHardwareState(type, component_type, bus_proto, id)
+AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id)
+    : AbstractHardwareState(type, component_type, bus_proto, id)
 {
 }
 
@@ -83,28 +79,19 @@ string AbstractMotorState::str() const
  * @brief AbstractMotorState::setPosition
  * @param pos
  */
-void AbstractMotorState::setPosition(int pos)
-{
-    _position = pos;
-}
+void AbstractMotorState::setPosition(int pos) { _position = pos; }
 
 /**
  * @brief AbstractMotorState::setVelocity
  * @param vel
  */
-void AbstractMotorState::setVelocity(int vel)
-{
-    _velocity = vel;
-}
+void AbstractMotorState::setVelocity(int vel) { _velocity = vel; }
 
 /**
  * @brief AbstractMotorState::setTorque
  * @param torque
  */
-void AbstractMotorState::setTorque(int torque)
-{
-    _torque = torque;
-}
+void AbstractMotorState::setTorque(int torque) { _torque = torque; }
 
 }  // namespace model
 }  // namespace common

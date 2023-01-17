@@ -99,7 +99,7 @@ def register_height_offset(height_offset):
 
 
 def auto_calibration():
-    print "Calibrate Robot if needed ..."
+    print("Calibrate Robot if needed ...")
     client.write_register(311, 1)
     # Wait for end of calibration
     while client.read_input_registers(402, 1).registers[0] == 1:
@@ -167,7 +167,7 @@ def get_target_pose_from_rel(workspace_str, height_offset, x_rel, y_rel, yaw_rel
 # ----------- Main programm
 
 if __name__ == '__main__':
-    print "--- START"
+    print("--- START")
 
     client = ModbusTcpClient('localhost', port=5020)
 
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     # connect to modbus server
     client.connect()
-    print "Connected to modbus server"
+    print("Connected to modbus server")
 
     # launch auto calibration then go to obs. pose
     auto_calibration()
@@ -201,7 +201,7 @@ if __name__ == '__main__':
         # according to their shape (circle or square).
 
         obj_rel_pose, shape_found, color_found = detect_object(workspace_name, shape, color)
-        print 'Detected a', ColorEnum(color_found).name, ShapeEnum(shape_found).name
+        print('Detected a', ColorEnum(color_found).name, ShapeEnum(shape_found).name)
 
         x_rel = obj_rel_pose[0]
         y_rel = obj_rel_pose[1]
@@ -248,10 +248,10 @@ if __name__ == '__main__':
         open_tool()
         back_to_observation()
 
-    print 'No more objects detected in the workspace'
+    print('No more objects detected in the workspace')
 
     # Activate learning mode and close connexion
     client.write_register(300, 1)
     client.close()
-    print "Close connection to modbus server"
-    print "--- END"
+    print("Close connection to modbus server")
+    print("--- END")

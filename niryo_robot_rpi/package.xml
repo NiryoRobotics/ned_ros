@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_rpi</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>Specific utilities for Ned RPI + custom Ned shield</description>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
@@ -32,9 +32,9 @@
   <exec_depend>niryo_robot_msgs</exec_depend>
 
   <!-- Python Dependencies -->
-  <exec_depend>python-flask</exec_depend>
-  <exec_depend>python-rpi.gpio</exec_depend>
-  
-  <test_depend>python-catkin-lint</test_depend>
+  <exec_depend>python3-flask</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == '2'">python-rpi.gpio</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == '3'">python3-rpi.gpio</exec_depend>    
+  <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

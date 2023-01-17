@@ -16,12 +16,12 @@
 
 #include "can_driver/abstract_stepper_driver.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-#include <ros/ros.h>
 #include <cassert>
+#include <ros/ros.h>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 using ::common::model::EStepperCommandType;
 
@@ -32,18 +32,13 @@ namespace can_driver
  * @brief AbstractStepperDriver::AbstractStepperDriver
  * @param mcp_can
  */
-AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-  AbstractCanDriver(std::move(mcp_can))
-{}
+AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) : AbstractCanDriver(std::move(mcp_can)) {}
 
 /**
  * @brief AbstractStepperDriver::str
  * @return
  */
-std::string AbstractStepperDriver::str() const
-{
-    return "Abstract Stepper Driver (" + AbstractCanDriver::str() + ")";
-}
+std::string AbstractStepperDriver::str() const { return "Abstract Stepper Driver (" + AbstractCanDriver::str() + ")"; }
 
 /**
  * @brief AbstractStepperDriver::writeSingleCmd
@@ -56,46 +51,29 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
     {
         switch (EStepperCommandType(cmd->getCmdType()))
         {
-            case EStepperCommandType::CMD_TYPE_POSITION:
-                return sendPositionCommand(cmd->getId(),
-                                           cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_TORQUE:
-                return sendTorqueOnCommand(cmd->getId(),
-                                           cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-                return sendTorqueOnCommand(cmd->getId(),
-                                           !cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
-                return sendSynchronizePositionCommand(cmd->getId(),
-                                                      cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
-                return sendRelativeMoveCommand(cmd->getId(),
-                                               cmd->getParams().at(0),
-                                               cmd->getParams().at(1));
-            case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
-                return sendMaxEffortCommand(cmd->getId(),
-                                            cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
-                return sendMicroStepsCommand(cmd->getId(),
-                                             cmd->getParams().front());
-            case EStepperCommandType::CMD_TYPE_CALIBRATION:
-                return sendCalibrationCommand(cmd->getId(),
-                                              cmd->getParams().at(0),
-                                              cmd->getParams().at(1),
-                                              cmd->getParams().at(2),
-                                              cmd->getParams().at(3));
+        case EStepperCommandType::CMD_TYPE_POSITION:
+            return sendPositionCommand(cmd->getId(), cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_TORQUE:
+            return sendTorqueOnCommand(cmd->getId(), cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
+            return sendTorqueOnCommand(cmd->getId(), !cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
+            return sendSynchronizePositionCommand(cmd->getId(), cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
+            return sendRelativeMoveCommand(cmd->getId(), cmd->getParams().at(0), cmd->getParams().at(1));
+        case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
+            return sendMaxEffortCommand(cmd->getId(), cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
+            return sendMicroStepsCommand(cmd->getId(), cmd->getParams().front());
+        case EStepperCommandType::CMD_TYPE_CALIBRATION:
+            return sendCalibrationCommand(cmd->getId(), cmd->getParams().at(0), cmd->getParams().at(1), cmd->getParams().at(2), cmd->getParams().at(3));
 
-            case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                return sendPositionOffsetCommand(cmd->getId(),
-                                                    cmd->getParams().at(0),
-                                                    cmd->getParams().at(1));
-            case EStepperCommandType::CMD_TYPE_CONVEYOR:
-                    return sendConveyorOnCommand(cmd->getId(),
-                                                 cmd->getParams().at(0),
-                                                 static_cast<uint8_t>(cmd->getParams().at(1)),
-                                                 static_cast<uint8_t>(cmd->getParams().at(2)));
-            default:
-                std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
+        case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
+            return sendPositionOffsetCommand(cmd->getId(), cmd->getParams().at(0), cmd->getParams().at(1));
+        case EStepperCommandType::CMD_TYPE_CONVEYOR:
+            return sendConveyorOnCommand(cmd->getId(), cmd->getParams().at(0), static_cast<uint8_t>(cmd->getParams().at(1)), static_cast<uint8_t>(cmd->getParams().at(2)));
+        default:
+            std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
     }
 
@@ -155,8 +133,7 @@ std::string AbstractStepperDriver::interpretFirmwareVersion(const std::array<uin
  * @param data
  * @return
  */
-std::pair<common::model::EStepperCalibrationStatus, int32_t>
-AbstractStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+std::pair<common::model::EStepperCalibrationStatus, int32_t> AbstractStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     auto status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];
@@ -169,8 +146,7 @@ AbstractStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE
  * @param data
  * @return
  */
-std::tuple<bool, uint8_t, uint16_t>
-AbstractStepperDriver::interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+std::tuple<bool, uint8_t, uint16_t> AbstractStepperDriver::interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     bool state = data[1];
     int16_t speed = data[2];

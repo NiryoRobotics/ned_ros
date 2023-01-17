@@ -17,9 +17,9 @@
 #include "ttl_driver/abstract_motor_driver.hpp"
 
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
 
 using ::std::shared_ptr;
 
@@ -31,19 +31,15 @@ namespace ttl_driver
  * @param portHandler
  * @param packetHandler
  */
-AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
-                                         shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(std::move(portHandler),
-                      std::move(packetHandler))
-{}
+AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> portHandler, shared_ptr<dynamixel::PacketHandler> packetHandler)
+    : AbstractTtlDriver(std::move(portHandler), std::move(packetHandler))
+{
+}
 
 /**
  * @brief AbstractMotorDriver::str
  * @return
  */
-std::string AbstractMotorDriver::str() const
-{
-    return "Motor Driver (" + AbstractTtlDriver::str() + ")";
-}
+std::string AbstractMotorDriver::str() const { return "Motor Driver (" + AbstractTtlDriver::str() + ")"; }
 
 }  // namespace ttl_driver

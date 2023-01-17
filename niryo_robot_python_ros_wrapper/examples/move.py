@@ -8,14 +8,14 @@ import math
 
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
 
-print "--- Start"
+print("--- Start")
 
 n = NiryoRosWrapper()
 
 try:
     # Calibrate robot first
     n.calibrate_auto()
-    print "Calibration finished !"
+    print("Calibration finished !")
 
     time.sleep(1)
 
@@ -36,8 +36,8 @@ try:
 
 
 except NiryoRosWrapperException as e:
-    print e
+    print(e)
     # handle exception here
     # you can also make a try/except for each command separately
 
-print "--- End"
+print("--- End")

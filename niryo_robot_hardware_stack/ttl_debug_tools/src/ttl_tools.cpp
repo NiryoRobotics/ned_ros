@@ -29,18 +29,15 @@ namespace ttl_debug_tools
 /**
  * @brief TtlTools::TtlTools
  */
-TtlTools::TtlTools()
-= default;
+TtlTools::TtlTools() = default;
 
 /**
  * @brief TtlTools::TtlTools
  * @param portHandler
  * @param packetHandler
  */
-TtlTools::TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                   std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    _portHandler(std::move(portHandler)),
-    _packetHandler(std::move(packetHandler))
+TtlTools::TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler)
+    : _portHandler(std::move(portHandler)), _packetHandler(std::move(packetHandler))
 {
 }
 
@@ -120,27 +117,23 @@ void TtlTools::ping(int id)
  * @param value
  * @param byte_number
  */
-int TtlTools::setRegister(uint8_t id, uint16_t reg_address,
-                           uint32_t value, uint8_t byte_number)
+int TtlTools::setRegister(uint8_t id, uint16_t reg_address, uint32_t value, uint8_t byte_number)
 {
     int comm_result = COMM_TX_FAIL;
 
     switch (byte_number)
     {
-        case 1:
-            comm_result = _packetHandler->write1ByteTxRx(_portHandler.get(), id,
-                    reg_address, static_cast<uint8_t>(value));
+    case 1:
+        comm_result = _packetHandler->write1ByteTxRx(_portHandler.get(), id, reg_address, static_cast<uint8_t>(value));
         break;
-        case 2:
-            comm_result = _packetHandler->write2ByteTxRx(_portHandler.get(), id,
-                    reg_address, static_cast<uint16_t>(value));
+    case 2:
+        comm_result = _packetHandler->write2ByteTxRx(_portHandler.get(), id, reg_address, static_cast<uint16_t>(value));
         break;
-        case 4:
-            comm_result = _packetHandler->write4ByteTxRx(_portHandler.get(), id,
-                    reg_address, static_cast<uint32_t>(value));
+    case 4:
+        comm_result = _packetHandler->write4ByteTxRx(_portHandler.get(), id, reg_address, static_cast<uint32_t>(value));
         break;
-        default:
-            printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+    default:
+        printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 
@@ -162,32 +155,29 @@ int TtlTools::getRegister(uint8_t id, uint16_t reg_address, uint32_t &value, uin
 
     switch (byte_number)
     {
-        case 1:
-        {
-            uint8_t read_data;
-            comm_result = _packetHandler->read1ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &error);
-            value = read_data;
-        }
-        break;
-        case 2:
-        {
-            uint16_t read_data;
-            comm_result = _packetHandler->read2ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &error);
-            value = read_data;
-        }
-        break;
-        case 4:
-        {
-            uint32_t read_data;
-            comm_result = _packetHandler->read4ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &error);
-            value = read_data;
-        }
-        break;
-        default:
-            printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+    case 1:
+    {
+        uint8_t read_data;
+        comm_result = _packetHandler->read1ByteTxRx(_portHandler.get(), id, reg_address, &read_data, &error);
+        value = read_data;
+    }
+    break;
+    case 2:
+    {
+        uint16_t read_data;
+        comm_result = _packetHandler->read2ByteTxRx(_portHandler.get(), id, reg_address, &read_data, &error);
+        value = read_data;
+    }
+    break;
+    case 4:
+    {
+        uint32_t read_data;
+        comm_result = _packetHandler->read4ByteTxRx(_portHandler.get(), id, reg_address, &read_data, &error);
+        value = read_data;
+    }
+    break;
+    default:
+        printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 
@@ -200,8 +190,7 @@ int TtlTools::getRegister(uint8_t id, uint16_t reg_address, uint32_t &value, uin
 /**
  * @brief TtlTools::setRegisters
  */
-int TtlTools::setRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
-                        std::vector<uint32_t> values, uint8_t byte_number)
+int TtlTools::setRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> values, uint8_t byte_number)
 {
     int dxl_comm_result = COMM_SUCCESS;
 
@@ -209,10 +198,7 @@ int TtlTools::setRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
     {
         if (ids.size() == values.size())
         {
-            dynamixel::GroupSyncWrite groupSyncWrite(_portHandler.get(),
-                                                     _packetHandler.get(),
-                                                     reg_address,
-                                                     byte_number);
+            dynamixel::GroupSyncWrite groupSyncWrite(_portHandler.get(), _packetHandler.get(), reg_address, byte_number);
 
             bool dxl_senddata_result = false;
 
@@ -223,32 +209,26 @@ int TtlTools::setRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
 
                 switch (byte_number)
                 {
-                    case 1:
-                    {
-                        uint8_t params[1] = {static_cast<uint8_t>(data)};
-                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
-                    }
-                    break;
-                    case 2:
-                    {
-                        uint8_t params[2] =
-                                            {DXL_LOBYTE(static_cast<uint16_t>(data)),
-                                             DXL_HIBYTE(static_cast<uint16_t>(data))};
-                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
-                    }
-                    break;
-                    case 4:
-                    {
-                        uint8_t params[4] =
-                                            {DXL_LOBYTE(DXL_LOWORD(data)),
-                                             DXL_HIBYTE(DXL_LOWORD(data)),
-                                             DXL_LOBYTE(DXL_HIWORD(data)),
-                                             DXL_HIBYTE(DXL_HIWORD(data))};
-                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
-                    }
-                    break;
-                    default:
-                        printf("AbstractTtlDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
+                case 1:
+                {
+                    uint8_t params[1] = {static_cast<uint8_t>(data)};
+                    dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                }
+                break;
+                case 2:
+                {
+                    uint8_t params[2] = {DXL_LOBYTE(static_cast<uint16_t>(data)), DXL_HIBYTE(static_cast<uint16_t>(data))};
+                    dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                }
+                break;
+                case 4:
+                {
+                    uint8_t params[4] = {DXL_LOBYTE(DXL_LOWORD(data)), DXL_HIBYTE(DXL_LOWORD(data)), DXL_LOBYTE(DXL_HIWORD(data)), DXL_HIBYTE(DXL_HIWORD(data))};
+                    dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                }
+                break;
+                default:
+                    printf("AbstractTtlDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
                     break;
                 }
 
@@ -284,7 +264,7 @@ int TtlTools::getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::
     dynamixel::GroupSyncRead groupSyncRead(_portHandler.get(), _packetHandler.get(), reg_address, byte_number);
     int dxl_comm_result = COMM_TX_FAIL;
 
-    for (auto const& id : ids)
+    for (auto const &id : ids)
     {
         if (!groupSyncRead.addParam(id))
         {
@@ -297,32 +277,32 @@ int TtlTools::getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::
 
     if (COMM_SUCCESS == dxl_comm_result)
     {
-    for (auto const& id : ids)
-    {
-        if (groupSyncRead.isAvailable(id, reg_address, byte_number))
+        for (auto const &id : ids)
         {
-            switch (byte_number)
+            if (groupSyncRead.isAvailable(id, reg_address, byte_number))
             {
+                switch (byte_number)
+                {
                 case 1:
                     values.emplace_back(static_cast<uint8_t>(groupSyncRead.getData(id, reg_address, byte_number)));
-                break;
+                    break;
                 case 2:
                     values.emplace_back(static_cast<uint16_t>(groupSyncRead.getData(id, reg_address, byte_number)));
-                break;
+                    break;
                 case 4:
                     values.emplace_back(groupSyncRead.getData(id, reg_address, byte_number));
-                break;
+                    break;
                 default:
                     printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                    break;
+                }
+            }
+            else
+            {
+                dxl_comm_result = COMM_RX_FAIL;
                 break;
             }
         }
-        else
-        {
-            dxl_comm_result = COMM_RX_FAIL;
-            break;
-        }
-    }
     }
 
     groupSyncRead.clearParam();
@@ -333,8 +313,5 @@ int TtlTools::getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::
 /**
  * @brief TtlTools::closePort
  */
-void TtlTools::closePort()
-{
-    _portHandler->closePort();
-}
+void TtlTools::closePort() { _portHandler->closePort(); }
 }  // namespace ttl_debug_tools

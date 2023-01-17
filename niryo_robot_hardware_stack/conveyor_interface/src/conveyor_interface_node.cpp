@@ -23,8 +23,8 @@
 #include <string>
 
 // niryo
-#include "conveyor_interface/conveyor_interface_core.hpp"
 #include "can_driver/can_interface_core.hpp"
+#include "conveyor_interface/conveyor_interface_core.hpp"
 #include "ros/duration.h"
 #include "ros/node_handle.h"
 #include "ttl_driver/ttl_interface_core.hpp"

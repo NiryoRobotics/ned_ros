@@ -27,7 +27,7 @@ namespace cpu_interface
  * @brief CpuInterfaceCore::CpuInterfaceCore
  * @param nh
  */
-CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
+CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle &nh)
 {
     ROS_DEBUG("CpuInterfaceCore::ctor - ctor");
 
@@ -87,26 +87,17 @@ void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 /**
  * @brief CpuInterfaceCore::startServices
  */
-void CpuInterfaceCore::startServices(ros::NodeHandle& /*nh*/)
-{
-    ROS_DEBUG("CpuInterfaceCore::startServices - no services to start");
-}
+void CpuInterfaceCore::startServices(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startServices - no services to start"); }
 
 /**
  * @brief CpuInterfaceCore::startPublishers
  */
-void CpuInterfaceCore::startPublishers(ros::NodeHandle& /*nh*/)
-{
-    ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start");
-}
+void CpuInterfaceCore::startPublishers(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start"); }
 
 /**
  * @brief CpuInterfaceCore::startSubscribers
  */
-void CpuInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
-{
-    ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start");
-}
+void CpuInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start"); }
 
 /**
  * @brief CpuInterfaceCore::_readCpuTemperature
@@ -130,10 +121,7 @@ void CpuInterfaceCore::_readCpuTemperature()
 /**
  * @brief CpuInterfaceCore::startReadingData
  */
-void CpuInterfaceCore::startReadingData()
-{
-    _read_hardware_data_thread = std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this);
-}
+void CpuInterfaceCore::startReadingData() { _read_hardware_data_thread = std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this); }
 
 /**
  * @brief CpuInterfaceCore::_readHardwareDataLoop
