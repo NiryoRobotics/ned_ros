@@ -18,14 +18,14 @@
 */
 
 // ros
-#include <ros/ros.h>
 #include <ros/console.h>
+#include <ros/ros.h>
 #include <string>
 
 // niryo
+#include "can_driver/can_interface_core.hpp"
 #include "joints_interface/joints_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
-#include "can_driver/can_interface_core.hpp"
 
 int main(int argc, char **argv)
 {

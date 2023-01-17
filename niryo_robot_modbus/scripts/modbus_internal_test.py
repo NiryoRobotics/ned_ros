@@ -226,7 +226,7 @@ def test_holding_register(client):
     print("ANALOG IOs MODE: {}".format(aio_mode_registers.registers))
     old_aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
     print("ANALOG IOs STATE: {}".format(old_aio_state_registers.registers))
-    print AIO_NAME_TO_ADDRESS.items()[0]
+    print(AIO_NAME_TO_ADDRESS.items()[0])
     client.write_registers(HR_SET_ANALOG_IO, [AIO_NAME_TO_ADDRESS.items()[0][1], 5000])
 
     print("ANALOG IOs MODE: {}".format(aio_mode_registers.registers))
@@ -251,11 +251,11 @@ if __name__ == '__main__':
     modbus_ip_address = '127.0.0.1'
     modbus_port = 5020
 
-    print "--- START"
+    print("--- START")
     modbus_tcp_client = ModbusTcpClient(modbus_ip_address, port=modbus_port)
 
     modbus_tcp_client.connect()
-    print "Connected to modbus server"
+    print("Connected to modbus server")
 
     if need_test_holding_register:
         test_holding_register(modbus_tcp_client)
@@ -270,5 +270,5 @@ if __name__ == '__main__':
         test_input_register(modbus_tcp_client)
 
     modbus_tcp_client.close()
-    print "Close connection to modbus server"
-    print "--- END"
+    print("Close connection to modbus server")
+    print("--- END")

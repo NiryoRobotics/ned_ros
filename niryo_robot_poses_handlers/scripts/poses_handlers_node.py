@@ -3,7 +3,6 @@
 # Libs
 import rospy
 import logging
-import thread
 
 from transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -89,7 +88,7 @@ class PoseHandlerNode:
         rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
         self.dynamic_frame_manager.restore_publisher()
         # Publisher dynamic frames
-        thread.start_new_thread(self.dynamic_frame_manager.publish_frames, ())
+        self.dynamic_frame_manager.publish_frames()
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")

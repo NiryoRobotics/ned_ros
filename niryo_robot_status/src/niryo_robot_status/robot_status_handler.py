@@ -1,9 +1,9 @@
 import rospy
 
-from robot_status_enums import *
-from robot_status_observer import RobotStatusObserver
-from robot_nodes_observer import RobotNodesObserver
-from robot_logs_observer import RobotLogsObserver
+from .robot_status_enums import *
+from .robot_status_observer import RobotStatusObserver
+from .robot_nodes_observer import RobotNodesObserver
+from .robot_logs_observer import RobotLogsObserver
 
 # - Messages
 from niryo_robot_status.msg import RobotStatus

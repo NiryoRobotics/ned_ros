@@ -23,20 +23,20 @@
 #include <boost/exception/exception.hpp>
 #include <cstdint>
 #include <random>
-#include <utility>
-#include <vector>
+#include <set>
 #include <string>
 #include <tuple>
-#include <set>
+#include <utility>
+#include <vector>
 
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "mcp_can_rpi/mcp_can_dfs_rpi.h"
 
 #include "common/model/stepper_command_type_enum.hpp"
 
+using ::common::model::EStepperCalibrationStatus;
 using ::std::shared_ptr;
 using ::std::string;
-using ::common::model::EStepperCalibrationStatus;
 
 namespace can_driver
 {
@@ -44,11 +44,7 @@ namespace can_driver
 /**
  * @brief MockStepperDriver::MockStepperDriver
  */
-MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData>  data) :
-  _fake_data(std::move(data))
-{
-    init();
-}
+MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData> data) : _fake_data(std::move(data)) { init(); }
 
 /**
  * @brief MockStepperDriver::init
@@ -61,21 +57,17 @@ bool MockStepperDriver::init()
     if (_fake_data)
     {
         // retrieve list of ids
-        for (auto const& imap : _fake_data->stepper_registers)
+        for (auto const &imap : _fake_data->stepper_registers)
         {
             uint8_t id = imap.first;
             _id_list.emplace_back(id);
 
             // init calibration status map
-            _calibration_status.insert(std::make_pair(id,
-                                       std::make_pair(EStepperCalibrationStatus::OK,
-                                                      0)));
+            _calibration_status.insert(std::make_pair(id, std::make_pair(EStepperCalibrationStatus::OK, 0)));
         }
 
         _default_position_spam = _fake_data->position_spam;
         _position_spam = _default_position_spam;
-
-
 
         res = true;
     }
@@ -91,10 +83,7 @@ bool MockStepperDriver::init()
  * @brief MockStepperDriver::str
  * @return
  */
-std::string MockStepperDriver::str() const
-{
-  return "Mock Stepper Driver (OK)";
-}
+std::string MockStepperDriver::str() const { return "Mock Stepper Driver (OK)"; }
 
 //*****************************
 // AbstractCanDriver interface
@@ -118,7 +107,7 @@ int MockStepperDriver::ping(uint8_t id)
  * @param id_list
  * @return
  */
-int MockStepperDriver::scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t>& id_list)
+int MockStepperDriver::scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list)
 {
     int result = CAN_FAIL;
 
@@ -149,9 +138,7 @@ int MockStepperDriver::scan(std::set<uint8_t>& motors_unfound, std::vector<uint8
  * @param error_message
  * @return
  */
-uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
-                                    std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
-                                    std::string& error_message)
+uint8_t MockStepperDriver::readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf, std::string &error_message)
 {
     (void)rxBuf;  // unused
 
@@ -167,13 +154,11 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
     _current_id = _id_list[_current_id_index];
     id = _current_id;
 
-    if (_calibration_status.count(_current_id) &&
-        EStepperCalibrationStatus::IN_PROGRESS == _calibration_status.at(_current_id).first &&
-        0 <= _fake_time)
+    if (_calibration_status.count(_current_id) && EStepperCalibrationStatus::IN_PROGRESS == _calibration_status.at(_current_id).first && 0 <= _fake_time)
     {
         control_byte = CAN_DATA_CALIBRATION_RESULT;
     }
-    else  if (_position_spam > 0)
+    else if (_position_spam > 0)
     {
         // we need to spam the bus with position messages as in a normal CAN bus
         _position_spam--;
@@ -185,12 +170,12 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
 
         // change control byte to all type of data can be read (circular buffer)
         _current_control_byte_index++;
-        if (_current_control_byte_index/3 >= _control_byte_list.size())
+        if (_current_control_byte_index / 3 >= _control_byte_list.size())
         {
             _current_control_byte_index = 0;
         }
 
-        control_byte = _control_byte_list[_current_control_byte_index/3];  // 3 times as slow as the id circular buffer
+        control_byte = _control_byte_list[_current_control_byte_index / 3];  // 3 times as slow as the id circular buffer
     }
 
     return CAN_OK;
@@ -206,8 +191,7 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
  */
 uint8_t MockStepperDriver::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
 {
-    ROS_DEBUG("MockStepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
-              id, static_cast<int>(conveyor_on), conveyor_speed, direction);
+    ROS_DEBUG("MockStepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d", id, static_cast<int>(conveyor_on), conveyor_speed, direction);
 
     if (_fake_data->stepper_registers.count(id))
     {
@@ -270,7 +254,7 @@ uint8_t MockStepperDriver::sendRelativeMoveCommand(uint8_t id, int steps, int de
  */
 uint8_t MockStepperDriver::sendTorqueOnCommand(uint8_t id, int torque_on)
 {
-    (void)id;  // unused
+    (void)id;         // unused
     (void)torque_on;  // unused
 
     return CAN_OK;
@@ -289,7 +273,7 @@ uint8_t MockStepperDriver::sendPositionOffsetCommand(uint8_t id, int cmd, int ab
 
     if (_fake_data->stepper_registers.count(id))
     {
-      // uint - int is lossy, need to explicitly describe how we do it
+        // uint - int is lossy, need to explicitly describe how we do it
         _fake_data->stepper_registers.at(id).position = static_cast<int32_t>(static_cast<int>(_fake_data->stepper_registers.at(id).position) - cmd);
     }
     return CAN_OK;
@@ -318,7 +302,7 @@ uint8_t MockStepperDriver::sendSynchronizePositionCommand(uint8_t id, bool begin
  */
 uint8_t MockStepperDriver::sendMicroStepsCommand(uint8_t id, int micro_steps)
 {
-    (void)id;  // unused
+    (void)id;           // unused
     (void)micro_steps;  // unused
 
     return CAN_OK;
@@ -332,7 +316,7 @@ uint8_t MockStepperDriver::sendMicroStepsCommand(uint8_t id, int micro_steps)
  */
 uint8_t MockStepperDriver::sendMaxEffortCommand(uint8_t id, int effort)
 {
-    (void)id;  // unused
+    (void)id;      // unused
     (void)effort;  // unused
 
     return CAN_OK;
@@ -347,9 +331,9 @@ uint8_t MockStepperDriver::sendMaxEffortCommand(uint8_t id, int effort)
  * @param timeout
  * @return
  */
-uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int  /*direction*/, int timeout)
+uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int /*direction*/, int timeout)
 {
-    (void)delay;  // unused
+    (void)delay;    // unused
     (void)timeout;  // unused
 
     if (_fake_data->stepper_registers.count(id) && _calibration_status.count(id))
@@ -441,8 +425,7 @@ std::string MockStepperDriver::interpretFirmwareVersion(const std::array<uint8_t
  * @param data
  * @return
  */
-std::pair<EStepperCalibrationStatus, int32_t>
-MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+std::pair<EStepperCalibrationStatus, int32_t> MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 
@@ -460,8 +443,7 @@ MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LEN
 
         _fake_time--;
         return _calibration_status.at(_current_id);
-     }
-
+    }
 
     return std::make_pair(EStepperCalibrationStatus::BAD_PARAM, 0);
 }
@@ -471,17 +453,14 @@ MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LEN
  * @param data
  * @return
  */
-std::tuple<bool, uint8_t, uint16_t>
-MockStepperDriver::interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+std::tuple<bool, uint8_t, uint16_t> MockStepperDriver::interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 
     if (_fake_data->stepper_registers.count(_current_id))
     {
         int direction = _fake_data->stepper_registers.at(_current_id).direction ? 1 : -1;
-        return std::make_tuple(_fake_data->stepper_registers.at(_current_id).state,
-                               _fake_data->stepper_registers.at(_current_id).speed,
-                               static_cast<uint16_t>(direction));
+        return std::make_tuple(_fake_data->stepper_registers.at(_current_id).state, _fake_data->stepper_registers.at(_current_id).speed, static_cast<uint16_t>(direction));
     }
 
     return std::make_tuple(false, 0, 1);

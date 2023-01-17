@@ -1,4 +1,4 @@
-from Report import Report
+from niryo_robot_reports.Report import Report
 
 
 class DailyReport(Report):

@@ -18,29 +18,29 @@
 */
 
 #include "can_driver/can_manager.hpp"
+#include "can_driver/mock_stepper_driver.hpp"
+#include "can_driver/stepper_driver.hpp"
+#include "common/model/bus_protocol_enum.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-#include "common/model/bus_protocol_enum.hpp"
-#include "can_driver/mock_stepper_driver.hpp"
-#include "can_driver/stepper_driver.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
 
 // c++
+#include <algorithm>
 #include <asm-generic/errno.h>
 #include <cstdint>
 #include <functional>
-#include <string>
-#include <vector>
 #include <set>
+#include <string>
 #include <utility>
-#include <algorithm>
+#include <vector>
 
-using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
-using ::common::model::StepperMotorState;
-using ::common::model::JointState;
 using ::common::model::EHardwareType;
+using ::common::model::EStepperCalibrationStatus;
+using ::common::model::JointState;
+using ::common::model::StepperMotorState;
 
 namespace can_driver
 {
@@ -48,8 +48,7 @@ namespace can_driver
 /**
  * @brief CanManager::CanManager
  */
-CanManager::CanManager(ros::NodeHandle& nh) :
-    _nh(nh)
+CanManager::CanManager(ros::NodeHandle &nh) : _nh(nh)
 {
     ROS_DEBUG("CanManager - ctor");
 
@@ -83,7 +82,7 @@ CanManager::~CanManager()
  * @param nh
  * @return
  */
-bool CanManager::init(ros::NodeHandle& nh)
+bool CanManager::init(ros::NodeHandle &nh)
 {
     int spi_channel = 0;
     int spi_baudrate = 0;
@@ -103,8 +102,7 @@ bool CanManager::init(ros::NodeHandle& nh)
     ROS_DEBUG("CanManager::init - Calibration timeout %f", _calibration_timeout);
 
     if (!_simulation_mode)
-        _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
-                                                      static_cast<uint8_t>(gpio_can_interrupt));
+        _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
     else
     {
         readFakeConfig(simu_conveyor);
@@ -186,7 +184,7 @@ int CanManager::setupCommunication()
  * It can be a joint, conveyor...
  * @param state
  */
-int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
+int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state)  // NOLINT
 {
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
@@ -221,11 +219,8 @@ void CanManager::removeHardwareComponent(uint8_t id)
         _state_map.erase(id);
     }
 
-    _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
-                                             _removed_motor_id_list.end(), id),
-                                             _removed_motor_id_list.end());
+    _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(), _removed_motor_id_list.end(), id), _removed_motor_id_list.end());
 }
-
 
 // ****************
 //  commands
@@ -254,7 +249,7 @@ int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
             if (CAN_OK == ret)
             {
                 // update all maps
-                auto i_state  = _state_map.find(old_id);
+                auto i_state = _state_map.find(old_id);
                 // update all maps
                 if (i_state != _state_map.end())
                 {
@@ -275,7 +270,7 @@ int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
 void CanManager::readStatus()
 {
     // read from all drivers for all motors
-    for (auto const& it : _driver_map)
+    for (auto const &it : _driver_map)
     {
         auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(it.second);
 
@@ -296,34 +291,34 @@ void CanManager::readStatus()
                     _debug_error_message.clear();
                     switch (control_byte)
                     {
-                        case AbstractStepperDriver::CAN_DATA_POSITION:
-                            stepperState->setPosition(driver->interpretPositionStatus(rxBuf));
-                            break;
-                        case AbstractStepperDriver::CAN_DATA_DIAGNOSTICS:
-                            stepperState->setTemperature(driver->interpretTemperatureStatus(rxBuf));
-                            break;
-                        case AbstractStepperDriver::CAN_DATA_FIRMWARE_VERSION:
-                            stepperState->setFirmwareVersion(driver->interpretFirmwareVersion(rxBuf));
-                            break;
-                        case AbstractStepperDriver::CAN_DATA_CONVEYOR_STATE:
+                    case AbstractStepperDriver::CAN_DATA_POSITION:
+                        stepperState->setPosition(driver->interpretPositionStatus(rxBuf));
+                        break;
+                    case AbstractStepperDriver::CAN_DATA_DIAGNOSTICS:
+                        stepperState->setTemperature(driver->interpretTemperatureStatus(rxBuf));
+                        break;
+                    case AbstractStepperDriver::CAN_DATA_FIRMWARE_VERSION:
+                        stepperState->setFirmwareVersion(driver->interpretFirmwareVersion(rxBuf));
+                        break;
+                    case AbstractStepperDriver::CAN_DATA_CONVEYOR_STATE:
+                    {
+                        auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
+                        if (cState)
                         {
-                            auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
-                            if (cState)
-                            {
-                                cState->updateData(driver->interpretConveyorData(rxBuf));
-                                cState->setGoalDirection(cState->getGoalDirection() * cState->getDirection());
-                            }
-                            break;
+                            cState->updateData(driver->interpretConveyorData(rxBuf));
+                            cState->setGoalDirection(cState->getGoalDirection() * cState->getDirection());
                         }
-                        case AbstractStepperDriver::CAN_DATA_CALIBRATION_RESULT:
-                        {
-                            stepperState->setCalibration(driver->interpretHomingData(rxBuf));
-                            updateCurrentCalibrationStatus();
-                            break;
-                        }
-                        default:
-                            ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
-                            _debug_error_message = "unknown control byte value";
+                        break;
+                    }
+                    case AbstractStepperDriver::CAN_DATA_CALIBRATION_RESULT:
+                    {
+                        stepperState->setCalibration(driver->interpretHomingData(rxBuf));
+                        updateCurrentCalibrationStatus();
+                        break;
+                    }
+                    default:
+                        ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
+                        _debug_error_message = "unknown control byte value";
                         break;
                     }
                 }
@@ -367,7 +362,7 @@ int CanManager::scanAndCheck()
     {
         // only for valid states (conveyor with default id is not valid)
         std::set<uint8_t> motors_unfound;
-        for (auto const& it : _state_map)
+        for (auto const &it : _state_map)
         {
             if (it.second && it.second->isValid())
                 motors_unfound.insert(it.first);
@@ -397,7 +392,7 @@ int CanManager::scanAndCheck()
         }
 
         // update last time read on found motors
-        for (auto& motor_id : _all_motor_connected)
+        for (auto &motor_id : _all_motor_connected)
         {
             if (_state_map.count(motor_id) && _state_map.at(motor_id))
                 std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->updateLastTimeRead();
@@ -469,8 +464,7 @@ void CanManager::_verifyMotorTimeoutLoop()
                         auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
 
                         // if it has timeout, we remove it from the vector
-                        if (state &&
-                            ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                        if (state && ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
                         {
                             timeout_motors.emplace_back(map_it.first);
                             if (position != _all_motor_connected.end())
@@ -491,8 +485,8 @@ void CanManager::_verifyMotorTimeoutLoop()
             _is_connection_ok = false;
 
             std::ostringstream ss;
-            ss <<  "No motor found or Disconnected stepper motor(s)(";
-            for (auto const& m : timeout_motors)
+            ss << "No motor found or Disconnected stepper motor(s)(";
+            for (auto const &m : timeout_motors)
                 ss << " " << static_cast<int>(m) << ",";
             ss << ")";
             _debug_error_message = ss.str();
@@ -506,7 +500,6 @@ void CanManager::_verifyMotorTimeoutLoop()
         ros::Duration(0.5).sleep();
     }
 }
-
 
 /**
  * @brief CanManager::getCurrentTimeout
@@ -558,7 +551,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
  * @param cmd
  * @return
  */
-int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd> && cmd)
+int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd> &&cmd)  // NOLINT
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
@@ -595,13 +588,13 @@ int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSin
  * @brief CanManager::executeJointTrajectoryCmd
  * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
  */
-void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
+void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t>> cmd_vec)
 {
-    for (auto const& it : _driver_map)
+    for (auto const &it : _driver_map)
     {
-      auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(it.second);
+        auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(it.second);
 
-        for (auto const& cmd : cmd_vec)
+        for (auto const &cmd : cmd_vec)
         {
             if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
             {
@@ -627,7 +620,7 @@ void CanManager::startCalibration()
 {
     ROS_DEBUG("CanManager::startCalibration: starting...");
 
-    for (auto const& s : _state_map)
+    for (auto const &s : _state_map)
     {
         if (s.second && (EHardwareType::STEPPER == s.second->getHardwareType() || EHardwareType::FAKE_STEPPER_MOTOR == s.second->getHardwareType()) &&
             !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
@@ -647,8 +640,7 @@ void CanManager::resetCalibration()
     _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
     for (auto &s : _state_map)
     {
-        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER ||
-                         s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR) &&
             !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
             std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::UNINITIALIZED, 0);
     }
@@ -676,10 +668,9 @@ void CanManager::updateCurrentCalibrationStatus()
     // update current state of the calibrationtimeout_motors
     // rule is : if a status in a motor is worse than one previously found, we take it
     // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
-    for (auto const& s : _state_map)
+    for (auto const &s : _state_map)
     {
-        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER
-                         || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
         {
             auto sState = std::dynamic_pointer_cast<StepperMotorState>(s.second);
             if (sState && !sState->isConveyor())
@@ -704,9 +695,7 @@ void CanManager::updateCurrentCalibrationStatus()
  * @param motor_list
  * @param error
  */
-void CanManager::getBusState(bool& connection_status,
-                             std::vector<uint8_t>& motor_list,
-                             std::string& error) const
+void CanManager::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
 {
     error = _debug_error_message;
     motor_list = _all_motor_connected;
@@ -717,11 +706,10 @@ void CanManager::getBusState(bool& connection_status,
  * @brief CanManager::getMotorsStates
  * @return only the joints states
  */
-std::vector<std::shared_ptr<JointState> >
-CanManager::getMotorsStates() const
+std::vector<std::shared_ptr<JointState>> CanManager::getMotorsStates() const
 {
-    std::vector<std::shared_ptr<JointState> > states;
-    for (const auto& it : _state_map)
+    std::vector<std::shared_ptr<JointState>> states;
+    for (const auto &it : _state_map)
     {
         if (EHardwareType::UNKNOWN != it.second->getHardwareType())
         {
@@ -737,8 +725,7 @@ CanManager::getMotorsStates() const
  * @param motor_id
  * @return
  */
-std::shared_ptr<common::model::AbstractHardwareState>
-CanManager::getHardwareState(uint8_t motor_id) const
+std::shared_ptr<common::model::AbstractHardwareState> CanManager::getHardwareState(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
         throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
@@ -756,27 +743,27 @@ CanManager::getHardwareState(uint8_t motor_id) const
  */
 void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 {
-  // if not already instanciated
-  if (!_driver_map.count(hardware_type))
-  {
-      switch (hardware_type)
-      {
-          case common::model::EHardwareType::STEPPER:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_mcp_can)));
-          break;
-          case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
-          break;
-          default:
-              ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");
-          break;
-      }
-  }
+    // if not already instanciated
+    if (!_driver_map.count(hardware_type))
+    {
+        switch (hardware_type)
+        {
+        case common::model::EHardwareType::STEPPER:
+            _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg>>(_mcp_can)));
+            break;
+        case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
+            _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
+            break;
+        default:
+            ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");
+            break;
+        }
+    }
 }
 
 /**
-* @brief CanManager::readFakeConfig read the config for fake driver.
-*/
+ * @brief CanManager::readFakeConfig read the config for fake driver.
+ */
 void CanManager::readFakeConfig(bool use_simu_conveyor)
 {
     _fake_data = std::make_shared<FakeCanData>();

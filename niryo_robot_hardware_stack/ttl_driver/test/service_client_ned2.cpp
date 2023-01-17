@@ -19,8 +19,8 @@
 
 #include <ros/service_client.h>
 
-#include <ros/ros.h>
 #include <gtest/gtest.h>
+#include <ros/ros.h>
 
 #include "ros/duration.h"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -90,7 +90,7 @@ TEST(TESTSuite, ReadCustomValue)
     EXPECT_TRUE(exists);
 
     ttl_driver::ReadCustomValue srv;
-    srv.request.id =  5;
+    srv.request.id = 5;
     srv.request.reg_address = 64;
     srv.request.byte_number = 1;
 
@@ -139,7 +139,7 @@ TEST(TESTSuite, ReadPIDValue)
 
     ttl_driver::ReadPIDValue srv;
 
-    srv.request.id =  5;
+    srv.request.id = 5;
 
     bool res{false};
     // try 3 times to read value
@@ -173,7 +173,7 @@ TEST(TESTSuite, ReadPIDValueWrongParam)
 
     ttl_driver::ReadPIDValue srv;
 
-    srv.request.id =  20;
+    srv.request.id = 20;
 
     client.call(srv);
 
@@ -215,7 +215,7 @@ TEST(TESTSuite, ReadVelocityProfile)
 
     ttl_driver::ReadVelocityProfile srv;
 
-    srv.request.id =  2;
+    srv.request.id = 2;
 
     bool res{false};
     // try 3 times to read value

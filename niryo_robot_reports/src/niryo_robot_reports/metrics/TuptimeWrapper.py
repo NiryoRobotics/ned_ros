@@ -1,7 +1,7 @@
 import csv
 import subprocess
 
-from GenericWrapper import GenericWrapper
+from niryo_robot_reports.metrics.GenericWrapper import GenericWrapper
 
 
 class TuptimeWrapper(GenericWrapper):

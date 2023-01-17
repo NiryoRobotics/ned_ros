@@ -16,16 +16,16 @@
 
 #include "can_driver/abstract_can_driver.hpp"
 
+#include <set>
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
-#include <set>
 
-using ::std::shared_ptr;
-using ::std::vector;
-using ::std::string;
 using ::std::ostringstream;
+using ::std::shared_ptr;
+using ::std::string;
+using ::std::vector;
 
 namespace can_driver
 {
@@ -34,9 +34,7 @@ namespace can_driver
  * @brief AbstractCanDriver::AbstractCanDriver
  * @param mcp_can
  */
-AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-  _mcp_can(std::move(mcp_can))
-{}
+AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) : _mcp_can(std::move(mcp_can)) {}
 
 /**
  * @brief StepperDriver::ping
@@ -45,30 +43,30 @@ AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_c
  */
 int AbstractCanDriver::ping(uint8_t id)
 {
-  int res = CAN_FAIL;
+    int res = CAN_FAIL;
 
-  double time_begin_scan = ros::Time::now().toSec();
+    double time_begin_scan = ros::Time::now().toSec();
 
-  while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
-  {
-      ros::Duration(0.001).sleep();  // check at 1000 Hz
-      if (canReadData())
-      {
-          INT32U rxId;
-          uint8_t len;
-          std::array<uint8_t, 8> rxBuf{};
-          read(&rxId, &len, rxBuf);
-          uint8_t motor_id = rxId & 0x0F;
+    while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
+    {
+        ros::Duration(0.001).sleep();  // check at 1000 Hz
+        if (canReadData())
+        {
+            INT32U rxId;
+            uint8_t len;
+            std::array<uint8_t, 8> rxBuf{};
+            read(&rxId, &len, rxBuf);
+            uint8_t motor_id = rxId & 0x0F;
 
-          if (motor_id == id)
-          {
-              res = CAN_OK;
-              break;
-          }
-      }
-  }
+            if (motor_id == id)
+            {
+                res = CAN_OK;
+                break;
+            }
+        }
+    }
 
-  return res;
+    return res;
 }
 
 /**
@@ -77,39 +75,39 @@ int AbstractCanDriver::ping(uint8_t id)
  * @param id_list
  * @return
  */
-int AbstractCanDriver::scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t> &id_list)
+int AbstractCanDriver::scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list)
 {
-  int result = CAN_FAIL;
+    int result = CAN_FAIL;
 
-  id_list.clear();
+    id_list.clear();
 
-  double time_begin_scan = ros::Time::now().toSec();
-  double timeout = 0.5;
+    double time_begin_scan = ros::Time::now().toSec();
+    double timeout = 0.5;
 
-  while ((!motors_unfound.empty()) && (ros::Time::now().toSec() - time_begin_scan < timeout))
-  {
-      ros::Duration(0.001).sleep();  // check at 1000 Hz
-      if (canReadData())
-      {
-          INT32U rxId;
-          uint8_t len;
-          std::array<uint8_t, 8> rxBuf{};
-          read(&rxId, &len, rxBuf);
-          uint8_t motor_id = rxId & 0x0F;
+    while ((!motors_unfound.empty()) && (ros::Time::now().toSec() - time_begin_scan < timeout))
+    {
+        ros::Duration(0.001).sleep();  // check at 1000 Hz
+        if (canReadData())
+        {
+            INT32U rxId;
+            uint8_t len;
+            std::array<uint8_t, 8> rxBuf{};
+            read(&rxId, &len, rxBuf);
+            uint8_t motor_id = rxId & 0x0F;
 
-          if (motors_unfound.count(motor_id))
-          {
-              motors_unfound.erase(motor_id);
-              id_list.emplace_back(motor_id);
-          }
-      }
-  }
+            if (motors_unfound.count(motor_id))
+            {
+                motors_unfound.erase(motor_id);
+                id_list.emplace_back(motor_id);
+            }
+        }
+    }
 
-  // if found everything
-  if (motors_unfound.empty())
-      result = CAN_OK;
+    // if found everything
+    if (motors_unfound.empty())
+        result = CAN_OK;
 
-  return result;
+    return result;
 }
 
 /**
@@ -138,9 +136,7 @@ std::string AbstractCanDriver::str() const
  * @param error_message
  * @return
  */
-uint8_t AbstractCanDriver::readData(uint8_t& id, int& control_byte,
-                                    std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
-                                    std::string& error_message)
+uint8_t AbstractCanDriver::readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf, std::string &error_message)
 {
     uint8_t res = CAN_FAIL;
 
@@ -160,7 +156,6 @@ uint8_t AbstractCanDriver::readData(uint8_t& id, int& control_byte,
     }
     return res;
 }
-
 
 /**
  * @brief AbstractCanDriver::read

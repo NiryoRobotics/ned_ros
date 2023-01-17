@@ -15,7 +15,7 @@ def create_wks_gazebo(niryo):
 
 
 if __name__ == '__main__':
-    print "--- Start"
+    print("--- START")
     try:
         rospy.init_node('niryo_robot_example_python_ros_wrapper')
         n = NiryoRosWrapper()
@@ -23,13 +23,13 @@ if __name__ == '__main__':
         # n.calibrate_auto()
         # print "Calibration finished !"
 
-        print "creating workspace ..."
+        print("creating workspace ...")
         create_wks_gazebo(n)
         # print "Looking down ..."
         # n.move_joints([0, 0, 0, 0, -1.57, 0])
 
         # n.vision_pick(workspace_name, 0.1, ObjectShape.ANY, ObjectColor.BLUE)
     except NiryoRosWrapperException as e:
-        print e
+        print(e)
 
-    print "--- End"
+    print("--- End")

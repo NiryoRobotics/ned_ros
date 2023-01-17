@@ -23,26 +23,24 @@
 #include "ros/serialization.h"
 #include "ttl_driver/ttl_interface_core.hpp"
 
-using ::std::to_string;
-using ::std::string;
-using ::common::model::HardwareTypeEnum;
 using ::common::model::BusProtocolEnum;
 using ::common::model::DxlMotorState;
-using ::common::model::EHardwareType;
-using ::common::model::StepperMotorState;
 using ::common::model::EBusProtocol;
+using ::common::model::EHardwareType;
+using ::common::model::HardwareTypeEnum;
+using ::common::model::StepperMotorState;
+using ::std::string;
+using ::std::to_string;
 
 // Method add joints
-void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>& ttl_interface)
+void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore> &ttl_interface)
 {
     size_t nb_joints = 0;
 
     ros::NodeHandle robot_hwnh("joints_interface");
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") && robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -69,11 +67,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
-            auto stepperState = std::make_shared<StepperMotorState>(joint_name,
-                                                                    eType,
-                                                                    common::model::EComponentType::JOINT,
-                                                                    eBusProto,
-                                                                    static_cast<uint8_t>(joint_id_config));
+            auto stepperState = std::make_shared<StepperMotorState>(joint_name, eType, common::model::EComponentType::JOINT, eBusProto, static_cast<uint8_t>(joint_id_config));
             if (stepperState)
             {
                 double offsetPos = 0.0;
@@ -159,10 +153,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
         else if (eType != EHardwareType::UNKNOWN)
         {  // dynamixel
             ROS_DEBUG("Initialize dxl motors");
-            auto dxlState = std::make_shared<DxlMotorState>(joint_name,
-                                                            eType,
-                                                            common::model::EComponentType::JOINT,
-                                                            static_cast<uint8_t>(joint_id_config));
+            auto dxlState = std::make_shared<DxlMotorState>(joint_name, eType, common::model::EComponentType::JOINT, static_cast<uint8_t>(joint_id_config));
             if (dxlState)
             {
                 double offsetPos = 0.0;
@@ -224,18 +215,18 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "ttl_driver_node");
+    ros::init(argc, argv, "ttl_driver_node");
 
-  ROS_DEBUG("Launching ttl_driver_node");
+    ROS_DEBUG("Launching ttl_driver_node");
 
-  ros::NodeHandle nodeHandle("~");
+    ros::NodeHandle nodeHandle("~");
 
-  std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_node = std::make_shared<ttl_driver::TtlInterfaceCore>(nodeHandle);
+    std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_node = std::make_shared<ttl_driver::TtlInterfaceCore>(nodeHandle);
 
-  addJointToTtlInterface(ttl_node);
+    addJointToTtlInterface(ttl_node);
 
-  ros::spin();
-  return 0;
+    ros::spin();
+    return 0;
 }

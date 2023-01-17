@@ -1,7 +1,7 @@
 # coding=utf-8
 import psutil
 
-from GenericWrapper import GenericWrapper
+from niryo_robot_reports.metrics.GenericWrapper import GenericWrapper
 
 
 class PsutilWrapper(GenericWrapper):
@@ -45,7 +45,7 @@ class PsutilWrapper(GenericWrapper):
 
     @staticmethod
     def get_cpu_temperature():
-        return psutil.sensors_temperatures().values()[0][0].current
+        return list(psutil.sensors_temperatures().values())[0][0].current
 
     @staticmethod
     def get_ram_usage():

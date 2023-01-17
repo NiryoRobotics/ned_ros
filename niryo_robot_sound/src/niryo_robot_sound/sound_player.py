@@ -13,7 +13,7 @@ from niryo_robot_msgs.srv import Trigger
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
-from sound_volume import VolumeManager
+from .sound_volume import VolumeManager
 
 
 class SoundExecution:

@@ -10,7 +10,7 @@ default_goupanddown_period: 5
 default_breath_period: 4
 default_snake_period: 1.5
 
-led_offset: 8
+led_offset: 8 #offset entre la led1 et la led la plus à l'arrière du robot afin de centrer les annimations
 enable_led_ring_bcm_pin: 27
 
 use_mesh: False

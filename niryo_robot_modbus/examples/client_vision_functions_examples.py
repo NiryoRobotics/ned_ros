@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from pymodbus.client.sync import ModbusTcpClient
-from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
+from pymodbus.payload import BinaryPayloadBuilder
 import time
 from enum import Enum, unique
 
@@ -57,13 +57,13 @@ def string_to_register(string):
 
 
 def print_result(func_name=None, args=None, result=None):
-    print func_name, 'called with arguments :',
+    print(func_name, 'called with arguments :', end=' ')
     for arg in args:
-        print arg,
-    print ' | Returned :',
+        print(arg, end=' ')
+    print(' | Returned :', end=' ')
     for res in result:
-        print res,
-    print '\n'
+        print(res, end=' ')
+    print('\n')
 
 
 # ----------- Modbus server related function
@@ -72,7 +72,7 @@ def pick_and_place_from_pose(pose):
     if pose != [0] * 6:
         open_tool()
 
-        print '--pick and place from pose :', pose
+        print('--pick and place from pose :', pose)
         pose_to_send = list(map(lambda j: int(number_to_raw_data(j * 1000)), pose))
         client.write_registers(10, pose_to_send)
         client.write_register(101, 1)
@@ -98,7 +98,7 @@ def pick_and_place_from_pose(pose):
         open_tool()
 
     else:
-        print 'Pick and place failed - target pose is null'
+        print('Pick and place failed - target pose is null')
         return
 
 
@@ -145,7 +145,7 @@ def register_height_offset(height_offset):
 
 
 def auto_calibration():
-    print "Calibrate Robot if needed ..."
+    print("Calibrate Robot if needed ...")
     client.write_register(311, 1)
     # Wait for end of calibration
     while client.read_input_registers(402, 1).registers[0] == 1:
@@ -278,7 +278,7 @@ def vision_pick(workspace_str, height_offset, shape_int, color_int):
 # ----------- Main programm
 
 if __name__ == '__main__':
-    print "--- START"
+    print("--- START")
 
     client = ModbusTcpClient('localhost', port=5020)
 
@@ -289,7 +289,7 @@ if __name__ == '__main__':
 
     # connect to modbus server
     client.connect()
-    print "Connected to modbus server"
+    print("Connected to modbus server")
 
     # launch auto calibration then go to obs. pose
     auto_calibration()
@@ -302,8 +302,8 @@ if __name__ == '__main__':
     # ------------------- MOVEMENTS AND VISION ------------------------- #
 
     # ----- DETECT OBJECT
-    print '\n'
-    print '------ DETECT OBJECT : get rel. pose of any blue pawn'
+    print('\n')
+    print('------ DETECT OBJECT : get rel. pose of any blue pawn')
 
     shape = ShapeEnum.ANY.value
     color = ColorEnum.BLUE.value
@@ -315,8 +315,8 @@ if __name__ == '__main__':
     back_to_observation()
 
     # ------ GET TARGET POSE FROM REL
-    print '\n'
-    print '------ GET TARGET POSE FROM REL : get target pose from blue pawn rel. pose, and pick&place it'
+    print('\n')
+    print('------ GET TARGET POSE FROM REL : get target pose from blue pawn rel. pose, and pick&place it')
 
     # Get object detected previously
     x_rel = obj_rel_pose[0]
@@ -331,8 +331,8 @@ if __name__ == '__main__':
     back_to_observation()
 
     # ----- GET TARGET POSE FROM CAM
-    print '\n'
-    print '------ GET TARGET POSE FROM CAM : get target pose of any red pawn and pick&place it'
+    print('\n')
+    print('------ GET TARGET POSE FROM CAM : get target pose of any red pawn and pick&place it')
 
     shape = ShapeEnum.ANY.value
     color = ColorEnum.RED.value
@@ -345,8 +345,8 @@ if __name__ == '__main__':
     back_to_observation()
 
     # ----- MOVE TO OBJECT function
-    print '\n'
-    print '------ MOVE TO OBJECT - move over any green pawn'
+    print('\n')
+    print('------ MOVE TO OBJECT - move over any green pawn')
 
     shape = ShapeEnum.ANY.value
     color = ColorEnum.GREEN.value
@@ -357,8 +357,8 @@ if __name__ == '__main__':
     back_to_observation()
 
     # ----- Vision pick function
-    print '\n'
-    print '------ VISION PICK - pick any red pawn, lift it and release it'
+    print('\n')
+    print('------ VISION PICK - pick any red pawn, lift it and release it')
 
     shape = ShapeEnum.ANY.value
     color = ColorEnum.RED.value
@@ -372,5 +372,5 @@ if __name__ == '__main__':
     # Activate learning mode and close connexion
     client.write_register(300, 1)
     client.close()
-    print "Close connection to modbus server"
-    print "--- END"
+    print("Close connection to modbus server")
+    print("--- END")

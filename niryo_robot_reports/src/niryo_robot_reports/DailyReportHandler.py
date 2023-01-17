@@ -1,5 +1,5 @@
 import rospy
-from StringIO import StringIO
+from io import StringIO
 from datetime import date, datetime
 
 from niryo_robot_reports.DailyReport import DailyReport

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from .math_functions import euclidean_dist_2_pts
+from niryo_robot_vision.math_functions import euclidean_dist_2_pts
 
 IM_EXTRACT_SMALL_SIDE_PIXELS = 200
 

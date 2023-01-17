@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_vision</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>Niryo vision package</description>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <license>GPLv3</license>
@@ -26,10 +26,10 @@
 
   <!-- Python Dependencies -->
   <exec_depend>python-numpy</exec_depend>
-  <exec_depend>python-opencv</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
   <exec_depend>python-yaml</exec_depend>
   <exec_depend>python-imaging</exec_depend>
 
-  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

@@ -30,36 +30,30 @@ namespace model
  * @brief ComponentTypeEnum::ComponentTypeEnum
  * @param e
  */
-ComponentTypeEnum::ComponentTypeEnum(EComponentType e):
-    AbstractEnum<ComponentTypeEnum, EComponentType>(e)
-{}
+ComponentTypeEnum::ComponentTypeEnum(EComponentType e) : AbstractEnum<ComponentTypeEnum, EComponentType>(e) {}
 
 /**
  * @brief ComponentTypeEnum::ComponentTypeEnum
  * @param str
  */
-ComponentTypeEnum::ComponentTypeEnum(const char* const str):
-    AbstractEnum<ComponentTypeEnum, EComponentType>(str)
-{}
+ComponentTypeEnum::ComponentTypeEnum(const char *const str) : AbstractEnum<ComponentTypeEnum, EComponentType>(str) {}
 
 /**
  * @brief ComponentTypeEnum::initialize
  * @return
  */
-std::map<EComponentType, std::string>
-ComponentTypeEnum::initialize()
+std::map<EComponentType, std::string> ComponentTypeEnum::initialize()
 {
     std::map<EComponentType, std::string> m;
 
-    m[EComponentType::TOOL]                 = "tool";
-    m[EComponentType::CONVEYOR]             = "conveyor";
-    m[EComponentType::JOINT]                = "joint";
-    m[EComponentType::END_EFFECTOR]         = "end effector";
-    m[EComponentType::UNKNOWN]              = "unknown";
+    m[EComponentType::TOOL] = "tool";
+    m[EComponentType::CONVEYOR] = "conveyor";
+    m[EComponentType::JOINT] = "joint";
+    m[EComponentType::END_EFFECTOR] = "end effector";
+    m[EComponentType::UNKNOWN] = "unknown";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-

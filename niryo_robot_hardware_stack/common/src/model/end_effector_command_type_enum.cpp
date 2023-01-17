@@ -31,35 +31,29 @@ namespace model
  * @brief EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum
  * @param e
  */
-EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum(EEndEffectorCommandType e):
-    AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>(e)
-{}
+EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum(EEndEffectorCommandType e) : AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>(e) {}
 
 /**
  * @brief EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum
  * @param str
  */
-EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum(const char* const str):
-    AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>(str)
-{}
+EndEffectorCommandTypeEnum::EndEffectorCommandTypeEnum(const char *const str) : AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>(str) {}
 
 /**
  * @brief EndEffectorCommandTypeEnum::initialize
  * @return
  */
-std::map<EEndEffectorCommandType, std::string>
-EndEffectorCommandTypeEnum::initialize()
+std::map<EEndEffectorCommandType, std::string> EndEffectorCommandTypeEnum::initialize()
 {
     std::map<EEndEffectorCommandType, std::string> m;
 
     m[EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT] = "digit input cmd";
     m[EEndEffectorCommandType::CMD_TYPE_PING] = "ping";
-    m[EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH]  = "set collision threshold cmd";
-    m[EEndEffectorCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
+    m[EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH] = "set collision threshold cmd";
+    m[EEndEffectorCommandType::CMD_TYPE_UNKNOWN] = "unknown type";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-

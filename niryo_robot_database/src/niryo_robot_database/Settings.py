@@ -23,11 +23,24 @@ class Settings:
         result = self.__dao.execute(query, {'name': name}).fetchone()
         if result is None:
             raise UnknownSettingsException()
-        return result['value'], result['type']
+
+        if result['type'] is None or isinstance(result['type'], str):
+            value_type = result['type']
+        else:
+            value_type = result['type'].decode()
+
+        if result['value'] is None or isinstance(result['value'], str):
+            value = result['value']
+        else:
+            value = result['value'].decode()
+
+        return value, value_type
 
     def set(self, name, value, value_type):
         try:
-            if value_type == 'bool' and value not in ['True', 'true', 'False', 'false']:
+            if value_type == 'bool' and value not in [
+                    'True', 'true', 'False', 'false'
+            ]:
                 raise ValueError()
             else:
                 locate(value_type)(value)

@@ -3,7 +3,7 @@
 Warning : Some errors are present in Gazebo
 -> It will log some errors because it cannot unload joint_controller (It's because ROS does it before Gazebo)
 -> Gazebo GUI is kinda bad on closing. It will always run into SIGTERM. So, what you should do is
-to change _TIMEOUT_SIGINT value in the file /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/nodeprocess.py
+to change _TIMEOUT_SIGINT value in the file /opt/ros/noetic/lib/python2.7/dist-packages/roslaunch/nodeprocess.py
 This will reduce the amount of time spent waiting during program shutdown
 -->
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

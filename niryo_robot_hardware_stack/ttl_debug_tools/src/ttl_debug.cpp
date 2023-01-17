@@ -21,14 +21,14 @@
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/value_semantic.hpp>
+#include <chrono>  // NOLINT
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>  // NOLINT
 #include <vector>
-#include <chrono>   // NOLINT
-#include <thread>   // NOLINT
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -49,11 +49,11 @@
 namespace po = boost::program_options;
 
 #ifdef __arm__
-    #define DEFAULT_PORT "/dev/serial0"
+#define DEFAULT_PORT "/dev/serial0"
 #elif __aarch64__
-    #define DEFAULT_PORT "/dev/ttyAMA0"
+#define DEFAULT_PORT "/dev/ttyAMA0"
 #else
-    #define DEFAULT_PORT ""
+#define DEFAULT_PORT ""
 #endif
 
 /**
@@ -68,21 +68,14 @@ int handleUserInput(int argc, char **argv)
     {
         // Get args
         po::options_description description("Options");
-        description.add_options()
-            ("help,h", "Print help message")
-            ("baudrate,b", po::value<int>()->default_value(1000000), "Baud rate")
-            ("port,p", po::value<std::string>()->default_value(DEFAULT_PORT), "Set port")
-            ("id,i", po::value<int>()->default_value(-1), "Motor ID")
-            ("ids", po::value<std::vector<int>>()->multitoken(), "list of id for sync read or write")
-            ("scan", "Scan all motors on the TTL bus")
-            ("ping", "ping specific ID")
-            ("get-register", po::value<int>(), "Get a value from a register (arg: reg_addr)")
-            ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
-            ("calibrate", "calibrate joints")
-            ("test", "a test movement")
-            ("set-register", po::value<std::vector<int>>()->multitoken(), "Set a value to a register (args: reg_addr, value, size)")
-            ("set-registers", po::value<std::vector<int>>()->multitoken(), "Set the values to a register for multiples devices (args: reg_addr, size, values)")
-            ("get-registers", po::value<int>()->multitoken(), "get the values of a register for multiples devices (arg: reg_addr)");
+        description.add_options()("help,h", "Print help message")("baudrate,b", po::value<int>()->default_value(1000000), "Baud rate")(
+            "port,p", po::value<std::string>()->default_value(DEFAULT_PORT), "Set port")("id,i", po::value<int>()->default_value(-1), "Motor ID")(
+            "ids", po::value<std::vector<int>>()->multitoken(), "list of id for sync read or write")("scan", "Scan all motors on the TTL bus")("ping", "ping specific ID")(
+            "get-register", po::value<int>(), "Get a value from a register (arg: reg_addr)")("size", po::value<int>()->default_value(1), "Size (for get-register only)")(
+            "calibrate", "calibrate joints")("test", "a test movement")("set-register", po::value<std::vector<int>>()->multitoken(),
+                                                                        "Set a value to a register (args: reg_addr, value, size)")(
+            "set-registers", po::value<std::vector<int>>()->multitoken(), "Set the values to a register for multiples devices (args: reg_addr, size, values)")(
+            "get-registers", po::value<int>()->multitoken(), "get the values of a register for multiples devices (arg: reg_addr)");
 
         // po::positional_options_description p;
         // p.add("set-register", 3);
@@ -110,18 +103,16 @@ int handleUserInput(int argc, char **argv)
             std::vector<int> id_list = vars["ids"].as<std::vector<int>>();
             for (auto l_id : id_list)
             {
-               ids.emplace_back(static_cast<uint8_t>(l_id));
+                ids.emplace_back(static_cast<uint8_t>(l_id));
             }
         }
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
 
         // Setup TTL communication
-        std::shared_ptr<dynamixel::PortHandler> portHandler(
-                    dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+        std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
 
-        std::shared_ptr<dynamixel::PacketHandler> packetHandler(
-                    dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+        std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
         ttl_debug_tools::TtlTools ttlTools(portHandler, packetHandler);
 
@@ -300,19 +291,17 @@ int handleUserInput(int argc, char **argv)
 
         return -1;
     }
-    catch(po::error& e)
+    catch (po::error &e)
     {
         std::cout << e.what() << "\n";
         return 1;
     }
-    catch(...)
+    catch (...)
     {
-        std::cout << "Unknown error" << "\n";
+        std::cout << "Unknown error"
+                  << "\n";
         return 1;
     }
 }
 
-int main(int argc, char **argv)
-{
-    return handleUserInput(argc, argv);
-}
+int main(int argc, char **argv) { return handleUserInput(argc, argv); }

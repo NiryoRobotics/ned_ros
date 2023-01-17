@@ -30,35 +30,29 @@ namespace model
  * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param e
  */
-ButtonTypeEnum::ButtonTypeEnum(EButtonType e):
-    AbstractEnum<ButtonTypeEnum, EButtonType>(e)
-{}
+ButtonTypeEnum::ButtonTypeEnum(EButtonType e) : AbstractEnum<ButtonTypeEnum, EButtonType>(e) {}
 
 /**
  * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param str
  */
-ButtonTypeEnum::ButtonTypeEnum(const char* const str):
-    AbstractEnum<ButtonTypeEnum, EButtonType>(str)
-{}
+ButtonTypeEnum::ButtonTypeEnum(const char *const str) : AbstractEnum<ButtonTypeEnum, EButtonType>(str) {}
 
 /**
  * @brief ButtonTypeEnum::initialize
  * @return
  */
-std::map<EButtonType, std::string>
-ButtonTypeEnum::initialize()
+std::map<EButtonType, std::string> ButtonTypeEnum::initialize()
 {
     std::map<EButtonType, std::string> m;
 
-    m[EButtonType::FREE_DRIVE_BUTTON]       = "free_drive";
-    m[EButtonType::SAVE_POSITION_BUTTON]    = "save_position";
-    m[EButtonType::CUSTOM_BUTTON]           = "custom";
-    m[EButtonType::UNKNOWN]                 = "unknown";
+    m[EButtonType::FREE_DRIVE_BUTTON] = "free_drive";
+    m[EButtonType::SAVE_POSITION_BUTTON] = "save_position";
+    m[EButtonType::CUSTOM_BUTTON] = "custom";
+    m[EButtonType::UNKNOWN] = "unknown";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-

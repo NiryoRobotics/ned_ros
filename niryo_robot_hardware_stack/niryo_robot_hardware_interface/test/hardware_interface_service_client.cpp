@@ -17,9 +17,9 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
-#include <gtest/gtest.h>
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
@@ -38,7 +38,6 @@ TEST(TESTSuite, launchMotorReport)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-
 TEST(TESTSuite, stopMotorReport)
 {
     // we need to launch a motor report before stopping it...
@@ -52,7 +51,6 @@ TEST(TESTSuite, stopMotorReport)
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
-
 
 TEST(TESTSuite, rebootMotors)
 {

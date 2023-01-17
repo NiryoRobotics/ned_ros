@@ -16,17 +16,16 @@
 #define PROTOCOL_VERSION 2.0
 
 #ifdef __arm__
-    #define DEFAULT_PORT "/dev/serial0"
+#define DEFAULT_PORT "/dev/serial0"
 #elifdef __aarch64__
-    #define DEFAULT_PORT "/dev/ttyAMA0"
+#define DEFAULT_PORT "/dev/ttyAMA0"
 #else
-    #define DEFAULT_PORT ""
+#define DEFAULT_PORT ""
 #endif
 
-
 // Bring in my package's API, which is what I'm testing
-#include "dynamixel_sdk/port_handler.h"
 #include "dynamixel_sdk/packet_handler.h"
+#include "dynamixel_sdk/port_handler.h"
 #include "ttl_debug_tools/ttl_tools.h"
 
 #include <string>
@@ -62,7 +61,7 @@ TEST(TtlDebugToolsTestSuite, testInit)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-  testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
 
-  return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }
