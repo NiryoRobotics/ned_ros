@@ -70,6 +70,10 @@ class ProgramsFileManager(object):
 
     # - Public
     def create(self, name, code, description, allow_overwrite):
+
+        if len(name) == 0:
+            name = 'untitled'
+
         # Getting path
         file_path = self._path_from_name(name)
 

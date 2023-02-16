@@ -20,7 +20,6 @@ class ToolTransformHandler:
     """
     This class uses a tfBuffer to handle transforms related to the tools.
     """
-
     def __init__(self):
         self.__tf_buffer = Buffer()
         self.__tf_listener = TransformListener(self.__tf_buffer)

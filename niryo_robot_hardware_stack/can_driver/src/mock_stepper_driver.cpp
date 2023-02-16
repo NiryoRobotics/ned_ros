@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <boost/exception/exception.hpp>
 #include <cstdint>
+#include <memory>
 #include <random>
 #include <set>
 #include <string>

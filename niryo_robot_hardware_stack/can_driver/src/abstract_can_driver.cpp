@@ -16,6 +16,7 @@
 
 #include "can_driver/abstract_can_driver.hpp"
 
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>

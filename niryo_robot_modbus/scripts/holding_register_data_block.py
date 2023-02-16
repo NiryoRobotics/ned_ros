@@ -10,6 +10,9 @@ import pymodbus
 from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.constants import Endian
 
+# ros_wrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
 # Enums
 from niryo_robot_vision.enums import ObjectType, ColorHSV  # Type and color used for services request
 from niryo_robot_modbus.enums import ColorRequest, ShapeRequest  # Shape and color used from modbus client
@@ -36,7 +39,6 @@ from niryo_robot_poses_handlers.srv import GetWorkspaceRatio, ManageWorkspace, M
 # Actions
 from niryo_robot_tools_commander.msg import ToolActionGoal
 from niryo_robot_arm_commander.msg import RobotMoveActionGoal
-
 """
  - Each address contains a 16 bits value
  - READ/WRITE registers
@@ -127,17 +129,14 @@ HR_WORKSPACE_NAME = 626
 
 HR_SET_ANALOG_IO = 650
 
-AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI1",
-                                   1: "AI2",
-                                   2: "AO1",
-                                   3: "AO2"})
+AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI1", 1: "AI2", 2: "AO1", 3: "AO2"})
 
 
 # Positive number : 0 - 32767
 # Negative number : 32768 - 65535
 def handle_negative_hr(val):
     if (val >> 15) == 1:
-        val = - (val & 0x7FFF)
+        val = -(val & 0x7FFF)
     return val
 
 
@@ -160,11 +159,13 @@ class HoldingRegisterDataBlock(DataBlock):
         self.is_action_client_running = False
         self.cmd_action_client = None
 
+        # python_ros_wrapper
+        self.python_ros_wrapper = NiryoRosWrapper()
+
         # Tool
         self.current_tool_id = None
         self.list_id_grippers = [11, 12, 13, 14]
-        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
-                         self.sub_selected_tool_id)
+        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32, self.sub_selected_tool_id)
 
         # Variables
         self.workspace_name = None
@@ -190,8 +191,7 @@ class HoldingRegisterDataBlock(DataBlock):
         if type(values) != list:
             values = [values]
             # set values in register
-        super(HoldingRegisterDataBlock, self).setValuesOffset(address,
-                                                              values)
+        super(HoldingRegisterDataBlock, self).setValuesOffset(address, values)
 
         # - Callbacks
 
@@ -232,31 +232,31 @@ class HoldingRegisterDataBlock(DataBlock):
         if len(values) == 0:
             return
 
-        if address == HR_LEARNING_MODE:
+        if address == HR_LEARNING_MODE:  # done
             self.activate_learning_mode(values[0])
-        elif address == HR_MOVE_JOINTS_COMMAND:
+        elif address == HR_MOVE_JOINTS_COMMAND:  # done
             self.move_joints_command()
-        elif address == HR_MOVE_POSE_COMMAND:
+        elif address == HR_MOVE_POSE_COMMAND:  # done
             self.move_pose_command()
         elif address == HR_MOVE_LINEAR_POSE_COMMAND:
             self.move_linear_pose_command()
         elif address == HR_STOP_COMMAND:
             self.stop_current_command()
-        elif address == HR_NEW_CALIBRATION_REQUEST:
+        elif address == HR_NEW_CALIBRATION_REQUEST:  # done
             self.request_new_calibration()
-        elif address == HR_START_AUTO_CALIBRATION:
+        elif address == HR_START_AUTO_CALIBRATION:  # done
             self.start_auto_calibration()
         elif address == HR_START_MANUAL_CALIBRATION:
             self.start_manual_calibration()
-        elif address == HR_UPDATE_TOOL_ID:
+        elif address == HR_UPDATE_TOOL_ID:  # done
             self.update_tool()
-        elif address == HR_OPEN_GRIPPER:
+        elif address == HR_OPEN_GRIPPER:  # done
             self.open_gripper_command()
-        elif address == HR_CLOSE_GRIPPER:
+        elif address == HR_CLOSE_GRIPPER:  # done
             self.close_gripper_command()
-        elif address == HR_PULL_AIR_VACUUM_PUMP:
+        elif address == HR_PULL_AIR_VACUUM_PUMP:  # done
             self.pull_air_vacuum_pump()
-        elif address == HR_PUSH_AIR_VACUUM_PUMP:
+        elif address == HR_PUSH_AIR_VACUUM_PUMP:  # done
             self.push_air_vacuum_pump()
         elif address == HR_PING_AND_SET_CONVEYOR:
             self.ping_and_set_conveyor()
@@ -298,56 +298,66 @@ class HoldingRegisterDataBlock(DataBlock):
             self.update_y_rel(values[0])
         elif address == HR_YAW_REL:
             self.update_yaw_rel(values[0])
-        elif address == HR_SET_ANALOG_IO:
+        elif address == HR_SET_ANALOG_IO:  # done
             self.analog_write(values)
 
     # - Methods definition
 
     def request_new_calibration(self):
-        self.call_ros_service('/niryo_robot/joints_interface/request_new_calibration', Trigger)
+        self.__set_command_in_progress()
+        response = self.python_ros_wrapper.request_new_calibration()
+        self.__set_command_done(response.status)
 
     def start_auto_calibration(self):
         self.__set_command_in_progress()
-        response = self.call_ros_service('/niryo_robot/joints_interface/calibrate_motors', SetInt, 1)
+        response = self.python_ros_wrapper.calibrate_auto()
         self.__set_command_done(response.status)
 
     def start_manual_calibration(self):
-        self.call_ros_service('/niryo_robot/joints_interface/calibrate_motors', SetInt, 2)
+        self.__set_command_in_progress()
+        response = self.python_ros_wrapper.calibrate_manual()
+        self.__set_command_done(response.status)
 
     def activate_learning_mode(self, activate):
+        self.__set_command_in_progress()
         activate = int(activate >= 1)
-        self.call_ros_service('/niryo_robot/learning_mode/activate', SetBool, activate)
+        response = self.python_ros_wrapper.set_learning_mode(activate)
+        self.__set_command_done(response.status)
 
     def stop_current_command(self):
         if self.is_action_client_running:
             self.cmd_action_client.cancel_goal()
 
     def analog_write(self, values):
-        from niryo_robot_rpi.srv import SetAnalogIO
-
+        self.__set_command_in_progress()
         if len(values) >= 2:
             pin_id, analog_state = values[0], values[1] / MULT
             if pin_id in AIO_ADDRESS_TO_NAME:
-                _result = self.call_ros_service('/niryo_robot_rpi/set_analog_io', SetAnalogIO,
-                                                AIO_ADDRESS_TO_NAME[pin_id], analog_state)
+                response = self.python_ros_wrapper.analog_write(AIO_ADDRESS_TO_NAME[pin_id], analog_state)
+        self.__set_command_done(response.status)
 
     def update_tool(self):
-        response = self.call_ros_service('/niryo_robot_tools_commander/update_tool', Trigger)
+        self.__set_command_in_progress()
+        response = self.python_ros_wrapper.update_tool()
         response_list = response.message.split(" : ")
         tool_id = int(response_list[1])
         self.setValuesOffset(HR_TOOL_ID, [tool_id])
+        self.__set_command_done(response.status)
 
     def open_gripper_command(self):
+        self.__set_command_in_progress()
         speed = self.getValuesOffset(HR_GRIPPER_OPEN_SPEED, 1)[0]
         tool_id = self.getValuesOffset(HR_TOOL_ID, 1)[0]
         self.open_gripper(tool_id, speed)
 
     def close_gripper_command(self):
+        self.__set_command_in_progress()
         speed = self.getValuesOffset(HR_GRIPPER_CLOSE_SPEED, 1)[0]
         tool_id = self.getValuesOffset(HR_TOOL_ID, 1)[0]
         self.close_gripper(tool_id, speed)
 
     def move_joints_command(self):
+        self.__set_command_in_progress()
         joints_raw_values = self.getValuesOffset(HR_JOINTS, 6)
         joints = []
         for j in joints_raw_values:
@@ -355,6 +365,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.move_joints(joints)
 
     def move_pose_command(self):
+        self.__set_command_in_progress()
         pose_raw_values = self.getValuesOffset(HR_POSITION_X, 6)
         pose = []
         for p in pose_raw_values:
@@ -362,6 +373,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.move_pose(pose)
 
     def move_linear_pose_command(self):
+        self.__set_command_in_progress()
         pose_raw_values = self.getValuesOffset(HR_POSITION_X, 6)
         pose = []
         for p in pose_raw_values:
@@ -373,120 +385,53 @@ class HoldingRegisterDataBlock(DataBlock):
             speed = 100
         elif speed > 1000:
             speed = 1000
-        goal = ToolActionGoal()
-        goal.goal.cmd.cmd_type = ToolCommand.OPEN_GRIPPER
-        goal.goal.cmd.tool_id = int(gripper_id)
-        goal.goal.cmd.gripper_open_speed = speed
-        self.start_execution_thread_tool(goal.goal)
+        response = self.python_ros_wrapper.open_gripper(speed=speed)
+        self.update_status(response.status)
 
     def close_gripper(self, gripper_id, speed):
         if speed < 100:
             speed = 100
         elif speed > 1000:
             speed = 1000
-        goal = ToolActionGoal()
-        goal.goal.cmd.cmd_type = ToolCommand.CLOSE_GRIPPER
-        goal.goal.cmd.tool_id = int(gripper_id)
-        goal.goal.cmd.gripper_close_speed = speed
-        self.start_execution_thread_tool(goal.goal)
+        response = self.python_ros_wrapper.close_gripper(speed=speed)
+        self.update_status(response.status)
 
     def pull_air_vacuum_pump(self):
-        goal = ToolActionGoal()
-        goal.goal.cmd.cmd_type = ToolCommand.PULL_AIR_VACUUM_PUMP
-        goal.goal.cmd.tool_id = 31
-        self.start_execution_thread_tool(goal.goal)
+        self.__set_command_in_progress()
+        response = self.python_ros_wrapper.pull_air_vacuum_pump()
+        self.update_status(response.status)
 
     def push_air_vacuum_pump(self):
-        goal = ToolActionGoal()
-        goal.goal.cmd.cmd_type = ToolCommand.PUSH_AIR_VACUUM_PUMP
-        goal.goal.cmd.tool_id = 31
-        self.start_execution_thread_tool(goal.goal)
+        self.__set_command_in_progress()
+        response = self.python_ros_wrapper.push_air_vacuum_pump()
+        self.update_status(response.status)
 
     def move_pose(self, pose):
-        goal = RobotMoveActionGoal()
-        goal.goal.cmd.cmd_type = ArmMoveCommand.POSE
-        goal.goal.cmd.position.x = pose[0]
-        goal.goal.cmd.position.y = pose[1]
-        goal.goal.cmd.position.z = pose[2]
-        goal.goal.cmd.rpy.roll = pose[3]
-        goal.goal.cmd.rpy.pitch = pose[4]
-        goal.goal.cmd.rpy.yaw = pose[5]
-        self.start_execution_thread_arm(goal.goal)
+        response = self.python_ros_wrapper.move_pose(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5])
+        self.update_status(response.status)
 
     def move_linear_pose(self, pose):
-        goal = RobotMoveActionGoal()
-        goal.goal.cmd.cmd_type = ArmMoveCommand.LINEAR_POSE
-        goal.goal.cmd.position.x = pose[0]
-        goal.goal.cmd.position.y = pose[1]
-        goal.goal.cmd.position.z = pose[2]
-        goal.goal.cmd.rpy.roll = pose[3]
-        goal.goal.cmd.rpy.pitch = pose[4]
-        goal.goal.cmd.rpy.yaw = pose[5]
-        self.start_execution_thread_arm(goal.goal)
+        response = self.python_ros_wrapper.move_linear_pose(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5])
+        self.update_status(response.status)
 
     def move_joints(self, joints):
-        goal = RobotMoveActionGoal()
-        goal.goal.cmd.cmd_type = ArmMoveCommand.JOINTS
-        goal.goal.cmd.joints = joints
-        self.start_execution_thread_arm(goal.goal)
+        response = self.python_ros_wrapper.move_joints(joints[0], joints[1], joints[2], joints[3], joints[4], joints[5])
+        self.update_status(response.status)
 
-    def start_execution_thread_arm(self, goal):
-        if not self.execution_thread.is_alive():
-            self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_arm_commander/robot_action',
-                                                           RobotMoveAction,
-                                                           goal])
-            self.execution_thread.start()
-            self.execution_thread.join()
-
-    def start_execution_thread_tool(self, goal):
-        if not self.execution_thread.is_alive():
-            self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_tools_commander/action_server',
-                                                           ToolAction,
-                                                           goal])
-            self.execution_thread.start()
-            # added thread.join to avoid errors when thread is long (caused issue in vision pick)
-            self.execution_thread.join()
-
-    def execute_action(self, action_name, action_msg_type, goal):
-        self.setValuesOffset(HR_IS_EXECUTING_CMD, [1])
-        self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [0])
-        self.cmd_action_client = actionlib.SimpleActionClient(action_name, action_msg_type)
-
-        # Connect to server
-        if not self.cmd_action_client.wait_for_server(rospy.Duration().from_sec(0.5)):
-            self.setValuesOffset(HR_IS_EXECUTING_CMD, [0])
-            self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [7])
-            return
-
-        # Send goal and check response
-        self.cmd_action_client.send_goal(goal)
-
-        self.is_action_client_running = True
-        if not self.cmd_action_client.wait_for_result(timeout=rospy.Duration(15)):
-            self.cmd_action_client.cancel_goal()
-            self.cmd_action_client.stop_tracking_goal()
-            self.setValuesOffset(HR_IS_EXECUTING_CMD, [0])
-            self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [6])
-            self.is_action_client_running = False
-            return
-
-        self.is_action_client_running = False
-        goal_state = self.cmd_action_client.get_state()
-
-        if goal_state != GoalStatus.SUCCEEDED:
-            self.cmd_action_client.stop_tracking_goal()
-
+    def update_status(self, status):
         self.setValuesOffset(HR_IS_EXECUTING_CMD, [0])
 
-        if goal_state == GoalStatus.REJECTED:
+        if status == CommandStatus.NO_CONNECTION:
+            self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [7])
+        elif status == CommandStatus.GOAL_TIMEOUT:
+            self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [6])
+        elif status == CommandStatus.REJECTED:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [2])
-        elif goal_state == GoalStatus.ABORTED:
+        elif status == CommandStatus.ABORTED:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [3])
-        elif goal_state == GoalStatus.PREEMPTED:
+        elif status == CommandStatus.PREEMPTED:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [4])
-        elif goal_state != GoalStatus.SUCCEEDED:
+        elif status != CommandStatus.SUCCESS:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [5])
         else:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_RESULT, [1])
@@ -498,11 +443,11 @@ class HoldingRegisterDataBlock(DataBlock):
         to the conveyor_id on result == CommandStatus.SUCCESS
         :rtype:
         """
+
+        self.__set_command_in_progress()
         req = SetConveyorRequest()
         req.cmd = SetConveyorRequest.ADD
-        self.__set_command_in_progress()
-        response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                         SetConveyor, req)
+        response = self.python_ros_wrapper.set_conveyor()
         self.__set_command_done(response.status)
         if response.status == CommandStatus.SUCCESS:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_DATA_RESULT, [int(response.id)])
@@ -514,12 +459,10 @@ class HoldingRegisterDataBlock(DataBlock):
         :return: set HR_LAST_ROBOT_CMD_RESULT to CommandStatus Enum
         :rtype:
         """
-        req = SetConveyorRequest()
-        req.cmd = SetConveyorRequest.REMOVE
+
         self.__set_command_in_progress()
-        req.id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
-        response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                         SetConveyor, req)
+        conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
+        response = self.python_ros_wrapper.unset_conveyor(conveyor_id)
         self.__set_command_done(response.status)
 
     def control_conveyor(self):
@@ -540,8 +483,7 @@ class HoldingRegisterDataBlock(DataBlock):
         conveyor_direction = handle_negative_hr(conveyor_direction)
 
         conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
-        response = self.call_ros_service('/niryo_robot/conveyor/control_conveyor',
-                                         ControlConveyor, conveyor_id, True, int(conveyor_speed), conveyor_direction)
+        response = self.python_ros_wrapper.control_conveyor(conveyor_id, True, int(conveyor_speed), conveyor_direction)
         self.__set_command_done(response.status)
 
     def stop_conveyor(self):
@@ -552,8 +494,7 @@ class HoldingRegisterDataBlock(DataBlock):
         """
         self.__set_command_in_progress()
         conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
-        response = self.call_ros_service('/niryo_robot/conveyor/control_conveyor',
-                                         ControlConveyor, conveyor_id, False, 0, 1)
+        response = self.python_ros_wrapper.control_conveyor(conveyor_id, False, 0, 1)
         self.__set_command_done(response.status)
 
     def enable_tcp(self, enable):
@@ -568,7 +509,7 @@ class HoldingRegisterDataBlock(DataBlock):
         :return: status, message
         :rtype: (int, str)
         """
-        response = self.call_ros_service('/niryo_robot_tools_commander/enable_tcp', SetBool, bool(enable))
+        response = self.python_ros_wrapper.enable_tcp(enable)
         return self.__set_command_done(response.status)
 
     def set_tcp(self, tcp_rpy_raw_values):
@@ -581,18 +522,9 @@ class HoldingRegisterDataBlock(DataBlock):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
-        from geometry_msgs.msg import Point
 
         tcp = [handle_negative_hr(axis) / MULT for axis in tcp_rpy_raw_values]
-
-        req = SetTCPRequest()
-        req.position = Point(*tcp[:3])
-        req.rpy.roll = tcp[3]
-        req.rpy.pitch = tcp[4]
-        req.rpy.yaw = tcp[5]
-
-        response = self.call_ros_service('/niryo_robot_tools_commander/set_tcp', SetTCP, req)
+        response = self.python_ros_wrapper.set_tcp(tcp[0], tcp[1], tcp[2], tcp[3], tcp[4], tcp[5])
         return self.__set_command_done(response.status)
 
     # - Vision related methods
@@ -657,8 +589,13 @@ class HoldingRegisterDataBlock(DataBlock):
                 return CommandStatus.OBJECT_NOT_FOUND, self.null_robot_state
 
         # - Get target pose from relative pose of object
-        response = self.call_ros_service('/niryo_robot_poses_handlers/get_target_pose', GetTargetPose,
-                                         self.workspace_name, height_offset, x_rel, y_rel, yaw_rel)
+        response = self.call_ros_service('/niryo_robot_poses_handlers/get_target_pose',
+                                         GetTargetPose,
+                                         self.workspace_name,
+                                         height_offset,
+                                         x_rel,
+                                         y_rel,
+                                         yaw_rel)
 
         if response.status == CommandStatus.SUCCESS:
             if not sub_called:
@@ -753,8 +690,7 @@ class HoldingRegisterDataBlock(DataBlock):
             height_offset=self.height_offset + 0.05, x_rel=obj_rel_pose.x,
             y_rel=obj_rel_pose.y, yaw_rel=obj_rel_pose.yaw, sub_called=True)
 
-        if (pick_pose_response_status == CommandStatus.SUCCESS and
-                approach_pose_response_status == CommandStatus.SUCCESS):
+        if pick_pose_response_status == approach_pose_response_status == CommandStatus.SUCCESS:
             # - First store shape and color of object
             self.store_pose_shape_color_in_registers(None, obj_type_str, obj_color_str)
 
@@ -838,7 +774,8 @@ class HoldingRegisterDataBlock(DataBlock):
         # Check that workspace_name, vision_shape and vision_color are not None. If they are, empty registers.
         if any(elem is None for elem in [self.workspace_name, self.vision_shape, self.vision_color]):
             if not sub_called:
-                self.store_pose_shape_color_in_registers(ObjectPose(*([0] * 6)), ShapeRequest.NONE.name,
+                self.store_pose_shape_color_in_registers(ObjectPose(*([0] * 6)),
+                                                         ShapeRequest.NONE.name,
                                                          ColorRequest.NONE.name)
                 rospy.logwarn(
                     'Modbus Server - Impossible to detect object : Workspace name, Shape or Color requested is None')
@@ -860,8 +797,7 @@ class HoldingRegisterDataBlock(DataBlock):
                 return ratio_status, ObjectPose(*([0] * 6)), ShapeRequest.NONE.name, ColorRequest.NONE.name
 
         # - Detect object in the workspace
-        response = self.call_ros_service("/niryo_robot_vision/obj_detection_rel", ObjDetection,
-                                         self.vision_shape, self.vision_color, ratio, False)
+        response = self.python_ros_wrapper.detect_object()
 
         if response.status == CommandStatus.SUCCESS:
             if not sub_called:
@@ -873,7 +809,8 @@ class HoldingRegisterDataBlock(DataBlock):
 
         elif response.status == CommandStatus.OBJECT_NOT_FOUND:
             if not sub_called:
-                self.store_pose_shape_color_in_registers(response.obj_pose, ShapeRequest.NONE.name,
+                self.store_pose_shape_color_in_registers(response.obj_pose,
+                                                         ShapeRequest.NONE.name,
                                                          ColorRequest.NONE.name)
             else:
                 return response.status, response.obj_pose, ShapeRequest.NONE.name, ColorRequest.NONE.name
@@ -902,8 +839,7 @@ class HoldingRegisterDataBlock(DataBlock):
         else:
             ws_name = values
 
-        response = self.call_ros_service('/niryo_robot_poses_handlers/get_workspace_ratio',
-                                         GetWorkspaceRatio, ws_name)
+        response = self.python_ros_wrapper.get_workspace_ratio(ws_name)
 
         if response.status == CommandStatus.SUCCESS:
             return response.status, response.ratio
@@ -995,13 +931,18 @@ class HoldingRegisterDataBlock(DataBlock):
 
     @staticmethod
     def robot_state_msg_to_list(robot_state):
-        return [robot_state.position.x, robot_state.position.y, robot_state.position.z,
-                robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw]
+        return [
+            robot_state.position.x,
+            robot_state.position.y,
+            robot_state.position.z,
+            robot_state.rpy.roll,
+            robot_state.rpy.pitch,
+            robot_state.rpy.yaw
+        ]
 
     @staticmethod
     def object_pose_to_list(object_pose):
-        return [object_pose.x, object_pose.y, object_pose.z,
-                object_pose.roll, object_pose.pitch, object_pose.yaw]
+        return [object_pose.x, object_pose.y, object_pose.z, object_pose.roll, object_pose.pitch, object_pose.yaw]
 
     @staticmethod
     def convert_register_to_string(values):

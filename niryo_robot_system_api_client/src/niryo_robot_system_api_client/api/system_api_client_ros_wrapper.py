@@ -1,7 +1,6 @@
 import rospy
 
-# - Services
-from niryo_robot_system_api_client.srv import ManageEthernet, ManageEthernetRequest
+from niryo_robot_system_api_client.HttpClient import HttpClient as SystemApiClient
 
 
 class SystemApiClientRosWrapperException(Exception):
@@ -9,12 +8,14 @@ class SystemApiClientRosWrapperException(Exception):
 
 
 class SystemApiClientRosWrapper(object):
+
     def __init__(self, service_timeout=1):
         self.__service_timeout = service_timeout
+        self.__system_api_client = SystemApiClient()
 
     # - Ethernet
     def __manage_ethernet(self, profile, ip, mask, gateway, dns):
-        result = self.__call_service('/niryo_robot/ethernet/manage', ManageEthernet, profile, ip, mask, gateway, dns)
+        success, result = self.__system_api_client.setup_ethernet(profile, ip, mask, gateway, dns)
         return self.__classic_return_w_check(result)
 
     def set_ethernet_static(self):
@@ -28,7 +29,7 @@ class SystemApiClientRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__manage_ethernet(ManageEthernetRequest.STATIC, '', '', '', '')
+        return self.__manage_ethernet(1, '', '', '', '')
 
     def set_ethernet_auto(self):
         """
@@ -41,7 +42,7 @@ class SystemApiClientRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__manage_ethernet(ManageEthernetRequest.AUTO, '', '', '', '')
+        return self.__manage_ethernet(2, '', '', '', '')
 
     def set_ethernet_custom(self, ip, mask, gateway, dns):
         """
@@ -62,7 +63,7 @@ class SystemApiClientRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__manage_ethernet(ManageEthernetRequest.CUSTOM, ip, mask, gateway, dns)
+        return self.__manage_ethernet(3, ip, mask, gateway, dns)
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):
@@ -97,6 +98,5 @@ class SystemApiClientRosWrapper(object):
     @staticmethod
     def __check_result_status(result):
         if result.status < 0:
-            raise SystemApiClientRosWrapperException(
-                "Error Code : {}\nMessage : {}".format(result.status, result.message)
-            )
+            raise SystemApiClientRosWrapperException("Error Code : {}\nMessage : {}".format(
+                result.status, result.message))

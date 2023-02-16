@@ -132,9 +132,8 @@ class CommandInterpreter:
     def interpret_command(self, dict_command_received):
         rospy.logdebug("Command Interpreter - Dict Received : {}".format(dict_command_received))
         # Check if command is a dict
-        if not type(dict_command_received) is dict:
-            msg = "Cannot interpret command of incorrect type: " + \
-                  type(dict_command_received)
+        if not isinstance(dict_command_received, dict):
+            msg = f"Cannot interpret command of incorrect type: {type(dict_command_received)}"
             return self.generate_dict_failure(message=msg)
         # Check if the dict is well formed
         if set(dict_command_received.keys()) != {"command", "param_list"}:
@@ -169,8 +168,8 @@ class CommandInterpreter:
         }
 
         packet_data = dict_to_packet(dict_ret)
-        rospy.logdebug("Command Interpreter - Packet response size {}\n" +
-                       "Dict response : {}".format(len(packet_data), dict_ret))
+        rospy.logdebug("Command Interpreter - Packet response size {}\nDict response : {}".format(
+            len(packet_data), dict_ret))
 
         return packet_data + payload
 
@@ -205,7 +204,7 @@ class CommandInterpreter:
 
     @staticmethod
     def __send_answer_with_payload(payload, *params):
-        return "OK", params, payload
+        return "OK", params, payload.encode()
 
     def __check_list_belonging(self, value, list_):
         """
@@ -248,7 +247,7 @@ class CommandInterpreter:
         which are acquired as string)
         """
         try:
-            map_list = map(type_, list_)
+            map_list = list(map(type_, list_))
             return map_list
         except ValueError:
             self.__raise_exception_expected_type(type_.__name__, list_)
@@ -552,8 +551,6 @@ class CommandInterpreter:
         description = param_list[1]
         list_poses = list(param_list[2:-1])
         belong_to_workspace = bool(param_list[-1])
-
-        print(belong_to_workspace)
 
         self.__niryo_robot.save_dynamic_frame_from_poses(name, description, list_poses, belong_to_workspace)
         return self.__send_answer()

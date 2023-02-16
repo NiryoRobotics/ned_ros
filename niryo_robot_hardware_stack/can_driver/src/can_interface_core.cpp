@@ -23,6 +23,7 @@
 #include <std_msgs/Int64MultiArray.h>
 
 // c++
+#include <memory>
 #include <string>
 #include <tuple>
 #include <utility>

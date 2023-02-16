@@ -16,6 +16,7 @@
 
 #include "ttl_driver/abstract_end_effector_driver.hpp"
 
+#include <memory>
 #include <ros/ros.h>
 #include <sstream>
 #include <string>

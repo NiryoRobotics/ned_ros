@@ -19,6 +19,7 @@
 
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include <gtest/gtest.h>
+#include <memory>
 #include <ros/ros.h>
 #include <ros/service_client.h>
 

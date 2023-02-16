@@ -31,6 +31,7 @@ from niryo_robot_msgs.srv import Trigger, SetInt
 
 
 class AbstractTopButton(object):
+
     def __init__(self):
         rospy.logdebug("NiryoButton - Entering in Init")
 
@@ -73,7 +74,7 @@ class AbstractTopButton(object):
     def callback_change_button_mode(_req):
         return {"status": CommandStatus.SUCCESS, "message": ""}
 
-    def _is_button_pressed(self):
+    def is_button_pressed(self):
         return not self._button_state
 
     def _trigger_sequence_autorun(self):

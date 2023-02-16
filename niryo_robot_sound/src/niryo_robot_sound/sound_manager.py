@@ -4,7 +4,6 @@ from threading import Lock
 
 # Messages
 from niryo_robot_status.msg import RobotStatus
-from std_msgs.msg import Empty
 
 # Services
 from niryo_robot_sound.srv import PlaySound
@@ -40,13 +39,13 @@ class SoundManager:
         self.__robot_status = RobotStatus.BOOTING
         self.__logs_status = RobotStatus.NONE
 
-        self.__robot_status_sub = rospy.Subscriber(
-            '/niryo_robot_status/robot_status', RobotStatus, self.__callback_sub_robot_status)
-        self.__niryo_studio_connection_sub = rospy.Subscriber(
-            '/niryo_studio_connection', Empty, self.__callback_niryo_studio)
+        self.__robot_status_sub = rospy.Subscriber('/niryo_robot_status/robot_status',
+                                                   RobotStatus,
+                                                   self.__callback_sub_robot_status)
 
         # - Services
         rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
+        rospy.Service('/niryo_robot_sound/overlay', PlaySound, self.__callback_overlay_sound)
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
@@ -55,9 +54,17 @@ class SoundManager:
         rospy.on_shutdown(self.play_shutdown_sound)
 
     # - Callbacks
-    def __callback_niryo_studio(self, _):
-        sound = self.__sound_database.connection_sound
-        self.__sound_player.overlay_sound(sound)
+    def __callback_overlay_sound(self, msg):
+        sound = self.__sound_database(msg.sound_name)
+        if sound is None:
+            return CommandStatus.SOUND_FILE_NOT_FOUND, "{} sound not found".format(msg.sound_name)
+        play_process = self.__sound_player.overlay_sound(sound)
+
+        if msg.wait_end:
+            play_process.wait()
+            return play_process.result, play_process.message
+
+        return CommandStatus.SUCCESS, "{} sound play requested with success".format(msg.sound_name)
 
     def __callback_play_sound_user(self, msg):
         return self.play_user_sound(msg.sound_name, msg.start_time_sec, msg.end_time_sec, msg.wait_end)
@@ -163,7 +170,6 @@ class SoundManager:
                     self.__overheat_timer = None
 
                 self.__robot_status_sub.unregister()
-                self.__niryo_studio_connection_sub.unregister()
 
                 rospy.logdebug("Play shutdown sound")
                 self.__sound_player.overlay_sound(self.__sound_database.sleep_sound).wait()

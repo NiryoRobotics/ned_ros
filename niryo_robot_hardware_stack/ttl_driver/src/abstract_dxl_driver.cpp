@@ -20,6 +20,7 @@
 #include "common/model/single_motor_cmd.hpp"
 
 #include <cassert>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <utility>

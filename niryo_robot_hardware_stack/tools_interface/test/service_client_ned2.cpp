@@ -28,6 +28,7 @@
 #include "ttl_driver/ttl_interface_core.hpp"
 
 #include <XmlRpcValue.h>
+#include <memory>
 #include <iostream>
 #include <string>
 

@@ -11,6 +11,7 @@ def number_to_raw_data(val):
         val = (1 << 15) - val
     return int(val)
 
+
 if __name__ == '__main__':
     print("--- START")
     client = ModbusTcpClient('192.168.1.52', port=5020)

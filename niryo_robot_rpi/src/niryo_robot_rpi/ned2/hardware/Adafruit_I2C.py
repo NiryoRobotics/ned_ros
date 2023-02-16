@@ -35,6 +35,7 @@ import smbus
 
 
 class Adafruit_I2C(object):
+
     @staticmethod
     def getPiRevision():
         "Gets the version number of the Raspberry Pi board"
@@ -44,7 +45,7 @@ class Adafruit_I2C(object):
                 for line in infile:
                     # Match a line of the form "Revision : 0002" while ignoring extra
                     # info in front of the revsion (like 1000 when the Pi was over-volted).
-                    match = re.match('Revision\s+:\s+.*(\w{4})$', line)
+                    match = re.match(r'Revision\s+:\s+.*(\w{4})$', line)
                     if match and match.group(1) in ['0000', '0002', '0003']:
                         # Return revision 1 if revision ends with 0000, 0002 or 0003.
                         return 1
@@ -53,7 +54,7 @@ class Adafruit_I2C(object):
                         return 2
                 # Couldn't find the revision, assume revision 0 like older code for compatibility.
                 return 0
-        except:
+        except (Exception, ):
             return 0
 
     @staticmethod
@@ -106,8 +107,7 @@ class Adafruit_I2C(object):
         try:
             self.bus.write_word_data(self.address, reg, value)
             if self.debug:
-                print("I2C: Wrote 0x%02X to register pair 0x%02X,0x%02X" %
-                      (value, reg, reg + 1))
+                print("I2C: Wrote 0x%02X to register pair 0x%02X,0x%02X" % (value, reg, reg + 1))
         except IOError as err:
             return self.errMsg()
 
@@ -135,9 +135,7 @@ class Adafruit_I2C(object):
         try:
             results = self.bus.read_i2c_block_data(self.address, reg, length)
             if self.debug:
-                print(
-                    "I2C: Device 0x%02X returned the following from reg 0x%02X"
-                    % (self.address, reg))
+                print("I2C: Device 0x%02X returned the following from reg 0x%02X" % (self.address, reg))
                 print(results)
             return results
         except IOError as err:
@@ -148,8 +146,7 @@ class Adafruit_I2C(object):
         try:
             result = self.bus.read_byte_data(self.address, reg)
             if self.debug:
-                print("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
-                      (self.address, result & 0xFF, reg))
+                print("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" % (self.address, result & 0xFF, reg))
             return result
         except IOError as err:
             return self.errMsg()
@@ -161,8 +158,7 @@ class Adafruit_I2C(object):
             if result > 127:
                 result -= 256
             if self.debug:
-                print("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
-                      (self.address, result & 0xFF, reg))
+                print("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" % (self.address, result & 0xFF, reg))
             return result
         except IOError as err:
             return self.errMsg()
@@ -176,8 +172,7 @@ class Adafruit_I2C(object):
             if not little_endian:
                 result = ((result << 8) & 0xFF00) + (result >> 8)
             if (self.debug):
-                print("I2C: Device 0x%02X returned 0x%04X from reg 0x%02X" %
-                      (self.address, result & 0xFFFF, reg))
+                print("I2C: Device 0x%02X returned 0x%04X from reg 0x%02X" % (self.address, result & 0xFFFF, reg))
             return result
         except IOError as err:
             return self.errMsg()
@@ -197,5 +192,5 @@ if __name__ == '__main__':
     try:
         bus = Adafruit_I2C(address=0)
         print("Default I2C bus is accessible")
-    except:
+    except (Exception, ):
         print("Error accessing default I2C bus")

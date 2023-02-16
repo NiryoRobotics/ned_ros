@@ -17,6 +17,7 @@
 #include "can_driver/abstract_stepper_driver.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include <cassert>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <tuple>

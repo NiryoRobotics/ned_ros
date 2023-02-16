@@ -25,6 +25,7 @@
 #include "ros/duration.h"
 #include "ttl_driver/ttl_interface_core.hpp"
 
+#include <memory>
 #include <string>
 
 static std::unique_ptr<ros::NodeHandle> nh;

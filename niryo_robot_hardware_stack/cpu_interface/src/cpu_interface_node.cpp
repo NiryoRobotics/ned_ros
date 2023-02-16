@@ -18,6 +18,7 @@
 */
 
 // std
+#include <memory>
 
 // ros
 #include <ros/ros.h>

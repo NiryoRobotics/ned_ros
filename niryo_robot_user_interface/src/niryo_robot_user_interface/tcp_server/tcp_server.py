@@ -146,7 +146,7 @@ class TcpServer:
         packet_error = dict_to_packet(dict_error)
         self.__send(packet_error)
 
-    def __send(self, result_data):
+    def __send(self, result_data: bytes):
         if self.__client is not None:
             try:
                 self.__client.sendall(result_data)
