@@ -36,6 +36,7 @@
 #include <memory>
 #include <ros/console.h>
 #include <string>
+#include <utility>
 
 using ::common::model::BusProtocolEnum;
 using ::common::model::DxlMotorState;

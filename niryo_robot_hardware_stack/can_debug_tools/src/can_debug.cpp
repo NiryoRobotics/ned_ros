@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <thread>  // NOLINT [build/c++11]

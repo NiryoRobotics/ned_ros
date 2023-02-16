@@ -18,31 +18,24 @@
 import rospy
 import subprocess
 
+from niryo_robot_sound.srv import PlaySound, PlaySoundRequest
+
 from niryo_robot_msgs.srv import SetBool, Trigger
 from niryo_robot_msgs.srv import SetInt
-from niryo_robot_system_api_client.srv import ManageWifi, ManageWifiRequest
 from niryo_robot_msgs.msg import CommandStatus
 
 __all__ = [
     "LedState",
-
-    "send_hotspot_command",
-    "send_restart_wifi_command",
-    "send_deactivate_wifi_command",
-    "send_reconnect_wifi_command",
-
     "send_trigger_program_autorun",
     "send_reboot_motors_command",
-
     "send_shutdown_command",
     "send_reboot_command",
-
     "send_led_state",
     "activate_learning_mode",
     "auto_calibration",
     "stop_robot_action",
-
     "ping_i2c",
+    "play_connected",
 ]
 
 ENABLE_BUS_MOTORS_SUCCESS = 1
@@ -56,6 +49,7 @@ CHANGE_MOTOR_CONFIG_WRONG_VERSION = -3
 
 
 class LedState:
+
     def __init__(self):
         pass
 
@@ -65,46 +59,6 @@ class LedState:
     OK = 4
     WAIT_HOTSPOT = 5
     PAUSE = 6
-
-
-def send_hotspot_command():
-    rospy.loginfo("HOTSPOT")
-    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
-    try:
-        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
-        set_hotspot(ManageWifiRequest.HOTSPOT)
-    except rospy.ServiceException:
-        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
-
-
-def send_restart_wifi_command():
-    rospy.loginfo("RESTART_WIFI")
-    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
-    try:
-        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
-        set_hotspot(ManageWifiRequest.RESTART)
-    except rospy.ServiceException:
-        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
-
-
-def send_deactivate_wifi_command():
-    rospy.loginfo("DEACTIVATE_WIFI")
-    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
-    try:
-        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
-        set_hotspot(ManageWifiRequest.DEACTIVATE)
-    except rospy.ServiceException:
-        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
-
-
-def send_reconnect_wifi_command():
-    rospy.loginfo("RECONNECT_WIFI")
-    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
-    try:
-        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
-        set_hotspot(ManageWifiRequest.RECONNECT)
-    except rospy.ServiceException:
-        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
 
 
 def send_trigger_program_autorun():
@@ -217,3 +171,8 @@ def ping_i2c(bus_num, address):
         return True
     except IOError as e:
         return e.args[0] == 16  # Busy but connected if error=16
+
+
+def play_connected():
+    overlay_sound = rospy.ServiceProxy('/niryo_robot_sound/overlay', PlaySound)
+    overlay_sound(PlaySoundRequest(sound_name='connected.wav'))

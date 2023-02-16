@@ -16,6 +16,7 @@
 
 #include "ttl_driver/abstract_motor_driver.hpp"
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <utility>

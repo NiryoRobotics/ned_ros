@@ -19,7 +19,7 @@ INSERT INTO settings VALUES (
 ), (
     lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
     'sharing_allowed',
-    'True',
+    'False',
     'bool'
 ), (
     lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
@@ -35,5 +35,15 @@ INSERT INTO settings VALUES (
     lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
     'cloud_domain',
     'api-rfm.niryo.com',
+    'str'
+), (
+    lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
+    'hotspot_default_password',
+    'niryorobot',
+    'str'
+), (
+    lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
+    'robot_name',
+    NULL,
     'str'
 );

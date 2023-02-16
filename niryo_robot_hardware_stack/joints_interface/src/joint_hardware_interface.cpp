@@ -20,6 +20,7 @@
 #include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <utility>

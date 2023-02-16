@@ -20,18 +20,6 @@ add_message_files(
   ${msg_files}
 )
 
-file(
-  GLOB srv_files
-  RELATIVE  ${CMAKE_CURRENT_SOURCE_DIR}/srv
-  srv/*.srv
-)
-
-add_service_files(
-  DIRECTORY srv
-  FILES
-  ${srv_files}
-)
-
 generate_messages(
   DEPENDENCIES
 )

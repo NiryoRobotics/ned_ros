@@ -19,6 +19,7 @@
 
 #include "can_debug_tools/can_tools.hpp"
 
+#include <memory>
 #include <string>
 
 // Bring in gtest

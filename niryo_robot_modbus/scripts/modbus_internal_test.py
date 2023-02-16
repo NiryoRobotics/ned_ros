@@ -20,7 +20,7 @@ def number_to_raw_data(val):
 
 def raw_data_to_number(val):
     if (val >> 15) == 1:
-        val = - (val & 0x7FFF)
+        val = -(val & 0x7FFF)
     return val
 
 
@@ -167,6 +167,12 @@ def test_holding_register(client):
 
     print("Testing tool stuff begins")
 
+    print("Update tool ID")
+    client.write_register(HR_UPDATE_TOOL_ID, 1)
+    tool_ID = client.read_holding_registers(HR_TOOL_ID, 1)
+    print("Tool ID: {}".format(tool_ID.registers[0]))
+    wait_end_of_execution(client)
+
     client.write_register(HR_OPEN_GRIPPER, 1)
     wait_end_of_execution(client)
     client.write_register(HR_CLOSE_GRIPPER, 1)
@@ -233,9 +239,7 @@ def test_holding_register(client):
     aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
     print("ANALOG IOs STATE: {}".format(aio_state_registers.registers))
 
-    client.write_registers(HR_SET_ANALOG_IO,
-                           [AIO_NAME_TO_ADDRESS.items()[0][1],
-                            old_aio_state_registers.registers[-1]])
+    client.write_registers(HR_SET_ANALOG_IO, [AIO_NAME_TO_ADDRESS.items()[0][1], old_aio_state_registers.registers[-1]])
 
     print("---- ANALOG IO HOLDING REGISTER TEST ENDS ----")
 

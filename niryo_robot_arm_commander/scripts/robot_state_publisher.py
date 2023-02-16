@@ -17,7 +17,6 @@ class StatePublisher(object):
     This object read Transformation Publisher and Publish the RobotState
      in the Topic '/niryo_robot/robot_state' at a certain rate
     """
-
     def __init__(self, arm_state):
         self.__arm_state = arm_state
 
@@ -50,8 +49,9 @@ class StatePublisher(object):
             dt = (t.header.stamp - self.__stamp).to_sec()
             if dt > 0:
                 lin_vel = [round(x, 4) for x in (np.array(pos) - np.array(self.__position)) / dt]
-                rot_vel = [round(x, 4) for x in
-                           euler_from_quaternion(np.array(diff_quat(quat, self.__quaternion)) / dt)]
+                rot_vel = [
+                    round(x, 4) for x in euler_from_quaternion(np.array(diff_quat(quat, self.__quaternion)) / dt)
+                ]
 
                 self.__twist.linear = Vector3(*lin_vel)
                 self.__twist.angular = Vector3(*rot_vel)
@@ -61,7 +61,9 @@ class StatePublisher(object):
             self.__position = pos
             self.__quaternion = quat
             self.__rpy = euler_from_quaternion(self.__quaternion)
-        except (LookupException, ConnectivityException, ExtrapolationException):
+        except (LookupException, ConnectivityException, ExtrapolationException) as e:
+            if isinstance(e, ExtrapolationException):
+                print(e)
             self.__transform_handler.set_empty_tcp_to_ee_link_transform("tool_link")
             rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> TCP")
 

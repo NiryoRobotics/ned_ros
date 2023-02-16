@@ -22,6 +22,7 @@ robot_sounds:
   turn_on_sound: "booting.wav"
   turn_off_sound: "stop.wav"
   connection_sound: "connected.wav"
+  disconnection_sound: "disconnected.wav"
   robot_ready_sound: "ready.wav"
   calibration_sound: "calibration.wav"
   warn_sound: "warn.wav"

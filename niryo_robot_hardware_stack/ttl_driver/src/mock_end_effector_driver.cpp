@@ -18,6 +18,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "ttl_driver/end_effector_reg.hpp"
 #include <cstddef>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>

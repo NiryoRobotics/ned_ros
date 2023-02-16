@@ -19,7 +19,7 @@ add_message_files(
   DigitalIO.msg
   DigitalIOState.msg
   I2CComponent.msg
-  LogStatus.msg
+  StorageStatus.msg
 )
 
 add_service_files(

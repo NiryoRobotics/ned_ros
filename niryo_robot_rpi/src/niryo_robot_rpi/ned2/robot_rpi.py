@@ -15,12 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import rospy
 
 from niryo_robot_status.msg import RobotStatus
 
-from niryo_robot_rpi.common.ros_log_manager import RosLogManager
+from niryo_robot_rpi.common.storage_manager import StorageManager
 
 from .hardware.MCP23017 import MCP23017
 
@@ -33,24 +32,27 @@ from .mcp_io_objects import McpIOManager
 
 
 class RobotRpi:
+
     def __init__(self):
-        self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),
-                              busnum=rospy.get_param("~mcp/i2c_bus"))
+        self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"), busnum=rospy.get_param("~mcp/i2c_bus"))
 
         self.__mcp_manager = McpIOManager(self.__mcp)
 
         self.__io_panel = IOPanel(mcp_manager=self.__mcp_manager)
-        self.__wifi_button = WifiButton(mcp_manager=self.__mcp_manager)
         self.__fans_manager = FansManager(mcp_manager=self.__mcp_manager)
         self.__shutdown_manager = ShutdownManager(mcp_manager=self.__mcp_manager)
         self.__niryo_robot_button = TopButton()
+        self.__wifi_button = WifiButton(mcp_manager=self.__mcp_manager,
+                                        is_top_button_pressed=self.__niryo_robot_button.is_button_pressed)
 
-        self.__ros_log_manager = RosLogManager()
+        self.__storage_manager = StorageManager()
 
         rospy.on_shutdown(self.shutdown)
 
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
-                                                        RobotStatus, self.__callback_robot_status, queue_size=10)
+                                                        RobotStatus,
+                                                        self.__callback_robot_status,
+                                                        queue_size=10)
 
     def __callback_robot_status(self, msg):
         if msg.robot_status <= RobotStatus.SHUTDOWN:

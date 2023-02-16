@@ -13,6 +13,7 @@ class UnknownRobotDatabaseException(Exception):
 
 
 class RobotDatabase:
+
     def __init__(self, dao):
         self.__dae = dao
 
@@ -30,10 +31,19 @@ class RobotDatabase:
         self.__joints_db.set_joints_versions(msg.motor_names, msg.stepper_firmware_versions)
 
     def __hw_callback(self, msg):
-        self.__joints_db.set_joints_motors(msg.motor_names, msg.motor_types, msg.hardware_errors_message)
+        from sqlite3.dbapi2 import InterfaceError
+        try:
+            self.__joints_db.set_joints_motors(msg.motor_names, msg.motor_types, msg.hardware_errors_message)
+        except InterfaceError as e:
+            rospy.logerr(('Received from hardware_status: '
+                          f'motor_names: {msg.motor_names}, '
+                          f'motor_types: {msg.motor_types}, '
+                          f'hardware_errors_message: {msg.hardware_errors_message}'))
+            raise e from None
 
 
 class JointsDatabase:
+
     def __init__(self, dao):
         self.__dao = dao
         self.__table_name = 'joints'
@@ -105,6 +115,7 @@ class JointsDatabase:
 
 
 class RobotVersionDatabase:
+
     def __init__(self, dao):
         self.__dao = dao
         self.__table_name = 'robot_version'

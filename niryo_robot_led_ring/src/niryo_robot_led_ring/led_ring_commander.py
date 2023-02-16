@@ -10,6 +10,7 @@ from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 # Message
+from niryo_robot_user_interface.msg import ConnectionState
 from niryo_robot_status.msg import RobotStatus
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
@@ -23,6 +24,7 @@ class LedRingCommander(object):
     This class is in charge of the Led Ring Node
     Its main goal is to interpret commands, and use methods from the LedRingCommander class according to this command
     """
+
     def __init__(self):
         rospy.loginfo("Led Ring Commander - Initialisation")
         self.__is_shutdown = False
@@ -85,7 +87,9 @@ class LedRingCommander(object):
                                                         self.__callback_robot_status,
                                                         queue_size=1)
         rospy.Subscriber("/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
-        rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
+        rospy.Subscriber('/niryo_robot_user_interface/niryo_studio_connection',
+                         ConnectionState,
+                         self.__callback_niryo_studio)
 
         self.__check_shutdown_timer = rospy.Timer(rospy.Duration(2), self.shutdown_check)
 
@@ -210,8 +214,8 @@ class LedRingCommander(object):
         if not self.user_mode:
             self.blink_over_status(WHITE, 1, 0.5)
 
-    def __callback_niryo_studio(self, _):
-        if not self.user_mode:
+    def __callback_niryo_studio(self, msg):
+        if msg.state in [ConnectionState.connection, ConnectionState.close] and not self.user_mode:
             self.blink_over_status(PURPLE, 2, 0.5)
 
     def notify_current_anim_and_color(self, _observer):

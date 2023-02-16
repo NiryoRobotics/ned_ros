@@ -28,6 +28,7 @@
 #include "dynamixel_sdk/port_handler.h"
 #include "ttl_debug_tools/ttl_tools.h"
 
+#include <memory>
 #include <string>
 
 // Bring in gtest

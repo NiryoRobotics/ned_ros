@@ -13,7 +13,6 @@ class Grip(object):
     :param name: unique (!) name for the grip that will be used to reference it
     :param transform: the tf transform msg from object to tool_0
     """
-
     def __init__(self, name, transform):
         self.name = name
         self.transform = transform
@@ -30,13 +29,17 @@ class Grip(object):
         transform_dict = dict()
         transform_dict["header_frame_id"] = self.transform.header.frame_id
         transform_dict["child_frame_id"] = self.transform.child_frame_id
-        transform_dict["translation"] = [self.transform.transform.translation.x,
-                                         self.transform.transform.translation.y,
-                                         self.transform.transform.translation.z]
-        transform_dict["quaternion"] = [self.transform.transform.rotation.x,
-                                        self.transform.transform.rotation.y,
-                                        self.transform.transform.rotation.z,
-                                        self.transform.transform.rotation.w]
+        transform_dict["translation"] = [
+            self.transform.transform.translation.x,
+            self.transform.transform.translation.y,
+            self.transform.transform.translation.z
+        ]
+        transform_dict["quaternion"] = [
+            self.transform.transform.rotation.x,
+            self.transform.transform.rotation.y,
+            self.transform.transform.rotation.z,
+            self.transform.transform.rotation.w
+        ]
         dict_["transform"] = transform_dict
         return dict_
 

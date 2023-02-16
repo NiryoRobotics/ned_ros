@@ -1230,7 +1230,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         # Get transform
         try:
-            transform = self.tf_buffer.lookup_transform(source_frame, local_frame, rospy.Time(), rospy.Duration(4.0))
+            transform = self.tf_buffer.lookup_transform(
+                source_frame,
+                local_frame,
+                rospy.Time(0),
+                rospy.Duration(4.0),
+            )
         except rospy.ROSException as e:
             raise NiryoRosWrapperException(str(e))
 
@@ -1772,7 +1777,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.loginfo_throttle(1, 'ROS Wrapper - No new conveyor found')
         else:
             self._check_result_status(result)
-        return result.id
+        return result
 
     def unset_conveyor(self, conveyor_id):
         """
@@ -2086,7 +2091,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.logwarn_throttle(1, 'ROS Wrapper - Markers Not Found')
         elif response.status == CommandStatus.VIDEO_STREAM_NOT_RUNNING:
             rospy.logwarn_throttle(1, 'Video Stream not running')
-        return False, None, "", ""
+        return response
 
     def get_camera_intrinsics(self):
         """
@@ -2209,7 +2214,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         result = self._call_service('/niryo_robot_poses_handlers/get_workspace_ratio', GetWorkspaceRatio, name)
         self._check_result_status(result)
-        return result.ratio
+        return result
 
     def get_workspace_list(self, with_desc=False):
         """
