@@ -7,7 +7,7 @@ if [ $? -ne 1 ] ; then
     exit 1
 fi
 
-DB_PATH="$HOME/.config/niryo/ned.db"
+DB_PATH="$HOME/niryo_robot_saved_files/.config/ned.db"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 if [[ ! -f  $DB_PATH ]]; then

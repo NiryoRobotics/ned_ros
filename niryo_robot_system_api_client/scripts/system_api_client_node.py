@@ -3,13 +3,12 @@
 import rospy
 import logging
 
-from niryo_robot_system_api_client.HttpClient import HttpClient
-
 from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_system_api_client.msg import WifiStatus
 
 from niryo_robot_msgs.srv import SetString
-from niryo_robot_system_api_client.srv import ManageWifi, ManageEthernet
-from niryo_robot_system_api_client.msg import WifiStatus
+
+from niryo_robot_system_api_client.HttpClient import HttpClient
 
 
 class SystemApiClientNode:
@@ -17,6 +16,10 @@ class SystemApiClientNode:
     def __init__(self):
         rospy.logdebug("System Api Client - Entering in Init")
         self.client = HttpClient()
+
+        self.set_robot_name_server = rospy.Service('/niryo_robot/wifi/set_robot_name',
+                                                   SetString,
+                                                   self.__callback_set_robot_name)
 
         self.wifi_state_publisher = rospy.Publisher('/niryo_robot/wifi/status', WifiStatus, queue_size=2)
         self.slow_mode = False
