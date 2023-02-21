@@ -1,43 +1,51 @@
 import csv
 import subprocess
 
-from niryo_robot_reports.metrics.GenericWrapper import GenericWrapper
+from .GenericWrapper import GenericWrapper
 
 
 class TuptimeWrapper(GenericWrapper):
-    def _fetch_datas(self, with_unit=True):
-        # root access is sometimes needed at boot
-        try:
-            output = subprocess.check_output(['sudo', 'tuptime', '-cs'])
-        except subprocess.CalledProcessError:
-            print('Please install the tuptime libray and give it root rights')
-            return
+    __available_metrics__ = [
+        'system_startups',
+        'average_downtime',
+        'average_uptime',
+        'system_life',
+        'current_uptime',
+        'system_shutdowns',
+        'system_downtime',
+        'system_uptime',
+    ]
 
-        loutput = output.splitlines()
-        reader = csv.reader(loutput)
+    def _fetch_datas(self):
+        # root access is sometimes needed at boot
+        completed_process = subprocess.run(['sudo', 'tuptime', '-cs'], capture_output=True, encoding='utf-8')
+        if completed_process.returncode != 0:
+            raise RuntimeError('Please install the tuptime libray and give it root rights')
+
+        reader = csv.reader(completed_process.stdout.splitlines())
         for row in reader:
             key = row.pop(0).replace(' ', '_').lower()
             if key == 'system_startups':
-                self._data.append({
+                self._data[key] = {
                     'name': key,
                     'value': row[0],
                     'unit': None,
-                })
+                }
             elif key in ['average_downtime', 'average_uptime', 'system_life', 'current_uptime']:
-                self._data.append({
+                self._data[key] = {
                     'name': key,
                     'value': int(float(row[0])),
                     'unit': 'seconds',
-                })
+                }
             elif key == 'system_shutdowns':
-                self._data.append({
+                self._data[key] = {
                     'name': key,
                     'value': int(row[0]) + int(row[3]),
                     'unit': None,
-                })
+                }
             elif key in ['system_downtime', 'system_uptime']:
-                self._data.append({
+                self._data[key] = {
                     'name': key,
                     'value': int(float(row[2])),
                     'unit': 'seconds',
-                })
+                }

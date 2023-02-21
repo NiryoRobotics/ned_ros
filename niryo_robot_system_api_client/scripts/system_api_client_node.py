@@ -33,6 +33,20 @@ class SystemApiClientNode:
 
         rospy.loginfo("System Api Client - Node Started")
 
+    def __callback_set_robot_name(self, req):
+        name = req.value
+        rospy.logdebug("System Api Client - Setting robot name to: " + str(name))
+        if len(name) > 32 or len(name) < 3:
+            rospy.logwarn('System Api Client - Invalid name: length must be between 3-32 characters')
+            return CommandStatus.SYSTEM_API_CLIENT_INVALID_ROBOT_NAME, 'Name length must be between 3-32 characters'
+
+        conn_success, result = self.client.set_robot_name(name)
+        if not conn_success:
+            return CommandStatus.SYSTEM_API_CLIENT_REQUEST_FAILED, result
+        if not result:
+            return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_ERROR, 'Could not change the robot name'
+        return CommandStatus.SUCCESS, 'Successfully changed the robot name'
+
     def __publish_hotspot_state_callback(self, _):
         conn_success, status = self.client.wifi_state()
 
