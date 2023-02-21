@@ -42,6 +42,9 @@ class SoundManager:
         self.__robot_status_sub = rospy.Subscriber('/niryo_robot_status/robot_status',
                                                    RobotStatus,
                                                    self.__callback_sub_robot_status)
+        self.__niryo_studio_connection_sub = rospy.Subscriber('/niryo_studio_connection',
+                                                              Empty,
+                                                              self.__callback_niryo_studio)
 
         # - Services
         rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
@@ -54,6 +57,11 @@ class SoundManager:
         rospy.on_shutdown(self.play_shutdown_sound)
 
     # - Callbacks
+
+    def __callback_niryo_studio(self, _):
+        sound = self.__sound_database.connection_sound
+        self.__sound_player.overlay_sound(sound)
+
     def __callback_overlay_sound(self, msg):
         sound = self.__sound_database(msg.sound_name)
         if sound is None:
