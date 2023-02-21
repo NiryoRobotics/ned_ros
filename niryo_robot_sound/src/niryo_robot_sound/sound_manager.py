@@ -3,6 +3,7 @@ import rospy
 from threading import Lock
 
 # Messages
+from std_msgs.msg import Empty
 from niryo_robot_status.msg import RobotStatus
 
 # Services

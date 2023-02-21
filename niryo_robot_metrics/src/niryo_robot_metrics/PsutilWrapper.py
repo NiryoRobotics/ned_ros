@@ -1,43 +1,53 @@
 # coding=utf-8
 import psutil
 
-from niryo_robot_reports.metrics.GenericWrapper import GenericWrapper
+from .GenericWrapper import GenericWrapper
 
 
 class PsutilWrapper(GenericWrapper):
+    __available_metrics__ = [
+        'cpu_usage',
+        'cpu_temperature',
+        'ram_usage',
+        'rom_usage',
+        'eth0_address',
+        'eth0_netmask',
+        'eth0_is_used',
+        'wlan0_address',
+        'wlan0_netmask',
+        'wlan0_is_used',
+    ]
+
     __ETH_IFACE = 'eth0'
     __WIFI_IFACE = 'wlan0'
 
     def _fetch_datas(self):
-        self._data += [
-            {
+        self._data.update({
+            'cpu_usage': {
                 'name': 'cpu_usage',
                 'value': self.get_cpu_usage(),
                 'unit': '%',
             },
-            {
+            'cpu_temperature': {
                 'name': 'cpu_temperature',
                 'value': self.get_cpu_temperature(),
                 'unit': '°C',
             },
-            {
+            'ram_usage': {
                 'name': 'ram_usage',
                 'value': self.get_ram_usage(),
                 'unit': '%',
             },
-            {
+            'rom_usage': {
                 'name': 'rom_usage',
                 'value': self.get_rom_usage(),
                 'unit': '%',
             },
-        ]
+        })
         for iface, iface_data in self.get_net_metrics().items():
             for key, value in iface_data.items():
-                self._data.append({
-                    'name': '{}_{}'.format(iface, key),
-                    'value': value,
-                    'unit': None
-                })
+                name = '{}_{}'.format(iface, key)
+                self._data[name] = {'name': name, 'value': value, 'unit': None}
 
     @staticmethod
     def get_cpu_usage():
