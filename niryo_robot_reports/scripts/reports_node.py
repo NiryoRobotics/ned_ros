@@ -5,7 +5,7 @@ import os
 import rospy
 from distutils.dir_util import mkpath
 
-from niryo_robot_reports.CloudAPI import CloudAPI
+from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
 from niryo_robot_reports.DailyReportHandler import DailyReportHandler
 from niryo_robot_reports.TestReportHandler import TestReportHandler
 from niryo_robot_reports.AlertReportHandler import AlertReportHandler
@@ -17,7 +17,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_reports.msg import Service
 
 # srv
-from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
+from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath, SetSettings
 from niryo_robot_reports.srv import CheckConnection
 
 
@@ -46,13 +46,24 @@ class ReportsNode:
             rospy.logwarn('Unable to fetch sharing allowed')
             get_sharing_allowed_response.value = False
 
-        self.__cloud_api = CloudAPI(
-            get_cloud_domain_response.value,
-            get_serial_number_response.value,
-            get_rasp_id_response.value,
-            get_api_key_response.value,
-            get_sharing_allowed_response.value,
-        )
+        self.__cloud_api = CloudAPI(get_cloud_domain_response.value,
+                                    get_serial_number_response.value,
+                                    get_rasp_id_response.value,
+                                    get_api_key_response.value,
+                                    get_sharing_allowed_response.value,
+                                    https=True)
+
+        if not get_api_key_response.value and get_rasp_id_response.value:
+            try:
+                api_key = self.__cloud_api.authentification.call()
+                self.__cloud_api.set_api_key(api_key)
+
+                rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
+                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+                set_setting('api_key', api_key, 'str')
+
+            except MicroServiceError as microservice_error:
+                rospy.logerr(microservice_error)
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
