@@ -32,8 +32,10 @@ from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
 
 
 class NiryoRosWrapper(AbstractNiryoRosWrapper):
-    def __init__(self):
+
+    def __init__(self, internal=False):
         super(NiryoRosWrapper, self).__init__()
+        self.__internal = internal
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
@@ -42,9 +44,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if self.__hardware_version in ['ned', 'ned2']:
             self.__node_name = rospy.get_name()
             self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
-            rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
-            self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
-            self.__advertise_ros_wrapper_srv(self.__node_name, True)
+            if not internal:
+                rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
+                self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
+                self.__advertise_ros_wrapper_srv(self.__node_name, True)
             rospy.on_shutdown(self.__advertise_stop)
 
         # - Publishers
@@ -124,7 +127,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         rospy.loginfo("Python ROS Wrapper ready")
 
     def __advertise_stop(self):
-        if self.__hardware_version in ['ned', 'ned2']:
+        if self.__hardware_version in ['ned', 'ned2'] and self.__internal:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
             except [rospy.ServiceException, rospy.ROSException]:

@@ -160,7 +160,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.cmd_action_client = None
 
         # python_ros_wrapper
-        self.python_ros_wrapper = NiryoRosWrapper()
+        self.python_ros_wrapper = NiryoRosWrapper(internal=True)
 
         # Tool
         self.current_tool_id = None

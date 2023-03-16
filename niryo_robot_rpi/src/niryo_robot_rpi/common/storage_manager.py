@@ -19,7 +19,7 @@ import rospy
 import subprocess
 import os
 
-from niryo_robot_rpi.msg import StorageStatus
+from niryo_robot_rpi.msg import StorageStatus, LogStatus
 from niryo_robot_msgs.srv import SetInt
 
 #
@@ -48,6 +48,9 @@ class StorageManager:
                                                                 self.callback_change_purge_log_on_startup)
 
         self.storage_status_publisher = rospy.Publisher('/niryo_robot_rpi/storage_status', StorageStatus, queue_size=10)
+        # TODO: delete in 5.1
+        self.log_status_publisher = rospy.Publisher('/niryo_robot_rpi/ros_log_status', LogStatus, queue_size=10)
+
         self.timer = rospy.Timer(rospy.Duration(3), self.publish_storage_status)
 
         rospy.loginfo("Init Storage Manager OK")
@@ -148,3 +151,11 @@ class StorageManager:
         msg.total_disk_size = self.get_total_disk_size()
         msg.purge_log_on_startup = self.purge_log_on_startup
         self.storage_status_publisher.publish(msg)
+
+        # TODO: delete in 5.1
+        msg = LogStatus()
+        msg.header.stamp = rospy.Time.now()
+        msg.log_size = self.get_log_size()
+        msg.available_disk_size = self.get_available_disk_size()
+        msg.purge_log_on_startup = self.purge_log_on_startup
+        self.log_status_publisher.publish(msg)
