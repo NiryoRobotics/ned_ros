@@ -19,8 +19,8 @@ class MicroServiceError(Exception):
 
 
 class ABCMicroService(ABC):
-    MICROSERVICE_URI = ''
     API_PREFIX = 'api/v1'
+    MICROSERVICE_URI = ''
 
     def __init__(self, base_url, headers):
         self._base_url = f'{base_url}/{self.MICROSERVICE_URI}/{self.API_PREFIX}'
@@ -49,30 +49,39 @@ class ABCReportMicroService(ABCMicroService):
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         if response.status_code != 200:
-            raise MicroServiceError(f'MicroService responded with status {response.status_code}: {response.text}',
-                                    code=MicroServiceError.Code.BAD_STATUS_CODE)
+            raise MicroServiceError(
+                (f'{self._base_url}: {self.__class__.__name__} '
+                 f'responded with status {response.status_code}: {response.text}'),
+                code=MicroServiceError.Code.BAD_STATUS_CODE,
+            )
 
 
 class AuthentificationMS(ABCMicroService):
     MICROSERVICE_URI = 'authentification'
 
     def call(self):
-        url = f'{self._base_url}/{self._headers["raspId"]}'
+        url = f'{self._base_url}/token/{self._headers["raspId"]}'
         try:
-            response = requests.post(url, headers=self._headers)
+            response = requests.get(url, headers=self._headers)
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
-        if response.status_code != 200:
-            if response.status_code == 400:
-                raise MicroServiceError(f'There is no robot registered with the rasp id "{self._headers["raspId"]}',
-                                        code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
-            raise MicroServiceError(f'MicroService responded with status {response.status_code}: {response.text}',
-                                    code=MicroServiceError.Code.BAD_STATUS_CODE)
-        json_data = response.json()['data']
-        if 'apiKey' not in json_data:
-            raise MicroServiceError(f'apiKey not in the response', code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
-        return json_data['apiKey']
+
+        if response.status_code == 404:
+            raise MicroServiceError(f'There is no robot registered with the rasp id "{self._headers["raspId"]}',
+                                    code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
+
+        json = response.json()
+        rospy.loginfo(json)
+        if response.status_code != 200 or response.status_code == 200 and json['error'] is True:
+            raise MicroServiceError(
+                f'{url}: {self.__class__.__name__} responded with status {response.status_code}: {response.text}',
+                code=MicroServiceError.Code.BAD_STATUS_CODE)
+
+        if 'data' not in json or 'apikey' not in json['data']:
+            raise MicroServiceError(f'{url}: {self.__class__.__name__}: invalid data payload: {json}',
+                                    code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
+        return json['data']['apikey']
 
 
 class DailyReportMS(ABCReportMicroService):
@@ -112,13 +121,6 @@ class CloudAPI(object):
         self.__microservices = {}
         self.__init_microservices()
 
-        if not api_key and rasp_id:
-            try:
-                api_key = self.__microservices['authentification'].call()
-                self.set_api_key(api_key)
-            except MicroServiceError as microservice_error:
-                rospy.logerr(microservice_error)
-
     def __init_microservices(self):
         self.__microservices = {'authentification': AuthentificationMS(self.__base_url, self.__headers)}
         if self.__sharing_allowed:
@@ -151,6 +153,10 @@ class CloudAPI(object):
     def set_sharing_allowed(self, value):
         self.__sharing_allowed = value
         self.__init_microservices()
+
+    @property
+    def authentification(self):
+        return self.__microservices['authentification']
 
     @property
     def daily_reports(self):
