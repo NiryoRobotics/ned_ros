@@ -48,7 +48,7 @@ INSERT INTO settings VALUES (
     'str'
 ), (
     lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
-    'rpi_uuid',
+    'rasp_id',
     NULL,
     'str'
 );

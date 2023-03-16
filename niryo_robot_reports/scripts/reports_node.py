@@ -32,7 +32,7 @@ class ReportsNode:
 
         get_cloud_domain_response = self.__get_setting('cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
-        get_rasp_id_response = self.__get_setting('rpi_uuid')
+        get_rasp_id_response = self.__get_setting('rasp_id')
         get_api_key_response = self.__get_setting('api_key')
         get_sharing_allowed_response = self.__get_setting('sharing_allowed')
 
@@ -130,7 +130,7 @@ class ReportsNode:
             self.__cloud_api.set_api_key(req.value)
         elif req.name == 'sharing_allowed':
             self.__cloud_api.set_sharing_allowed(req.value == 'True')
-        elif req.name == 'rpi_uuid':
+        elif req.name == 'rasp_id':
             self.__cloud_api.set_rasp_id(req.value)
 
 
