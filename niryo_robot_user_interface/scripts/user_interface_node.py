@@ -30,7 +30,7 @@ class UserInterface:
 
         rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
         self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
-        self.__uuid = self.__get_setting('rpi_uuid').value
+        self.__rasp_id = self.__get_setting('rasp_id').value
 
         self.__play_overlay_service = rospy.ServiceProxy('/niryo_robot_sound/overlay', PlaySound)
 
@@ -40,7 +40,7 @@ class UserInterface:
 
         self.__robot_connection_pub = rospy.Publisher('~robot_connection', ConnectionState, queue_size=10)
         self.__robot_connection_timer = rospy.Timer(
-            rospy.Duration(1), lambda _: self.__robot_connection_pub.publish(self.__uuid, ConnectionState.ok))
+            rospy.Duration(1), lambda _: self.__robot_connection_pub.publish(self.__rasp_id, ConnectionState.ok))
 
         if self.__tcp_server is not None:
             # Set a bool to mentioned this node is initialized
@@ -75,7 +75,7 @@ class UserInterface:
         if self.__tcp_server is not None:
             self.__tcp_server.quit()
             self.__robot_connection_timer.shutdown()
-        self.__robot_connection_pub.publish(self.__uuid, ConnectionState.close)
+        self.__robot_connection_pub.publish(self.__rasp_id, ConnectionState.close)
 
     def on_client_connection(self):
         self.__is_client_connected_pub.publish(True)
