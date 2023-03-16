@@ -22,6 +22,7 @@ from niryo_robot_reports.srv import CheckConnection
 
 
 class ReportsNode:
+
     def __init__(self):
         self.__wait_booting()
         rospy.logdebug("Reports Node - Entering in Init")
@@ -31,12 +32,16 @@ class ReportsNode:
 
         get_cloud_domain_response = self.__get_setting('cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
+        get_rasp_id_response = self.__get_setting('rpi_uuid')
         get_api_key_response = self.__get_setting('api_key')
         get_sharing_allowed_response = self.__get_setting('sharing_allowed')
 
-        if get_serial_number_response.status != get_api_key_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to fetch either the serial number or the api key')
-
+        if get_serial_number_response.status != CommandStatus.SUCCESS:
+            rospy.logerr('Unable to fetch the serial number')
+        if get_api_key_response.status != CommandStatus.SUCCESS:
+            rospy.logerr('Unable to fetch the api key')
+        if get_rasp_id_response.status != CommandStatus.SUCCESS:
+            rospy.logerr('Unable to fetch the rasp id')
         if get_sharing_allowed_response.status != CommandStatus.SUCCESS:
             rospy.logwarn('Unable to fetch sharing allowed')
             get_sharing_allowed_response.value = False
@@ -44,15 +49,14 @@ class ReportsNode:
         self.__cloud_api = CloudAPI(
             get_cloud_domain_response.value,
             get_serial_number_response.value,
+            get_rasp_id_response.value,
             get_api_key_response.value,
             get_sharing_allowed_response.value,
         )
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
-            rospy.logerr(
-                'Unable to retrieve the reports directory path from the database'
-            )
+            rospy.logerr('Unable to retrieve the reports directory path from the database')
         reports_path = os.path.expanduser(get_report_path_response.value)
         if not os.path.isdir(reports_path):
             mkpath(reports_path)
@@ -115,12 +119,12 @@ class ReportsNode:
             self.__cloud_api.set_api_key(req.value)
         elif req.name == 'sharing_allowed':
             self.__cloud_api.set_sharing_allowed(req.value == 'True')
+        elif req.name == 'rpi_uuid':
+            self.__cloud_api.set_rasp_id(req.value)
 
 
 if __name__ == "__main__":
-    rospy.init_node(
-        'niryo_robot_reports', anonymous=False, log_level=rospy.INFO
-    )
+    rospy.init_node('niryo_robot_reports', anonymous=False, log_level=rospy.INFO)
 
     try:
         node = ReportsNode()

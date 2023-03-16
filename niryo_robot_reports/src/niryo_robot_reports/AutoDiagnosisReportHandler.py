@@ -12,6 +12,8 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_programs_manager.srv import ExecuteProgram, ExecuteProgramRequest
 from niryo_robot_reports.srv import RunAutoDiagnosis
 
+from niryo_robot_reports.CloudAPI import MicroServiceError
+
 from niryo_robot_metrics.TuptimeWrapper import TuptimeWrapper
 from niryo_robot_metrics.PsutilWrapper import PsutilWrapper
 
@@ -58,11 +60,11 @@ class AutoDiagnosisReportHandler:
         report['metrics'] = list(self.__tuptime_wrapper.data.values()) + list(self.__psutil_wrapper.data.values())
 
         report['date'] = datetime.now().isoformat()
-        success = self.__cloud_api.auto_diagnosis_reports.send(report)
-
         rospy.logdebug(report)
-
-        if not success:
+        try:
+            self.__cloud_api.auto_diagnosis_reports.send(report)
+        except MicroServiceError as microservice_error:
+            rospy.logerr(str(microservice_error))
             return CommandStatus.REPORTS_SENDING_FAIL, 'Unable to send the report'
 
         return CommandStatus.SUCCESS, 'Report sent successfully'

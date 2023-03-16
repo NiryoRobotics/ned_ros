@@ -7,6 +7,7 @@ from datetime import datetime
 
 import rospy
 from niryo_robot_metrics.PsutilWrapper import PsutilWrapper
+from niryo_robot_reports.CloudAPI import MicroServiceError
 
 
 class CheckFrequencies(Enum):
@@ -76,9 +77,12 @@ class AlertReportHandler:
             self.__send_report(metric_checker)
 
     def __send_report(self, metric_checker):
-        self.__cloud_api.alert_reports.send({
-            'metric': metric_checker.metric_name, 'value': metric_checker.value, 'date': datetime.now().isoformat()
-        })
+        try:
+            self.__cloud_api.alert_reports.send({
+                'metric': metric_checker.metric_name, 'value': metric_checker.value, 'date': datetime.now().isoformat()
+            })
+        except MicroServiceError as microservice_error:
+            rospy.logerr(str(microservice_error))
 
     def __run(self):
         clock_frequency = 1
