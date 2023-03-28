@@ -1,5 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Lib
+import functools
+
 import rospy
 
 from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
@@ -14,6 +16,7 @@ from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 
 from conveyor_interface.msg import ConveyorFeedbackArray
+from niryo_robot_arm_commander.msg import PausePlanExecution
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_status.msg import RobotStatus
@@ -30,12 +33,39 @@ from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
 
 from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
 
+from niryo_robot_python_ros_wrapper.CollisionPolicy import CollisionPolicy
+
+
+def move_command(move_function):
+
+    @functools.wraps(move_function)
+    def wrapper(self, *args, **kwargs):
+        # check if a collision happened previously
+        if self._collision_detected:
+            rospy.logerr(f'{move_function.__name__} called with collision_detected still raised')
+            raise NiryoRosWrapperException(
+                'clear_collision_detected() must be called before attempting a new move command')
+
+        result = move_function(self, *args, **kwargs)
+
+        # check if a collision happened during the move
+        status, message = result
+        if status == CommandStatus.ABORTED:
+            self._collision_detected = True
+            if self._collision_policy == CollisionPolicy.HARD:
+                raise NiryoRosWrapperException(message)
+        return result
+
+    return wrapper
+
 
 class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
-    def __init__(self, internal=False):
+    def __init__(self, collision_policy=CollisionPolicy.HARD):
         super(NiryoRosWrapper, self).__init__()
-        self.__internal = internal
+        self._collision_detected = False
+        self._collision_policy = collision_policy
+
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
@@ -44,10 +74,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if self.__hardware_version in ['ned', 'ned2']:
             self.__node_name = rospy.get_name()
             self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
-            if not internal:
-                rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
-                self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
-                self.__advertise_ros_wrapper_srv(self.__node_name, True)
+            rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
+            self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
+            self.__advertise_ros_wrapper_srv(self.__node_name, True)
             rospy.on_shutdown(self.__advertise_stop)
 
         # - Publishers
@@ -60,6 +89,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__break_point_publisher = rospy.Publisher('/niryo_robot_blockly/break_point', Int32, queue_size=10)
 
         # -- Subscribers
+
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
@@ -126,8 +156,15 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         rospy.loginfo("Python ROS Wrapper ready")
 
+    @property
+    def collision_detected(self):
+        return self._collision_detected
+
+    def clear_collision_detected(self):
+        self._collision_detected = False
+
     def __advertise_stop(self):
-        if self.__hardware_version in ['ned', 'ned2'] and self.__internal:
+        if self.__hardware_version in ['ned', 'ned2']:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
             except [rospy.ServiceException, rospy.ROSException]:
@@ -325,6 +362,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         p = self.get_pose()
         return [p.position.x, p.position.y, p.position.z, p.rpy.roll, p.rpy.pitch, p.rpy.yaw]
 
+    @move_command
     def move_joints(self, j1, j2, j3, j4, j5, j6):
         """
         Executes Move joints action
@@ -348,6 +386,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         goal = RobotMoveGoal(cmd=cmd)
         return self.__robot_action_nac.execute(goal)
 
+    @move_command
     def move_to_sleep_pose(self):
         """
         Moves to Sleep pose which allows the user to activate the learning mode without the risk
@@ -358,6 +397,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.move_joints(0.0, 0.50, -1.25, 0.0, 0.0, 0.0)
 
+    @move_command
     def move_pose(self, x, y, z, roll, pitch, yaw, frame=''):
         """
         Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose,
@@ -408,6 +448,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         x, y, z, roll, pitch, yaw = self.get_pose_saved(pose_name)
         return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
 
+    @move_command
     def __move_pose_with_cmd(self, cmd_type, *pose):
         """
         Executes Move pose action
@@ -423,6 +464,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         goal = RobotMoveGoal(cmd=cmd)
         return self.__robot_action_nac.execute(goal)
 
+    @move_command
     def shift_pose(self, axis, value):
         """
         Executes Shift pose action
@@ -439,6 +481,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         goal = RobotMoveGoal(cmd=cmd)
         return self.__robot_action_nac.execute(goal)
 
+    @move_command
     def shift_linear_pose(self, axis, value):
         """
         Executes Shift pose action with a linear trajectory
@@ -490,6 +533,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
+    @move_command
     def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
         """
         Calls robot action service to draw a spiral trajectory
@@ -1020,6 +1064,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
         return self._classic_return_w_check(result)
 
+    @move_command
     def __execute_trajectory_from_formatted_poses(self, list_poses, dist_smoothing=0.0):
 
         goal = RobotMoveGoal()
@@ -1028,6 +1073,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         goal.cmd.dist_smoothing = dist_smoothing
         return self.__robot_action_nac.execute(goal)
 
+    @move_command
     def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
         goal = RobotMoveGoal()
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
@@ -1328,6 +1374,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         rot = RPY(*euler)
         return point, rot
 
+    @move_command
     def move_relative(self, offset, frame="world"):
         """
         Move robot end of a offset in a frame
@@ -1347,6 +1394,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self.__robot_action_nac.execute(goal)
 
+    @move_command
     def move_linear_relative(self, offset, frame="world"):
         """
         Move robot end of a offset by a linear movement in a frame
@@ -2088,13 +2136,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         ratio = self.get_workspace_ratio(workspace_name)
         response = self._call_service("/niryo_robot_vision/obj_detection_rel", ObjDetection, shape, color, ratio, False)
-        if response.status == CommandStatus.SUCCESS:
-            return True, response.obj_pose, response.obj_type, response.obj_color
-        elif response.status == CommandStatus.MARKERS_NOT_FOUND:
+
+        if response.status == CommandStatus.MARKERS_NOT_FOUND:
             rospy.logwarn_throttle(1, 'ROS Wrapper - Markers Not Found')
         elif response.status == CommandStatus.VIDEO_STREAM_NOT_RUNNING:
             rospy.logwarn_throttle(1, 'Video Stream not running')
-        return response
+
+        object_detected = response.status == CommandStatus.SUCCESS
+        return object_detected, response.obj_pose, response.obj_type, response.obj_color
 
     def get_camera_intrinsics(self):
         """
@@ -2217,7 +2266,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         result = self._call_service('/niryo_robot_poses_handlers/get_workspace_ratio', GetWorkspaceRatio, name)
         self._check_result_status(result)
-        return result
+        return result.ratio
 
     def get_workspace_list(self, with_desc=False):
         """

@@ -31,9 +31,13 @@ class ABCMicroService(ABC):
 
 
 class ABCReportMicroService(ABCMicroService):
+    RESOURCE_URI = ''
+
+    def __init__(self, base_url, header):
+        super().__init__(base_url, header)
 
     def ping(self):
-        endpoint = f'{self._base_url}/{self.MICROSERVICE_URI}/ping'
+        endpoint = f'{self._base_url}/ping'
         try:
             response = requests.get(endpoint, headers=self._headers)
         except requests.ConnectionError as e:
@@ -43,8 +47,10 @@ class ABCReportMicroService(ABCMicroService):
         return response.status_code == 200
 
     def send(self, payload):
+        endpoint = f'{self._base_url}/{self.MICROSERVICE_URI}'
         try:
-            response = requests.post(self._base_url, headers=self._headers, json=payload)
+            rospy.loginfo(f'url: {endpoint}, headers: {self._headers}, payload: {payload}')
+            response = requests.post(endpoint, headers=self._headers, json=payload)
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
@@ -72,7 +78,6 @@ class AuthentificationMS(ABCMicroService):
                                     code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
 
         json = response.json()
-        rospy.loginfo(json)
         if response.status_code != 200 or response.status_code == 200 and json['error'] is True:
             raise MicroServiceError(
                 f'{url}: {self.__class__.__name__} responded with status {response.status_code}: {response.text}',
@@ -112,12 +117,15 @@ class CloudAPI(object):
         self.__base_url = '{}://{}'.format('https' if https else 'http', domain)
         self.__url = self.__base_url
         self.__sharing_allowed = sharing_allowed
+        if not serial_number and not rasp_id:
+            raise ValueError('There must be at least a serial number or a rasp id')
         self.__headers = {
             'accept': 'application/json',
-            'serialNumber': serial_number,
-            'raspId': rasp_id,
+            'identifier': rasp_id,
             'apiKey': api_key,
         }
+        if serial_number != '':
+            self.__headers['serialNumber'] = serial_number
         self.__microservices = {}
         self.__init_microservices()
 

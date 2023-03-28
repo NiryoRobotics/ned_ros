@@ -76,6 +76,8 @@ class NiryoActionClient(object):
             return CommandStatus.REJECTED, "Goal has been rejected : {}".format(response.message)
         elif goal_state == GoalStatus.ABORTED:
             return CommandStatus.ABORTED, "Goal has been aborted : {}".format(response.message)
+        elif goal_state == GoalStatus.PREEMPTED:
+            return CommandStatus.PREEMPTED, "Goal has been preempted: {}".format(response.message)
         elif goal_state != GoalStatus.SUCCEEDED:
             return CommandStatus.FAILURE, "Error when processing goal : {}".format(response.message)
 

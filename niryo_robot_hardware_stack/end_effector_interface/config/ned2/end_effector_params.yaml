@@ -1,2 +1,2 @@
 hardware_type : "end_effector"
-collision_thresh : 3.5
+collision_thresh : 6.5

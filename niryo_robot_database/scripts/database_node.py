@@ -11,7 +11,6 @@ from sqlite3 import OperationalError
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
 from niryo_robot_database.Settings import Settings, UnknownSettingsException
 from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
-from niryo_robot_database.RobotDatabase import RobotDatabase
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
@@ -22,6 +21,7 @@ from niryo_robot_database.srv import SetSettings, GetSettings, AddFilePath, GetA
 
 
 class DatabaseNode:
+
     def __init__(self):
         rospy.logdebug("Database Node - Entering in Init")
 
@@ -40,13 +40,16 @@ class DatabaseNode:
 
         self.__settings = Settings(sqlite_dao)
         self.__file_paths = FilePath(sqlite_dao)
-        self.__robot_db = RobotDatabase(sqlite_dao)
 
         rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
         rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
         rospy.Service('~file_paths/add', AddFilePath, self.__callback_add_file_path)
         rospy.Service('~file_paths/rm', RmFilePath, self.__callback_rm_file_path)
-        rospy.Service('~file_paths/get_all_by_type', GetAllByType, self.__callback_get_all_by_type, )
+        rospy.Service(
+            '~file_paths/get_all_by_type',
+            GetAllByType,
+            self.__callback_get_all_by_type,
+        )
 
         self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
 
@@ -77,9 +80,7 @@ class DatabaseNode:
 
     def __callback_add_file_path(self, req):
         try:
-            row_id = self.__file_paths.add_file_path(
-                req.type, req.name, req.path
-            )
+            row_id = self.__file_paths.add_file_path(req.type, req.name, req.path)
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, str(row_id)
@@ -92,8 +93,7 @@ class DatabaseNode:
             return CommandStatus.DATABASE_DB_ERROR, []
 
         res = [
-            FilePathMsg(id=x['id'], type=x['type'], name=x['name'], date=x['date'], path=x['path'])
-            for x in filepaths
+            FilePathMsg(id=x['id'], type=x['type'], name=x['name'], date=x['date'], path=x['path']) for x in filepaths
         ]
 
         return CommandStatus.SUCCESS, res
