@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Lib
 import rospy
@@ -104,8 +104,10 @@ class RobotCommanderNode:
 
         # Robot Action Server
         self.__current_goal_handle = actionlib.ServerGoalHandle()
-        self.__action_server = actionlib.ActionServer('~robot_action', RobotMoveAction,
-                                                      goal_cb=self.__callback_goal, cancel_cb=self.__callback_cancel,
+        self.__action_server = actionlib.ActionServer('~robot_action',
+                                                      RobotMoveAction,
+                                                      goal_cb=self.__callback_goal,
+                                                      cancel_cb=self.__callback_cancel,
                                                       auto_start=False)
         self.__action_server_thread = threading.Thread()
         self.__action_server_lock = threading.Lock()
@@ -163,10 +165,10 @@ class RobotCommanderNode:
             self.__pause_finished_event.clear()
             self.__cancel_command()
         elif msg.state == PausePlanExecution.CANCEL:
+            rospy.loginfo("Arm Commander - Receive Cancel Command from button")
             self.__pause_finished_event.set()
             self.__cancel_command()
-            rospy.loginfo("Arm Commander - Receive Cancel Command from button")
-        else:
+        elif msg.state == PausePlanExecution.RESUME:
             self.__pause_finished_event.set()
 
     def __callback_compute_trajectory(self, req):
@@ -225,8 +227,7 @@ class RobotCommanderNode:
                 if not self.__current_goal_is_active():
                     break
             else:
-                result = self.create_result(CommandStatus.GOAL_STILL_ACTIVE,
-                                            "Current command is still active")
+                result = self.create_result(CommandStatus.GOAL_STILL_ACTIVE, "Current command is still active")
                 goal_handle.set_rejected(result)
                 return
 
@@ -290,9 +291,14 @@ class RobotCommanderNode:
         It waits until the action finished and set goal_handle according to the result
         :return: None
         """
-        if self.__cancel_due_to_pause():
-            self.__reset_pause_play_state()
-            return
+        if self.__pause_state == PausePlanExecution.PAUSE:
+            while not self.__pause_finished_event.wait(1):
+                pass
+            self.__pause_finished_event.clear()
+            if self.__pause_state == PausePlanExecution.RESUME:
+                rospy.loginfo("Commander Action Serv - Resuming goal action")
+                return self.__execute_goal_action()
+
         try:
             cmd = self.__current_goal_handle.goal.goal.cmd
 
@@ -305,18 +311,8 @@ class RobotCommanderNode:
             rospy.loginfo("Commander Action Serv - An exception was "
                           "thrown during command execution : {}".format(e.message))
 
-        # Check if plan is paused and should be restarted
-        if self.__pause_state == PausePlanExecution.PAUSE:
-            if self.__cancel_due_to_pause():
-                self.__reset_pause_play_state()
-            elif self.__pause_state == PausePlanExecution.RESUME:
-                rospy.loginfo("Commander Action Serv - Resuming goal action")
-                return self.__execute_goal_action()
-            else:
-                self.__current_goal_handle.set_aborted(result)
-                rospy.logwarn("Commander Action Serv - Unknown result, goal has been set as aborted")
         # Check response
-        elif not response:
+        if not response:
             self.__current_goal_handle.set_aborted(result)
             rospy.logwarn("Commander Action Serv - Execution has been aborted")
         elif response.status == CommandStatus.SUCCESS:
@@ -328,15 +324,12 @@ class RobotCommanderNode:
         elif response.status == CommandStatus.CONTROLLER_PROBLEMS:
             self.__cancel_command()
             self.__current_goal_handle.set_aborted(result)
-            rospy.logwarn("Commander Action Serv - Controller failed during execution : " +
-                          "Goal has been aborted.\n" +
+            rospy.logwarn("Commander Action Serv - Controller failed during execution : " + "Goal has been aborted.\n" +
                           "This is due to either a collision, or a motor unable to follow a given command" +
                           " (overload, extreme positions, ...)")
         else:
             self.__current_goal_handle.set_aborted(result)
             rospy.logwarn("Commander Action Serv - Unknown result, goal has been set as aborted")
-
-        self.__pause_finished_event.set()
 
     def __interpret_and_execute_command(self, cmd):
         """

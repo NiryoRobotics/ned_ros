@@ -19,6 +19,7 @@ class PosesTransformHandler:
     """
     This class uses a tfBuffer to handle transforms related to the vision kit.
     """
+
     def __init__(self, grip_manager, pose_handler_node):
         self.__tf_buffer = tf2_ros.Buffer()
         self.__debug_stop_event = threading.Event()
@@ -117,7 +118,6 @@ class PosesTransformHandler:
         t.header.stamp = stamp
         tmp_buffer.set_transform(t, "default_authority")
 
-        rospy.loginfo("ca va peter !")
         return tmp_buffer.lookup_transform("base_link", "tool_link_target", rospy.Time(0))
 
     def get_object_transform(self, x_off=0.0, y_off=0.0, z_off=0.0, roll_off=0.0, pitch_off=1.5708, yaw_off=0.0):

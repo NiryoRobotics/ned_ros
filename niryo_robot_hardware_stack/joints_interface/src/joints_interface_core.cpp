@@ -233,7 +233,7 @@ void JointsInterfaceCore::rosControlLoop()
             _robot->read(current_time, elapsed_time);
 
             // check if a collision is occurred, reset controller to stop robot
-            if (_ttl_interface->getCollisionStatus() && !_previous_state_learning_mode)
+            if (_ttl_interface->getCollisionStatus() && !_previous_state_learning_mode && !_robot->needCalibration())
             {
                 resetController();
                 ROS_WARN_THROTTLE(2.0, "JointsInterfaceCore: collision detected by End Effector");

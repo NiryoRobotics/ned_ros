@@ -45,7 +45,7 @@ class TopButton(AbstractTopButton):
 
     def _callback_robot_status(self, msg):
         self.__robot_status = msg
-        self._is_prog_running()
+        # self._is_prog_running()
 
     def _is_prog_running(self):
         is_prog_running = self.__robot_status.robot_status in [
@@ -55,13 +55,13 @@ class TopButton(AbstractTopButton):
             self.__robot_status.LEARNING_MODE_AUTONOMOUS
         ]
 
-        if self.__last_is_prog_running != is_prog_running:
-            self.__last_is_prog_running = is_prog_running
+        # if self.__last_is_prog_running != is_prog_running:
+        #     self.__last_is_prog_running = is_prog_running
 
-            if is_prog_running:
-                self._send_pause_state(PausePlanExecution.PLAY)
-            else:
-                self._send_pause_state(PausePlanExecution.STANDBY)
+        #     if is_prog_running:
+        #         self._send_pause_state(PausePlanExecution.PLAY)
+        #     else:
+        #         self._send_pause_state(PausePlanExecution.STANDBY)
 
         return is_prog_running
 
@@ -75,7 +75,7 @@ class TopButton(AbstractTopButton):
                 self.__button_action_done = False
                 self.last_time_button_pressed = rospy.Time.now()
 
-            # Get long press to cancle program
+            # Get long press to cancel program
             if not self.__button_action_done and (rospy.Time.now() - self.last_time_button_pressed).to_sec() > 2:
                 self.__button_action_done = True
 
