@@ -125,13 +125,13 @@ class ReportsNode:
 
     def __setting_update_callback(self, req):
         if req.name == 'serial_number':
-            self.__cloud_api.set_serial_number(req.value)
+            self.__cloud_api.set_identifier(req.value)
         elif req.name == 'api_key':
             self.__cloud_api.set_api_key(req.value)
         elif req.name == 'sharing_allowed':
             self.__cloud_api.set_sharing_allowed(req.value == 'True')
         elif req.name == 'rasp_id':
-            self.__cloud_api.set_rasp_id(req.value)
+            self.__cloud_api.set_identifier(req.value)
 
 
 if __name__ == "__main__":

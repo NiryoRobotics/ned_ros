@@ -66,7 +66,7 @@ class AuthentificationMS(ABCMicroService):
     MICROSERVICE_URI = 'authentification'
 
     def call(self):
-        url = f'{self._base_url}/token/{self._headers["raspId"]}'
+        url = f'{self._base_url}/token/{self._headers["identifier"]}'
         try:
             response = requests.get(url, headers=self._headers)
         except requests.ConnectionError as connection_error:
@@ -74,7 +74,7 @@ class AuthentificationMS(ABCMicroService):
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
 
         if response.status_code == 404:
-            raise MicroServiceError(f'There is no robot registered with the rasp id "{self._headers["raspId"]}',
+            raise MicroServiceError(f'There is no robot registered with the identifier "{self._headers["identifier"]}',
                                     code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
 
         json = response.json()
@@ -125,7 +125,7 @@ class CloudAPI(object):
             'apiKey': api_key,
         }
         if serial_number != '':
-            self.__headers['serialNumber'] = serial_number
+            self.__headers['identifier'] = serial_number
         self.__microservices = {}
         self.__init_microservices()
 
@@ -146,13 +146,9 @@ class CloudAPI(object):
                 'auto_diagnosis_reports': FakeReportMS(self.__base_url, self.__headers)
             })
 
-    def set_serial_number(self, value):
+    def set_identifier(self, value):
         for microservice in self.__microservices.values():
-            microservice.update_header('serialNumber', value)
-
-    def set_rasp_id(self, value):
-        for microservice in self.__microservices.values():
-            microservice.update_header('raspId', value)
+            microservice.update_header('identifier', value)
 
     def set_api_key(self, value):
         for microservice in self.__microservices.values():

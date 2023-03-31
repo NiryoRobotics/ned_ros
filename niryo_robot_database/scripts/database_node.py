@@ -30,11 +30,7 @@ class DatabaseNode:
         db_path = os.path.expanduser(sqlite_db_file_path)
 
         if not os.path.isfile(db_path):
-            package_path = rospkg.RosPack().get_path('niryo_robot_database')
-            file_path = os.path.join(package_path, 'sql', 'init.sh')
-            subprocess.call(['bash', file_path])
-            if not os.path.isfile(db_path):
-                rospy.logerr('Database Node - Unable to open the database. Did you run sql/init.sh ?')
+            raise RuntimeError('Database Node - Unable to open the database.')
 
         sqlite_dao = SQLiteDAO(db_path)
 
