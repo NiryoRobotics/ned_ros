@@ -30,30 +30,18 @@ class ReportsNode:
         rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
         self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
-        get_cloud_domain_response = self.__get_setting('cloud_domain')
-        get_serial_number_response = self.__get_setting('serial_number')
-        get_rasp_id_response = self.__get_setting('rasp_id')
-        get_api_key_response = self.__get_setting('api_key')
-        get_sharing_allowed_response = self.__get_setting('sharing_allowed')
+        settings = {}
+        for setting in ['cloud_domain', 'serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
+            response = self.__get_setting(setting)
+            setting_value = response.value
+            if response.status != CommandStatus.SUCCESS:
+                rospy.logerr(f'Unable to get setting "{setting}"')
+                setting_value = None
+            settings[setting] = setting_value
 
-        if get_serial_number_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to fetch the serial number')
-        if get_api_key_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to fetch the api key')
-        if get_rasp_id_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to fetch the rasp id')
-        if get_sharing_allowed_response.status != CommandStatus.SUCCESS:
-            rospy.logwarn('Unable to fetch sharing allowed')
-            get_sharing_allowed_response.value = False
+        self.__cloud_api = CloudAPI(**settings, https=True)
 
-        self.__cloud_api = CloudAPI(get_cloud_domain_response.value,
-                                    get_serial_number_response.value,
-                                    get_rasp_id_response.value,
-                                    get_api_key_response.value,
-                                    get_sharing_allowed_response.value,
-                                    https=True)
-
-        if not get_api_key_response.value and get_rasp_id_response.value:
+        if not settings['api_key'] and settings['api_key']:
             try:
                 api_key = self.__cloud_api.authentification.call()
                 self.__cloud_api.set_api_key(api_key)
@@ -61,7 +49,6 @@ class ReportsNode:
                 rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
                 set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
                 set_setting('api_key', api_key, 'str')
-
             except MicroServiceError as microservice_error:
                 rospy.logerr(microservice_error)
 

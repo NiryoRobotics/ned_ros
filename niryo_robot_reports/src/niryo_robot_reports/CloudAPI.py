@@ -54,7 +54,7 @@ class ABCReportMicroService(ABCMicroService):
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
         rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
-        if response.status_code != 200:
+        if not (200 <= response.status_code < 400):
             raise MicroServiceError(
                 (f'{self._base_url}: {self.__class__.__name__} '
                  f'responded with status {response.status_code}: {response.text}'),
@@ -113,24 +113,24 @@ class FakeReportMS(ABCReportMicroService):
 
 class CloudAPI(object):
 
-    def __init__(self, domain, serial_number, rasp_id, api_key, sharing_allowed, https=False):
-        self.__base_url = '{}://{}'.format('https' if https else 'http', domain)
-        self.__url = self.__base_url
+    def __init__(self, cloud_domain, serial_number, rasp_id, api_key, sharing_allowed, https=False):
+        self.__base_url = '{}://{}'.format('https' if https else 'http', cloud_domain)
+        self.__serial_number = serial_number
+        self.__rasp_id = rasp_id
         self.__sharing_allowed = sharing_allowed
-        if not serial_number and not rasp_id:
-            raise ValueError('There must be at least a serial number or a rasp id')
+
         self.__headers = {
             'accept': 'application/json',
-            'identifier': rasp_id,
+            'identifier': rasp_id or serial_number,
             'apiKey': api_key,
         }
-        if serial_number != '':
-            self.__headers['identifier'] = serial_number
         self.__microservices = {}
         self.__init_microservices()
 
     def __init_microservices(self):
-        self.__microservices = {'authentification': AuthentificationMS(self.__base_url, self.__headers)}
+        self.__microservices = {
+            'authentification': AuthentificationMS(self.__base_url, self.__headers),
+        }
         if self.__sharing_allowed:
             self.__microservices.update({
                 'daily_reports': DailyReportMS(self.__base_url, self.__headers),
@@ -146,9 +146,18 @@ class CloudAPI(object):
                 'auto_diagnosis_reports': FakeReportMS(self.__base_url, self.__headers)
             })
 
-    def set_identifier(self, value):
+    def __update_identifier(self):
+        identifier = self.__rasp_id or self.__serial_number
         for microservice in self.__microservices.values():
-            microservice.update_header('identifier', value)
+            microservice.update_header('identifier', identifier)
+
+    def set_serial_number(self, value):
+        self.__serial_number = value
+        self.__update_identifier()
+
+    def set_rasp_id(self, value):
+        self.__rasp_id = value
+        self.__update_identifier()
 
     def set_api_key(self, value):
         for microservice in self.__microservices.values():
