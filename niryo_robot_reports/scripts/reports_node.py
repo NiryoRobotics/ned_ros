@@ -43,7 +43,15 @@ class ReportsNode:
 
         try:
             self.__cloud_api.authentification.ping()
+<<<<<<< develop
         except MicroServiceError:
+=======
+        except MicroServiceError as microservice_error:
+            if microservice_error.code == MicroServiceError.Code.BAD_REQUEST_CONTENT:
+                self.__cloud_api.authentification.call()
+
+        if not settings['api_key']:
+>>>>>>> fix 404 with good api key
             try:
                 api_key = self.__cloud_api.authentification.authenticate()
                 self.__cloud_api.set_api_key(api_key)
@@ -51,6 +59,7 @@ class ReportsNode:
                 rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
                 set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
                 set_setting('api_key', api_key, 'str')
+                self.__cloud_api.set_api_key(api_key)
             except MicroServiceError as microservice_error:
                 rospy.logerr(str(microservice_error))
 

@@ -71,6 +71,13 @@ class AuthentificationMS(ABCMicroService):
             response = requests.post(endpoint, headers=self._headers, json={'identifier': self._headers['identifier']})
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
+<<<<<<< develop
+=======
+
+        if response.status_code == 404:
+            raise MicroServiceError(f'There is no robot registered with the identifier "{self._headers["identifier"]}',
+                                    code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
+>>>>>>> fix 404 with good api key
 
         try:
             json = response.json()
