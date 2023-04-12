@@ -88,6 +88,7 @@ class AuthentificationMS(ABCMicroService):
             raise MicroServiceError(f'Invalid json for response {response.text}',
                                     code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
 <<<<<<< develop
+<<<<<<< develop
         if 400 <= response.status_code < 500:
             raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
         elif 500 <= response.status_code:
@@ -107,6 +108,12 @@ class AuthentificationMS(ABCMicroService):
                 f'{endpoint}: {self.__class__.__name__} responded with status {response.status_code}: {json["message"]}',
                 code=MicroServiceError.Code.BAD_STATUS_CODE)
 >>>>>>> better status code handling
+=======
+        if 400 <= response.status_code < 500:
+            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
+        elif 500 <= response.status_code:
+            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.UNDEFINED)
+>>>>>>> correct status code handling
 
         if 'data' not in json or 'apikey' not in json['data']:
             raise MicroServiceError(f'{endpoint}: {self.__class__.__name__}: invalid data payload: {json}',
