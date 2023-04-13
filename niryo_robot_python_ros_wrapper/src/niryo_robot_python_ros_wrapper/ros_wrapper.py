@@ -1828,10 +1828,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.loginfo_throttle(1, 'ROS Wrapper - No new conveyor found')
         else:
             self._check_result_status(result)
+<<<<<<< develop
         conveyor_id = result.id
 
         return self.__conveyor_id_to_conveyor_number(conveyor_id)
 
+=======
+        return result.id
+>>>>>>> return conveyor id instead of service response
 
     def unset_conveyor(self, conveyor_id):
         """
