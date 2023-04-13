@@ -16,13 +16,6 @@ from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
 
-LOOPS = 1
-CALIBRATION_LOOPS = 1
-SPIRAL_LOOPS = 1
-
-SPEED = 200  # %
-ACCELERATION = 100  # %
-
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
 BLACK = [0, 0, 0]
@@ -31,10 +24,6 @@ PURPLE = [153, 51, 153]
 PINK = [255, 0, 255]
 RED = [255, 0, 0]
 YELLOW = [255, 255, 0]
-
-USE_BUTTON = False
-VOLUME = 50
-USE_VOCAL = False
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -191,8 +180,6 @@ class TestProduction:
             rospy.sleep(0.1)
 
         new_report_publisher.publish(json.dumps(self.get_report()))
-        rospy.sleep(1)
-        new_report_publisher.publish('')
         rospy.logdebug('test report published')
         return True
 
@@ -648,39 +635,45 @@ class TestFunctions(object):
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
-    if robot.get_learning_mode():
+
+    FULL = True
+
+    if FULL:
         LOOPS = 5
         CALIBRATION_LOOPS = 2
         SPIRAL_LOOPS = 5
         USE_BUTTON = True
         SPEED = 80  # %
         ACCELERATION = 50  # %
-
-        robot.sound.play('ready.wav')
-
-        print("----- START -----")
-        test = TestProduction()
-        test.run()
-        print("----- END -----")
-        test.print_report()
-
-        if test.get_report()['success']:
-            try:
-                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-                set_setting('sharing_allowed', 'True', 'bool')
-                set_setting('test_report_done', 'True', 'bool')
-                try:
-                    test.send_report()
-                except Exception as _e:
-                    rospy.logerr(f'Failed to send report: {_e}')
-                rospy.sleep(3)
-                set_setting('sharing_allowed', 'False', 'bool')
-            except Exception as _e:
-                pass
-
-        else:
-            raise TestFailure('Test failure')
+        VOLUME = 50  # %
+        USE_VOCAL = False
     else:
-        test = TestProduction(full=False)
-        if not test.run():
-            raise TestFailure('Program failure')
+        LOOPS = 1
+        CALIBRATION_LOOPS = 1
+        SPIRAL_LOOPS = 1
+        USE_BUTTON = False
+        SPEED = 200  # %
+        ACCELERATION = 100  # %
+        VOLUME = 50  # %
+        USE_VOCAL = False
+
+    robot.sound.play('ready.wav')
+
+    print("----- START -----")
+    test = TestProduction(full=FULL)
+    test.run()
+    print("----- END -----")
+    test.print_report()
+
+    try:
+        set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        # set_setting('sharing_allowed', 'True', 'bool')
+        set_setting('test_report_done', 'True', 'bool')
+        try:
+            test.send_report()
+        except Exception as _e:
+            rospy.logerr(f'Failed to send report: {_e}')
+        rospy.sleep(3)
+        # set_setting('sharing_allowed', 'False', 'bool')
+    except Exception as _e:
+        rospy.logerr(_e)

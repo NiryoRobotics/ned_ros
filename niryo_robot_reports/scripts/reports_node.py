@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Libs
 import os
@@ -6,9 +6,9 @@ import rospy
 from distutils.dir_util import mkpath
 
 from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
+from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.DailyReportHandler import DailyReportHandler
 from niryo_robot_reports.TestReportHandler import TestReportHandler
-from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 
 # msg
@@ -41,16 +41,18 @@ class ReportsNode:
 
         self.__cloud_api = CloudAPI(**settings, https=True)
 
-        if not settings['api_key'] and settings['api_key']:
+        try:
+            self.__cloud_api.authentification.ping()
+        except MicroServiceError:
             try:
-                api_key = self.__cloud_api.authentification.call()
+                api_key = self.__cloud_api.authentification.authenticate()
                 self.__cloud_api.set_api_key(api_key)
 
                 rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
                 set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
                 set_setting('api_key', api_key, 'str')
             except MicroServiceError as microservice_error:
-                rospy.logerr(microservice_error)
+                rospy.logerr(str(microservice_error))
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
@@ -65,8 +67,7 @@ class ReportsNode:
 
         DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        # TODO to be reactivated if needed
-        # AlertReportHandler(self.__cloud_api)
+        AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
