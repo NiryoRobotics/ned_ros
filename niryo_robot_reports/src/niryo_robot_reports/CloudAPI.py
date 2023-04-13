@@ -29,22 +29,23 @@ class ABCMicroService(ABC):
     def update_header(self, key, value):
         self._headers[key] = value
 
+    def ping(self):
+        endpoint = f'{self._base_url}/ping'
+        try:
+            response = requests.get(endpoint, headers=self._headers)
+        except requests.ConnectionError as e:
+            raise MicroServiceError(str(e))
+
+        if response.status_code == 404:
+            raise MicroServiceError('A call to the auth service may be needed',
+                                    code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
+
 
 class ABCReportMicroService(ABCMicroService):
     RESOURCE_URI = ''
 
     def __init__(self, base_url, header):
         super().__init__(base_url, header)
-
-    def ping(self):
-        endpoint = f'{self._base_url}/ping'
-        try:
-            response = requests.get(endpoint, headers=self._headers)
-        except requests.ConnectionError as e:
-            rospy.logdebug(e)
-            return False
-        rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
-        return response.status_code == 200
 
     def send(self, payload):
         endpoint = f'{self._base_url}/{self.MICROSERVICE_URI}'
@@ -53,7 +54,6 @@ class ABCReportMicroService(ABCMicroService):
             response = requests.post(endpoint, headers=self._headers, json=payload)
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
-        rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         if not (200 <= response.status_code < 400):
             raise MicroServiceError(
                 (f'{self._base_url}: {self.__class__.__name__} '
@@ -65,26 +65,25 @@ class ABCReportMicroService(ABCMicroService):
 class AuthentificationMS(ABCMicroService):
     MICROSERVICE_URI = 'authentification'
 
-    def call(self):
-        url = f'{self._base_url}/token/{self._headers["identifier"]}'
+    def authenticate(self):
+        endpoint = f'{self._base_url}/token'
         try:
-            response = requests.get(url, headers=self._headers)
+            response = requests.post(endpoint, headers=self._headers, json={'identifier': self._headers['identifier']})
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
-        rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
 
-        if response.status_code == 404:
-            raise MicroServiceError(f'There is no robot registered with the identifier "{self._headers["identifier"]}',
-                                    code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
-
-        json = response.json()
-        if response.status_code != 200 or response.status_code == 200 and json['error'] is True:
-            raise MicroServiceError(
-                f'{url}: {self.__class__.__name__} responded with status {response.status_code}: {response.text}',
-                code=MicroServiceError.Code.BAD_STATUS_CODE)
+        try:
+            json = response.json()
+        except requests.exceptions.JSONDecodeError:
+            raise MicroServiceError(f'Invalid json for response {response.text}',
+                                    code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
+        if 400 <= response.status_code < 500:
+            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
+        elif 500 <= response.status_code:
+            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.UNDEFINED)
 
         if 'data' not in json or 'apikey' not in json['data']:
-            raise MicroServiceError(f'{url}: {self.__class__.__name__}: invalid data payload: {json}',
+            raise MicroServiceError(f'{endpoint}: {self.__class__.__name__}: invalid data payload: {json}',
                                     code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
         return json['data']['apikey']
 
@@ -117,7 +116,8 @@ class CloudAPI(object):
         self.__base_url = '{}://{}'.format('https' if https else 'http', cloud_domain)
         self.__serial_number = serial_number
         self.__rasp_id = rasp_id
-        self.__sharing_allowed = sharing_allowed
+        # bypass sharing allowed
+        self.__sharing_allowed = True
 
         self.__headers = {
             'accept': 'application/json',

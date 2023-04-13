@@ -14,7 +14,7 @@ from niryo_robot_programs_manager.srv import GetProgramList, GetProgramListReque
 from niryo_robot_programs_manager.srv import ManageProgram, ManageProgramRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest
 
-python_language_msg = ProgramLanguage(ProgramLanguage.PYTHON2)
+python_language_msg = ProgramLanguage(ProgramLanguage.PYTHON3)
 blockly_language_msg = ProgramLanguage(ProgramLanguage.BLOCKLY)
 
 

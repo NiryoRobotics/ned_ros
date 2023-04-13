@@ -45,7 +45,7 @@ class AutoDiagnosisReportHandler:
             code_string = f.read()
 
         req = ExecuteProgramRequest(execute_from_string=True, name='', code_string=code_string)
-        req.language.used = ProgramLanguage.PYTHON2
+        req.language.used = ProgramLanguage.PYTHON3
         rospy.logdebug('Executing the auto-diagnosis script...')
         res = self.__execute_program_service(req)
 
