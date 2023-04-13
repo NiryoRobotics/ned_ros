@@ -65,6 +65,7 @@ class ReportsNode:
                 rospy.logerr(str(microservice_error))
 =======
         except MicroServiceError:
+<<<<<<< develop
             api_key = self.__cloud_api.authentification.authenticate()
             self.__cloud_api.set_api_key(api_key)
 
@@ -72,6 +73,17 @@ class ReportsNode:
             set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
             set_setting('api_key', api_key, 'str')
 >>>>>>> better status code handling
+=======
+            try:
+                api_key = self.__cloud_api.authentification.authenticate()
+                self.__cloud_api.set_api_key(api_key)
+
+                rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
+                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+                set_setting('api_key', api_key, 'str')
+            except MicroServiceError as microservice_error:
+                rospy.logerr(str(microservice_error))
+>>>>>>> still catch exception
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
