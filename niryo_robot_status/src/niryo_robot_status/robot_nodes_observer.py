@@ -28,7 +28,8 @@ class RobotNodesObserver(object):
         self.__check_nodes_timer = None
 
         self.__python_wrapper_nodes = set()
-        self.__advertise_python_ros_wrapper = rospy.Service('~ping_ros_wrapper', Ping,
+        self.__advertise_python_ros_wrapper = rospy.Service('~ping_ros_wrapper',
+                                                            Ping,
                                                             self.__callback_python_ros_wrapper_node)
 
         self.__handle_pyniryo_connection_loop = Thread(target=self.check_pyniryo_connection_loop)
@@ -37,7 +38,7 @@ class RobotNodesObserver(object):
         self.__pyniryo_nodes_sub = rospy.Subscriber('/ping_pyniryo', Bool, self.__callback_pyniryo_nodes)
 
     def __callback_python_ros_wrapper_node(self, req):
-        if req.name not in ['/niryo_robot_user_interface', '/system_software_node', '']:
+        if req.name not in ['/niryo_robot_user_interface', '/system_software_node', '/niryo_robot_modbus', '']:
             if req.state:
                 self.__python_wrapper_nodes.add(req.name)
             elif req.name in self.__python_wrapper_nodes:
@@ -70,11 +71,15 @@ class RobotNodesObserver(object):
         except rosnode.ROSNodeIOException:
             alive_nodes = []
 
-        self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
-                                       pywrapper_node in alive_nodes}
+        self.__python_wrapper_nodes = {
+            pywrapper_node
+            for pywrapper_node in self.__python_wrapper_nodes if pywrapper_node in alive_nodes
+        }
 
-        missing_nodes = [vital_node for vital_node in self.__vital_nodes
-                         if vital_node not in alive_nodes or not rosnode.rosnode_ping(vital_node, 1)]
+        missing_nodes = [
+            vital_node for vital_node in self.__vital_nodes
+            if vital_node not in alive_nodes or not rosnode.rosnode_ping(vital_node, 1)
+        ]
 
         self.__are_vital_nodes_alive = not bool(missing_nodes)
         self.__missing_vital_nodes = missing_nodes

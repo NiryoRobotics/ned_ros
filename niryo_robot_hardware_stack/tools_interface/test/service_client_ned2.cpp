@@ -17,17 +17,18 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include "common/model/tool_state.hpp"
+#include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
-#include <gtest/gtest.h>
 #include <vector>
-#include "common/model/tool_state.hpp"
 
 #include "tools_interface/tools_interface_core.hpp"
 
 #include "ttl_driver/ttl_interface_core.hpp"
 
 #include <XmlRpcValue.h>
+#include <memory>
 #include <iostream>
 #include <string>
 
@@ -47,7 +48,7 @@ TEST(ToolTestConfigSuite, correctPath)
 
 /**
  * @brief Test checks config does not miss any param
- * 
+ *
  */
 TEST(ToolTestConfigSuite, correctSize)
 {
@@ -119,30 +120,27 @@ TEST(ToolTestSetTool, addTool)
 
 class ToolTestControlSuite : public ::testing::Test
 {
-    protected:
-        static void SetUpTestCase()
-        {
-            pingTool();
-        }
+  protected:
+    static void SetUpTestCase() { pingTool(); }
 
-        static void pingTool()
-        {
-            auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+    static void pingTool()
+    {
+        auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
-            bool exists(client.waitForExistence(ros::Duration(1)));
-            EXPECT_TRUE(exists);
+        bool exists(client.waitForExistence(ros::Duration(1)));
+        EXPECT_TRUE(exists);
 
-            tools_interface::PingDxlTool srv_ping;
-            client.call(srv_ping);
+        tools_interface::PingDxlTool srv_ping;
+        client.call(srv_ping);
 
-            // Continue only if set tool successfully
-            int res = common::model::ToolState::TOOL_STATE_PING_OK;
-            ASSERT_EQ(srv_ping.response.state, res);
+        // Continue only if set tool successfully
+        int res = common::model::ToolState::TOOL_STATE_PING_OK;
+        ASSERT_EQ(srv_ping.response.state, res);
 
-            id = srv_ping.response.tool.id;
-        }
+        id = srv_ping.response.tool.id;
+    }
 
-        static int id;
+    static int id;
 };
 
 int ToolTestControlSuite::id;
@@ -285,7 +283,8 @@ TEST_F(ToolTestControlSuite, closeToolWrongId)
 
 TEST_F(ToolTestControlSuite, PullAirVacuumPump)
 {
-    if (id != 31) return;
+    if (id != 31)
+        return;
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
@@ -317,7 +316,8 @@ TEST_F(ToolTestControlSuite, PullAirVacuumPump)
 
 TEST_F(ToolTestControlSuite, PushAirVacuumPump)
 {
-    if (id != 31) return;
+    if (id != 31)
+        return;
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
@@ -377,7 +377,7 @@ int main(int argc, char **argv)
 
     // remove manual tests if automatic mode
     if (!manual_tests)
-      testing::GTEST_FLAG(filter) = "-ToolTestControlSuiteManual.*";
+        testing::GTEST_FLAG(filter) = "-ToolTestControlSuiteManual.*";
 
     return RUN_ALL_TESTS();
 }

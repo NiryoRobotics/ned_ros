@@ -1,9 +1,9 @@
 import rospy
 
-from robot_status_enums import *
-from robot_status_observer import RobotStatusObserver
-from robot_nodes_observer import RobotNodesObserver
-from robot_logs_observer import RobotLogsObserver
+from .robot_status_enums import *
+from .robot_status_observer import RobotStatusObserver
+from .robot_nodes_observer import RobotNodesObserver
+from .robot_logs_observer import RobotLogsObserver
 
 # - Messages
 from niryo_robot_status.msg import RobotStatus
@@ -37,7 +37,8 @@ class RobotStatusHandler(object):
         self.__robot_status_pub = rospy.Publisher('~robot_status', RobotStatus, latch=True, queue_size=10)
 
         # - Services
-        self.__advertise_shutdown_service = rospy.Service('~advertise_shutdown', AdvertiseShutdown,
+        self.__advertise_shutdown_service = rospy.Service('~advertise_shutdown',
+                                                          AdvertiseShutdown,
                                                           self.__callback_advertise_shutdown)
 
         # - Handle shutdown
@@ -92,7 +93,7 @@ class RobotStatusHandler(object):
                         self.__publish()
             rate.sleep()
 
-        rospy.loginfo('\033[5;34;1m\(^-^)/ \033[3mRobot ready to receive commands! \033[0;5;34;1m\(^-^)/\033[0m')
+        rospy.loginfo('\033[5;34;1m\\(^-^)/ \033[3mRobot ready to receive commands! \033[0;5;34;1m\\(^-^)/\033[0m')
 
         self.__robot_message = ""
         self.__build_robot_status()
@@ -165,8 +166,8 @@ class RobotStatusHandler(object):
         self.__robot_status_pub.publish(robot_status_msg)
 
         if RobotStatus.SHUTDOWN < robot_status_msg.robot_status < RobotStatus.NONE:
-            rospy.logwarn(
-                "[Robot Status] - {} - {}".format(robot_status_msg.robot_status_str, robot_status_msg.robot_message))
+            rospy.logwarn("[Robot Status] - {} - {}".format(robot_status_msg.robot_status_str,
+                                                            robot_status_msg.robot_message))
 
     def __check_hardware_error(self):
         new_robot_status = RobotStatus.UNKNOWN
@@ -184,8 +185,7 @@ class RobotStatusHandler(object):
                 if motor_error and not (motor_index > 5 and motor_error == "Overload"):
                     new_robot_status = RobotStatus.MOTOR_ERROR
                     new_robot_message += "{}: {}\n".format(
-                        self.__robot_status_observer.hardware_status.motor_names[motor_index],
-                        motor_error)
+                        self.__robot_status_observer.hardware_status.motor_names[motor_index], motor_error)
 
         return new_robot_status, new_robot_message
 

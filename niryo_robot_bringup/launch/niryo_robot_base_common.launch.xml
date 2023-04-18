@@ -11,7 +11,7 @@
     <arg name="simulation_mode" default="false"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="simu_conveyor" default="false"/>
-    <arg name="conf_location" value="~/.config/niryo"/>
+    <arg name="conf_location" value="~/niryo_robot_saved_files/.config"/>
 
     <!-- for conveniency -->
     <arg name="ros_version" value="$(env ROS_DISTRO)"/>

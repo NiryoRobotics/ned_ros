@@ -180,7 +180,16 @@ class TrajectoriesExecutor:
         :return: the computed plan if MoveIt succeed else None
         """
         plan = self.__arm.plan()
-        return None if not plan.joint_trajectory.points else plan
+
+        # handle changes between melodic / noetic
+        if isinstance(plan, RobotTrajectory):
+            return None if not plan.joint_trajectory.points else plan
+        else:
+            success, trajectory, planning_time, error_code = plan
+            if not success or not trajectory.joint_trajectory.points:
+                return None
+            else:
+                return trajectory
 
     def compute_and_execute_cartesian_plan(self, list_poses, velocity_factor=1.0, acceleration_factor=1.0):
         """
@@ -302,9 +311,9 @@ class TrajectoriesExecutor:
 
     def plan(self):
         for _ in range(self.__compute_plan_max_tries):
-            partial_plan = self.__arm.plan()
-            if len(partial_plan.joint_trajectory.points) != 0:
-                return partial_plan
+            plan = self.__get_computed_plan()
+            if plan is not None:
+                return plan
         else:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "No trajectory found.")
 

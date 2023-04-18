@@ -17,11 +17,11 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-
-#include <ros/ros.h>
-#include <ros/service_client.h>
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include <gtest/gtest.h>
+#include <memory>
+#include <ros/ros.h>
+#include <ros/service_client.h>
 
 #include <string>
 
@@ -50,18 +50,18 @@ void wait_spin(double t)
  * @brief waitForMessage
  * @param msg
  */
-void waitForMessage(const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg)
+void waitForMessage(const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg)
 {
     size_t i = 0;
     while (ros::ok() && msg == nullptr && i < MAX_FAILURES)
     {
-      ros::spinOnce();
-      ros::WallDuration(0.1).sleep();
-      ++i;
+        ros::spinOnce();
+        ros::WallDuration(0.1).sleep();
+        ++i;
     }
     if (i == MAX_FAILURES)
     {
-      ADD_FAILURE();
+        ADD_FAILURE();
     }
 
     wait_spin(2.0);
@@ -70,20 +70,18 @@ void waitForMessage(const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg
 /**
  * @brief The ConveyorInterfaceAutoTestSuite class
  */
-class ConveyorInterfaceTestSuiteAuto : public ::testing::Test {
-protected:
-  static void SetUpTestCase()
-  {
-    ROS_INFO("SetupTestCase : Auto");
-    _nh_private = std::make_unique<ros::NodeHandle>("~");
-  }
+class ConveyorInterfaceTestSuiteAuto : public ::testing::Test
+{
+  protected:
+    static void SetUpTestCase()
+    {
+        ROS_INFO("SetupTestCase : Auto");
+        _nh_private = std::make_unique<ros::NodeHandle>("~");
+    }
 
-  static void TearDownTestCase()
-  {
-    ROS_INFO("TearDownTestCase : Auto");
-  }
+    static void TearDownTestCase() { ROS_INFO("TearDownTestCase : Auto"); }
 
-  static std::shared_ptr<ros::NodeHandle> _nh_private;
+    static std::shared_ptr<ros::NodeHandle> _nh_private;
 };
 
 std::shared_ptr<ros::NodeHandle> ConveyorInterfaceTestSuiteAuto::_nh_private;
@@ -91,17 +89,12 @@ std::shared_ptr<ros::NodeHandle> ConveyorInterfaceTestSuiteAuto::_nh_private;
 /**
  * @brief The ConveyorInterfaceManualTestSuite class
  */
-class ConveyorInterfaceTestSuiteManual : public ::testing::Test {
-protected:
-  static void SetUpTestCase()
-  {
-    ROS_INFO("SetupTestCase : Manual");
-  }
+class ConveyorInterfaceTestSuiteManual : public ::testing::Test
+{
+  protected:
+    static void SetUpTestCase() { ROS_INFO("SetupTestCase : Manual"); }
 
-  static void TearDownTestCase()
-  {
-    ROS_INFO("TearDownTestCase : Manual");
-  }
+    static void TearDownTestCase() { ROS_INFO("TearDownTestCase : Manual"); }
 };
 
 //************************
@@ -148,7 +141,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor1)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -157,13 +150,13 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor1)
     size_t i = 0;
     while (ros::ok() && pcl->conveyors.empty() && i < MAX_FAILURES)
     {
-      ros::spinOnce();
-      ros::WallDuration(0.1).sleep();
-      ++i;
+        ros::spinOnce();
+        ros::WallDuration(0.1).sleep();
+        ++i;
     }
     if (i == MAX_FAILURES)
     {
-      ADD_FAILURE();
+        ADD_FAILURE();
     }
 
     auto conv_vec = pcl->conveyors;
@@ -197,7 +190,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor2)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -214,7 +207,6 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor2)
 
     wait_spin(WAITING_TIME);
 }
-
 
 TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor3)
 {
@@ -236,8 +228,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor3)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
-
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -253,7 +244,6 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor3)
 
     wait_spin(WAITING_TIME);
 }
-
 
 //************************
 //    One conveyor
@@ -275,7 +265,6 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyorWrongId)
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID);
 }
-
 
 //************************
 //    One conveyor
@@ -355,12 +344,12 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
 
     for (int i = 0; i < 10; ++i)
     {
-      ROS_WARN("################### Wait for second conveyor to be manually connected: (%d s) ###################", i);
-      ros::Duration(1).sleep();
+        ROS_WARN("################### Wait for second conveyor to be manually connected: (%d s) ###################", i);
+        ros::Duration(1).sleep();
 
-      client.call(srv);
-      if (niryo_robot_msgs::CommandStatus::SUCCESS == srv.response.status)
-        break;
+        client.call(srv);
+        if (niryo_robot_msgs::CommandStatus::SUCCESS == srv.response.status)
+            break;
     }
 
     // set second conveyor
@@ -373,7 +362,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -390,46 +379,46 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
 
 TEST_F(ConveyorInterfaceTestSuiteManual, removeAndResetConveyor)
 {
-  auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
-  // remove first conveyor
-  conveyor_interface::SetConveyor srv_rm;
-  srv_rm.request.id = 9;
-  srv_rm.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
-  client.call(srv_rm);
+    // remove first conveyor
+    conveyor_interface::SetConveyor srv_rm;
+    srv_rm.request.id = 9;
+    srv_rm.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
+    client.call(srv_rm);
 
-  EXPECT_EQ(srv_rm.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
-  wait_spin(WAITING_TIME);
+    EXPECT_EQ(srv_rm.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+    wait_spin(WAITING_TIME);
 
-  // reset first conveyor -> now the order of the conveyors should be inverted
-  conveyor_interface::SetConveyor srv_set;
-  srv_set.request.id = 8;
-  srv_set.request.cmd = conveyor_interface::SetConveyor::Request::ADD;
-  client.call(srv_set);
+    // reset first conveyor -> now the order of the conveyors should be inverted
+    conveyor_interface::SetConveyor srv_set;
+    srv_set.request.id = 8;
+    srv_set.request.cmd = conveyor_interface::SetConveyor::Request::ADD;
+    client.call(srv_set);
 
-  EXPECT_EQ(srv_set.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
-  EXPECT_EQ(srv_set.response.id, srv_rm.request.id);
+    EXPECT_EQ(srv_set.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+    EXPECT_EQ(srv_set.response.id, srv_rm.request.id);
 
-  wait_spin(WAITING_TIME);
+    wait_spin(WAITING_TIME);
 
-  // subscribe to feedback
+    // subscribe to feedback
 
-  conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
-  auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                  [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+    conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
+    auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
-  waitForMessage(pcl);
+    waitForMessage(pcl);
 
-  EXPECT_EQ(subscriber.getNumPublishers(), 1U);
-  wait_spin(2.0);
+    EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
-  auto conv_vec = pcl->conveyors;
-  ASSERT_EQ(conv_vec.size(), 2U);
+    auto conv_vec = pcl->conveyors;
+    ASSERT_EQ(conv_vec.size(), 2U);
 
-  EXPECT_NE(conv_vec.at(0).conveyor_id, conv_vec.at(1).conveyor_id);
-  EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_rm.request.id);  // expect first id to be now second
+    EXPECT_NE(conv_vec.at(0).conveyor_id, conv_vec.at(1).conveyor_id);
+    EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_rm.request.id);  // expect first id to be now second
 
-  wait_spin(WAITING_TIME);
+    wait_spin(WAITING_TIME);
 }
 
 TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
@@ -438,7 +427,6 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
-
 
     conveyor_interface::ControlConveyor srv_1;
     srv_1.request.id = 9;
@@ -461,8 +449,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
-
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -528,8 +515,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor1_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
-
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -566,8 +552,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor2_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
-
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 
@@ -605,8 +590,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor3_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
-
+                                                                               [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr &msg) { pcl = msg; });
 
     waitForMessage(pcl);
 

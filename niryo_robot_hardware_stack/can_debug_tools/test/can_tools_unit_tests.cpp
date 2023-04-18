@@ -19,6 +19,7 @@
 
 #include "can_debug_tools/can_tools.hpp"
 
+#include <memory>
 #include <string>
 
 // Bring in gtest
@@ -32,13 +33,11 @@ TEST(CanDebugToolsTestSuite, testInit)
     int gpio_can_interrupt = 25;
 
     std::cout << "Using channel: " << spi_channel << ", "
-                << "Using baudrate: " << spi_baudrate << ", "
-                << "Using gpio: " << gpio_can_interrupt
-                << "\n";
+              << "Using baudrate: " << spi_baudrate << ", "
+              << "Using gpio: " << gpio_can_interrupt << "\n";
 
     // Setup TTL communication
-    auto mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
-                                                    static_cast<uint8_t>(gpio_can_interrupt));
+    auto mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
 
     can_debug_tools::CanTools canTools(mcp_can);
 
@@ -48,7 +47,7 @@ TEST(CanDebugToolsTestSuite, testInit)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-  testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
 
-  return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }

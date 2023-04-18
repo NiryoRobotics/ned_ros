@@ -23,16 +23,16 @@
 // niryo
 #include "can_driver/can_interface_core.hpp"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "can_driver_node");
+    ros::init(argc, argv, "can_driver_node");
 
-  ROS_DEBUG("Launching can_driver_node");
+    ROS_DEBUG("Launching can_driver_node");
 
-  ros::NodeHandle nodeHandle("~");
+    ros::NodeHandle nodeHandle("~");
 
-  can_driver::CanInterfaceCore can_node(nodeHandle);
+    can_driver::CanInterfaceCore can_node(nodeHandle);
 
-  ros::spin();
-  return 0;
+    ros::spin();
+    return 0;
 }

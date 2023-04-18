@@ -6,7 +6,8 @@ from threading import Thread
 from datetime import datetime
 
 import rospy
-from niryo_robot_reports.metrics.PsutilWrapper import PsutilWrapper
+from niryo_robot_metrics.PsutilWrapper import PsutilWrapper
+from niryo_robot_reports.CloudAPI import MicroServiceError
 
 
 class CheckFrequencies(Enum):
@@ -16,6 +17,7 @@ class CheckFrequencies(Enum):
 
 
 class MetricChecker:
+
     def __init__(self, metrics, test):
         self.__metrics = metrics
         self.__test = test
@@ -23,11 +25,7 @@ class MetricChecker:
         self.__success = None
 
     def __str__(self):
-        return '{} {} with value {}'.format(
-            self.metric_name,
-            'succeeded' if self.__success else 'failed',
-            self.__value
-        )
+        return '{} {} with value {}'.format(self.metric_name, 'succeeded' if self.__success else 'failed', self.__value)
 
     @property
     def metric_name(self):
@@ -49,6 +47,7 @@ class MetricChecker:
 
 
 class AlertReportHandler:
+
     def __init__(self, cloud_api):
         self.__cloud_api = cloud_api
         self.__watch = Thread(target=self.__run)
@@ -56,12 +55,16 @@ class AlertReportHandler:
 
         self.__psutil_wrapper = PsutilWrapper()
 
-        self.__metrics = {CheckFrequencies.LOW: [], CheckFrequencies.NORMAL: [], CheckFrequencies.HIGH: [], }
+        self.__metrics = {
+            CheckFrequencies.LOW: [],
+            CheckFrequencies.NORMAL: [],
+            CheckFrequencies.HIGH: [],
+        }
         for alert_report_name, alert_report_args in rospy.get_param('~alert_report').items():
             freq = CheckFrequencies[alert_report_args['frequency']]
             threshold = alert_report_args['threshold']
-            self.__metrics[freq].append(MetricChecker(metrics=getattr(self.__psutil_wrapper, alert_report_name),
-                                                      test=lambda x: x < threshold))
+            self.__metrics[freq].append(
+                MetricChecker(metrics=getattr(self.__psutil_wrapper, alert_report_name), test=lambda x: x < threshold))
 
         self.__check_by_frequency(CheckFrequencies.LOW)
         self.__watch.start()
@@ -74,11 +77,12 @@ class AlertReportHandler:
             self.__send_report(metric_checker)
 
     def __send_report(self, metric_checker):
-        self.__cloud_api.alert_reports.send({
-            'metric': metric_checker.metric_name,
-            'value': metric_checker.value,
-            'date': datetime.now().isoformat()
-        })
+        try:
+            self.__cloud_api.alert_reports.send({
+                'metric': metric_checker.metric_name, 'value': metric_checker.value, 'date': datetime.now().isoformat()
+            })
+        except MicroServiceError as microservice_error:
+            rospy.logerr(str(microservice_error))
 
     def __run(self):
         clock_frequency = 1

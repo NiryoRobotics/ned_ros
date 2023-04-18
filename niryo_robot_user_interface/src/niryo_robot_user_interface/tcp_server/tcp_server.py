@@ -5,13 +5,15 @@ import rospy
 # Communication imports
 import select
 import socket
-from .communication_functions import create_socket_server, receive_dict, dict_to_packet
+from niryo_robot_user_interface.tcp_server.communication_functions import (create_socket_server,
+                                                                           receive_dict,
+                                                                           dict_to_packet)
 
-from .command_interpreter import CommandInterpreter
+from niryo_robot_user_interface.tcp_server.command_interpreter import CommandInterpreter
 
 # Threading
 from threading import Thread, Lock
-import Queue
+import queue
 
 
 class TcpServer:
@@ -36,7 +38,7 @@ class TcpServer:
             self.__is_busy_lock = Lock()
             # Interpreter
             self.__interpreter = CommandInterpreter()
-            self.__queue = Queue.Queue(1)
+            self.__queue = queue.Queue(1)
 
         except socket.error as err:
             rospy.logerr("UserInterface.init : TCP server unable to start : %s", err)
@@ -55,9 +57,9 @@ class TcpServer:
 
     def quit(self):
         self.__is_running = False
-        if self.__loop_thread.isAlive():
+        if self.__loop_thread.is_alive():
             self.__loop_thread.join()
-        if self.__command_executor_thread.isAlive():
+        if self.__command_executor_thread.is_alive():
             self.__command_executor_thread.join()
         if self.__client is not None:
             self.__shutdown_client()
@@ -114,7 +116,7 @@ class TcpServer:
                 dict_command_received = self.__queue.get(block=True, timeout=0.5)
                 with self.__is_busy_lock:
                     self.__treat_command(dict_command_received)
-            except Queue.Empty:
+            except queue.Empty:
                 pass
 
     def __read_command(self):
@@ -144,7 +146,7 @@ class TcpServer:
         packet_error = dict_to_packet(dict_error)
         self.__send(packet_error)
 
-    def __send(self, result_data):
+    def __send(self, result_data: bytes):
         if self.__client is not None:
             try:
                 self.__client.sendall(result_data)

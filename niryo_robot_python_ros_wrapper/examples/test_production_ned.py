@@ -16,13 +16,6 @@ from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
 
-LOOPS = 1
-CALIBRATION_LOOPS = 1
-SPIRAL_LOOPS = 1
-
-SPEED = 200  # %
-ACCELERATION = 100  # %
-
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
 BLACK = [0, 0, 0]
@@ -31,10 +24,6 @@ PURPLE = [153, 51, 153]
 PINK = [255, 0, 255]
 RED = [255, 0, 0]
 YELLOW = [255, 255, 0]
-
-USE_BUTTON = False
-VOLUME = 50
-USE_VOCAL = False
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -56,6 +45,7 @@ class TestFailure(Exception):
 
 
 class TestReport(object):
+
     def __init__(self, header):
         self._header = header
         self._report = ""
@@ -190,8 +180,6 @@ class TestProduction:
             rospy.sleep(0.1)
 
         new_report_publisher.publish(json.dumps(self.get_report()))
-        rospy.sleep(1)
-        new_report_publisher.publish('')
         rospy.logdebug('test report published')
         return True
 
@@ -323,13 +311,17 @@ class TestFunctions(object):
         self.say("Premier test du ruban led")
         report.append("Led ring color set to WHITE")
         self.say("Validez le test")
-        report.execute(self.wait_custom_button_press, "Wait custom button press to continue", args=[60, ])
+        report.execute(self.wait_custom_button_press, "Wait custom button press to continue", args=[
+            60,
+        ])
 
         self.__robot.led_ring.rainbow_cycle()
         report.append("Led ring color set to RAINBOW")
         self.say("Second test du ruban led")
         self.say("Validez le test")
-        report.execute(self.wait_custom_button_press, "Wait custom button press to validate", args=[60, ])
+        report.execute(self.wait_custom_button_press, "Wait custom button press to validate", args=[
+            60,
+        ])
 
     def test_sound(self, report):
         if self.__hardware_version not in ['ned2']:
@@ -429,15 +421,15 @@ class TestFunctions(object):
         def test_digital_io_value(io_name, state):
             io_state = self.__robot.digital_read(io_name)
             if io_state != state:
-                raise TestFailure(
-                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, state))
+                raise TestFailure("Non expected value on digital input {} - Actual {} - Target {}".format(
+                    io_name, io_state, state))
             return 1, "Success"
 
         def test_analog_io_value(io_name, value, error=0.3):
             io_state = self.__robot.analog_read(io_name)
             if not (value - error <= io_state <= value + error):
-                raise TestFailure(
-                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, value))
+                raise TestFailure("Non expected value on digital input {} - Actual {} - Target {}".format(
+                    io_name, io_state, value))
             return 1, "Success"
 
         self.__robot.led_ring.solid(PINK)
@@ -496,13 +488,8 @@ class TestFunctions(object):
         last_target[2] = joint_limit[joint_names[2]]['max'] - 0.1
         last_target[4] = joint_limit[joint_names[4]]['min'] + 0.1
 
-        poses = [(default_joint_pose, 1, 3),
-                 (first_target, 1, 4),
-                 (default_joint_pose, 1, 4),
-                 (second_target, 1, 3),
-                 (default_joint_pose, 1, 3),
-                 (third_target, 1, 4),
-                 (last_target, 1, 4)]
+        poses = [(default_joint_pose, 1, 3), (first_target, 1, 4), (default_joint_pose, 1, 4), (second_target, 1, 3),
+                 (default_joint_pose, 1, 3), (third_target, 1, 4), (last_target, 1, 4)]
 
         for loop_index in range(LOOPS):
             for position_index, step in enumerate(poses):
@@ -517,21 +504,18 @@ class TestFunctions(object):
             self.say("Test des spirales")
 
         for loop_index in range(SPIRAL_LOOPS):
-            report.execute(self.__robot.move_pose, "Loop {} - Move to spiral center".format(loop_index),
-                           [0.3, 0, 0.2, 0, 1.57, 0])
-            report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index),
-                           [0.15, 5, 216, 3])
+            report.execute(self.__robot.move_pose,
+                           "Loop {} - Move to spiral center".format(loop_index), [0.3, 0, 0.2, 0, 1.57, 0])
+            report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index), [0.15, 5, 216, 3])
 
     def test_fun_poses(self, report):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.rainbow_cycle()
             self.say("Test de divers movements")
 
-        waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26],
-                     [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
-                     [1.40, 0.35, -0.34, -1.24, -1.23, -0.10],
-                     [0.00, 0.60, 0.46, -1.55, -0.15, 2.50],
-                     [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
+        waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26], [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
+                     [1.40, 0.35, -0.34, -1.24, -1.23, -0.10], [0.00, 0.60, 0.46, -1.55, -0.15,
+                                                                2.50], [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
 
         for loop_index in range(LOOPS):
             for wayoint_index, wayoint in enumerate(waypoints):
@@ -594,7 +578,9 @@ class TestFunctions(object):
             self.__robot.led_ring.flashing(BLUE)
             report.append("End")
             self.say("Fin du test, validez la position 0")
-            report.execute(self.wait_save_button_press, "Wait save button press to validate", args=[600, ])
+            report.execute(self.wait_save_button_press, "Wait save button press to validate", args=[
+                600,
+            ])
 
         self.__robot.led_ring.solid(BLUE)
         self.__robot.move_to_sleep_pose()
@@ -640,8 +626,8 @@ class TestFunctions(object):
         start_time = rospy.Time.now()
         while not almost_equal_array(self.__robot.get_joints(), target, decimal=precision_decimal):
             if (rospy.Time.now() - start_time).to_sec() > 5:
-                raise TestFailure(
-                    "Target not reached - Actual {} - Target {}".format(self.__robot.get_joints(), target))
+                raise TestFailure("Target not reached - Actual {} - Target {}".format(
+                    self.__robot.get_joints(), target))
             rospy.sleep(0.1)
         return 1, "Success"
 
@@ -649,43 +635,45 @@ class TestFunctions(object):
 if __name__ == '__main__':
     rospy.init_node('niryo_test_production_ros_wrapper')
     robot = NiryoRosWrapper()
-    if robot.get_learning_mode():
+
+    FULL = True
+
+    if FULL:
         LOOPS = 5
         CALIBRATION_LOOPS = 2
         SPIRAL_LOOPS = 5
         USE_BUTTON = True
         SPEED = 80  # %
         ACCELERATION = 50  # %
-
-        robot.sound.play('ready.wav')
-
-        print("----- START -----")
-        test = TestProduction()
-        test.run()
-        print("----- END -----")
-        test.print_report()
-
-        if test.get_report()['success']:
-            try:
-                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-                set_setting('sharing_allowed', 'True', 'bool')
-                set_setting('test_report_done', 'True', 'bool')
-                try:
-                    robot.system_api_client.set_ethernet_auto()
-                    rospy.sleep(7)
-
-                    test.send_report()
-                except Exception as _e:
-                    pass
-                rospy.sleep(3)
-                set_setting('sharing_allowed', 'False', 'bool')
-            except Exception as _e:
-                pass
-
-            robot.system_api_client.set_ethernet_static()
-        else:
-            raise TestFailure('Test failure')
+        VOLUME = 50  # %
+        USE_VOCAL = False
     else:
-        test = TestProduction(full=False)
-        if not test.run():
-            raise TestFailure('Program failure')
+        LOOPS = 1
+        CALIBRATION_LOOPS = 1
+        SPIRAL_LOOPS = 1
+        USE_BUTTON = False
+        SPEED = 200  # %
+        ACCELERATION = 100  # %
+        VOLUME = 50  # %
+        USE_VOCAL = False
+
+    robot.sound.play('ready.wav')
+
+    print("----- START -----")
+    test = TestProduction(full=FULL)
+    test.run()
+    print("----- END -----")
+    test.print_report()
+
+    try:
+        set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        # set_setting('sharing_allowed', 'True', 'bool')
+        set_setting('test_report_done', 'True', 'bool')
+        try:
+            test.send_report()
+        except Exception as _e:
+            rospy.logerr(f'Failed to send report: {_e}')
+        rospy.sleep(3)
+        # set_setting('sharing_allowed', 'False', 'bool')
+    except Exception as _e:
+        rospy.logerr(_e)

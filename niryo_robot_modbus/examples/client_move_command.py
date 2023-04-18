@@ -21,13 +21,13 @@ def raw_data_to_number(val):
 
 
 if __name__ == '__main__':
-    print "--- START"
+    print("--- START")
     client = ModbusTcpClient('localhost', port=5020)
 
     client.connect()
-    print "Connected to modbus server"
+    print("Connected to modbus server")
 
-    print "Calibrate Robot if needed"
+    print("Calibrate Robot if needed")
     client.write_register(311, 1)
     time.sleep(1)
 
@@ -35,10 +35,10 @@ if __name__ == '__main__':
     while client.read_input_registers(402, 1).registers[0] == 1:
         time.sleep(0.05)
 
-    print "Send a Joint Move command to the robot"
+    print("Send a Joint Move command to the robot")
     joints = [-0.5, 0.0, 0.0, 0.2, 1.2, -1.0]
     joints_to_send = list(map(lambda j: int(number_to_raw_data(j * 1000)), joints))
-    print joints_to_send
+    print(joints_to_send)
 
     client.write_registers(0, joints_to_send)
     client.write_register(100, 1)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     while client.read_holding_registers(150, count=1).registers[0] == 1:
         time.sleep(0.01)
 
-    print "Joint Move command is finished"
+    print("Joint Move command is finished")
 
     joints = [0.5, 0.2, -0.7, -1.0, -1.2, 1.0]
     joints_to_send = list(map(lambda j: number_to_raw_data(j * 1000), joints))
@@ -73,5 +73,5 @@ if __name__ == '__main__':
     client.write_register(300, 1)
 
     client.close()
-    print "Close connection to modbus server"
-    print "--- END"
+    print("Close connection to modbus server")
+    print("--- END")

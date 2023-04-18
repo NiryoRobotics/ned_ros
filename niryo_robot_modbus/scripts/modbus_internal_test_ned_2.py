@@ -62,7 +62,7 @@ def test_discrete_input(client):
             # WORKS ONLY IN SIMULATION MODE
             client.write_coil(CoilDataBlock.CO_IO_STATE + io_coil_offset, io_value)
             digital_IO_states = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_STATE + io_coil_offset)
-            print digital_IO_states.getBit(0)
+            print(digital_IO_states.getBit(0))
             assert digital_IO_states.getBit(0) == io_value
 
     print("---- DISCRETE INPUT TEST ENDS ----")
@@ -222,7 +222,7 @@ def test_holding_register(client):
             time.sleep(0.2)
 
             analog_io_state_reg = client.read_input_registers(IR_AIO_STATE + io_register_offset, 4)
-            print analog_io_state_reg.registers
+            print(analog_io_state_reg.registers)
             assert analog_io_state_reg.registers[0] == value
 
     # WORKS ONLY IN SIMULATION MODE
@@ -249,11 +249,11 @@ if __name__ == '__main__':
     modbus_ip_address = '127.0.0.1'
     modbus_port = 5020
 
-    print "--- START"
+    print("--- START")
     modbus_tcp_client = ModbusTcpClient(modbus_ip_address, port=modbus_port)
 
     modbus_tcp_client.connect()
-    print "Connected to modbus server"
+    print("Connected to modbus server")
 
     if need_test_holding_register:
         test_holding_register(modbus_tcp_client)
@@ -268,5 +268,5 @@ if __name__ == '__main__':
         test_input_register(modbus_tcp_client)
 
     modbus_tcp_client.close()
-    print "Close connection to modbus server"
-    print "--- END"
+    print("Close connection to modbus server")
+    print("--- END")

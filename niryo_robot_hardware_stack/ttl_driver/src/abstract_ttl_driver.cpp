@@ -16,15 +16,16 @@
 
 #include "ttl_driver/abstract_ttl_driver.hpp"
 
+#include <memory>
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
 
-using ::std::shared_ptr;
-using ::std::vector;
-using ::std::string;
 using ::std::ostringstream;
+using ::std::shared_ptr;
+using ::std::string;
+using ::std::vector;
 
 namespace ttl_driver
 {
@@ -34,11 +35,10 @@ namespace ttl_driver
  * @param portHandler
  * @param packetHandler
  */
-AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                                     std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    _dxlPortHandler(std::move(portHandler)),
-    _dxlPacketHandler(std::move(packetHandler))
-{}
+AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler)
+    : _dxlPortHandler(std::move(portHandler)), _dxlPacketHandler(std::move(packetHandler))
+{
+}
 
 /**
  * @brief AbstractTtlDriver::ping
@@ -49,8 +49,7 @@ int AbstractTtlDriver::ping(uint8_t id)
 {
     uint8_t dxl_error = 0;
 
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(),
-                                         id, &dxl_error);
+    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &dxl_error);
 
     return result;
 }
@@ -61,14 +60,11 @@ int AbstractTtlDriver::ping(uint8_t id)
  * @param model_number
  * @return
  */
-int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
+int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t &model_number)
 {
     uint8_t dxl_error = 0;
 
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(),
-                                         id,
-                                         &model_number,
-                                         &dxl_error);
+    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &model_number, &dxl_error);
 
     return result;
 }
@@ -78,10 +74,7 @@ int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
  * @param id_list
  * @return
  */
-int AbstractTtlDriver::scan(vector<uint8_t> &id_list)
-{
-    return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list);
-}
+int AbstractTtlDriver::scan(vector<uint8_t> &id_list) { return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list); }
 
 /**
  * @brief AbstractTtlDriver::reboot
@@ -133,29 +126,29 @@ int AbstractTtlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id
 
     switch (data_len)
     {
-        case DXL_LEN_ONE_BYTE:
-        {
-            uint8_t read_data;
-            dxl_comm_result = read<uint8_t>(address, id, read_data);
-            data = read_data;
-        }
-        break;
-        case DXL_LEN_TWO_BYTES:
-        {
-            uint16_t read_data;
-            dxl_comm_result = read<uint16_t>(address, id, read_data);
-            data = read_data;
-        }
-        break;
-        case DXL_LEN_FOUR_BYTES:
-        {
-            uint32_t read_data;
-            dxl_comm_result = read<uint32_t>(address, id, read_data);
-            data = read_data;
-        }
-        break;
-        default:
-            printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+    case DXL_LEN_ONE_BYTE:
+    {
+        uint8_t read_data;
+        dxl_comm_result = read<uint8_t>(address, id, read_data);
+        data = read_data;
+    }
+    break;
+    case DXL_LEN_TWO_BYTES:
+    {
+        uint16_t read_data;
+        dxl_comm_result = read<uint16_t>(address, id, read_data);
+        data = read_data;
+    }
+    break;
+    case DXL_LEN_FOUR_BYTES:
+    {
+        uint32_t read_data;
+        dxl_comm_result = read<uint32_t>(address, id, read_data);
+        data = read_data;
+    }
+    break;
+    default:
+        printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 
@@ -177,17 +170,17 @@ int AbstractTtlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t i
 
     switch (data_len)
     {
-        case DXL_LEN_ONE_BYTE:
-            dxl_comm_result = write<uint8_t>(address, id, static_cast<uint8_t>(data));
+    case DXL_LEN_ONE_BYTE:
+        dxl_comm_result = write<uint8_t>(address, id, static_cast<uint8_t>(data));
         break;
-        case DXL_LEN_TWO_BYTES:
-            dxl_comm_result = write<uint16_t>(address, id, static_cast<uint16_t>(data));
+    case DXL_LEN_TWO_BYTES:
+        dxl_comm_result = write<uint16_t>(address, id, static_cast<uint16_t>(data));
         break;
-        case DXL_LEN_FOUR_BYTES:
-            dxl_comm_result = write<uint32_t>(address, id, data);
+    case DXL_LEN_FOUR_BYTES:
+        dxl_comm_result = write<uint32_t>(address, id, data);
         break;
-        default:
-            printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
+    default:
+        printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 

@@ -42,6 +42,7 @@ from niryo_robot_msgs.srv import GetBool
 
 
 class JogController:
+
     def __init__(self, arm_state):
         self.__arm_state = arm_state
 
@@ -89,9 +90,9 @@ class JogController:
         self._publish_jog_enabled()
 
         # - Direct publisher to joint controller
-        self._joint_trajectory_publisher = rospy.Publisher(
-            rospy.get_param("~joint_controller_name") + '/command', JointTrajectory,
-            queue_size=3)
+        self._joint_trajectory_publisher = rospy.Publisher(rospy.get_param("~joint_controller_name") + '/command',
+                                                           JointTrajectory,
+                                                           queue_size=3)
 
         # Publishing rate
         self._timer_rate = rospy.get_param("~jog_timer_rate_sec")
@@ -99,22 +100,28 @@ class JogController:
 
         # - Subscribers
         # - Joint controller state, used to check collisions
-        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', JointTrajectoryControllerState,
-                         self.__callback_joint_controller_state)
+        rospy.Subscriber(
+            rospy.get_param("~joint_controller_name") + '/state',
+            JointTrajectoryControllerState,
+            self.__callback_joint_controller_state)
 
         # topic used to jog pose via Niryo Studio, to avoid calling the service
         self._jog_command_ik = None
-        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik', CommandJog,
-                         self.__callback_send_jog_command_ik, queue_size=20)
+        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik',
+                         CommandJog,
+                         self.__callback_send_jog_command_ik,
+                         queue_size=20)
 
         # topic used to jog joints via Niryo Studio, to avoid calling the service
-        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command', CommandJog,
-                         self.__callback_send_jog_joints_command, queue_size=10)
+        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command',
+                         CommandJog,
+                         self.__callback_send_jog_joints_command,
+                         queue_size=10)
 
         # - Service
         # Service to enable Jog Controller
         rospy.Service('/niryo_robot/jog_interface/enable', SetBool, self.__callback_enable_jog)
-        rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,   self.__callback_jog_commander)
+        rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift, self.__callback_jog_commander)
 
     # - Callbacks
 
@@ -134,10 +141,10 @@ class JogController:
             self._shift_mode = shift_mode
 
         shift_command = list(msg.shift_values)
-        shift_command[:3] = [min([v, math.copysign(self.__pose_translation_max, v)], key=abs) for v in
-                             shift_command[:3]]
-        shift_command[3:] = [min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in
-                             shift_command[3:]]
+        shift_command[:3] = [
+            min([v, math.copysign(self.__pose_translation_max, v)], key=abs) for v in shift_command[:3]
+        ]
+        shift_command[3:] = [min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in shift_command[3:]]
 
         if self._last_shift_values_cmd != msg.shift_values:
             self._last_shift_values_cmd = msg.shift_values
@@ -180,8 +187,7 @@ class JogController:
         if shift_mode == JogShiftRequest.JOINTS_SHIFT:
             # Accumulate multiple commands if they come faster than the publish rate
             shift_command = [min([v, math.copysign(self.__joints_rotation_max, v)], key=abs) for v in shift_command]
-            target_values = [actual + shift for actual, shift in
-                             zip(self._last_target_values, shift_command)]
+            target_values = [actual + shift for actual, shift in zip(self._last_target_values, shift_command)]
 
             # get index of the jogged joints in a list
             joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
@@ -245,10 +251,12 @@ class JogController:
 
         shift_command = list(msg.shift_values)
         if shift_mode == JogShiftRequest.POSE_SHIFT:
-            shift_command[:3] = [min([v, math.copysign(self.__pose_translation_max, v)], key=abs) for v in
-                                 shift_command[:3]]
-            shift_command[3:] = [min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in
-                                 shift_command[3:]]
+            shift_command[:3] = [
+                min([v, math.copysign(self.__pose_translation_max, v)], key=abs) for v in shift_command[:3]
+            ]
+            shift_command[3:] = [
+                min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in shift_command[3:]
+            ]
             try:
                 success, potential_target_values = self._get_new_joints_w_ik(shift_command)
             except ArmCommanderException as e:
@@ -260,8 +268,7 @@ class JogController:
         else:
             # Accumulate multiple commands if they come faster than the publish rate
             shift_command = [min([v, math.copysign(self.__joints_rotation_max, v)], key=abs) for v in shift_command]
-            target_values = [actual + shift for actual, shift in
-                             zip(self._last_target_values, shift_command)]
+            target_values = [actual + shift for actual, shift in zip(self._last_target_values, shift_command)]
 
             target_values = self.__limit_params_joints(target_values)
 
@@ -448,10 +455,13 @@ class JogController:
 
     def _get_new_joints_w_ik(self, shift_command):
         quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
-        quat_target = quaternion_multiply(quat_jog, [self._last_robot_state_published.orientation.x,
-                                                     self._last_robot_state_published.orientation.y,
-                                                     self._last_robot_state_published.orientation.z,
-                                                     self._last_robot_state_published.orientation.w])
+        quat_target = quaternion_multiply(quat_jog,
+                                          [
+                                              self._last_robot_state_published.orientation.x,
+                                              self._last_robot_state_published.orientation.y,
+                                              self._last_robot_state_published.orientation.z,
+                                              self._last_robot_state_published.orientation.w
+                                          ])
         rpy_target = RPY(*euler_from_quaternion(quat_target))
 
         self._new_robot_state = RobotState()
@@ -492,11 +502,14 @@ class JogController:
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
-                                  response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                                  response.contacts[0].contact_body_1,
+                                  response.contacts[0].contact_body_2)
                     return False, response.contacts[0].contact_body_1, response.contacts[0].contact_body_2
                 else:  # didn't succeed to get the contacts on the real robot
-                    rospy.logwarn_throttle(1, 'Jog Controller - Joints target unreachable because of '
-                                              'collision between two parts of Ned')
+                    rospy.logwarn_throttle(
+                        1,
+                        'Jog Controller - Joints target unreachable because of '
+                        'collision between two parts of Ned')
                     return False, None, None
             else:
                 return True, None, None

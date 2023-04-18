@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>

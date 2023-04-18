@@ -10,7 +10,7 @@
 
 ```sql
 sqlite3
-.open /home/niryo/.config/niryo/ned.db
+.open /home/niryo/niryo_robot_saved_files/.config/ned.db
 .read sql/create.sql
 .read sql/populate.sql
 ```

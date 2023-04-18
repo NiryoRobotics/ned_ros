@@ -60,7 +60,7 @@ class TrajectoryHandlerNode:
         if self.check_trajectory_existence(trajectory_name) and not auto:
             return False
         self.create_trajectory_file(
-            trajectory_name, description, trajectory.points)
+            str(trajectory_name), str(description), trajectory.points)
         return True
 
     def update_trajectory(self, name="", description="", new_name=""):
@@ -82,7 +82,7 @@ class TrajectoryHandlerNode:
 
     def check_trajectory_existence(self, trajectory_name):
         trajectory_name_list, _description_list = self.get_available_trajectories_w_description()
-        if trajectory_name in trajectory_name_list:
+        if str(trajectory_name) in trajectory_name_list:
             return True
         else:
             return False
@@ -96,7 +96,7 @@ class TrajectoryHandlerNode:
         :type points: list[JointTrajectoryPoint]
         :return: None
         """
-        self.traj_file_manager.create(name, points, description)
+        self.traj_file_manager.create(str(name), points, str(description))
 
     def get_trajectory(self, name):
         """
@@ -107,7 +107,7 @@ class TrajectoryHandlerNode:
         :return: The trajectory object
         :rtype: JointTrajectory
         """
-        traj_read = self.traj_file_manager.read(name)
+        traj_read = self.traj_file_manager.read(str(name))
         list_poses_raw = traj_read.list_poses
         return JointTrajectory(
             header=Header(stamp=rospy.Time.now()),
@@ -137,7 +137,7 @@ class TrajectoryHandlerNode:
         :return: The trajectory file
         :rtype: dict
         """
-        return self.traj_file_manager.read(name)
+        return self.traj_file_manager.read(str(name))
 
     def remove_trajectory_file(self, name):
         """
@@ -147,7 +147,7 @@ class TrajectoryHandlerNode:
         :type name: str
         :return: None
         """
-        self.traj_file_manager.remove(name)
+        self.traj_file_manager.remove(str(name))
 
     def get_available_trajectories_w_description(self):
         """
@@ -270,24 +270,21 @@ class TrajectoryHandlerNode:
             try:
                 if self.check_trajectory_existence(req.name):
                     trajectory = self.get_trajectory(req.name)
-                    self.__traj_executor.execute_joint_trajectory(trajectory)
-                    return CommandStatus.SUCCESS, " Execute Registered Trajectory '{}'".format(req.name)
+                    return self.__traj_executor.execute_joint_trajectory(trajectory)
                 else:
                     return CommandStatus.TRAJECTORY_HANDLER_EXECUTE_REGISTERED_FAILURE, str(NiryoRobotFileException)
             except ArmCommanderException as e:
                 return CommandStatus.TRAJECTORY_HANDLER_EXECUTE_REGISTERED_FAILURE, str(e)
         elif cmd == req.EXECUTE:
             try:
-                self.__traj_executor.execute_joint_trajectory(req.trajectory)
-                return CommandStatus.SUCCESS, "Executed Trajectory '{}'".format(req.name)
+                return self.__traj_executor.execute_joint_trajectory(req.trajectory)
             except ArmCommanderException as e:
                 return CommandStatus.TRAJECTORY_HANDLER_EXECUTE_FAILURE, str(e)
         elif cmd == req.GO_TO_FIRST_POINT:
             try:
                 trajectory = self.get_trajectory(req.name)
                 trajectory.points = [trajectory.points[0]]
-                self.__traj_executor.execute_joint_trajectory(trajectory)
-                return CommandStatus.SUCCESS, " Go to trajectory first point '{}'".format(req.name)
+                return self.__traj_executor.execute_joint_trajectory(trajectory)
             except ArmCommanderException as e:
                 return CommandStatus.TRAJECTORY_HANDLER_EXECUTE_FAILURE, str(e)
         else:

@@ -42,6 +42,7 @@ class PosesTransformHandler:
         :param yaw_center: Avoid over rotation
         """
         tmp_buffer = tf2_ros.Buffer()
+        stamp = rospy.Time.now()
         delta_x = transformations.euclidian_dist(workspace.points[1], workspace.points[0]) * x_rel
         delta_y = transformations.euclidian_dist(workspace.points[3], workspace.points[0]) * y_rel
 
@@ -49,14 +50,14 @@ class PosesTransformHandler:
         t.transform.translation = Vector3(delta_y, delta_x, 0)
         t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(0, 0, yaw_rel))
         t.header.frame_id = str(workspace.name)
+        t.header.stamp = stamp
         t.child_frame_id = "object_base"
         tmp_buffer.set_transform(t, "default_authority")
-        t.child_frame_id = "object_base_bis"
 
         transform_frame = self.__pose_handler_node.dynamic_frame_manager.dict_dynamic_frame[workspace.name]["transform"]
         transform = copy.deepcopy(transform_frame)
         transform.header.frame_id = "base_link"
-        transform.header.stamp = rospy.Time(0)
+        transform.header.stamp = stamp
         tmp_buffer.set_transform(transform, "default_authority")
 
         # Correcting yaw to avoid out of reach targets
@@ -68,7 +69,7 @@ class PosesTransformHandler:
                 yaw += np.pi
             elif yaw > yaw_center + np.pi / 2:
                 yaw -= np.pi
-
+        t.header.stamp = rospy.Time.now()
         t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(roll, pitch, yaw))
         self.__tf_buffer.set_transform(t, "default_authority")
 
@@ -86,6 +87,8 @@ class PosesTransformHandler:
             rospy.logerr("Poses Transform Handler - Grip transform need to have child frame 'tool_link_target'")
             return False
 
+        grip.transform.header.stamp = rospy.Time.now()
+
         self.__tf_buffer.set_transform(grip.transform, "default_authority")
         return True
 
@@ -95,8 +98,7 @@ class PosesTransformHandler:
 
         :returns: transform base_link -> object_base
         """
-        return self.__tf_buffer.lookup_transform("base_link", "object_base",
-                                                 rospy.Time(0))
+        return self.__tf_buffer.lookup_transform("base_link", "object_base", rospy.Time(0))
 
     def get_gripping_transform(self):
         """
@@ -104,8 +106,19 @@ class PosesTransformHandler:
 
         :returns: transform base_link -> tool_link_target
         """
-        return self.__tf_buffer.lookup_transform(
-            "base_link", "tool_link_target", rospy.Time(0))
+
+        tmp_buffer = tf2_ros.Buffer()
+        stamp = rospy.Time.now()
+
+        t = self.__tf_buffer.lookup_transform("base_link", "object_base", rospy.Time(0))
+        t.header.stamp = stamp
+        tmp_buffer.set_transform(t, "default_authority")
+
+        t = self.__tf_buffer.lookup_transform("object_base", "tool_link_target", rospy.Time(0))
+        t.header.stamp = stamp
+        tmp_buffer.set_transform(t, "default_authority")
+
+        return tmp_buffer.lookup_transform("base_link", "tool_link_target", rospy.Time(0))
 
     def get_object_transform(self, x_off=0.0, y_off=0.0, z_off=0.0, roll_off=0.0, pitch_off=1.5708, yaw_off=0.0):
         """
@@ -125,18 +138,24 @@ class PosesTransformHandler:
         :param robot_pose: pose of the robot's tool_link
         :returns: xyz position of calibration tip in robot coordinates
         """
+        stamp = rospy.Time.now()
         # First apply transform for robot pose
-        base_link_to_tool_link = self.transform_from_euler(
-            robot_pose.position.x, robot_pose.position.y, robot_pose.position.z,
-            robot_pose.rpy.roll, robot_pose.rpy.pitch, robot_pose.rpy.yaw,
-            "base_link", "tool_link"
-        )
+        base_link_to_tool_link = self.transform_from_euler(robot_pose.position.x,
+                                                           robot_pose.position.y,
+                                                           robot_pose.position.z,
+                                                           robot_pose.rpy.roll,
+                                                           robot_pose.rpy.pitch,
+                                                           robot_pose.rpy.yaw,
+                                                           "base_link",
+                                                           "tool_link")
+        base_link_to_tool_link.header.stamp = stamp
         self.__tf_buffer.set_transform(base_link_to_tool_link, "default_authority")
 
         # Getting calibration tip
         calibration_tip_grip = self.__grip_manager.read("default_Calibration_Tip")
         tool_link_to_calib_tip = calibration_tip_grip.transform
         tool_link_to_calib_tip.header.frame_id = "tool_link"
+        tool_link_to_calib_tip.header.stamp = stamp
         tool_link_to_calib_tip.child_frame_id = "calibration_tip"
 
         self.__tf_buffer.set_transform(tool_link_to_calib_tip, "default_authority")
@@ -148,8 +167,7 @@ class PosesTransformHandler:
         return calib_tip_position
 
     @staticmethod
-    def transform_from_euler(x, y, z, roll, pitch, yaw, header_frame_id,
-                             child_frame_id):
+    def transform_from_euler(x, y, z, roll, pitch, yaw, header_frame_id, child_frame_id):
         """
         Creates a new stamped transform from translation and euler-orientation
 
@@ -176,6 +194,7 @@ class PosesTransformHandler:
         t.transform.rotation.w = q[3]
 
         t.header.frame_id = header_frame_id
+        t.header.stamp = rospy.Time.now()
         t.child_frame_id = child_frame_id
 
         return t
@@ -185,8 +204,7 @@ class PosesTransformHandler:
         Start publishing debug information on /tf and /visualization_marker for
         debugging using rviz. This will happen in a separate thread.
         """
-        self.__debug_thread = threading.Thread(target=self.__debug_loop,
-                                               name="Poses Transform Handler Debug Thread")
+        self.__debug_thread = threading.Thread(target=self.__debug_loop, name="Poses Transform Handler Debug Thread")
         self.__debug_thread.start()
 
     def disable_debug(self):
@@ -203,8 +221,7 @@ class PosesTransformHandler:
         (tfBuffer should be threadsafe)
         """
         broadcaster = tf2_ros.TransformBroadcaster()
-        rviz_marker_pub = rospy.Publisher('/visualization_marker', Marker,
-                                          queue_size=1000)
+        rviz_marker_pub = rospy.Publisher('/visualization_marker', Marker, queue_size=1000)
         rate = rospy.Rate(5)
         while not self.__debug_stop_event.is_set() and not rospy.is_shutdown():
             if self.__debug_current_ws is None:
@@ -214,19 +231,11 @@ class PosesTransformHandler:
 
             try:
                 broadcaster.sendTransform(
-                    self.__tf_buffer.lookup_transform(
-                        "base_link", self.__debug_current_ws.name,
-                        rospy.Time(0))
-                )
+                    self.__tf_buffer.lookup_transform("base_link", self.__debug_current_ws.name, rospy.Time(0)))
                 broadcaster.sendTransform(
-                    self.__tf_buffer.lookup_transform(
-                        self.__debug_current_ws.name, "object_base",
-                        rospy.Time(0))
-                )
+                    self.__tf_buffer.lookup_transform(self.__debug_current_ws.name, "object_base", rospy.Time(0)))
                 broadcaster.sendTransform(
-                    self.__tf_buffer.lookup_transform(
-                        "object_base", "tool_link_target", rospy.Time(0))
-                )
+                    self.__tf_buffer.lookup_transform("object_base", "tool_link_target", rospy.Time(0)))
             except tf2_ros.LookupException as e:
                 rospy.logerr("Poses Transform Handler - Could not publish debug tf: {}".format(e))
 

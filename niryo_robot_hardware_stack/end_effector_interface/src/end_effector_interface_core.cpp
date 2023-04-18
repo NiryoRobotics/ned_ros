@@ -19,6 +19,7 @@
 
 // c++
 #include <functional>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -28,18 +29,17 @@
 #include "niryo_robot_msgs/SetBool.h"
 
 // niryo
-#include "end_effector_interface/end_effector_interface_core.hpp"
 #include "common/model/end_effector_state.hpp"
-
+#include "end_effector_interface/end_effector_interface_core.hpp"
 
 using ::std::string;
 using ::std::to_string;
 
-using ::common::model::EndEffectorState;
 using ::common::model::ButtonTypeEnum;
 using ::common::model::EButtonType;
-using ::common::model::EndEffectorSingleCmd;
 using ::common::model::EEndEffectorCommandType;
+using ::common::model::EndEffectorSingleCmd;
+using ::common::model::EndEffectorState;
 
 namespace end_effector_interface
 {
@@ -49,9 +49,7 @@ namespace end_effector_interface
  * @param nh
  * @param ttl_interface
  */
-EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
-                                                   std::shared_ptr<ttl_driver::TtlInterfaceCore > ttl_interface):
-    _ttl_interface(std::move(ttl_interface))
+EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle &nh, std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface) : _ttl_interface(std::move(ttl_interface))
 {
     ROS_DEBUG("EndEffectorInterfaceCore::ctor");
 
@@ -103,7 +101,7 @@ bool EndEffectorInterfaceCore::rebootHardware()
  * @brief EndEffectorInterfaceCore::initParameters
  * @param nh
  */
-void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
+void EndEffectorInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     int id = -1;
     nh.getParam("end_effector_id", id);
@@ -133,15 +131,15 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     _end_effector_state->setCollisionThresh(collision_thresh);
 
     uint8_t button_id = 0;
-    while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
+    while (nh.hasParam("button_" + std::to_string(button_id) + "/type"))
     {
-      std::string button_type;
-      nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
-      auto eType = ButtonTypeEnum(button_type.c_str());
+        std::string button_type;
+        nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
+        auto eType = ButtonTypeEnum(button_type.c_str());
 
-      ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
-      _end_effector_state->configureButton(button_id, eType);
-      button_id++;
+        ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
+        _end_effector_state->configureButton(button_id, eType);
+        button_id++;
     }
 }
 
@@ -149,40 +147,33 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
  * @brief EndEffectorInterfaceCore::startServices
  * @param nh
  */
-void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
+void EndEffectorInterfaceCore::startServices(ros::NodeHandle &nh)
 {
-    _digital_in_server = nh.advertiseService("set_ee_io_state",
-                                             &EndEffectorInterfaceCore::_callbackSetIOState, this);
+    _digital_in_server = nh.advertiseService("set_ee_io_state", &EndEffectorInterfaceCore::_callbackSetIOState, this);
 }
 
 /**
  * @brief EndEffectorInterfaceCore::startPublishers
  * @param nh
  */
-void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
+void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-  _free_drive_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "free_drive_button_status", 10, true);
+    _free_drive_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>("free_drive_button_status", 10, true);
 
-  _save_pos_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "save_pos_button_status", 10, true);
+    _save_pos_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>("save_pos_button_status", 10, true);
 
-  _custom_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "custom_button_status", 10, true);
+    _custom_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>("custom_button_status", 10, true);
 
-  _digital_out_publisher = nh.advertise<end_effector_interface::EEIOState>(
-                                          "io_state", 10, true);
+    _digital_out_publisher = nh.advertise<end_effector_interface::EEIOState>("io_state", 10, true);
 
-  _states_publisher_timer = nh.createTimer(_states_publisher_duration,
-                                         &EndEffectorInterfaceCore::_publishButtonState,
-                                         this);
+    _states_publisher_timer = nh.createTimer(_states_publisher_duration, &EndEffectorInterfaceCore::_publishButtonState, this);
 }
 
 /**
  * @brief EndEffectorInterfaceCore::startSubscribers
  * @param nh
  */
-void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
+void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle &nh)
 {
     (void)nh;  // unused
 
@@ -194,24 +185,23 @@ void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::initEndEffectorHardware()
 {
-  // init driver
-  if (_end_effector_state && _end_effector_state->isValid())
-  {
-      int result = _ttl_interface->setEndEffector(_end_effector_state);
+    // init driver
+    if (_end_effector_state && _end_effector_state->isValid())
+    {
+        int result = _ttl_interface->setEndEffector(_end_effector_state);
 
-      if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-          niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
-      {
-          ROS_INFO("EndEffectorInterfaceCore::ctor - Set end effector success");
-      }
-      else
-      {
-          _end_effector_state->setConnectionStatus(false);
-          ROS_WARN("EndEffectorInterfaceCore::initEndEffectorHardware - "
-                   "Set end effector failure, return : %d. Aborted...",
-                   result);
-      }
-  }
+        if (niryo_robot_msgs::CommandStatus::SUCCESS == result && niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
+        {
+            ROS_INFO("EndEffectorInterfaceCore::ctor - Set end effector success");
+        }
+        else
+        {
+            _end_effector_state->setConnectionStatus(false);
+            ROS_WARN("EndEffectorInterfaceCore::initEndEffectorHardware - "
+                     "Set end effector failure, return : %d. Aborted...",
+                     result);
+        }
+    }
 }
 
 /**
@@ -222,9 +212,8 @@ int EndEffectorInterfaceCore::initHardware()
     if (_end_effector_state)
     {
         uint8_t thresh = _end_effector_state->getCollisionThresh();
-        _ttl_interface->addSingleCommandToQueue(std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH,
-                                                                            _end_effector_state->getId(),
-                                                                            std::initializer_list<uint32_t>{thresh}));
+        _ttl_interface->addSingleCommandToQueue(
+            std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH, _end_effector_state->getId(), std::initializer_list<uint32_t>{thresh}));
     }
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
@@ -233,7 +222,7 @@ int EndEffectorInterfaceCore::initHardware()
  * @brief EndEffectorInterfaceCore::_publishButtonState
  * Called every _states_publisher_duration via the _states_publisher_timer
  */
-void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
+void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent &)
 {
     EEButtonStatus button_msg;
     EEIOState io_msg;
@@ -242,7 +231,7 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
     {
         if (!_simulation)
         {
-            for (const auto& button : _end_effector_state->getButtonsStatus())
+            for (const auto &button : _end_effector_state->getButtonsStatus())
             {
                 if (button->actions.empty())
                     continue;
@@ -250,17 +239,17 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
                 button_msg.action = static_cast<uint8_t>(button->actions.front());
                 switch (button->type)
                 {
-                    case EButtonType::FREE_DRIVE_BUTTON:
-                        _free_drive_button_state_publisher.publish(button_msg);
-                        break;
-                    case EButtonType::SAVE_POSITION_BUTTON:
-                        _save_pos_button_state_publisher.publish(button_msg);
-                        break;
-                    case EButtonType::CUSTOM_BUTTON:
-                        _custom_button_state_publisher.publish(button_msg);
-                        break;
-                    default:
-                        break;
+                case EButtonType::FREE_DRIVE_BUTTON:
+                    _free_drive_button_state_publisher.publish(button_msg);
+                    break;
+                case EButtonType::SAVE_POSITION_BUTTON:
+                    _save_pos_button_state_publisher.publish(button_msg);
+                    break;
+                case EButtonType::CUSTOM_BUTTON:
+                    _custom_button_state_publisher.publish(button_msg);
+                    break;
+                default:
+                    break;
                 }
                 button->actions.pop();
             }
@@ -279,15 +268,14 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
  * @param res
  * @return
  */
-bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
-                                                   end_effector_interface::SetEEDigitalOut::Response &res)
+bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req, end_effector_interface::SetEEDigitalOut::Response &res)
 {
     res.state = false;
 
     if (_end_effector_state && _end_effector_state->isValid())
     {
-        _ttl_interface->addSingleCommandToQueue(std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT,
-                                                                                       _end_effector_state->getId(), std::initializer_list<uint32_t>{req.data}));
+        _ttl_interface->addSingleCommandToQueue(
+            std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT, _end_effector_state->getId(), std::initializer_list<uint32_t>{req.data}));
         _end_effector_state->setDigitalOut(req.data);
         // TODO(cc) find a way to check if ok
         res.state = true;

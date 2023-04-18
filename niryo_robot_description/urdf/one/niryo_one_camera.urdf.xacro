@@ -31,7 +31,9 @@
             <geometry>
                 <box size="${cameraWidth} ${cameraWidth} ${cameraHeight}"/>
             </geometry>
-            <material name="DarkGrey"/>
+            <material name="Grey">
+               <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
         </visual>
 
         <inertial>

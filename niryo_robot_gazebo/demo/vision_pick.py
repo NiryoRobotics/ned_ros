@@ -4,7 +4,6 @@ from niryo_robot_python_ros_wrapper.ros_wrapper import *
 import rospy
 import random
 import copy
-import sys
 
 
 def create_wks_gazebo(niryo):
@@ -37,19 +36,19 @@ def create_wks2_gazebo(niryo):
 
 
 if __name__ == '__main__':
-    print "--- Start"
+    print("--- Start")
     try:
         rospy.init_node('niryo_robot_example_python_ros_wrapper')
         n = NiryoRosWrapper()
 
         n.calibrate_auto()
-        print "Calibration finished !"
+        print("Calibration finished !")
         n.update_tool()
 
-        print "creating workspaces ..."
+        print("creating workspaces ...")
         create_wks_gazebo(n)
         create_wks2_gazebo(n)
-        print "Workspaces created ..."
+        print("Workspaces created ...")
 
         center_pose_g2 = n.get_target_pose_from_rel("gazebo_2", 0.005, 0.5, 0.5, 0.0)
 
@@ -69,26 +68,26 @@ if __name__ == '__main__':
             try:
                 available_poses = g2_poses[:]
                 while n.vision_pick_w_obs_joints("gazebo_1", 0.002, ObjectShape.ANY, ObjectColor.ANY, obs_joints)[0]:
-                    print "Object picked ..."
+                    print("Object picked ...")
                     random_index = random.choice(range(len(available_poses)))
-                    print "Place on grid ..."
+                    print("Place on grid ...")
                     place_pose = available_poses.pop(random_index)
                     n.place_from_pose(place_pose.position.x, place_pose.position.y, place_pose.position.z,
                                       place_pose.rpy.roll, place_pose.rpy.pitch, place_pose.rpy.yaw)
 
                 while n.vision_pick_w_obs_joints("gazebo_2", 0.002, ObjectShape.ANY, ObjectColor.ANY, obs_joints2)[0]:
-                    print "Object picked ..."
+                    print("Object picked ...")
                     pose = n.get_target_pose_from_rel("gazebo_1", 0.005, 0.15 + random.random() * 0.7,
                                                       0.15 + random.random() * 0.7, 0.0)
-                    print "Place randomly on the restricted workspace area ..."
+                    print("Place randomly on the restricted workspace area ...")
                     n.place_from_pose(pose.position.x, pose.position.y, pose.position.z,
                                       pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw)
             except NiryoRosWrapperException:
                 break
             except Exception as e:
-                print e
+                print(e)
 
     except Exception as e:
-        print e
+        print(e)
 
-    print "--- End"
+    print("--- End")

@@ -1,4 +1,4 @@
-# ros_log_manager.py
+# storage_manager.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.
 #
@@ -19,28 +19,19 @@ import rospy
 import subprocess
 import os
 
-from niryo_robot_rpi.msg import LogStatus
+from niryo_robot_rpi.msg import StorageStatus, LogStatus
 from niryo_robot_msgs.srv import SetInt
 
 #
-# This class will handle ROS logs on Raspberry Pi
+# This class will handle storage on Raspberry Pi
 #
 
-"""
-todo :
 
-- service to get latest ros log nicely formated
-- detect when ros log is too big (> 1GB) -> alert message
-
-"""
-
-
-class RosLogManager:
+class StorageManager:
 
     def __init__(self):
-        rospy.logdebug("RosLogManager - Entering in Init")
-
-        self.log_size_treshold = rospy.get_param("~ros_log_size_threshold")
+        rospy.logdebug("StorageManager - Entering in Init")
+        self.log_size_threshold = rospy.get_param("~ros_log_size_threshold")
         self.log_path = rospy.get_param("~ros_log_location")
         self.should_purge_log_on_startup_file = rospy.get_param("~should_purge_ros_log_on_startup_file")
         self.purge_log_on_startup = self.should_purge_log_on_startup()
@@ -50,35 +41,44 @@ class RosLogManager:
             rospy.logwarn("Purging ROS log on startup !")
             self.purge_log()
 
-        self.purge_log_server = rospy.Service('/niryo_robot_rpi/purge_ros_logs', SetInt,
-                                              self.callback_purge_log)
+        self.purge_log_server = rospy.Service('/niryo_robot_rpi/purge_ros_logs', SetInt, self.callback_purge_log)
 
-        self.change_purge_log_on_startup_server = rospy.Service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt,
+        self.change_purge_log_on_startup_server = rospy.Service('/niryo_robot_rpi/set_purge_ros_log_on_startup',
+                                                                SetInt,
                                                                 self.callback_change_purge_log_on_startup)
 
+        self.storage_status_publisher = rospy.Publisher('/niryo_robot_rpi/storage_status', StorageStatus, queue_size=10)
+        # TODO: delete in 5.1
         self.log_status_publisher = rospy.Publisher('/niryo_robot_rpi/ros_log_status', LogStatus, queue_size=10)
-        self.timer = rospy.Timer(rospy.Duration(3), self.publish_log_status)
 
-        rospy.loginfo("Init Ros Log Manager OK")
+        self.timer = rospy.Timer(rospy.Duration(3), self.publish_storage_status)
+
+        rospy.loginfo("Init Storage Manager OK")
 
     @staticmethod
-    def get_available_disk_size():
+    def get_storage(value):
         try:
-            process = subprocess.Popen(['df', '--output=avail', '/'], stdout=subprocess.PIPE)
+            process = subprocess.Popen(['df', f'--output={value}', '/'], stdout=subprocess.PIPE)
             output, error = process.communicate()
-            lines = output.split(os.linesep)
+            lines = output.decode().split(os.linesep)
             if len(lines) >= 2:
-                return int(lines[1]) / 1024
+                return int(int(lines[1]) / 1024)
             return -1
         except subprocess.CalledProcessError:
             return -1
+
+    def get_available_disk_size(self):
+        return self.get_storage('avail')
+
+    def get_total_disk_size(self):
+        return self.get_storage('size')
 
     def get_log_size(self):
         try:
             if not os.path.isdir(self.log_path):
                 return -1
             output = subprocess.check_output(['du', '-sBM', self.log_path])
-            output_array = output.split()
+            output_array = output.decode().split()
             if len(output_array) >= 1:
                 return int(output_array[0].replace('M', ''))
             return -1
@@ -130,9 +130,10 @@ class RosLogManager:
     def callback_purge_log(self, req):
         rospy.logwarn("Purge ROS logs on user request")
         if self.purge_log():
-            return self.create_response(200, "ROS logs have been purged. " +
-                                        "Following logs will be discarded. If you want to get logs, you " +
-                                        "need to restart the robot")
+            return self.create_response(
+                200,
+                "ROS logs have been purged. " + "Following logs will be discarded. If you want to get logs, you " +
+                "need to restart the robot")
         return self.create_response(400, "Unable to remove ROS logs")
 
     def callback_change_purge_log_on_startup(self, req):
@@ -142,7 +143,16 @@ class RosLogManager:
             self.change_purge_log_on_startup(False)
         return self.create_response(200, "Purge log on startup value has been changed")
 
-    def publish_log_status(self, event):
+    def publish_storage_status(self, event):
+        msg = StorageStatus()
+        msg.header.stamp = rospy.Time.now()
+        msg.log_size = self.get_log_size()
+        msg.available_disk_size = self.get_available_disk_size()
+        msg.total_disk_size = self.get_total_disk_size()
+        msg.purge_log_on_startup = self.purge_log_on_startup
+        self.storage_status_publisher.publish(msg)
+
+        # TODO: delete in 5.1
         msg = LogStatus()
         msg.header.stamp = rospy.Time.now()
         msg.log_size = self.get_log_size()

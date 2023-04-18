@@ -30,36 +30,30 @@ namespace model
  * @brief ActionTypeEnum::ActionTypeEnum
  * @param e
  */
-ActionTypeEnum::ActionTypeEnum(EActionType e):
-    AbstractEnum<ActionTypeEnum, EActionType>(e)
-{}
+ActionTypeEnum::ActionTypeEnum(EActionType e) : AbstractEnum<ActionTypeEnum, EActionType>(e) {}
 
 /**
  * @brief ActionTypeEnum::ActionTypeEnum
  * @param str
  */
-ActionTypeEnum::ActionTypeEnum(const char* const str):
-    AbstractEnum<ActionTypeEnum, EActionType>(str)
-{}
+ActionTypeEnum::ActionTypeEnum(const char *const str) : AbstractEnum<ActionTypeEnum, EActionType>(str) {}
 
 /**
  * @brief ActionTypeEnum::initialize
  * @return
  */
-std::map<EActionType, std::string>
-ActionTypeEnum::initialize()
+std::map<EActionType, std::string> ActionTypeEnum::initialize()
 {
     std::map<EActionType, std::string> m;
 
-    m[EActionType::HANDLE_HELD_ACTION]    = "handle held action";
-    m[EActionType::LONG_PUSH_ACTION]      = "long push action";
-    m[EActionType::SINGLE_PUSH_ACTION]    = "single push action";
-    m[EActionType::DOUBLE_PUSH_ACTION]    = "double push action";
-    m[EActionType::NO_ACTION]             = "no action";
+    m[EActionType::HANDLE_HELD_ACTION] = "handle held action";
+    m[EActionType::LONG_PUSH_ACTION] = "long push action";
+    m[EActionType::SINGLE_PUSH_ACTION] = "single push action";
+    m[EActionType::DOUBLE_PUSH_ACTION] = "double push action";
+    m[EActionType::NO_ACTION] = "no action";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-

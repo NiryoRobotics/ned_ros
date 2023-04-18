@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Libs
 import os
 import rospy
 from distutils.dir_util import mkpath
 
-from niryo_robot_reports.CloudAPI import CloudAPI
+from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
+from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.DailyReportHandler import DailyReportHandler
 from niryo_robot_reports.TestReportHandler import TestReportHandler
-from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 
 # msg
@@ -17,11 +17,12 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_reports.msg import Service
 
 # srv
-from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
+from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath, SetSettings
 from niryo_robot_reports.srv import CheckConnection
 
 
 class ReportsNode:
+
     def __init__(self):
         self.__wait_booting()
         rospy.logdebug("Reports Node - Entering in Init")
@@ -29,30 +30,33 @@ class ReportsNode:
         rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
         self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
-        get_cloud_domain_response = self.__get_setting('cloud_domain')
-        get_serial_number_response = self.__get_setting('serial_number')
-        get_api_key_response = self.__get_setting('api_key')
-        get_sharing_allowed_response = self.__get_setting('sharing_allowed')
+        settings = {}
+        for setting in ['cloud_domain', 'serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
+            response = self.__get_setting(setting)
+            setting_value = response.value
+            if response.status != CommandStatus.SUCCESS:
+                rospy.logerr(f'Unable to get setting "{setting}"')
+                setting_value = None
+            settings[setting] = setting_value
 
-        if get_serial_number_response.status != get_api_key_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to fetch either the serial number or the api key')
+        self.__cloud_api = CloudAPI(**settings, https=True)
 
-        if get_sharing_allowed_response.status != CommandStatus.SUCCESS:
-            rospy.logwarn('Unable to fetch sharing allowed')
-            get_sharing_allowed_response.value = False
+        try:
+            self.__cloud_api.authentification.ping()
+        except MicroServiceError:
+            try:
+                api_key = self.__cloud_api.authentification.authenticate()
+                self.__cloud_api.set_api_key(api_key)
 
-        self.__cloud_api = CloudAPI(
-            get_cloud_domain_response.value,
-            get_serial_number_response.value,
-            get_api_key_response.value,
-            get_sharing_allowed_response.value,
-        )
+                rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
+                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+                set_setting('api_key', api_key, 'str')
+            except MicroServiceError as microservice_error:
+                rospy.logerr(str(microservice_error))
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
-            rospy.logerr(
-                'Unable to retrieve the reports directory path from the database'
-            )
+            rospy.logerr('Unable to retrieve the reports directory path from the database')
         reports_path = os.path.expanduser(get_report_path_response.value)
         if not os.path.isdir(reports_path):
             mkpath(reports_path)
@@ -63,8 +67,7 @@ class ReportsNode:
 
         DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        # TODO to be reactivated if needed
-        # AlertReportHandler(self.__cloud_api)
+        AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
@@ -110,17 +113,17 @@ class ReportsNode:
 
     def __setting_update_callback(self, req):
         if req.name == 'serial_number':
-            self.__cloud_api.set_serial_number(req.value)
+            self.__cloud_api.set_identifier(req.value)
         elif req.name == 'api_key':
             self.__cloud_api.set_api_key(req.value)
         elif req.name == 'sharing_allowed':
             self.__cloud_api.set_sharing_allowed(req.value == 'True')
+        elif req.name == 'rasp_id':
+            self.__cloud_api.set_identifier(req.value)
 
 
 if __name__ == "__main__":
-    rospy.init_node(
-        'niryo_robot_reports', anonymous=False, log_level=rospy.INFO
-    )
+    rospy.init_node('niryo_robot_reports', anonymous=False, log_level=rospy.INFO)
 
     try:
         node = ReportsNode()
