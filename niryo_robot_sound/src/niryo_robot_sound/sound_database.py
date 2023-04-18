@@ -5,7 +5,7 @@ import os
 import base64
 
 # Messages
-from niryo_robot_sound.msg import SoundList, SoundObject
+from niryo_robot_sound.msg import SoundList
 
 # Services
 from niryo_robot_sound.srv import ManageSound
@@ -24,8 +24,8 @@ class SoundDatabase:
     def __init__(self):
         self.__simulation_mode = rospy.get_param("~simulation_mode")
 
-        self.__user_sound_directory_path = os.path.expanduser(rospy.get_param(
-            "~path_user_sound_simulation" if self.__simulation_mode else "~path_user_sound"))
+        self.__user_sound_directory_path = os.path.expanduser(
+            rospy.get_param("~path_user_sound_simulation" if self.__simulation_mode else "~path_user_sound"))
         if not os.path.isdir(self.__user_sound_directory_path):
             os.makedirs(self.__user_sound_directory_path)
 
@@ -49,13 +49,14 @@ class SoundDatabase:
         self.__load_robot_sounds()
 
         # - Publishers
-        self.__sound_database_publisher = rospy.Publisher('/niryo_robot_sound/sound_database', SoundList, latch=True,
+        self.__sound_database_publisher = rospy.Publisher('/niryo_robot_sound/sound_database',
+                                                          SoundList,
+                                                          latch=True,
                                                           queue_size=10)
         self.__publish_sounds()
 
         # - Services
-        rospy.Service('/niryo_robot_sound/manage', ManageSound,
-                      self.__callback_manage_sound)
+        rospy.Service('/niryo_robot_sound/manage', ManageSound, self.__callback_manage_sound)
 
     def __call__(self, *args, **kwargs):
         if len(args) >= 1:
@@ -149,10 +150,9 @@ class SoundDatabase:
 
         return CommandStatus.SUCCESS, "{} Sound successfully deleted".format(sound_name)
 
-    def add_sound(self, sound_name, sound_data):
+    def add_sound(self, sound_name, raw_sound_data):
         if not (sound_name.endswith('.mp3') or sound_name.endswith('.wav')):
-            return CommandStatus.INVALID_SOUND_FORMAT, "The {}file must be in .mp3 or .wav format".format(
-                sound_name)
+            return CommandStatus.INVALID_SOUND_FORMAT, "The {}file must be in .mp3 or .wav format".format(sound_name)
 
         if sound_name in self.__user_sounds:
             return CommandStatus.FAILURE, "Failure to write the {} sound, this name already exists".format(sound_name)
@@ -161,22 +161,24 @@ class SoundDatabase:
 
         # Split the sound_data to keep just the encoded data that we need
         try:
-            sound_data_list = sound_data.split("base64,")[1]
+            decoded_base64_sound_data = raw_sound_data.split("base64,")[1]
         except IndexError:
-            sound_data_list = sound_data
+            decoded_base64_sound_data = raw_sound_data
+
+        encoded_base64_sound_data = decoded_base64_sound_data.encode('utf-8')
 
         # delete the padding to be able to decode the sound_data properly
-        missing_padding = len(sound_data_list) % 4
+        missing_padding = len(encoded_base64_sound_data) % 4
         if missing_padding != 0:
-            sound_data_list += b'=' * (4 - missing_padding)
+            encoded_base64_sound_data += b'=' * (4 - missing_padding)
         # decode the sound_data
-        sound_data_decoded = base64.decodestring(sound_data_list)
+        sound_data = base64.decodebytes(encoded_base64_sound_data)
 
         # Create the new soundFile and put the decoded sound_data on it
         sound_file_path = os.path.join(self.__user_sound_directory_path, sound_name)
         try:
-            with open(sound_file_path, 'w') as sound_file:
-                sound_file.write(str(sound_data_decoded))
+            with open(sound_file_path, 'wb') as sound_file:
+                sound_file.write(sound_data)
         except IOError:
             return CommandStatus.FAILURE, "Failure to write the {} sound".format(sound_name)
         try:
@@ -207,12 +209,15 @@ class SoundDatabase:
 
     def __load_robot_sounds(self):
         self.__robot_sounds = {
-            sound_name: Sound(sound_name, os.path.join(self.__robot_sound_directory_path, sound_name)) for sound_name in
-            self.__system_sounds}
+            sound_name: Sound(sound_name, os.path.join(self.__robot_sound_directory_path, sound_name))
+            for sound_name in self.__system_sounds
+        }
 
     def __publish_sounds(self):
         msg = SoundList()
-        msg.sounds = [sound.to_msg() for sound in self.__user_sounds.values() + self.__robot_sounds.values()]
+        msg.sounds = [
+            sound.to_msg() for sound in list(self.__user_sounds.values()) + list(self.__robot_sounds.values())
+        ]
 
         try:
             self.__sound_database_publisher.publish(msg)

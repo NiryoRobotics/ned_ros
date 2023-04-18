@@ -28,7 +28,7 @@
 
     <!-- Load URDF -->
     <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
-    <param name="robot_description" command="$(find xacro)/xacro  --inorder $(arg urdf_path)"/>
+    <param name="robot_description" command="$(find xacro)/xacro  $(arg urdf_path)"/>
 
     <!-- Launch Robot state publisher -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />

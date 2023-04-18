@@ -47,8 +47,8 @@ class NiryoActionClient(object):
 
     def execute(self, goal):
         if not isinstance(goal, self.__action_goal_type):
-            raise NiryoRosWrapperException(
-                'Wrong goal type: expected {} but got {}'.format(type(goal), type(self.__action_goal_type)))
+            raise NiryoRosWrapperException('Wrong goal type: expected {} but got {}'.format(
+                type(goal), type(self.__action_goal_type)))
 
         if self.__action_server is None:
             self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
@@ -56,8 +56,8 @@ class NiryoActionClient(object):
         # Connect to server
         if not self.__action_server.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
             rospy.logwarn("ROS Wrapper - Failed to connect to {} action server".format(self.__action_name))
+            return CommandStatus.SUCCESS, ""
 
-            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__action_name))
         # Send goal and check response
         goal_state, response = self.__send_goal_and_wait_for_completed(goal)
 
@@ -73,11 +73,13 @@ class NiryoActionClient(object):
             self.__action_server.stop_tracking_goal()
 
         if goal_state == GoalStatus.REJECTED:
-            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
+            return CommandStatus.REJECTED, "Goal has been rejected : {}".format(response.message)
         elif goal_state == GoalStatus.ABORTED:
-            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
+            return CommandStatus.ABORTED, "Goal has been aborted : {}".format(response.message)
+        elif goal_state == GoalStatus.PREEMPTED:
+            return CommandStatus.PREEMPTED, "Goal has been preempted: {}".format(response.message)
         elif goal_state != GoalStatus.SUCCEEDED:
-            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
+            return CommandStatus.FAILURE, "Error when processing goal : {}".format(response.message)
 
         return response.status, response.message
 
@@ -86,7 +88,7 @@ class NiryoActionClient(object):
         if not self.__action_server.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
             self.__action_server.cancel_goal()
             self.__action_server.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__action_name))
+            return CommandStatus.GOAL_TIMEOUT, "Action Server timeout : {}".format(self.__action_name)
 
         goal_state = self.__action_server.get_state()
         response = self.__action_server.get_result()

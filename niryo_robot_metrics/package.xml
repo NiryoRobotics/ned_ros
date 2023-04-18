@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+    <package format="3">
+    <name>niryo_robot_metrics</name>
+    <version>5.0.0</version>
+    <description>
+        Takes care of metrics
+    </description>
+
+    <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
+    <license>GPLv3</license>
+    <author email="j.mottier@niryo.com">Justin Mottier</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>message_generation</build_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>std_msgs</build_depend>
+
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>std_msgs</build_export_depend>
+
+    <exec_depend>message_runtime</exec_depend>
+    <exec_depend>rospy</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
+
+    <test_depend>python3-catkin-lint</test_depend>
+    <test_depend>roslint</test_depend>
+</package>

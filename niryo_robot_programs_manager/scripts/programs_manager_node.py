@@ -7,9 +7,10 @@ import yaml
 
 from threading import Thread
 
-from niryo_robot_programs_manager.ProgramsFileManager import FileAlreadyExistException, FileDoesNotExistException
-from niryo_robot_programs_manager.Python2Manager import Python2FileManager
 from niryo_robot_programs_manager.BlocklyManager import BlocklyManager
+from niryo_robot_programs_manager.PythonManager import PythonFileManager
+from niryo_robot_programs_manager.programs_manager_enums import LanguageEnum
+from niryo_robot_programs_manager.ProgramsFileManager import FileAlreadyExistException, FileDoesNotExistException
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -18,7 +19,6 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_programs_manager.msg import ProgramList
 from niryo_robot_programs_manager.msg import ProgramLanguage, ProgramLanguageList
 from niryo_robot_programs_manager.msg import ProgramIsRunning
-from std_msgs.msg import Bool
 
 # Services
 from niryo_robot_msgs.srv import Trigger
@@ -32,7 +32,6 @@ from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutoru
 
 
 class ProgramManagerNode:
-
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
@@ -40,7 +39,7 @@ class ProgramManagerNode:
         if not os.path.isdir(self.__programs_base_dir):
             os.makedirs(self.__programs_base_dir)
 
-        self.__python2_manager = Python2FileManager(self.__programs_base_dir)
+        self.__python3_manager = PythonFileManager(self.__programs_base_dir, LanguageEnum.PYTHON3)
         self.__blockly_manager = BlocklyManager(self.__programs_base_dir)
 
         rospy.logdebug("Programs Manager - Managers created !")
@@ -50,24 +49,28 @@ class ProgramManagerNode:
         self.__autorun_file_path = os.path.join(self.__programs_base_dir, rospy.get_param("~autorun_file_name"))
 
         self._manager_map = {
-            ProgramLanguage.PYTHON2: self.__python2_manager,
+            #  This is a temporary fix in order to keep a semi compatibility with python2
+            ProgramLanguage.PYTHON2: self.__python3_manager,
+            ProgramLanguage.PYTHON3: self.__python3_manager,
             ProgramLanguage.BLOCKLY: self.__blockly_manager,
         }
 
         self.__str_to_program_language_map = {
             "NONE": ProgramLanguage.NONE,
             "PYTHON2": ProgramLanguage.PYTHON2,
+            "PYTHON3": ProgramLanguage.PYTHON3,
             "BLOCKLY": ProgramLanguage.BLOCKLY,
         }
-        self.__program_language_to_str_map = {index: string for string, index
-                                              in self.__str_to_program_language_map.iteritems()}
+        self.__program_language_to_str_map = {
+            index: string
+            for string, index in self.__str_to_program_language_map.items()
+        }
         self.__autorun_mode_to_str = {
             SetProgramAutorunRequest.DISABLE: "DISABLE",
             SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
             SetProgramAutorunRequest.LOOP: "LOOP",
         }
-        self._str_to_autorun_mode = {index: string for string, index
-                                     in self.__autorun_mode_to_str.iteritems()}
+        self._str_to_autorun_mode = {index: string for string, index in self.__autorun_mode_to_str.items()}
 
         # Services
         rospy.Service('~manage_program', ManageProgram, self.__callback_manage_program)
@@ -84,7 +87,9 @@ class ProgramManagerNode:
         self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
         self.__publish_program_list()
 
-        self.__program_is_running_publisher = rospy.Publisher('~program_is_running', ProgramIsRunning, latch=True,
+        self.__program_is_running_publisher = rospy.Publisher('~program_is_running',
+                                                              ProgramIsRunning,
+                                                              latch=True,
                                                               queue_size=1)
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
@@ -226,7 +231,8 @@ class ProgramManagerNode:
         self.__program_is_running.program_is_running = True
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
-        self.__execution_thread = Thread(target=self.__execute_program, name="execution_thread_programs_manager",
+        self.__execution_thread = Thread(target=self.__execute_program,
+                                         name="execution_thread_programs_manager",
                                          args=[language_obj.used, name, None])
         self.__execution_thread.setDaemon(True)
         self.__execution_thread.start()
@@ -263,6 +269,11 @@ class ProgramManagerNode:
             ret, message, output = manager.execute(prog_name)
             while self.__loop_autorun and ret:
                 ret, message, output = manager.execute(prog_name)
+
+            if not isinstance(message, str):
+                message = message.decode()
+            if not isinstance(output, str):
+                output = output.decode()
 
         except FileDoesNotExistException:
             self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.FILE_ERROR, "File Doesn't Exist")
@@ -308,7 +319,7 @@ class ProgramManagerNode:
         language_str = self.__program_language_to_str_map[language]
         mode_str = self.__autorun_mode_to_str[mode]
 
-        json_dict = {"language": language_str, "name": name, "mode": mode_str}
+        json_dict = {"language": language_str, "name": str(name), "mode": mode_str}
         with open(self.__autorun_file_path, "w") as output_file:
             yaml.dump(json_dict, output_file, default_flow_style=False)
 
@@ -334,7 +345,7 @@ class ProgramManagerNode:
                 programs_description = description_list
         else:
             prog_dict = {}
-            for language, manager in self._manager_map.iteritems():
+            for language, manager in self._manager_map.items():
                 # Get all names from a manager
                 all_names = manager.get_all_names()
                 # Adding them to dictionary
@@ -353,11 +364,11 @@ class ProgramManagerNode:
                 languages_list_list.append(ros_lang_list)
 
             description_list = []
-            for name, languages in prog_dict.iteritems():
+            for name, languages in prog_dict.items():
                 if ProgramLanguage.PYTHON2 not in languages:
                     description_list.append("")
                 else:
-                    description = self.__python2_manager.read_description(name)
+                    description = self.__python3_manager.read_description(name)
                     description_list.append(description)
 
             programs_names = prog_dict.keys()
@@ -373,7 +384,7 @@ class ProgramManagerNode:
 
         try:
             self.__loop_autorun = False
-            ret, message = self.__python2_manager.stop_execution()
+            ret, message = self.__python3_manager.stop_execution()
             if not self.__standalone:
                 self.__stop_robot_action()
 

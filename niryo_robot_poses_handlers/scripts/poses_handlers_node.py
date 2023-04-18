@@ -3,7 +3,6 @@
 # Libs
 import rospy
 import logging
-import thread
 
 from transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -43,7 +42,6 @@ class PoseHandlerNode:
         - created of grips
         - convertion of workspace-relative poses (e.g. from camera) to robot poses
     """
-
     def __init__(self):
         rospy.logdebug("Poses Handlers - Entering in Init")
 
@@ -56,8 +54,10 @@ class PoseHandlerNode:
 
         # Grips
         tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
-        self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
-                                        for tool in tool_config_dict}
+        self.__tool_id_gripname_dict = {
+            tool["id"]: "default_" + tool["name"].replace(" ", "_")
+            for tool in tool_config_dict
+        }
         self.__tool_id_gripname_dict[-1] = "default_Calibration_Tip"
 
         grip_dir = rospy.get_param("~grip_dir")
@@ -89,7 +89,7 @@ class PoseHandlerNode:
         rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
         self.dynamic_frame_manager.restore_publisher()
         # Publisher dynamic frames
-        thread.start_new_thread(self.dynamic_frame_manager.publish_frames, ())
+        self.dynamic_frame_manager.publish_frames()
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
@@ -215,8 +215,12 @@ class PoseHandlerNode:
     def __callback_get_pose(self, req):
         try:
             pos_read = self.get_pose(req.name)
-            pos_msg = NiryoPose(pos_read.name, pos_read.description,
-                                pos_read.joints, pos_read.position, pos_read.rpy, pos_read.orientation)
+            pos_msg = NiryoPose(pos_read.name,
+                                pos_read.description,
+                                pos_read.joints,
+                                pos_read.position,
+                                pos_read.rpy,
+                                pos_read.orientation)
             return CommandStatus.SUCCESS, "Success", pos_msg
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), NiryoPose()
@@ -249,7 +253,9 @@ class PoseHandlerNode:
                 return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
                     len(frame.poses))
             try:
-                self.create_dynamic_frame_from_poses(frame.name, frame.description, frame.poses,
+                self.create_dynamic_frame_from_poses(frame.name,
+                                                     frame.description,
+                                                     frame.poses,
                                                      frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
@@ -261,7 +267,9 @@ class PoseHandlerNode:
                 return CommandStatus.DYNAMIC_FRAME_CREATION_FAILED, "Frame have 3 points, {} given".format(
                     len(frame.points))
             try:
-                self.create_dynamic_frame_from_points(frame.name, frame.description, frame.points,
+                self.create_dynamic_frame_from_points(frame.name,
+                                                      frame.description,
+                                                      frame.points,
                                                       frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
@@ -370,8 +378,7 @@ class PoseHandlerNode:
 
     def get_workspace_poses(self, name):
         ws_raw = self.__ws_manager.read(name)
-        poses = [RobotState(position=Point(*pose[0]), rpy=RPY(*pose[1]))
-                 for pose in ws_raw.robot_poses]
+        poses = [RobotState(position=Point(*pose[0]), rpy=RPY(*pose[1])) for pose in ws_raw.robot_poses]
         return poses
 
     def get_workspace_points(self, name):
@@ -415,7 +422,10 @@ class PoseHandlerNode:
         :param yaw_rel: angle of the object inside working zone
         """
         current_ws = self.__ws_manager.read(workspace)
-        self.__transform_handler.set_relative_pose_object(current_ws, x_rel, y_rel, yaw_rel,
+        self.__transform_handler.set_relative_pose_object(current_ws,
+                                                          x_rel,
+                                                          y_rel,
+                                                          yaw_rel,
                                                           yaw_center=current_ws.yaw_center)
 
         if self.__tcp_enabled:
@@ -612,7 +622,10 @@ class PoseHandlerNode:
 
         # Get transform
         try:
-            transform = self.__tf_buffer.lookup_transform(source_frame, local_frame, rospy.Time(), rospy.Duration(4.0))
+            transform = self.__tf_buffer.lookup_transform(source_frame,
+                                                          local_frame,
+                                                          rospy.Time.now(),
+                                                          rospy.Duration(4.0))
         except Exception as e:
             return str(e)
 

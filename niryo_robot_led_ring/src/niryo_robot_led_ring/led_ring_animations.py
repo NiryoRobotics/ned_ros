@@ -2,31 +2,43 @@ import rospy
 import math
 from threading import Lock
 
+import rpi_ws281x
 from rpi_ws281x import Color, PixelStrip, ws
 from niryo_robot_led_ring.msg import LedRingAnimation
 from std_msgs.msg import ColorRGBA
 
-from led_ring_simulation import LedRingSimulation
+from niryo_robot_led_ring.led_ring_simulation import LedRingSimulation
 
 GREY = ColorRGBA(51, 51, 51, 0)  # used as led ring turned off in rviz
 BLACK = ColorRGBA(0, 0, 0, 0)
+
+
+def version_to_tab(version_str):
+    return list(map(int, version_str.split('.')))
 
 
 class LedRingAnimations:
     """
     Object which implements control method for the Led ring
     """
-
     def __init__(self):
 
         # - Parameters
+        if version_to_tab(rpi_ws281x.__version__) < version_to_tab('4.3.4'):
+            rospy.logerr(
+                'Please install a more recent version of the rpi_ws281x (min 4.3.4) library, '
+                'otherwise your led ring may not work.')
+
         self.__is_simulation = rospy.get_param("~simulation_mode")
 
         # LED self.strip configuration:
         self.LED_COUNT = rospy.get_param('~led_count')  # Number of LED pixels.
-        self.LED_PIN = rospy.get_param('~led_pin')  # GPIO pin connected to the pixels (must support PWM!)
-        self.LED_FREQ_HZ = rospy.get_param('~led_freq_hs')  # LED signal frequency in hertz (usually 800khz)
-        self.LED_DMA = rospy.get_param('~led_dma')  # DMA channel to use for generating signal (try 10)
+        self.LED_PIN = rospy.get_param(
+            '~led_pin')  # GPIO pin connected to the pixels (must support PWM!)
+        self.LED_FREQ_HZ = rospy.get_param(
+            '~led_freq_hs')  # LED signal frequency in hertz (usually 800khz)
+        self.LED_DMA = rospy.get_param(
+            '~led_dma')  # DMA channel to use for generating signal (try 10)
         # Set to 0 for darkest and 255 for brightest
         self.LED_BRIGHTNESS = rospy.get_param('~led_brightness')
         # True to invert the signal (when using NPN transistor level shift)
@@ -38,15 +50,22 @@ class LedRingAnimations:
             self.LED_STRIP = ws.WS2811_STRIP_GRB
 
         # default param for led ring control methods
-        self.default_flashing_period = rospy.get_param('~default_flashing_period')
-        self.default_alternate_period = rospy.get_param('~default_alternate_period')
+        self.default_flashing_period = rospy.get_param(
+            '~default_flashing_period')
+        self.default_alternate_period = rospy.get_param(
+            '~default_alternate_period')
         self.default_chase_period = rospy.get_param('~default_chase_period')
-        self.default_colorwipe_period = rospy.get_param('~default_colorwipe_period')
-        self.default_rainbow_period = rospy.get_param('~default_rainbow_period')
-        self.default_rainbowcycle_period = rospy.get_param('~default_rainbowcycle_period')
-        self.default_rainbowchase_period = rospy.get_param('~default_rainbowchase_period')
+        self.default_colorwipe_period = rospy.get_param(
+            '~default_colorwipe_period')
+        self.default_rainbow_period = rospy.get_param(
+            '~default_rainbow_period')
+        self.default_rainbowcycle_period = rospy.get_param(
+            '~default_rainbowcycle_period')
+        self.default_rainbowchase_period = rospy.get_param(
+            '~default_rainbowchase_period')
         self.default_goup_period = rospy.get_param('~default_goup_period')
-        self.default_goupanddown_period = rospy.get_param('~default_goupanddown_period')
+        self.default_goupanddown_period = rospy.get_param(
+            '~default_goupanddown_period')
         self.default_breath_period = rospy.get_param('~default_breath_period')
         self.default_snake_period = rospy.get_param('~default_snake_period')
 
@@ -57,7 +76,10 @@ class LedRingAnimations:
 
         self.current_animation_color = BLACK
         self.current_animation = LedRingAnimation.NONE
-        self.set_current_anim_and_color(self.current_animation, self.current_animation_color, )
+        self.set_current_anim_and_color(
+            self.current_animation,
+            self.current_animation_color,
+        )
 
         self.strip = None
         self.led_count = self.LED_COUNT
@@ -79,8 +101,14 @@ class LedRingAnimations:
 
     def init_led_ring(self):
         if not self.__is_simulation:
-            self.strip = PixelStrip(self.LED_COUNT, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
-                                    self.LED_BRIGHTNESS, self.LED_CHANNEL, self.LED_STRIP)
+            self.strip = PixelStrip(self.LED_COUNT,
+                                    self.LED_PIN,
+                                    self.LED_FREQ_HZ,
+                                    self.LED_DMA,
+                                    self.LED_INVERT,
+                                    self.LED_BRIGHTNESS,
+                                    self.LED_CHANNEL,
+                                    self.LED_STRIP)
             self.strip.begin()
             self.led_count = self.strip.numPixels()
 
@@ -105,7 +133,11 @@ class LedRingAnimations:
     def was_function_interrupted(self):
         return self.__stop_func  # if true, function was interrupted
 
-    def __play_cycle_animation(self, color_cycle, period, iterations, animation_function):
+    def __play_cycle_animation(self,
+                               color_cycle,
+                               period,
+                               iterations,
+                               animation_function):
         # start playing animation :
         loop_period = period * 1.0 / len(color_cycle)
         next_loop_time = rospy.Time.now()
@@ -151,7 +183,8 @@ class LedRingAnimations:
         """
         self.init_animation()
         with self.__animation_lock:
-            colors = color_rgba[:self.led_count] if len(color_rgba) > self.led_count else color_rgba + (
+            colors = color_rgba[:self.led_count] if len(
+                color_rgba) > self.led_count else color_rgba + (
                     len(color_rgba) - self.led_count) * [BLACK]
 
             for led_id, led_color in enumerate(colors):
@@ -172,7 +205,6 @@ class LedRingAnimations:
         """
         Flash a color according to a frequency
         """
-
         def animation_function(anim_color_cycle, anim_cycle_index):
             self.set_and_show_leds(anim_color_cycle[anim_cycle_index])
 
@@ -187,17 +219,21 @@ class LedRingAnimations:
 
         # start the animation
         with self.__animation_lock:
-            self.set_current_anim_and_color(LedRingAnimation.FLASHING, color_rgba)
-            self.__play_cycle_animation(color_cycle, period, iterations, animation_function)
+            self.set_current_anim_and_color(LedRingAnimation.FLASHING,
+                                            color_rgba)
+            self.__play_cycle_animation(color_cycle,
+                                        period,
+                                        iterations,
+                                        animation_function)
 
     def alternate(self, color_list_rgba, period=None, iterations=0):
         """
         The different colors are alternated one after the other.
         If iterations is 0, do it indefinitely
         """
-
         def animation_function(anim_color_cycle, anim_cycle_index):
-            self.set_current_anim_and_color(LedRingAnimation.ALTERNATE, anim_color_cycle[anim_cycle_index])
+            self.set_current_anim_and_color(LedRingAnimation.ALTERNATE,
+                                            anim_color_cycle[anim_cycle_index])
             self.set_and_show_leds(anim_color_cycle[anim_cycle_index])
 
         self.init_animation()
@@ -209,18 +245,23 @@ class LedRingAnimations:
 
         # start the animation
         with self.__animation_lock:
-            self.__play_cycle_animation(color_cycle, period, iterations, animation_function)
+            self.__play_cycle_animation(color_cycle,
+                                        period,
+                                        iterations,
+                                        animation_function)
 
     def chase(self, color_rgba, period=None, iterations=0):
         """
         Movie theater light style chaser animation.
         If iterations is 0, do it indefinitely
         """
-
         def animation_function(anim_color_cycle, anim_cycle_index):
             for led_id in range(self.led_count):
                 # set color led by led
-                self.set_led(led_id, anim_color_cycle[led_id % len(anim_color_cycle) - anim_cycle_index])
+                self.set_led(
+                    led_id,
+                    anim_color_cycle[led_id % len(anim_color_cycle) -
+                                     anim_cycle_index])
             self.show_leds()  # display all leds
 
         self.init_animation()
@@ -233,7 +274,10 @@ class LedRingAnimations:
         with self.__animation_lock:
             self.set_and_show_leds(self.off_color)
             self.set_current_anim_and_color(LedRingAnimation.CHASE, color_rgba)
-            self.__play_cycle_animation(color_cycle, period, iterations, animation_function)
+            self.__play_cycle_animation(color_cycle,
+                                        period,
+                                        iterations,
+                                        animation_function)
 
     def color_wipe(self, color_rgba, duration=None):
         """
@@ -246,7 +290,8 @@ class LedRingAnimations:
             duration = self.default_colorwipe_period
 
         with self.__animation_lock:
-            self.set_current_anim_and_color(LedRingAnimation.COLOR_WIPE, color_rgba)
+            self.set_current_anim_and_color(LedRingAnimation.COLOR_WIPE,
+                                            color_rgba)
             self.__wipe_animation(color_rgba, duration)
 
             if self.__stop_func:
@@ -280,12 +325,15 @@ class LedRingAnimations:
                 break
 
             # value = 255 * math.sin(2 * math.pi * (counter * 1.0 / smoothness_pts))
-            factor = math.exp(-(pow(((counter * 1.0 / nb_steps) - beta) / gamma, 2.0)) / 2.0)
+            factor = math.exp(-(pow(
+                ((counter * 1.0 / nb_steps) - beta) / gamma, 2.0)) / 2.0)
 
             # self.set_brightness(value)
             self.set_and_show_leds(
-                ColorRGBA(self.current_animation_color.r * factor, self.current_animation_color.g * factor,
-                          self.current_animation_color.b * factor, 0))
+                ColorRGBA(self.current_animation_color.r * factor,
+                          self.current_animation_color.g * factor,
+                          self.current_animation_color.b * factor,
+                          0))
 
             next_loop += anim_period
             rospy.sleep(next_loop - rospy.Time.now())
@@ -301,7 +349,8 @@ class LedRingAnimations:
 
         # start playing animation :
         with self.__animation_lock:
-            self.set_current_anim_and_color(LedRingAnimation.BREATH, color_rgba)
+            self.set_current_anim_and_color(LedRingAnimation.BREATH,
+                                            color_rgba)
             if not iterations:
                 while not self.__stop_func:
                     self.breath_animation(color_rgba, period)
@@ -317,7 +366,10 @@ class LedRingAnimations:
         def animation_function(anim_color_cycle, anim_cycle_index):
             for led_id in range(self.led_count):
                 # set color led by led
-                self.set_led(led_id, anim_color_cycle[(led_id + anim_cycle_index) % len(anim_color_cycle)])
+                self.set_led(
+                    led_id,
+                    anim_color_cycle[(led_id + anim_cycle_index) %
+                                     len(anim_color_cycle)])
             self.show_leds()  # display all leds
 
         self.init_animation()
@@ -325,27 +377,36 @@ class LedRingAnimations:
         if not period:
             period = self.default_snake_period
 
-        attenuated_color = ColorRGBA(color_rgba.r * 0.5, color_rgba.g * 0.5, color_rgba.b * 0.5, 0)
+        attenuated_color = ColorRGBA(color_rgba.r * 0.5,
+                                     color_rgba.g * 0.5,
+                                     color_rgba.b * 0.5,
+                                     0)
         snake_length = 10
-        snake_pattern = [attenuated_color] + (snake_length - 2) * [color_rgba] + [attenuated_color] + (
-                self.LED_COUNT - snake_length) * [self.off_color]
+        snake_pattern = [
+            attenuated_color
+        ] + (snake_length - 2) * [color_rgba] + [
+            attenuated_color
+        ] + (self.LED_COUNT - snake_length) * [self.off_color]
 
         # start the animation
         with self.__animation_lock:
             self.set_and_show_leds(self.off_color)
             self.set_current_anim_and_color(LedRingAnimation.SNAKE, color_rgba)
-            self.__play_cycle_animation(snake_pattern, period, iterations, animation_function)
+            self.__play_cycle_animation(snake_pattern,
+                                        period,
+                                        iterations,
+                                        animation_function)
 
     def go_up(self, color_rgba, period=None, iterations=0):
         """
         Leds turn on like a loading circle, and are all turned off at the same time
         If iterations is 0, do it indefinitely
         """
-
         def animation(duration):
             end_time = rospy.Time.now() + rospy.Duration(duration)
 
-            self.__wipe_animation(color_rgba, duration * self.led_count / (self.led_count + 1))
+            self.__wipe_animation(
+                color_rgba, duration * self.led_count / (self.led_count + 1))
             self.set_and_show_leds(self.off_color)
             rospy.sleep(end_time - rospy.Time.now())
 
@@ -372,7 +433,6 @@ class LedRingAnimations:
         Leds turn on like a loading circle, and turn off the same way
         If iterations is 0, do it indefinitely
         """
-
         def animation(duration):
             self.__wipe_animation(color_rgba, duration / 2.0)
             self.__wipe_animation(self.off_color, duration / 2.0)
@@ -382,7 +442,8 @@ class LedRingAnimations:
             period = self.default_goupanddown_period
 
         with self.__animation_lock:
-            self.set_current_anim_and_color(LedRingAnimation.GO_UP_AND_DOWN, color_rgba)
+            self.set_current_anim_and_color(LedRingAnimation.GO_UP_AND_DOWN,
+                                            color_rgba)
 
             # start playing animation :
             if not iterations:
@@ -414,7 +475,6 @@ class LedRingAnimations:
         Draw rainbow that fades across all Leds at once
         If iterations is 0, do it indefinitely
         """
-
         def animation(color_counter):
             # for led_id in range(self.led_count):
             #   self.set_led(led_id, wheel_rgba((led_id + color_counter) & 255))
@@ -448,10 +508,14 @@ class LedRingAnimations:
         Draw rainbow that uniformly distributes itself across all Leds
         If iterations is 0, do it indefinitely
         """
-
         def animation(color_counter):
             for led_id in range(self.led_count):
-                self.set_led(led_id, wheel_rgba(int((led_id * 256.0 // self.led_count + color_counter)) & 255))
+                pos = int(
+                    (led_id * 256.0 // self.led_count + color_counter)) & 255
+                self.set_led(
+                    led_id,
+                    wheel_rgba(pos),
+                )
             self.show_leds()
 
         self.init_animation()
@@ -478,13 +542,13 @@ class LedRingAnimations:
         Rainbow chase animation
         If iterations is 0, do it indefinitely
         """
-
         def animation(color_counter):
             for led_id in range(self.led_count):
                 offset = color_counter % 3
 
                 if (led_id + offset) % 3 == 0:
-                    self.set_led(led_id, wheel_rgba((led_id + color_counter) & 255))
+                    self.set_led(led_id,
+                                 wheel_rgba((led_id + color_counter) & 255))
                 else:
                     self.set_led(led_id, self.off_color)  # don't show
             self.show_leds()
@@ -524,9 +588,11 @@ class LedRingAnimations:
 
         sleep_duration = duration / float(steps)
         for _ in range(steps):
-            self.current_animation_color = ColorRGBA(self.current_animation_color.r + step_r,
-                                                     self.current_animation_color.g + step_g,
-                                                     self.current_animation_color.b + step_b, 0)
+            self.current_animation_color = ColorRGBA(
+                self.current_animation_color.r + step_r,
+                self.current_animation_color.g + step_g,
+                self.current_animation_color.b + step_b,
+                0)
             rospy.sleep(sleep_duration)
 
     # - Real Led ring related method
@@ -567,11 +633,13 @@ class LedRingAnimations:
             self.strip.show()
 
             # update value of current led state
-            current_rgb_array_led_state = self.get_state_list_from_pixel_strip()
+            current_rgb_array_led_state = self.get_state_list_from_pixel_strip(
+            )
             current_color_rgba_led_state = []
             # transform a list like [[r, g, b], [r, g, b], ...] to a list like [ColorRGBA, ColorRGBA, ...]
             for elem in current_rgb_array_led_state:
-                current_color_rgba_led_state.append(get_rgba_color_from_list(elem))
+                current_color_rgba_led_state.append(
+                    get_rgba_color_from_list(elem))
             self.set_current_real_leds_state(current_color_rgba_led_state)
         self.led_ring_makers.show_led_ring_markers()
 

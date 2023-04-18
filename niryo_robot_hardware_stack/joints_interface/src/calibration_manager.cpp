@@ -21,10 +21,10 @@
 #include <fstream>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-
 // to be migrated to std/filesystem when switching to C++17
 #include <boost/filesystem.hpp>
 

@@ -5,17 +5,17 @@
 from pymodbus.client.sync import ModbusTcpClient
 import time
 
-print "--- START"
+print("--- START")
 client = ModbusTcpClient('localhost', port=5020)
 
 client.connect()
-print "Connected to modbus server"
+print("Connected to modbus server")
 
 rr = client.read_input_registers(400, 9)
-print rr.registers
+print(rr.registers)
 
 rr = client.read_discrete_inputs(100, 6)
-print rr.bits
+print(rr.bits)
 
 # Set digital IO mode - output
 client.write_coil(0, False)
@@ -28,8 +28,8 @@ client.write_coil(103, False)
 time.sleep(0.1)
 
 rr = client.read_discrete_inputs(100, 6)
-print rr.bits
+print(rr.bits)
 
 client.close()
-print "Close connection to modbus server"
-print "--- END"
+print("Close connection to modbus server")
+print("--- END")

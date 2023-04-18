@@ -1,8 +1,8 @@
 """
 File containing functions for communication with Socket !
 """
+from typing import Optional
 
-import sys
 import ast
 import json
 import socket
@@ -12,7 +12,7 @@ from .const_communication import READ_SIZE, DEFAULT_PACKET_SIZE_INFOS
 
 
 # --- RECEPTION -- #
-def receive_data(sckt, packet_size_infos, buffer_size):
+def receive_data(sckt, packet_size_infos, buffer_size) -> Optional[str]:
     """
     Receive msg which cannot be contained in only one buffer
 
@@ -26,15 +26,15 @@ def receive_data(sckt, packet_size_infos, buffer_size):
     if len(received_data) != nbr_bytes:
         return None
     size_packet = int(struct.unpack(packet_size_infos["type"], received_data)[0])
-    received_big_data = "" if sys.version_info[0] == 2 else b""
+    received_big_data = b""
 
     while len(received_big_data) < size_packet:
         received_big_data += sckt.recv(min(buffer_size, size_packet - len(received_big_data)))
 
-    return received_big_data if sys.version_info[0] == 2 else received_big_data.decode()
+    return received_big_data.decode()
 
 
-def receive_dict(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, buffer_size=READ_SIZE):
+def receive_dict(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, buffer_size=READ_SIZE) -> dict:
     """
     Receive json through a Socket
 
@@ -47,7 +47,7 @@ def receive_dict(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, buffer_size=
     return data_to_dict(msg)
 
 
-def receive_dict_w_payload(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, buffer_size=READ_SIZE):
+def receive_dict_w_payload(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, buffer_size=READ_SIZE) -> (dict, bytes):
     """
     Receive json through a Socket then extract payload content.
     Payload can typically be an heavy file like an image
@@ -60,7 +60,7 @@ def receive_dict_w_payload(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, bu
     dict_data = receive_dict(sckt, buffer_size=buffer_size, packet_size_infos=packet_size_infos)
 
     payload_size = dict_data["payload_size"]
-    received_payload = "" if sys.version_info[0] == 2 else b""
+    received_payload = b""
     while len(received_payload) < payload_size:
         received_payload += sckt.recv(buffer_size)
 
@@ -68,7 +68,7 @@ def receive_dict_w_payload(sckt, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS, bu
 
 
 # - JSON - #
-def data_to_dict(data):
+def data_to_dict(data) -> Optional[dict]:
     """
     Convert a string representing a JSON to a JSON
 
@@ -82,7 +82,7 @@ def data_to_dict(data):
     return ast.literal_eval(data)
 
 
-def dict_to_packet(dict_obj, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS):
+def dict_to_packet(dict_obj, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS) -> bytes:
     """
     Convert dict to packet
 
@@ -90,11 +90,8 @@ def dict_to_packet(dict_obj, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS):
     :param packet_size_infos:
     :return: packet
     """
-    json_obj = json.dumps(dict_obj)
-
-    if sys.version[0] == 3:
-        json_obj = json_obj.encode()
-    packet = "" if sys.version_info[0] == 2 else b""
+    json_obj = json.dumps(dict_obj).encode()
+    packet = b""
     packet += struct.pack(packet_size_infos["type"], len(json_obj))
     packet += json_obj
     return packet
@@ -102,7 +99,8 @@ def dict_to_packet(dict_obj, packet_size_infos=DEFAULT_PACKET_SIZE_INFOS):
 
 # # --- SOCKET HANDLING --- #
 
-def create_socket_server(ip_address, port):
+
+def create_socket_server(ip_address, port) -> socket.socket:
     """
     Everything in the title
 

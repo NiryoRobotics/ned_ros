@@ -6,7 +6,7 @@ import os
 import unittest
 import shutil
 
-from niryo_robot_programs_manager.msg import ProgramLanguage, ProgramLanguageList
+from niryo_robot_programs_manager.msg import ProgramLanguage
 from niryo_robot_programs_manager.srv import ExecuteProgram, ExecuteProgramRequest
 from niryo_robot_programs_manager.srv import GetProgram, GetProgramRequest
 from niryo_robot_programs_manager.srv import GetProgramAutorunInfos
@@ -14,7 +14,7 @@ from niryo_robot_programs_manager.srv import GetProgramList, GetProgramListReque
 from niryo_robot_programs_manager.srv import ManageProgram, ManageProgramRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest
 
-python_language_msg = ProgramLanguage(ProgramLanguage.PYTHON2)
+python_language_msg = ProgramLanguage(ProgramLanguage.PYTHON3)
 blockly_language_msg = ProgramLanguage(ProgramLanguage.BLOCKLY)
 
 
@@ -161,7 +161,7 @@ class TestProgramManagerAbstract(unittest.TestCase):
 
 py_code = """
 import math
-print math.pi
+print(math.pi)
 """
 py_description = "Display PI"
 

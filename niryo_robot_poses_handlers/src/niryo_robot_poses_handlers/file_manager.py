@@ -135,11 +135,10 @@ class FileManager(object):
 
 
 class PickleFileManager(FileManager):
-
     def _write(self, name, object_):
         if name in self._protected_names:
             raise NiryoRobotFileException("Object '{}' is protected and cannot be written".format(name))
-        with open(self._path_from_name(name), 'w') as f:
+        with open(self._path_from_name(name), 'bw') as f:
             try:
                 pickle.dump(object_.to_dict(), f)
             except Exception as e:
@@ -161,7 +160,7 @@ class PickleFileManager(FileManager):
         if not self.exists(name):
             raise NiryoRobotFileException("Object '{}' does not exist".format(name))
 
-        with open(self._path_from_name(name), 'r') as f:
+        with open(self._path_from_name(name), 'br') as f:
             try:
                 return self.object_type.from_dict(pickle.load(f))
             except Exception as e:

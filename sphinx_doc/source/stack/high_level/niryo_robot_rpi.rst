@@ -51,9 +51,9 @@ Publisher - Raspberry Pi
    *  -  ``/niryo_robot/rpi/led_state``
       -  :std_msgs:`std_msgs/Int8<Int8>`
       -  Publishes the current LED color
-   *  -  ``ros_log_status``
-      -  :ref:`LogStatus<source/stack/high_level/niryo_robot_rpi:LogStatus (Topic)>`
-      -  Publishes the current log status (log size / available disk / boolean if should delete ros log on startup)
+   *  -  ``storage_status``
+      -  :ref:`StorageStatus<source/stack/high_level/niryo_robot_rpi:StorageStatus (Topic)>`
+      -  Publishes the current storage status (log size / available disk / total disk / boolean if should delete ros log on startup)
 
 Services - Raspberry Pi
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

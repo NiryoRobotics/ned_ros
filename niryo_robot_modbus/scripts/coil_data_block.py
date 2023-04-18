@@ -4,8 +4,8 @@ import rospy
 from data_block import DataBlock
 from collections import OrderedDict
 
-from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
-from niryo_robot_rpi.srv import SetPullup, SetIOMode, SetIOModeRequest
+from niryo_robot_rpi.srv import SetDigitalIO
+from niryo_robot_rpi.srv import SetIOMode, SetIOModeRequest
 
 """
  - Each address contains a 1 bit value

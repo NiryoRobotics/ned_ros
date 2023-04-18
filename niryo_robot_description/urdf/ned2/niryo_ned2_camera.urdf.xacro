@@ -24,8 +24,17 @@
             <geometry>
                 <box size="${cameraWidth} ${cameraHeight} ${cameraHeight}"/>
             </geometry>
-            <material name="DarkGrey"/>
+            <material name="Grey">
+               <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
         </visual>
+        <collision>
+            <origin xyz="0 0 0"
+                    rpy="0 0 0"/>
+            <geometry>
+                <box size="${cameraWidth} ${cameraHeight} ${cameraHeight}"/>
+            </geometry>
+        </collision>
     </link>
 
     <!-- Add gazebo settings to make the link an camera ! -->

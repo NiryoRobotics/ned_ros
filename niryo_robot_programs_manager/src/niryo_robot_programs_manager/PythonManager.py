@@ -10,14 +10,23 @@ line_jump = "\n"
 len_line_jump = len(line_jump)
 
 
-class Python2FileManager(ProgramsFileManager):
-    associated_path = "python2/"
+class PythonFileManager(ProgramsFileManager):
+    def __init__(self, base_dir, language):
 
-    def __init__(self, base_dir):
+        if language == LanguageEnum.PYTHON2:
+            self.__version_number = 2
+        elif language == LanguageEnum.PYTHON3:
+            self.__version_number = 3
+        else:
+            raise ValueError('PythonFileManager language must be a python language')
+
+        self.associated_path = f'python{self.__version_number}'
+
         programs_dir = os.path.join(base_dir, self.associated_path)
-        super(Python2FileManager, self).__init__(progs_dir=programs_dir,
-                                                 language=LanguageEnum.PYTHON2, extension=".py",
-                                                 runnable=True)
+        super(PythonFileManager, self).__init__(progs_dir=programs_dir,
+                                                language=language,
+                                                extension=".py",
+                                                runnable=True)
 
         self.__process = None
 
@@ -34,8 +43,9 @@ class Python2FileManager(ProgramsFileManager):
         if not self.exists(name):
             raise FileDoesNotExistException
         try:
-            self.__process = subprocess.Popen(['python', self._path_from_name(name)],
-                                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.__process = subprocess.Popen([f'python{self.__version_number}', self._path_from_name(name)],
+                                              stdout=subprocess.PIPE,
+                                              stderr=subprocess.PIPE)
             stdout, stderr = self.__process.communicate()
         except Exception as e:
             return False, str(e), ''

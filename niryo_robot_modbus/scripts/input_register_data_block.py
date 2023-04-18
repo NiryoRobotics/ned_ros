@@ -10,10 +10,9 @@ from std_msgs.msg import Bool, Int32
 
 from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, SoftwareVersion
-from niryo_robot_rpi.msg import LogStatus
+from niryo_robot_rpi.msg import StorageStatus
 from niryo_robot_rpi.msg import AnalogIOState
 from niryo_robot_rpi.srv import SetIOModeRequest
-
 """
  - Each address contains a 16 bits value
  - READ ONLY registers
@@ -43,6 +42,7 @@ IR_RPI_ROS_LOG_SIZE = 405
 IR_RPI_VERSION_N1 = 406
 IR_RPI_VERSION_N2 = 407
 IR_RPI_VERSION_N3 = 408
+IR_RPI_TOTAL_SPACE = 409
 
 IR_CONVEYOR_1_CONNECTION_STATE = 530
 IR_CONVEYOR_1_CONTROL_STATUS = 531
@@ -60,10 +60,12 @@ IR_AIO_STATE = 610
 AIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
 AIO_MODE_INPUT = SetIOModeRequest.INPUT
 
-AIO_NAME_TO_ADDRESS = OrderedDict({"AI1": 0,
-                                   "AI2": 1,
-                                   "AO1": 2,
-                                   "AO2": 3, })
+AIO_NAME_TO_ADDRESS = OrderedDict({
+    "AI1": 0,
+    "AI2": 1,
+    "AO1": 2,
+    "AO2": 3,
+})
 
 
 def handle_negative(val):
@@ -85,7 +87,7 @@ class InputRegisterDataBlock(DataBlock):
         self.selected_tool_id_sub = None
         self.learning_mode_sub = None
         self.hardware_status_sub = None
-        self.ros_log_status_sub = None
+        self.ros_storage_status_sub = None
         self.software_version_sub = None
         self.conveyor_feedback_sub = None
         self.analog_io_state_sub = None
@@ -93,18 +95,24 @@ class InputRegisterDataBlock(DataBlock):
     def start_ros_subscribers(self):
         self.joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.sub_joint_states)
         self.robot_state_sub = rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.sub_robot_state)
-        self.selected_tool_id_sub = rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
+        self.selected_tool_id_sub = rospy.Subscriber('/niryo_robot_tools_commander/current_id',
+                                                     Int32,
                                                      self.sub_selected_tool_id)
         self.learning_mode_sub = rospy.Subscriber('/niryo_robot/learning_mode/state', Bool, self.sub_learning_mode)
-        self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
+        self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
+                                                    HardwareStatus,
                                                     self.sub_hardware_status)
-        self.ros_log_status_sub = rospy.Subscriber('/niryo_robot_rpi/ros_log_status', LogStatus,
-                                                   self.sub_ros_log_status)
+        self.ros_storage_status_sub = rospy.Subscriber('/niryo_robot_rpi/storage_status',
+                                                       StorageStatus,
+                                                       self.sub_storage_status)
         self.software_version_sub = rospy.Subscriber('/niryo_robot_hardware_interface/software_version',
-                                                     SoftwareVersion, self.sub_software_version)
-        self.conveyor_feedback_sub = rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
+                                                     SoftwareVersion,
+                                                     self.sub_software_version)
+        self.conveyor_feedback_sub = rospy.Subscriber('/niryo_robot/conveyor/feedback',
+                                                      ConveyorFeedbackArray,
                                                       self.sub_conveyor_feedback)
-        self.analog_io_state_sub = rospy.Subscriber('/niryo_robot_rpi/analog_io_state', AnalogIOState,
+        self.analog_io_state_sub = rospy.Subscriber('/niryo_robot_rpi/analog_io_state',
+                                                    AnalogIOState,
                                                     self.sub_analog_io_state)
 
     def stop_ros_subscribers(self):
@@ -113,7 +121,7 @@ class InputRegisterDataBlock(DataBlock):
         self.selected_tool_id_sub.unregister()
         self.learning_mode_sub.unregister()
         self.hardware_status_sub.unregister()
-        self.ros_log_status_sub.unregister()
+        self.ros_storage_status_sub.unregister()
         self.software_version_sub.unregister()
         self.conveyor_feedback_sub.unregister()
         self.analog_io_state_sub.unregister()
@@ -149,9 +157,10 @@ class InputRegisterDataBlock(DataBlock):
         self.setValuesOffset(IR_CALIBR_IN_PROGRESS, [int(msg.calibration_in_progress)])
         self.setValuesOffset(IR_RPI_TEMPERATURE, [int(msg.rpi_temperature)])
 
-    def sub_ros_log_status(self, msg):
+    def sub_storage_status(self, msg):
         self.setValuesOffset(IR_RPI_AVAILABLE_SPACE, [int(msg.available_disk_size)])
         self.setValuesOffset(IR_RPI_ROS_LOG_SIZE, [int(msg.log_size)])
+        self.setValuesOffset(IR_RPI_TOTAL_SPACE, [int(msg.total_disk_size)])
 
     def sub_software_version(self, msg):
         version = msg.rpi_image_version

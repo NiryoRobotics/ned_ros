@@ -22,16 +22,13 @@
 #include <ros/console.h>
 
 // Declare a test
-TEST(CpuInterfaceTestSuite, testInit)
-{
-    ASSERT_TRUE(true);
-}
+TEST(CpuInterfaceTestSuite, testInit) { ASSERT_TRUE(true); }
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "cpu_interface_unit_tests");
+    testing::InitGoogleTest(&argc, argv);
+    ros::init(argc, argv, "cpu_interface_unit_tests");
 
-  return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }

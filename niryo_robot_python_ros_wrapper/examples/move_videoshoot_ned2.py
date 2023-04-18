@@ -28,7 +28,7 @@ def callback_pause_movement(msg):
 
 rospy.Subscriber('/niryo_robot_rpi/pause_state', PausePlanExecution, callback_pause_movement)
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
-print "--- Start"
+print("--- Start")
 
 n = NiryoRosWrapper()
 # n.request_new_calibration()
@@ -106,12 +106,13 @@ def random_sounds():
 t_sound = threading.Thread(target=random_sounds)
 t_sound.start()
 
-print "--- Prepare traj --"
+print(
+    "--- Prepare traj --")
 
 n.move_joints(*(6 * [0]))
 french_flag()
 n.move_pose(*[0.029, 0.217, 0.3, 2.254, 1.476, -2.38])
-print ("-- Compute traj 1 --")
+print("-- Compute traj 1 --")
 traj1 = n.compute_trajectory_from_poses_and_joints(
     [[0.029, 0.217, 0.15, 2.254, 1.476, -2.38],
      [0.03, 0.217, 0.3, 2.254, 1.476, -2.38], [0.159, 0.126, 0.3, 0.062, 1.535, 0.96],
@@ -125,7 +126,7 @@ traj1 = n.compute_trajectory_from_poses_and_joints(
      "pose"], 0.01)
 # n.execute_moveit_robot_trajectory(traj1)
 
-print ("-- Compute traj 2 --")
+print("-- Compute traj 2 --")
 n.move_pose(*[0.25, 0, 0.25, 0, 0, 0])
 traj2 = n.compute_trajectory_from_poses_and_joints(
     [[0.18, 0, 0.17, 0, 0, 0], [0.35, 0, 0.17, 0, 0, 0], [0.181, 0, 0.171, 0, 0, 0],
@@ -135,7 +136,7 @@ traj2 = n.compute_trajectory_from_poses_and_joints(
     ["pose", "pose", "pose", "pose", "pose", "pose", "pose", "pose", "joint"], 0)
 # n.execute_moveit_robot_trajectory(traj2)
 
-print ("-- Compute traj 3 --")
+print("-- Compute traj 3 --")
 n.move_pose(*[0.1, -0.01, 0.531, -0.045, 0.011, -0.074])
 traj3 = n.compute_trajectory_from_poses_and_joints(
     [[0.152, -0.005, 0.301, -0.063, -0.073, -0.036],
@@ -144,7 +145,7 @@ traj3 = n.compute_trajectory_from_poses_and_joints(
     ["pose", "pose", "pose", "pose", "pose"], 0)
 # n.execute_moveit_robot_trajectory(traj3)
 
-print ("-- Compute traj 4 --")
+print("-- Compute traj 4 --")
 pose_list = [
     [0.3, -0.16, 0.325, 0, 0, 0],
     [0.3, -0.13, 0.32, 0, 0, 0],
@@ -169,7 +170,7 @@ niryo_wave_traj = n.compute_trajectory_from_poses(full_traj, 0.001)
 
 
 # Slalome
-print ("-- Compute traj 5 --")
+print("-- Compute traj 5 --")
 start_pose = [0.2, -0.2, 0.15, 0, 1.57, 0]
 pose_list = [start_pose]
 for _ in range(2):
@@ -207,8 +208,7 @@ while True:
         n.calibrate_auto()
         n.update_tool()
         n.grasp_with_tool()
-        print "Calibration finished !"
-
+        print("Calibration finished !")
         print("Wave")
         open_gripper()
         n.led_ring.breath(BLUE)
@@ -330,10 +330,10 @@ while True:
         n.set_arm_max_velocity(100)
 
     except NiryoRosWrapperException as e:
-        print e
-        break
+        print(e)
+
         # handle exception here
         # you can also make a try/except for each command separately
 
-print "--- End"
+print("--- End")
 sys.exit()

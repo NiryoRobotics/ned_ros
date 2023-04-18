@@ -1,7 +1,7 @@
 from threading import Lock, Event
 import rospy
 
-from ros_wrapper_enums import ButtonAction
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
 
 from end_effector_interface.msg import EEButtonStatus
 

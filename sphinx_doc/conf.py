@@ -20,9 +20,9 @@ copyright = shared_conf.copyright
 author = shared_conf.author
 
 # The short X.Y version
-version = u'v4.1'
+version = u'v5.0'
 # The full version, including alpha/beta/rc tags
-release = u'v4.1.1'
+release = u'v5.0.0'
 
 # -- General configuration ---------------------------------------------------
 

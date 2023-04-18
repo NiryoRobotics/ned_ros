@@ -1,7 +1,7 @@
 
 import rospy
 
-from robot_status_enums import *
+from .robot_status_enums import *
 
 # - Messages
 from rosgraph_msgs.msg import Log

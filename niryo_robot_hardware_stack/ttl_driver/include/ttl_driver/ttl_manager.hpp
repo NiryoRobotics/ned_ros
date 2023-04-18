@@ -223,7 +223,7 @@ private:
     int _led_state = 0;
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 50;
+    static constexpr uint32_t MAX_HW_FAILURE = 150;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
     // at init, no hw, so no calib needed

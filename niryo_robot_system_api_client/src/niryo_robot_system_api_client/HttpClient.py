@@ -1,11 +1,13 @@
 import json
-import urllib
-import urllib2
+from urllib.request import urlopen, Request
+from urllib.parse import urlencode
 
 
 class HttpClient:
 
-    def __init__(self, host, port, prefix=None):
+    NONE_STATUS_CODE_MSG = 'Unable to connect to the HTTP server'
+
+    def __init__(self, host='127.0.0.1', port=5000, prefix=None):
         self.host = host
         self.port = port
         self.prefix = prefix
@@ -26,15 +28,18 @@ class HttpClient:
         url += uri
 
         if params:
-            url += '?{}'.format(urllib.urlencode(params))
+            url += '?{}'.format(urlencode(params))
 
         return url
+
+    def __payload(self, payload):
+        return json.dumps(payload).encode()
 
     def __get(self, uri, params=None):
         url = self.__url_builder(uri, params)
 
         try:
-            u = urllib2.urlopen(url)
+            u = urlopen(url)
         except IOError:
             return False, False
 
@@ -47,9 +52,9 @@ class HttpClient:
 
         url = self.__url_builder(uri)
         try:
-            request = urllib2.Request(url)
+            request = Request(url)
             request.add_header('Content-Type', 'application/json')
-            executed = urllib2.urlopen(request, json.dumps(params))
+            executed = urlopen(request, self.__payload(params))
         except IOError:
             return False, False
 
@@ -59,7 +64,7 @@ class HttpClient:
         status_code, response = self.__post('/setRobotName', {'name': name})
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         if status_code != 200:
             return False, response['detail']
@@ -70,7 +75,7 @@ class HttpClient:
         status_code, response = self.__get('/hotspotState')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response['state']
 
@@ -78,15 +83,39 @@ class HttpClient:
         status_code, response = self.__get('/wifiState')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response
 
-    def activate_hotspot(self):
-        status_code, response = self.__post('/switchToHotspot')
+    def reset_wifi(self):
+        status_code, response = self.__post('/resetWifi')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
+
+        return True, response
+
+    def reset_hotspot(self):
+        status_code, response = self.__post('/resetHotspot')
+
+        if not status_code:
+            return False, self.NONE_STATUS_CODE_MSG
+
+        return True, response
+
+    def reset_ethernet(self):
+        status_code, response = self.__post('/resetEthernet')
+
+        if not status_code:
+            return False, self.NONE_STATUS_CODE_MSG
+
+        return True, response
+
+    def start_hotspot(self):
+        status_code, response = self.__post('/startHotspot')
+
+        if not status_code:
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response
 
@@ -94,23 +123,31 @@ class HttpClient:
         status_code, response = self.__post('/restartWifi')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response
 
-    def deactivate_wifi(self):
-        status_code, response = self.__post('/deactivateWifi')
+    def start_wifi(self):
+        status_code, response = self.__post('/startWifi')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response
 
-    def reconnect_last_wifi(self):
-        status_code, response = self.__post('/reconnectLastWifi')
+    def stop_wifi(self):
+        status_code, response = self.__post('/stopWifi')
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
+
+        return True, response
+
+    def stop_hotspot(self):
+        status_code, response = self.__post('/stopHotspot')
+
+        if not status_code:
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response
 
@@ -119,6 +156,6 @@ class HttpClient:
                                             {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
 
         if not status_code:
-            return False, 'Unable to connect to the HTTP server'
+            return False, self.NONE_STATUS_CODE_MSG
 
         return True, response

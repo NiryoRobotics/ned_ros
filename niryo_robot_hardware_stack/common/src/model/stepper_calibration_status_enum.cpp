@@ -31,38 +31,32 @@ namespace model
  * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
  * @param e
  */
-StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(EStepperCalibrationStatus e):
-    AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(e)
-{}
+StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(EStepperCalibrationStatus e) : AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(e) {}
 
 /**
  * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
  * @param str
  */
-StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(const char* const str):
-    AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(str)
-{}
+StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(const char *const str) : AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(str) {}
 
 /**
  * @brief StepperCalibrationStatusEnum::initialize
  * @return
  */
-std::map<EStepperCalibrationStatus, std::string>
-StepperCalibrationStatusEnum::initialize()
+std::map<EStepperCalibrationStatus, std::string> StepperCalibrationStatusEnum::initialize()
 {
     std::map<EStepperCalibrationStatus, std::string> m;
 
     m[EStepperCalibrationStatus::UNINITIALIZED] = "uninitialized";
-    m[EStepperCalibrationStatus::OK]    = "ok";
-    m[EStepperCalibrationStatus::TIMEOUT]     = "timeout";
-    m[EStepperCalibrationStatus::BAD_PARAM]    = "bad parameter";
+    m[EStepperCalibrationStatus::OK] = "ok";
+    m[EStepperCalibrationStatus::TIMEOUT] = "timeout";
+    m[EStepperCalibrationStatus::BAD_PARAM] = "bad parameter";
     m[EStepperCalibrationStatus::FAIL] = "fail";
-    m[EStepperCalibrationStatus::WAITING_USER_INPUT]  = "waiting user input";
-    m[EStepperCalibrationStatus::IN_PROGRESS]  = "in progress";
+    m[EStepperCalibrationStatus::WAITING_USER_INPUT] = "waiting user input";
+    m[EStepperCalibrationStatus::IN_PROGRESS] = "in progress";
 
     return m;
 }
 
 }  // namespace model
 }  // namespace common
-

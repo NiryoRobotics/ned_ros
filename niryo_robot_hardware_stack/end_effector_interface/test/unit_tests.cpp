@@ -17,9 +17,10 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <memory>
+#include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <ros/service_client.h>
-#include <gtest/gtest.h>
 
 #include <string>
 
@@ -31,22 +32,19 @@
 
 class EndEffectorTestSuite : public ::testing::Test
 {
-    protected:
-        static void SetUpTestCase()
-        {
-            ros::NodeHandle nh_ttl("ttl_driver");
-            ros::NodeHandle nh("end_effector_interface");
-            ros::Duration(10.0).sleep();
+  protected:
+    static void SetUpTestCase()
+    {
+        ros::NodeHandle nh_ttl("ttl_driver");
+        ros::NodeHandle nh("end_effector_interface");
+        ros::Duration(10.0).sleep();
 
-            ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
+        ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
 
-            ee_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_interface);
-        }
+        ee_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_interface);
+    }
 
-        static void TearDownTestCase()
-        {
-            ros::shutdown();
-        }
+    static void TearDownTestCase() { ros::shutdown(); }
 
     static std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface;
     static std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> ee_interface;
@@ -73,10 +71,7 @@ TEST_F(EndEffectorTestSuite, config)
 }
 
 // Test service set Digital IO
-TEST_F(EndEffectorTestSuite, rebootHW)
-{
-    ASSERT_EQ(ee_interface->rebootHardware(), true);
-}
+TEST_F(EndEffectorTestSuite, rebootHW) { ASSERT_EQ(ee_interface->rebootHardware(), true); }
 
 TEST_F(EndEffectorTestSuite, getEndEffectorState)
 {

@@ -41,6 +41,7 @@ LED_WHITE = 7
 
 
 class LEDManager(object):
+
     def __init__(self, lock=None):
         self._red_led = None
         self._green_led = None
@@ -57,17 +58,21 @@ class LEDManager(object):
         self._blinker_stop_time = None
 
         self._set_led_state_server = rospy.Service('/niryo_robot/rpi/set_led_state',
-                                                   SetInt, self._callback_set_led_state)
+                                                   SetInt,
+                                                   self._callback_set_led_state)
 
         self._set_led_custom_blinker_server = rospy.Service('/niryo_robot_rpi/set_led_custom_blinker',
-                                                            LedBlinker, self._callback_set_led_custom_blinker)
+                                                            LedBlinker,
+                                                            self._callback_set_led_custom_blinker)
 
         self.hardware_status_subscriber = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
-                                                           HardwareStatus, self._callback_hardware_status)
+                                                           HardwareStatus,
+                                                           self._callback_hardware_status)
 
         # Subscribe to hotspot and hardware status. Those values will override standard states
         self.wifi_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/status',
-                                                      WifiStatus, self.__callback_wifi_state)
+                                                      WifiStatus,
+                                                      self.__callback_wifi_state)
 
         self.set_led_from_state(dxl_leds=True)
 
@@ -141,7 +146,7 @@ class LEDManager(object):
         if self.state == LedState.SHUTDOWN:
             return
 
-        if msg.status == msg.HOTSPOT:
+        if msg.hotspot_state == msg.ON:
             if self.state != LedState.HOTSPOT:
                 self.state = LedState.HOTSPOT
                 self.set_led_from_state(dxl_leds=True)

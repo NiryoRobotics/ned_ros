@@ -17,9 +17,10 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <gtest/gtest.h>
+#include <memory>
 #include <ros/ros.h>
 #include <ros/service_client.h>
-#include <gtest/gtest.h>
 
 #include "joints_interface/joints_interface_core.hpp"
 

@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ttl_driver</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>Provides an interface bewteen high level ROS packages and motors on TTL bus</description>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 
@@ -34,6 +34,6 @@
 
   <test_depend>rostest</test_depend>
   <test_depend>code_coverage</test_depend>
-  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

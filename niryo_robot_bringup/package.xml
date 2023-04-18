@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_bringup</name>
-  <version>4.1.1</version>
+  <version>5.0.0</version>
   <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
@@ -25,6 +25,6 @@
   <exec_depend>rviz</exec_depend>
   <exec_depend>xacro</exec_depend>
 
-  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

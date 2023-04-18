@@ -8,7 +8,7 @@ default_volume: 100
 default_volume_simulation: 10
 min_volume: 0
 max_volume: 100
-volume_factor: 2.0
+volume_factor: 1.0
 volume_file_path: "~/niryo_robot_saved_files/robot_sound_volume.txt"
 volume_file_path_simulation: "~/.niryo/simulation/robot_sound_volume.txt"
 
@@ -22,6 +22,7 @@ robot_sounds:
   turn_on_sound: "booting.wav"
   turn_off_sound: "stop.wav"
   connection_sound: "connected.wav"
+  disconnection_sound: "disconnected.wav"
   robot_ready_sound: "ready.wav"
   calibration_sound: "calibration.wav"
   warn_sound: "warn.wav"
