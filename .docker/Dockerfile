@@ -8,11 +8,11 @@ RUN apt update \
 RUN find . -type f -name "package.xml" | cpio -pdm docker_ros_folder_dependencies
 
 # Install rosdep
-RUN apt update \
+RUN if [ "$(arch)" = "x86_64" ]; then export SKIPPED_ROS_KEYS="python3-rpi.gpio python-rpi.gpio"; fi \
+    && apt update \
     && rosdep update  \
-    && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys=python-rpi.gpio --skip-keys=python3-rpi.gpio \
+    && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys "'${SKIPPED_ROS_KEYS}'" \
     && rm -rf /var/lib/apt/lists/*
-
 
 # Install additionnal dependencies
 RUN apt update \
