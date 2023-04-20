@@ -10,7 +10,7 @@ RUN find . -type f -name "package.xml" | cpio -pdm docker_ros_folder_dependencie
 # Install rosdep
 RUN apt update \
     && rosdep update  \
-    && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys "python-rpi.gpio" \
+    && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys=python-rpi.gpio --skip-keys=python3-rpi.gpio \
     && rm -rf /var/lib/apt/lists/*
 
 
