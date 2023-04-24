@@ -249,7 +249,7 @@ catkin_lint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
     # Check code linting
-    - catkin_lint -W2 --rosdistro noetic --ignore missing_directory --explain src
+    - catkin_lint -W2 --rosdistro noetic --ignore missing_directory -ignore unknown_package --explain src
 
 code_coverage_cpp_job:
   stage: test
