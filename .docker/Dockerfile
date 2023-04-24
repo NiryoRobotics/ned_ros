@@ -2,7 +2,7 @@ ARG ROS_DISTRO=noetic
 FROM ros:${ROS_DISTRO}-perception AS BUILD_DEPENDENCIES
 
 RUN apt update \
-    && apt install -y --no-install-recommends python3-pip python3-catkin-tools cpio git\
+    && apt install -y --no-install-recommends python3-pip python3-catkin-tools cpio git ros-${ROS_DISTRO}-rosdoc-lite\
     && rm -rf /var/lib/apt/lists/*
 
 RUN find . -type f -name "package.xml" | cpio -pdm docker_ros_folder_dependencies
