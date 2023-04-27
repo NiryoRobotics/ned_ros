@@ -175,10 +175,8 @@ build_doc_job:
     - mv src/install .
     - mv src/build .
     - mv src/devel .
+    - ls -al .
     - cp -r src/.gitlab_resources/.catkin_tools .
-    - ls -al src/sphinx_doc
-    - ls -al src/sphinx_doc/front_end
-    - ls -al src/sphinx_doc/front_end/config
     ################# Quickfix end ###############
     - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
