@@ -99,7 +99,7 @@ build_docker_arm64_job:
     - cd ${NIRYO_HOME_FOLDER}
     - cp -r src/.gitlab_resources/.catkin_tools .
     # we need to first build the packages before building tests
-    - catkin build --profile ${CATKIN_PROFILE_NAME}
+    - catkin build --profile ${CATKIN_PROFILE_NAME} -j1
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
   artifacts:
