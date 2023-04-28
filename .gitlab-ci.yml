@@ -222,6 +222,7 @@ test_job:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
