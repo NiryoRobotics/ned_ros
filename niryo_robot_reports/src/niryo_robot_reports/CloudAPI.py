@@ -71,49 +71,16 @@ class AuthentificationMS(ABCMicroService):
             response = requests.post(endpoint, headers=self._headers, json={'identifier': self._headers['identifier']})
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)
-<<<<<<< develop
-=======
 
-<<<<<<< develop
-        if response.status_code == 404:
-            raise MicroServiceError(f'There is no robot registered with the identifier "{self._headers["identifier"]}',
-                                    code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
->>>>>>> fix 404 with good api key
-
-=======
->>>>>>> better status code handling
         try:
             json = response.json()
         except requests.exceptions.JSONDecodeError:
             raise MicroServiceError(f'Invalid json for response {response.text}',
                                     code=MicroServiceError.Code.BAD_RESPONSE_CONTENT)
-<<<<<<< develop
-<<<<<<< develop
         if 400 <= response.status_code < 500:
             raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
         elif 500 <= response.status_code:
             raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.UNDEFINED)
-=======
-        if 200 <= response.status_code < 400:
-            if json['error'] is True:
-                raise MicroServiceError((f'{endpoint}: {self.__class__.__name__} responded with '
-                                         f'status {response.status_code} and error: {json["message"]}'),
-                                        code=MicroServiceError.Code.BAD_STATUS_CODE)
-        elif 400 <= response.status_code < 500:
-            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
-        elif 500 <= response.status_code:
-            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.UNDEFINED)
-        else:
-            raise MicroServiceError(
-                f'{endpoint}: {self.__class__.__name__} responded with status {response.status_code}: {json["message"]}',
-                code=MicroServiceError.Code.BAD_STATUS_CODE)
->>>>>>> better status code handling
-=======
-        if 400 <= response.status_code < 500:
-            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.BAD_REQUEST_CONTENT)
-        elif 500 <= response.status_code:
-            raise MicroServiceError(f'{endpoint}: {json["message"]}', code=MicroServiceError.Code.UNDEFINED)
->>>>>>> correct status code handling
 
         if 'data' not in json or 'apikey' not in json['data']:
             raise MicroServiceError(f'{endpoint}: {self.__class__.__name__}: invalid data payload: {json}',
