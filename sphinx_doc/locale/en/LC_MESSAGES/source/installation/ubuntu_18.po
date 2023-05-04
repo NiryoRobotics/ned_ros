@@ -42,7 +42,7 @@ msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:17
 msgid ""
-"The Niryo ROS Stack runs on top of ROS Melodic or Kinetic (deprecated). "
+"The Niryo ROS Stack runs on top of ROS Noetic or Melodic (deprecated). "
 "This version of ROS is strongly dependent of Ubuntu 18.04 version, thus, "
 "this OS is currently the only official supported OS."
 msgstr ""
@@ -126,8 +126,8 @@ msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:81
 msgid ""
-"You need to install ROS Melodic. To do so, follow the ROS official "
-"tutorial `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
+"You need to install ROS Noetic. To do so, follow the ROS official "
+"tutorial `here <http://wiki.ros.org/noetic/Installation/Ubuntu>`_ and "
 "chose the **Desktop-Full Install**."
 msgstr ""
 
@@ -197,7 +197,7 @@ msgid "To install a package on Ubuntu: ::"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:118
-msgid "Melodic specific packages needed are:"
+msgid "Noetic specific packages needed are:"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:120
@@ -225,7 +225,7 @@ msgid "joint-state-publisher-gui"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:127
-msgid "To install a ROS Melodic's package on Ubuntu: ::"
+msgid "To install a ROS Noetic package on Ubuntu: ::"
 msgstr ""
 
 #: ../../source/installation/ubuntu_18.rst:133

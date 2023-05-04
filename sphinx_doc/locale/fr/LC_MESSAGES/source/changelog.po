@@ -78,28 +78,28 @@ msgid "python-wstool"
 msgstr "python-wstool"
 
 #: ../../source/changelog.rst:19
-msgid "ros-melodic-moveit"
-msgstr "ros-melodic-moveit"
+msgid "ros-noetic-moveit"
+msgstr "ros-noetic-moveit"
 
 #: ../../source/changelog.rst:20
-msgid "ros-melodic-control"
-msgstr "ros-melodic-control"
+msgid "ros-noetic-control"
+msgstr "ros-noetic-control"
 
 #: ../../source/changelog.rst:21
-msgid "ros-melodic-controllers"
-msgstr "ros-melodic-controllers"
+msgid "ros-noetic-controllers"
+msgstr "ros-noetic-controllers"
 
 #: ../../source/changelog.rst:22
-msgid "ros-melodic-tf2-web-republisher"
-msgstr "ros-melodic-tf2-web-republisher"
+msgid "ros-noetic-tf2-web-republisher"
+msgstr "ros-noetic-tf2-web-republisher"
 
 #: ../../source/changelog.rst:23
-msgid "ros-melodic-rosbridge-server"
-msgstr "ros-melodic-rosbridge-server"
+msgid "ros-noetic-rosbridge-server"
+msgstr "ros-noetic-rosbridge-server"
 
 #: ../../source/changelog.rst:24
-msgid "ros-melodic-joint-state-publisher-gui"
-msgstr "ros-melodic-joint-state-publisher-gui"
+msgid "ros-noetic-joint-state-publisher-gui"
+msgstr "ros-noetic-joint-state-publisher-gui"
 
 #: ../../source/changelog.rst:27
 msgid "Python libraries"

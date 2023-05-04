@@ -20,6 +20,7 @@ class ToolTransformHandler:
     """
     This class uses a tfBuffer to handle transforms related to the tools.
     """
+
     def __init__(self):
         self.__tf_buffer = Buffer()
         self.__tf_listener = TransformListener(self.__tf_buffer)
@@ -89,24 +90,23 @@ class ToolTransformHandler:
         msg = TCP()
         msg.enabled = self.__enable_tcp
 
-        if self.__enable_tcp:
-            msg.position.x = self.__tcp_transform.transform.translation.x
-            msg.position.y = self.__tcp_transform.transform.translation.y
-            msg.position.z = self.__tcp_transform.transform.translation.z
-            msg.orientation = self.__tcp_transform.transform.rotation
-            msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw = euler_from_quaternion(
-                [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w])
-        else:
-            msg.orientation = Quaternion(0, 0, 0, 1)
+        msg.position.x = self.__tcp_transform.transform.translation.x
+        msg.position.y = self.__tcp_transform.transform.translation.y
+        msg.position.z = self.__tcp_transform.transform.translation.z
+        msg.orientation = self.__tcp_transform.transform.rotation
+        msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw = euler_from_quaternion(
+            [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w])
 
         self.__tcp_publisher.publish(msg)
 
     def __send_tcp_transform(self, _):
         t = self.__tcp_transform if self.__enable_tcp else self.empty_transform()
-        try:
-            t.header.stamp = self.__tf_buffer.lookup_transform('base_link', 'tool_link', rospy.Time(0)).header.stamp
-        except (ConnectivityException, LookupException):
-            t.header.stamp = rospy.Time.now()
+        # temporary thing to check if we still have TF_REPEATED_DATA
+        t.header.stamp = rospy.Time.now()
+        # try:
+        #     t.header.stamp = self.__tf_buffer.lookup_transform('base_link', 'tool_link', rospy.Time(0)).header.stamp
+        # except (ConnectivityException, LookupException):
+        #     t.header.stamp = rospy.Time.now()
 
         self.__static_broadcaster.sendTransform(t)
 

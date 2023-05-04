@@ -796,8 +796,9 @@ class CommandInterpreter:
 
     @check_nb_args(0)
     def __get_connected_conveyors_id(self):
-        conveyors = self.__niryo_robot.get_conveyors_feedback()
-        conveyors_list = [self.__conveyor_id_string_dict_convertor_inv[conveyor.conveyor_id] for conveyor in conveyors]
+        conveyors = self.__niryo_robot.get_conveyors_number()
+        conveyors_list = [self.__conveyor_id_string_dict_convertor_inv[conveyor_id]
+                          for conveyor_id in conveyors]
         return self.__send_answer(conveyors_list)
 
     # - Vision

@@ -181,7 +181,7 @@ class TrajectoriesExecutor:
         """
         plan = self.__arm.plan()
 
-        # handle changes between melodic / noetic
+        # handle changes between noetic / noetic
         if isinstance(plan, RobotTrajectory):
             return None if not plan.joint_trajectory.points else plan
         else:

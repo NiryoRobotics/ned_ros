@@ -168,8 +168,8 @@ msgid "It comprises all the following elements :"
 msgstr "Il comprend tous les éléments suivants:"
 
 #: ../../source/real_robot.rst:69
-msgid "ROS melodic and its requirements"
-msgstr "ROS melodic et ses prérequis"
+msgid "ROS noetic and its requirements"
+msgstr "ROS noetic et ses prérequis"
 
 #: ../../source/real_robot.rst:70
 msgid "Sound driver"

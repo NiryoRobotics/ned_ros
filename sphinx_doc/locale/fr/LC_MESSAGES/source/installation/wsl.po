@@ -190,7 +190,7 @@ msgstr ""
 
 #: ../../source/installation/wsl.rst:105
 msgid "Install ROS Melodic (see instructions here)"
-msgstr "Installer ROS melodic (voir les instructions ici)"
+msgstr "Installer ROS noetic (voir les instructions ici)"
 
 #: ../../source/installation/wsl.rst:107
 msgid "Try launching Rviz"

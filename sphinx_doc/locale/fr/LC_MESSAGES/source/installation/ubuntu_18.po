@@ -150,12 +150,12 @@ msgstr "Installer ROS"
 #: ../../source/installation/ubuntu_18.rst:81
 msgid ""
 "You need to install ROS Melodic. To do so, follow the ROS official "
-"tutorial `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
+"tutorial `here <http://wiki.ros.org/noetic/Installation/Ubuntu>`_ and "
 "chose the **Desktop-Full Install**."
 msgstr ""
 "Vous devez tout d'abord installer ROS Melodic. Pour cela, suivez les "
 "instructions du tutoriel officiel de ROS `ici "
-"<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ et choisissez "
+"<http://wiki.ros.org/noetic/Installation/Ubuntu>`_ et choisissez "
 "l'option **Desktop-Full Install**."
 
 #: ../../source/installation/ubuntu_18.rst:86
@@ -230,7 +230,7 @@ msgstr "Pour installer un package sur Ubuntu : ::"
 
 #: ../../source/installation/ubuntu_18.rst:118
 msgid "Melodic specific packages needed are:"
-msgstr "Les packages melodic spécifiques requis sont :"
+msgstr "Les packages noetic spécifiques requis sont :"
 
 #: ../../source/installation/ubuntu_18.rst:120
 msgid "moveit"

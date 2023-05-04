@@ -2,6 +2,18 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.1.0
+___________
+
+**Features**
+
+* The topic ``/niryo_robot_tools_commander/tcp`` now return the tcp position either if it is enabled or not
+* Every part of a dynamic frame can now be edited using the service ``/niryo_robot_poses_handlers/manage_dynamic_frame``
+* Manage a file in ``~/.ros/logs`` which store the date corresponding to the ros run ids
+**Improvements**
+
+**Bugfixes**
+
 Forthcoming
 -----------
 

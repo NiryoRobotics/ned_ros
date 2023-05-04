@@ -20,7 +20,9 @@ import RPi.GPIO as GPIO
 from threading import Thread
 import rosnode
 
-from niryo_robot_rpi.common.rpi_ros_utils import send_hotspot_command, send_shutdown_command, activate_learning_mode
+from niryo_robot_system_api_client.HttpClient import HttpClient as SystemApiClient
+
+from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, activate_learning_mode
 from niryo_robot_rpi.common.rpi_ros_utils import LedState, send_led_state
 from niryo_robot_rpi.common.abstract_top_button import AbstractTopButton
 
@@ -37,6 +39,7 @@ from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 
 
 class ButtonMode:
+
     def __init__(self):
         pass
 
@@ -46,9 +49,12 @@ class ButtonMode:
 
 
 class TopButton(AbstractTopButton):
+
     def __init__(self):
         self.pause_time = None
         self.resume = None
+
+        self.__system_api_client = SystemApiClient()
 
         self.__program_manager_is_running = False
 
@@ -62,13 +68,16 @@ class TopButton(AbstractTopButton):
         # Publisher used to send info to Niryo Studio, so the user can add a move block
         # by pressing the button
         self.save_point_publisher = rospy.Publisher("/niryo_robot/blockly/save_current_point", Int32, queue_size=10)
-        self._button_state_publisher = rospy.Publisher("/niryo_robot/rpi/is_button_pressed", Bool, latch=True,
+        self._button_state_publisher = rospy.Publisher("/niryo_robot/rpi/is_button_pressed",
+                                                       Bool,
+                                                       latch=True,
                                                        queue_size=1)
 
         super(TopButton, self).__init__()
 
         # - Subscribers
-        rospy.Subscriber('/niryo_robot_programs_manager/program_is_running', ProgramIsRunning,
+        rospy.Subscriber('/niryo_robot_programs_manager/program_is_running',
+                         ProgramIsRunning,
                          self.__callback_program_is_running)
         rospy.Subscriber('/niryo_robot/rpi/led_state', Int8, self.__callback_led_state)
 
@@ -81,7 +90,7 @@ class TopButton(AbstractTopButton):
 
     def read_value(self):
         super(TopButton, self).read_value()
-        self._button_state_publisher.publish(self._is_button_pressed())
+        self._button_state_publisher.publish(self.is_button_pressed())
         return self._button_state
 
     def __callback_program_is_running(self, msg):
@@ -103,10 +112,10 @@ class TopButton(AbstractTopButton):
         elapsed_seconds = 15
 
         while not rospy.is_shutdown():
-            button_was_pressed = self._is_button_pressed()
+            button_was_pressed = self.is_button_pressed()
 
             self.read_value()
-            if self._is_button_pressed():
+            if self.is_button_pressed():
                 if not button_was_pressed:
                     last_press_time = rospy.Time.now()
                 elapsed_seconds = (rospy.Time.now() - last_press_time).to_sec()
@@ -118,7 +127,7 @@ class TopButton(AbstractTopButton):
                 if elapsed_seconds >= 10:
                     pass
                 elif elapsed_seconds >= 6:
-                    send_hotspot_command()
+                    self.__system_api_client.start_hotspot()
                 elif elapsed_seconds >= 3:
                     send_shutdown_command()
                 elif 0.02 < elapsed_seconds < 3:
@@ -159,7 +168,7 @@ class TopButton(AbstractTopButton):
                     self._cancel_program_from_program_manager()
 
                 self.read_value()
-                while not rospy.is_shutdown() and self._is_button_pressed():
+                while not rospy.is_shutdown() and self.is_button_pressed():
                     self.__button_loop_frequency.sleep()
                     self.read_value()
             else:
@@ -173,12 +182,12 @@ class TopButton(AbstractTopButton):
     def double_press(self):
         start_time = rospy.Time.now()
         self.read_value()
-        button_pressed = self._is_button_pressed()
+        button_pressed = self.is_button_pressed()
         while not rospy.is_shutdown() and (rospy.Time.now() - start_time).to_sec() < 1:
             self.read_value()
-            if not button_pressed and self._is_button_pressed():
+            if not button_pressed and self.is_button_pressed():
                 return True
-            button_pressed = self._is_button_pressed()
+            button_pressed = self.is_button_pressed()
             self.__button_loop_frequency.sleep()
         return False
 

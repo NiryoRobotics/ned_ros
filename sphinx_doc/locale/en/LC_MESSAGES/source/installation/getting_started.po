@@ -42,7 +42,7 @@ msgstr ""
 
 #: ../../source/installation/getting_started.rst:10
 msgid ""
-"As the stack is based on ROS Melodic or Kinetic (deprecated), you need to"
+"As the stack is based on ROS Noetic or Melodic (deprecated), you need to"
 " be on an Ubuntu based system."
 msgstr ""
 
