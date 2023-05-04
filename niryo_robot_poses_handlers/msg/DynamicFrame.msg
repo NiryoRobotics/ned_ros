@@ -1,4 +1,4 @@
-string name # maximum lenght of dynamic_frame's name is 30 characters
+string name # maximum length of dynamic_frame's name is 30 characters
 string new_name
 string description
 bool belong_to_workspace

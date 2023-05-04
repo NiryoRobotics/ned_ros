@@ -1,161 +1,153 @@
-import json
-from urllib.request import urlopen, Request
-from urllib.parse import urlencode
+import requests
+import rospy
 
 
 class HttpClient:
 
-    NONE_STATUS_CODE_MSG = 'Unable to connect to the HTTP server'
+    ERROR_MSG = 'Error while requesting the HTTP server'
 
     def __init__(self, host='127.0.0.1', port=5000, prefix=None):
-        self.host = host
-        self.port = port
-        self.prefix = prefix
-        self.last_error = ''
+        self.__base_url = f'http://{host}:{port}'
+        if prefix is not None:
+            self.__base_url += f'/{prefix}'
 
-    def __url_builder(self, uri, params=None):
-        """
-        Build an url from the route and parameters
+    def __parse_response(self, response=None):
+        default_response = False, '', {}
+        if response is None or response.status_code != 200:
+            return default_response
+        try:
+            json = response.json()
+        except requests.exceptions.JSONDecodeError as json_decode_error:
+            rospy.logerr(json_decode_error)
+            return default_response
+        return True, json['detail'], json['data']
 
-        :type uri: str
-        :type params: dict
-        :return: None
-        :rtype: str
-        """
-        url = 'http://{}:{}'.format(self.host, self.port)
-        if self.prefix is not None:
-            url += self.prefix
-        url += uri
-
-        if params:
-            url += '?{}'.format(urlencode(params))
-
-        return url
-
-    def __payload(self, payload):
-        return json.dumps(payload).encode()
-
-    def __get(self, uri, params=None):
-        url = self.__url_builder(uri, params)
+    def __get(self, uri):
+        endpoint = f'{self.__base_url}{uri}'
 
         try:
-            u = urlopen(url)
-        except IOError:
-            return False, False
+            response = requests.get(endpoint)
+        except requests.ConnectionError as connection_error:
+            rospy.logerr_throttle_identical(60, str(connection_error))
+            response = None
 
-        return u.getcode(), json.loads(u.read())
+        return self.__parse_response(response)
 
     def __post(self, uri, params=None):
         if params is None:
-            # Important otherwise the request will be GET instead of POST
             params = {}
 
-        url = self.__url_builder(uri)
-        try:
-            request = Request(url)
-            request.add_header('Content-Type', 'application/json')
-            executed = urlopen(request, self.__payload(params))
-        except IOError:
-            return False, False
+        endpoint = f'{self.__base_url}{uri}'
 
-        return executed.getcode(), json.loads(executed.read())
+        try:
+            response = requests.post(endpoint, json=params)
+        except requests.ConnectionError as connection_error:
+            rospy.logerr_throttle_identical(60, str(connection_error))
+            response = None
+
+        return self.__parse_response(response)
 
     def set_robot_name(self, name):
-        status_code, response = self.__post('/setRobotName', {'name': name})
+        success, detail, _ = self.__post('/setRobotName', {'name': name})
 
-        if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+        if not success:
+            return False, self.ERROR_MSG
 
-        if status_code != 200:
-            return False, response['detail']
-
-        return True, response['detail']
+        return True, detail
 
     def hotspot_state(self):
-        status_code, response = self.__get('/hotspotState')
+        success, _, data = self.__get('/hotspotState')
 
-        if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+        if not success:
+            return False, self.ERROR_MSG
 
-        return True, response['state']
+        return True, data
 
     def wifi_state(self):
-        status_code, response = self.__get('/wifiState')
+        status_code, _, data = self.__get('/wifiState')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, data
 
     def reset_wifi(self):
-        status_code, response = self.__post('/resetWifi')
+        status_code, detail, _ = self.__post('/resetWifi')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def reset_hotspot(self):
-        status_code, response = self.__post('/resetHotspot')
+        status_code, detail, _ = self.__post('/resetHotspot')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def reset_ethernet(self):
-        status_code, response = self.__post('/resetEthernet')
+        status_code, detail, _ = self.__post('/resetEthernet')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def start_hotspot(self):
-        status_code, response = self.__post('/startHotspot')
+        status_code, detail, _ = self.__post('/startHotspot')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def restart_wifi(self):
-        status_code, response = self.__post('/restartWifi')
+        status_code, detail, _ = self.__post('/restartWifi')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def start_wifi(self):
-        status_code, response = self.__post('/startWifi')
+        status_code, detail, _ = self.__post('/startWifi')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def stop_wifi(self):
-        status_code, response = self.__post('/stopWifi')
+        status_code, detail, _ = self.__post('/stopWifi')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def stop_hotspot(self):
-        status_code, response = self.__post('/stopHotspot')
+        status_code, detail, _ = self.__post('/stopHotspot')
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail
 
     def setup_ethernet(self, profile, ip="", mask="", gateway="", dns=""):
-        status_code, response = self.__post('/ethernetProfile',
-                                            {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
+        (status_code, detail, _) = self.__post(
+            '/ethernetProfile',
+            {
+                'profile': profile,
+                "ip": ip,
+                "mask": mask,
+                "gw": gateway,
+                "dns": dns,
+            },
+        )
 
         if not status_code:
-            return False, self.NONE_STATUS_CODE_MSG
+            return False, self.ERROR_MSG
 
-        return True, response
+        return True, detail

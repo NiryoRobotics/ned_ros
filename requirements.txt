@@ -10,7 +10,7 @@ psutil
 RPI.GPIO
 rpi_ws281x>=4.3.4
 spidev
-
+requests
 
 # Adafruit-GPIO==1.0.3
 # Adafruit-PureIO==1.0.1

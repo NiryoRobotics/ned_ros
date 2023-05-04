@@ -127,7 +127,7 @@ msgid "It comprises all the following elements :"
 msgstr ""
 
 #: ../../source/real_robot.rst:69
-msgid "ROS melodic and its requirements"
+msgid "ROS noetic and its requirements"
 msgstr ""
 
 #: ../../source/real_robot.rst:70

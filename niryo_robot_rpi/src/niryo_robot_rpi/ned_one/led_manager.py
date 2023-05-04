@@ -146,7 +146,7 @@ class LEDManager(object):
         if self.state == LedState.SHUTDOWN:
             return
 
-        if msg.hotspot_state == msg.ON:
+        if msg.hotspot_status == msg.ON:
             if self.state != LedState.HOTSPOT:
                 self.state = LedState.HOTSPOT
                 self.set_led_from_state(dxl_leds=True)

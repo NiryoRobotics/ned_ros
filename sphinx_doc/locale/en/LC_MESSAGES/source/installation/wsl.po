@@ -147,7 +147,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/installation/wsl.rst:105
-msgid "Install ROS Melodic (see instructions here)"
+msgid "Install ROS Noetic (see instructions here)"
 msgstr ""
 
 #: ../../source/installation/wsl.rst:107

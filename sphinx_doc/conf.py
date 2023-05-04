@@ -28,12 +28,7 @@ release = u'v5.0.0'
 
 extensions = base_conf.extensions
 
-StandaloneHTMLBuilder.supported_image_types = [
-    'image/svg+xml',
-    'image/gif',
-    'image/png',
-    'image/jpeg'
-]
+StandaloneHTMLBuilder.supported_image_types = ['image/svg+xml', 'image/gif', 'image/png', 'image/jpeg']
 
 # Avoid autosection label to trigger warning on low level titles
 autosectionlabel_maxdepth = 3
@@ -89,7 +84,7 @@ html_static_path = shared_conf.html_static_path[:] + ['static/']
 html_logo = shared_conf.html_logo
 html_favicon = shared_conf.html_favicon
 
-html_css_files =  ['config.css'] + shared_conf.html_css_files[:]
+html_css_files = ['config.css'] + shared_conf.html_css_files[:]
 
 html_js_files = shared_conf.html_js_files
 
@@ -110,7 +105,7 @@ ros_base_path = ['../']
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 # Links
-ros_distro = 'melodic'
+ros_distro = 'noetic'
 extlinks = {
     'rosdocs': ('http://docs.ros.org/' + ros_distro + '/api/%s', ''),
     'tf2': ('http://docs.ros.org/' + ros_distro + '/api/tf2_ros/html/c++/classtf2__ros_1_1%s.html', ''),
@@ -119,20 +114,20 @@ extlinks = {
     'rosgraph_msgs': ('http://docs.ros.org/' + ros_distro + '/api/rosgraph_msgs/html/msg/%s.html', 'rosgraph_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'control_msgs': ('http://docs.ros.org/' + ros_distro + '/api/control_msgs/html/msg/%s.html', 'control_msgs/'),
-    'visualization_msgs': (
-    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
+    'visualization_msgs':
+    ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
     'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
-    'visualization_msgs': (
-    'http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
+    'visualization_msgs':
+    ('http://docs.ros.org/' + ros_distro + '/api/visualization_msgs/html/msg/%s.html', 'visualization_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'rosconsole': ('http://wiki.ros.org/rosconsole%s', ''),
     'log4cxx': ('https://logging.apache.org/log4cxx/latest_stable/index.html%s', ''),
     'ros_multimachine': ('https://wiki.ros.org/ROS/Tutorials/MultipleMachines%s', ''),
     'doc_niryo_studio': ('https://docs.niryo.com/product/niryo-studio/v3.2.1/en/index.html%s', ''),
-    'niryo_studio_simulation': (
-        'https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
-        None),
+    'niryo_studio_simulation':
+    ('https://docs.niryo.com/product/niryo-studio/source/connection.html#using-ned-in-simulation-with-niryo-studio/%s',
+     None),
     'pymodbus': ('https://pymodbus.readthedocs.io/en/latest/index.html%s', ''),
     'python_website': ('https://www.python.org/%s', None),
     'python_installation': ('https://realpython.com/installing-python/%s', None),
