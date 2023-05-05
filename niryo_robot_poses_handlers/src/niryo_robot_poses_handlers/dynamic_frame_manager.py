@@ -101,8 +101,6 @@ class DynamicFrameManager(FileManager):
         """
         Create a new local frame
         """
-        self.check_exist(name)
-
         static_transform_stamped, transform_as_list = self.__get_static_transform(name, points)
 
         # Add to the list of publish transform

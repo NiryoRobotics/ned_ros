@@ -14,6 +14,14 @@ ___________
 
 **Bugfixes**
 
+v5.0.1
+___________
+
+**Features**
+**Improvements**
+
+**Bugfixes**
+* Fixed a bug preventing the downloaded update to be applied successfully
 Forthcoming
 -----------
 
