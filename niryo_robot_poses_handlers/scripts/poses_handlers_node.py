@@ -346,9 +346,9 @@ class PoseHandlerNode:
         robot_poses_raw = []
 
         for pose in robot_poses:
-            rospy.loginfo("Robot point\n{}".format(pose.position))
+            rospy.logdebug("Robot point\n{}".format(pose.position))
             point = self.__transform_handler.get_calibration_tip_position(pose)
-            rospy.loginfo("Tip point\n{}".format(point))
+            rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
             pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
@@ -533,9 +533,9 @@ class PoseHandlerNode:
         points = []
 
         for pose in poses:
-            rospy.loginfo("Robot point\n{}".format(pose.position))
+            rospy.logdebug("Robot point\n{}".format(pose.position))
             point = self.__transform_handler.get_calibration_tip_position(pose)
-            rospy.loginfo("Tip point\n{}".format(point))
+            rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
 
         self.dynamic_frame_manager.create(name, points, description, belong_to_workspace)
