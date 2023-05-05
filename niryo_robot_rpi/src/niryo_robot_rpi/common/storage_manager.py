@@ -61,7 +61,7 @@ class StorageManager:
         rospy.loginfo("Init Storage Manager OK")
 
     def __update_run_ids_file(self):
-        with open(f'{self.log_path}/{self.__run_ids_filename}', 'w+') as file:
+        with open(f'{self.log_path}/{self.__run_ids_filename}', 'a+') as file:
             try:
                 run_ids = json.load(file)
             except json.JSONDecodeError:
