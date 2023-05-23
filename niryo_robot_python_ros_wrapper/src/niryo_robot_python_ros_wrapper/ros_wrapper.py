@@ -49,11 +49,9 @@ def move_command(move_function):
         result = move_function(self, *args, **kwargs)
 
         # check if a collision happened during the move
-        status, message = result
-        if status == CommandStatus.ABORTED:
-            self._collision_detected = True
-            if self._collision_policy == CollisionPolicy.HARD:
-                raise NiryoRosWrapperException(message)
+        if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
+            status, message = result
+            raise NiryoRosWrapperException(message)
         return result
 
     return wrapper
@@ -89,6 +87,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__break_point_publisher = rospy.Publisher('/niryo_robot_blockly/break_point', Int32, queue_size=10)
 
         # -- Subscribers
+
+        rospy.Subscriber('/niryo_robot/collision_detected', Bool, self.__callback_collision_detected)
 
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
@@ -162,6 +162,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def clear_collision_detected(self):
         self._collision_detected = False
+
+    def __callback_collision_detected(self, msg):
+        if msg.data:
+            self._collision_detected = True
 
     def __advertise_stop(self):
         if self.__hardware_version in ['ned', 'ned2']:
