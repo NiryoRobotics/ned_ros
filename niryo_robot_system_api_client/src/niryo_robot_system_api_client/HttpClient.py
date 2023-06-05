@@ -9,7 +9,7 @@ class HttpClient:
     def __init__(self, host='127.0.0.1', port=5000, prefix=None):
         self.__base_url = f'http://{host}:{port}'
         if prefix is not None:
-            self.__base_url += f'/{prefix}'
+            self.__base_url += f'{prefix}'
 
     def __parse_response(self, response=None):
         default_response = False, '', {}
