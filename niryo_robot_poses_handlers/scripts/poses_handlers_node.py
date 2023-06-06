@@ -4,7 +4,7 @@
 import rospy
 import logging
 
-from transform_handler import PosesTransformHandler
+from .transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
