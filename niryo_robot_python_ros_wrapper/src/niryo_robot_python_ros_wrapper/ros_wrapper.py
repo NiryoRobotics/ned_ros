@@ -1836,7 +1836,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return self.__conveyor_id_to_conveyor_number(conveyor_id)
 
-
     def unset_conveyor(self, conveyor_id):
         """
         Removes specific conveyor
@@ -1890,7 +1889,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_conveyors_number(self):
         fb = self.__conveyors_feedback_ntv.value
-        return [self.__conveyor_id_to_conveyor_number(conveyor.conveyor_id) for conveyor in fb.conveyors]     
+        return [self.__conveyor_id_to_conveyor_number(conveyor.conveyor_id) for conveyor in fb.conveyors]
 
     def __conveyor_number_to_conveyor_id(self, conveyor_number):
         ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
@@ -2367,4 +2366,3 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     @property
     def robot_status(self):
         return self.__robot_status
-

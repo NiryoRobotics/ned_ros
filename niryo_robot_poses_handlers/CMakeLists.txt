@@ -111,7 +111,6 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/transform_handler.py
     scripts/poses_handlers_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
