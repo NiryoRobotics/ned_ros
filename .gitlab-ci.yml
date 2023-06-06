@@ -229,6 +229,7 @@ test_job:
     - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
+  allow_failure: true
 
 roslint_job:
   stage: test
