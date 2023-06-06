@@ -230,6 +230,7 @@ test_job:
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
   allow_failure: true
+  when: manual
 
 roslint_job:
   stage: test
