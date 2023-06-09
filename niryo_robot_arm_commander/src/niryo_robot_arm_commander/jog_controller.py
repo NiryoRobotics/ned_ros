@@ -13,7 +13,7 @@ a mouse to control the robot)
 import rospy
 import math
 from threading import Lock
-from niryo_robot_arm_commander.command_enums import ArmCommanderException
+from .command_enums import ArmCommanderException
 
 # Quaternion
 from tf.transformations import quaternion_from_euler, quaternion_multiply, euler_from_quaternion

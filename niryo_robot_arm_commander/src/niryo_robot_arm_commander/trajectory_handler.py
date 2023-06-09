@@ -13,9 +13,9 @@ from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from end_effector_interface.msg import EEButtonStatus
 
-from niryo_robot_arm_commander.trajectory_file_manager import TrajectoryFileManager
+from .trajectory_file_manager import TrajectoryFileManager
+from .command_enums import ArmCommanderException
 from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest, GetTrajectory
-from niryo_robot_arm_commander.command_enums import ArmCommanderException
 
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 

@@ -6,7 +6,7 @@ import rospy
 import threading
 import random
 
-from niryo_robot_arm_commander.utils import poses_too_close
+from .utils import poses_too_close
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -28,7 +28,7 @@ from niryo_robot_msgs.srv import Trigger
 from niryo_robot_msgs.srv import SetBool
 
 # Enums
-from niryo_robot_arm_commander.command_enums import ArmCommanderException
+from .command_enums import ArmCommanderException
 
 
 class TrajectoriesExecutor:

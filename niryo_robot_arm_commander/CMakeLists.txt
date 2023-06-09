@@ -97,17 +97,8 @@ endif()
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS 
-    scripts/arm_commander.py
-    scripts/arm_state.py
-    scripts/ArmParametersValidator.py
-    scripts/jog_controller.py
-    scripts/kinematics_handler.py
+catkin_install_python(PROGRAMS
     scripts/robot_commander_node.py
-    scripts/trajectories_executor.py
-    scripts/transform_handler.py
-    scripts/trajectory_handler.py
-    scripts/robot_state_publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
