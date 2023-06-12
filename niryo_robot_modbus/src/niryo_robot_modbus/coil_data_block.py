@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import rospy
-
-from data_block import DataBlock
 from collections import OrderedDict
+
+from .data_block import DataBlock
 
 from niryo_robot_rpi.srv import SetDigitalIO
 from niryo_robot_rpi.srv import SetIOMode, SetIOModeRequest

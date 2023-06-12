@@ -9,10 +9,10 @@ from pymodbus.server.sync import ModbusTcpServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 
-from coil_data_block import CoilDataBlock
-from discrete_input_data_block import DiscreteInputDataBlock
-from input_register_data_block import InputRegisterDataBlock
-from holding_register_data_block import HoldingRegisterDataBlock
+from .coil_data_block import CoilDataBlock
+from .discrete_input_data_block import DiscreteInputDataBlock
+from .input_register_data_block import InputRegisterDataBlock
+from .holding_register_data_block import HoldingRegisterDataBlock
 
 
 class ModbusServer:

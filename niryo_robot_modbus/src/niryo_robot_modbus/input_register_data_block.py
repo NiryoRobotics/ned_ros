@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import rospy
-from data_block import DataBlock
 from collections import OrderedDict
+
+from .data_block import DataBlock
 
 # Messages
 from sensor_msgs.msg import JointState
