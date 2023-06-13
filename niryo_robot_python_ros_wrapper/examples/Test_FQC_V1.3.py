@@ -260,21 +260,26 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
     def say(self, text, prio=0):  # prio is here to speak even if USE_VOCAL = False
         if (USE_VOCAL or prio == 1) and self.__hardware_version in ['ned2']:
-            self.__robot.sound.say(text, 1)
+            try:
+                self.__robot.sound.say(text, 1)
+            except Exception:
+                rospy.loginfo("No internet connection, robot can't speak")
+        subprocess.run('rm -rf /home/niryo/niryo_robot_saved_files/niryo_robot_user_sounds/last_text_to_speech.mp3',
+                       shell=True,
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
     def name(self, report):
         if FULL != 0:
             report.execute(self.__robot.sound.set_volume, "Set volume", [VOLUME])
-        try:
-            name = [
-                "Programme demo",
-                "Debut du test court FQC",
-                "Debut du test long FQC",
-                "Test avant expedission",
-            ]  # expedition
-            self.say(name[FULL], 1)
-        except Exception:
-            report.append("No internet connection, robot can't speak")
+
+        name = [
+            "Programme demo",
+            "Debut du test court FQC",
+            "Debut du test long FQC",
+            "Test avant expedission",
+        ]  # expedition
+        self.say(name[FULL], 1)
 
     def ip_say(self, report):
         self.__robot.led_ring.solid(PURPLE)
@@ -760,7 +765,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
         nb_collision, nb_loop = 0, 0
         report.append("Start of the long test")
 
-        waypoints = [[j_limit_1m, j_limit_2M, np.deg2rad(-65), j_limit_4M, j_limit_5m,
+        waypoints = [[j_limit_1m, j_limit_2M, np.deg2rad(-60), j_limit_4M, j_limit_5m,
                       j_limit_6M], [j_limit_1M, j_limit_2M, j_limit_3m, j_limit_4m, j_limit_5M, j_limit_6m],
                      [j_limit_1M, j_limit_2M, j_limit_3M, j_limit_4m, j_limit_5M,
                       j_limit_6m], [j_limit_1m, j_limit_2M, j_limit_3M, j_limit_4M, j_limit_5m, j_limit_6M],
@@ -798,18 +803,17 @@ class TestFunctions(object):  # definition of each function (some are unused)
             self.__robot.led_ring.flashing(BLUE)
             report.append("End")
             if FULL == 0:
-                try:
-                    self.say("Fin de la demo", 1)
-                except Exception:
-                    report.append("No internet connection, robot can't speak")
+                self.say("Fin de la demo", 1)
             if FULL == 1:
-                self.say("Fin du test court FQC, appuyez sur SAVE pour validez la position du elbo a 90 degrer")
+                self.say("Appuyez sur SAVE pour valider la position du elbo a 90 degrer")
                 report.execute(self.wait_save_button_press, "Wait save button press to validate")
+                self.say("Fin du test court FQC")
             if FULL == 2:
                 self.say("Fin du test long FQC", 1)
             if FULL == 3:
-                self.say("Fin du test avant expedission, appuyez sur SAVE pour validez la position du elbo a 90 degrer")
+                self.say("Appuyez sur SAVE pour valider la position du elbo a 90 degrer")
                 report.execute(self.wait_save_button_press, "Wait save button press to validate")
+                self.say("Fin du test avant expedission")
         self.__robot.led_ring.solid(BLUE)
         self.__robot.move_to_sleep_pose()
         self.__robot.set_arm_max_velocity(100)
@@ -866,7 +870,7 @@ if __name__ == '__main__':
 
         if robot.get_learning_mode() and robot.custom_button.is_pressed():
             LOOPS = 5
-            CALIBRATION_LOOPS = 2
+            CALIBRATION_LOOPS = 1
             SPIRAL_LOOPS = 5
 
             USE_VOCAL = True
@@ -878,7 +882,7 @@ if __name__ == '__main__':
         elif robot.get_learning_mode():
 
             LOOPS = 5
-            CALIBRATION_LOOPS = 2
+            CALIBRATION_LOOPS = 1
             SPIRAL_LOOPS = 5
 
             USE_VOCAL = True
