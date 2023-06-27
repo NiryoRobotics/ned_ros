@@ -15,7 +15,7 @@ class SystemApiClientNode:
 
     def __init__(self):
         rospy.logdebug("System Api Client - Entering in Init")
-        self.client = HttpClient(prefix='/api/v2')
+        self.client = HttpClient()
 
         self.set_robot_name_server = rospy.Service('/niryo_robot/wifi/set_robot_name',
                                                    SetString,
