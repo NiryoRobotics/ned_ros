@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+from threading import Lock
 from niryo_robot_system_api_client.HttpClient import HttpClient as SystemApiClient
 
 from .mcp_io_objects import McpIOManager
@@ -45,6 +46,7 @@ class WifiButton:
         self.__wlan0_status = WifiStatus.UNKNOWN
         self.__hotspot_status = WifiStatus.UNKNOWN
         self.__wifi_led.off()
+        self.__led_lock = Lock()
 
         rospy.Subscriber('/niryo_robot/wifi/status', WifiStatus, self.__wifi_status_callback)
 
@@ -78,9 +80,13 @@ class WifiButton:
             self.led_on()
 
     def stop_blink(self):
-        if self.__timer is not None:
-            self.__timer.shutdown()
-            self.__timer = None
+        if self.__timer is None:
+            return
+
+        self.__timer.shutdown()
+        self.__timer = None
+        self.__led_lock.acquire(blocking=True)
+        self.__led_lock.release()
 
     def led_off(self):
         self.stop_blink()
@@ -92,9 +98,14 @@ class WifiButton:
 
     def led_blink(self, blink_pattern):
         self.stop_blink()
-        self.__timer = rospy.Timer(rospy.Duration.from_sec(1), blink_pattern)
 
-    def irregular_blink_pattern(self, _):
+        def blink_pattern_wrapper(_):
+            with self.__led_lock:
+                blink_pattern()
+
+        self.__timer = rospy.Timer(rospy.Duration.from_sec(1), blink_pattern_wrapper)
+
+    def irregular_blink_pattern(self):
         self.__wifi_led.on()
         rospy.sleep(0.2)
         self.__wifi_led.off()
@@ -104,7 +115,7 @@ class WifiButton:
         self.__wifi_led.off()
         rospy.sleep(0.4)
 
-    def regular_blink_pattern(self, _):
+    def regular_blink_pattern(self):
         self.__wifi_led.on()
         rospy.sleep(0.5)
         self.__wifi_led.off()
