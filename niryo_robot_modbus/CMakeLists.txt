@@ -54,15 +54,8 @@ endif()
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS 
-    scripts/coil_data_block.py
-    scripts/data_block.py
-    scripts/discrete_input_data_block.py
-    scripts/holding_register_data_block.py
-    scripts/input_register_data_block.py
-    scripts/modbus_internal_test.py
+catkin_install_python(PROGRAMS
     scripts/modbus_server_node.py
-    scripts/modbus_server.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation

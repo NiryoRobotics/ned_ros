@@ -9,7 +9,7 @@ import numpy as np
 from geometry_msgs.msg import Quaternion, Twist, Vector3
 from niryo_robot_msgs.msg import RobotState
 
-from niryo_robot_arm_commander.utils import diff_quat
+from .utils import diff_quat
 
 
 class StatePublisher(object):

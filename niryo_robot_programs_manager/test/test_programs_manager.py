@@ -29,7 +29,7 @@ def call_service(service_name, service_msg_type, *args):
 
 
 def clean_folders():
-    folders_list_raw = [python2_dir, blockly_dir]
+    folders_list_raw = [python3_dir, blockly_dir]
     folders_list = [os.path.expanduser(folder) for folder in folders_list_raw]
     for folder in folders_list:
         if os.path.isdir(folder):
@@ -37,8 +37,8 @@ def clean_folders():
         os.makedirs(folder)
 
 
-def create_python2_code(name):
-    TestPython2Manager.save_program(name, "niryo_robot.calib()", "")
+def create_python3_code(name):
+    TestPython3Manager.save_program(name, "niryo_robot.calib()", "")
 
 
 class TestProgramManagerAbstract(unittest.TestCase):
@@ -166,21 +166,21 @@ print(math.pi)
 py_description = "Display PI"
 
 
-class TestPython2Manager(TestProgramManagerAbstract):
+class TestPython3Manager(TestProgramManagerAbstract):
     language = python_language_msg
     code = py_code
     description = py_description
 
-    def test_python2_no_prog(self):
+    def test_python3_no_prog(self):
         self.abstract_no_prog()
 
-    def test_python2_creation_delete_prog(self):
+    def test_python3_creation_delete_prog(self):
         self.abstract_creation_delete_prog()
 
-    def test_python2_overwrite(self):
+    def test_python3_overwrite(self):
         self.abstract_overwrite()
 
-    def test_python2_execute_prog(self):
+    def test_python3_execute_prog(self):
         self.abstract_execute_prog()
 
 
@@ -207,7 +207,7 @@ class TestAllManager(TestProgramManagerAbstract):
 
 
 class TestAutorun(TestProgramManagerAbstract):
-    test_python2_code_name = "test_code_python2"
+    test_python3_code_name = "test_code_python3"
 
     @staticmethod
     def set_autorun_program_from_req(req):
@@ -218,23 +218,23 @@ class TestAutorun(TestProgramManagerAbstract):
         return call_service('/niryo_robot_programs_manager/get_program_autorun_infos', GetProgramAutorunInfos)
 
     def test_set_autorun(self):
-        create_python2_code(self.test_python2_code_name)
+        create_python3_code(self.test_python3_code_name)
         req = SetProgramAutorunRequest()
         req.language = blockly_language_msg
         req.name = "unknown_name"
         req.mode = SetProgramAutorunRequest.LOOP
 
         self.assertNotStatus(self.set_autorun_program_from_req(req))
-        req.name = self.test_python2_code_name
+        req.name = self.test_python3_code_name
         self.assertNotStatus(self.set_autorun_program_from_req(req))
 
         req.language = python_language_msg
         self.assertStatus(self.set_autorun_program_from_req(req))
 
     def test_get_autorun(self):
-        create_python2_code(self.test_python2_code_name)
+        create_python3_code(self.test_python3_code_name)
         req = SetProgramAutorunRequest()
-        req.name = self.test_python2_code_name
+        req.name = self.test_python3_code_name
         req.language = python_language_msg
         req.mode = SetProgramAutorunRequest.ONE_SHOT
         self.assertStatus(self.set_autorun_program_from_req(req))
@@ -243,7 +243,7 @@ class TestAutorun(TestProgramManagerAbstract):
         self.assertStatus(infos)
 
         self.assertEqual(infos.language, python_language_msg)
-        self.assertEqual(infos.name, self.test_python2_code_name)
+        self.assertEqual(infos.name, self.test_python3_code_name)
         self.assertEqual(infos.mode, SetProgramAutorunRequest.ONE_SHOT)
 
 
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         rospy.sleep(0.10)
 
     programs_dir = os.path.expanduser(rospy.get_param('/niryo_robot_programs_manager/programs_dir'))
-    python2_dir = os.path.join(programs_dir, "python2")
+    python3_dir = os.path.join(programs_dir, "python3")
     blockly_dir = os.path.join(programs_dir, "blockly")
     # Going to execute all unittest.TestCase subclasses in the file -> Import are also concerned
     rostest.rosrun("programs_manager", "test_programs_manager", __name__)

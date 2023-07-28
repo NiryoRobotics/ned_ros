@@ -7,7 +7,6 @@ import shutil
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 
 import niryo_robot_poses_handlers.pose_manager as pose_manager
-import niryo_robot_poses_handlers.trajectory_manager as trajectory_manager
 import niryo_robot_poses_handlers.workspace_manager as workspace_manager
 
 test_folder = "~/Tests_Niryo_Ned/"
@@ -62,37 +61,6 @@ class TestPoseMethods(unittest.TestCase):
             name = "Test{}".format(i)
             self.manager.create(name, *pose)
             self.assertEqual(self.manager.read(name).get_value(), pose)
-
-            list_names.append(name)
-            self.assertEqual(self.manager.get_all_names(), list_names)
-        for name in list_names:
-            self.manager.remove(name)
-        self.assertEqual(self.manager.get_all_names(), [])
-
-
-class TestTrajectoryMethods(unittest.TestCase):
-
-    def setUp(self):
-        create_test_folder()
-        self.path = os.path.join(test_folder, "trajectories")
-        self.manager = trajectory_manager.TrajectoryManager(trajectory_dir=self.path)
-
-    def tearDown(self):
-        shutil.rmtree(self.path)
-        delete_test_folder()
-
-    def test_python_get_read_remove_trajectories(self):
-        check_get_read_remove(self)
-
-    def test_python_creation_delete_traj(self):
-        self.assertEqual(self.manager.get_all_names(), [])
-        list_names = []
-        poses = [[[1, 2, 3], [1, 0, 0, 0]],
-                 [[1, 2, 3], [1, 0, 0, 0]]]
-        for i in range(5):
-            name = "Test{}".format(i)
-            self.manager.create(name, poses)
-            self.assertEqual(self.manager.read(name).get_value(), poses)
 
             list_names.append(name)
             self.assertEqual(self.manager.get_all_names(), list_names)

@@ -5,7 +5,7 @@ from urdf_parser_py.urdf import URDF
 
 from math import sqrt
 
-from niryo_robot_arm_commander.command_enums import ArmCommanderException
+from .command_enums import ArmCommanderException
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus

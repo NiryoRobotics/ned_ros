@@ -4,10 +4,10 @@
 
 from pymodbus.client.sync import ModbusTcpClient
 
-from input_register_data_block import *
-from coil_data_block import CoilDataBlock
-from discrete_input_data_block import DiscreteInputDataBlock
-from holding_register_data_block import *
+from .input_register_data_block import *
+from .coil_data_block import CoilDataBlock
+from .discrete_input_data_block import DiscreteInputDataBlock
+from .holding_register_data_block import *
 
 import time
 

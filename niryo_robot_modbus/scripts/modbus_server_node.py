@@ -2,7 +2,7 @@
 
 import rospy
 import logging
-from modbus_server import ModbusServer
+from niryo_robot_modbus.modbus_server import ModbusServer
 
 
 class ModbusServerNode:
