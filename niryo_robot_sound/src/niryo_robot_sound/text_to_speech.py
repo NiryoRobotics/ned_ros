@@ -13,9 +13,13 @@ class NiryoTextToSpeech(object):
         self.__sound_database = sound_data_base
         self.__sound_manager = sound_manager
 
-        self.__languages = {TextToSpeechRequest.ENGLISH: 'en', TextToSpeechRequest.FRENCH: 'fr',
-                            TextToSpeechRequest.SPANISH: 'es', TextToSpeechRequest.MANDARIN: 'zh-CN',
-                            TextToSpeechRequest.PORTUGUESE: 'pt'}
+        self.__languages = {
+            TextToSpeechRequest.ENGLISH: 'en',
+            TextToSpeechRequest.FRENCH: 'fr',
+            TextToSpeechRequest.SPANISH: 'es',
+            TextToSpeechRequest.MANDARIN: 'zh-CN',
+            TextToSpeechRequest.PORTUGUESE: 'pt'
+        }
 
         self.__tts_name = 'last_text_to_speech.mp3'
 
@@ -38,3 +42,4 @@ class NiryoTextToSpeech(object):
         tts.save(sound_path)
         self.__sound_database.refresh_user_sounds()
         self.__sound_manager.play_user_sound(self.__tts_name)
+        self.__sound_database.delete_sound(self.__tts_name)

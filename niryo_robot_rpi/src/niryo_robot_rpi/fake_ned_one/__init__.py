@@ -1,1 +1,1 @@
-from fake_ned_one.fake_io_panel import FakeIOPanel
+from .fake_io_panel import FakeIOPanel

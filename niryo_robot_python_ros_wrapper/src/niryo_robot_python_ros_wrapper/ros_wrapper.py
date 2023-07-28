@@ -49,11 +49,9 @@ def move_command(move_function):
         result = move_function(self, *args, **kwargs)
 
         # check if a collision happened during the move
-        status, message = result
-        if status == CommandStatus.ABORTED:
-            self._collision_detected = True
-            if self._collision_policy == CollisionPolicy.HARD:
-                raise NiryoRosWrapperException(message)
+        if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
+            status, message = result
+            raise NiryoRosWrapperException(message)
         return result
 
     return wrapper
@@ -89,6 +87,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__break_point_publisher = rospy.Publisher('/niryo_robot_blockly/break_point', Int32, queue_size=10)
 
         # -- Subscribers
+
+        rospy.Subscriber('/niryo_robot/collision_detected', Bool, self.__callback_collision_detected)
 
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
@@ -162,6 +162,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def clear_collision_detected(self):
         self._collision_detected = False
+
+    def __callback_collision_detected(self, msg):
+        if msg.data:
+            self._collision_detected = True
 
     def __advertise_stop(self):
         if self.__hardware_version in ['ned', 'ned2']:
@@ -1828,7 +1832,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             rospy.loginfo_throttle(1, 'ROS Wrapper - No new conveyor found')
         else:
             self._check_result_status(result)
-        return result.id
+        conveyor_id = result.id
+
+        return self.__conveyor_id_to_conveyor_number(conveyor_id)
 
     def unset_conveyor(self, conveyor_id):
         """
@@ -1881,23 +1887,25 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         fb = self.__conveyors_feedback_ntv.value
         return fb.conveyors
 
+    def get_conveyors_number(self):
+        fb = self.__conveyors_feedback_ntv.value
+        return [self.__conveyor_id_to_conveyor_number(conveyor.conveyor_id) for conveyor in fb.conveyors]
+
     def __conveyor_number_to_conveyor_id(self, conveyor_number):
-        if conveyor_number == ConveyorID.ID_1:
-            return ConveyorTTL.ID_1 if self.get_hardware_version() in ['ned2'] else ConveyorCan.ID_1
-        elif conveyor_number == ConveyorID.ID_2:
-            return ConveyorTTL.ID_2 if self.get_hardware_version() in ['ned2'] else ConveyorCan.ID_2
-        else:
-            return conveyor_number
+        ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
+        try:
+            conveyor_id = dict(zip([ConveyorID.ID_1, ConveyorID.ID_2], ids))[conveyor_number]
+        except KeyError:
+            conveyor_id = ConveyorID.NONE.value
+        return conveyor_id
 
     def __conveyor_id_to_conveyor_number(self, conveyor_id):
-        if conveyor_id in [ConveyorTTL.ID_1, ConveyorCan.ID_1]:
-            return ConveyorID.ID_1
-        elif conveyor_id in [ConveyorTTL.ID_2, ConveyorCan.ID_2]:
-            return ConveyorID.ID_2
-        elif conveyor_id in [ConveyorTTL.NONE, ConveyorCan.NONE]:
-            return ConveyorID.NONE
-        else:
-            return conveyor_id
+        ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
+        try:
+            conveyor_number = dict(zip(ids, [ConveyorID.ID_1, ConveyorID.ID_2]))[conveyor_id]
+        except KeyError:
+            conveyor_number = ConveyorID.NONE
+        return conveyor_number
 
     # - Vision
 

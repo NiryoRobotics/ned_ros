@@ -9,8 +9,8 @@ import threading
 import sys
 
 # Commanders
-from arm_commander import ArmCommander
-from arm_state import ArmState
+from niryo_robot_arm_commander.arm_commander import ArmCommander
+from niryo_robot_arm_commander.arm_state import ArmState
 import moveit_commander
 
 from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException

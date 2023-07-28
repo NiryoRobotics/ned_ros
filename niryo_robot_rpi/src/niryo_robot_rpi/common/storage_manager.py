@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
+import json
+import os
 import rospy
 import subprocess
-import os
 
 from niryo_robot_rpi.msg import StorageStatus, LogStatus
 from niryo_robot_msgs.srv import SetInt
@@ -35,6 +37,9 @@ class StorageManager:
         self.log_path = rospy.get_param("~ros_log_location")
         self.should_purge_log_on_startup_file = rospy.get_param("~should_purge_ros_log_on_startup_file")
         self.purge_log_on_startup = self.should_purge_log_on_startup()
+
+        self.__run_ids_filename = 'run_ids.json'
+        self.__update_run_ids_file()
 
         # clean log on startup if param is true
         if self.purge_log_on_startup:
@@ -54,6 +59,22 @@ class StorageManager:
         self.timer = rospy.Timer(rospy.Duration(3), self.publish_storage_status)
 
         rospy.loginfo("Init Storage Manager OK")
+
+    def __update_run_ids_file(self):
+        with open(f'{self.log_path}/{self.__run_ids_filename}', 'a+') as file:
+            try:
+                run_ids = json.load(file)
+            except json.JSONDecodeError:
+                run_ids = {}
+            run_ids[datetime.now().isoformat()] = rospy.get_param('/run_id')
+            file.seek(0)
+            file.truncate()
+            json.dump(run_ids, file, indent=2)
+
+    def __clear_run_ids_file(self):
+        with open(f'{self.log_path}/{self.__run_ids_filename}', 'w') as file:
+            run_ids = {}
+            json.dump(run_ids, file, indent=2)
 
     @staticmethod
     def get_storage(value):
@@ -90,6 +111,7 @@ class StorageManager:
     def purge_log(self):
         try:
             subprocess.call(['rosclean', 'purge', '--size', '50', '-y'])
+            self.__clear_run_ids_file()
             rospy.loginfo("ROS Log Manager - Purging done")
             return True
         except subprocess.CalledProcessError as e:

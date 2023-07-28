@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from asyncore import read
 from niryo_robot_poses_handlers.file_manager import FileManager, NiryoRobotFileException
 from niryo_robot_poses_handlers.transform_functions import euler_from_matrix, quaternion_from_euler
 
-from geometry_msgs.msg import Point, Vector3, TransformStamped, Pose, Quaternion
+from geometry_msgs.msg import Point, Vector3, TransformStamped, Quaternion
 
 import tf2_ros
 import numpy as np
@@ -20,7 +19,6 @@ class DynamicFrame(object):
         self.description = description
         self.belong_to_workspace = False
         self.robot_poses = []
-        self.points = []
         self.static_transform_stamped = []
 
     def to_dict(self):
@@ -28,21 +26,19 @@ class DynamicFrame(object):
         dict_["name"] = self.name
         dict_["description"] = self.description
         dict_["belong_to_workspace"] = self.belong_to_workspace
-        dict_["points"] = self.points
         dict_["static_transform_stamped"] = self.static_transform_stamped
         return dict_
 
     @classmethod
     def from_dict(cls, dict_):
         dyn_frame = cls(dict_["name"], dict_["description"])
-        dyn_frame.points = dict_["points"]
         dyn_frame.belong_to_workspace = dict_["belong_to_workspace"]
         dyn_frame.static_transform_stamped = dict_["static_transform_stamped"]
 
         return dyn_frame
 
     def get_value(self):
-        return self.static_transform_stamped, self.points, self.robot_poses
+        return self.static_transform_stamped, self.robot_poses
 
 
 class DynamicFrameManager(FileManager):
@@ -61,11 +57,7 @@ class DynamicFrameManager(FileManager):
         self.__broadcaster = tf2_ros.TransformBroadcaster()
 
     @staticmethod
-    def calculate_transform(points):
-        """
-        Calculate frame with 3 poses
-        """
-        # Points
+    def __get_static_transform(name, points):
         point_o = Point(*points[0])
         point_vx = Point(*points[1])
         point_vy = Point(*points[2])
@@ -94,91 +86,102 @@ class DynamicFrameManager(FileManager):
         al, be, ga = euler_from_matrix(rotation)
         q = quaternion_from_euler(al, be, ga)
 
-        return point_o, point_vx, point_vy, q
+        # Create frame
+        static_transform_stamped = TransformStamped()
+        static_transform_stamped.header.frame_id = "world"
+        static_transform_stamped.child_frame_id = name
+        # Position
+        static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
+        # Orientation
+        static_transform_stamped.transform.rotation = Quaternion(*q)
 
-    def create(self, frame_name, points, description="", belong_to_workspace=False):
+        return static_transform_stamped, [[point_o.x, point_o.y, point_o.z], q.tolist()]
+
+    def create(self, name, points, description="", belong_to_workspace=False):
         """
         Create a new local frame
         """
-        print(points)
-        if self.exists(frame_name):
-            raise NiryoRobotFileException("Frame {} already exists".format(frame_name))
-
-        point_o, point_vx, point_vy, q = self.calculate_transform(points)
-
-        # Create frame
-        static_transform_stamped = TransformStamped()
-        static_transform_stamped.header.frame_id = "world"
-        static_transform_stamped.child_frame_id = frame_name
-        # Position
-        static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
-        # Orientation
-        static_transform_stamped.transform.rotation = Quaternion(*q)
+        static_transform_stamped, transform_as_list = self.__get_static_transform(name, points)
 
         # Add to the list of publish transform
-        self.dict_dynamic_frame[frame_name] = {"transform": static_transform_stamped}
+        self.dict_dynamic_frame[name] = {"transform": static_transform_stamped}
 
-        dynamic_frame = DynamicFrame(frame_name, description)
+        dynamic_frame = DynamicFrame(name, description)
         dynamic_frame.points = points
         dynamic_frame.belong_to_workspace = belong_to_workspace
-        dynamic_frame.static_transform_stamped = [[point_o.x, point_o.y, point_o.z], q.tolist()]
+        dynamic_frame.static_transform_stamped = transform_as_list
 
-        self._write(frame_name, dynamic_frame)
+        self._write(name, dynamic_frame)
 
-    def edit_frame(self, frame_name, new_frame_name, description=""):
-        """
-            Edit a frame
-        """
-        if not self.exists(frame_name):
-            raise NiryoRobotFileException("Frame {} not already exists".format(frame_name))
+    def edit_name(self, name, new_name):
+        self.check_exist(name)
 
-        # Remove transform from publish transform list
-        self.dict_dynamic_frame.pop(frame_name)
+        self.dict_dynamic_frame[new_name] = self.dict_dynamic_frame.pop(name)
 
-        dynamic_frame = self.read(frame_name)
-        points = dynamic_frame.points
+        dynamic_frame = self.read(name)
+        FileManager.remove(self, name)
+        dynamic_frame.name = new_name
+        self._write(new_name, dynamic_frame)
 
-        point_o, point_vx, point_vy, q = self.calculate_transform(points)
+    def edit_description(self, name, description):
+        self.check_exist(name)
 
-        # Create frame
-        static_transform_stamped = TransformStamped()
-        static_transform_stamped.header.frame_id = "world"
-        static_transform_stamped.child_frame_id = new_frame_name
-        # Position
-        static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
-        # Orientation
-        static_transform_stamped.transform.rotation = Quaternion(*q)
+        dynamic_frame = self.read(name)
+        dynamic_frame.description = description
+        self._write(name, dynamic_frame)
+
+    def edit_points(self, name, points):
+        self.check_exist(name)
+
+        static_transform_stamped, transform_as_list = self.__get_static_transform(name, points)
 
         # Add to the list of publish transform
-        self.dict_dynamic_frame[new_frame_name] = {"transform": static_transform_stamped}
+        self.dict_dynamic_frame[name] = {"transform": static_transform_stamped}
 
-        dynamic_frame = DynamicFrame(new_frame_name, description)
+        dynamic_frame = self.read(name)
         dynamic_frame.points = points
-        dynamic_frame.belong_to_workspace = dynamic_frame.belong_to_workspace
-        dynamic_frame.static_transform_stamped = [[point_o.x, point_o.y, point_o.z], q.tolist()]
+        dynamic_frame.static_transform_stamped = transform_as_list
+        self._write(name, dynamic_frame)
 
-        self._write(new_frame_name, dynamic_frame)
+    def edit_static_transform_w_rpy(self, name, position, rpy):
+        quaternion = Quaternion(*quaternion_from_euler(rpy.roll, rpy.pitch, rpy.yaw))
+        return self.edit_static_transform(name, position, quaternion)
 
-        # Case : edit only description
-        if (frame_name != new_frame_name):
-            FileManager.remove(self, frame_name)
+    def edit_static_transform(self, name, position, quaternion):
+        self.check_exist(name)
 
-    def remove(self, frame_name, belong_to_workspace=False):
+        static_transform_stamped = TransformStamped()
+        static_transform_stamped.header.frame_id = "world"
+        static_transform_stamped.child_frame_id = name
+        # Position
+        static_transform_stamped.transform.translation = Vector3(*[position.x, position.y, position.z])
+        # Orientation
+        static_transform_stamped.transform.rotation = quaternion
+
+        # Add to the list of publish transform
+        self.dict_dynamic_frame[name] = {"transform": static_transform_stamped}
+
+        dynamic_frame = self.read(name)
+        # we set everything to 0 as we are not able to calculate the points from the transform
+        dynamic_frame.points = [[0] * 3] * 3
+        dynamic_frame.static_transform_stamped = [[position.x, position.y, position.z],
+                                                  [quaternion.x, quaternion.y, quaternion.z, quaternion.z]]
+        self._write(name, dynamic_frame)
+
+    def remove(self, name, belong_to_workspace=False):
         """
         Remove a frame
         """
         if not belong_to_workspace:
-            frame = self.read(frame_name)
+            frame = self.read(name)
             if frame.belong_to_workspace:
-                raise NiryoRobotFileException("Frame {} can't be removed because it belong to a workspace".format(
-                    frame_name))
+                raise NiryoRobotFileException("Frame {} can't be removed because it belong to a workspace".format(name))
 
-        if not self.exists(frame_name):
-            raise NiryoRobotFileException("Frame {} not already exists".format(frame_name))
+        self.check_exist(name)
 
         # Remove transform from publish transform list
-        self.dict_dynamic_frame.pop(frame_name)
-        FileManager.remove(self, frame_name)
+        self.dict_dynamic_frame.pop(name)
+        FileManager.remove(self, name)
 
     def restore_publisher(self):
         """
@@ -187,20 +190,15 @@ class DynamicFrameManager(FileManager):
         list_files = self.get_all_names()
         for file in list_files:
             frame = self.read(file)
-            points_raw = []
-            for i in range(3):
-                points_raw.append([frame.points[i][0], frame.points[i][1], frame.points[i][2]])
-
-            point_o, point_vx, point_vy, q = self.calculate_transform(points_raw)
 
             # Create frame
             static_transform_stamped = TransformStamped()
             static_transform_stamped.header.frame_id = "world"
-            static_transform_stamped.child_frame_id = str(frame.name)
+            static_transform_stamped.child_frame_id = frame.name
             # Position
-            static_transform_stamped.transform.translation = Vector3(*[point_o.x, point_o.y, point_o.z])
+            static_transform_stamped.transform.translation = Vector3(*frame.static_transform_stamped[0])
             # Orientation
-            static_transform_stamped.transform.rotation = Quaternion(*q)
+            static_transform_stamped.transform.rotation = Quaternion(*frame.static_transform_stamped[1])
 
             # Add to the list of publish transform
             self.dict_dynamic_frame[frame.name] = {"transform": static_transform_stamped}
@@ -213,7 +211,11 @@ class DynamicFrameManager(FileManager):
         for frame in list(self.dict_dynamic_frame.values()):
             # Actualisation du temps
             frame["transform"].header.stamp = current_time
-            self.__broadcaster.sendTransform(frame["transform"])
+            try:
+                self.__broadcaster.sendTransform(frame["transform"])
+            except Exception as e:
+                rospy.logerr(frame)
+                raise e
 
     def publish_frames(self):
         """

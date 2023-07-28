@@ -133,6 +133,10 @@ class FileManager(object):
         """
         return os.path.isfile(self._path_from_name(name))
 
+    def check_exist(self, name):
+        if not self.exists(name):
+            raise NiryoRobotFileException(f"File {self._path_from_name(name)} doesnt exist")
+
 
 class PickleFileManager(FileManager):
     def _write(self, name, object_):

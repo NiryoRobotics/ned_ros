@@ -66,7 +66,7 @@ System setup
 The robot is running on top of an Ubuntu server 18.04.5 for ARM customized to work on a Raspberry Pi 4B.
 
 It comprises all the following elements :
-   - ROS melodic and its requirements
+   - ROS noetic and its requirements
    - Sound driver
    - Led ring driver
    - Robot System services (connectivity, databases, flask server)

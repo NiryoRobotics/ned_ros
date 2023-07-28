@@ -5,6 +5,7 @@ from niryo_robot_tools_commander.api import ToolID
 
 
 class ShiftPose:
+
     def __init__(self):
         pass
 
@@ -95,7 +96,7 @@ class PinID:
 # - Conveyor
 
 
-class ConveyorID:
+class ConveyorID(Enum):
     """
     ConveyorID to be able to have CAN (id 12 and 13) and TTL (id 9 and 10) conveyor in any possible combination
 
@@ -104,42 +105,32 @@ class ConveyorID:
     ID_3 = 9    # Ned2
     ID_4 = 10   # Ned2
     """
-
-    def __init__(self):
-        pass
-
     NONE = 0
     ID_1 = -1
     ID_2 = -2
 
 
-class ConveyorCan:
+class ConveyorCan(Enum):
     """
     ConveyorID to control conveyors with CAN interface
     """
-
-    def __init__(self):
-        pass
 
     NONE = 0
     ID_1 = 12
     ID_2 = 13
 
 
-class ConveyorTTL:
+class ConveyorTTL(Enum):
     """
     ConveyorID to control conveyors with TTL interface
     """
-
-    def __init__(self):
-        pass
-
     NONE = 0
     ID_1 = 9
     ID_2 = 10
 
 
 class ConveyorDirection:
+
     def __init__(self):
         pass
 
@@ -149,7 +140,9 @@ class ConveyorDirection:
 
 # - Vision
 
+
 class ObjectColor:
+
     def __init__(self):
         pass
 
@@ -160,6 +153,7 @@ class ObjectColor:
 
 
 class ObjectShape:
+
     def __init__(self):
         pass
 
@@ -169,6 +163,7 @@ class ObjectShape:
 
 
 class ProgramLanguage:
+
     def __init__(self):
         pass
 
@@ -180,6 +175,7 @@ class ProgramLanguage:
 
 
 class AutorunMode:
+
     def __init__(self):
         pass
 
@@ -189,6 +185,7 @@ class AutorunMode:
 
 
 class ButtonAction:
+
     def __init__(self):
         pass
 

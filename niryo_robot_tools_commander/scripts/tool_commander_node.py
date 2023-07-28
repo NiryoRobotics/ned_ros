@@ -6,9 +6,9 @@ import logging
 import actionlib
 import moveit_commander
 
-from tools_classes import *
-from tool_ros_command_interface import ToolRosCommandInterface
-from transform_handler import ToolTransformHandler
+from niryo_robot_tools_commander.tools_classes import *
+from niryo_robot_tools_commander.tool_ros_command_interface import ToolRosCommandInterface
+from niryo_robot_tools_commander.transform_handler import ToolTransformHandler
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus

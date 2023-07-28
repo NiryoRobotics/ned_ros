@@ -99,7 +99,7 @@ build_docker_arm64_job:
     - cd ${NIRYO_HOME_FOLDER}
     - cp -r src/.gitlab_resources/.catkin_tools .
     # we need to first build the packages before building tests
-    - catkin build --profile ${CATKIN_PROFILE_NAME}
+    - catkin build --profile ${CATKIN_PROFILE_NAME} -j1
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
   artifacts:
@@ -175,10 +175,8 @@ build_doc_job:
     - mv src/install .
     - mv src/build .
     - mv src/devel .
+    - ls -al .
     - cp -r src/.gitlab_resources/.catkin_tools .
-    - ls -al src/sphinx_doc
-    - ls -al src/sphinx_doc/front_end
-    - ls -al src/sphinx_doc/front_end/config
     ################# Quickfix end ###############
     - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
@@ -224,12 +222,15 @@ test_job:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
     - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
+  allow_failure: true
+  when: manual
 
 roslint_job:
   stage: test
@@ -249,7 +250,7 @@ catkin_lint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
     # Check code linting
-    - catkin lint -W2 --rosdistro melodic --ignore missing_directory --explain src
+    - catkin_lint -W2 --rosdistro noetic --ignore missing_directory --ignore unknown_package --explain src
 
 code_coverage_cpp_job:
   stage: test

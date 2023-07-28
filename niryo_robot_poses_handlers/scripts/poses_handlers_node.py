@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Libs
 import rospy
 import logging
 
-from transform_handler import PosesTransformHandler
+from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
@@ -284,12 +284,24 @@ class PoseHandlerNode:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
         elif cmd == req.EDIT:
             try:
-                self.edit_dynamic_frame(frame.name, frame.new_name, frame.description)
+                if frame.description != '':
+                    self.dynamic_frame_manager.edit_description(frame.name, frame.description)
+                if len(frame.points) == 3:
+                    points_as_list = [(p.x, p.y, p.z) for p in frame.points]
+                    self.dynamic_frame_manager.edit_points(frame.name, points_as_list)
+                if frame.rpy != RPY():
+                    self.dynamic_frame_manager.edit_static_transform_w_rpy(frame.name, frame.position, frame.rpy)
+                if frame.orientation != Quaternion():
+                    self.dynamic_frame_manager.edit_static_transform(frame.name, frame.position, frame.orientation)
+                if frame.new_name != '':
+                    self.dynamic_frame_manager.edit_name(frame.name, frame.new_name)
+
                 return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
             except Exception as e:
+                raise e
                 return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
         else:
-            return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(frame.cmd)
+            return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(cmd)
 
     def __callback_get_dynamic_frame(self, req):
         try:
@@ -333,9 +345,9 @@ class PoseHandlerNode:
         robot_poses_raw = []
 
         for pose in robot_poses:
-            rospy.loginfo("Robot point\n{}".format(pose.position))
+            rospy.logdebug("Robot point\n{}".format(pose.position))
             point = self.__transform_handler.get_calibration_tip_position(pose)
-            rospy.loginfo("Tip point\n{}".format(point))
+            rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
             pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
@@ -520,9 +532,9 @@ class PoseHandlerNode:
         points = []
 
         for pose in poses:
-            rospy.loginfo("Robot point\n{}".format(pose.position))
+            rospy.logdebug("Robot point\n{}".format(pose.position))
             point = self.__transform_handler.get_calibration_tip_position(pose)
-            rospy.loginfo("Tip point\n{}".format(point))
+            rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
 
         self.dynamic_frame_manager.create(name, points, description, belong_to_workspace)
@@ -554,21 +566,6 @@ class PoseHandlerNode:
         :return: None
         """
         self.dynamic_frame_manager.remove(name, belong_to_workspace)
-
-    def edit_dynamic_frame(self, name, new_name, description):
-        """
-        Asks dynamic frame manager to modify dynamic frame
-
-        :param name: dynamic frame name
-        :type name: str
-        :param new_name: new dynamic frame name
-        :type new_name: str
-        :param description: new description
-        :type description: str
-        :type name: str
-        :return: None
-        """
-        self.dynamic_frame_manager.edit_frame(name, new_name, description)
 
     def get_dynamic_frame(self, name):
         """
