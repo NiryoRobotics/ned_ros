@@ -18,14 +18,31 @@ _NEXT_AXIS = [1, 2, 0, 1]
 
 # map axes strings to/from tuples of inner axis, parity, repetition, frame
 _AXES2TUPLE = {
-    'sxyz': (0, 0, 0, 0), 'sxyx': (0, 0, 1, 0), 'sxzy': (0, 1, 0, 0),
-    'sxzx': (0, 1, 1, 0), 'syzx': (1, 0, 0, 0), 'syzy': (1, 0, 1, 0),
-    'syxz': (1, 1, 0, 0), 'syxy': (1, 1, 1, 0), 'szxy': (2, 0, 0, 0),
-    'szxz': (2, 0, 1, 0), 'szyx': (2, 1, 0, 0), 'szyz': (2, 1, 1, 0),
-    'rzyx': (0, 0, 0, 1), 'rxyx': (0, 0, 1, 1), 'ryzx': (0, 1, 0, 1),
-    'rxzx': (0, 1, 1, 1), 'rxzy': (1, 0, 0, 1), 'ryzy': (1, 0, 1, 1),
-    'rzxy': (1, 1, 0, 1), 'ryxy': (1, 1, 1, 1), 'ryxz': (2, 0, 0, 1),
-    'rzxz': (2, 0, 1, 1), 'rxyz': (2, 1, 0, 1), 'rzyz': (2, 1, 1, 1)}
+    'sxyz': (0, 0, 0, 0),
+    'sxyx': (0, 0, 1, 0),
+    'sxzy': (0, 1, 0, 0),
+    'sxzx': (0, 1, 1, 0),
+    'syzx': (1, 0, 0, 0),
+    'syzy': (1, 0, 1, 0),
+    'syxz': (1, 1, 0, 0),
+    'syxy': (1, 1, 1, 0),
+    'szxy': (2, 0, 0, 0),
+    'szxz': (2, 0, 1, 0),
+    'szyx': (2, 1, 0, 0),
+    'szyz': (2, 1, 1, 0),
+    'rzyx': (0, 0, 0, 1),
+    'rxyx': (0, 0, 1, 1),
+    'ryzx': (0, 1, 0, 1),
+    'rxzx': (0, 1, 1, 1),
+    'rxzy': (1, 0, 0, 1),
+    'ryzy': (1, 0, 1, 1),
+    'rzxy': (1, 1, 0, 1),
+    'ryxy': (1, 1, 1, 1),
+    'ryxz': (2, 0, 0, 1),
+    'rzxz': (2, 0, 1, 1),
+    'rxyz': (2, 1, 0, 1),
+    'rzyz': (2, 1, 1, 1)
+}
 
 _TUPLE2AXES = dict((v, k) for k, v in _AXES2TUPLE.items())
 
@@ -35,6 +52,18 @@ def concatenate_matrices(*matrices):
     for i in matrices:
         M = np.dot(M, i)
     return M
+
+
+def normalize_quaterion(quaternion, tolerance=0.00001):
+    use_numpy = isinstance(quaternion, np.ndarray)
+    mag2 = sum(n * n for n in quaternion)
+    if mag2 <= tolerance:
+        return quaternion
+    mag = math.sqrt(mag2)
+    normalized_quaternion = tuple(n / mag for n in quaternion)
+    if use_numpy:
+        normalized_quaternion = np.array(normalized_quaternion)
+    return normalized_quaternion
 
 
 def euler_matrix(ai, aj, ak, axes='sxyz'):
@@ -128,17 +157,21 @@ def euler_from_quaternion(quaternion, axes='sxyz'):
 
 def quaternion_matrix(quaternion):
     q = np.array(quaternion[:4], dtype=np.float64, copy=True)
+    q = normalize_quaterion(q)
     nq = np.dot(q, q)
     if nq < _EPS:
         return np.identity(4)
     q *= math.sqrt(2.0 / nq)
     q = np.outer(q, q)
-    return np.array((
-        (1.0 - q[1, 1] - q[2, 2], 0.0 + q[0, 1] - q[2, 3], 0.0 + q[0, 2] + q[1, 3], 0.0),
-        (0.0 + q[0, 1] + q[2, 3], 1.0 - q[0, 0] - q[2, 2], 0.0 + q[1, 2] - q[0, 3], 0.0),
-        (0.0 + q[0, 2] - q[1, 3], 0.0 + q[1, 2] + q[0, 3], 1.0 - q[0, 0] - q[1, 1], 0.0),
-        (0.0, 0.0, 0.0, 1.0)
-    ), dtype=np.float64)
+    return np.array(
+        (
+            (1.0 - q[1, 1] - q[2, 2], 0.0 + q[0, 1] - q[2, 3], 0.0 + q[0, 2] + q[1, 3], 0.0),
+            (0.0 + q[0, 1] + q[2, 3], 1.0 - q[0, 0] - q[2, 2], 0.0 + q[1, 2] - q[0, 3], 0.0),
+            (0.0 + q[0, 2] - q[1, 3], 0.0 + q[1, 2] + q[0, 3], 1.0 - q[0, 0] - q[1, 1], 0.0),
+            (0.0, 0.0, 0.0, 1.0),
+        ),
+        dtype=np.float64,
+    )
 
 
 def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
@@ -171,7 +204,7 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
     sc = si * ck
     ss = si * sk
 
-    quaternion = np.empty((4,), dtype=np.float64)
+    quaternion = np.empty((4, ), dtype=np.float64)
     if repetition:
         quaternion[i] = cj * (cs + sc)
         quaternion[j] = sj * (cc + ss)
@@ -185,7 +218,7 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
     if parity:
         quaternion[j] *= -1
 
-    return quaternion
+    return normalize_quaterion(quaternion)
 
 
 def euclidian_dist(point_a, point_b):

@@ -4,18 +4,19 @@ import rospy
 import actionlib
 import threading
 from collections import OrderedDict
-from data_block import DataBlock
 
 import pymodbus
 from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.constants import Endian
+
+from .data_block import DataBlock
 
 # ros_wrapper
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
 
 # Enums
 from niryo_robot_vision.enums import ObjectType, ColorHSV  # Type and color used for services request
-from niryo_robot_modbus.enums import ColorRequest, ShapeRequest  # Shape and color used from modbus client
+from .enums import ColorRequest, ShapeRequest  # Shape and color used from modbus client
 
 # Messages
 from actionlib_msgs.msg import GoalStatus

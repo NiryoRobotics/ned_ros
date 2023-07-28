@@ -6,10 +6,10 @@ class HttpClient:
 
     ERROR_MSG = 'Error while requesting the HTTP server'
 
-    def __init__(self, host='127.0.0.1', port=5000, prefix=None):
+    def __init__(self, host='127.0.0.1', port=5000, prefix='/api/v2'):
         self.__base_url = f'http://{host}:{port}'
         if prefix is not None:
-            self.__base_url += f'/{prefix}'
+            self.__base_url += f'{prefix}'
 
     def __parse_response(self, response=None):
         default_response = False, '', {}

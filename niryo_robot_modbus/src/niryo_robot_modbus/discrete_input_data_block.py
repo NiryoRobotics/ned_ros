@@ -3,7 +3,7 @@
 import rospy
 from collections import OrderedDict
 
-from data_block import DataBlock
+from .data_block import DataBlock
 
 from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
 from niryo_robot_rpi.srv import SetIOModeRequest

@@ -13,13 +13,13 @@ from moveit_msgs.srv import GetStateValidity
 from niryo_robot_msgs.srv import SetBool, SetInt, SetFloat
 
 # - Classes
-from transform_handler import ArmTCPTransformHandler
-from ArmParametersValidator import ArmParametersValidator
-from kinematics_handler import KinematicsHandler
-from robot_state_publisher import StatePublisher
+from .transform_handler import ArmTCPTransformHandler
+from .ArmParametersValidator import ArmParametersValidator
+from .kinematics_handler import KinematicsHandler
+from .robot_state_publisher import StatePublisher
 
 # - Enums
-from niryo_robot_arm_commander.command_enums import ArmCommanderException
+from .command_enums import ArmCommanderException
 
 
 class ArmState(object):
