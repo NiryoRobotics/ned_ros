@@ -6,6 +6,7 @@ from .data_block import DataBlock
 
 from niryo_robot_rpi.srv import SetDigitalIO
 from niryo_robot_rpi.srv import SetIOMode, SetIOModeRequest
+
 """
  - Each address contains a 1 bit value
  - READ/WRITE registers
@@ -21,28 +22,24 @@ class CoilDataBlock(DataBlock):
     CO_IO_STATE = 100
 
     if rospy.get_param("/niryo_robot_modbus/hardware_version") == "ned2":
-        DIO_ADDRESS = OrderedDict({
-            0: "DI1",
-            1: "DI2",
-            2: "DI3",
-            3: "DI4",
-            4: "DI5",
-            5: "DO1",
-            6: "DO2",
-            7: "DO3",
-            8: "DO4",
-        })
+        DIO_ADDRESS = OrderedDict({0: "DI1",
+                                   1: "DI2",
+                                   2: "DI3",
+                                   3: "DI4",
+                                   4: "DI5",
+                                   5: "DO1",
+                                   6: "DO2",
+                                   7: "DO3",
+                                   8: "DO4", })
     else:
-        DIO_ADDRESS = OrderedDict({
-            0: "1A",
-            1: "1B",
-            2: "1C",
-            3: "2A",
-            4: "2B",
-            5: "2C",
-            6: "SW1",
-            7: "SW2",
-        })
+        DIO_ADDRESS = OrderedDict({0: "1A",
+                                   1: "1B",
+                                   2: "1C",
+                                   3: "2A",
+                                   4: "2B",
+                                   5: "2C",
+                                   6: "SW1",
+                                   7: "SW2", })
 
     DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
     DIO_MODE_INPUT = SetIOModeRequest.INPUT
@@ -94,4 +91,5 @@ class CoilDataBlock(DataBlock):
         :type digital_state: Union[ PinState, bool]
         :rtype: None
         """
-        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id, bool(digital_state))
+        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id,
+                                        bool(digital_state))
