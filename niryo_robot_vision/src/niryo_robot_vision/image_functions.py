@@ -18,20 +18,16 @@ __all__ = [
     "draw_contours",
     "extract_img_workspace",
     "relative_pos_from_pixels",
-
     "show_and_check_close",
     "show_img",
     "show_and_wait_close",
-
     "compress_image",
     "uncompress_image",
     "add_annotation_to_image",
     "undistort_image",
     "resize_img",
     "concat_imgs",
-
     "extract_img_from_ros_msg",
-
     "debug_threshold_color",
     "debug_markers",
 ]
@@ -47,12 +43,14 @@ def improve_mask(mask):
     :return mask: mask improved
     :rtype mask: numpy.array
     """
-    kernel = np.ones((3,3))
-    mask = cv2.erode(mask , kernel)
-    mask = cv2.erode(mask , kernel)
+
+    kernel = np.ones((3, 3))
+    mask = cv2.erode(mask, kernel)
+    mask = cv2.erode(mask, kernel)
     mask = cv2.dilate(mask, kernel)
     mask = cv2.dilate(mask, kernel)
     return mask
+
 
 def threshold_red(img_hsv):
     """
@@ -70,6 +68,7 @@ def threshold_red(img_hsv):
     red_img = improve_mask(red_img)
     return red_img
 
+
 def threshold_green(img_hsv):
     """
     Threshold hsv image of green component
@@ -82,6 +81,7 @@ def threshold_green(img_hsv):
     green_img = cv2.inRange(img_hsv, tuple(GREEN[0]), tuple(GREEN[1]))
     green_img = improve_mask(green_img)
     return green_img
+
 
 def threshold_blue(img_hsv):
     """
@@ -96,6 +96,7 @@ def threshold_blue(img_hsv):
     blue_img = improve_mask(blue_img)
     return blue_img
 
+
 def threshold_hsv(img, color_hsv):
     """
     Take BGR image (OpenCV imread result) and return thresholded image
@@ -107,19 +108,19 @@ def threshold_hsv(img, color_hsv):
     :return: threshold image
     :rtype: numpy.array
     """
-    frame = cv2.GaussianBlur(img, (5,5), 0)
+    frame = cv2.GaussianBlur(img, (5, 5), 0)
     frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    #red threshold
+    # red threshold
     if color_hsv.value == 1:
         thresh_img = threshold_red(frame_hsv)
-    #green threshold
+    # green threshold
     elif color_hsv.value == 2:
         thresh_img = threshold_green(frame_hsv)
-    #blue threshold
+    # blue threshold
     elif color_hsv.value == 3:
         thresh_img = threshold_blue(frame_hsv)
-    #any
+    # any
     else:
         thresh_red = threshold_red(frame_hsv)
         thresh_green = threshold_green(frame_hsv)
@@ -131,7 +132,9 @@ def threshold_hsv(img, color_hsv):
     return thresh_img
 
 
-def morphological_transformations(im_thresh, morpho_type=MorphoType.CLOSE, kernel_shape=(5, 5),
+def morphological_transformations(im_thresh,
+                                  morpho_type=MorphoType.CLOSE,
+                                  kernel_shape=(5, 5),
                                   kernel_type=KernelType.ELLIPSE):
     """
     Take black & white image and apply morphological transformation
@@ -407,20 +410,16 @@ def add_annotation_to_image(img, text, write_on_top=True):
                                                           thickness=thickness_used)
     text_true_height = text_height + baseline
     if write_on_top:
-        cv2.rectangle(img, (0, 0),
-                      (int(text_width * 1.1), int(text_true_height * 1.35)),
-                      WHITE, cv2.FILLED)
-        cv2.putText(img, text,
-                    (int(text_width * 0.05), int(text_true_height * 1.2 - baseline)),
-                    font, font_scale_used, ORANGE, thickness_used)
+        cv2.rectangle(img, (0, 0), (int(text_width * 1.1), int(text_true_height * 1.35)), WHITE, cv2.FILLED)
+        cv2.putText(img,
+                    text, (int(text_width * 0.05), int(text_true_height * 1.2 - baseline)),
+                    font,
+                    font_scale_used,
+                    ORANGE,
+                    thickness_used)
     else:
-        cv2.rectangle(img,
-                      (int(text_width * 1.1), h_im - int(text_true_height * 1.35)),
-                      (0, h_im),
-                      WHITE, cv2.FILLED)
-        cv2.putText(img, text,
-                    (int(text_width * 0.05), h_im - baseline),
-                    font, font_scale_used, ORANGE, thickness_used)
+        cv2.rectangle(img, (int(text_width * 1.1), h_im - int(text_true_height * 1.35)), (0, h_im), WHITE, cv2.FILLED)
+        cv2.putText(img, text, (int(text_width * 0.05), h_im - baseline), font, font_scale_used, ORANGE, thickness_used)
     return img
 
 
@@ -498,6 +497,7 @@ def concat_imgs(tuple_imgs, axis=1):
 
 # ROS
 
+
 def extract_img_from_ros_msg(ros_msg):
     """
     Take a ROS CompressedImage message and return the image uncompressed
@@ -515,6 +515,7 @@ def extract_img_from_ros_msg(ros_msg):
 
 
 # DEBUG
+
 
 def debug_threshold_color(img, color_hsv):
     """
