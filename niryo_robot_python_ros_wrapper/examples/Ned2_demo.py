@@ -1,24 +1,22 @@
+# !/usr/bin/env python
+
 # Test FQC V1.4
-#!/usr/bin/env python
-import time
-import subprocess
-import rospy
+
 import json
+import subprocess
+from datetime import datetime
+
 import numpy as np
 import psutil
-from datetime import datetime
 import requests
-
-from std_msgs.msg import String, Int32
-from niryo_robot_reports.msg import Service
-
-from niryo_robot_database.srv import SetSettings
-from niryo_robot_rpi.srv import ScanI2CBus
-from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
-from niryo_robot_reports.srv import CheckConnection
-
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
+
+import rospy
+from niryo_robot_database.srv import SetSettings
+from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
+from niryo_robot_rpi.srv import ScanI2CBus
+from std_msgs.msg import String, Int32
 
 # This is the variable to modify for the demo program. FULL is here to define the default test (here demo)
 LOOPS = 1
@@ -34,7 +32,6 @@ ACCELERATION = 100  # %
 USE_BUTTON = False
 VOLUME = 100
 USE_VOCAL = False
-
 
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
@@ -68,7 +65,7 @@ class TestFailure(Exception):
     pass
 
 
-class TestReport(object):   # We define the report to send to RFM
+class TestReport(object):  # We define the report to send to RFM
 
     def __init__(self, header):
         self._header = header
@@ -83,7 +80,7 @@ class TestReport(object):   # We define the report to send to RFM
         rospy.loginfo('\033[96;24;23m ' + new_line + ' \033[0m')
         self._report += new_line
 
-    def execute(self, function, prefix, args=None, ret=False): # Execute a function and create a report of the latter
+    def execute(self, function, prefix, args=None, ret=False):  # Execute a function and create a report of the latter
         try:
             status, message = function() if args is None else function(*args)
         except Exception as e:
@@ -93,7 +90,7 @@ class TestReport(object):   # We define the report to send to RFM
             if status >= 0:
                 success_message = " succeed" if prefix else "Succeed"
                 self.append("{}{} - {} - {}".format(prefix, success_message, status, message))
-                if ret == True:
+                if ret:
                     return status
             else:
                 success_message = " failed" if prefix else "Failed"
@@ -105,7 +102,7 @@ class TestReport(object):   # We define the report to send to RFM
         return self._report
 
 
-class TestStep(object):     # This is the part who execute each program
+class TestStep(object):  # This is the part who execute each program
 
     def __init__(self, function, name, critical=False):
         self.__function = function
@@ -115,7 +112,7 @@ class TestStep(object):     # This is the part who execute each program
 
         self.__status = TestStatus.NONE
 
-    def run(self, *args, **kwargs):     # run each function
+    def run(self, *args, **kwargs):  # run each function
         self.__status = TestStatus.NONE
 
         try:
@@ -139,15 +136,14 @@ class TestStep(object):     # This is the part who execute each program
         return {"name": self.__name, "status": self.__status, "report": str(self.__report)}
 
 
-class TestProduction:       # Here we create the program who contain each function that we want
+class TestProduction:  # Here we create the program who contain each function that we want
 
     def __init__(self):
         self.__functions = TestFunctions()
         self.__success = False
 
-        if FULL == 1:       # For the short test (freemotion and button)
+        if FULL == 1:  # For the short test (freemotion and button)
             self.__sub_tests = [
-
                 TestStep(self.__functions.name, "Program name", critical=True),
                 TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
                 TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
@@ -161,9 +157,8 @@ class TestProduction:       # Here we create the program who contain each functi
                 TestStep(self.__functions.test_high_speed, "Test high speed", critical=True),
                 TestStep(self.__functions.end_test, "Test final check", critical=True)
             ]
-        if FULL == 2:       # For the long test (custom and button)
+        if FULL == 2:  # For the long test (custom and button)
             self.__sub_tests = [
-
                 TestStep(self.__functions.name, "Program name", critical=True),
                 TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
                 TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
@@ -172,9 +167,8 @@ class TestProduction:       # Here we create the program who contain each functi
                 TestStep(self.__functions.test_long, "Long test", critical=True),
                 TestStep(self.__functions.end_test, "Test final check", critical=True)
             ]
-        if FULL == 0:        # For the demo (only button) and also default mode
+        if FULL == 0:  # For the demo (only button) and also default mode
             self.__sub_tests = [
-
                 TestStep(self.__functions.name, "Program name", critical=True),
                 TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
                 TestStep(self.__functions.test_spiral, "Test spiral", critical=True),
@@ -183,9 +177,8 @@ class TestProduction:       # Here we create the program who contain each functi
                 TestStep(self.__functions.test_pick_and_place, "Test pick and place", critical=True),
                 TestStep(self.__functions.end_test, "Test final check", critical=True)
             ]
-        if FULL == 3:        # Expedition test
+        if FULL == 3:  # Expedition test
             self.__sub_tests = [
-
                 TestStep(self.__functions.name, "Program name", critical=True),
                 TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
                 TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
@@ -199,14 +192,14 @@ class TestProduction:       # Here we create the program who contain each functi
                 TestStep(self.__functions.end_test, "Test final check", critical=True)
             ]
 
-    def run(self):              # run the whole program
+    def run(self):  # run the whole program
         rospy.sleep(1)
         self.__functions.led_stop()
         try:
             for test in self.__sub_tests:
                 test.run()
 
-        except TestFailure:     # What's append if the test fail
+        except TestFailure:  # What's append if the test fail
             self.__sub_tests.append(TestStep(self.__functions.test_robot_status, "Test robot status", critical=True))
             # self.__sub_tests[-1].run()
             self.__functions.reset()
@@ -244,7 +237,7 @@ class TestProduction:       # Here we create the program who contain each functi
         return True
 
 
-class TestFunctions(object):    # definition of each function (some are unused)
+class TestFunctions(object):  # definition of each function (some are unused)
 
     def __init__(self):
         rospy.sleep(2)
@@ -268,21 +261,23 @@ class TestFunctions(object):    # definition of each function (some are unused)
         if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode():
             self.__set_led_state_service(False, 0, 0, 0)
 
-    def say(self, text, prio=0):    # prio is here to speak even if USE_VOCAL = False
+    def say(self, text, prio=0):  # prio is here to speak even if USE_VOCAL = False
         if (USE_VOCAL or prio == 1) and self.__hardware_version in ['ned2']:
             try:
                 self.__robot.sound.say(text, 1)
-            except:
+            except Exception:
                 rospy.loginfo("No internet connection, robot can't speak")
-        subprocess.run(
-            'rm -rf /home/niryo/niryo_robot_saved_files/niryo_robot_user_sounds/last_text_to_speech.mp3',
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('rm -rf /home/niryo/niryo_robot_saved_files/niryo_robot_user_sounds/last_text_to_speech.mp3',
+                       shell=True,
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
     def name(self, report):
         if FULL != 0:
             report.execute(self.__robot.sound.set_volume, "Set volume", [VOLUME])
 
-        name = ["Programme demo", "Debut du test court FQC", "Debut du test long FQC", "Test avant expedission"] # expedition
+        name = ["Programme demo", "Debut du test court FQC", "Debut du test long FQC",
+                "Test avant expedission"]  # expedition
         self.say(name[FULL], 1)
 
     def ip_say(self, report):
@@ -309,15 +304,16 @@ class TestFunctions(object):    # definition of each function (some are unused)
         apiKey = self.__robot.database.get_setting('api_key')
         try:
             response = requests.get('https://api.niryo.com/test-reports/api/v1/test-reports/ping',
-                                headers={'accept': 'application/json', 'identifier': rasp_id,
-                                 'apiKey': apiKey})
+                                    headers={
+                                        'accept': 'application/json', 'identifier': rasp_id, 'apiKey': apiKey
+                                    })
             if response.status_code >= 400:
                 report.append("error {}".format(response.text))
                 self.say("Erreur connexion RFM", 1)
                 raise TestFailure("Erreur connexion RFM")
             else:
                 report.append("Service test_reports successfully reached")
-                self.say("Connexion au serveur RFM rai hussi", 1) # reussi
+                self.say("Connexion au serveur RFM rai hussi", 1)  # reussi
         except Exception as e:
             report.append(e)
             report.append("No internet connection")
@@ -428,37 +424,36 @@ class TestFunctions(object):    # definition of each function (some are unused)
 
         self.say("Test des haut parleurs")
 
-        report.execute(self.__robot.sound.set_volume, "Set volume", [int (VOLUME/2)])
-        report.append("Volume set to {}%".format(int (VOLUME/2)))
+        def play_channel(channel):
+            subprocess.run((f'ffplay -nodisp -autoexit -af "pan=stereo|c{channel}=c0+c1" '
+                            f'/home/niryo/catkin_ws/src/niryo_robot_sound/niryo_robot_state_sounds/reboot.wav'),
+                           shell=True,
+                           stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
+
+        report.execute(self.__robot.sound.set_volume, "Set volume", [int(VOLUME / 2)])
+        report.append("Volume set to {}%".format(int(VOLUME / 2)))
         self.say("Volume haut parleur gauche 50 pour 100")
 
-        subprocess.run(
-            'ffplay -nodisp -autoexit -af "pan=stereo|c1=c0+c1" /home/niryo/catkin_ws/src/niryo_robot_sound/niryo_robot_state_sounds/reboot.wav',
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        play_channel(1)
 
         report.execute(self.__robot.sound.set_volume, "Set volume", [VOLUME])
         report.append("Volume set to {}%".format(VOLUME))
         self.say("Volume haut parleur gauche 100 pour 100")
 
-        subprocess.run(
-            'ffplay -nodisp -autoexit -af "pan=stereo|c1=c0+c1" /home/niryo/catkin_ws/src/niryo_robot_sound/niryo_robot_state_sounds/reboot.wav',
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        play_channel(1)
 
-        report.execute(self.__robot.sound.set_volume, "Set volume", [int (VOLUME/2)])
-        report.append("Volume set to {}%".format(int (VOLUME/2)))
+        report.execute(self.__robot.sound.set_volume, "Set volume", [int(VOLUME / 2)])
+        report.append("Volume set to {}%".format(int(VOLUME / 2)))
         self.say("Volume haut parleur droit 50 pour 100")
 
-        subprocess.run(
-            'ffplay -nodisp -autoexit -af "pan=stereo|c0=c0+c1" /home/niryo/catkin_ws/src/niryo_robot_sound/niryo_robot_state_sounds/reboot.wav',
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        play_channel(0)
 
         report.execute(self.__robot.sound.set_volume, "Set volume", [VOLUME])
         report.append("Volume set to {}%".format(VOLUME))
         self.say("Volume haut parleur droit 100 pour 100")
 
-        subprocess.run(
-            'ffplay -nodisp -autoexit -af "pan=stereo|c0=c0+c1" /home/niryo/catkin_ws/src/niryo_robot_sound/niryo_robot_state_sounds/reboot.wav',
-            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        play_channel(0)
 
         self.say("Appuyez sur CUSTOM pour validez le test des haut parleurs")
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
@@ -533,15 +528,15 @@ class TestFunctions(object):    # definition of each function (some are unused)
         def test_digital_io_value(io_name, state):
             io_state = self.__robot.digital_read(io_name)
             if io_state != state:
-                raise TestFailure(
-                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, state))
+                raise TestFailure("Non expected value on digital input {} - Actual {} - Target {}".format(
+                    io_name, io_state, state))
             return 1, "Success"
 
         def test_analog_io_value(io_name, value, error=0.3):
             io_state = self.__robot.analog_read(io_name)
             if not (value - error <= io_state <= value + error):
-                raise TestFailure(
-                    "Non expected value on digital input {} - Actual {} - Target {}".format(io_name, io_state, value))
+                raise TestFailure("Non expected value on digital input {} - Actual {} - Target {}".format(
+                    io_name, io_state, value))
             return 1, "Success"
 
         self.__robot.led_ring.solid(PINK)
@@ -585,21 +580,18 @@ class TestFunctions(object):    # definition of each function (some are unused)
 
         first_target, second_target, third_target, last_target = 6 * [0], 6 * [0], 6 * [0], 6 * [0]
 
-        first_target[0], first_target[3], first_target[4], first_target[5] = j_limit_1m, j_limit_4m, j_limit_5m, j_limit_6m
+        first_target[0], first_target[3], first_target[4], first_target[
+            5] = j_limit_1m, j_limit_4m, j_limit_5m, j_limit_6m
 
         second_target[1], second_target[2] = j_limit_2M, j_limit_3m
 
-        third_target[0], third_target[3], third_target[4], third_target[5] = j_limit_1M, j_limit_4M, j_limit_5M, j_limit_6M
+        third_target[0], third_target[3], third_target[4], third_target[
+            5] = j_limit_1M, j_limit_4M, j_limit_5M, j_limit_6M
 
         last_target[2], last_target[4] = j_limit_3M, j_limit_5m
 
-        poses = [(default_joint_pose, 1, 3),
-                 (first_target, 1, 4),
-                 (default_joint_pose, 1, 4),
-                 (second_target, 1, 3),
-                 (default_joint_pose, 1, 3),
-                 (third_target, 1, 4),
-                 (last_target, 1, 4)]
+        poses = [(default_joint_pose, 1, 3), (first_target, 1, 4), (default_joint_pose, 1, 4), (second_target, 1, 3),
+                 (default_joint_pose, 1, 3), (third_target, 1, 4), (last_target, 1, 4)]
 
         for loop_index in range(LOOPS):
             for position_index, step in enumerate(poses):
@@ -614,21 +606,18 @@ class TestFunctions(object):    # definition of each function (some are unused)
             # self.say("Test des spirales")
 
         for loop_index in range(SPIRAL_LOOPS):
-            report.execute(self.__robot.move_pose, "Loop {} - Move to spiral center".format(loop_index),
-                           [0.3, 0, 0.2, 0, 1.57, 0])
-            report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index),
-                           [0.15, 5, 216, 3])
+            report.execute(self.__robot.move_pose,
+                           "Loop {} - Move to spiral center".format(loop_index), [0.3, 0, 0.2, 0, 1.57, 0])
+            report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index), [0.15, 5, 216, 3])
 
     def test_fun_poses(self, report):
         if self.__hardware_version in ['ned2']:
             self.__robot.led_ring.rainbow_cycle()
             # self.say("Test de divers movements")
 
-        waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26],
-                     [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
-                     [1.40, 0.35, -0.34, -1.24, -1.23, -0.10],
-                     [0.00, 0.60, 0.46, -1.55, -0.15, 2.50],
-                     [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
+        waypoints = [[0.16, 0.00, -0.75, -0.56, 0.60, -2.26], [2.25, -0.25, -0.90, 1.54, -1.70, 1.70],
+                     [1.40, 0.35, -0.34, -1.24, -1.23, -0.10], [0.00, 0.60, 0.46, -1.55, -0.15,
+                                                                2.50], [-1.0, 0.00, -1.00, -1.70, -1.35, -0.14]]
 
         for loop_index in range(LOOPS):
             for wayoint_index, wayoint in enumerate(waypoints):
@@ -683,7 +672,7 @@ class TestFunctions(object):    # definition of each function (some are unused)
 
         try:
             report.execute(self.__robot.grasp_with_tool, "Close gripper")
-        except:
+        except Exception:
             report.append("No tool connected")
 
         report.execute(self.__robot.move_pose, "Move to home pose", home_pose)
@@ -719,38 +708,49 @@ class TestFunctions(object):    # definition of each function (some are unused)
         sixth_joint_min[5] = j_limit_6m
         sixth_joint_max[5] = j_limit_6M
 
-        poses = [first_joint_min, first_joint_max, second_joint_min, second_joint_max,
-                 third_joint_min, third_joint_max, fourth_joint_min, fourth_joint_max,
-                 fifth_joint_min, fifth_joint_max, sixth_joint_min, sixth_joint_max]
+        poses = [
+            first_joint_min,
+            first_joint_max,
+            second_joint_min,
+            second_joint_max,
+            third_joint_min,
+            third_joint_max,
+            fourth_joint_min,
+            fourth_joint_max,
+            fifth_joint_min,
+            fifth_joint_max,
+            sixth_joint_min,
+            sixth_joint_max
+        ]
 
-        c = [-1, 0, 0, 2, 1, 0] #correctif for 10 loop and 1min per axis :  c = [-1, 0, 0, 2, 1, 0]
+        c = [-1, 0, 0, 2, 1, 0]  # correctif for 10 loop and 1min per axis :  c = [-1, 0, 0, 2, 1, 0]
 
         self.say("Mettre la masse et appuyer sur CUSTOM")
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
-        for position_index in range(int(len(poses)/2)):
+        for position_index in range(int(len(poses) / 2)):
 
-            if position_index == 3:                            # limit of the axe 4
-                self.__robot.set_arm_max_velocity(150)         # to avoid problem
-            if position_index == 4:                            # 150% speed is enough
-                self.__robot.set_arm_max_velocity(200)         #
+            if position_index == 3:  # limit of the axe 4
+                self.__robot.set_arm_max_velocity(150)  # to avoid problem
+            if position_index == 4:  # 150% speed is enough
+                self.__robot.set_arm_max_velocity(200)  #
             if position_index == 5:
                 report.execute(self.move_and_compare, "Change payload", args=[default_joint_pose])
-                self.say("Mettre la masse des porter et appuyer sur CUSTOM") # masse deportee
+                self.say("Mettre la masse des porter et appuyer sur CUSTOM")  # masse deportee
                 report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
             for loop_index in range(HIGH_SPEED_LOOP + c[position_index]):
-                if position_index == 3 and loop_index == 6:     # change position of the Payload
-                    fourth_joint_min[4] = np.deg2rad(90)        # at the half of the movements
-                    fourth_joint_max[4] = np.deg2rad(90)        #
+                if position_index == 3 and loop_index == 6:  # change position of the Payload
+                    fourth_joint_min[4] = np.deg2rad(90)  # at the half of the movements
+                    fourth_joint_max[4] = np.deg2rad(90)  #
 
-                joint_position_min = poses[2*position_index]
-                joint_position_max = poses[2*position_index+1]
+                joint_position_min = poses[2 * position_index]
+                joint_position_max = poses[2 * position_index + 1]
                 report.execute(self.move_and_compare,
-                               "Move number {}.{} min ".format(position_index+1, loop_index),
+                               "Move number {}.{} min ".format(position_index + 1, loop_index),
                                args=[joint_position_min])
                 report.execute(self.move_and_compare,
-                               "Move number {}.{} max".format(position_index+1, loop_index),
+                               "Move number {}.{} max".format(position_index + 1, loop_index),
                                args=[joint_position_max])
 
         report.execute(self.move_and_compare, "Move HOME", args=[default_joint_pose])
@@ -767,17 +767,17 @@ class TestFunctions(object):    # definition of each function (some are unused)
         nb_collision, nb_loop = 0, 0
         report.append("Start of the long test")
 
-        waypoints = [[j_limit_1m, j_limit_2M, np.deg2rad(-55), j_limit_4M, j_limit_5m, j_limit_6M],
-                     [j_limit_1M, j_limit_2M, j_limit_3m, j_limit_4m, j_limit_5M, j_limit_6m],
-                     [j_limit_1M, j_limit_2M, j_limit_3M, j_limit_4m, j_limit_5M, j_limit_6m],
-                     [j_limit_1m, j_limit_2M, j_limit_3M, j_limit_4M, j_limit_5m, j_limit_6M],
-                     [j_limit_1m, j_limit_2m, j_limit_3M, j_limit_4M, j_limit_5M, j_limit_6M],
-                     [j_limit_1M, j_limit_2m, j_limit_3M, j_limit_4m, j_limit_5m, j_limit_6m],
-                     [0, 0.5, -1.25, 0, 0, 0]]
+        waypoints = [[j_limit_1m, j_limit_2M, np.deg2rad(-55), j_limit_4M, j_limit_5m,
+                      j_limit_6M], [j_limit_1M, j_limit_2M, j_limit_3m, j_limit_4m, j_limit_5M, j_limit_6m],
+                     [j_limit_1M, j_limit_2M, j_limit_3M, j_limit_4m, j_limit_5M,
+                      j_limit_6m], [j_limit_1m, j_limit_2M, j_limit_3M, j_limit_4M, j_limit_5m, j_limit_6M],
+                     [j_limit_1m, j_limit_2m, j_limit_3M, j_limit_4M, j_limit_5M,
+                      j_limit_6M], [j_limit_1M, j_limit_2m, j_limit_3M, j_limit_4m, j_limit_5m,
+                                    j_limit_6m], [0, 0.5, -1.25, 0, 0, 0]]
 
         start_time = rospy.Time.now()
 
-        while (rospy.Time.now() - start_time).to_sec() < NB_HOURS*3600:
+        while (rospy.Time.now() - start_time).to_sec() < NB_HOURS * 3600:
             nb_loop += 1
             for wayoint_index, wayoint in enumerate(waypoints):
                 try:
@@ -858,8 +858,8 @@ class TestFunctions(object):    # definition of each function (some are unused)
         start_time = rospy.Time.now()
         while not almost_equal_array(self.__robot.get_joints(), target, decimal=precision_decimal):
             if (rospy.Time.now() - start_time).to_sec() > 5:
-                raise TestFailure(
-                    "Target not reached - Actual {} - Target {}".format(self.__robot.get_joints(), target))
+                raise TestFailure("Target not reached - Actual {} - Target {}".format(
+                    self.__robot.get_joints(), target))
             rospy.sleep(0.1)
         return 1, "Success"
 
@@ -868,7 +868,7 @@ if __name__ == '__main__':
     rospy.init_node('niryo_test_FQC_ros_wrapper')
     robot = NiryoRosWrapper()
 
-    if robot.get_learning_mode() or robot.custom_button.is_pressed():     # detect in which mode we are
+    if robot.get_learning_mode() or robot.custom_button.is_pressed():  # detect in which mode we are
 
         if robot.get_learning_mode() and robot.custom_button.is_pressed():
             LOOPS = 5
@@ -921,7 +921,7 @@ if __name__ == '__main__':
             rospy.logerr(_e)
         if not prog:
             raise TestFailure('Program failure : {}'.format(prog))
-    else:       # Demo program
+    else:  # Demo program
         test = TestProduction()
         if not test.run():
             raise TestFailure('Program failure')
