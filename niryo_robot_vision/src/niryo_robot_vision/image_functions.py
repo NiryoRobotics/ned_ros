@@ -5,6 +5,10 @@ from .enums import *
 from .markers_detection import extract_img_markers, draw_markers
 
 __all__ = [
+    "improve_mask",
+    "threshold_red",
+    "threshold_blue",
+    "threshold_green",
     "threshold_hsv",
     "morphological_transformations",
     "get_contour_barycenter",
@@ -34,7 +38,65 @@ __all__ = [
 
 
 # Image Processing
-def threshold_hsv(img, list_min_hsv, list_max_hsv, reverse_hue=False, use_s_prime=False):
+def improve_mask(mask):
+    """
+    Improve binary mask with morphological operation
+
+    :param mask: input mask to improve
+    :type mask: numpy.array
+    :return mask: mask improved
+    :rtype mask: numpy.array
+    """
+    kernel = np.ones((3,3))
+    mask = cv2.erode(mask , kernel)
+    mask = cv2.erode(mask , kernel)
+    mask = cv2.dilate(mask, kernel)
+    mask = cv2.dilate(mask, kernel)
+    return mask
+
+def threshold_red(img_hsv):
+    """
+    Threshold hsv image of red component
+    :param img_hsv: hsv image to be threshold
+    :type img_hsv: numpy.array
+    :param red_img: threshold img
+    :rtype: numpy.array
+    """
+    RED_L = [0, 85, 120], [35, 255, 255]
+    RED_H = [150, 100, 80], [180, 255, 255]
+    red_low_img = cv2.inRange(img_hsv, tuple(RED_L[0]), tuple(RED_L[1]))
+    red_high_img = cv2.inRange(img_hsv, tuple(RED_H[0]), tuple(RED_H[1]))
+    red_img = cv2.bitwise_or(red_low_img, red_high_img)
+    red_img = improve_mask(red_img)
+    return red_img
+
+def threshold_green(img_hsv):
+    """
+    Threshold hsv image of green component
+    :param img_hsv: hsv image to be threshold
+    :type img_hsv: numpy.array
+    :param green_img: threshold img
+    :rtype: numpy.array
+    """
+    GREEN = [60, 30, 60], [95, 255, 255]
+    green_img = cv2.inRange(img_hsv, tuple(GREEN[0]), tuple(GREEN[1]))
+    green_img = improve_mask(green_img)
+    return green_img
+
+def threshold_blue(img_hsv):
+    """
+    Threshold hsv image of blue component
+    :param img_hsv: hsv image to be threshold
+    :type img_hsv: numpy.array
+    :param blue_img: threshold img
+    :rtype: numpy.array
+    """
+    BLUE = [100, 50, 100], [125, 255, 255]
+    blue_img = cv2.inRange(img_hsv, tuple(BLUE[0]), tuple(BLUE[1]))
+    blue_img = improve_mask(blue_img)
+    return blue_img
+
+def threshold_hsv(img, color_hsv):
     """
     Take BGR image (OpenCV imread result) and return thresholded image
     according to values on HSV (Hue, Saturation, Value)
@@ -42,32 +104,31 @@ def threshold_hsv(img, list_min_hsv, list_max_hsv, reverse_hue=False, use_s_prim
 
     :param img: image BGR if rgb_space = False
     :type img: numpy.array
-    :param list_min_hsv: list corresponding to [min_value_H,min_value_S,min_value_V]
-    :type list_min_hsv: list[int]
-    :param list_max_hsv: list corresponding to [max_value_H,max_value_S,max_value_V]
-    :type list_max_hsv: list[int]
-    :param use_s_prime: True if you want to use S channel as S' = S x V else classic
-    :type use_s_prime: bool
-    :param reverse_hue: Useful for Red color cause it is at both extremum
-    :type reverse_hue: bool
     :return: threshold image
     :rtype: numpy.array
     """
-    frame_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    if use_s_prime:
-        frame_hsv[:, :, 1] = (1. / 255) * frame_hsv[:, :, 1] * frame_hsv[:, :, 2].astype(np.uint8)
+    frame = cv2.GaussianBlur(img, (5,5), 0)
+    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    if not reverse_hue:
-        return cv2.inRange(frame_hsv, tuple(list_min_hsv), tuple(list_max_hsv))
+    #red threshold
+    if color_hsv.value == 1:
+        thresh_img = threshold_red(frame_hsv)
+    #green threshold
+    elif color_hsv.value == 2:
+        thresh_img = threshold_green(frame_hsv)
+    #blue threshold
+    elif color_hsv.value == 3:
+        thresh_img = threshold_blue(frame_hsv)
+    #any
     else:
-        list_min_v_c = list(list_min_hsv)
-        list_max_v_c = list(list_max_hsv)
-        lower_bound_red, higher_bound_red = sorted([list_min_v_c[0], list_max_v_c[0]])
-        list_min_v_c[0], list_max_v_c[0] = 0, lower_bound_red
-        low_red_im = cv2.inRange(frame_hsv, tuple(list_min_v_c), tuple(list_max_v_c))
-        list_min_v_c[0], list_max_v_c[0] = higher_bound_red, 179
-        high_red_im = cv2.inRange(frame_hsv, tuple(list_min_v_c), tuple(list_max_v_c))
-        return cv2.addWeighted(low_red_im, 1.0, high_red_im, 1.0, 0)
+        thresh_red = threshold_red(frame_hsv)
+        thresh_green = threshold_green(frame_hsv)
+        thresh_blue = threshold_blue(frame_hsv)
+
+        thresh_img = cv2.bitwise_or(thresh_red, thresh_green)
+        thresh_img = cv2.bitwise_or(thresh_img, thresh_blue)
+
+    return thresh_img
 
 
 def morphological_transformations(im_thresh, morpho_type=MorphoType.CLOSE, kernel_shape=(5, 5),
@@ -466,8 +527,7 @@ def debug_threshold_color(img, color_hsv):
     :return: Masked image
     :rtype: numpy.array
     """
-    param_thresh = color_hsv.value
-    thresh_img = threshold_hsv(img, *param_thresh)
+    thresh_img = threshold_hsv(img, color_hsv)
     im_morph = morphological_transformations(thresh_img, MorphoType.OPEN, kernel_shape=(7, 7))
     return cv2.bitwise_and(img, img, mask=im_morph)
 
