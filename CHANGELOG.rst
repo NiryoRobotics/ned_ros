@@ -2,6 +2,16 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.1.1
+-----------
+
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+ * Corrected an issue that was preventing the system from considering the "purge ros logs on startup" command.
+
 v5.1.0
 ___________
 
