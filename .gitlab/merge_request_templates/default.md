@@ -1,6 +1,7 @@
 ## Merge Request: %{source_branch} → %{target_branch}
 
-**Summary/Title**: Brief description of changes
+### Summary
+<!-- Brief description of changes -->
 
 ### Changelog
 
