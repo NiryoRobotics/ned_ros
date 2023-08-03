@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+from pathlib import Path
 import subprocess
 
 from niryo_robot_sound.srv import PlaySound, PlaySoundRequest
@@ -49,9 +50,6 @@ CHANGE_MOTOR_CONFIG_WRONG_VERSION = -3
 
 
 class LedState:
-
-    def __init__(self):
-        pass
 
     SHUTDOWN = 1
     HOTSPOT = 2

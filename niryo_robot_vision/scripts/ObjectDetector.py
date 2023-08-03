@@ -148,8 +148,7 @@ class ObjectDetector:
         :return:
         """
         self.actualize_img(im_work)
-        list_min_hsv, list_max_hsv, reverse_hue = self.get_hsv_parameters()
-        im_thresh = threshold_hsv(im_work, list_min_hsv, list_max_hsv, reverse_hue=reverse_hue, use_s_prime=use_s_prime)
+        im_thresh = threshold_hsv(im_work, self._obj_color)
         im_morph = morphological_transformations(im_thresh, MorphoType.OPEN, kernel_shape=(7, 7))
         self.actualize_im_thresh(im_morph)
         return im_morph

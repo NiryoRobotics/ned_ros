@@ -9,6 +9,7 @@ from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_rpi.msg import WifiButtonStatus
 # Message
 from niryo_robot_user_interface.msg import ConnectionState
 from niryo_robot_status.msg import RobotStatus
@@ -90,6 +91,7 @@ class LedRingCommander(object):
         rospy.Subscriber('/niryo_robot_user_interface/niryo_studio_connection',
                          ConnectionState,
                          self.__callback_niryo_studio)
+        rospy.Subscriber('/niryo_robot/wifi_button_state', WifiButtonStatus, self.__callback_wifi_button_state)
 
         self.__check_shutdown_timer = rospy.Timer(rospy.Duration(2), self.shutdown_check)
 
@@ -217,6 +219,18 @@ class LedRingCommander(object):
     def __callback_niryo_studio(self, msg):
         if msg.state in [ConnectionState.connection, ConnectionState.close] and not self.user_mode:
             self.blink_over_status(PURPLE, 2, 0.5)
+
+    def __callback_wifi_button_state(self, msg):
+        if msg.state == WifiButtonStatus.RELEASED and msg.mode != WifiButtonStatus.IGNORE_PRESS:
+            self.blink(BLUE, 2, 0)
+            self.display_user_mode()
+        elif msg.mode in [WifiButtonStatus.LONG_PRESS, WifiButtonStatus.VERY_LONG_PRESS]:
+            command = LedUserRequest()
+            command.animation_mode.animation = LedRingAnimation.FLASHING
+            command.colors = [PURPLE] if msg.mode == WifiButtonStatus.VERY_LONG_PRESS else [WHITE]
+            self.start_led_ring_thread(command)
+        else:
+            self.display_user_mode()
 
     def notify_current_anim_and_color(self, _observer):
         """
