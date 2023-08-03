@@ -6,7 +6,6 @@
 
     <group ns="niryo_robot_rpi" >
         <rosparam file="$(find niryo_robot_rpi)/config/$(arg hardware_version)/io_config.yaml"/>
-        <rosparam file="$(find niryo_robot_rpi)/config/log_config.yaml"/>
     </group>
 
 </launch>
