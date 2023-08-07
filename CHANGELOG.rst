@@ -16,6 +16,7 @@ ___________
  * Fixed a problem that sometimes stopped the hotspot from starting when pressing the wifi button.
  * Fixed a situation where the system wouldn't pay attention to the "clear ros logs when starting" command.
  * Fixed a problem that sometimes stopped the camera from recognizing colored shapes.
+ * Fixed an issue that permitted editing of dynamic frames belonging to workspaces.
 
 v5.1.0
 ___________
