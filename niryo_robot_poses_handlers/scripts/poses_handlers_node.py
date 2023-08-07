@@ -278,12 +278,17 @@ class PoseHandlerNode:
             except (ValueError, Exception) as e:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
+            if frame.belong_to_workspace:
+                return (CommandStatus.POSES_HANDLER_REMOVAL_FAILED,
+                        "Can't remove a dynamic frame which belong to a workspace")
             try:
                 self.remove_dynamic_frame(frame.name, frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
         elif cmd == req.EDIT:
+            if frame.belong_to_workspace:
+                return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, "Can't edit a dynamic frame which belong to a workspace"
             try:
                 if frame.description != '':
                     self.dynamic_frame_manager.edit_description(frame.name, frame.description)
