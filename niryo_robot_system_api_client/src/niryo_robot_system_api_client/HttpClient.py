@@ -22,11 +22,11 @@ class HttpClient:
             return default_response
         return True, json['detail'], json['data']
 
-    def __get(self, uri):
+    def __get(self, uri, params=None):
         endpoint = f'{self.__base_url}{uri}'
 
         try:
-            response = requests.get(endpoint)
+            response = requests.get(endpoint, params=params)
         except requests.ConnectionError as connection_error:
             rospy.logerr_throttle_identical(60, str(connection_error))
             response = None
@@ -151,3 +151,24 @@ class HttpClient:
             return False, self.ERROR_MSG
 
         return True, detail
+
+    def set_setting(self, name, value):
+        (status_code, detail, _) = self.__post(
+            '/setSetting',
+            {
+                'name': name, 'value': value
+            },
+        )
+
+        if not status_code:
+            return False, self.ERROR_MSG
+
+        return True, detail
+
+    def get_setting(self, name):
+        status_code, _, data = self.__get('/getSetting', {'name': name, 'with_type': True})
+
+        if not status_code:
+            return False, self.ERROR_MSG
+
+        return True, data

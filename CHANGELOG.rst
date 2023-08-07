@@ -10,11 +10,13 @@ ___________
 **Improvements**
  * The functionalities of the WiFi button have been revamped: pressing it briefly (< 2s) will toggle the hotspot on or off, holding it down for an extended duration (> 2s) will enable or disable the WiFi client, and a long press (> 7s) will restore the robot's network settings. To cancel any ongoing action, press the button for over 10 seconds.
  * When the WiFi button is pressed, the LED ring indicates what action will be done at the release.
+ * The database node use the system software HTTP API to get and set the settings in the database. This is to ensure there is only one access point to the database.
 
 **Bugfixes**
  * Fixed a problem that sometimes stopped the hotspot from starting when pressing the wifi button.
  * Fixed a situation where the system wouldn't pay attention to the "clear ros logs when starting" command.
  * Fixed a problem that sometimes stopped the camera from recognizing colored shapes.
+ * Fixed an issue that permitted editing of dynamic frames belonging to workspaces.
 
 v5.1.0
 ___________
