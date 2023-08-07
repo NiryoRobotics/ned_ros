@@ -7,6 +7,8 @@ import time
 import rospy
 from sqlite3 import OperationalError
 
+from niryo_robot_system_api_client.HttpClient import HttpClient
+
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
 from niryo_robot_database.Settings import Settings, UnknownSettingsException
 from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
@@ -32,6 +34,7 @@ class DatabaseNode:
         if not os.path.isfile(db_path):
             raise RuntimeError('Database Node - Unable to open the database.')
 
+        self.__http_client = HttpClient()
         sqlite_dao = SQLiteDAO(db_path)
 
         self.__settings = Settings(sqlite_dao)
@@ -61,23 +64,20 @@ class DatabaseNode:
         rospy.logdebug("Database Node - Node Started")
 
     def __callback_set_settings(self, req):
-        try:
-            self.__settings.set(req.name, req.value, req.type)
-        except TypeError as e:
-            return CommandStatus.DATABASE_SETTINGS_TYPE_MISMATCH, e.__str__()
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
+        success, detail = self.__http_client.set_setting(req.name, req.value)
+        if not success:
+            return CommandStatus.DATABASE_DB_ERROR, detail
 
         self.__setting_update_publisher.publish(req.name, req.value, req.type)
         return CommandStatus.SUCCESS, 'Settings successfully set'
 
     def __callback_get_settings(self, req):
-        try:
-            value, value_type = self.__settings.get(req.name)
-        except UnknownSettingsException:
-            return CommandStatus.DATABASE_SETTINGS_UNKNOWN, 'Unknown settings', None
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e), None
+        success, data = self.__http_client.get_setting(req.name)
+        if not success:
+            return CommandStatus.DATABASE_DB_ERROR, data
+        value = data[req.name]
+        value_type = data['type']
+
         return CommandStatus.SUCCESS, value, value_type
 
     def __callback_add_file_path(self, req):
