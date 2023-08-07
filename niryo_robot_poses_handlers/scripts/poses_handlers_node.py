@@ -583,6 +583,7 @@ class PoseHandlerNode:
         frame = DynamicFrame()
         frame.name = frame_read.name
         frame.description = frame_read.description
+        frame.belong_to_workspace = frame_read.belong_to_workspace
         point = Point(*pose_raw[0])
         quaternion = Quaternion(*pose_raw[1])
         roll, pitch, yaw = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
