@@ -140,7 +140,7 @@ class StorageManager:
 
     def callback_change_purge_log_on_startup(self, req):
         set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting_service('purge_ros_logs', value=req.value == 1, type='bool')
+        set_setting_service(name='purge_ros_logs', value=req.value == 1, type='bool')
         return self.create_response(200, "Purge log on startup value has been changed")
 
     def publish_storage_status(self, _):
