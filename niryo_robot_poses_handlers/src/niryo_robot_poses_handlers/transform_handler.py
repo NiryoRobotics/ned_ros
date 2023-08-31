@@ -48,7 +48,7 @@ class PosesTransformHandler:
 
         t = TransformStamped()
         t.transform.translation = Vector3(delta_y, delta_x, 0)
-        t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(0, 0, yaw_rel))
+        t.transform.rotation = Quaternion(*transformations.quaternion_from_euler(0, 0, -yaw_rel))
         t.header.frame_id = str(workspace.name)
         t.header.stamp = stamp
         t.child_frame_id = "object_base"
