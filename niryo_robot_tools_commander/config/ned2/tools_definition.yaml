@@ -22,16 +22,16 @@ tool_list:
       - close_gripper
     specs:
       open_position: 2200
-      open_hold_torque: 500
-      open_max_torque: 1200
+      open_hold_torque: 200
+      open_max_torque: 200
       close_position: 900
-      close_hold_torque: -1200
-      close_max_torque: -1400
+      close_hold_torque: -200
+      close_max_torque: -200
       open_speed: 300
       close_speed: 300
       torque_limit:
-        min: -1400
-        max: 1400
+        min: -200
+        max: 200
     transformation:
       translation: [0.085, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
@@ -43,16 +43,16 @@ tool_list:
       - close_gripper
     specs:
       open_position: 2380
-      open_hold_torque: 500
-      open_max_torque: 1000
+      open_hold_torque: 300
+      open_max_torque: 300
       close_position: 1350
-      close_hold_torque: -500
-      close_max_torque: -1000
+      close_hold_torque: -300
+      close_max_torque: -300
       open_speed: 300
       close_speed: 300
       torque_limit:
-        min: -1000
-        max: 1000
+        min: -300
+        max: 300
     transformation:
       translation: [0.110, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
@@ -64,14 +64,14 @@ tool_list:
       - close_gripper
     specs:
       open_position: 2840
-      open_hold_torque: 500
-      open_max_torque: 1000
+      open_hold_torque: 200
+      open_max_torque: 200
       close_position: 1859
-      close_hold_torque: -500
-      close_max_torque: -1000
+      close_hold_torque: -200
+      close_max_torque: -200
       torque_limit:
-        min: -1000
-        max: 1000
+        min: -200
+        max: 200
     transformation:
       translation: [0.114, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]

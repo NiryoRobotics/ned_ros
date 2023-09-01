@@ -304,7 +304,6 @@ class PoseHandlerNode:
 
                 return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
             except Exception as e:
-                raise e
                 return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
         else:
             return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(cmd)

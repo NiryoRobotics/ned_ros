@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from niryo_robot_poses_handlers.file_manager import FileManager, NiryoRobotFileException
-from niryo_robot_poses_handlers.transform_functions import euler_from_matrix, quaternion_from_euler
+from niryo_robot_poses_handlers.transform_functions import euler_from_matrix, quaternion_from_euler, normalize_quaterion
 
 from geometry_msgs.msg import Point, Vector3, TransformStamped, Quaternion
 
@@ -155,8 +155,10 @@ class DynamicFrameManager(FileManager):
         static_transform_stamped.child_frame_id = name
         # Position
         static_transform_stamped.transform.translation = Vector3(*[position.x, position.y, position.z])
+
         # Orientation
-        static_transform_stamped.transform.rotation = quaternion
+        normalized_quaterion = normalize_quaterion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
+        static_transform_stamped.transform.rotation = Quaternion(*normalized_quaterion)
 
         # Add to the list of publish transform
         self.dict_dynamic_frame[name] = {"transform": static_transform_stamped}
