@@ -63,10 +63,6 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:22
-msgid "``/niryo_robot/wifi/status``"
-msgstr ""
-
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:23
 msgid ""
 ":ref:`WifiStatus<source/stack/high_level/niryo_robot_system_api_client:WifiStatus"
@@ -83,10 +79,6 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:31
 msgid "System API Client Services"
-msgstr ""
-
-#: ../../source/stack/high_level/niryo_robot_system_api_client.rst:40
-msgid "``/niryo_robot/wifi/set_robot_name``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_system_api_client.rst:41

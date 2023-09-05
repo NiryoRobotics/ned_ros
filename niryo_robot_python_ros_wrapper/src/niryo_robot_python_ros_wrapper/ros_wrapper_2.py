@@ -2,25 +2,28 @@
 
 # Lib
 import threading
-import rosgraph_msgs.msg
-import rospy
-
-# Command Status
-from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
-
-# Messages
-from std_msgs.msg import Int32, String
-
-# Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, SetString
-
-from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
-    GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
-    ExecuteProgramRequest
-from niryo_robot_database.srv import GetSettings, SetSettings
 
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
+
+import rosgraph_msgs.msg
+import rospy
+# Command Status
+from niryo_robot_msgs.msg import SoftwareVersion
+# Services
+from niryo_robot_msgs.srv import SetInt, Trigger
+from niryo_robot_programs_manager.srv import (SetProgramAutorun,
+                                              SetProgramAutorunRequest,
+                                              GetProgramAutorunInfos,
+                                              GetProgramList,
+                                              ManageProgram,
+                                              ManageProgramRequest,
+                                              GetProgram,
+                                              GetProgramRequest,
+                                              ExecuteProgram,
+                                              ExecuteProgramRequest)
+# Messages
+from std_msgs.msg import Int32, String
 
 
 class NiryoRosWrapper2Exception(Exception):
@@ -29,11 +32,7 @@ class NiryoRosWrapper2Exception(Exception):
 
 class NiryoRosWrapper2:
     LOGS_LEVELS = {
-        rospy.INFO: 'INFO',
-        rospy.WARN: 'WARNING',
-        rospy.ERROR: 'ERROR',
-        rospy.FATAL: 'FATAL',
-        rospy.DEBUG: 'DEBUG'
+        rospy.INFO: 'INFO', rospy.WARN: 'WARNING', rospy.ERROR: 'ERROR', rospy.FATAL: 'FATAL', rospy.DEBUG: 'DEBUG'
     }
 
     def __init__(self):
@@ -45,7 +44,8 @@ class NiryoRosWrapper2:
 
         # -- Subscribers
         self.__software_version = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
+        rospy.Subscriber('/niryo_robot_hardware_interface/software_version',
+                         SoftwareVersion,
                          self.__callback_software_version)
 
         self.__highlighted_block = None
@@ -207,20 +207,6 @@ class NiryoRosWrapper2:
         :rtype: (str, str, list[str], list[str])
         """
         return self.__software_version
-
-    def set_robot_name(self, name):
-        """
-        Set the robot name
-
-        :param name: the new name of the robot
-        :type name: str
-        :return: status, message
-        :rtype: int, str
-        """
-        req = SetString()
-        req.data = name
-        result = self.__call_service('/niryo_robot/wifi/set_robot_name', SetString, req)
-        return self.__classic_return_w_check(result)
 
     def __call_shutdown_rpi(self, value):
         result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, value)

@@ -27,7 +27,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from std_msgs.msg import Int8
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.srv import SetInt
-from niryo_robot_system_api_client.msg import WifiStatus
+from niryo_robot_system_api_client import system_api_client
 from niryo_robot_rpi.srv import LedBlinker
 
 LED_OFF = 0
@@ -69,10 +69,7 @@ class LEDManager(object):
                                                            HardwareStatus,
                                                            self._callback_hardware_status)
 
-        # Subscribe to hotspot and hardware status. Those values will override standard states
-        self.wifi_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/status',
-                                                      WifiStatus,
-                                                      self.__callback_wifi_state)
+        self.wifi_status_timer = rospy.Timer(rospy.Duration(1), self.__callback_wifi_state)
 
         self.set_led_from_state(dxl_leds=True)
 
@@ -142,11 +139,15 @@ class LEDManager(object):
 
         self._led_state_topic.publish(self.state)
 
-    def __callback_wifi_state(self, msg):
+    def __callback_wifi_state(self):
         if self.state == LedState.SHUTDOWN:
             return
 
-        if msg.hotspot_status == msg.ON:
+        response = system_api_client.wifi_state()
+        if not response.success:
+            return
+
+        if response.data['hotspot_state'] is True:
             if self.state != LedState.HOTSPOT:
                 self.state = LedState.HOTSPOT
                 self.set_led_from_state(dxl_leds=True)
