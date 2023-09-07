@@ -36,5 +36,4 @@ vital_nodes_common:
  - "/tf2_web_republisher"
 
 vital_nodes_real:
- - "/niryo_robot_system_api_client"
  - "/niryo_robot_vision"

@@ -9,21 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
 # enable python module support
 catkin_python_setup()
 
-file(
-  GLOB msg_files
-  RELATIVE  ${CMAKE_CURRENT_SOURCE_DIR}/msg
-  msg/*.msg
-)
-
-add_message_files(
-  FILES
-  ${msg_files}
-)
-
-generate_messages(
-  DEPENDENCIES
-)
-
 catkin_package(
   CATKIN_DEPENDS
   message_runtime
@@ -69,21 +54,6 @@ endif()
 #############
 ## Install ##
 #############
-
-catkin_install_python(PROGRAMS 
-    scripts/system_api_client_node.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-# Mark other files for installation
-install(
-  DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-)
 
 if (rosdoc_lite_FOUND)
   install(

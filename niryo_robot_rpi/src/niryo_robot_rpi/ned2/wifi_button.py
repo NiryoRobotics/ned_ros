@@ -17,22 +17,17 @@
 
 import rospy
 from threading import Lock
-from niryo_robot_system_api_client.HttpClient import HttpClient as SystemApiClient
+from niryo_robot_system_api_client import system_api_client
 
 from .mcp_io_objects import McpIOManager
 
 from niryo_robot_rpi.common.rpi_ros_utils import play_connected
-
-from niryo_robot_system_api_client.msg import WifiStatus
 from niryo_robot_rpi.msg import WifiButtonStatus
 
 
 class WifiButton:
 
     def __init__(self, mcp_manager):
-
-        self.__system_api_client = SystemApiClient()
-
         if mcp_manager is None:
             mcp_manager = McpIOManager()
 
@@ -43,12 +38,12 @@ class WifiButton:
                                                     reverse_polarity=True)
 
         self.__timer = None
-        self.__wlan0_status = WifiStatus.UNKNOWN
-        self.__hotspot_status = WifiStatus.UNKNOWN
+        self.__wlan0_state = None
+        self.__hotspot_state = None
         self.__wifi_led.off()
         self.__led_lock = Lock()
 
-        rospy.Subscriber('/niryo_robot/wifi/status', WifiStatus, self.__wifi_status_callback)
+        self.wifi_state_timer = rospy.Timer(rospy.Duration(1), self.__wifi_state_callback)
 
         self.__button_state_publisher = rospy.Publisher('/niryo_robot/wifi_button_state',
                                                         WifiButtonStatus,
@@ -63,18 +58,24 @@ class WifiButton:
     def __del__(self):
         self.shutdown()
 
-    def __wifi_status_callback(self, msg):
-        if self.__hotspot_status != msg.hotspot_status or self.__wlan0_status != msg.wlan0_status:
-            self.__hotspot_status = msg.hotspot_status
-            self.__wlan0_status = msg.wlan0_status
+    def __wifi_state_callback(self, _):
+        response = system_api_client.wifi_state()
+        if not response.success:
+            self.__hotspot_state = self.__wlan0_state = False
+
+        new_hotspot_state = self.__hotspot_state != response.data['hotspot_state']
+        new_wlan0_state = self.__wlan0_state != response.data['wlan0_state']
+        if new_hotspot_state or new_wlan0_state:
+            self.__hotspot_state = response.data['hotspot_state']
+            self.__wlan0_state = response.data['wlan0_state']
             self.set_led_behaviour()
 
     def set_led_behaviour(self):
-        if self.__wlan0_status == WifiStatus.OFF and self.__hotspot_status == WifiStatus.OFF:
+        if self.__wlan0_state is False and self.__hotspot_state is False:
             self.led_off()
-        elif self.__wlan0_status == WifiStatus.ON and self.__hotspot_status == WifiStatus.OFF:
+        elif self.__wlan0_state is True and self.__hotspot_state is False:
             self.led_blink(self.irregular_blink_pattern)
-        elif self.__wlan0_status == WifiStatus.OFF and self.__hotspot_status == WifiStatus.ON:
+        elif self.__wlan0_state is False and self.__hotspot_state is True:
             self.led_blink(self.regular_blink_pattern)
         else:
             self.led_on()
@@ -143,21 +144,21 @@ class WifiButton:
         fun()
 
     def __swap_wifi_state(self):
-        if self.__wlan0_status == WifiStatus.ON:
-            self.__system_api_client.stop_wifi()
+        if self.__wlan0_state is True:
+            system_api_client.stop_wifi()
         else:
-            self.__system_api_client.start_wifi()
+            system_api_client.start_wifi()
 
     def __swap_hotspot_state(self):
-        if self.__hotspot_status == WifiStatus.ON:
-            self.__system_api_client.stop_hotspot()
+        if self.__hotspot_state is True:
+            system_api_client.stop_hotspot()
         else:
-            self.__system_api_client.start_hotspot()
+            system_api_client.start_hotspot()
 
     def __reset_network(self):
-        self.__system_api_client.reset_wifi()
-        self.__system_api_client.reset_ethernet()
-        self.__system_api_client.reset_hotspot()
+        system_api_client.reset_wifi()
+        system_api_client.reset_ethernet()
+        system_api_client.reset_hotspot()
         play_connected()
 
     def on_press(self):

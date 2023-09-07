@@ -2,38 +2,29 @@
 # Lib
 import functools
 
+# Enums
+from niryo_robot_python_ros_wrapper.CollisionPolicy import CollisionPolicy
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
+from niryo_robot_tools_commander.api import ToolsRosWrapper
+
 import rospy
-
-from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
-
-# Command Status
-from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
-
-# Messages
-from geometry_msgs.msg import Pose, Point, Quaternion
-from std_msgs.msg import Bool, Int32, String
-from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
-from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-
-from conveyor_interface.msg import ConveyorFeedbackArray
-from niryo_robot_arm_commander.msg import PausePlanExecution
-from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
-from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
-from niryo_robot_status.msg import RobotStatus
-
-# Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
-
 # Actions
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from conveyor_interface.msg import ConveyorFeedbackArray
+# Messages
+from geometry_msgs.msg import Pose, Point, Quaternion
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
-
-# Enums
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
-
-from niryo_robot_tools_commander.api import ToolsRosWrapper, ToolID
-
-from niryo_robot_python_ros_wrapper.CollisionPolicy import CollisionPolicy
+# Command Status
+from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
+from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
+# Services
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
+from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
+from niryo_robot_status.msg import RobotStatus
+from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
+from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
+from std_msgs.msg import Bool, Int32, String
+from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 
 
 def move_command(move_function):
@@ -132,10 +123,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # database
         from niryo_robot_database.api import DatabaseRosWrapper
         self.__database = DatabaseRosWrapper(self.__service_timeout)
-
-        # system_api_client
-        from niryo_robot_system_api_client.api import SystemApiClientRosWrapper
-        self.__system_api_client = SystemApiClientRosWrapper(self.__service_timeout)
 
         from niryo_robot_status.api import RobotStatusRosWrapper
         self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
@@ -618,7 +605,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
+        from niryo_robot_arm_commander.srv import JogShiftRequest
         return self.__jog_shift(JogShiftRequest.JOINTS_SHIFT, shift_values)
 
     def jog_pose_shift(self, shift_values):
@@ -630,11 +617,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
+        from niryo_robot_arm_commander.srv import JogShiftRequest
         return self.__jog_shift(JogShiftRequest.POSE_SHIFT, shift_values)
 
     def __jog_shift(self, cmd, shift_values):
-        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
+        from niryo_robot_arm_commander.srv import JogShift
         result = self._call_service('/niryo_robot/jog_interface/jog_shift_commander', JogShift, cmd, shift_values)
 
         return self._classic_return_w_check(result)
@@ -2016,7 +2003,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: target_pose
         :rtype: RobotState
         """
-        from niryo_robot_poses_handlers.srv import GetTargetPose, GetTargetPoseRequest
+        from niryo_robot_poses_handlers.srv import GetTargetPose
 
         result = self._call_service('/niryo_robot_poses_handlers/get_target_pose',
                                     GetTargetPose,
@@ -2299,10 +2286,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         value = self.__software_version_ntv.wait_for_message()
         return value
-
-    @property
-    def system_api_client(self):
-        return self.__system_api_client
 
     # - Ned
 
