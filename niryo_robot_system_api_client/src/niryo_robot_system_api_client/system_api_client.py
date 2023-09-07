@@ -74,5 +74,5 @@ def set_setting(name, value):
     return __request('POST', SystemApiEndpoint.SET_SETTING, body_params={'name': name, 'value': value})
 
 
-def get_setting(name):
-    return __request('GET', SystemApiEndpoint.GET_SETTING, {'name': name})
+def get_setting(name, with_type=True):
+    return __request('GET', SystemApiEndpoint.GET_SETTING, {'name': name, 'with_type': with_type})
