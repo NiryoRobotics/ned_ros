@@ -16,13 +16,13 @@ def number_to_raw_data(val):
 
 def raw_data_to_number(val):
     if (val >> 15) == 1:
-        val = - (val & 0x7FFF)
+        val = -(val & 0x7FFF)
     return val
 
 
 if __name__ == '__main__':
     print("--- START")
-    client = ModbusTcpClient('localhost', port=5020)
+    client = ModbusTcpClient('192.168.1.98', port=5020)
 
     client.connect()
     print("Connected to modbus server")

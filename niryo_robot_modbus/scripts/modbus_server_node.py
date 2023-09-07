@@ -2,10 +2,11 @@
 
 import rospy
 import logging
-from niryo_robot_modbus.modbus_server import ModbusServer
+from niryo_robot_modbus.ModbusServer import ModbusServer
 
 
 class ModbusServerNode:
+
     def __init__(self):
         # Retrieved parameters
         self.__modbus_server_address = rospy.get_param("~server_address")

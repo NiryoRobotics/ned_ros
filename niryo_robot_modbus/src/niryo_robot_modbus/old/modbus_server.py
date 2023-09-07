@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from select import error
 import rospy
 import socket
 from threading import Thread
@@ -9,7 +8,8 @@ from pymodbus.server.sync import ModbusTcpServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 
-from .coil_data_block import CoilDataBlock
+# from .coil_data_block import CoilDataBlock
+from ..CoilDataBlock import CoilDataBlock
 from .discrete_input_data_block import DiscreteInputDataBlock
 from .input_register_data_block import InputRegisterDataBlock
 from .holding_register_data_block import HoldingRegisterDataBlock
@@ -21,11 +21,13 @@ class ModbusServer:
 
         self.coil = CoilDataBlock()
         self.discrete_input = DiscreteInputDataBlock()
-
         self.input_register = InputRegisterDataBlock()
         self.holding_register = HoldingRegisterDataBlock()
+
         self.store = ModbusSlaveContext(di=self.discrete_input,
-                                        co=self.coil, hr=self.holding_register, ir=self.input_register)
+                                        co=self.coil,
+                                        hr=self.holding_register,
+                                        ir=self.input_register)
         self.context = ModbusServerContext(slaves=self.store, single=True)
 
         self.identity = ModbusDeviceIdentification()
@@ -37,7 +39,9 @@ class ModbusServer:
 
         try:
             self.server = ModbusTcpServer(context=self.context,
-                                          framer=None, identity=self.identity, address=(address, port))
+                                          framer=None,
+                                          identity=self.identity,
+                                          address=(address, port))
 
         except socket.error as err:
             rospy.logerr("ModbusServer.init : TCP server unable to start : %s", err)
