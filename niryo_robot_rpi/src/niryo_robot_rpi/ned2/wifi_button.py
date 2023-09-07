@@ -38,12 +38,12 @@ class WifiButton:
                                                     reverse_polarity=True)
 
         self.__timer = None
-        self.__wlan0_status = None
-        self.__hotspot_status = None
+        self.__wlan0_state = None
+        self.__hotspot_state = None
         self.__wifi_led.off()
         self.__led_lock = Lock()
 
-        self.wifi_status_timer = rospy.Timer(rospy.Duration(1), self.__wifi_status_callback)
+        self.wifi_state_timer = rospy.Timer(rospy.Duration(1), self.__wifi_state_callback)
 
         self.__button_state_publisher = rospy.Publisher('/niryo_robot/wifi_button_state',
                                                         WifiButtonStatus,
@@ -58,23 +58,24 @@ class WifiButton:
     def __del__(self):
         self.shutdown()
 
-    def __wifi_status_callback(self, msg):
+    def __wifi_state_callback(self, _):
         response = system_api_client.wifi_state()
         if not response.success:
-            self.__hotspot_status = self.__wlan0_status = False
+            self.__hotspot_state = self.__wlan0_state = False
 
-        if self.__hotspot_status != response.data['hotspot_state'] or self.__wlan0_status != response.data[
-                'wlan0_state']:
-            self.__hotspot_status = msg.hotspot_status
-            self.__wlan0_status = msg.wlan0_status
+        new_hotspot_state = self.__hotspot_state != response.data['hotspot_state']
+        new_wlan0_state = self.__wlan0_state != response.data['wlan0_state']
+        if new_hotspot_state or new_wlan0_state:
+            self.__hotspot_state = response.data['hotspot_state']
+            self.__wlan0_state = response.data['wlan0_state']
             self.set_led_behaviour()
 
     def set_led_behaviour(self):
-        if self.__wlan0_status is False and self.__hotspot_status is False:
+        if self.__wlan0_state is False and self.__hotspot_state is False:
             self.led_off()
-        elif self.__wlan0_status is True and self.__hotspot_status is False:
+        elif self.__wlan0_state is True and self.__hotspot_state is False:
             self.led_blink(self.irregular_blink_pattern)
-        elif self.__wlan0_status is False and self.__hotspot_status is True:
+        elif self.__wlan0_state is False and self.__hotspot_state is True:
             self.led_blink(self.regular_blink_pattern)
         else:
             self.led_on()
@@ -143,13 +144,13 @@ class WifiButton:
         fun()
 
     def __swap_wifi_state(self):
-        if self.__wlan0_status is True:
+        if self.__wlan0_state is True:
             system_api_client.stop_wifi()
         else:
             system_api_client.start_wifi()
 
     def __swap_hotspot_state(self):
-        if self.__hotspot_status is True:
+        if self.__hotspot_state is True:
             system_api_client.stop_hotspot()
         else:
             system_api_client.start_hotspot()
