@@ -2,6 +2,14 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.1.2
+___________
+**Features**
+**Improvements**
+ * The daily reports can now send metrics about the robot. Currently, the total lifetime of the robot is sent
+**Bugfixes**
+
+
 v5.1.1
 ___________
 
