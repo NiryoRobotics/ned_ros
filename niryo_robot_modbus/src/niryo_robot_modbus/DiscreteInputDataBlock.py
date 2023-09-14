@@ -29,19 +29,9 @@ class DiscreteInputDataBlock(DataBlock):
             "DI3": 2,
             "DI4": 3,
             "DI5": 4,
-            "DO1": 5,
-            "DO2": 6,
-            "DO3": 7,
-            "DO4": 8,
         })
     else:
         DIO_ADDRESS = OrderedDict({
-            "1A": 0,
-            "1B": 1,
-            "1C": 2,
-            "2A": 3,
-            "2B": 4,
-            "2C": 5,
             "SW1": 6,
             "SW2": 7,
         })
