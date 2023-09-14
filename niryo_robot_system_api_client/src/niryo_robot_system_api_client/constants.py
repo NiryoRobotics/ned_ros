@@ -1,0 +1,6 @@
+__API_PROTOCOL = 'http'
+__API_HOST = '127.0.0.1'
+__API_PREFIX = '/api/v2'
+__API_PORT = 5000
+
+API_BASE_URL = f'{__API_PROTOCOL}://{__API_HOST}:{__API_PORT}{__API_PREFIX}'

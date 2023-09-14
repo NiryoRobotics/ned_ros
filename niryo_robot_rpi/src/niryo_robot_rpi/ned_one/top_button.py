@@ -20,7 +20,7 @@ import RPi.GPIO as GPIO
 from threading import Thread
 import rosnode
 
-from niryo_robot_system_api_client.HttpClient import HttpClient as SystemApiClient
+from niryo_robot_system_api_client import system_api_client
 
 from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, activate_learning_mode
 from niryo_robot_rpi.common.rpi_ros_utils import LedState, send_led_state
@@ -53,8 +53,6 @@ class TopButton(AbstractTopButton):
     def __init__(self):
         self.pause_time = None
         self.resume = None
-
-        self.__system_api_client = SystemApiClient()
 
         self.__program_manager_is_running = False
 
@@ -127,7 +125,7 @@ class TopButton(AbstractTopButton):
                 if elapsed_seconds >= 10:
                     pass
                 elif elapsed_seconds >= 6:
-                    self.__system_api_client.start_hotspot()
+                    system_api_client.start_hotspot()
                 elif elapsed_seconds >= 3:
                     send_shutdown_command()
                 elif 0.02 < elapsed_seconds < 3:

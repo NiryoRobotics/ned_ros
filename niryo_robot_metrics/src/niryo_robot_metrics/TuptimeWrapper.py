@@ -1,5 +1,6 @@
 import csv
 import subprocess
+import rospy
 
 from .GenericWrapper import GenericWrapper
 
@@ -16,9 +17,13 @@ class TuptimeWrapper(GenericWrapper):
         'system_uptime',
     ]
 
+    tuptime_db_path = '/home/niryo/niryo_robot_saved_files/.config/tuptime.db'
+
     def _fetch_datas(self):
         # root access is sometimes needed at boot
-        completed_process = subprocess.run(['sudo', 'tuptime', '-cs'], capture_output=True, encoding='utf-8')
+        completed_process = subprocess.run(['sudo', 'tuptime', '-cs', '-f', self.tuptime_db_path],
+                                           capture_output=True,
+                                           encoding='utf-8')
         if completed_process.returncode != 0:
             raise RuntimeError('Please install the tuptime libray and give it root rights')
 
