@@ -41,8 +41,6 @@ class CoilDataBlock(ModbusSparseDataBlock):
 
     # Override
     def setValues(self, address, values):
-        address -= 1
-
         if address >= self.CUSTOM_VAR_START_ADDR:
             super().setValues(address, values)
             return
@@ -55,11 +53,7 @@ class CoilDataBlock(ModbusSparseDataBlock):
         else:
             self.__ros_wrapper.set_pin_mode(pin_id, values[0])
 
-    # TODO: the address is incremented by 1 between the client and the server
-
     def getValues(self, address, count=1):
-        address -= 1
-
         if address >= self.CUSTOM_VAR_START_ADDR:
             return super().getValues(address)
 
