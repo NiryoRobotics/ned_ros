@@ -33,7 +33,7 @@ Coils
 
 Each address contains a 1bit value.
 
-**READ/WRITE** (the stored values correspond to the last given command, not the current robot state)
+**READ/WRITE**
 
 Accepted Modbus functions:
 
@@ -52,19 +52,19 @@ This datastore can be used to set Digital I/O mode and state. Digital I/O number
       - Ned2 digital IO
    *  - 0
       - 1A
-      - DI1
+      -
    *  - 1
       - 1B
-      - DI2
+      -
    *  - 2
       - 1C
-      - DI3
+      -
    *  - 3
       - 2A
-      - DI4
+      -
    *  - 4
       - 2B
-      - DI5
+      -
    *  - 5
       - 2C
       - D01
