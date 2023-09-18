@@ -1733,6 +1733,20 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def get_analog_io_state(self):
         return self.__analog_io_state_ntv.value
 
+    def get_digital_io_mode(self, pin_id):
+        """
+        Get a digital IO mode
+
+        :param pin_id: the pin id of a digital io
+        :type pin_id: str
+        :return: The mode of the digital io (Input or Output)
+        :rtype: PinMode
+        """
+        dio_states = self.get_digital_io_state()
+        if pin_id in [dio.name for dio in dio_states.digital_inputs]:
+            return PinMode.INPUT
+        return PinMode.OUTPUT
+
     def get_hardware_version(self):
         """
         Gets the robot hardware version
