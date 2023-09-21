@@ -1,60 +1,48 @@
 #!/usr/bin/env python
 
+from typing import List
+
+from pymodbus.datastore import ModbusSparseDataBlock
+
 import rospy
-from collections import OrderedDict
+from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinState
 
-from .old.data_block import DataBlock
-
-from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
-from niryo_robot_rpi.srv import SetIOModeRequest
-"""
- - Each address contains a 1 bit value
- - READ ONLY registers
-
- --> State of the robot
-"""
+from .utils import address_range
 
 
-class DiscreteInputDataBlock(DataBlock):
+class DiscreteInputDataBlock(ModbusSparseDataBlock):
     """
     Discrete Input: Read Only binary data
     """
-    DI_IO_MODE = 0
-    DI_IO_STATE = 100
 
-    if rospy.get_param("/niryo_robot_modbus/hardware_version") == "ned2":
-        DIO_ADDRESS = OrderedDict({
-            "DI1": 0,
-            "DI2": 1,
-            "DI3": 2,
-            "DI4": 3,
-            "DI5": 4,
-        })
-    else:
-        DIO_ADDRESS = OrderedDict({
-            "SW1": 6,
-            "SW2": 7,
-        })
+    def __init__(self, ros_wrapper: NiryoRosWrapper):
+        self.__ros_wrapper = ros_wrapper
 
-    DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
-    DIO_MODE_INPUT = SetIOModeRequest.INPUT
+        self.__digital_inputs_ids = self.get_digital_inputs_ids()
 
-    def __init__(self):
-        super(DiscreteInputDataBlock, self).__init__()
-        self._digital_io_state_sub = None
+        super().__init__({address: False for address in address_range(len(self.__digital_inputs_ids))})
 
-    def start_ros_subscribers(self):
-        self._digital_io_state_sub = rospy.Subscriber('/niryo_robot_rpi/digital_io_state',
-                                                      DigitalIOState,
-                                                      self._sub_digital_io_state)
+    def get_digital_inputs_ids(self) -> List[str]:
+        """
+        Get the list of the robot's digital output IDs.
 
-    def stop_ros_subscribers(self):
-        self._digital_io_state_sub.unregister()
+        Returns:
+            List[str]: A list of digital output IDs.
+        """
+        if self.__ros_wrapper.get_hardware_version() == 'ned':
+            # All Ned's IOs are in Coils since they are either output only or input / output
+            return []
 
-    def _sub_digital_io_state(self, msg):
-        for din in msg.digital_inputs:
-            self.setValuesOffset(self.DI_IO_MODE + self.DIO_ADDRESS[din.name], self.DIO_MODE_INPUT)
-            self.setValuesOffset(self.DI_IO_STATE + self.DIO_ADDRESS[din.name], int(din.value))
-        for dout in msg.digital_outputs:
-            self.setValuesOffset(self.DI_IO_MODE + self.DIO_ADDRESS[dout.name], self.DIO_MODE_OUTPUT)
-            self.setValuesOffset(self.DI_IO_STATE + self.DIO_ADDRESS[dout.name], int(dout.value))
+        digital_io = self.__ros_wrapper.get_digital_io_state()
+        digital_inputs = [di.name for di in digital_io.digital_inputs]
+        return digital_inputs
+
+    # Override ModbusSparseDataBlock
+
+    def getValues(self, address: int, count: int = 1) -> List[bool]:
+        pin_id = self.__digital_inputs_ids[address]
+        rospy.loginfo(f'address {address}')
+        rospy.loginfo(f'digital read: {self.__ros_wrapper.digital_read(pin_id)}')
+        rospy.loginfo(f'{self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH}')
+        return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH]

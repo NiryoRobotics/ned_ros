@@ -11,7 +11,7 @@ from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 
 from .CoilDataBlock import CoilDataBlock
-from .old.discrete_input_data_block import DiscreteInputDataBlock
+from .DiscreteInputDataBlock import DiscreteInputDataBlock
 from .InputRegisterDataBlock import InputRegisterDataBlock
 from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
 
@@ -20,8 +20,10 @@ class ModbusServer:
 
     def __init__(self, address, port):
         self.__ros_wrapper = NiryoRosWrapper()
+        self.__ros_wrapper.wait_for_nodes_initialization()
+
         self.coil = CoilDataBlock(self.__ros_wrapper)
-        self.discrete_input = DiscreteInputDataBlock()
+        self.discrete_input = DiscreteInputDataBlock(self.__ros_wrapper)
         self.input_register = InputRegisterDataBlock()
         self.holding_register = HoldingRegisterDataBlock(self.__ros_wrapper)
 
@@ -56,14 +58,12 @@ class ModbusServer:
         t.start()
 
     def __start_server(self):
-        self.discrete_input.start_ros_subscribers()
         self.input_register.start_ros_subscribers()
         if self.server is not None:
             self.server.serve_forever()
 
     def stop(self):
         rospy.loginfo("Modbus - Stopping ROS subscribers")
-        self.discrete_input.stop_ros_subscribers()
         self.input_register.stop_ros_subscribers()
 
         if self.server is not None:
