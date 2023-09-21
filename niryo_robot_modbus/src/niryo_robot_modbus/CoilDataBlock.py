@@ -1,70 +1,108 @@
 #!/usr/bin/env python
 
-import rospy
+from typing import List
+
 from pymodbus.datastore import ModbusSparseDataBlock
-from pymodbus.exceptions import ModbusIOException
+
+import rospy
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinMode
-from . import ros_wrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinMode, PinState
+
+from .utils import address_range
 
 
 class CoilDataBlock(ModbusSparseDataBlock):
     """
     Coil: Read / Write binary data
+
+    The coil datas will contain addresses for accessing the digital output states of the robot.
+    Each feature is separated by an offset.
+    For instance, address 003 is used to access the state of D04, and address 103 is used to access its mode.
+
+    state = HIGH (1) / LOW (0)
+    mode = INPUT (1) / OUTPUT (0)
     """
-    IO_STATE_START_ADDR = 100
-    CUSTOM_VAR_START_ADDR = 200
+    DO_MODE_OFFSET_ADDRESS = rospy.get_param('/niryo_robot_modbus/register_addresses_offset/coils/do_state')
+    USER_STORE_OFFSET_ADDRESS = rospy.get_param('/niryo_robot_modbus/register_addresses_offset/coils/user_store')
 
-    if rospy.get_param("/niryo_robot_modbus/hardware_version") == "ned2":
-        DIO_ADDRESS = {
-            5: "DO1",
-            6: "DO2",
-            7: "DO3",
-            8: "DO4",
-        }
-    else:
-        DIO_ADDRESS = {
-            0: "1A",
-            1: "1B",
-            2: "1C",
-            3: "2A",
-            4: "2B",
-            5: "2C",
-        }
+    def __init__(self, ros_wrapper: NiryoRosWrapper):
+        self.__ros_wrapper = ros_wrapper
+        self.__has_bidirectional_ios = self.__ros_wrapper.get_hardware_version() == 'ned'
 
-    def __init__(self):
-        register_addresses = {k: False for k in self.DIO_ADDRESS.keys()}
-        register_addresses.update({address + self.IO_STATE_START_ADDR: False for address in self.DIO_ADDRESS.keys()})
-        register_addresses.update({address: False for address in range(200, 300)})
-        super().__init__(register_addresses)
+        self.__digital_outputs_ids = self.get_digital_outputs_ids()
 
-    # Override
-    def setValues(self, address, values):
-        if address >= self.CUSTOM_VAR_START_ADDR:
+        super().__init__({address: False for address in self.get_addresses()})
+
+    def get_addresses(self) -> List[int]:
+        """
+        Get a list of Modbus addresses for the digital outputs and modes.
+
+        Returns:
+            List[int]: A list of Modbus addresses.
+        """
+        n_digital_outputs = len(self.__digital_outputs_ids)
+
+        # digital output state addresses
+        addresses = address_range(n_digital_outputs)
+
+        if self.__has_bidirectional_ios:
+            # digital i/o mode addresses
+            addresses += address_range(n_digital_outputs, self.DO_MODE_OFFSET_ADDRESS)
+        # user store addresses
+        addresses += address_range(100, self.USER_STORE_OFFSET_ADDRESS)
+        return addresses
+
+    def get_digital_outputs_ids(self) -> List[str]:
+        """
+        Get the list of the robot's digital output IDs.
+
+        Returns:
+            List[str]: A list of digital output IDs.
+        """
+        digital_io = self.__ros_wrapper.get_digital_io_state()
+        digital_outputs = [do.name for do in digital_io.digital_outputs]
+        if self.__ros_wrapper.get_hardware_version() == 'ned':
+            # ned IOs can be set either in input mode or output mode
+            # we put them to the front of the list in order to keep the legacy addresses order
+            digital_outputs = [di.name for di in digital_io.digital_inputs] + digital_outputs
+        return digital_outputs
+
+    def get_pin_id_from_address(self, address: int) -> str:
+        """
+        Get the digital output pin ID from a Modbus address.
+
+        Args:
+            address (int): The Modbus address.
+
+        Returns:
+            str: The digital output pin ID.
+        """
+        for offset in sorted([self.DO_MODE_OFFSET_ADDRESS], reverse=True):
+            if address >= offset:
+                return self.__digital_outputs_ids[address % offset]
+        return self.__digital_outputs_ids[address]
+
+    # Override ModbusSparseDataBlock
+    def setValues(self, address: int, values: List[bool]) -> None:
+        if address >= self.USER_STORE_OFFSET_ADDRESS:
             super().setValues(address, values)
             return
 
-        pin_id = self.DIO_ADDRESS[address % 100]
-        if address >= self.IO_STATE_START_ADDR:
-            if self.get_dio_mode(pin_id) == PinMode.INPUT:
-                raise ModbusIOException("Can't change the state of an IO in input mode")
-            ros_wrapper.digital_write(pin_id, values[0])
+        pin_id = self.get_pin_id_from_address(address)
+        if address >= self.DO_MODE_OFFSET_ADDRESS:
+            self.__ros_wrapper.set_pin_mode(pin_id, values[0])
         else:
-            ros_wrapper.set_pin_mode(pin_id, values[0])
+            if self.__ros_wrapper.get_digital_io_mode(pin_id) == PinMode.INPUT:
+                return
+            self.__ros_wrapper.digital_write(pin_id, values[0])
 
-    def getValues(self, address, count=1):
-        if address >= self.CUSTOM_VAR_START_ADDR:
+    def getValues(self, address: int, count: int = 1) -> List[bool]:
+        if address >= self.USER_STORE_OFFSET_ADDRESS:
             return super().getValues(address)
 
-        pin_id = self.DIO_ADDRESS[address % 100]
-        if address >= self.IO_STATE_START_ADDR:
-            return [self.get_dio_mode(pin_id)]
+        pin_id = self.get_pin_id_from_address(address)
+        if address >= self.DO_MODE_OFFSET_ADDRESS:
+            return [self.__ros_wrapper.get_digital_io_mode(pin_id) == PinMode.INPUT]
         else:
-            return [ros_wrapper.digital_read(pin_id)]
-
-    def get_dio_mode(self, pin_id):
-        dio_states = ros_wrapper.get_digital_io_state()
-        if pin_id in [dio.name for dio in dio_states.digital_inputs]:
-            return PinMode.INPUT
-        return PinMode.OUTPUT
+            return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH]

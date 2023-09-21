@@ -1653,9 +1653,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Sets pin number pin_id to mode pin_mode
 
         :param pin_id:
-        :type pin_id: PinID
+        :type pin_id: str
         :param pin_mode:
-        :type pin_mode: PinMode
+        :type pin_mode: int
         :return: status, message
         :rtype: (int, str)
         """
