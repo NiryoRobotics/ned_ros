@@ -1,4 +1,4 @@
 register_addresses_offset:
   coils:
-    do_state: 100
+    do_mode: 100
     user_store: 200

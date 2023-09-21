@@ -23,7 +23,7 @@ class CoilDataBlock(ModbusSparseDataBlock):
     state = HIGH (1) / LOW (0)
     mode = INPUT (1) / OUTPUT (0)
     """
-    DO_MODE_OFFSET_ADDRESS = rospy.get_param('/niryo_robot_modbus/register_addresses_offset/coils/do_state')
+    DO_MODE_OFFSET_ADDRESS = rospy.get_param('/niryo_robot_modbus/register_addresses_offset/coils/do_mode')
     USER_STORE_OFFSET_ADDRESS = rospy.get_param('/niryo_robot_modbus/register_addresses_offset/coils/user_store')
 
     def __init__(self, ros_wrapper: NiryoRosWrapper):
