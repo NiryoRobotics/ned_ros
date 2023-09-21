@@ -25,10 +25,13 @@ class ModbusServer:
         self.input_register = InputRegisterDataBlock()
         self.holding_register = HoldingRegisterDataBlock(self.__ros_wrapper)
 
-        self.store = ModbusSlaveContext(di=self.discrete_input,
-                                        co=self.coil,
-                                        hr=self.holding_register,
-                                        ir=self.input_register)
+        self.store = ModbusSlaveContext(
+            di=self.discrete_input,
+            co=self.coil,
+            hr=self.holding_register,
+            ir=self.input_register,
+            # start the registers at address 0 instead of 1
+            zero_mode=True)
         self.context = ModbusServerContext(slaves=self.store, single=True)
 
         self.identity = ModbusDeviceIdentification()
