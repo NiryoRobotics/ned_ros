@@ -8,7 +8,8 @@ from pymodbus.server.sync import ModbusTcpServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 
-from . import ros_wrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+
 from .CoilDataBlock import CoilDataBlock
 from .old.discrete_input_data_block import DiscreteInputDataBlock
 from .InputRegisterDataBlock import InputRegisterDataBlock
@@ -18,10 +19,11 @@ from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
 class ModbusServer:
 
     def __init__(self, address, port):
-        self.coil = CoilDataBlock(ros_wrapper)
+        self.__ros_wrapper = NiryoRosWrapper()
+        self.coil = CoilDataBlock(self.__ros_wrapper)
         self.discrete_input = DiscreteInputDataBlock()
         self.input_register = InputRegisterDataBlock()
-        self.holding_register = HoldingRegisterDataBlock(ros_wrapper)
+        self.holding_register = HoldingRegisterDataBlock(self.__ros_wrapper)
 
         self.store = ModbusSlaveContext(di=self.discrete_input,
                                         co=self.coil,
