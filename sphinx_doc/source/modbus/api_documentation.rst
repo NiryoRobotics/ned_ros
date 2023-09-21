@@ -52,49 +52,45 @@ This datastore can be used to set Digital I/O mode and state. Digital I/O number
       - Ned2 digital IO
    *  - 0
       - 1A
-      -
+      - D01
    *  - 1
       - 1B
-      -
+      - D02
    *  - 2
       - 1C
-      -
+      - D03
    *  - 3
       - 2A
-      -
+      - D04
    *  - 4
       - 2B
       -
    *  - 5
       - 2C
-      - D01
+      -
    *  - 6
       - SW1
-      - D02
+      -
    *  - 7
       - SW2
-      - D03
-   *  - 8
       -
-      - D04
-
 
 .. list-table::
    :header-rows: 1
    :widths: auto
    :align: center
 
-   *  - Address
+   *  - Address range
       - Description
 
    *  - 0-8
-      - Digital I/O mode (Input = 1, Output = 0)
+      - Digital I/O state (High = 1, Low = 0). The states writes will not be taken into account if the IO is in input mode at the time.
 
    *  - 100-108
-      - Digital I/O state (High = 1, Low = 0)
+      - Digital I/O mode (Input = 1, Output = 0). Only available for Ned since Ned2 IO modes can't be changed.
 
    *  - 200-299
-      - Can be used to store your own variables
+      - Can be used to store your own variables.
 
 
 Discrete inputs
