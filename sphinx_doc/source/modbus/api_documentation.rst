@@ -104,7 +104,31 @@ Accepted Modbus functions:
 
 - 0x02: READ_DISCRETE_INPUTS
 
-This datastore can be used to read Digital I/O mode and state. See the :ref:`source/modbus/api_documentation:Coils` section above for digital I/O number mapping.
+This datastore can be used to read Digital inputs states. See the :ref:`source/modbus/api_documentation:Coils` section above for the digital outputs and the modes (input / output).
+
+.. list-table:: Digital IO addresses offset table
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   *  - Address offset
+      - Niryo One / Ned digital IO
+      - Ned2 digital IO
+   *  - 0
+      -
+      - DI1
+   *  - 1
+      -
+      - DI2
+   *  - 2
+      -
+      - DI3
+   *  - 3
+      -
+      - DI4
+   *  - 4
+      -
+      - DI5
 
 .. list-table::
    :header-rows: 1
@@ -115,10 +139,7 @@ This datastore can be used to read Digital I/O mode and state. See the :ref:`sou
       - Description
 
    *  - 0-8
-      - Digital I/O mode (Input = 1, Output = 0)
-
-   *  - 100-108
-      - Digital I/O state (High = 1, Low = 0)
+      - Digital input state (High = 1, Low = 0)
 
 
 Holding registers
