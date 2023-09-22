@@ -14,6 +14,7 @@ from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
@@ -21,7 +22,7 @@ from niryo_robot_msgs.msg import BasicObjectArray
 
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
-from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
+from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState, StorageStatus
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
 from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
@@ -93,6 +94,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__digital_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/digital_io_state', DigitalIOState)
         self.__analog_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/analog_io_state', AnalogIOState)
         self.__max_velocity_scaling_factor_ntv = NiryoTopicValue('/niryo_robot/max_velocity_scaling_factor', Int32)
+        self.__storage_status_ntv = NiryoTopicValue('/niryo_robot_rpi/storage_status', StorageStatus)
 
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
@@ -1746,6 +1748,24 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if pin_id in [dio.name for dio in dio_states.digital_inputs]:
             return PinMode.INPUT
         return PinMode.OUTPUT
+
+    def get_available_disk_size(self):
+        """
+        Get the RPI available space on the SD card
+        :return: the number of MegaBytes available
+        :rtype: int
+        """
+        self.__storage_status_ntv.wait_for_message()
+        return self.__storage_status_ntv.value.available_disk_size
+
+    def get_ros_logs_size(self):
+        """
+        Get the ros logs size on the SD card
+        :return: the size of the ros logs in MB
+        :rtype: int
+        """
+        self.__storage_status_ntv.wait_for_message()
+        return self.__storage_status_ntv.value.log_size
 
     def get_hardware_version(self):
         """
