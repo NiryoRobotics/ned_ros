@@ -42,7 +42,4 @@ class DiscreteInputDataBlock(ModbusSparseDataBlock):
 
     def getValues(self, address: int, count: int = 1) -> List[bool]:
         pin_id = self.__digital_inputs_ids[address]
-        rospy.loginfo(f'address {address}')
-        rospy.loginfo(f'digital read: {self.__ros_wrapper.digital_read(pin_id)}')
-        rospy.loginfo(f'{self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH}')
         return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH]
