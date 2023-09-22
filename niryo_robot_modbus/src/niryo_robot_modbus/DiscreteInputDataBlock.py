@@ -41,5 +41,7 @@ class DiscreteInputDataBlock(ModbusSparseDataBlock):
     # Override ModbusSparseDataBlock
 
     def getValues(self, address: int, count: int = 1) -> List[bool]:
+        if count <= 0:
+            return []
         pin_id = self.__digital_inputs_ids[address]
-        return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH]
+        return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH] + self.getValues(address + 1, count - 1)

@@ -98,11 +98,14 @@ class CoilDataBlock(ModbusSparseDataBlock):
             self.__ros_wrapper.digital_write(pin_id, values[0])
 
     def getValues(self, address: int, count: int = 1) -> List[bool]:
+        if count <= 0:
+            return []
         if address >= self.USER_STORE_OFFSET_ADDRESS:
-            return super().getValues(address)
+            return super().getValues(address, count)
 
         pin_id = self.get_pin_id_from_address(address)
         if address >= self.DO_MODE_OFFSET_ADDRESS:
-            return [self.__ros_wrapper.get_digital_io_mode(pin_id) == PinMode.INPUT]
+            result = self.__ros_wrapper.get_digital_io_mode(pin_id) == PinMode.INPUT
         else:
-            return [self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH]
+            result = self.__ros_wrapper.digital_read(pin_id) == PinState.HIGH
+        return [result] + self.getValues(address + 1, count - 1)
