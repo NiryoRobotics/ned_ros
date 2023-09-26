@@ -40,7 +40,25 @@ Accepted Modbus functions:
 - 0x01: READ_COILS
 - 0x05: WRITE_SINGLE_COIL
 
-This datastore can be used to set Digital I/O mode and state. Digital I/O numbers used for Modbus:
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   *  - Address range
+      - Description
+
+   *  - 0-8
+      - Digital I/O state (High = 1, Low = 0). The states writes will not be taken into account if the IO is in input mode at the time.
+
+   *  - 100-108
+      - Digital I/O mode (Input = 1, Output = 0). Only available for Ned since Ned2 IO modes can't be changed.
+
+   *  - 200-299
+      - Can be used to store your own variables.
+
+Offsets
+^^^^^^^
 
 .. list-table:: Digital IO addresses offset table
    :header-rows: 1
@@ -75,23 +93,6 @@ This datastore can be used to set Digital I/O mode and state. Digital I/O number
       - SW2
       -
 
-.. list-table::
-   :header-rows: 1
-   :widths: auto
-   :align: center
-
-   *  - Address range
-      - Description
-
-   *  - 0-8
-      - Digital I/O state (High = 1, Low = 0). The states writes will not be taken into account if the IO is in input mode at the time.
-
-   *  - 100-108
-      - Digital I/O mode (Input = 1, Output = 0). Only available for Ned since Ned2 IO modes can't be changed.
-
-   *  - 200-299
-      - Can be used to store your own variables.
-
 
 Discrete inputs
 -------------------------------
@@ -105,6 +106,44 @@ Accepted Modbus functions:
 - 0x02: READ_DISCRETE_INPUTS
 
 This datastore can be used to read Digital inputs states. See the :ref:`source/modbus/api_documentation:Coils` section above for the digital outputs and the modes (input / output).
+As all of the Ned's IOs are configurable either in input or output, all of its IOs are in the Coils register.
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+   :align: center
+
+   *  - Address
+      - Description
+
+   *  - 0-8
+      - Digital input state (High = 1, Low = 0)
+
+   *  - 100
+      - Freedrive / Learning mode activated
+
+   *  - 110
+      - Calibration needed
+
+   *  - 111
+      - Calibration in progress
+
+   *  - 112
+      - Motor connection Ok
+
+   *  - 200-209
+      - Conveyor connection Ok
+
+   *  - 210-219
+      - Conveyor is running
+
+   *  - 220-219
+      - Conveyor direction (1 = Forward, 0 = Backward)
+
+Please note that **a conveyor's register is available only once a it's been plugged and set**.
+
+Offsets
+^^^^^^^
 
 .. list-table:: Digital IO addresses offset table
    :header-rows: 1
@@ -129,17 +168,6 @@ This datastore can be used to read Digital inputs states. See the :ref:`source/m
    *  - 4
       -
       - DI5
-
-.. list-table::
-   :header-rows: 1
-   :widths: auto
-   :align: center
-
-   *  - Address
-      - Description
-
-   *  - 0-8
-      - Digital input state (High = 1, Low = 0)
 
 
 Holding registers
@@ -339,84 +367,62 @@ Accepted Modbus functions:
 
    *  - Address
       - Description
+      - Unit
 
    *  - 0-5
-      - Joints (mrad)
+      - Current joints position
+      - mrad
 
    *  - 10-12
-      - Position x,y,z (mm)
+      - Current TCP position x,y,z
+      - mm
       
    *  - 13-15
-      - Orientation roll, pitch, yaw (mrad)
-      
-   *  - 200
-      - Selected tool ID (0 for no tool)
-      
-   *  - 300
-      - Learning Mode activated
-      
-   *  - 400
-      - Motors connection up (Ok = 1, Not ok = 0)
-      
-   *  - 401
-      - Calibration needed flag
-      
-   *  - 402
-      - Calibration in progress flag
+      - Current TCP orientation roll, pitch, yaw
+      - mrad
       
    *  - 403
       - Raspberry Pi temperature
+      - °C
       
    *  - 404
       - Raspberry Pi available disk size
+      - MB
       
    *  - 405
       - Raspberry Pi ROS log size
+      - MB
       
-   *  - 406
-      - Ned RPI image version n.1
+   *  - 410
+      - Major number of Ned RPI image version
+      - int
       
-   *  - 407
-      - Ned RPI image version n.2
+   *  - 411
+      - Minor number of Ned RPI image version
+      - int
       
-   *  - 408
-      - Ned RPI image version n.3
-      
-   *  - 409
-      - Hardware version (1 or 2)
-      
-   *  - 530
-      - Conveyor 1 connection state (Connected = 1 , Not connected = 0)
-      
-   *  - 531
-      - Conveyor 1 control status ( On = 0, Off = 1)
-      
-   *  - 532
-      - Conveyor 1 Speed (0-100 (%))
-      
-   *  - 533
-      - Conveyor 1 direction (Backward = -1, Forward = 1)
-      
-   *  - 540
-      - Conveyor 2 connection state (Connected = 1 , Not connected = 0)
-      
-   *  - 541
-      - Conveyor 2 control status ( On = 0, Off = 1)
-      
-   *  - 542
-      - Conveyor 2 Speed (0-100 (%))
-      
-   *  - 543
-      - Conveyor 2 direction (Backward = -1, Forward = 1)
+   *  - 412
+      - Patch number of Ned RPI image version
+      - int
 
-   *  - 600 - 604
-      - Analog IO mode
+   *  - 413
+      - Build number of Ned RPI image version
+      - int
+
+   *  - 420
+      - Hardware version (1 or 2)
+      - int
+      
+   *  - 500-502
+      - Conveyors Speed
+      - percent
 
    *  - 610 - 614
-      - Analog IO state in mV
+      - Analog IO state
+      - mV
 
 
-.. _Analog IO addresses offset table:
+.. _Analog Inputs addresses offset table:
 
 .. list-table:: Analog IO addresses offset table
    :header-rows: 1
@@ -432,12 +438,6 @@ Accepted Modbus functions:
    *  - 1
       - /
       - AI2
-   *  - 2
-      - /
-      - AO1
-   *  - 3
-      - /
-      - AO2
 
 
 

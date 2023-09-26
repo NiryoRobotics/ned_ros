@@ -2,7 +2,7 @@
 
 from pymodbus.datastore import ModbusSparseDataBlock
 
-from .mapping import input_register_mapping
+from .addressing.input_register_addressing import get_addressing
 
 
 class InputRegisterDataBlock(ModbusSparseDataBlock):
@@ -11,9 +11,15 @@ class InputRegisterDataBlock(ModbusSparseDataBlock):
     """
 
     def __init__(self, ros_wrapper):
-        self.__ros_wrapper = ros_wrapper
-        self.__mapping = input_register_mapping.get_mapping(self.__ros_wrapper)
-        super().__init__(self.__mapping.keys())
+        self.__addressing = get_addressing(ros_wrapper)
+        super().__init__({address: False for address in self.__addressing.keys()})
 
     def getValues(self, address, count=1):
-        super().getValues(address, count)
+        if count <= 0:
+            return []
+        try:
+            register_result = self.__addressing[address]()
+        except (IndexError, KeyError) as error:
+            raise ModbusIOException(str(error))
+
+        return [register_result] + self.getValues(address + 1, count - 1)
