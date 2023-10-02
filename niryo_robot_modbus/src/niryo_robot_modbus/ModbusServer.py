@@ -25,6 +25,9 @@ class ModbusServer:
         self.__ros_wrapper = NiryoRosWrapper()
         self.__ros_wrapper.wait_for_nodes_initialization()
 
+        logger = logging.getLogger("pymodbus.server")
+        logger.addHandler(logging.StreamHandler())
+
         self.store = ModbusSlaveContext(
             di=WrapperDataBlock(discrete_input_addressing.get_addressing(self.__ros_wrapper)),
             co=WrapperDataBlock(coil_addressing.get_addressing(self.__ros_wrapper)),

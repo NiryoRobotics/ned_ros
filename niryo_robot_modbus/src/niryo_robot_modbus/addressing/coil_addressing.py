@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, PinState, PinMode
 
-from .WrapperAddress import WrapperAddress
+from .WrapperAddress import DigitalWrapperAddress
 
 
 def get_digital_io_ids(ros_wrapper: NiryoRosWrapper) -> List[str]:
@@ -21,7 +21,7 @@ def get_digital_io_ids(ros_wrapper: NiryoRosWrapper) -> List[str]:
     return digital_outputs
 
 
-def get_addressing(ros_wrapper: NiryoRosWrapper) -> Dict[int, WrapperAddress]:
+def get_addressing(ros_wrapper: NiryoRosWrapper) -> Dict[int, DigitalWrapperAddress]:
     """
     This function creates a dynamic addressing scheme for reading and writing on coil data blocks.
     The addressing scheme is designed to handle digital output states for all available digital I/O pins.
@@ -29,8 +29,8 @@ def get_addressing(ros_wrapper: NiryoRosWrapper) -> Dict[int, WrapperAddress]:
 
     :param ros_wrapper: An instance of the NiryoRosWrapper class providing ROS interface.
     :type ros_wrapper: NiryoRosWrapper
-    :returns: A dictionary mapping addresses to WrapperAddress objects.
-    :rtype: Dict[int, WrapperAddress]
+    :returns: A dictionary mapping addresses to DigitalWrapperAddress objects.
+    :rtype: Dict[int, DigitalWrapperAddress]
     """
     hardware_version = ros_wrapper.get_hardware_version()
     dios = get_digital_io_ids(ros_wrapper)
@@ -38,18 +38,17 @@ def get_addressing(ros_wrapper: NiryoRosWrapper) -> Dict[int, WrapperAddress]:
 
     addressing = {
         # Digital io states
-        **WrapperAddress.dynamic_addressing(
+        **DigitalWrapperAddress.dynamic_addressing(
             0,
             n_dios,
             read=lambda ix: ros_wrapper.digital_read(dios[ix]) == PinState.HIGH,
-            write=lambda ix,
-            value: ros_wrapper.digital_write(dios[ix], PinState.HIGH if value[0] else PinState.LOW),
+            write=(lambda ix, value: ros_wrapper.digital_write(dios[ix], PinState.HIGH if value[0] else PinState.LOW)),
         ),
     }
     if hardware_version == 'ned':
         addressing.update(
             # Digital io modes
-            WrapperAddress.dynamic_addressing(
+            DigitalWrapperAddress.dynamic_addressing(
                 100,
                 n_dios,
                 read=lambda ix: dios[ix] in [x.name for x in ros_wrapper.get_digital_io_state().digital_inputs],
