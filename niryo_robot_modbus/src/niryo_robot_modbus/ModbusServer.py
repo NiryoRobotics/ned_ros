@@ -14,8 +14,8 @@ from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
 
 from .WrapperDataBlock import WrapperDataBlock
+from .CoilDataBlock import CoilDataBlock
 from .addressing import discrete_input_addressing
-from .addressing import coil_addressing
 from .addressing import input_register_addressing
 
 
@@ -30,7 +30,7 @@ class ModbusServer:
 
         self.store = ModbusSlaveContext(
             di=WrapperDataBlock(discrete_input_addressing.get_addressing(self.__ros_wrapper)),
-            co=WrapperDataBlock(coil_addressing.get_addressing(self.__ros_wrapper)),
+            co=CoilDataBlock(self.__ros_wrapper),
             hr=HoldingRegisterDataBlock(self.__ros_wrapper),
             ir=WrapperDataBlock(input_register_addressing.get_addressing(self.__ros_wrapper)),
             # start the registers at address 0 instead of 1

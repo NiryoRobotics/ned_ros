@@ -3,7 +3,7 @@ from typing import List
 
 from pymodbus.datastore import ModbusSparseDataBlock
 
-from .addressing.WrapperAddress import WrapperAddress
+from niryo_robot_modbus.src.niryo_robot_modbus.WrapperAddress import WrapperAddress
 
 
 class WrapperDataBlock(ABC, ModbusSparseDataBlock):

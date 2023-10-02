@@ -1,10 +1,8 @@
-from typing import List
-
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinState, PinMode
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 
 from .WrapperDataBlock import WrapperDataBlock
-from .addressing.WrapperAddress import DigitalWrapperAddress
+from niryo_robot_modbus.src.niryo_robot_modbus.WrapperAddress import DigitalWrapperAddress
 
 
 class CoilDataBlock(WrapperDataBlock):
@@ -31,6 +29,10 @@ class CoilDataBlock(WrapperDataBlock):
                        value: self._ros_wrapper.digital_write(self._digital_outputs[ix],
                                                               PinState.HIGH if value[0] else PinState.LOW)),
             ),
+            **{
+                a: None
+                for a in range(200, 300)
+            }
         }
         if self._bidirectional_ios:
             addressing.update(
