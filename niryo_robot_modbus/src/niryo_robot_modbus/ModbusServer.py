@@ -11,12 +11,11 @@ from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 
-from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
-
 from .WrapperDataBlock import WrapperDataBlock
 from .CoilDataBlock import CoilDataBlock
-from .addressing import discrete_input_addressing
-from .addressing import input_register_addressing
+from .DiscreteInputDataBlock import DiscreteInputDataBlock
+from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
+from .InputRegisterDataBlock import InputRegisterDataBlock
 
 
 class ModbusServer:
@@ -28,13 +27,12 @@ class ModbusServer:
         logger = logging.getLogger("pymodbus.server")
         logger.addHandler(logging.StreamHandler())
 
-        self.store = ModbusSlaveContext(
-            di=WrapperDataBlock(discrete_input_addressing.get_addressing(self.__ros_wrapper)),
-            co=CoilDataBlock(self.__ros_wrapper),
-            hr=HoldingRegisterDataBlock(self.__ros_wrapper),
-            ir=WrapperDataBlock(input_register_addressing.get_addressing(self.__ros_wrapper)),
-            # start the registers at address 0 instead of 1
-            zero_mode=True)
+        # zero_mode is to start the registers at address 0 instead of 1
+        self.store = ModbusSlaveContext(di=DiscreteInputDataBlock(self.__ros_wrapper),
+                                        co=CoilDataBlock(self.__ros_wrapper),
+                                        hr=HoldingRegisterDataBlock(self.__ros_wrapper),
+                                        ir=InputRegisterDataBlock(self.__ros_wrapper),
+                                        zero_mode=True)
 
         self.context = ModbusServerContext(slaves=self.store, single=True)
 

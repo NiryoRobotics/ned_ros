@@ -6,14 +6,14 @@ from conveyor_interface.msg import ConveyorFeedback
 
 from . import safe_get
 from .WrapperDataBlock import WrapperDataBlock
-from niryo_robot_modbus.src.niryo_robot_modbus.WrapperAddress import DigitalWrapperAddress
+from .WrapperAddress import DigitalWrapperAddress
 
 
 class DiscreteInputDataBlock(WrapperDataBlock):
 
     def __init__(self, ros_wrapper):
+        self._dios = [di.name for di in ros_wrapper.get_digital_io_state().digital_inputs]
         super().__init__(ros_wrapper)
-        self._dios = [di.name for di in self._ros_wrapper.get_digital_io_state().digital_inputs]
 
     def _get_addressing(self):
         n_digital_inputs = len(self._ros_wrapper.get_digital_io_state().digital_inputs)
@@ -39,7 +39,7 @@ class DiscreteInputDataBlock(WrapperDataBlock):
             **DigitalWrapperAddress.dynamic_addressing(
                 200,
                 n_conveyors,
-                lambda ix: self._ros_wrapper.get_conveyors_feedback()[ix].connection_state,
+                lambda ix: safe_get(self._ros_wrapper.get_conveyors_feedback(), ix, ConveyorFeedback()).connection_state,
             ),
             # conveyor is running
             **DigitalWrapperAddress.dynamic_addressing(
@@ -51,5 +51,5 @@ class DiscreteInputDataBlock(WrapperDataBlock):
             **DigitalWrapperAddress.dynamic_addressing(
                 220,
                 n_conveyors,
-                lambda ix: self._ros_wrapper.get_conveyors_feedback()[ix].direction == 1),
+                lambda ix: safe_get(self._ros_wrapper.get_conveyors_feedback(), ix, ConveyorFeedback()).direction == 1),
         }
