@@ -14,6 +14,7 @@ from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
+from tools_interface.msg import Tool
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
@@ -95,6 +96,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__analog_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/analog_io_state', AnalogIOState)
         self.__max_velocity_scaling_factor_ntv = NiryoTopicValue('/niryo_robot/max_velocity_scaling_factor', Int32)
         self.__storage_status_ntv = NiryoTopicValue('/niryo_robot_rpi/storage_status', StorageStatus)
+        self.__tool_motor_state_ntv = NiryoTopicValue('/niryo_robot_hardware/tools/motor', Tool)
 
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
@@ -105,6 +107,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                                                queue_size=1)
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
+
+        self.__conveyor_id_to_number = {}
+        for conveyor_protocol_enum in [ConveyorTTL, ConveyorCan]:
+            self.__conveyor_id_to_number[conveyor_protocol_enum.ID_1.value] = ConveyorID.ID_1
+            self.__conveyor_id_to_number[conveyor_protocol_enum.ID_2.value] = ConveyorID.ID_2
 
         # Software
         self.__software_version_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/software_version',
@@ -1455,6 +1462,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                 robot_state.rpy.yaw)
 
     # -- Tools
+
     def get_current_tool_id(self):
         """
         Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
@@ -1463,6 +1471,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: ToolID
         """
         return self.__tools.get_current_tool_id()
+
+    def get_current_tool_state(self):
+        """
+        Return the hardware state of the tool
+        :return: the hardware state
+        :rtype: int
+        """
+        return self.__tool_motor_state_ntv.value.state
 
     def update_tool(self):
         """
@@ -1601,6 +1617,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         return self.__tools.enable_tcp(enable)
+
+    def get_tcp(self):
+        """
+        Returns the TCP state
+        :return: the tcp (enabled, position and orientation)
+        :rtype: Tool msg object
+        """
+        return self.__tools.get_tcp()
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """
@@ -1928,12 +1952,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return conveyor_id
 
     def __conveyor_id_to_conveyor_number(self, conveyor_id):
-        ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
-        try:
-            conveyor_number = dict(zip(ids, [ConveyorID.ID_1, ConveyorID.ID_2]))[conveyor_id]
-        except KeyError:
-            conveyor_number = ConveyorID.NONE
-        return conveyor_number
+        return self.__conveyor_id_to_number[conveyor_id]
 
     # - Vision
 
@@ -2024,7 +2043,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return img_param_msg.brightness_factor, img_param_msg.contrast_factor, img_param_msg.saturation_factor
 
-    def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
+    def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel, as_list=False):
         """
         Given a pose (x_rel, y_rel, yaw_rel) relative to a workspace, this function
         returns the robot pose in which the current tool will be able to pick an object at this pose.
@@ -2054,6 +2073,15 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                     y_rel,
                                     yaw_rel)
         self._check_result_status(result)
+        if as_list:
+            return [
+                result.target_pose.position.x,
+                result.target_pose.position.y,
+                result.target_pose.position.z,
+                result.target_pose.rpy.roll,
+                result.target_pose.rpy.pitch,
+                result.target_pose.rpy.yaw
+            ]
         return result.target_pose
 
     def get_target_pose_from_cam(self, workspace_name, height_offset, shape, color):
