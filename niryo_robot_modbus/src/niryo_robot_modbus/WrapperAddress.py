@@ -98,8 +98,9 @@ class WrapperAddress(ABC):
         """
         wrapper_addresses = {}
         for address in range(offset, count + offset):
-            wrapper_addresses[address] = cls(lambda ix=address - offset: read(ix),
-                                             (lambda values, ix=address - offset: write(ix, values)))
+            read_cb = None if read is None else lambda ix=address - offset: read(ix)
+            write_cb = None if write is None else lambda values, ix=address - offset: write(ix, values)
+            wrapper_addresses[address] = cls(read_cb, write_cb)
         return wrapper_addresses
 
 

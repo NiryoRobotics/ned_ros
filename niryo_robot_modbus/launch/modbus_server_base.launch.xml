@@ -3,6 +3,5 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <group ns="niryo_robot_modbus" >
-        <rosparam file="$(find niryo_robot_modbus)/config/default.yaml" command="load"/>
     </group>
 </launch>

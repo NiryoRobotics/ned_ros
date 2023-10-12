@@ -1952,6 +1952,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return conveyor_id
 
     def __conveyor_id_to_conveyor_number(self, conveyor_id):
+        if conveyor_id not in self.__conveyor_id_to_number:
+            return ConveyorID.NONE
         return self.__conveyor_id_to_number[conveyor_id]
 
     # - Vision

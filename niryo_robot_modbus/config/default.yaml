@@ -1,6 +1,0 @@
-register_addresses_offset:
-  coils:
-    do_mode: 100
-    user_store: 200
-  discrete_input:
-    di_mode: 100

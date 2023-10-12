@@ -79,7 +79,7 @@ class CoilDataBlock(WrapperDataBlock):
             DigitalWrapperAddress(read=lambda: self._ros_wrapper.get_robot_status().robot_status == RobotStatus.MOVING,
                                   write=lambda v: self._ros_wrapper.stop_move() if not v else None),
             71:
-            DigitalWrapperAddress(read=lambda: self._shared_data.move_linear,
+            DigitalWrapperAddress(read=lambda: self._shared_data.linear_mode,
                                   write=lambda v: self._shared_data.set_linear_mode(v)),
             72:  # freedrive / learning mode
             DigitalWrapperAddress(read=lambda: self._ros_wrapper.get_learning_mode(),
