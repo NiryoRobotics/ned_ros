@@ -97,7 +97,7 @@ class WrapperAddress(ABC):
         :rtype: Dict[int, Callable]
         """
         wrapper_addresses = {}
-        for address in range(offset, count + offset):
+        for address in range(offset, offset + count):
             read_cb = None if read is None else lambda ix=address - offset: read(ix)
             write_cb = None if write is None else lambda values, ix=address - offset: write(ix, values)
             wrapper_addresses[address] = cls(read_cb, write_cb)

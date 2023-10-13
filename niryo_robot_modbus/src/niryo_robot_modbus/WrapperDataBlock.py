@@ -113,4 +113,4 @@ class WrapperDataBlock(ABC, ModbusSparseDataBlock):
         target = self._ros_wrapper.detect_object(self._shared_data.workspace_name,
                                                  self._shared_data.shape,
                                                  self._shared_data.color)
-        return {'found': target[0], 'rel_pose': color, 'shape': shape, 'color': target[3]}
+        return dict.fromkeys(['found', 'rel_pose', 'shape', 'color'], target)

@@ -47,7 +47,7 @@ class CoilDataBlock(WrapperDataBlock):
                                                                          PinState.HIGH if value[0] else PinState.LOW)),
             ),
             51:  # scan tool
-            DigitalWrapperAddress(read=lambda: self._ros_wrapper.get_current_tool_id(),
+            DigitalWrapperAddress(read=None,
                                   write=lambda value: self._ros_wrapper.update_tool()),
             52:  # actuate tool
             DigitalWrapperAddress(
@@ -91,5 +91,5 @@ class CoilDataBlock(WrapperDataBlock):
             DigitalWrapperAddress(read=lambda: self._ros_wrapper.get_hardware_status().calibration_in_progress,
                                   write=lambda v: self._ros_wrapper.calibrate_auto() if v else None),
             # User store
-            **DigitalWrapperAddress.dynamic_addressing(200, 99),
+            **DigitalWrapperAddress.dynamic_addressing(200, 100),
         }
