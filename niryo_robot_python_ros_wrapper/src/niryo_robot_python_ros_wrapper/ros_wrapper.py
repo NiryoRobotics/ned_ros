@@ -2086,7 +2086,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             ]
         return result.target_pose
 
-    def get_target_pose_from_cam(self, workspace_name, height_offset, shape, color):
+    def get_target_pose_from_cam(self, workspace_name, height_offset, shape, color, as_list=False):
         """
         First detects the specified object using the camera and then returns the robot pose in which the object can
         be picked with the current tool
@@ -2105,7 +2105,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, None, "", ""
-        obj_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        obj_pose = self.get_target_pose_from_rel(workspace_name,
+                                                 height_offset,
+                                                 rel_pose.x,
+                                                 rel_pose.y,
+                                                 rel_pose.yaw,
+                                                 as_list=as_list)
         return True, obj_pose, obj_shape, obj_color
 
     def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):

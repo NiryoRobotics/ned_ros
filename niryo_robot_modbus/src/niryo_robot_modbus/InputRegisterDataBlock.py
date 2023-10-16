@@ -34,10 +34,10 @@ class InputRegisterDataBlock(WrapperDataBlock):
             **AnalogWrapperAddress.dynamic_addressing(
                 36,
                 n_poses,
-                read=lambda ix: self._ros_wrapper.get_target_pose_from_cam(self._shared_data.workspace_name,
+                read=lambda ix: self._ros_wrapper.get_target_pose_from_rel(self._shared_data.workspace_name,
                                                                            self._shared_data.height_offset,
                                                                            self._shared_data.shape,
-                                                                           self._shared_data.color)[ix],
+                                                                           self._shared_data.color)[1][ix],
                 data_type=float
             ),
             # vision target shape
