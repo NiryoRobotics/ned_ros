@@ -2,6 +2,15 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.2.0
+___________
+**Features**
+ * Added a foxglove bridge server
+
+**Improvements**
+
+**Bugfixes**
+
 v5.1.3
 ___________
 **Features**
