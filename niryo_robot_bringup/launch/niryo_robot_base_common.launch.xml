@@ -42,9 +42,7 @@
         <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
     </include>
 
-    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch">
-        <arg name="port" value="9091" />
-    </include>
+    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
 
     <!-- Including launch files -->
     <include file="$(find niryo_robot_hardware_interface)/launch/controllers.launch">
