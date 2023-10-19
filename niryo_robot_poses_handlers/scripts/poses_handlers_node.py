@@ -277,12 +277,17 @@ class PoseHandlerNode:
             except (ValueError, Exception) as e:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
+            if frame.belong_to_workspace:
+                return (CommandStatus.POSES_HANDLER_REMOVAL_FAILED,
+                        "Can't remove a dynamic frame which belong to a workspace")
             try:
                 self.remove_dynamic_frame(frame.name, frame.belong_to_workspace)
                 return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
         elif cmd == req.EDIT:
+            if frame.belong_to_workspace:
+                return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, "Can't edit a dynamic frame which belong to a workspace"
             try:
                 if frame.description != '':
                     self.dynamic_frame_manager.edit_description(frame.name, frame.description)
@@ -298,7 +303,6 @@ class PoseHandlerNode:
 
                 return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
             except Exception as e:
-                raise e
                 return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
         else:
             return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(cmd)
@@ -582,6 +586,7 @@ class PoseHandlerNode:
         frame = DynamicFrame()
         frame.name = frame_read.name
         frame.description = frame_read.description
+        frame.belong_to_workspace = frame_read.belong_to_workspace
         point = Point(*pose_raw[0])
         quaternion = Quaternion(*pose_raw[1])
         roll, pitch, yaw = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])

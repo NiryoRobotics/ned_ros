@@ -7,3 +7,4 @@ string message
 
 string code
 string description
+string saved_at

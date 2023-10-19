@@ -7,8 +7,9 @@ import time
 import rospy
 from sqlite3 import OperationalError
 
+from niryo_robot_system_api_client import system_api_client
+
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
-from niryo_robot_database.Settings import Settings, UnknownSettingsException
 from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
 from niryo_robot_database.Version import Version, UnknownVersionException
 
@@ -34,7 +35,6 @@ class DatabaseNode:
 
         sqlite_dao = SQLiteDAO(db_path)
 
-        self.__settings = Settings(sqlite_dao)
         rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
         rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
         self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
@@ -61,23 +61,20 @@ class DatabaseNode:
         rospy.logdebug("Database Node - Node Started")
 
     def __callback_set_settings(self, req):
-        try:
-            self.__settings.set(req.name, req.value, req.type)
-        except TypeError as e:
-            return CommandStatus.DATABASE_SETTINGS_TYPE_MISMATCH, e.__str__()
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
+        response = system_api_client.set_setting(req.name, req.value)
+        if not response.success:
+            return CommandStatus.DATABASE_DB_ERROR, response.detail
 
         self.__setting_update_publisher.publish(req.name, req.value, req.type)
         return CommandStatus.SUCCESS, 'Settings successfully set'
 
     def __callback_get_settings(self, req):
-        try:
-            value, value_type = self.__settings.get(req.name)
-        except UnknownSettingsException:
-            return CommandStatus.DATABASE_SETTINGS_UNKNOWN, 'Unknown settings', None
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e), None
+        response = system_api_client.get_setting(req.name)
+        if not response.success:
+            return CommandStatus.DATABASE_DB_ERROR, response.detail
+        value = response.data[req.name]
+        value_type = response.data['type']
+
         return CommandStatus.SUCCESS, value, value_type
 
     def __callback_add_file_path(self, req):

@@ -32,6 +32,7 @@ from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutoru
 
 
 class ProgramManagerNode:
+
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
@@ -156,7 +157,8 @@ class ProgramManagerNode:
         manager = self._manager_map[language_used]
         try:
             code, description = manager.read(req.name)
-            return CommandStatus.SUCCESS, "Success", code, description
+            saved_at = manager.get_saved_at(req.name)
+            return CommandStatus.SUCCESS, "Success", code, description, saved_at
         except Exception as e:
             resp.status = CommandStatus.PROGRAMS_MANAGER_READ_FAILURE
             resp.message = str(e)

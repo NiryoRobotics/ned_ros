@@ -115,11 +115,8 @@ class WorkspaceManager(FileManager):
         self.__validate_points(points)
 
         robot_points = np.array(points)
-        relative_points = np.array(
-            [[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], dtype=float)
-        position_matrix = np.linalg.lstsq(relative_points, robot_points)[0].T
-        # rcond should be set to None for new numpy version
-        # position_matrix = np.linalg.lstsq(relative_points, robot_points, rcond=None)[0].T
+        relative_points = np.array([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], dtype=float)
+        position_matrix = np.linalg.lstsq(relative_points, robot_points, rcond=None)[0].T
 
         # Calculate coordinate system for rotation
         ws_points = np.dot(position_matrix, relative_points.T).T

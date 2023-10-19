@@ -2,6 +2,8 @@ import rospy
 from io import StringIO
 from datetime import date, datetime
 
+from niryo_robot_metrics.TuptimeWrapper import TuptimeWrapper
+
 from niryo_robot_reports.DailyReport import DailyReport
 from niryo_robot_reports.CloudAPI import MicroServiceError
 
@@ -21,6 +23,8 @@ class DailyReportHandler:
         self.__get_all_files_paths_db = get_all_files_paths_db
         self.__current_date = str(date.today())
 
+        self.__tuptime_wrapper = TuptimeWrapper()
+
         report_name = '{}.json'.format(self.__current_date)
         report_path = '{}/{}'.format(self.__reports_path, report_name)
         self.__daily_report = DailyReport(report_path)
@@ -36,6 +40,8 @@ class DailyReportHandler:
         current_day = str(date.today())
         if current_day == self.__current_date:
             return
+
+        self.__daily_report.add_metrics('system_life', self.__tuptime_wrapper['system_life'])
 
         try:
             self.__cloud_api.daily_reports.send({'date': self.__current_date, 'report': self.__daily_report.content})

@@ -2,6 +2,44 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.1.3
+___________
+**Features**
+
+**Improvements**
+ * Added a field "saved_at" in the service /niryo_robot_programs_manager/get_program response
+**Bugfixes**
+
+
+v5.1.2
+___________
+**Features**
+
+**Improvements**
+ * The daily reports can now send metrics about the robot. Currently, the total lifetime of the robot is sent
+**Bugfixes**
+
+
+v5.1.1
+___________
+
+**Features**
+
+**Improvements**
+ * Revamped WiFi button functionalities: Brief press (< 2s) toggles hotspot; Extended press (> 2s) enables/disables WiFi client; Long press (> 7s) restores network settings. To abort, press for over 10 seconds.
+ * WiFi button press triggers LED ring indication for forthcoming action.
+ * The database node use the system software HTTP API to get and set the settings in the database. This is to ensure there is only one access point to the database.
+ * Reduced the grippers open / close torque to slow down the motor's heating
+
+**Bugfixes**
+ * Resolved an issue where the hotspot failed to initiate concurrently with the WiFi client.
+ * Fixed a bug that consistently disregarded the "purge ros logs on startup" command.
+ * Fixed a problem that sometimes stopped the camera from recognizing colored shapes.
+ * Fixed an issue that permitted editing of dynamic frames belonging to workspaces.
+ * Rectified dynamic frame editing by implementing quaternion normalization.
+ * Fixed a bug that caused the vision picks to catch objects by their corners.
+
+
 v5.1.0
 ___________
 

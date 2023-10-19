@@ -42,8 +42,7 @@ class RobotRpi:
         self.__fans_manager = FansManager(mcp_manager=self.__mcp_manager)
         self.__shutdown_manager = ShutdownManager(mcp_manager=self.__mcp_manager)
         self.__niryo_robot_button = TopButton()
-        self.__wifi_button = WifiButton(mcp_manager=self.__mcp_manager,
-                                        is_top_button_pressed=self.__niryo_robot_button.is_button_pressed)
+        self.__wifi_button = WifiButton(mcp_manager=self.__mcp_manager)
 
         self.__storage_manager = StorageManager()
 

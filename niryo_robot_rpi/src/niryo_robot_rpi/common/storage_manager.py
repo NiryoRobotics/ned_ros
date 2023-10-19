@@ -18,11 +18,14 @@
 from datetime import datetime
 import json
 import os
+from pathlib import Path
 import rospy
 import subprocess
 
 from niryo_robot_rpi.msg import StorageStatus, LogStatus
 from niryo_robot_msgs.srv import SetInt
+
+from niryo_robot_database.srv import GetSettings, SetSettings
 
 #
 # This class will handle storage on Raspberry Pi
@@ -33,18 +36,24 @@ class StorageManager:
 
     def __init__(self):
         rospy.logdebug("StorageManager - Entering in Init")
-        self.log_size_threshold = rospy.get_param("~ros_log_size_threshold")
-        self.log_path = rospy.get_param("~ros_log_location")
-        self.should_purge_log_on_startup_file = rospy.get_param("~should_purge_ros_log_on_startup_file")
-        self.purge_log_on_startup = self.should_purge_log_on_startup()
 
-        self.__run_ids_filename = 'run_ids.json'
-        self.__update_run_ids_file()
+        process_result = subprocess.run(['roslaunch-logs'], capture_output=True, encoding='utf-8', check=True)
+        current_ros_logs_path = Path(process_result.stdout.strip())
+        self.__log_path = current_ros_logs_path.parent
+        self.__run_id = current_ros_logs_path.stem
+
+        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
+        get_setting_response = get_setting_service('purge_ros_logs_on_startup')
+        self.__purge_log_on_startup = get_setting_response.value == 'True'
+
+        self.__run_ids_file = self.__log_path.joinpath('run_ids.json')
 
         # clean log on startup if param is true
-        if self.purge_log_on_startup:
+        if self.__purge_log_on_startup:
             rospy.logwarn("Purging ROS log on startup !")
             self.purge_log()
+
+        self.__update_run_ids_file()
 
         self.purge_log_server = rospy.Service('/niryo_robot_rpi/purge_ros_logs', SetInt, self.callback_purge_log)
 
@@ -53,7 +62,8 @@ class StorageManager:
                                                                 self.callback_change_purge_log_on_startup)
 
         self.storage_status_publisher = rospy.Publisher('/niryo_robot_rpi/storage_status', StorageStatus, queue_size=10)
-        # TODO: delete in 5.1
+
+        # NS1 only
         self.log_status_publisher = rospy.Publisher('/niryo_robot_rpi/ros_log_status', LogStatus, queue_size=10)
 
         self.timer = rospy.Timer(rospy.Duration(3), self.publish_storage_status)
@@ -61,20 +71,15 @@ class StorageManager:
         rospy.loginfo("Init Storage Manager OK")
 
     def __update_run_ids_file(self):
-        with open(f'{self.log_path}/{self.__run_ids_filename}', 'a+') as file:
-            try:
-                run_ids = json.load(file)
-            except json.JSONDecodeError:
-                run_ids = {}
-            run_ids[datetime.now().isoformat()] = rospy.get_param('/run_id')
-            file.seek(0)
-            file.truncate()
-            json.dump(run_ids, file, indent=2)
+        try:
+            run_ids = json.loads(self.__run_ids_file.read_text())
+        except (OSError, json.JSONDecodeError):
+            run_ids = {}
+        run_ids[datetime.now().isoformat()] = self.__run_id
+        self.__run_ids_file.write_text(json.dumps(run_ids, indent=2))
 
     def __clear_run_ids_file(self):
-        with open(f'{self.log_path}/{self.__run_ids_filename}', 'w') as file:
-            run_ids = {}
-            json.dump(run_ids, file, indent=2)
+        self.__run_ids_file.write_text('{}')
 
     @staticmethod
     def get_storage(value):
@@ -96,18 +101,16 @@ class StorageManager:
 
     def get_log_size(self):
         try:
-            if not os.path.isdir(self.log_path):
+            if not self.__log_path.is_dir():
                 return -1
-            output = subprocess.check_output(['du', '-sBM', self.log_path])
-            output_array = output.decode().split()
+            process_result = subprocess.run(['du', '-sBM', str(self.__log_path)], capture_output=True, encoding='utf-8')
+            output_array = process_result.stdout.split()
             if len(output_array) >= 1:
                 return int(output_array[0].replace('M', ''))
             return -1
         except subprocess.CalledProcessError:
             return -1
 
-    # !! ros logs after using this method will not be saved
-    # need to restart ros completly to save new logs
     def purge_log(self):
         try:
             subprocess.call(['rosclean', 'purge', '--size', '50', '-y'])
@@ -118,29 +121,6 @@ class StorageManager:
             rospy.logwarn(e)
             return False
 
-    def should_purge_log_on_startup(self):
-        if os.path.isfile(self.should_purge_log_on_startup_file):
-            with open(self.should_purge_log_on_startup_file, 'r') as f:
-                for line in f:
-                    if not (line.startswith('#') or len(line) == 0):
-                        condition = line.rstrip()
-                        if condition == "true":
-                            return True
-                        return False
-        return False
-
-    def change_purge_log_on_startup(self, condition):
-        with open(self.should_purge_log_on_startup_file, 'w') as f:
-            value = ""
-            if condition:
-                value = "true"
-            else:
-                value = "false"
-            f.write(value)
-
-        # After writing, read new value from file
-        self.purge_log_on_startup = self.should_purge_log_on_startup()
-
     #
     # ----- ROS Interface below -----
     #
@@ -149,7 +129,7 @@ class StorageManager:
     def create_response(status, message):
         return {'status': status, 'message': message}
 
-    def callback_purge_log(self, req):
+    def callback_purge_log(self, _):
         rospy.logwarn("Purge ROS logs on user request")
         if self.purge_log():
             return self.create_response(
@@ -159,25 +139,23 @@ class StorageManager:
         return self.create_response(400, "Unable to remove ROS logs")
 
     def callback_change_purge_log_on_startup(self, req):
-        if req.value == 1:
-            self.change_purge_log_on_startup(True)
-        else:
-            self.change_purge_log_on_startup(False)
+        set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        set_setting_service(name='purge_ros_logs', value=req.value == 1, type='bool')
         return self.create_response(200, "Purge log on startup value has been changed")
 
-    def publish_storage_status(self, event):
+    def publish_storage_status(self, _):
         msg = StorageStatus()
         msg.header.stamp = rospy.Time.now()
         msg.log_size = self.get_log_size()
         msg.available_disk_size = self.get_available_disk_size()
         msg.total_disk_size = self.get_total_disk_size()
-        msg.purge_log_on_startup = self.purge_log_on_startup
+        msg.purge_log_on_startup = self.__purge_log_on_startup
         self.storage_status_publisher.publish(msg)
 
-        # TODO: delete in 5.1
+        # NS1 only
         msg = LogStatus()
         msg.header.stamp = rospy.Time.now()
         msg.log_size = self.get_log_size()
         msg.available_disk_size = self.get_available_disk_size()
-        msg.purge_log_on_startup = self.purge_log_on_startup
+        msg.purge_log_on_startup = self.__purge_log_on_startup
         self.log_status_publisher.publish(msg)
