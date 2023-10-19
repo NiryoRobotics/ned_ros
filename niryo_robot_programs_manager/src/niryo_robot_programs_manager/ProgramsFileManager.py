@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import time
 
 
 class ProgramFileException(Exception):
@@ -101,6 +102,19 @@ class ProgramsFileManager(object):
         :rtype: (str, str)
         """
         raise NotImplementedError
+
+    def get_saved_at(self, name):
+        """
+        Return the modification time of the file
+        :param name: the program's file name
+        :type name: str
+        :return: the modification time of the file
+        :rtype: str
+        """
+        if not self.exists(name):
+            raise ProgramFileException("File '{}' does not exist".format(name))
+
+        return time.ctime(os.path.getmtime(self._path_from_name(name)))
 
     def read_description(self, name):
         """
