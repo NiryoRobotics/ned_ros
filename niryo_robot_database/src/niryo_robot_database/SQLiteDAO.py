@@ -3,10 +3,12 @@ from threading import Lock
 
 
 class SQLiteDAO:
+
     def __init__(self, db_path):
         self.__lock = Lock()
         self.__con = sqlite3.connect(db_path, check_same_thread=False)
-        self.__con.row_factory = self.dict_factory
+        # self.__con.row_factory = self.dict_factory
+        self.__con.row_factory = sqlite3.Row
         self.__cursor = self.__con.cursor()
 
     def __del__(self):
@@ -22,6 +24,8 @@ class SQLiteDAO:
             value = row[idx]
             if value is None:
                 value = ''
+            elif isinstance(value, int) or isinstance(value, float):
+                pass
             elif not isinstance(value, str):
                 value = value.encode('utf-8')
 

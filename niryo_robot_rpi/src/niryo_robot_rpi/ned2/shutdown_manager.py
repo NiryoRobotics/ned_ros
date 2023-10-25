@@ -14,14 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
+import actionlib
 import rospy
 from threading import Event, Lock, Timer
 
 from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, send_reboot_command
 from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
+from niryo_robot_programs_manager.msg import ExecuteProgramAction
 from .mcp_io_objects import McpIOManager
 
 from std_msgs.msg import String
@@ -88,8 +88,9 @@ class ShutdownManager(AbstractShutdownManager):
             pass
 
         try:
-            stop_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
-            stop_program_service()
+            action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager/execute_program',
+                                                         ExecuteProgramAction)
+            action_client.cancel_all_goals()
         except (rospy.ServiceException, rospy.ROSInterruptException, rospy.ROSException):
             pass
 

@@ -1,8 +1,5 @@
-# Program language
-niryo_robot_programs_manager/ProgramLanguage language
-
-# Program Name
-string name
+# Program id
+string program_id
 
 # Mode
 int8 DISABLE = 0

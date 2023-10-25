@@ -1,33 +1,30 @@
 #!/usr/bin/env python
+from queue import Queue
+from typing import Optional
 
+import actionlib
+from actionlib import ServerGoalHandle
 import rospy
 import logging
 import os
-import yaml
-
 from threading import Thread
 
-from niryo_robot_programs_manager.BlocklyManager import BlocklyManager
-from niryo_robot_programs_manager.PythonManager import PythonFileManager
-from niryo_robot_programs_manager.programs_manager_enums import LanguageEnum
-from niryo_robot_programs_manager.ProgramsFileManager import FileAlreadyExistException, FileDoesNotExistException
+from niryo_robot_programs_manager.ProgramsManager import ProgramsManager
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from niryo_robot_programs_manager.msg import ProgramList
-from niryo_robot_programs_manager.msg import ProgramLanguage, ProgramLanguageList
-from niryo_robot_programs_manager.msg import ProgramIsRunning
+from niryo_robot_programs_manager.msg import ProgramList, ExecuteProgramResult, Program, ExecuteProgramFeedback
+from niryo_robot_programs_manager.msg import ExecuteProgramAction
 
 # Services
-from niryo_robot_msgs.srv import Trigger
+from niryo_robot_msgs.srv import Trigger, GetString
+from niryo_robot_database.srv import GetSettings, SetSettings
 
-from niryo_robot_programs_manager.srv import ExecuteProgram
 from niryo_robot_programs_manager.srv import GetProgram, GetProgramResponse
-from niryo_robot_programs_manager.srv import GetProgramAutorunInfos, GetProgramAutorunInfosResponse
-from niryo_robot_programs_manager.srv import GetProgramList
-from niryo_robot_programs_manager.srv import ManageProgram
+from niryo_robot_programs_manager.srv import GetProgramAutorunInfos
+from niryo_robot_programs_manager.srv import CreateProgram, DeleteProgram
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest
 
 
@@ -36,73 +33,66 @@ class ProgramManagerNode:
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
-        self.__programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
-        if not os.path.isdir(self.__programs_base_dir):
-            os.makedirs(self.__programs_base_dir)
+        rospy.wait_for_service('/niryo_robot_database/get_db_file_path', 20)
+        get_db_path_service = rospy.ServiceProxy('/niryo_robot_database/get_db_file_path', GetString)
 
-        self.__python3_manager = PythonFileManager(self.__programs_base_dir, LanguageEnum.PYTHON3)
-        self.__blockly_manager = BlocklyManager(self.__programs_base_dir)
+        database_path = get_db_path_service().value
+        programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
+
+        self.__programs_manager = ProgramsManager(database_path, programs_base_dir)
 
         rospy.logdebug("Programs Manager - Managers created !")
 
-        self.__standalone = rospy.get_param("~standalone")
+        # Autorun
+        self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
-        self.__autorun_file_path = os.path.join(self.__programs_base_dir, rospy.get_param("~autorun_file_name"))
+        get_setting_response = get_setting_service('autorun_id')
+        if get_setting_response.status < 0:
+            self.__autorun_id = ''
+            self.__set_setting_service('autorun_id', self.__autorun_id, 'str')
+        else:
+            self.__autorun_id = get_setting_response.value
 
-        self._manager_map = {
-            #  This is a temporary fix in order to keep a semi compatibility with python2
-            ProgramLanguage.PYTHON2: self.__python3_manager,
-            ProgramLanguage.PYTHON3: self.__python3_manager,
-            ProgramLanguage.BLOCKLY: self.__blockly_manager,
-        }
-
-        self.__str_to_program_language_map = {
-            "NONE": ProgramLanguage.NONE,
-            "PYTHON2": ProgramLanguage.PYTHON2,
-            "PYTHON3": ProgramLanguage.PYTHON3,
-            "BLOCKLY": ProgramLanguage.BLOCKLY,
-        }
-        self.__program_language_to_str_map = {
-            index: string
-            for string, index in self.__str_to_program_language_map.items()
-        }
         self.__autorun_mode_to_str = {
             SetProgramAutorunRequest.DISABLE: "DISABLE",
             SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
             SetProgramAutorunRequest.LOOP: "LOOP",
         }
-        self._str_to_autorun_mode = {index: string for string, index in self.__autorun_mode_to_str.items()}
+        self.__str_to_autorun_mode = {string: mode for mode, string in self.__autorun_mode_to_str.items()}
+        self.__autorun_must_run = False
+
+        get_setting_response = get_setting_service('autorun_mode')
+        if get_setting_response.status < 0:
+            self.__autorun_mode = SetProgramAutorunRequest.DISABLE
+            mode_str = self.__autorun_mode_to_str[self.__autorun_mode]
+            self.__set_setting_service('autorun_mode', mode_str, 'str')
+        else:
+            self.__autorun_mode = self.__str_to_autorun_mode[get_setting_response.value]
+
+        # Action Server
+        self.__execute_program_action_server = actionlib.ActionServer('~execute_program',
+                                                                      ExecuteProgramAction,
+                                                                      goal_cb=self.__callback_execute_program_goal,
+                                                                      cancel_cb=self.__execute_program_cancel_cb,
+                                                                      auto_start=False)
+        self.__execute_program_action_server.start()
+        self.__execute_program_active_goal: Optional[ServerGoalHandle] = None
+        self.__execution_output = []
 
         # Services
-        rospy.Service('~manage_program', ManageProgram, self.__callback_manage_program)
-        rospy.Service('~get_program_list', GetProgramList, self.__callback_get_program_list)
+        rospy.Service('~create_program', CreateProgram, self.__callback_create_program)
+        rospy.Service('~delete_program', DeleteProgram, self.__callback_delete_program)
         rospy.Service('~get_program', GetProgram, self.__callback_get_program)
-
-        rospy.Service('~execute_program', ExecuteProgram, self.__callback_execute_program)
-        self.__execute_from_string_program_name = rospy.get_param("~execute_from_string_program_name")
-
-        rospy.Service('~stop_program', Trigger, self.__callback_stop_program)
-        self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.NONE, "")
 
         # Publisher
         self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
         self.__publish_program_list()
 
-        self.__program_is_running_publisher = rospy.Publisher('~program_is_running',
-                                                              ProgramIsRunning,
-                                                              latch=True,
-                                                              queue_size=1)
-        self.__program_is_running_publisher.publish(self.__program_is_running)
-
         # - Autorun
         rospy.Service('~set_program_autorun', SetProgramAutorun, self.__callback_set_program_autorun)
         rospy.Service('~get_program_autorun_infos', GetProgramAutorunInfos, self.__callback_get_program_autorun_infos)
         rospy.Service('~execute_program_autorun', Trigger, self.__callback_execute_program_autorun)
-
-        self.__loop_autorun = False
-
-        self.__execution_thread = None
-        self.__execution_stopped = False
 
         rospy.on_shutdown(self.stop_program)
 
@@ -113,294 +103,124 @@ class ProgramManagerNode:
 
     # -- ROS CALLBACKS
     # Program
-    def __callback_manage_program(self, req):
-        language_used = req.language.used
-        if language_used not in self._manager_map:
-            return CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE, "Unknown Language"
-        manager = self._manager_map[language_used]
-        try:
-            if req.cmd == req.SAVE:
-                manager.create(req.name, req.code, req.description, req.allow_overwrite)
-                self.__publish_program_list()
+    def __callback_create_program(self, req):
+        program_id = self.__programs_manager.create_program(req.name,
+                                                            req.description,
+                                                            req.python_code,
+                                                            req.blockly_code)
+        self.__publish_program_list()
+        return CommandStatus.SUCCESS, f'Program "{req.name}" successfully created', program_id
 
-                message = "Created program '{}'".format(req.name)
-                rospy.loginfo("Programs Manager - {}".format(message))
-
-                return CommandStatus.SUCCESS, message
-            elif req.cmd == req.DELETE:
-                manager.remove(req.name)
-                self.__publish_program_list()
-
-                message = "Removed program '{}'".format(req.name)
-                rospy.loginfo("Programs Manager - {}".format(message))
-
-                return CommandStatus.SUCCESS, message
-            else:
-                return CommandStatus.UNKNOWN_COMMAND, "Programs Manager - Command '{}' not found.".format(req.cmd)
-        except FileAlreadyExistException as e:
-            rospy.logerr("Programs Manager - File already exists !")
-            return CommandStatus.PROGRAMS_MANAGER_FILE_ALREADY_EXISTS, str(e)
-        except Exception as e:
-            return CommandStatus.PROGRAMS_MANAGER_WRITING_FAILURE, str(e)
-
-    def __callback_get_program_list(self, req):
-        language_msg = req.language
-        return self.___get_program_list(language_msg)
+    def __callback_delete_program(self, req):
+        self.__programs_manager.delete_program(req.id)
+        self.__publish_program_list()
+        return CommandStatus.SUCCESS, 'Program successfully deleted'
 
     def __callback_get_program(self, req):
         resp = GetProgramResponse()
-        language_used = req.language.used
-        if language_used not in self._manager_map:
-            resp.status = CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE
-            resp.message = "Unknown Language"
-            return resp
-        manager = self._manager_map[language_used]
-        try:
-            code, description = manager.read(req.name)
-            saved_at = manager.get_saved_at(req.name)
-            return CommandStatus.SUCCESS, "Success", code, description, saved_at
-        except Exception as e:
-            resp.status = CommandStatus.PROGRAMS_MANAGER_READ_FAILURE
-            resp.message = str(e)
-            return resp
+        program = self.__programs_manager.get(req.id)
+        resp.status = CommandStatus.SUCCESS
+        resp.program_id = program['id']
+        resp.name = program['name']
+        resp.description = program['description']
+        resp.has_blockly = program['has_blockly']
+        resp.saved_at = program['saved_at']
+        resp.python_code = program['python_code']
+        resp.blockly_code = program['blockly_code']
+        return resp
 
-    def __callback_execute_program(self, req):
-        if self.__program_is_running.program_is_running:
-            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running", ""
-        language = req.language.used
-        if req.execute_from_string:
-            name = None
-            code_string = req.code_string
+    def __callback_execute_program_goal(self, goal_handle: ServerGoalHandle):
+        rospy.loginfo(goal_handle.get_goal_id())
+        if self.__execute_program_active_goal is not None:
+            status = CommandStatus.PROGRAMS_MANAGER_PROGRAM_ALREADY_RUNNING
+            message = "Program is already running"
+            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message))
+
+        rospy.loginfo('set goal accepeted')
+        goal_handle.set_accepted()
+        self.__execute_program_active_goal = goal_handle
+        rospy.loginfo('execute program')
+        if goal_handle.goal.goal.execute_from_string:
+            self.__execute_program(self.__programs_manager.execute_from_code, goal_handle.goal.goal.code_string)
         else:
-            name = req.name
-            code_string = None
-        return self.__execute_program(language, name=name, code_string=code_string)
+            self.__execute_program(self.__programs_manager.execute_program, goal_handle.goal.goal.program_id)
 
-    def __callback_stop_program(self, _req):
-        return self.stop_program()
+    def __execute_program(self, fun, *args, **kwargs):
+        queue = Queue()
+        kwargs['output_stream'] = queue
+        self.__execution_thread = Thread(target=fun, args=args, kwargs=kwargs)
+        self.__execution_thread.setDaemon(True)
+        self.__execution_thread.start()
+        while True:
+            output = queue.get()
+            if output == '':
+                break
+            self.__execution_output.append(output)
+            self.__execute_program_active_goal.publish_feedback(ExecuteProgramFeedback(output=self.__execution_output))
+
+        self.__execute_program_active_goal.set_succeeded()
+        self.__execution_output = []
+        self.__execute_program_active_goal = None
+
+    def __execute_program_cancel_cb(self, goal_handle: ServerGoalHandle):
+        self.stop_program()
+        goal_handle.set_canceled()
 
     # Autorun
     def __callback_set_program_autorun(self, req):
-        mode = req.mode
-
-        if mode == SetProgramAutorunRequest.DISABLE:
-            return self.__disable_autorun()
-
-        language_used = req.language.used
-        if language_used not in self._manager_map:
-            return CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE, "Unknown Language"
-
-        manager = self._manager_map[language_used]
-        if not manager.runnable:
-            return CommandStatus.PROGRAMS_MANAGER_NOT_RUNNABLE_LANGUAGE, "Not Runnable Language"
-
-        name = req.name
-
-        if not manager.exists(name):
-            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, "File Doesn't Exist"
-
-        return self.__save_autorun_infos(language_used, name, mode)
+        mode_str = self.__autorun_mode_to_str[req.mode]
+        self.__set_setting_service('autorun_mode', mode_str, 'str')
+        return CommandStatus.SUCCESS, f'Successfully set autorun mode to "{mode_str}"'
 
     def __callback_get_program_autorun_infos(self, _req):
-        language, name, mode = self.__get_autorun_infos()
-
-        if language is None:
-            resp = GetProgramAutorunInfosResponse()
-            resp.status = CommandStatus.PROGRAMS_MANAGER_AUTORUN_FAILURE
-            resp.message = "Failed to get autorun infos"
-            return resp
-
-        return CommandStatus.SUCCESS, "OK", language, name, mode
+        return CommandStatus.SUCCESS, 'OK', self.__autorun_id, self.__autorun_mode
 
     def __callback_execute_program_autorun(self, _req):
-        if self.__program_is_running.program_is_running:
+        if self.__programs_manager.is_executing_program:
             return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running"
 
-        language_obj, name, mode = self.__get_autorun_infos()
-
-        if language_obj is None or language_obj == ProgramLanguage.NONE:
-            rospy.loginfo("Programs Manager - Autorun file is not set")
-            return CommandStatus.PROGRAMS_MANAGER_AUTORUN_FAILURE, "Autorun file is not set"
-
-        if mode == self._str_to_autorun_mode["ONE_SHOT"]:
-            self.__loop_autorun = False
-        elif mode == self._str_to_autorun_mode["DISABLE"]:
+        if self.__autorun_mode == SetProgramAutorunRequest.DISABLE:
             rospy.loginfo("Programs Manager - Autorun disable")
             return CommandStatus.PROGRAMS_MANAGER_AUTORUN_FAILURE, "Autorun disable"
+        if self.__autorun_mode == SetProgramAutorunRequest.ONE_SHOT:
+            self.__execute_program(self.__programs_manager.execute_program, self.__autorun_id)
         else:
-            self.__loop_autorun = True
-
-        self.__program_is_running.program_is_running = True
-        self.__program_is_running_publisher.publish(self.__program_is_running)
-
-        self.__execution_thread = Thread(target=self.__execute_program,
-                                         name="execution_thread_programs_manager",
-                                         args=[language_obj.used, name, None])
-        self.__execution_thread.setDaemon(True)
-        self.__execution_thread.start()
+            self.__autorun_must_run = True
+            while self.__autorun_must_run:
+                self.__execute_program(self.__programs_manager.execute_program, self.__autorun_id)
 
         message = "Executing autorun program ..."
         rospy.loginfo("Programs Manager - {}".format(message))
         return CommandStatus.SUCCESS, message
 
     # - Functions
+
     def __publish_program_list(self):
-        programs_list = self.___get_program_list(ProgramLanguage(ProgramLanguage.ALL))
-        self.__program_list_publisher.publish(*programs_list)
-
-    def __execute_program(self, language_used, name=None, code_string=None):
-        if language_used not in self._manager_map:
-            return CommandStatus.PROGRAMS_MANAGER_UNKNOWN_LANGUAGE, "Unknown Language", ""
-        manager = self._manager_map[language_used]
-        if not manager.runnable:
-            return CommandStatus.PROGRAMS_MANAGER_NOT_RUNNABLE_LANGUAGE, "Not Runnable Language", ""
-
-        if code_string:
-            prog_name = self.__execute_from_string_program_name
-            manager.create(prog_name, code_string, description="", allow_overwrite=True)
-        else:
-            prog_name = name
-
-        self.__execution_stopped = False
-
-        try:
-            if not self.__program_is_running.program_is_running:
-                self.__program_is_running.program_is_running = True
-                self.__program_is_running_publisher.publish(self.__program_is_running)
-
-            ret, message, output = manager.execute(prog_name)
-            while self.__loop_autorun and ret:
-                ret, message, output = manager.execute(prog_name)
-
-            if not isinstance(message, str):
-                message = message.decode()
-            if not isinstance(output, str):
-                output = output.decode()
-
-        except FileDoesNotExistException:
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.FILE_ERROR, "File Doesn't Exist")
-            self.__program_is_running_publisher.publish(self.__program_is_running)
-            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, "File Doesn't Exist", ""
-        except Exception as e:
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, str(e))
-            self.__program_is_running_publisher.publish(self.__program_is_running)
-            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, str(e), ""
-
-        if ret:
-            message = "Program execution success"
-            rospy.loginfo("Programs Manager - {}".format(message))
-            status = CommandStatus.SUCCESS
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.SUCCESS, message)
-        elif self.__execution_stopped:
-            status, message = CommandStatus.PREEMPTED, "Program successfully stopped"
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, message)
-        else:
-            status, message = CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, message
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, message)
-
-        self.__program_is_running_publisher.publish(self.__program_is_running)
-        return status, message, output
-
-    def __get_autorun_infos(self):
-        if not os.path.isfile(self.__autorun_file_path):
-            return None, None, None
-        with open(self.__autorun_file_path, "r") as input_file:
-            yaml_file = yaml.safe_load(input_file)
-
-        mode = self._str_to_autorun_mode[yaml_file["mode"]]
-
-        language = ProgramLanguage(self.__str_to_program_language_map[yaml_file["language"]])
-
-        return language, yaml_file["name"], mode
-
-    def __disable_autorun(self):
-        self.__save_autorun_infos(ProgramLanguage.NONE, "", SetProgramAutorunRequest.DISABLE)
-        return CommandStatus.SUCCESS, "Programs Manager - Disable Autorun Program"
-
-    def __save_autorun_infos(self, language, name, mode):
-        language_str = self.__program_language_to_str_map[language]
-        mode_str = self.__autorun_mode_to_str[mode]
-
-        json_dict = {"language": language_str, "name": str(name), "mode": mode_str}
-        with open(self.__autorun_file_path, "w") as output_file:
-            yaml.dump(json_dict, output_file, default_flow_style=False)
-
-        message = "Programs Manager - Change autorun " \
-                  "setting to file {} in {} mode".format(name,
-                                                         mode_str.replace("_", " ").title())
-        rospy.loginfo(message)
-
-        return CommandStatus.SUCCESS, message
-
-    def ___get_program_list(self, language_msg):
-        language_used = language_msg.used
-        if language_used != language_msg.ALL:
-            # If language_used is unknown
-            if language_used not in self._manager_map:
-                return [], [], []
-            else:
-                manager = self._manager_map[language_used]
-                prog_list, description_list = manager.get_all_names_with_description()
-
-                programs_names = prog_list
-                list_of_language_list = [ProgramLanguageList([language_msg])]
-                programs_description = description_list
-        else:
-            prog_dict = {}
-            for language, manager in self._manager_map.items():
-                # Get all names from a manager
-                all_names = manager.get_all_names()
-                # Adding them to dictionary
-                for name in all_names:
-                    if name[0] == ".":
-                        # Secret file
-                        continue
-                    elif name not in prog_dict:
-                        prog_dict[name] = [language]
-                    else:
-                        prog_dict[name].append(language)
-
-            languages_list_list = []
-            for lang_list in prog_dict.values():
-                ros_lang_list = ProgramLanguageList([ProgramLanguage(lang) for lang in lang_list])
-                languages_list_list.append(ros_lang_list)
-
-            description_list = []
-            for name, languages in prog_dict.items():
-                if ProgramLanguage.PYTHON2 not in languages:
-                    description_list.append("")
-                else:
-                    description = self.__python3_manager.read_description(name)
-                    description_list.append(description)
-
-            programs_names = prog_dict.keys()
-            list_of_language_list = languages_list_list
-            programs_description = description_list
-
-        return programs_names, list_of_language_list, programs_description
+        programs_list = self.__programs_manager.get_all()
+        ros_programs = [
+            Program(program_id=program['id'],
+                    name=program['name'],
+                    description=program['description'],
+                    has_blockly=program['has_blockly'],
+                    saved_at=program['saved_at'],
+                    python_code=program['python_code'],
+                    blockly_code=program['blockly_code']) for program in programs_list
+        ]
+        self.__program_list_publisher.publish(ros_programs)
 
     # - Others functions
     def stop_program(self):
-        if not self.__program_is_running.program_is_running:
-            return CommandStatus.SUCCESS, "No program is running"
+        if not self.__programs_manager.is_executing_program:
+            return CommandStatus.SUCCESS, "There is no program running"
 
         try:
-            self.__loop_autorun = False
-            ret, message = self.__python3_manager.stop_execution()
-            if not self.__standalone:
-                self.__stop_robot_action()
-
-            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, "")
-            self.__program_is_running_publisher.publish(self.__program_is_running)
-
+            self.__autorun_must_run = False
+            self.__programs_manager.stop_execution()
+            self.__stop_robot_action()
         except Exception as e:
             return CommandStatus.PROGRAMS_MANAGER_FAILURE, str(e)
 
-        if ret:
-            self.__execution_stopped = True
-            return CommandStatus.SUCCESS, "Stop program success"
-        else:
-            return CommandStatus.PROGRAMS_MANAGER_STOPPING_FAILED, message
+        return CommandStatus.SUCCESS, "Stop program success"
 
     @staticmethod
     def __stop_robot_action():

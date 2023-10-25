@@ -11,32 +11,39 @@ execute_process( COMMAND
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
+  genmsg
+  actionlib_msgs
 )
 
 add_message_files(
   FILES
-  ProgramIsRunning.msg
-  ProgramLanguage.msg
-  ProgramLanguageList.msg
+  Program.msg
   ProgramList.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
-  ExecuteProgram.srv
+  CreateProgram.srv
+  DeleteProgram.srv
   GetProgram.srv
   GetProgramAutorunInfos.srv
-  GetProgramList.srv
-  ManageProgram.srv
   SetProgramAutorun.srv
 )
+
+add_action_files(
+  DIRECTORY action
+  FILES
+  ExecuteProgram.action
+)
+
 
 # enable python module support
 catkin_python_setup()
 
 generate_messages(
   DEPENDENCIES
+  actionlib_msgs
 )
 
 catkin_package(

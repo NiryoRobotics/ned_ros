@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
+import subprocess
 import time
+from threading import Lock
 
 
 class ProgramFileException(Exception):
@@ -15,16 +17,26 @@ class FileDoesNotExistException(ProgramFileException):
     pass
 
 
+class FileNotRunnableException(ProgramFileException):
+    pass
+
+
+class ExecutionException(ProgramFileException):
+    pass
+
+
 class ProgramsFileManager(object):
-    associated_path = ""
 
-    def __init__(self, progs_dir, language, extension, runnable):
-        self._progs_dir = os.path.abspath(os.path.expanduser(progs_dir)) + "/"
-        if not os.path.isdir(self._progs_dir):
-            os.makedirs(self._progs_dir)
+    def __init__(self, programs_dir, extension, runnable=False, bin_path=''):
+        self._programs_dir = os.path.abspath(os.path.expanduser(programs_dir)) + "/"
+        if not os.path.isdir(self._programs_dir):
+            os.makedirs(self._programs_dir)
 
-        self._language = language
         self._runnable = runnable
+        self.__bin_path = bin_path
+
+        self.__process = None
+        self.__execution_lock = Lock()
 
         self._extension, self._suffix = self._init_extension_n_suffix(extension)
 
@@ -42,9 +54,9 @@ class ProgramsFileManager(object):
         return name + self._suffix
 
     def _path_from_name(self, name):
-        return self._progs_dir + self._filename_from_name(name)
+        return self._programs_dir + self._filename_from_name(name)
 
-    def _read_raw_file(self, name):
+    def read(self, name):
         """
         Read file
 
@@ -66,11 +78,11 @@ class ProgramsFileManager(object):
                 raise ProgramFileException("Could not read object '{}' : {}".format(name, e))
 
     @staticmethod
-    def _generate_raw_text(code, description):
+    def _generate_raw_text(code):
         raise NotImplementedError
 
     # - Public
-    def create(self, name, code, description, allow_overwrite):
+    def create(self, name, code):
 
         if len(name) == 0:
             name = 'untitled'
@@ -78,30 +90,14 @@ class ProgramsFileManager(object):
         # Getting path
         file_path = self._path_from_name(name)
 
-        if not allow_overwrite and os.path.isfile(file_path):
-            raise FileAlreadyExistException("File already exist and overwrite permission is not given")
-
-        # Generate raw string
-        file_raw_text = self._generate_raw_text(code, description)
         # Generating lines which should be written
-        file_lines = file_raw_text.split('\\n')
+        file_lines = code.split('\\n') + []
         with open(file_path, 'w') as f:
             try:
                 for file_line in file_lines:
                     f.write(file_line + "\n")
             except Exception as e:
                 raise ProgramFileException("Could not write program" + str(e))
-
-    def read(self, name):
-        """
-        Read
-
-        :param name:
-        :type name: str
-        :return: Code, description
-        :rtype: (str, str)
-        """
-        raise NotImplementedError
 
     def get_saved_at(self, name):
         """
@@ -115,12 +111,6 @@ class ProgramsFileManager(object):
             raise ProgramFileException("File '{}' does not exist".format(name))
 
         return time.ctime(os.path.getmtime(self._path_from_name(name)))
-
-    def read_description(self, name):
-        """
-        Read description
-        """
-        return self.read(name)[1]
 
     def remove(self, name):
         """
@@ -148,7 +138,7 @@ class ProgramsFileManager(object):
         :rtype: list[str]
         """
         try:
-            filenames = sorted(os.listdir(self._progs_dir))
+            filenames = sorted(os.listdir(self._programs_dir))
         except OSError as e:
             raise ProgramFileException("Could not retrieve files. " + str(e))
         if with_suffix:
@@ -156,14 +146,9 @@ class ProgramsFileManager(object):
         else:
             return [self._name_from_filename(f) for f in filenames if f.endswith(self._suffix)]
 
-    def get_all_names_with_description(self):
-        list_name = self.get_all_names()
-        list_description = [self.read_description(name=n) for n in list_name]
-        return list_name, list_description
-
     def get_all_names_with_subdirectory(self):
         list_ = self.get_all_names(with_suffix=True)
-        return [self.associated_path + name for name in list_]
+        return [self.__bin_path + name for name in list_]
 
     def exists(self, name):
         """
@@ -176,18 +161,43 @@ class ProgramsFileManager(object):
         """
         return os.path.isfile(self._path_from_name(name))
 
-    def execute(self, _name):
-        if self._runnable:
-            return False, "Execution not implemented"
-        else:
-            return False, "Execution not runnable"
-
-    def stop_execution(self):
-        if self._runnable:
-            return False, "Stop execution not implemented"
-        else:
-            return False, "Execution not runnable, why do you want to stop it ?"
-
     @property
     def runnable(self):
         return self._runnable
+
+    @property
+    def is_running(self):
+        return self.__execution_lock.locked()
+
+    def execute_from_path(self, path, output_stream):
+        with self.__execution_lock:
+            try:
+                self.__process = subprocess.Popen([self.__bin_path, path],
+                                                  stdout=subprocess.PIPE,
+                                                  stderr=subprocess.PIPE,
+                                                  encoding='utf-8')
+                while True:
+                    output = self.__process.stdout.read(1)
+                    if output == '' and self.__process.poll() is not None:
+                        break
+                    if output != '':
+                        output_stream.put(output)
+            except Exception as e:
+                raise ExecutionException(str(e))
+
+    def execute_from_name(self, name, output_stream):
+        if not self.exists(name):
+            raise FileDoesNotExistException
+        if not self.runnable:
+            raise FileNotRunnableException
+
+        return self.execute_from_path(self._path_from_name(name), output_stream)
+
+    def stop_execution(self):
+        if self.__process is None:
+            return
+
+        try:
+            self.__process.terminate()
+        except Exception as e:
+            raise ProgramFileException(str(e))

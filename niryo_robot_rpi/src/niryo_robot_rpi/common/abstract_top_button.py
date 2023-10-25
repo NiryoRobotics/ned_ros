@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import actionlib
 import rospy
 import RPi.GPIO as GPIO
 
@@ -28,6 +28,7 @@ from niryo_robot_arm_commander.msg import PausePlanExecution
 
 # Services
 from niryo_robot_msgs.srv import Trigger, SetInt
+from niryo_robot_programs_manager.msg import ExecuteProgramAction
 
 
 class AbstractTopButton(object):
@@ -84,9 +85,9 @@ class AbstractTopButton(object):
 
     @staticmethod
     def _cancel_program_from_program_manager():
-        srv = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
-        resp = srv()
-        return resp.status, resp.message
+        action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager/execute_program',
+                                                     ExecuteProgramAction)
+        action_client.cancel_all_goals()
 
     def _resume_program(self):
         rospy.loginfo("Button Manager - Resume sequence")

@@ -1,0 +1,4 @@
+string program_id
+---
+int16 status
+string message

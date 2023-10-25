@@ -1,3 +1,4 @@
+import actionlib
 import rospy
 import json
 import rospkg
@@ -5,11 +6,10 @@ import os
 from datetime import datetime
 
 # msg
-from niryo_robot_programs_manager.msg import ProgramLanguage
+from niryo_robot_programs_manager.msg import ExecuteProgramAction, ExecuteProgramGoal
 from niryo_robot_msgs.msg import CommandStatus
 
 # srv
-from niryo_robot_programs_manager.srv import ExecuteProgram, ExecuteProgramRequest
 from niryo_robot_reports.srv import RunAutoDiagnosis
 
 from niryo_robot_reports.CloudAPI import MicroServiceError
@@ -26,9 +26,8 @@ class AutoDiagnosisReportHandler:
         self.__tuptime_wrapper = TuptimeWrapper()
         self.__psutil_wrapper = PsutilWrapper()
 
-        rospy.wait_for_service('/niryo_robot_programs_manager/execute_program', 5)
-        self.__execute_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/execute_program',
-                                                            ExecuteProgram)
+        self.__execute_program_action_client = actionlib.SimpleActionClient(
+            '/niryo_robot_programs_manager/execute_program', ExecuteProgramAction)
 
         self.__auto_diagnosis_file = os.path.join(rospkg.RosPack().get_path('niryo_robot_reports'),
                                                   'scripts',
@@ -44,12 +43,18 @@ class AutoDiagnosisReportHandler:
         with open(self.__auto_diagnosis_file, 'r') as f:
             code_string = f.read()
 
-        req = ExecuteProgramRequest(execute_from_string=True, name='', code_string=code_string)
-        req.language.used = ProgramLanguage.PYTHON3
         rospy.logdebug('Executing the auto-diagnosis script...')
-        res = self.__execute_program_service(req)
+        output = ''
 
-        serialized_json = res.output[res.output.index('{')::].rstrip()
+        def feedback_cb(feedback):
+            output = feedback.output[-1]
+
+        self.__execute_program_action_client.send_goal(ExecuteProgramGoal(execute_from_string=True,
+                                                                          code_string=code_string),
+                                                       feedback_cb=feedback_cb)
+        self.__execute_program_action_client.wait_for_result()
+
+        serialized_json = output[output.index('{')::].rstrip()
         try:
             report = json.loads(serialized_json)
         except ValueError:

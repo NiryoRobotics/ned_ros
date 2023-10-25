@@ -7,6 +7,7 @@ class UnknownFilePathException(Exception):
 
 
 class FilePath:
+
     def __init__(self, dao):
         self.__dao = dao
 
@@ -21,7 +22,7 @@ class FilePath:
     def get_all_by_type(self, file_type):
         query = 'SELECT id, type, name, date, path FROM file_path WHERE type = :type'
         result = self.__dao.execute(query, {'type': file_type}).fetchall()
-        return result
+        return [dict(r) for r in result]
 
     def add_file_path(self, file_type, name, path):
         file_path_exists, file_path_id = self.exists(name)

@@ -1,10 +1,5 @@
-string name
-
-niryo_robot_programs_manager/ProgramLanguage language
+string program_id
 ---
 int32 status
 string message
-
-string code
-string description
-string saved_at
+niryo_robot_programs_manager/Program program

@@ -1,4 +1,5 @@
 import rospy
+from actionlib_msgs.msg import GoalStatusArray
 
 # - Messages
 from std_msgs.msg import Bool
@@ -7,7 +8,6 @@ from sensor_msgs.msg import JointState
 
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_arm_commander.msg import PausePlanExecution
-from niryo_robot_programs_manager.msg import ProgramIsRunning
 
 # - Services
 from niryo_robot_arm_commander.srv import GetJointLimits
@@ -43,36 +43,46 @@ class RobotStatusObserver(object):
 
         # - Subscribers
         self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
-                                                    HardwareStatus, self.__callback_hardware_status)
+                                                    HardwareStatus,
+                                                    self.__callback_hardware_status)
 
         self.__pause_state_sub = rospy.Subscriber('/niryo_robot_rpi/pause_state',
-                                                  PausePlanExecution, self.__callback_pause)
+                                                  PausePlanExecution,
+                                                  self.__callback_pause)
 
         self.motion_goal_is_active_sub = rospy.Subscriber('/niryo_robot_arm_commander/is_active',
-                                                          Bool, self.__callback_motion_goal_is_active)
+                                                          Bool,
+                                                          self.__callback_motion_goal_is_active)
 
         self.is_debug_motor_active_sub = rospy.Subscriber('/niryo_robot_arm_commander/is_debug_motor_active',
-                                                          Bool, self.__callback_is_debug_motor_active)
+                                                          Bool,
+                                                          self.__callback_is_debug_motor_active)
 
         self.jog_is_enabled_sub = rospy.Subscriber('/niryo_robot/jog_interface/is_enabled',
-                                                   Bool, self.__callback_jog_is_enabled)
+                                                   Bool,
+                                                   self.__callback_jog_is_enabled)
 
-        self.program_is_running_sub = rospy.Subscriber('/niryo_robot_programs_manager/program_is_running',
-                                                       ProgramIsRunning, self.__callback_program_is_running)
+        self.program_is_running_sub = rospy.Subscriber('/niryo_robot_programs_manager/execute_program/status',
+                                                       GoalStatusArray,
+                                                       self.__callback_program_is_running)
 
         self.is_tcp_client_connected_sub = rospy.Subscriber('/niryo_robot_user_interface/is_client_connected',
-                                                            Bool, self.__callback_is_client_connected)
+                                                            Bool,
+                                                            self.__callback_is_client_connected)
 
         self.learning_mode_state_sub = rospy.Subscriber('/niryo_robot/learning_mode/state',
-                                                        Bool, self.__callback_learning_mode_state)
+                                                        Bool,
+                                                        self.__callback_learning_mode_state)
 
         self.__collision_detected_sub = rospy.Subscriber('/niryo_robot/collision_detected',
-                                                         Bool, self.__callback_collision_detected)
+                                                         Bool,
+                                                         self.__callback_collision_detected)
 
         self.__joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
 
         self.__learning_trajectory_sub = rospy.Subscriber('/niryo_robot_arm_commander/learning_trajectory',
-                                                          Bool, self.__callback_learning_trajectory)
+                                                          Bool,
+                                                          self.__callback_learning_trajectory)
 
     def __callback_pause(self, msg):
         if self.pause_state != msg.state:
@@ -90,11 +100,15 @@ class RobotStatusObserver(object):
             self.__robot_status_handler.advertise_new_state()
 
     def __callback_program_is_running(self, msg):
-        if self.program_is_running != msg.program_is_running:
-            self.program_is_running = msg.program_is_running
-            if not msg.program_is_running:
-                self.program_error = True if msg.last_execution_status == msg.EXECUTION_ERROR else False
-                self.program_error_message = msg.last_execution_msg
+        if len(msg.status_list) == 0:
+            return
+        last_goal = msg.status_list[-1]
+        program_is_running = last_goal.status == last_goal.ACTIVE
+        if self.program_is_running != program_is_running:
+            self.program_is_running = program_is_running
+            # if not program_is_running:
+            # self.program_error = True if msg.last_execution_status == msg.EXECUTION_ERROR else False
+            # self.program_error_message = msg.last_execution_msg
             self.__robot_status_handler.advertise_new_state()
 
             # Clean error after
@@ -152,8 +166,8 @@ class RobotStatusObserver(object):
         current_out_of_bounds_state = False
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
-                if (joint_name in self.joint_limits and
-                        not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
+                if (joint_name in self.joint_limits
+                        and not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
                     current_out_of_bounds_state = True
                     break
 
@@ -167,8 +181,10 @@ class RobotStatusObserver(object):
             try:
                 rospy.wait_for_service('/niryo_robot_arm_commander/get_joints_limit', timeout=5)
                 joint_limits_service = rospy.ServiceProxy('/niryo_robot_arm_commander/get_joints_limit', GetJointLimits)
-                self.joint_limits = {joint_limit.name: joint_limit for joint_limit in
-                                     joint_limits_service.call().joint_limits}
+                self.joint_limits = {
+                    joint_limit.name: joint_limit
+                    for joint_limit in joint_limits_service.call().joint_limits
+                }
             except rospy.ROSException:
                 rospy.logwarn("Waiting for '/niryo_robot_arm_commander/get_joints_limit' service")
             tries += 1
