@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from queue import Queue
 from typing import Optional
 
 import actionlib
@@ -7,7 +6,6 @@ from actionlib import ServerGoalHandle
 import rospy
 import logging
 import os
-from threading import Thread
 
 from niryo_robot_programs_manager.ProgramsManager import ProgramsManager
 
@@ -15,7 +13,11 @@ from niryo_robot_programs_manager.ProgramsManager import ProgramsManager
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from niryo_robot_programs_manager.msg import ProgramList, ExecuteProgramResult, Program, ExecuteProgramFeedback
+from niryo_robot_programs_manager.msg import (ProgramList,
+                                              ExecuteProgramResult,
+                                              Program,
+                                              ExecuteProgramFeedback,
+                                              ExecuteProgramGoal)
 from niryo_robot_programs_manager.msg import ExecuteProgramAction
 
 # Services
@@ -78,7 +80,8 @@ class ProgramManagerNode:
                                                                       auto_start=False)
         self.__execute_program_action_server.start()
         self.__execute_program_active_goal: Optional[ServerGoalHandle] = None
-        self.__execution_output = []
+
+        self.__execute_program_action_client = actionlib.SimpleActionClient('~execute_program', ExecuteProgramAction)
 
         # Services
         rospy.Service('~create_program', CreateProgram, self.__callback_create_program)
@@ -112,7 +115,7 @@ class ProgramManagerNode:
         return CommandStatus.SUCCESS, f'Program "{req.name}" successfully created', program_id
 
     def __callback_delete_program(self, req):
-        self.__programs_manager.delete_program(req.id)
+        self.__programs_manager.delete_program(req.program_id)
         self.__publish_program_list()
         return CommandStatus.SUCCESS, 'Program successfully deleted'
 
@@ -136,30 +139,31 @@ class ProgramManagerNode:
             message = "Program is already running"
             goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message))
 
-        rospy.loginfo('set goal accepeted')
+        goal = goal_handle.goal.goal
+
+        if not goal.execute_from_string and not self.__programs_manager.exists(goal.program_id):
+            status = CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST
+            message = "Program does not exist"
+            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message))
+
         goal_handle.set_accepted()
         self.__execute_program_active_goal = goal_handle
-        rospy.loginfo('execute program')
-        if goal_handle.goal.goal.execute_from_string:
-            self.__execute_program(self.__programs_manager.execute_from_code, goal_handle.goal.goal.code_string)
+
+        if goal.execute_from_string:
+            self.__programs_manager.execute_from_code(goal.code_string)
         else:
-            self.__execute_program(self.__programs_manager.execute_program, goal_handle.goal.goal.program_id)
+            self.__programs_manager.execute_from_id(goal.program_id)
 
-    def __execute_program(self, fun, *args, **kwargs):
-        queue = Queue()
-        kwargs['output_stream'] = queue
-        self.__execution_thread = Thread(target=fun, args=args, kwargs=kwargs)
-        self.__execution_thread.setDaemon(True)
-        self.__execution_thread.start()
-        while True:
-            output = queue.get()
-            if output == '':
-                break
-            self.__execution_output.append(output)
-            self.__execute_program_active_goal.publish_feedback(ExecuteProgramFeedback(output=self.__execution_output))
+        feedback = ExecuteProgramFeedback(output=self.__programs_manager.execution_output)
+        while self.__programs_manager.execution_is_running:
+            if len(self.__programs_manager.execution_output) > len(feedback.output):
+                feedback.output = self.__programs_manager.execution_output
+                self.__execute_program_active_goal.publish_feedback(feedback)
 
-        self.__execute_program_active_goal.set_succeeded()
-        self.__execution_output = []
+        if self.__programs_manager.execution_is_success:
+            self.__execute_program_active_goal.set_succeeded()
+        else:
+            self.__execute_program_active_goal.set_aborted()
         self.__execute_program_active_goal = None
 
     def __execute_program_cancel_cb(self, goal_handle: ServerGoalHandle):
@@ -168,26 +172,33 @@ class ProgramManagerNode:
 
     # Autorun
     def __callback_set_program_autorun(self, req):
-        mode_str = self.__autorun_mode_to_str[req.mode]
-        self.__set_setting_service('autorun_mode', mode_str, 'str')
-        return CommandStatus.SUCCESS, f'Successfully set autorun mode to "{mode_str}"'
+        if req.mode:
+            self.__autorun_mode = req.mode
+            mode_str = self.__autorun_mode_to_str[req.mode]
+            self.__set_setting_service('autorun_mode', mode_str, 'str')
+
+        if req.program_id:
+            self.__autorun_id = req.program_id
+            self.__set_setting_service('autorun_id', req.program_id, 'str')
+
+        return CommandStatus.SUCCESS, 'Successfully set autorun'
 
     def __callback_get_program_autorun_infos(self, _req):
         return CommandStatus.SUCCESS, 'OK', self.__autorun_id, self.__autorun_mode
 
     def __callback_execute_program_autorun(self, _req):
-        if self.__programs_manager.is_executing_program:
+        if self.__programs_manager.execution_is_running:
             return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running"
 
         if self.__autorun_mode == SetProgramAutorunRequest.DISABLE:
             rospy.loginfo("Programs Manager - Autorun disable")
             return CommandStatus.PROGRAMS_MANAGER_AUTORUN_FAILURE, "Autorun disable"
-        if self.__autorun_mode == SetProgramAutorunRequest.ONE_SHOT:
-            self.__execute_program(self.__programs_manager.execute_program, self.__autorun_id)
-        else:
-            self.__autorun_must_run = True
+
+        goal = ExecuteProgramGoal(program_id=self.__autorun_id)
+        self.__execute_program_action_client.send_goal_and_wait(goal)
+        if self.__autorun_mode == SetProgramAutorunRequest.LOOP:
             while self.__autorun_must_run:
-                self.__execute_program(self.__programs_manager.execute_program, self.__autorun_id)
+                self.__execute_program_action_client.send_goal_and_wait(goal)
 
         message = "Executing autorun program ..."
         rospy.loginfo("Programs Manager - {}".format(message))
@@ -210,7 +221,7 @@ class ProgramManagerNode:
 
     # - Others functions
     def stop_program(self):
-        if not self.__programs_manager.is_executing_program:
+        if not self.__programs_manager.execution_is_running:
             return CommandStatus.SUCCESS, "There is no program running"
 
         try:

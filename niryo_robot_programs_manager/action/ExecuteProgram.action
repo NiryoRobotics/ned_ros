@@ -8,4 +8,4 @@ int16 status
 string message
 ---
 # feedback
-string[] output
+string output
