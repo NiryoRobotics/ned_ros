@@ -1,1 +1,0 @@
-niryo_robot_arm_commander/Trajectory[] trajectories

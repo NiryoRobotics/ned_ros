@@ -3,8 +3,7 @@
 import rospy
 from threading import Lock, Thread
 
-from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_msgs.srv import GetNameDescriptionList
+from niryo_robot_msgs.msg import CommandStatus, BasicObject, BasicObjectArray
 
 from std_msgs.msg import Int32, Bool, Header
 from trajectory_msgs.msg import JointTrajectory
@@ -14,7 +13,6 @@ from end_effector_interface.msg import EEButtonStatus
 from .trajectory_file_manager import TrajectoryFileManager
 from .command_enums import ArmCommanderException
 from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest, GetTrajectory
-from niryo_robot_arm_commander.msg import Trajectory, TrajectoryArray
 
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 
@@ -42,7 +40,7 @@ class TrajectoryHandlerNode:
         self.save_trajectory_publisher = rospy.Publisher("/niryo_robot/blockly/save_trajectory", Int32, queue_size=10)
         self.__learning_trajectory_publisher = rospy.Publisher('~learning_trajectory', Bool, queue_size=10)
         self.__trajectory_list_publisher = rospy.Publisher('~trajectory_list',
-                                                           TrajectoryArray,
+                                                           BasicObjectArray,
                                                            queue_size=10,
                                                            latch=True)
 
@@ -308,9 +306,9 @@ class TrajectoryHandlerNode:
                 self.__record_thread.start()
 
     def __publish_trajectory_list(self):
-        trajectory_array = TrajectoryArray()
-        trajectory_array.trajectories = [
-            Trajectory(name=name, description=description) for name,
+        trajectory_array = BasicObjectArray()
+        trajectory_array.objects = [
+            BasicObject(name=name, description=description) for name,
             description in zip(*self.get_available_trajectories_w_description())
         ]
         self.__trajectory_list_publisher.publish(trajectory_array)

@@ -17,8 +17,6 @@ add_message_files(
   JointLimits.msg
   PausePlanExecution.msg
   ShiftPose.msg
-  Trajectory.msg
-  TrajectoryArray.msg
 )
 
 add_service_files(

@@ -10,8 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+  BasicObject.msg
+  BasicObjectArray.msg
   BusState.msg
-
   CommandStatus.msg
   HardwareStatus.msg
   MotorHeader.msg

@@ -13,10 +13,12 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
-from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction, TrajectoryArray
+from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
+from niryo_robot_msgs.msg import BasicObjectArray
+
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
 from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
@@ -84,7 +86,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
-        self.__trajectories_ntv = NiryoTopicValue('/niryo_robot_arm_commander/trajectory_list', TrajectoryArray)
+        self.__trajectories_ntv = NiryoTopicValue('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
