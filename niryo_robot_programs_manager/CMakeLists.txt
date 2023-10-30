@@ -48,8 +48,8 @@ generate_messages(
 
 catkin_package(
   CATKIN_DEPENDS
-    message_runtime
     actionlib_msgs
+    message_runtime
 )
 
 include_directories(
