@@ -87,6 +87,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
         self.__trajectories_ntv = NiryoTopicValue('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray)
+        self.__dynamic_frame_ntv = NiryoTopicValue('/niryo_robot_arm_commander/dynamic_frame_list', BasicObjectArray)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -1246,9 +1247,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_dynamic_frame_list', GetNameDescriptionList)
-
-        return result.name_list, result.description_list
+        dynamic_frame_list = self.__dynamic_frame_ntv.value
+        names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list]
+        descriptions = [dynamic_frame.description for dynamic_frame in dynamic_frame_list]
+        return names, descriptions
 
     def __transform_pose(self, pose_local_frame, local_frame, source_frame):
         """

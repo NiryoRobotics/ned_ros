@@ -19,6 +19,8 @@ from niryo_robot_msgs.msg import CommandStatus
 from geometry_msgs.msg import Point, Quaternion
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
+from niryo_robot_msgs.msg import BasicObject, BasicObjectArray
+
 from niryo_robot_poses_handlers.msg import NiryoPose, DynamicFrame
 from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
@@ -42,6 +44,7 @@ class PoseHandlerNode:
         - created of grips
         - convertion of workspace-relative poses (e.g. from camera) to robot poses
     """
+
     def __init__(self):
         rospy.logdebug("Poses Handlers - Entering in Init")
 
@@ -85,8 +88,11 @@ class PoseHandlerNode:
         self.dynamic_frame_manager = DynamicFrameManager(dynamic_frame_dir)
         rospy.Service('~manage_dynamic_frame', ManageDynamicFrame, self.__callback_manage_dynamic_frame)
         rospy.Service('~get_dynamic_frame', GetDynamicFrame, self.__callback_get_dynamic_frame)
-        rospy.Service('~get_dynamic_frame_list', GetNameDescriptionList, self.__callback_get_dynamic_frame_list)
         rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
+        self.__dynamic_frame_list_publisher = rospy.Publisher('~dynamic_frame_list',
+                                                              BasicObjectArray,
+                                                              queue_size=10,
+                                                              latch=True)
         self.dynamic_frame_manager.restore_publisher()
         # Publisher dynamic frames
         self.dynamic_frame_manager.publish_frames()
@@ -257,6 +263,7 @@ class PoseHandlerNode:
                                                      frame.description,
                                                      frame.poses,
                                                      frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -271,6 +278,7 @@ class PoseHandlerNode:
                                                       frame.description,
                                                       frame.points,
                                                       frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -282,6 +290,7 @@ class PoseHandlerNode:
                         "Can't remove a dynamic frame which belong to a workspace")
             try:
                 self.remove_dynamic_frame(frame.name, frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -301,6 +310,7 @@ class PoseHandlerNode:
                 if frame.new_name != '':
                     self.dynamic_frame_manager.edit_name(frame.name, frame.new_name)
 
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
@@ -314,14 +324,6 @@ class PoseHandlerNode:
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), None
 
-    def __callback_get_dynamic_frame_list(self, _):
-        try:
-            dynamic_frame_list, description_list = self.get_available_dynamic_frame_w_description()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting dynamic frames list: {}".format(e))
-            dynamic_frame_list = description_list = []
-        return {"name_list": dynamic_frame_list, "description_list": description_list}
-
     def __callback_get_transform_pose(self, req):
         try:
             pose = [req.position.x, req.position.y, req.position.z, req.rpy.roll, req.rpy.pitch, req.rpy.yaw]
@@ -332,6 +334,14 @@ class PoseHandlerNode:
             rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
             position = rpy = []
             return CommandStatus.CONVERT_FAILED, str(e), position, rpy
+
+    def __publish_dynamic_frame_list(self):
+        dynamic_frame_array = BasicObjectArray()
+        dynamic_frame_array.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(*self.get_available_dynamic_frame_w_description())
+        ]
+        self.__dynamic_frame_list_publisher.publish(dynamic_frame_array)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
