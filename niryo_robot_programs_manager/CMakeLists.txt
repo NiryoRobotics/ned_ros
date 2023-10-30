@@ -10,9 +10,9 @@ execute_process( COMMAND
     )
 
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
-  genmsg
   actionlib_msgs
+  genmsg
+  message_generation
 )
 
 add_message_files(
@@ -49,6 +49,7 @@ generate_messages(
 catkin_package(
   CATKIN_DEPENDS
     message_runtime
+    actionlib_msgs
 )
 
 include_directories(
