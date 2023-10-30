@@ -1,6 +1,6 @@
 import os
 from threading import Thread
-from typing import Dict, Any, TypedDict, List
+from typing import TypedDict, List
 from uuid import uuid4
 from tempfile import NamedTemporaryFile
 
@@ -113,7 +113,7 @@ class ProgramsManager:
         self.__execute(self.__python_manager.path_from_name(program_id))
 
     def execute_from_code(self, python_code: str) -> None:
-        with NamedTemporaryFile(prefix='tmp_program', mode='w') as program_file:
+        with NamedTemporaryFile(prefix='tmp_program', suffix='.py', mode='w') as program_file:
             program_file.write(python_code)
             self.__execute(program_file.name)
 
