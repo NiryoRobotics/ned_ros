@@ -13,7 +13,7 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
-from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
+from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction, TrajectoryArray
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
@@ -84,6 +84,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
+        self.__trajectories_ntv = NiryoTopicValue('/niryo_robot_arm_commander/trajectory_list', TrajectoryArray)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -882,8 +883,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of trajectory name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_arm_commander/get_trajectory_list', GetNameDescriptionList)
-        return result.name_list
+        return [trajectory.name for trajectory in self.__trajectories_ntv.value.trajectories]
 
     def execute_registered_trajectory(self, trajectory_name):
         """

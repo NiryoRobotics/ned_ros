@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-from re import M
-from tabnanny import check
 import rospy
 from threading import Lock, Thread
 
-from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
+from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_msgs.srv import GetNameDescriptionList
 
 from std_msgs.msg import Int32, Bool, Header
@@ -16,6 +14,7 @@ from end_effector_interface.msg import EEButtonStatus
 from .trajectory_file_manager import TrajectoryFileManager
 from .command_enums import ArmCommanderException
 from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest, GetTrajectory
+from niryo_robot_arm_commander.msg import Trajectory, TrajectoryArray
 
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 
@@ -36,31 +35,30 @@ class TrajectoryHandlerNode:
         # - Subscribers
         self.__save_pos_button_topic = rospy.Subscriber(
             '/niryo_robot_hardware_interface/end_effector_interface/save_pos_button_status',
-            EEButtonStatus, self.__callback_save_pos_button_status)
+            EEButtonStatus,
+            self.__callback_save_pos_button_status)
 
         # - Publisher
-        self.save_trajectory_publisher = rospy.Publisher(
-            "/niryo_robot/blockly/save_trajectory", Int32, queue_size=10)
-        self.__learning_trajectory_publisher = rospy.Publisher(
-            '~learning_trajectory', Bool, queue_size=10)
+        self.save_trajectory_publisher = rospy.Publisher("/niryo_robot/blockly/save_trajectory", Int32, queue_size=10)
+        self.__learning_trajectory_publisher = rospy.Publisher('~learning_trajectory', Bool, queue_size=10)
+        self.__trajectory_list_publisher = rospy.Publisher('~trajectory_list',
+                                                           TrajectoryArray,
+                                                           queue_size=10,
+                                                           latch=True)
 
         # Services
-        self.traj_file_manager = TrajectoryFileManager(
-            rospy.get_param("/niryo_robot_poses_handlers/trajectories_dir"))
-        rospy.Service('~manage_trajectory', ManageTrajectory,
-                      self.__callback_manage_trajectory)
-        rospy.Service('~get_trajectory', GetTrajectory,
-                      self.__callback_get_trajectory)
-        rospy.Service('~get_trajectory_list', GetNameDescriptionList,
-                      self.__callback_get_trajectory_list)
+        self.traj_file_manager = TrajectoryFileManager(rospy.get_param("/niryo_robot_poses_handlers/trajectories_dir"))
+        rospy.Service('~manage_trajectory', ManageTrajectory, self.__callback_manage_trajectory)
+        rospy.Service('~get_trajectory', GetTrajectory, self.__callback_get_trajectory)
 
         rospy.on_shutdown(self.stop_record)
+
+        self.__publish_trajectory_list()
 
     def save_trajectory(self, trajectory, trajectory_name="last_executed_trajectory", description="", auto=True):
         if self.check_trajectory_existence(trajectory_name) and not auto:
             return False
-        self.create_trajectory_file(
-            str(trajectory_name), str(description), trajectory.points)
+        self.create_trajectory_file(str(trajectory_name), str(description), trajectory.points)
         return True
 
     def update_trajectory(self, name="", description="", new_name=""):
@@ -70,8 +68,7 @@ class TrajectoryHandlerNode:
                 if (not self.check_trajectory_existence(new_name) and name != new_name) or (name == new_name):
                     trajectory = self.get_trajectory(name)
                     self.remove_trajectory_file(name)
-                    self.create_trajectory_file(
-                        new_name, description, trajectory.points)
+                    self.create_trajectory_file(new_name, description, trajectory.points)
                 else:
                     status = False
             else:
@@ -97,6 +94,7 @@ class TrajectoryHandlerNode:
         :return: None
         """
         self.traj_file_manager.create(str(name), points, str(description))
+        self.__publish_trajectory_list()
 
     def get_trajectory(self, name):
         """
@@ -109,12 +107,9 @@ class TrajectoryHandlerNode:
         """
         traj_read = self.traj_file_manager.read(str(name))
         list_poses_raw = traj_read.list_poses
-        return JointTrajectory(
-            header=Header(stamp=rospy.Time.now()),
-            joint_names=rospy.get_param("~joint_names"),
-            points=[JointTrajectoryPoint(positions=pose_raw)
-                    for pose_raw in list_poses_raw]
-        )
+        return JointTrajectory(header=Header(stamp=rospy.Time.now()),
+                               joint_names=rospy.get_param("~joint_names"),
+                               points=[JointTrajectoryPoint(positions=pose_raw) for pose_raw in list_poses_raw])
 
     def get_trajectory_first_point(self, name):
         """
@@ -148,6 +143,7 @@ class TrajectoryHandlerNode:
         :return: None
         """
         self.traj_file_manager.remove(str(name))
+        self.__publish_trajectory_list()
 
     def get_available_trajectories_w_description(self):
         """
@@ -165,12 +161,12 @@ class TrajectoryHandlerNode:
                 self.__learning_trajectory_publisher.publish(True)
                 self.__arm_state.force_learning_mode(True)
 
-                trajectory = JointTrajectory(
-                    header=Header(), joint_names=rospy.get_param("~joint_names"), points=[])
+                trajectory = JointTrajectory(header=Header(), joint_names=rospy.get_param("~joint_names"), points=[])
                 time_ref = rospy.Time.now()
                 while not rospy.is_shutdown() and self.__recording:
-                    trajectory.points.append(JointTrajectoryPoint(time_from_start=rospy.Time.now() - time_ref,
-                                                                  positions=self.__arm_state.joint_states))
+                    trajectory.points.append(
+                        JointTrajectoryPoint(time_from_start=rospy.Time.now() - time_ref,
+                                             positions=self.__arm_state.joint_states))
                     self.__frequency.sleep()
                 self.__recording = False
                 self.__learning_trajectory_publisher.publish(False)
@@ -223,8 +219,7 @@ class TrajectoryHandlerNode:
                     return CommandStatus.TRAJECTORY_HANDLER_RENAME_FAILURE, \
                         "No trajectory to save on hold"
 
-                status = self.update_trajectory(
-                    "last_executed_trajectory", req.description, req.name)
+                status = self.update_trajectory("last_executed_trajectory", req.description, req.name)
                 if status:
                     return CommandStatus.SUCCESS, "Created trajectory '{}'".format(req.name)
                 else:
@@ -234,8 +229,7 @@ class TrajectoryHandlerNode:
                 return CommandStatus.TRAJECTORY_HANDLER_RENAME_FAILURE, str(e)
         elif cmd == req.SAVE:
             try:
-                _status = self.save_trajectory(
-                    req.trajectory, req.name, req.description)
+                _status = self.save_trajectory(req.trajectory, req.name, req.description)
                 if _status:
                     return CommandStatus.SUCCESS, "Saved trajectory '{}'".format(req.name)
                 else:
@@ -258,8 +252,7 @@ class TrajectoryHandlerNode:
                 return CommandStatus.TRAJECTORY_HANDLER_REMOVAL_FAILED, str(e)
         elif cmd == req.UPDATE:
             try:
-                status = self.update_trajectory(
-                    req.name, req.description, req.new_name)
+                status = self.update_trajectory(req.name, req.description, req.new_name)
                 if status:
                     return CommandStatus.SUCCESS, "Updated Trajectory '{}'".format(req.name)
                 else:
@@ -294,8 +287,7 @@ class TrajectoryHandlerNode:
         try:
             trajectory_name_list, description_list = self.get_available_trajectories_w_description()
         except NiryoRobotFileException as e:
-            rospy.logerr(
-                "Trajectory Handlers - Error occured when getting trajectories list: {}".format(e))
+            rospy.logerr("Trajectory Handlers - Error occured when getting trajectories list: {}".format(e))
             trajectory_name_list = description_list = []
         return {"name_list": trajectory_name_list, "description_list": description_list}
 
@@ -314,6 +306,14 @@ class TrajectoryHandlerNode:
             if not self.__record_thread.is_alive():
                 self.__record_thread = Thread(target=self.record)
                 self.__record_thread.start()
+
+    def __publish_trajectory_list(self):
+        trajectory_array = TrajectoryArray()
+        trajectory_array.trajectories = [
+            Trajectory(name=name, description=description) for name,
+            description in zip(*self.get_available_trajectories_w_description())
+        ]
+        self.__trajectory_list_publisher.publish(trajectory_array)
 
     def blockly_save_trajectory(self):
         self.save_trajectory_publisher.publish(Int32(data=1))
