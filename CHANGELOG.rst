@@ -8,6 +8,11 @@ ___________
  * Added a foxglove bridge server
 
 **Improvements**
+ * Refacto of the programs manager
+   * It now uses programs ids to handle the programs
+   * A program is now defined as a python program which can have a blockly program attached
+   * An action server is used to execute a program rather than a service
+   * The autorun and the programs properties are stored in the database
 
 **Bugfixes**
 
