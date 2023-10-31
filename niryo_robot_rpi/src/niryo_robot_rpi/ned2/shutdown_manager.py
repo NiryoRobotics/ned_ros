@@ -21,7 +21,7 @@ from threading import Event, Lock, Timer
 from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, send_reboot_command
 from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
-from niryo_robot_programs_manager.msg import ExecuteProgramAction
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 from .mcp_io_objects import McpIOManager
 
 from std_msgs.msg import String
@@ -88,7 +88,7 @@ class ShutdownManager(AbstractShutdownManager):
             pass
 
         try:
-            action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager/execute_program',
+            action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager_v2/execute_program',
                                                          ExecuteProgramAction)
             action_client.cancel_all_goals()
         except (rospy.ServiceException, rospy.ROSInterruptException, rospy.ROSException):

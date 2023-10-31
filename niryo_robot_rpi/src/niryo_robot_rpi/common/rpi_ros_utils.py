@@ -61,7 +61,7 @@ class LedState:
 
 def send_trigger_program_autorun():
     rospy.loginfo("Trigger program autorun from button")
-    topic_name = "/niryo_robot_programs_manager/execute_program_autorun"
+    topic_name = "/niryo_robot_programs_manager_v2/execute_program_autorun"
     try:
         rospy.wait_for_service(topic_name, 0.1)
         trigger = rospy.ServiceProxy(topic_name, Trigger)

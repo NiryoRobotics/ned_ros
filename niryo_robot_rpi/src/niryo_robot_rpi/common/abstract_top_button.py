@@ -28,7 +28,7 @@ from niryo_robot_arm_commander.msg import PausePlanExecution
 
 # Services
 from niryo_robot_msgs.srv import Trigger, SetInt
-from niryo_robot_programs_manager.msg import ExecuteProgramAction
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 
 class AbstractTopButton(object):
@@ -85,7 +85,7 @@ class AbstractTopButton(object):
 
     @staticmethod
     def _cancel_program_from_program_manager():
-        action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager/execute_program',
+        action_client = actionlib.SimpleActionClient('/niryo_robot_programs_manager_v2/execute_program',
                                                      ExecuteProgramAction)
         action_client.cancel_all_goals()
 

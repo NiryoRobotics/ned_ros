@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 # msg
-from niryo_robot_programs_manager.msg import ExecuteProgramAction, ExecuteProgramGoal
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction, ExecuteProgramGoal
 from niryo_robot_msgs.msg import CommandStatus
 
 # srv
@@ -27,7 +27,7 @@ class AutoDiagnosisReportHandler:
         self.__psutil_wrapper = PsutilWrapper()
 
         self.__execute_program_action_client = actionlib.SimpleActionClient(
-            '/niryo_robot_programs_manager/execute_program', ExecuteProgramAction)
+            '/niryo_robot_programs_manager_v2/execute_program', ExecuteProgramAction)
 
         self.__auto_diagnosis_file = os.path.join(rospkg.RosPack().get_path('niryo_robot_reports'),
                                                   'scripts',

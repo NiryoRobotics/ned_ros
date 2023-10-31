@@ -62,7 +62,7 @@ class RobotStatusObserver(object):
                                                    Bool,
                                                    self.__callback_jog_is_enabled)
 
-        self.program_is_running_sub = rospy.Subscriber('/niryo_robot_programs_manager/execute_program/status',
+        self.program_is_running_sub = rospy.Subscriber('/niryo_robot_programs_manager_v2/execute_program/status',
                                                        GoalStatusArray,
                                                        self.__callback_program_is_running)
 
