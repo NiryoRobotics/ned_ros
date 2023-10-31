@@ -3,6 +3,7 @@ node_logs:
  - '/move_group'
  - '/controller_spawner'
  - '/niryo_robot_programs_manager'
+ - '/niryo_robot_programs_manager_v2'
  - '/niryo_robot_modbus'
  - '/niryo_robot_rpi'
  - '/niryo_robot_user_interface'
@@ -14,6 +15,7 @@ initialisation_params:
  - "/niryo_robot_arm_commander/initialized"
  - "/niryo_robot_poses_handlers/initialized"
  - "/niryo_robot_programs_manager/initialized"
+ - "/niryo_robot_programs_manager_v2/initialized"
  - "/niryo_robot_tools_commander/initialized"
  - "/niryo_robot_user_interface/initialized"
  - "/niryo_robot_vision/initialized"

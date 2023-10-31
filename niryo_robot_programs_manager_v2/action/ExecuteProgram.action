@@ -1,0 +1,11 @@
+# goal
+string program_id
+bool execute_from_string
+string code_string
+---
+# result
+int16 status
+string message
+---
+# feedback
+string output

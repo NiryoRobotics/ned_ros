@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Launching Node -->
+    <include file="$(find niryo_robot_programs_manager_v2)/launch/programs_manager.launch">
+        <arg name="hardware_version" value="ned"/>
+        <arg name="simulation_mode" value="true" />
+    </include>
+    <!-- Launching Test -->
+    <!-- remark : if error with File "/usr/lib/python2.7/hashlib.py", line 134, in <module>
+        install openssl1.0 can solve the pb -->
+    <test test-name="programs_manager" pkg="niryo_robot_programs_manager_v2" type="test_programs_manager.py"/>
+</launch>
