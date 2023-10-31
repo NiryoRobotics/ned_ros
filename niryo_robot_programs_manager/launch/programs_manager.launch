@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+    <arg name="standalone" default="false"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false" />
+
+    <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(arg simulation_mode)"/>
+    <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(arg simulation_mode)"/>
+
+    <arg name="programs_dir" value="$(arg saved_files_dir)/niryo_robot_programs" />
+
+    <include file="$(find niryo_robot_programs_manager)/launch/programs_manager_base.launch.xml" />
+
+    <node name="niryo_robot_programs_manager" pkg="niryo_robot_programs_manager" type="programs_manager_node.py"
+          output="screen">
+        <param name="log_level" type="string" value="$(arg log_level)" />
+
+        <param name="standalone" type="bool" value="$(arg standalone)"/>
+        <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
+    </node>
+    
+</launch>

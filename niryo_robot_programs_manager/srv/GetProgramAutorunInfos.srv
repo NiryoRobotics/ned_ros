@@ -1,0 +1,12 @@
+---
+int32 status
+string message
+
+niryo_robot_programs_manager/ProgramLanguage language
+string name
+
+# Mode
+int8 ONE_SHOT = 1
+int8 LOOP = 2
+
+int8 mode

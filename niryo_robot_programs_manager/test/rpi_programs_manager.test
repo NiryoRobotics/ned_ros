@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Launching Node -->
+    <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
+    </include>
+    <!-- Launching Test -->
+    <test test-name="programs_manager" pkg="niryo_robot_programs_manager" type="test_programs_manager.py"/>
+</launch>

@@ -1,0 +1,18 @@
+# Command
+int32 SAVE = 1
+int32 DELETE = -1
+int8 cmd
+
+# Program Name
+string name
+
+# - Creation
+niryo_robot_programs_manager/ProgramLanguage language
+
+string code
+string description
+
+bool allow_overwrite
+---
+int16 status
+string message

@@ -1,0 +1,16 @@
+# Program language
+niryo_robot_programs_manager/ProgramLanguage language
+
+# Program Name
+string name
+
+# Mode
+int8 DISABLE = 0
+int8 ONE_SHOT = 1
+int8 LOOP = 2
+
+int8 mode
+
+---
+int16 status
+string message

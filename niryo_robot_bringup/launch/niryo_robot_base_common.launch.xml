@@ -81,6 +81,11 @@
         <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
+    <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
+    </include>
+
     <include file="$(find niryo_robot_programs_manager_v2)/launch/programs_manager.launch">
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="log_level" value="$(arg log_level)"/>

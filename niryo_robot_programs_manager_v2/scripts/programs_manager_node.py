@@ -16,10 +16,10 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
 from niryo_robot_programs_manager_v2.msg import (ProgramList,
-                                              ExecuteProgramResult,
-                                              Program,
-                                              ExecuteProgramFeedback,
-                                              ExecuteProgramGoal)
+                                                 ExecuteProgramResult,
+                                                 Program,
+                                                 ExecuteProgramFeedback,
+                                                 ExecuteProgramGoal)
 from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 # Services
@@ -253,7 +253,7 @@ class ProgramManagerNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node('niryo_programs_manager', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node('niryo_programs_manager_v2', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter
     log_level = rospy.get_param("~log_level")
