@@ -9,27 +9,27 @@ import logging
 import os
 
 from actionlib_msgs.msg import GoalStatus
-from niryo_robot_programs_manager.ProgramsManager import ProgramsManager
+from niryo_robot_programs_manager_v2.ProgramsManager import ProgramsManager
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from niryo_robot_programs_manager.msg import (ProgramList,
+from niryo_robot_programs_manager_v2.msg import (ProgramList,
                                               ExecuteProgramResult,
                                               Program,
                                               ExecuteProgramFeedback,
                                               ExecuteProgramGoal)
-from niryo_robot_programs_manager.msg import ExecuteProgramAction
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 # Services
 from niryo_robot_msgs.srv import Trigger, GetString
 from niryo_robot_database.srv import GetSettings, SetSettings
 
-from niryo_robot_programs_manager.srv import GetProgram, GetProgramResponse
-from niryo_robot_programs_manager.srv import GetProgramAutorunInfos
-from niryo_robot_programs_manager.srv import CreateProgram, DeleteProgram
-from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest
+from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse
+from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
+from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram
+from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAutorunRequest
 
 
 class ProgramManagerNode:

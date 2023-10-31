@@ -5,10 +5,10 @@ import os
 import unittest
 import shutil
 
-from niryo_robot_programs_manager.srv import GetProgram, GetProgramRequest, CreateProgramRequest, CreateProgram, \
+from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramRequest, CreateProgramRequest, CreateProgram, \
     DeleteProgramRequest, DeleteProgram
-from niryo_robot_programs_manager.srv import GetProgramAutorunInfos
-from niryo_robot_programs_manager.srv import SetProgramAutorun
+from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
+from niryo_robot_programs_manager_v2.srv import SetProgramAutorun
 
 
 def call_service(service_name, service_msg_type, *args):
@@ -59,19 +59,19 @@ class TestProgramManagerAbstract(unittest.TestCase):
         req.name = name
         req.python_code = code
         req.description = description
-        return call_service('/niryo_robot_programs_manager/create_program', CreateProgram, req)
+        return call_service('/niryo_robot_programs_manager_v2/create_program', CreateProgram, req)
 
     @classmethod
     def delete_program(cls, id_):
         req = DeleteProgramRequest()
         req.program_id = id_
-        return call_service('/niryo_robot_programs_manager/delete_program', DeleteProgram, req)
+        return call_service('/niryo_robot_programs_manager_v2/delete_program', DeleteProgram, req)
 
     @classmethod
     def get_program(cls, id_):
         req = GetProgramRequest()
         req.program_id = id_
-        return call_service('/niryo_robot_programs_manager/get_program', GetProgram, req)
+        return call_service('/niryo_robot_programs_manager_v2/get_program', GetProgram, req)
 
     # - Abstract test methods
 
@@ -128,10 +128,10 @@ class TestBlocklyManager(TestProgramManagerAbstract):
 
 
 if __name__ == '__main__':
-    while not rospy.has_param('/niryo_robot_programs_manager/initialized'):
+    while not rospy.has_param('/niryo_robot_programs_manager_v2/initialized'):
         rospy.sleep(0.10)
 
-    programs_dir = os.path.expanduser(rospy.get_param('/niryo_robot_programs_manager/programs_dir'))
+    programs_dir = os.path.expanduser(rospy.get_param('/niryo_robot_programs_manager_v2/programs_dir'))
     python3_dir = os.path.join(programs_dir, "python3")
     blockly_dir = os.path.join(programs_dir, "blockly")
     # Going to execute all unittest.TestCase subclasses in the file -> Import are also concerned

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_programs_manager)
+project(niryo_robot_programs_manager_v2)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 #retrieve architecture
