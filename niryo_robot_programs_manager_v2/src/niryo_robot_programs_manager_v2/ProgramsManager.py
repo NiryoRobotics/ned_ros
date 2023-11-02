@@ -79,6 +79,18 @@ class ProgramsManager:
         if program['has_blockly']:
             self.__blockly_manager.remove(program_id)
 
+    def update_program(self,
+                       program_id: str,
+                       name: str,
+                       description: str,
+                       python_code: str,
+                       blockly_code: str = '') -> None:
+        has_blockly = blockly_code != ''
+        self.__database.update_program(program_id, name, description, has_blockly)
+        self.__python_manager.edit(program_id, python_code)
+        if has_blockly:
+            self.__blockly_manager.edit(program_id, blockly_code)
+
     def exists(self, program_id: str) -> bool:
         return self.__database.exists(program_id) and self.__python_manager.exists(program_id)
 

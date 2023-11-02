@@ -15,11 +15,8 @@ from niryo_robot_programs_manager_v2.ProgramsManager import ProgramsManager
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from niryo_robot_programs_manager_v2.msg import (ProgramList,
-                                                 ExecuteProgramResult,
-                                                 Program,
-                                                 ExecuteProgramFeedback,
-                                                 ExecuteProgramGoal)
+from niryo_robot_programs_manager_v2.msg import Program, ProgramList
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramResult, ExecuteProgramFeedback, ExecuteProgramGoal
 from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 # Services
@@ -28,7 +25,7 @@ from niryo_robot_database.srv import GetSettings, SetSettings
 
 from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse
 from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
-from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram
+from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram, UpdateProgram
 from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAutorunRequest
 
 
@@ -87,6 +84,7 @@ class ProgramManagerNode:
         # Services
         rospy.Service('~create_program', CreateProgram, self.__callback_create_program)
         rospy.Service('~delete_program', DeleteProgram, self.__callback_delete_program)
+        rospy.Service('~update_program', UpdateProgram, self.__callback_update_program)
         rospy.Service('~get_program', GetProgram, self.__callback_get_program)
         rospy.Service('~stop_execution', Trigger, self.__callback_stop_execution)
 
@@ -120,6 +118,16 @@ class ProgramManagerNode:
         self.__programs_manager.delete_program(req.program_id)
         self.__publish_program_list()
         return CommandStatus.SUCCESS, 'Program successfully deleted'
+
+    def __callback_update_program(self, req):
+        if not self.__programs_manager.exists(req.program_id):
+            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, f'No program with id {req.program_id}'
+        self.__programs_manager.update_program(req.program_id,
+                                               req.name,
+                                               req.description,
+                                               req.python_code,
+                                               req.blockly_code)
+        return CommandStatus.SUCCESS, 'Program successfully updated'
 
     def __callback_get_program(self, req):
         resp = GetProgramResponse()
