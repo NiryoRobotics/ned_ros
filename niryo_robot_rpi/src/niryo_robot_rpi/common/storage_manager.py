@@ -23,7 +23,7 @@ import rospy
 import subprocess
 
 from niryo_robot_rpi.msg import StorageStatus, LogStatus
-from niryo_robot_msgs.srv import Trigger, SetBool
+from niryo_robot_msgs.srv import SetInt
 
 from niryo_robot_database.srv import GetSettings, SetSettings
 
@@ -55,10 +55,10 @@ class StorageManager:
 
         self.__update_run_ids_file()
 
-        self.purge_log_server = rospy.Service('/niryo_robot_rpi/purge_ros_logs', Trigger, self.callback_purge_log)
+        self.purge_log_server = rospy.Service('/niryo_robot_rpi/purge_ros_logs', SetInt, self.callback_purge_log)
 
         self.change_purge_log_on_startup_server = rospy.Service('/niryo_robot_rpi/set_purge_ros_log_on_startup',
-                                                                SetBool,
+                                                                SetInt,
                                                                 self.callback_change_purge_log_on_startup)
 
         self.storage_status_publisher = rospy.Publisher('/niryo_robot_rpi/storage_status', StorageStatus, queue_size=10)
@@ -140,7 +140,7 @@ class StorageManager:
 
     def callback_change_purge_log_on_startup(self, req):
         set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting_service(name='purge_ros_logs', value=req.value, type='bool')
+        set_setting_service(name='purge_ros_logs', value=req.value == 1, type='bool')
         return self.create_response(200, "Purge log on startup value has been changed")
 
     def publish_storage_status(self, _):
