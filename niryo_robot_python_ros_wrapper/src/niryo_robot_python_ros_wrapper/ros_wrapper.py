@@ -43,7 +43,7 @@ def move_command(move_function):
 
         # check if a collision happened during the move
         if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
-            status, message = result
+            _, message = result
             raise NiryoRosWrapperException(message)
         return result
 
@@ -64,7 +64,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         if self.__hardware_version in ['ned', 'ned2']:
             self.__node_name = rospy.get_name()
-            self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
+            rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
             rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
             self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
             self.__advertise_ros_wrapper_srv(self.__node_name, True)
@@ -86,8 +86,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
-        self.__trajectories_ntv = NiryoTopicValue('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray)
-        self.__dynamic_frame_ntv = NiryoTopicValue('/niryo_robot_arm_commander/dynamic_frame_list', BasicObjectArray)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -162,7 +160,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if self.__hardware_version in ['ned', 'ned2']:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
-            except [rospy.ServiceException, rospy.ROSException]:
+            except (rospy.ServiceException, rospy.ROSException):
                 pass
 
     def __ping_ros_wrapper_callback(self):
@@ -886,7 +884,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of trajectory name
         :rtype: list[str]
         """
-        return [trajectory.name for trajectory in self.__trajectories_ntv.value.trajectories]
+        trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
+        return [trajectory.name for trajectory in trajectories]
 
     def execute_registered_trajectory(self, trajectory_name):
         """
@@ -1240,6 +1239,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return [name, description, [position.x, position.y, position.z, rpy.roll, rpy.pitch, rpy.yaw]]
 
+    @staticmethod
     def get_saved_dynamic_frame_list(self):
         """
         Get list of saved dynamic frames
@@ -1247,7 +1247,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
-        dynamic_frame_list = self.__dynamic_frame_ntv.value
+        dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
+                                                    BasicObjectArray,
+                                                    2)
         names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list]
         descriptions = [dynamic_frame.description for dynamic_frame in dynamic_frame_list]
         return names, descriptions
@@ -1312,8 +1314,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type pitch: float
         :param yaw:
         :type yaw: float
-        :return: status, message
-        :rtype: (int, str)
+        :return: point, rotation
+        :rtype: (Position, RPY)
         """
         import tf
         import geometry_msgs
