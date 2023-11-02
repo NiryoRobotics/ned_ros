@@ -749,7 +749,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
 
-    def get_saved_pose_list(self, with_desc=False):
+    @staticmethod
+    def get_saved_pose_list(with_desc=False):
         """
         Asks the pose manager service which positions are available
 
@@ -758,11 +759,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of positions name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_pose_list', GetNameDescriptionList)
+        pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
+        names = [pose.name for pose in pose_list]
         if with_desc:
-            return result.name_list, result.description_list
-
-        return result.name_list
+            descriptions = [pose.description for pose in pose_list]
+            return names, descriptions
+        return names
 
     # - Pick/Place
 

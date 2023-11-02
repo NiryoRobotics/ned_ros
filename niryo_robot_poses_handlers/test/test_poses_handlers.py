@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
-import os
 import rospy
 import rostest
-import shutil
-import unittest
 
 from niryo_robot_poses_handlers.test_pure_python_poses_handlers import *
 
-from geometry_msgs.msg import Pose, Point, Quaternion
-from niryo_robot_msgs.msg import RPY, RobotState
+from geometry_msgs.msg import Point, Quaternion
+from niryo_robot_msgs.msg import RPY, RobotState, BasicObjectArray
 
 from niryo_robot_msgs.srv import GetNameDescriptionList
 
@@ -77,7 +74,9 @@ class TestServicePose(TestPoseHandlerAbstract):
 
     @staticmethod
     def get_pose_list():
-        return call_service('/niryo_robot_poses_handlers/get_pose_list', GetNameDescriptionList).name_list
+        pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
+        names = [pose.name for pose in pose_list]
+        return names
 
     @staticmethod
     def get_pose(name):
@@ -115,7 +114,8 @@ class TestServicePose(TestPoseHandlerAbstract):
             self.assertStatus(ret_get_pos)
             p = ret_get_pos.pose
 
-            self.assertEqual([p.position.x, p.position.y, p.position.z, p.rpy.roll, p.rpy.pitch, p.rpy.yaw], pose,
+            self.assertEqual([p.position.x, p.position.y, p.position.z, p.rpy.roll, p.rpy.pitch, p.rpy.yaw],
+                             pose,
                              "Read Failed")
 
             list_names.append(name)
@@ -138,8 +138,7 @@ class TestServiceWorkspace(TestPoseHandlerAbstract):
         poses = ret.poses
         list_p_raw = []
         for p in poses:
-            pose = [[p.position.x, p.position.y, p.position.z],
-                    [p.rpy.roll, p.rpy.pitch, p.rpy.yaw]]
+            pose = [[p.position.x, p.position.y, p.position.z], [p.rpy.roll, p.rpy.pitch, p.rpy.yaw]]
             list_p_raw.append(pose)
         return ret, list_p_raw
 

@@ -79,7 +79,8 @@ class PoseHandlerNode:
 
         rospy.Service('~manage_pose', ManagePose, self.__callback_manage_pose)
         rospy.Service('~get_pose', GetPose, self.__callback_get_pose)
-        rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_position_list)
+        self.__pose_list_publisher = rospy.Publisher('~pose_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__publish_pose_list()
 
         # Dynamic Frame
         self.__tf_listener = None
@@ -210,13 +211,6 @@ class PoseHandlerNode:
             return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
 
     # Position
-    def __callback_get_position_list(self, _):
-        try:
-            pos_list, description_list = self.get_available_poses()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting position list: {}".format(e))
-            pos_list = description_list = []
-        return {"name_list": pos_list, "description_list": description_list}
 
     def __callback_get_pose(self, req):
         try:
@@ -237,12 +231,14 @@ class PoseHandlerNode:
         if cmd == req.SAVE:
             try:
                 self.create_pose(pose.name, pose.description, pose.joints, pose.position, pose.rpy, pose.orientation)
+                self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
             try:
                 self.remove_pose(pose.name)
+                self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Removed Position '{}'".format(pose.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -342,6 +338,13 @@ class PoseHandlerNode:
             description in zip(*self.get_available_dynamic_frame_w_description())
         ]
         self.__dynamic_frame_list_publisher.publish(dynamic_frame_array)
+
+    def __publish_pose_list(self):
+        pose_array = BasicObjectArray()
+        pose_array.objects = [
+            BasicObject(name=name, description=description) for name, description in zip(*self.get_available_poses())
+        ]
+        self.__pose_list_publisher.publish(pose_array)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
