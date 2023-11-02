@@ -2,7 +2,6 @@ import os
 from threading import Thread
 from typing import TypedDict, List
 from uuid import uuid4
-from tempfile import NamedTemporaryFile
 
 import rospy
 from niryo_robot_database.Program import Program
@@ -125,9 +124,8 @@ class ProgramsManager:
         self.__execute(self.__python_manager.get_file_path(program_id))
 
     def execute_from_code(self, python_code: str) -> None:
-        with NamedTemporaryFile(prefix='tmp_program_', suffix='.py', mode='w') as program_file:
-            program_file.write(python_code)
-            self.__execute(program_file.name)
+        with self.__python_manager.temporary_file(python_code) as tmp_file:
+            self.__execute(tmp_file)
 
     def stop_execution(self) -> None:
         self.__python_runner.stop()

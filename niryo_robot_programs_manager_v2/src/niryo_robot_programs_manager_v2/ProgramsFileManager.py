@@ -1,5 +1,7 @@
-from typing import List
+from contextlib import contextmanager
 from pathlib import Path
+from tempfile import NamedTemporaryFile
+from typing import List, Generator
 
 
 class ProgramFileException(Exception):
@@ -153,3 +155,9 @@ class ProgramsFileManager(object):
 
     def get_file_path(self, name: str) -> str:
         return str(self._path_from_name(name))
+
+    @contextmanager
+    def temporary_file(self, code) -> Generator[str]:
+        with NamedTemporaryFile(prefix='tmp_program_', suffix=self.__extension, mode='w') as program_file:
+            program_file.write(code)
+            yield str(program_file)
