@@ -105,15 +105,15 @@ class ProgramsManager:
     def execution_is_success(self) -> bool:
         return self.__python_runner.exit_status == 0
 
-    def __execute(self, path) -> None:
+    def __execute(self, path: str) -> None:
         self.__execution_thread = Thread(target=self.__python_runner.start, args=[path], daemon=True)
         self.__execution_thread.start()
 
     def execute_from_id(self, program_id: str) -> None:
-        self.__execute(self.__python_manager.path_from_name(program_id))
+        self.__execute(self.__python_manager.get_file_path(program_id))
 
     def execute_from_code(self, python_code: str) -> None:
-        with NamedTemporaryFile(prefix='tmp_program', suffix='.py', mode='w') as program_file:
+        with NamedTemporaryFile(prefix='tmp_program_', suffix='.py', mode='w') as program_file:
             program_file.write(python_code)
             self.__execute(program_file.name)
 
