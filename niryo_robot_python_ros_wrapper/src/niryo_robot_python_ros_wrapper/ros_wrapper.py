@@ -760,9 +760,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: list[str]
         """
         pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
-        names = [pose.name for pose in pose_list]
+        names = [pose.name for pose in pose_list.objects]
         if with_desc:
-            descriptions = [pose.description for pose in pose_list]
+            descriptions = [pose.description for pose in pose_list.objects]
             return names, descriptions
         return names
 
@@ -887,7 +887,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: list[str]
         """
         trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
-        return [trajectory.name for trajectory in trajectories]
+        return [trajectory.name for trajectory in trajectories.objects]
 
     def execute_registered_trajectory(self, trajectory_name):
         """
@@ -1252,8 +1252,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
                                                     BasicObjectArray,
                                                     2)
-        names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list]
-        descriptions = [dynamic_frame.description for dynamic_frame in dynamic_frame_list]
+        names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list.objects]
+        descriptions = [dynamic_frame.description for dynamic_frame in dynamic_frame_list.objects]
         return names, descriptions
 
     def __transform_pose(self, pose_local_frame, local_frame, source_frame):

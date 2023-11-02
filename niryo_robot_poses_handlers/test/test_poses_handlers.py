@@ -75,7 +75,7 @@ class TestServicePose(TestPoseHandlerAbstract):
     @staticmethod
     def get_pose_list():
         pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
-        names = [pose.name for pose in pose_list]
+        names = [pose.name for pose in pose_list.objects]
         return names
 
     @staticmethod
