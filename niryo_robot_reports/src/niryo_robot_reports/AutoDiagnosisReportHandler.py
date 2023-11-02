@@ -26,7 +26,7 @@ class AutoDiagnosisReportHandler:
         self.__tuptime_wrapper = TuptimeWrapper()
         self.__psutil_wrapper = PsutilWrapper()
 
-        self.__execute_program_action_client = actionlib.SimpleActionClient(
+        self.__execute_program_action_client = actionlib.ActionClient(
             '/niryo_robot_programs_manager_v2/execute_program', ExecuteProgramAction)
 
         self.__auto_diagnosis_file = os.path.join(rospkg.RosPack().get_path('niryo_robot_reports'),
@@ -37,8 +37,8 @@ class AutoDiagnosisReportHandler:
 
     def __run_auto_diagnosis_callback(self, _req):
         if not os.path.isfile(self.__auto_diagnosis_file):
-            return CommandStatus.FILE_NOT_FOUND, \
-                   'Auto-diagnosis file not found at {}'.format(self.__auto_diagnosis_file)
+            msg = 'Auto-diagnosis file not found at {}'.format(self.__auto_diagnosis_file)
+            return CommandStatus.FILE_NOT_FOUND, msg
 
         with open(self.__auto_diagnosis_file, 'r') as f:
             code_string = f.read()
@@ -47,12 +47,14 @@ class AutoDiagnosisReportHandler:
         output = ''
 
         def feedback_cb(feedback):
-            output = feedback.output[-1]
+            nonlocal output
+            output = feedback.output
 
-        self.__execute_program_action_client.send_goal(ExecuteProgramGoal(execute_from_string=True,
-                                                                          code_string=code_string),
-                                                       feedback_cb=feedback_cb)
-        self.__execute_program_action_client.wait_for_result()
+        client_goal_handle = self.__execute_program_action_client.send_goal(ExecuteProgramGoal(execute_from_string=True,
+                                                                                               code_string=code_string),
+                                                                            feedback_cb=feedback_cb)
+        while client_goal_handle.get_comm_state() != actionlib.CommState.DONE:
+            rospy.sleep(0.1)
 
         serialized_json = output[output.index('{')::].rstrip()
         try:
