@@ -130,7 +130,9 @@ class TestServiceWorkspace(TestPoseHandlerAbstract):
 
     @staticmethod
     def get_workspace_list():
-        return call_service('/niryo_robot_poses_handlers/get_workspace_list', GetNameDescriptionList).name_list
+        workspace_list = rospy.wait_for_message('workspace_list', BasicObjectArray, 2)
+        names = [workspace.name for workspace in workspace_list.objects]
+        return names
 
     @staticmethod
     def get_workspace_poses(name):

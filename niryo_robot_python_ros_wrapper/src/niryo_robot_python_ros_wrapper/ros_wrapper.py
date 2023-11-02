@@ -2271,17 +2271,20 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self._check_result_status(result)
         return result.ratio
 
-    def get_workspace_list(self, with_desc=False):
+    @staticmethod
+    def get_workspace_list(with_desc=False):
         """
         Asks the workspace manager service names of the available workspace
 
         :return: list of workspaces name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_list', GetNameDescriptionList)
+        workspace_list = rospy.wait_for_message('/niryo_robot_workspaces_handlers/workspace_list', BasicObjectArray, 2)
+        names = [workspace.name for workspace in workspace_list.objects]
         if with_desc:
-            return result.name_list, result.description_list
-        return result.name_list
+            descriptions = [workspace.description for workspace in workspace_list.objects]
+            return names, descriptions
+        return names
 
     # - Software
 

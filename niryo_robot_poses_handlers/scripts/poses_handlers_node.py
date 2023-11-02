@@ -104,10 +104,11 @@ class PoseHandlerNode:
         self.__ws_manager = WorkspaceManager(ws_dir)
         rospy.Service('~manage_workspace', ManageWorkspace, self.__callback_manage_workspace)
         rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
-        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
         rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
         rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
+        self.__workspace_list_publisher = rospy.Publisher('workspace_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__publish_workspace_list()
 
         if rospy.has_param('~gazebo_workspaces'):
             for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
@@ -140,10 +141,11 @@ class PoseHandlerNode:
                     len(workspace.poses))
             try:
                 self.create_workspace(workspace.name, workspace.description, workspace.poses)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Created workspace '{}'".format(workspace.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
-            except (ValueError, Exception) as e:
+            except Exception as e:
                 return CommandStatus.WORKSPACE_CREATION_FAILED, str(e)
 
         elif cmd == req.SAVE_WITH_POINTS:
@@ -152,6 +154,7 @@ class PoseHandlerNode:
                     len(workspace.points))
             try:
                 self.create_workspace_from_points(workspace.name, workspace.description, workspace.points)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Created workspace '{}'".format(workspace.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -160,6 +163,7 @@ class PoseHandlerNode:
         elif cmd == req.DELETE:
             try:
                 self.remove_workspace(workspace.name)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Removed workspace '{}'".format(workspace.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -172,14 +176,6 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", ratio
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), 0
-
-    def __callback_workspace_list(self, _):
-        try:
-            ws_list, description_list = self.get_available_workspaces()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting workspace list: {}".format(e))
-            ws_list = description_list = []
-        return {"name_list": ws_list, "description_list": description_list}
 
     def __callback_get_workspace_poses(self, req):
         try:
@@ -201,6 +197,14 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", position_matrix, orientation_matrix
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), [], []
+
+    def __publish_workspace_list(self):
+        workspace_array = BasicObjectArray()
+        workspace_array.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(*self.get_available_workspaces())
+        ]
+        self.__workspace_list_publisher.publish(workspace_array)
 
     # Grips
     def __callback_target_pose(self, req):
