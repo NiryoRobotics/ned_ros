@@ -191,7 +191,7 @@ class VisionNode:
         if req.clearing:
             marker = create_clear_all_marker(rospy.Time.now())
             self.__publisher_rviz.publish([marker])
-            return CommandStatus.SUCCESS
+            return CommandStatus.SUCCESS, 'Successfully cleared markers'
         else:
             # Get workspace matrix
             rospy.wait_for_service('/niryo_robot_poses_handlers/get_workspace_matrix_poses')
@@ -278,7 +278,7 @@ class VisionNode:
             if img is None:
                 message = 'Try to get object relative pose while stream is not running !'
                 rospy.logwarn(f'Vision Node - {message}')
-                return CommandStatus.VIDEO_STREAM_NOT_RUNNING, message, ObjectPose(), "", "", CompressedImage()
+                return CommandStatus.VIDEO_STREAM_NOT_RUNNING, message
 
             # Detect  object
             index = 11
@@ -329,7 +329,7 @@ class VisionNode:
                         list_clear_marker.append(create_clear_marker(i, time_object))
                     self.__publisher_rviz.publish(list_clear_marker)
 
-        return status
+        return status, ''
 
 
 if __name__ == '__main__':
