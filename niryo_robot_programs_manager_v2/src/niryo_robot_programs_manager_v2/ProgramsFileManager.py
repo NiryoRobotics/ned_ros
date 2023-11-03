@@ -56,7 +56,7 @@ class ProgramsFileManager(object):
         """
         file_path = self.__programs_dir.joinpath(name).with_suffix(self.__extension)
         if check_exists and not file_path.is_file():
-            raise FileDoesNotExistException(f"File '{name}' does not exist")
+            raise FileDoesNotExistException(f'File with name "{name}" does not exist')
         return file_path
 
     def read(self, name: str) -> str:
@@ -157,7 +157,8 @@ class ProgramsFileManager(object):
         return str(self._path_from_name(name))
 
     @contextmanager
-    def temporary_file(self, code) -> Generator[str]:
-        with NamedTemporaryFile(prefix='tmp_program_', suffix=self.__extension, mode='w') as program_file:
+    def temporary_file(self, code: str) -> Generator[str, None, None]:
+        with NamedTemporaryFile(suffix=self.__extension, mode='w') as program_file:
             program_file.write(code)
-            yield str(program_file)
+            program_file.flush()
+            yield program_file.name
