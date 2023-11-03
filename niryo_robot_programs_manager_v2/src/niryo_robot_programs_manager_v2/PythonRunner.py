@@ -55,6 +55,8 @@ class PythonRunner:
         :return: The exit status of the program if it has exited, else None.
         :rtype: Optional[int]
         """
+        if self.__process is None:
+            return None
         return self.__process.poll()
 
     def start(self, program_path: str) -> None:
