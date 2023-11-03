@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="standalone" default="false"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="simulation_mode" default="false" />
 
@@ -18,7 +17,6 @@
           output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
 
-        <param name="standalone" type="bool" value="$(arg standalone)"/>
         <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
     </node>
     
