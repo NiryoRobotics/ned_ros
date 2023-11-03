@@ -1,3 +1,5 @@
 string color
 ---
+niryo_robot_msgs/CommandStatus status
+string message
 sensor_msgs/CompressedImage img

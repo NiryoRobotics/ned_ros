@@ -1,3 +1,5 @@
 ---
+niryo_robot_msgs/CommandStatus status
+string message
 bool markers_detected
 sensor_msgs/CompressedImage img
