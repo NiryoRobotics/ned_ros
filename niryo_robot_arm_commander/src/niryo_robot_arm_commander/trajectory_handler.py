@@ -4,6 +4,7 @@ import rospy
 from threading import Lock, Thread
 
 from niryo_robot_msgs.msg import CommandStatus, BasicObject, BasicObjectArray
+from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse
 
 from std_msgs.msg import Int32, Bool, Header
 from trajectory_msgs.msg import JointTrajectory
@@ -48,6 +49,7 @@ class TrajectoryHandlerNode:
         self.traj_file_manager = TrajectoryFileManager(rospy.get_param("/niryo_robot_poses_handlers/trajectories_dir"))
         rospy.Service('~manage_trajectory', ManageTrajectory, self.__callback_manage_trajectory)
         rospy.Service('~get_trajectory', GetTrajectory, self.__callback_get_trajectory)
+        rospy.Service('~get_trajectory_list', GetNameDescriptionList, self.__callback_get_trajectory_list)
 
         rospy.on_shutdown(self.stop_record)
 
@@ -282,12 +284,21 @@ class TrajectoryHandlerNode:
             return CommandStatus.UNKNOWN_COMMAND, "cmd '{}' not found.".format(req.cmd)
 
     def __callback_get_trajectory_list(self, _):
+        response = GetNameDescriptionListResponse()
+        response.status = CommandStatus.SUCCESS
+
         try:
-            trajectory_name_list, description_list = self.get_available_trajectories_w_description()
-        except NiryoRobotFileException as e:
+            response.name_list, response.description_list = self.get_available_trajectories_w_description()
+        except Exception as e:
             rospy.logerr("Trajectory Handlers - Error occured when getting trajectories list: {}".format(e))
-            trajectory_name_list = description_list = []
-        return {"name_list": trajectory_name_list, "description_list": description_list}
+            response.status = CommandStatus.POSES_HANDLER_READ_FAILURE
+            response.message = str(e)
+
+        response.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(response.name_list, response.description_list)
+        ]
+        return response
 
     def __callback_get_trajectory(self, req):
         try:

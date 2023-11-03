@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from threading import Thread, Event
-from typing import Optional
 
 import actionlib
 from actionlib import ServerGoalHandle

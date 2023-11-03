@@ -26,7 +26,7 @@ from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList
+from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse
 
 from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
@@ -79,6 +79,7 @@ class PoseHandlerNode:
 
         rospy.Service('~manage_pose', ManagePose, self.__callback_manage_pose)
         rospy.Service('~get_pose', GetPose, self.__callback_get_pose)
+        rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_pose_list)
         self.__pose_list_publisher = rospy.Publisher('~pose_list', BasicObjectArray, latch=True, queue_size=10)
         self.__publish_pose_list()
 
@@ -90,6 +91,7 @@ class PoseHandlerNode:
         rospy.Service('~manage_dynamic_frame', ManageDynamicFrame, self.__callback_manage_dynamic_frame)
         rospy.Service('~get_dynamic_frame', GetDynamicFrame, self.__callback_get_dynamic_frame)
         rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
+        rospy.Service('~get_dynamic_frame_list', GetNameDescriptionList, self.__callback_get_dynamic_frame_list)
         self.__dynamic_frame_list_publisher = rospy.Publisher('~dynamic_frame_list',
                                                               BasicObjectArray,
                                                               queue_size=10,
@@ -107,6 +109,7 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
         rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
         rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
+        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_get_workspace_list)
         self.__workspace_list_publisher = rospy.Publisher('workspace_list', BasicObjectArray, latch=True, queue_size=10)
         self.__publish_workspace_list()
 
@@ -198,6 +201,9 @@ class PoseHandlerNode:
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), [], []
 
+    def __callback_get_workspace_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_workspaces)
+
     def __publish_workspace_list(self):
         workspace_array = BasicObjectArray()
         workspace_array.objects = [
@@ -228,6 +234,9 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", pos_msg
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), NiryoPose()
+
+    def __callback_get_pose_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_poses)
 
     def __callback_manage_pose(self, req):
         cmd = req.cmd
@@ -334,6 +343,9 @@ class PoseHandlerNode:
             rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
             position = rpy = []
             return CommandStatus.CONVERT_FAILED, str(e), position, rpy
+
+    def __callback_get_dynamic_frame_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_dynamic_frame_w_description)
 
     def __publish_dynamic_frame_list(self):
         dynamic_frame_array = BasicObjectArray()
@@ -670,6 +682,24 @@ class PoseHandlerNode:
     @staticmethod
     def quaternion_to_list(quaternion):
         return [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
+
+    @staticmethod
+    def name_description_list_from_fun(fun):
+        response = GetNameDescriptionListResponse()
+        response.status = CommandStatus.SUCCESS
+
+        try:
+            response.name_list, response.description_list = fun()
+        except Exception as e:
+            rospy.logerr("Poses Handlers - Error occured when getting list: {}".format(e))
+            response.status = CommandStatus.POSES_HANDLER_READ_FAILURE
+            response.message = str(e)
+
+        response.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(response.name_list, response.description_list)
+        ]
+        return response
 
 
 if __name__ == "__main__":
