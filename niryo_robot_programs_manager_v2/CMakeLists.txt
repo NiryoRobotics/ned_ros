@@ -29,6 +29,7 @@ add_service_files(
   GetProgram.srv
   GetProgramAutorunInfos.srv
   SetProgramAutorun.srv
+  UpdateProgram.srv
 )
 
 add_action_files(

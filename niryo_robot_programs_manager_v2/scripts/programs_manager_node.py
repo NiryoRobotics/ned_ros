@@ -15,11 +15,8 @@ from niryo_robot_programs_manager_v2.ProgramsManager import ProgramsManager
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from niryo_robot_programs_manager_v2.msg import (ProgramList,
-                                                 ExecuteProgramResult,
-                                                 Program,
-                                                 ExecuteProgramFeedback,
-                                                 ExecuteProgramGoal)
+from niryo_robot_programs_manager_v2.msg import Program, ProgramList
+from niryo_robot_programs_manager_v2.msg import ExecuteProgramResult, ExecuteProgramFeedback, ExecuteProgramGoal
 from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 # Services
@@ -28,7 +25,7 @@ from niryo_robot_database.srv import GetSettings, SetSettings
 
 from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse
 from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
-from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram
+from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram, UpdateProgram
 from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAutorunRequest
 
 
@@ -87,6 +84,7 @@ class ProgramManagerNode:
         # Services
         rospy.Service('~create_program', CreateProgram, self.__callback_create_program)
         rospy.Service('~delete_program', DeleteProgram, self.__callback_delete_program)
+        rospy.Service('~update_program', UpdateProgram, self.__callback_update_program)
         rospy.Service('~get_program', GetProgram, self.__callback_get_program)
         rospy.Service('~stop_execution', Trigger, self.__callback_stop_execution)
 
@@ -121,6 +119,16 @@ class ProgramManagerNode:
         self.__publish_program_list()
         return CommandStatus.SUCCESS, 'Program successfully deleted'
 
+    def __callback_update_program(self, req):
+        if not self.__programs_manager.exists(req.program_id):
+            return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, f'No program with id {req.program_id}'
+        self.__programs_manager.update_program(req.program_id,
+                                               req.name,
+                                               req.description,
+                                               req.python_code,
+                                               req.blockly_code)
+        return CommandStatus.SUCCESS, 'Program successfully updated'
+
     def __callback_get_program(self, req):
         resp = GetProgramResponse()
         resp.status = CommandStatus.SUCCESS
@@ -128,43 +136,70 @@ class ProgramManagerNode:
         return resp
 
     def __callback_execute_program_goal(self, goal_handle: ServerGoalHandle):
+        rospy.logdebug(f'Received goal "{goal_handle.get_goal_id()}"')
         if self.__programs_manager.execution_is_running:
             status = CommandStatus.PROGRAMS_MANAGER_PROGRAM_ALREADY_RUNNING
             message = "Program is already running"
-            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message))
+            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message), message)
+            return
 
         goal = goal_handle.goal.goal
 
         if not goal.execute_from_string and not self.__programs_manager.exists(goal.program_id):
             status = CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST
             message = "Program does not exist"
-            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message))
+            goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message), message)
+            return
 
+        rospy.logdebug('Goal accepted')
         goal_handle.set_accepted()
-
-        Thread(target=self.__execute_program, args=[goal_handle, goal]).start()
+        Thread(target=self.__execute_program, args=[goal_handle, goal], daemon=True).start()
 
     def __execute_program(self, goal_handle: ServerGoalHandle, goal: ExecuteProgramGoal):
-        if goal.execute_from_string:
-            self.__programs_manager.execute_from_code(goal.code_string)
-        else:
-            self.__programs_manager.execute_from_id(goal.program_id)
-
-        feedback = ExecuteProgramFeedback(output=self.__programs_manager.execution_output)
-        while self.__programs_manager.execution_is_running:
-            if len(self.__programs_manager.execution_output) > len(feedback.output):
-                feedback.output = self.__programs_manager.execution_output
-                goal_handle.publish_feedback(feedback)
-
-        if goal_handle.get_goal_status().status == GoalStatus.ACTIVE:
-            if self.__programs_manager.execution_is_success:
-                goal_handle.set_succeeded()
+        try:
+            # execute the program
+            if goal.execute_from_string:
+                self.__programs_manager.execute_from_code(goal.code_string)
             else:
-                goal_handle.set_aborted()
+                self.__programs_manager.execute_from_id(goal.program_id)
+
+            # handle the feedback
+            feedback = ExecuteProgramFeedback(output=self.__programs_manager.execution_output)
+            while self.__programs_manager.execution_is_running:
+                if len(self.__programs_manager.execution_output) > len(feedback.output):
+                    feedback.output = self.__programs_manager.execution_output
+                    goal_handle.publish_feedback(feedback)
+
+            # set the final goal status
+            if goal_handle.get_goal_status().status == GoalStatus.ACTIVE:
+                if self.__programs_manager.execution_is_success:
+                    message = 'Execution success'
+                    goal_handle.set_succeeded(ExecuteProgramResult(status=CommandStatus.SUCCESS, message=message),
+                                              message)
+                else:
+                    message = 'Execution failed'
+                    goal_handle.set_aborted(
+                        ExecuteProgramResult(
+                            status=CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED,
+                            message=message,
+                        ),
+                        message)
+            else:
+                rospy.logwarn('The goal status is not "active" anymore. It\'s most likely it has been canceled.')
+        except Exception as e:
+            message = f'An unknown error happened during program execution: {e}'
+            rospy.logerr(message)
+            goal_handle.set_aborted(
+                ExecuteProgramResult(
+                    status=CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED,
+                    message=message,
+                ),
+                message)
 
     def __execute_program_cancel_cb(self, goal_handle: ServerGoalHandle):
         self.stop_program()
-        goal_handle.set_canceled()
+        goal_handle.set_canceled(
+            ExecuteProgramResult(status=CommandStatus.SUCCESS, message='The execution has been stopped'))
 
     # Autorun
     def __callback_set_program_autorun(self, req):

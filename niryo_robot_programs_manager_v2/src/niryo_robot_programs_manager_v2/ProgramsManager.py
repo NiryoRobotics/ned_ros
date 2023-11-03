@@ -1,8 +1,8 @@
 import os
+import time
 from threading import Thread
 from typing import TypedDict, List
 from uuid import uuid4
-from tempfile import NamedTemporaryFile
 
 import rospy
 from niryo_robot_database.Program import Program
@@ -79,6 +79,18 @@ class ProgramsManager:
         if program['has_blockly']:
             self.__blockly_manager.remove(program_id)
 
+    def update_program(self,
+                       program_id: str,
+                       name: str,
+                       description: str,
+                       python_code: str,
+                       blockly_code: str = '') -> None:
+        has_blockly = blockly_code != ''
+        self.__database.update_program(program_id, name, description, has_blockly)
+        self.__python_manager.edit(program_id, python_code)
+        if has_blockly:
+            self.__blockly_manager.edit(program_id, blockly_code)
+
     def exists(self, program_id: str) -> bool:
         return self.__database.exists(program_id) and self.__python_manager.exists(program_id)
 
@@ -105,17 +117,23 @@ class ProgramsManager:
     def execution_is_success(self) -> bool:
         return self.__python_runner.exit_status == 0
 
-    def __execute(self, path) -> None:
-        self.__execution_thread = Thread(target=self.__python_runner.start, args=[path], daemon=True)
-        self.__execution_thread.start()
+    def __execute(self, fun, *args, **kwargs):
+        Thread(target=fun, args=args, kwargs=kwargs, daemon=True).start()
+        # We ensure the execution process is started before returning
+        while not self.execution_is_running and self.__python_runner.exit_status is None:
+            time.sleep(0.1)
 
     def execute_from_id(self, program_id: str) -> None:
-        self.__execute(self.__python_manager.path_from_name(program_id))
+        file_path = self.__python_manager.get_file_path(program_id)
+        self.__execute(self.__python_runner.start, program_path=file_path)
 
     def execute_from_code(self, python_code: str) -> None:
-        with NamedTemporaryFile(prefix='tmp_program', suffix='.py', mode='w') as program_file:
-            program_file.write(python_code)
-            self.__execute(program_file.name)
+
+        def execute_with_context():
+            with self.__python_manager.temporary_file(python_code) as tmp_file_path:
+                self.__python_runner.start(tmp_file_path)
+
+        self.__execute(execute_with_context)
 
     def stop_execution(self) -> None:
         self.__python_runner.stop()
