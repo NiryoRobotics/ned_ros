@@ -23,7 +23,7 @@ from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 from niryo_robot_msgs.srv import Trigger, GetString
 from niryo_robot_database.srv import GetSettings, SetSettings
 
-from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse
+from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse, GetProgramList
 from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
 from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram, UpdateProgram
 from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAutorunRequest
@@ -87,6 +87,7 @@ class ProgramManagerNode:
         rospy.Service('~update_program', UpdateProgram, self.__callback_update_program)
         rospy.Service('~get_program', GetProgram, self.__callback_get_program)
         rospy.Service('~stop_execution', Trigger, self.__callback_stop_execution)
+        rospy.Service('~get_program_list', GetProgramList, self.__callback_get_program_list)
 
         # Publisher
         self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
@@ -134,6 +135,11 @@ class ProgramManagerNode:
         resp.status = CommandStatus.SUCCESS
         resp.program = self.program_msg_from_program_manager(self.__programs_manager.get(req.program_id))
         return resp
+
+    def __callback_get_program_list(self, _):
+        programs_list = self.__programs_manager.get_all()
+        ros_programs = [self.program_msg_from_program_manager(program) for program in programs_list]
+        return CommandStatus.SUCCESS, '', ros_programs
 
     def __callback_execute_program_goal(self, goal_handle: ServerGoalHandle):
         rospy.logdebug(f'Received goal "{goal_handle.get_goal_id()}"')

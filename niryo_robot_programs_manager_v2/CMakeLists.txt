@@ -28,6 +28,7 @@ add_service_files(
   DeleteProgram.srv
   GetProgram.srv
   GetProgramAutorunInfos.srv
+  GetProgramList.srv
   SetProgramAutorun.srv
   UpdateProgram.srv
 )
