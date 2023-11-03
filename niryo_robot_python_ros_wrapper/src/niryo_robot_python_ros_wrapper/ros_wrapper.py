@@ -17,6 +17,8 @@ from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMo
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
+from niryo_robot_msgs.msg import BasicObjectArray
+
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
 from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
@@ -41,7 +43,7 @@ def move_command(move_function):
 
         # check if a collision happened during the move
         if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
-            status, message = result
+            _, message = result
             raise NiryoRosWrapperException(message)
         return result
 
@@ -62,7 +64,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         if self.__hardware_version in ['ned', 'ned2']:
             self.__node_name = rospy.get_name()
-            self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
+            rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
             rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
             self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
             self.__advertise_ros_wrapper_srv(self.__node_name, True)
@@ -158,7 +160,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if self.__hardware_version in ['ned', 'ned2']:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
-            except [rospy.ServiceException, rospy.ROSException]:
+            except (rospy.ServiceException, rospy.ROSException):
                 pass
 
     def __ping_ros_wrapper_callback(self):
@@ -747,7 +749,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
 
-    def get_saved_pose_list(self, with_desc=False):
+    @staticmethod
+    def get_saved_pose_list(with_desc=False):
         """
         Asks the pose manager service which positions are available
 
@@ -756,11 +759,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of positions name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_pose_list', GetNameDescriptionList)
+        pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
+        names = [pose.name for pose in pose_list.objects]
         if with_desc:
-            return result.name_list, result.description_list
-
-        return result.name_list
+            descriptions = [pose.description for pose in pose_list.objects]
+            return names, descriptions
+        return names
 
     # - Pick/Place
 
@@ -882,8 +886,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of trajectory name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_arm_commander/get_trajectory_list', GetNameDescriptionList)
-        return result.name_list
+        trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
+        return [trajectory.name for trajectory in trajectories.objects]
 
     def execute_registered_trajectory(self, trajectory_name):
         """
@@ -1237,6 +1241,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return [name, description, [position.x, position.y, position.z, rpy.roll, rpy.pitch, rpy.yaw]]
 
+    @staticmethod
     def get_saved_dynamic_frame_list(self):
         """
         Get list of saved dynamic frames
@@ -1244,9 +1249,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_dynamic_frame_list', GetNameDescriptionList)
-
-        return result.name_list, result.description_list
+        dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
+                                                    BasicObjectArray,
+                                                    2)
+        names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list.objects]
+        descriptions = [dynamic_frame.description for dynamic_frame in dynamic_frame_list.objects]
+        return names, descriptions
 
     def __transform_pose(self, pose_local_frame, local_frame, source_frame):
         """
@@ -1308,8 +1316,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type pitch: float
         :param yaw:
         :type yaw: float
-        :return: status, message
-        :rtype: (int, str)
+        :return: point, rotation
+        :rtype: (Position, RPY)
         """
         import tf
         import geometry_msgs
@@ -2263,17 +2271,20 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self._check_result_status(result)
         return result.ratio
 
-    def get_workspace_list(self, with_desc=False):
+    @staticmethod
+    def get_workspace_list(with_desc=False):
         """
         Asks the workspace manager service names of the available workspace
 
         :return: list of workspaces name
         :rtype: list[str]
         """
-        result = self._call_service('/niryo_robot_poses_handlers/get_workspace_list', GetNameDescriptionList)
+        workspace_list = rospy.wait_for_message('/niryo_robot_workspaces_handlers/workspace_list', BasicObjectArray, 2)
+        names = [workspace.name for workspace in workspace_list.objects]
         if with_desc:
-            return result.name_list, result.description_list
-        return result.name_list
+            descriptions = [workspace.description for workspace in workspace_list.objects]
+            return names, descriptions
+        return names
 
     # - Software
 
