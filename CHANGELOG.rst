@@ -6,6 +6,14 @@ v5.2.0
 ___________
 **Features**
  * Added a foxglove bridge server
+ * new messages: BasicObject and BasicObjectList
+ * New topics:
+   * /niryo_robot_arm_commander/trajectory_list (BasicObjectArray)
+   * /niryo_robot_poses_handler/pose_list (BasicObjectArray)
+   * /niryo_robot_poses_handler/dynamic_frame_list (BasicObjectArray)
+
+ * New services:
+   * /niryo_robot_database/get_db_file_path
 
 **Improvements**
  * Refacto of the programs manager
@@ -13,6 +21,19 @@ ___________
    * A program is now defined as a python program which can have a blockly program attached
    * An action server is used to execute a program rather than a service
    * The autorun and the programs properties are stored in the database
+   * Named programs_manager_v2 in order to keep the old programs manager for NS1
+ * The service GetNameDescription takes an array of BasicObject (for future compatibility)
+ * remove ros_wrapper_2
+
+ * modified service type:
+   * /niryo_robot/tools/reboot
+     * std_srvs/Trigger -> niryo_robot_msgs/Trigger
+   * /niryo_robot_vision/debug_markers
+     * Added "status" and "message" to service response
+   * /niryo_robot_vision/debug_colors
+     * Added "status" and "message" to service response
+   * /niryo_robot_vision/visualization
+     * Added "message" to service response
 
 **Bugfixes**
 
