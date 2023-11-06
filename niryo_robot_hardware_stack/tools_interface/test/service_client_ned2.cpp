@@ -358,7 +358,7 @@ TEST_F(ToolTestControlSuite, ToolReboot)
     niryo_robot_msgs::Trigger srv;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.success, true);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
     EXPECT_EQ(srv.response.message, "Tool reboot succeeded");
 }
 
