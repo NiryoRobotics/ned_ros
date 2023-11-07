@@ -1,3 +1,6 @@
 [submodule "sphinx_doc/front_end"]
 	path = sphinx_doc/front_end
 	url = ../../../documentations/front-end.git
+[submodule "ros-foxglove-bridge"]
+	path = ros-foxglove-bridge
+	url = https://github.com/foxglove/ros-foxglove-bridge.git
