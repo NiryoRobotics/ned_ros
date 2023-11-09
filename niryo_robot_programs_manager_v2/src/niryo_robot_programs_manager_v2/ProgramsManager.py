@@ -51,7 +51,7 @@ class ProgramsManager:
             if db_program['id'] not in python_programs:
                 rospy.logwarn(f'Removing program "{db_program["id"]}" from database since it has no file')
                 self.__database.delete_program(db_program['id'])
-            if db_program['has_blockly'] and db_program['id'] not in blockly_programs:
+            elif db_program['has_blockly'] and db_program['id'] not in blockly_programs:
                 rospy.logwarn(f'No blockly file found for "{db_program["id"]}". Setting "has_blockly" to False')
                 self.__database.update_program(db_program['id'], has_blockly=False)
 
