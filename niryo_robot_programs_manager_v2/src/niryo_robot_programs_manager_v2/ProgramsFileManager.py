@@ -149,7 +149,7 @@ class ProgramsFileManager(object):
         """
         try:
             self._path_from_name(name)
-        except FileNotFoundError:
+        except FileDoesNotExistException:
             return False
         return True
 
