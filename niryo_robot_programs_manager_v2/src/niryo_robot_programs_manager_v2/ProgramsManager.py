@@ -103,17 +103,37 @@ class ProgramsManager:
         return self.__database.exists(program_id) and self.__python_manager.exists(program_id)
 
     def get(self, program_id: str) -> ProgramDict:
+        """
+        Retrieve a program by doing a request to the database and by reading the files on the system
+        :param program_id: the wanted program's id
+        :type program_id: str
+        :return: The program information
+        :rtype: ProgramDict
+        """
         db_program = self.__database.get_by_id(program_id)
         db_program['python_code'] = self.__python_manager.read(program_id)
         db_program['blockly_code'] = self.__blockly_manager.read(program_id) if db_program['has_blockly'] else ''
         return db_program
 
     def get_all(self) -> List[ProgramDict]:
+        """
+        Returns all the programs.
+        This method is costly as it calls the database and the system files multiple times.
+        Prefer using the programs property
+        :return: The programs information
+        :rtype: List[ProgramDict]
+        """
         return [self.get(db_program['id']) for db_program in self.__database.get_all()]
 
     @property
-    def programs(self):
-        return self.__programs
+    def programs(self) -> List[ProgramDict]:
+        """
+        Returns the cached programs.
+        This method is more efficient than get_all as it do not directly use the database nor the file
+        :return: The programs information
+        :rtype: List[ProgramDict]
+        """
+        return list(self.__programs.values())
 
     # - Program executions
 
