@@ -150,7 +150,7 @@ class ProgramManagerNode:
 
         goal = goal_handle.goal.goal
 
-        if not goal.execute_from_string and not self.__programs_manager.exists(goal.program_id):
+        if goal.code_string == '' and not self.__programs_manager.exists(goal.program_id):
             status = CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST
             message = "Program does not exist"
             goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message), message)
@@ -158,12 +158,13 @@ class ProgramManagerNode:
 
         rospy.logdebug('Goal accepted')
         goal_handle.set_accepted()
-        Thread(target=self.__execute_program, args=[goal_handle, goal], daemon=True).start()
+        Thread(target=self.__execute_program, args=[goal_handle], daemon=True).start()
 
-    def __execute_program(self, goal_handle: ServerGoalHandle, goal: ExecuteProgramGoal):
+    def __execute_program(self, goal_handle: ServerGoalHandle):
+        goal = goal_handle.goal.goal
         try:
             # execute the program
-            if goal.execute_from_string:
+            if goal.code_string != '':
                 self.__programs_manager.execute_from_code(goal.code_string)
             else:
                 self.__programs_manager.execute_from_id(goal.program_id)
