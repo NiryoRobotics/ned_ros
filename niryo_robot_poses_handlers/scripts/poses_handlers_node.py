@@ -21,12 +21,12 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_msgs.msg import BasicObject, BasicObjectArray
 
-from niryo_robot_poses_handlers.msg import NiryoPose, DynamicFrame
+from niryo_robot_poses_handlers.msg import NiryoPose, DynamicFrame, RelativePose
 from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse
+from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse, SetString
 
 from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
@@ -83,6 +83,12 @@ class PoseHandlerNode:
         self.__pose_list_publisher = rospy.Publisher('~pose_list', BasicObjectArray, latch=True, queue_size=10)
         self.__publish_pose_list()
 
+        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', RelativePose, queue_size=10)
+        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback)
+        self.__relative_transform_frame = ''
+        rospy.Service('~set_relative_transform_frame', SetString, self.__callback_set_relative_transform_frame)
+        # rospy.Timer(rospy.Duration(nsecs=int(1e9 / 30)), self.__publish_relative_pose)
+
         # Dynamic Frame
         self.__tf_listener = None
         self.__tf_buffer = None
@@ -96,6 +102,8 @@ class PoseHandlerNode:
                                                               BasicObjectArray,
                                                               queue_size=10,
                                                               latch=True)
+        self.__publish_dynamic_frame_list()
+
         self.dynamic_frame_manager.restore_publisher()
         # Publisher dynamic frames
         self.dynamic_frame_manager.publish_frames()
@@ -238,6 +246,12 @@ class PoseHandlerNode:
     def __callback_get_pose_list(self, _):
         return self.name_description_list_from_fun(self.get_available_poses)
 
+    def __callback_set_relative_transform_frame(self, req):
+        if req.value != '' and req.value not in self.get_available_dynamic_frame_w_description()[0]:
+            return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
+        self.__relative_transform_frame = req.value
+        return CommandStatus.SUCCESS, f'Successfully set relative transform frame to "{req.value}"'
+
     def __callback_manage_pose(self, req):
         cmd = req.cmd
         pose = req.pose
@@ -361,6 +375,28 @@ class PoseHandlerNode:
             BasicObject(name=name, description=description) for name, description in zip(*self.get_available_poses())
         ]
         self.__pose_list_publisher.publish(pose_array)
+
+    def __robot_state_callback(self, msg):
+        pose = [msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw]
+        self.__publish_relative_pose(pose)
+
+    def __publish_relative_pose(self, base_link_pose):
+        if self.__relative_transform_frame == '':
+            return
+        transform_pose = self.get_transform_pose(base_link_pose, 'base_link', self.__relative_transform_frame)
+        if isinstance(transform_pose, str):
+            rospy.logerr(transform_pose)
+            return
+        position, rpy = transform_pose
+        relative_pose = RelativePose()
+        relative_pose.frame_name = self.__relative_transform_frame
+        relative_pose.pose.x = position.x
+        relative_pose.pose.y = position.y
+        relative_pose.pose.z = position.z
+        relative_pose.pose.roll = rpy.roll
+        relative_pose.pose.pitch = rpy.pitch
+        relative_pose.pose.yaw = rpy.yaw
+        self.__relative_pose_publisher.publish(relative_pose)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
