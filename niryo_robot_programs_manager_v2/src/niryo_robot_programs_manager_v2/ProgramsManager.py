@@ -59,6 +59,10 @@ class ProgramsManager:
         for python_program in python_programs:
             if python_program not in db_programs_ids:
                 rospy.logwarn(f'Found python program "{python_program}" not referenced in database')
+                self.__database.insert_program(id_=python_program,
+                                               name=python_program,
+                                               description='Unknown program',
+                                               has_blockly=python_program in blockly_programs)
 
     # - Programs handling
 
