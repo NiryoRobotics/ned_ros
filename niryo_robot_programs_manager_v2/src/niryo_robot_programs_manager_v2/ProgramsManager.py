@@ -36,7 +36,8 @@ class ProgramsManager:
         self.__blockly_manager = ProgramsFileManager(f'{self.__programs_path}/blockly', '.xml')
 
         self.__sync_db_with_system()
-        self.__programs = {program['id']: program for program in self.__database.get_all()}
+        self.__programs = {db_program['id']: db_program for db_program in self.get_all()}
+
         self.__python_runner = PythonRunner()
 
     def __sync_db_with_system(self) -> None:
@@ -69,11 +70,12 @@ class ProgramsManager:
     def create_program(self, name: str, description: str, python_code: str, blockly_code: str = '') -> str:
         has_blockly = blockly_code != ''
         program_id = str(uuid4())
-        new_program = self.__database.insert_program(program_id, name, description, has_blockly)
-        self.__programs[program_id] = new_program
+        self.__database.insert_program(program_id, name, description, has_blockly)
         self.__python_manager.create(program_id, python_code)
         if has_blockly:
             self.__blockly_manager.create(program_id, blockly_code)
+
+        self.__programs[program_id] = self.get(program_id)
         return program_id
 
     def delete_program(self, program_id: str) -> None:
@@ -94,18 +96,24 @@ class ProgramsManager:
         self.__python_manager.edit(program_id, python_code)
         if has_blockly:
             self.__blockly_manager.edit(program_id, blockly_code)
+        self.__programs.pop(program_id)
+        self.__programs[program_id] = self.get(program_id)
 
     def exists(self, program_id: str) -> bool:
         return self.__database.exists(program_id) and self.__python_manager.exists(program_id)
 
     def get(self, program_id: str) -> ProgramDict:
-        db_program = dict(self.__programs[program_id])
+        db_program = self.__database.get_by_id(program_id)
         db_program['python_code'] = self.__python_manager.read(program_id)
         db_program['blockly_code'] = self.__blockly_manager.read(program_id) if db_program['has_blockly'] else ''
         return db_program
 
     def get_all(self) -> List[ProgramDict]:
-        return [self.get(program_id) for program_id in self.__programs]
+        return [self.get(db_program['id']) for db_program in self.__database.get_all()]
+
+    @property
+    def programs(self):
+        return self.__programs
 
     # - Program executions
 
