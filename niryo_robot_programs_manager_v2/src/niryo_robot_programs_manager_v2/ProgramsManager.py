@@ -110,7 +110,7 @@ class ProgramsManager:
         :return: The program information
         :rtype: ProgramDict
         """
-        db_program = self.__database.get_by_id(program_id)
+        db_program = dict(self.__database.get_by_id(program_id))
         db_program['python_code'] = self.__python_manager.read(program_id)
         db_program['blockly_code'] = self.__blockly_manager.read(program_id) if db_program['has_blockly'] else ''
         return db_program
