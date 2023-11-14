@@ -1,6 +1,5 @@
 import os
-import time
-from threading import Thread
+from threading import Thread, Event
 from typing import TypedDict, List
 from uuid import uuid4
 
@@ -149,23 +148,34 @@ class ProgramsManager:
     def execution_is_success(self) -> bool:
         return self.__python_runner.exit_status == 0
 
-    def __execute(self, fun, *args, **kwargs):
-        Thread(target=fun, args=args, kwargs=kwargs, daemon=True).start()
-        # We ensure the execution process is started before returning
-        while not self.execution_is_running and self.__python_runner.exit_status is None:
-            time.sleep(0.1)
+    def execute_from_id(self, program_id: str, in_thread: bool = True) -> None:
 
-    def execute_from_id(self, program_id: str) -> None:
-        file_path = self.__python_manager.get_file_path(program_id)
-        self.__execute(self.__python_runner.start, program_path=file_path)
+        def execute_program(*args, **kwargs):
+            file_path = self.__python_manager.get_file_path(program_id)
+            self.__python_runner.start(file_path, *args, **kwargs)
 
-    def execute_from_code(self, python_code: str) -> None:
+        if in_thread:
+            self.__execute_in_thread(execute_program)
+        else:
+            execute_program()
 
-        def execute_with_context():
+    def execute_from_code(self, python_code: str, in_thread: bool = True) -> None:
+
+        def execute_program(*args, **kwargs):
             with self.__python_manager.temporary_file(python_code) as tmp_file_path:
-                self.__python_runner.start(tmp_file_path)
+                self.__python_runner.start(tmp_file_path, *args, **kwargs)
 
-        self.__execute(execute_with_context)
+        if in_thread:
+            self.__execute_in_thread(execute_program)
+        else:
+            execute_program()
+
+    @staticmethod
+    def __execute_in_thread(method, *args, **kwargs):
+        execution_started_event = Event()
+        kwargs['execution_started_event'] = execution_started_event
+        Thread(target=method, args=args, kwargs=kwargs, daemon=True).start()
+        execution_started_event.wait(5)
 
     def stop_execution(self) -> None:
         self.__python_runner.stop()
