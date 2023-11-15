@@ -50,26 +50,26 @@ class ProgramsManager:
         for db_program in db_programs:
             if db_program['id'] not in python_programs:
                 rospy.logwarn(f'Removing program "{db_program["id"]}" from database since it has no file')
-                self.__database.delete_program(db_program['id'])
+                self.__database.delete(db_program['id'])
             elif db_program['has_blockly'] and db_program['id'] not in blockly_programs:
                 rospy.logwarn(f'No blockly file found for "{db_program["id"]}". Setting "has_blockly" to False')
-                self.__database.update_program(db_program['id'], has_blockly=False)
+                self.__database.update(db_program['id'], has_blockly=False)
 
         db_programs_ids = [p['id'] for p in db_programs]
         for python_program in python_programs:
             if python_program not in db_programs_ids:
                 rospy.logwarn(f'Found python program "{python_program}" not referenced in database')
-                self.__database.insert_program(id_=python_program,
-                                               name=python_program,
-                                               description='Unknown program',
-                                               has_blockly=python_program in blockly_programs)
+                self.__database.insert(id_=python_program,
+                                       name=python_program,
+                                       description='Unknown program',
+                                       has_blockly=python_program in blockly_programs)
 
     # - Programs handling
 
     def create_program(self, name: str, description: str, python_code: str, blockly_code: str = '') -> str:
         has_blockly = blockly_code != ''
         program_id = str(uuid4())
-        self.__database.insert_program(program_id, name, description, has_blockly)
+        self.__database.insert(program_id, name, description, has_blockly)
         self.__python_manager.create(program_id, python_code)
         if has_blockly:
             self.__blockly_manager.create(program_id, blockly_code)
@@ -78,7 +78,7 @@ class ProgramsManager:
         return program_id
 
     def delete_program(self, program_id: str) -> None:
-        self.__database.delete_program(program_id)
+        self.__database.delete(program_id)
         self.__python_manager.remove(program_id)
         program = self.__programs.pop(program_id)
         if program['has_blockly']:
@@ -91,7 +91,7 @@ class ProgramsManager:
                        python_code: str,
                        blockly_code: str = '') -> None:
         has_blockly = blockly_code != ''
-        self.__database.update_program(program_id, name, description, has_blockly)
+        self.__database.update(program_id, name, description, has_blockly)
         self.__python_manager.edit(program_id, python_code)
         if has_blockly:
             self.__blockly_manager.edit(program_id, blockly_code)
