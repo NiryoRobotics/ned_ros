@@ -76,11 +76,11 @@ class ProgramsFileManager(object):
         except Exception as e:
             raise ProgramFileException(f"Could not read object '{name}': {e}")
 
-    def create(self, name: str, code: str, overwrite_allowed: bool = False) -> None:
+    def write(self, name: str, code: str, overwrite_allowed: bool = False) -> None:
         """
-        Create a new file with the given name and content.
+        Write the content of `code` inside a file named `name`
 
-        :param name: The name of the file to create.
+        :param name: The name of the file to write to.
         :type name: str
         :param code: The content of the file.
         :type code: str
@@ -89,7 +89,7 @@ class ProgramsFileManager(object):
         :raises: ProgramFileException: If the file cannot be created or written.
         """
         if len(name) < 1:
-            name = 'untitled'
+            raise ProgramFileException('Name cannot be empty')
 
         if self.exists(name) and not overwrite_allowed:
             raise FileAlreadyExistException(f'File "{name}" already exist')
@@ -113,18 +113,6 @@ class ProgramsFileManager(object):
             file_path.unlink()
         except OSError as e:
             raise ProgramFileException(f"Could not remove object '{name}': {e}")
-
-    def edit(self, name: str, code: str) -> None:
-        """
-        Edit an existing file with the given name and content.
-
-        :param name: The name of the file to edit.
-        :type name: str
-        :param code: The content of the file.
-        :type code: str
-        :raises: ProgramFileException: If the file cannot be edited.
-        """
-        self.create(name, code)
 
     def get_all_names(self, with_suffix: bool = False) -> List[str]:
         """

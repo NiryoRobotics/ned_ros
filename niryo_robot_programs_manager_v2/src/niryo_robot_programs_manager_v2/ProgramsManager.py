@@ -1,6 +1,6 @@
 import os
 from threading import Thread, Event
-from typing import TypedDict, List
+from typing import TypedDict, List, Callable
 from uuid import uuid4
 
 import rospy
@@ -53,7 +53,7 @@ class ProgramsManager:
                 self.__database.delete(db_program['id'])
             elif db_program['has_blockly'] and db_program['id'] not in blockly_programs:
                 rospy.logwarn(f'No blockly file found for "{db_program["id"]}". Setting "has_blockly" to False')
-                self.__database.update(db_program['id'], has_blockly=False)
+                self.__database.update(db_program['id'], {'has_blockly': False})
 
         db_programs_ids = [p['id'] for p in db_programs]
         for python_program in python_programs:
@@ -70,9 +70,9 @@ class ProgramsManager:
         has_blockly = blockly_code != ''
         program_id = str(uuid4())
         self.__database.insert(program_id, name, description, has_blockly)
-        self.__python_manager.create(program_id, python_code)
+        self.__python_manager.write(program_id, python_code)
         if has_blockly:
-            self.__blockly_manager.create(program_id, blockly_code)
+            self.__blockly_manager.write(program_id, blockly_code)
 
         self.__programs[program_id] = self.get(program_id)
         return program_id
@@ -84,17 +84,12 @@ class ProgramsManager:
         if program['has_blockly']:
             self.__blockly_manager.remove(program_id)
 
-    def update_program(self,
-                       program_id: str,
-                       name: str,
-                       description: str,
-                       python_code: str,
-                       blockly_code: str = '') -> None:
+    def update_program(self, program_id: str, name: str, description: str, python_code: str, blockly_code: str) -> None:
         has_blockly = blockly_code != ''
-        self.__database.update(program_id, name, description, has_blockly)
-        self.__python_manager.edit(program_id, python_code)
+        self.__database.update(program_id, {'name': name, 'description': description, 'has_blockly': has_blockly})
+        self.__python_manager.write(program_id, python_code, overwrite_allowed=True)
         if has_blockly:
-            self.__blockly_manager.edit(program_id, blockly_code)
+            self.__blockly_manager.write(program_id, blockly_code, overwrite_allowed=True)
         self.__programs.pop(program_id)
         self.__programs[program_id] = self.get(program_id)
 
@@ -150,7 +145,7 @@ class ProgramsManager:
 
     def execute_from_id(self, program_id: str, in_thread: bool = True) -> None:
 
-        def execute_program(*args, **kwargs):
+        def execute_program(*args, **kwargs) -> None:
             file_path = self.__python_manager.get_file_path(program_id)
             self.__python_runner.start(file_path, *args, **kwargs)
 
@@ -161,7 +156,7 @@ class ProgramsManager:
 
     def execute_from_code(self, python_code: str, in_thread: bool = True) -> None:
 
-        def execute_program(*args, **kwargs):
+        def execute_program(*args, **kwargs) -> None:
             with self.__python_manager.temporary_file(python_code) as tmp_file_path:
                 self.__python_runner.start(tmp_file_path, *args, **kwargs)
 
@@ -171,7 +166,7 @@ class ProgramsManager:
             execute_program()
 
     @staticmethod
-    def __execute_in_thread(method, *args, **kwargs):
+    def __execute_in_thread(method: Callable, *args, **kwargs) -> None:
         execution_started_event = Event()
         kwargs['execution_started_event'] = execution_started_event
         Thread(target=method, args=args, kwargs=kwargs, daemon=True).start()
