@@ -49,6 +49,7 @@ class ProgramManagerNode:
 
         get_setting_response = get_setting_service('autorun_id')
         if get_setting_response.status < 0:
+            rospy.logerr('The autorun id has not been found in database')
             self.__autorun_id = ''
             self.__set_setting_service('autorun_id', self.__autorun_id, 'str')
         else:
@@ -64,6 +65,7 @@ class ProgramManagerNode:
 
         get_setting_response = get_setting_service('autorun_mode')
         if get_setting_response.status < 0:
+            rospy.logerr('The autorun mode has not been found in database')
             self.__autorun_mode = SetProgramAutorunRequest.DISABLE
             mode_str = self.__autorun_mode_to_str[self.__autorun_mode]
             self.__set_setting_service('autorun_mode', mode_str, 'str')
