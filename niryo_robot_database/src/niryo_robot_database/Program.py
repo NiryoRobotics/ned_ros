@@ -16,7 +16,7 @@ saved_at DATE,
 has_blockly BOOLEAN
 """
     _default = [
-        (str(uuid4()), 'Ned2_demo', 'A small demonstration program to show the Ned2 capabilities', False),
+        ('Ned2_demo', 'Ned2_demo', 'A small demonstration program to show the Ned2 capabilities', False),
     ]
 
     def update(self, id_, name=None, description=None, has_blockly=None):
