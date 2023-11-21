@@ -19,7 +19,7 @@ class ABCTable(ABC):
             self.__populate_table()
 
     def __create_table(self):
-        query = f'CREATE TABLE IF NOT EXISTS {self._table_name} ({self.schema})'
+        query = f'CREATE TABLE IF NOT EXISTS {self._table_name} ({self._schema})'
         self._dao.execute(query)
 
     def __populate_table(self):
