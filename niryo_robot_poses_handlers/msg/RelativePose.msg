@@ -1,2 +1,0 @@
-string frame_name
-niryo_robot_msgs/ObjectPose pose

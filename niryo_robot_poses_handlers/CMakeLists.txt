@@ -21,7 +21,6 @@ add_message_files(
   FILES
   DynamicFrame.msg
   NiryoPose.msg
-  RelativePose.msg
   Workspace.msg
 )
 
