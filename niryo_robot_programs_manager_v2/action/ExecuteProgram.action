@@ -1,6 +1,5 @@
 # goal
 string program_id
-bool execute_from_string
 string code_string
 ---
 # result

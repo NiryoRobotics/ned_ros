@@ -22,7 +22,7 @@ from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 from niryo_robot_msgs.srv import Trigger, GetString
 from niryo_robot_database.srv import GetSettings, SetSettings
 
-from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramResponse, GetProgramList
+from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramList
 from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
 from niryo_robot_programs_manager_v2.srv import CreateProgram, DeleteProgram, UpdateProgram
 from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAutorunRequest
@@ -49,6 +49,7 @@ class ProgramManagerNode:
 
         get_setting_response = get_setting_service('autorun_id')
         if get_setting_response.status < 0:
+            rospy.logerr('The autorun id has not been found in database')
             self.__autorun_id = ''
             self.__set_setting_service('autorun_id', self.__autorun_id, 'str')
         else:
@@ -64,6 +65,7 @@ class ProgramManagerNode:
 
         get_setting_response = get_setting_service('autorun_mode')
         if get_setting_response.status < 0:
+            rospy.logerr('The autorun mode has not been found in database')
             self.__autorun_mode = SetProgramAutorunRequest.DISABLE
             mode_str = self.__autorun_mode_to_str[self.__autorun_mode]
             self.__set_setting_service('autorun_mode', mode_str, 'str')
@@ -130,15 +132,12 @@ class ProgramManagerNode:
         return CommandStatus.SUCCESS, 'Program successfully updated'
 
     def __callback_get_program(self, req):
-        resp = GetProgramResponse()
-        resp.status = CommandStatus.SUCCESS
-        resp.program = self.program_msg_from_program_manager(self.__programs_manager.get(req.program_id))
-        return resp
+        program = self.program_msg_from_program_manager(self.__programs_manager.get(req.program_id))
+        return CommandStatus.SUCCESS, f'Successfully retrieved program "{program["id"]}"', program
 
     def __callback_get_program_list(self, _):
-        programs_list = self.__programs_manager.get_all()
-        ros_programs = [self.program_msg_from_program_manager(program) for program in programs_list]
-        return CommandStatus.SUCCESS, '', ros_programs
+        ros_programs = [self.program_msg_from_program_manager(program) for program in self.__programs_manager.programs]
+        return CommandStatus.SUCCESS, 'Successfully retrieved programs', ros_programs
 
     def __callback_execute_program_goal(self, goal_handle: ServerGoalHandle):
         rospy.logdebug(f'Received goal "{goal_handle.get_goal_id()}"')
@@ -150,7 +149,7 @@ class ProgramManagerNode:
 
         goal = goal_handle.goal.goal
 
-        if not goal.execute_from_string and not self.__programs_manager.exists(goal.program_id):
+        if goal.code_string == '' and not self.__programs_manager.exists(goal.program_id):
             status = CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST
             message = "Program does not exist"
             goal_handle.set_rejected(ExecuteProgramResult(status=status, message=message), message)
@@ -158,12 +157,13 @@ class ProgramManagerNode:
 
         rospy.logdebug('Goal accepted')
         goal_handle.set_accepted()
-        Thread(target=self.__execute_program, args=[goal_handle, goal], daemon=True).start()
+        Thread(target=self.__execute_program, args=[goal_handle], daemon=True).start()
 
-    def __execute_program(self, goal_handle: ServerGoalHandle, goal: ExecuteProgramGoal):
+    def __execute_program(self, goal_handle: ServerGoalHandle):
+        goal = goal_handle.goal.goal
         try:
             # execute the program
-            if goal.execute_from_string:
+            if goal.code_string != '':
                 self.__programs_manager.execute_from_code(goal.code_string)
             else:
                 self.__programs_manager.execute_from_id(goal.program_id)
@@ -268,11 +268,9 @@ class ProgramManagerNode:
                        blockly_code=program['blockly_code'])
 
     def __publish_program_list(self):
-        programs_list = self.__programs_manager.get_all()
-        ros_programs = [self.program_msg_from_program_manager(program) for program in programs_list]
+        ros_programs = [self.program_msg_from_program_manager(program) for program in self.__programs_manager.programs]
         self.__program_list_publisher.publish(ros_programs)
 
-    # - Others functions
     def stop_program(self):
         if not self.__programs_manager.execution_is_running:
             return

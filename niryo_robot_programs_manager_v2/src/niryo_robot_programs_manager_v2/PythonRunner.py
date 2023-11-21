@@ -1,5 +1,5 @@
 import subprocess
-from threading import Lock
+from threading import Lock, Event
 from typing import Optional
 
 import rospy
@@ -59,15 +59,19 @@ class PythonRunner:
             return None
         return self.__process.poll()
 
-    def start(self, program_path: str) -> None:
+    def start(self, program_path: str, execution_started_event: Event = None) -> None:
         """
         Start the specified program.
 
         :param program_path: The path to the program file to be executed.
         :type program_path: str
+        :param execution_started_event: An event which notify when the execution has started
+        :type execution_started_event: Event
         :raises: ExecutionException: If an error occurs during program execution.
         """
         with self.__execution_lock:
+            if execution_started_event is not None:
+                execution_started_event.set()
             self.__output = ''
             try:
                 self.__process = subprocess.Popen(['python3', '-u', program_path],
