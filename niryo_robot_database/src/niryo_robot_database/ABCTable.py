@@ -5,6 +5,10 @@ class RowNotFoundError(Exception):
     pass
 
 
+class RowAlreadyExist(Exception):
+    pass
+
+
 class ABCTable(ABC):
     _schema = ""
     _default = []
@@ -42,6 +46,10 @@ class ABCTable(ABC):
     def check_exists(self, id_):
         if not self.exists(id_):
             raise RowNotFoundError(f'id "{id_}" does not exist in {self._table_name}.')
+
+    def check_not_exists(self, id_):
+        if self.exists(id_):
+            raise RowAlreadyExist(f'id "{id_}" already exist in {self._table_name}.')
 
     def delete(self, id_):
         self.check_exists(id_)

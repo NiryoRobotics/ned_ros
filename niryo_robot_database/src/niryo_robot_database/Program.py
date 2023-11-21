@@ -23,7 +23,7 @@ has_blockly BOOLEAN
         return super().update(id_, values)
 
     def insert(self, id_, name, description, has_blockly):
-        self.check_exists(id_)
+        self.check_not_exists(id_)
 
         saved_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         program = {
