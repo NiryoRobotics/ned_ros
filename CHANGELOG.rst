@@ -11,6 +11,11 @@ ___________
    * /niryo_robot_arm_commander/trajectory_list (BasicObjectArray)
    * /niryo_robot_poses_handler/pose_list (BasicObjectArray)
    * /niryo_robot_poses_handler/dynamic_frame_list (BasicObjectArray)
+ * New topic: /niryo_robot_poses_handlers/relative_pose
+   * This topic publish the TCP pose relative to a dynamic frame
+ * New service: /niryo_robot_poses_handlers/set_relative_transform_frame
+   * Use this service to set the dynamic frame which should be used for the relative pose
+
 
  * New services:
    * /niryo_robot_database/get_db_file_path
