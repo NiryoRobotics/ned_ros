@@ -3,6 +3,9 @@
 # Libs
 import rospy
 import logging
+import tf
+import tf2_ros
+import tf2_geometry_msgs
 
 from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -16,7 +19,7 @@ from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from geometry_msgs.msg import Point, Quaternion
+from geometry_msgs.msg import Point, Quaternion, PoseStamped
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_msgs.msg import BasicObject, BasicObjectArray
@@ -26,7 +29,7 @@ from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse
+from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse, SetString
 
 from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
@@ -96,9 +99,19 @@ class PoseHandlerNode:
                                                               BasicObjectArray,
                                                               queue_size=10,
                                                               latch=True)
+        self.__publish_dynamic_frame_list()
+
         self.dynamic_frame_manager.restore_publisher()
-        # Publisher dynamic frames
         self.dynamic_frame_manager.publish_frames()
+
+        # Relative pose
+        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=10)
+        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback, queue_size=1)
+        self.__current_pose = [0] * 6
+
+        self.__relative_transform = None
+        rospy.Service('~set_relative_transform_frame', SetString, self.__callback_set_relative_transform_frame)
+        rospy.Timer(rospy.Duration.from_sec(1 / 30), lambda _: self.__publish_relative_pose())
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
@@ -238,6 +251,18 @@ class PoseHandlerNode:
     def __callback_get_pose_list(self, _):
         return self.name_description_list_from_fun(self.get_available_poses)
 
+    def __callback_set_relative_transform_frame(self, req):
+        if req.value == '':
+            self.__relative_transform = None
+        elif req.value not in self.dynamic_frame_manager.get_all_names():
+            return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
+
+        try:
+            self.__relative_transform = self.get_transform(req.value, 'world')
+        except tf2_ros.LookupException as lookup_exception:
+            return CommandStatus.TF_ERROR, str(lookup_exception)
+        return CommandStatus.SUCCESS, f'Successfully set relative transform frame to "{req.value}"'
+
     def __callback_manage_pose(self, req):
         cmd = req.cmd
         pose = req.pose
@@ -260,6 +285,7 @@ class PoseHandlerNode:
 
     # Dynamic Frame
     def __callback_manage_dynamic_frame(self, req):
+        rospy.loginfo(req)
         cmd = req.cmd
         frame = req.dynamic_frame
         frame.name = frame.name[:30]
@@ -336,7 +362,9 @@ class PoseHandlerNode:
     def __callback_get_transform_pose(self, req):
         try:
             pose = [req.position.x, req.position.y, req.position.z, req.rpy.roll, req.rpy.pitch, req.rpy.yaw]
-            position, rpy = self.get_transform_pose(pose, req.source_frame, req.local_frame)
+            transform_pose = self.transform_pose_from_frame(pose, req.source_frame, req.local_frame)
+            position = transform_pose.pose.position
+            rpy = self.quaternion_to_rpy(transform_pose.pose.orientation)
             return CommandStatus.SUCCESS, "Success", position, rpy
 
         except Exception as e:
@@ -361,6 +389,16 @@ class PoseHandlerNode:
             BasicObject(name=name, description=description) for name, description in zip(*self.get_available_poses())
         ]
         self.__pose_list_publisher.publish(pose_array)
+
+    def __robot_state_callback(self, msg):
+        self.__current_pose = [msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw]
+
+    def __publish_relative_pose(self):
+        if self.__relative_transform is None:
+            return
+
+        transform_pose = self.transform_pose(self.__relative_transform, self.__current_pose)
+        self.__relative_pose_publisher.publish(transform_pose)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
@@ -636,52 +674,43 @@ class PoseHandlerNode:
         """
         return self.dynamic_frame_manager.get_all_names_w_description()
 
-    def get_transform_pose(self, pose, source_frame, local_frame):
+    def get_transform(self, source_frame, local_frame):
+        if self.__tf_buffer is None or self.__tf_listener is None:
+            self.__tf_buffer = tf2_ros.Buffer()
+            self.__tf_listener = tf2_ros.TransformListener(self.__tf_buffer)
+
+        # Get transform
+        transform = self.__tf_buffer.lookup_transform(source_frame, local_frame, rospy.Time(0), rospy.Duration(4))
+        return transform
+
+    def transform_pose(self, transform, pose):
+        pose_stamped = tf2_geometry_msgs.PoseStamped()
+        pose_stamped.pose.position = Point(*pose[:3])
+        quaternion = tf.transformations.quaternion_from_euler(*pose[3:])
+        pose_stamped.pose.orientation = Quaternion(*quaternion)
+        pose_stamped.header.frame_id = transform.child_frame_id
+        pose_stamped.header.stamp = rospy.Time.now()
+
+        # Calculate pose in world frame
+        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, transform)
+
+        return transform_pose
+
+    def transform_pose_from_frame(self, pose, source_frame, local_frame):
         """
         Get the transform pose in source_frame from local_frame
 
         :return: transform pose
         :rtype : list[float]
         """
-        import tf2_ros
-        import tf2_geometry_msgs
-        import tf
 
-        if self.__tf_buffer is None or self.__tf_listener is None:
-            self.__tf_buffer = tf2_ros.Buffer()
-            self.__tf_listener = tf2_ros.TransformListener(self.__tf_buffer)
-
-        # Get transform
-        try:
-            transform = self.__tf_buffer.lookup_transform(source_frame,
-                                                          local_frame,
-                                                          rospy.Time.now(),
-                                                          rospy.Duration(4.0))
-        except Exception as e:
-            return str(e)
-
-        # Pose in local_frame
-        pose_stamped = tf2_geometry_msgs.PoseStamped()
-        pose_stamped.pose.position = Point(*pose[:3])
-        quaternion = tf.transformations.quaternion_from_euler(*pose[3:])
-        pose_stamped.pose.orientation = Quaternion(*quaternion)
-        pose_stamped.header.frame_id = local_frame
-        pose_stamped.header.stamp = rospy.Time.now()
-
-        # Calculate pose in world frame
-        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, transform)
-
-        quaternion = transform_pose.pose.orientation
-        euler = tf.transformations.euler_from_quaternion(self.quaternion_to_list(quaternion))
-        position = transform_pose.pose.position
-
-        rpy = RPY(*euler)
-
-        return position, rpy
+        transform = self.get_transform(source_frame, local_frame)
+        return self.transform_pose(transform, pose)
 
     @staticmethod
-    def quaternion_to_list(quaternion):
-        return [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
+    def quaternion_to_rpy(quaternion):
+        euler = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
+        return RPY(*euler)
 
     @staticmethod
     def name_description_list_from_fun(fun):
