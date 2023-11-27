@@ -41,6 +41,7 @@ ___________
      * Added "message" to service response
 
 **Bugfixes**
+  * Removed double assignment of the const REBOOT_MOTOR in RobotStatus.msg
 
 v5.1.3
 ___________
