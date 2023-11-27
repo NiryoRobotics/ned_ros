@@ -33,5 +33,3 @@ EXPOSE 9090
 EXPOSE 11311
 
 ENTRYPOINT [ "/opt/docker_ros_entrypoint.sh" ]
-
-#
