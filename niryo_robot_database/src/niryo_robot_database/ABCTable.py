@@ -53,7 +53,7 @@ class ABCTable(ABC):
 
     def delete(self, id_):
         self.check_exists(id_)
-        query = 'DELETE FROM {self._table_name} WHERE id = :id'
+        query = f'DELETE FROM {self._table_name} WHERE id = :id'
         self._dao.execute(query, {'id': id_})
 
     def update(self, id_, values):
