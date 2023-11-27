@@ -285,7 +285,6 @@ class PoseHandlerNode:
 
     # Dynamic Frame
     def __callback_manage_dynamic_frame(self, req):
-        rospy.loginfo(req)
         cmd = req.cmd
         frame = req.dynamic_frame
         frame.name = frame.name[:30]
