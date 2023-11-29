@@ -10,13 +10,13 @@ RUN find . -type f -name "package.xml" | cpio -pdm docker_ros_folder_dependencie
 # Install rosdep
 RUN apt update \
     && rosdep update  \
-    && rosdep install --simulate --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys="python3-rpi.gpio python-rpi.gpio" \
     && rosdep install --rosdistro ${ROS_DISTRO} --from-paths docker_ros_folder_dependencies --ignore-src --default-yes --skip-keys="python3-rpi.gpio python-rpi.gpio" \
     && rm -rf /var/lib/apt/lists/*
 
 # Install additionnal dependencies
+# ros-babel-fish is a foxglove dependecy which is not detected by rosdep for some reasons
 RUN apt update \
-    && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl\
+    && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl ros-${ROS_DISTRO}-ros-babel-fish/focal\
     && rm -rf /var/lib/apt/lists/*
 
 COPY .docker/install_wiringpi.sh /opt/install_wiringpi.sh
