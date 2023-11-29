@@ -240,8 +240,7 @@ roslint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
     # Check code linting
-    - catkin config --skiplist foxglove_bridge
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -j1
+    - catkin config --skiplist foxglove_bridge && catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -j1
 
 catkin_lint_job:
   stage: test
