@@ -14,8 +14,9 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install additionnal dependencies
+# ros-babel-fish is a foxglove dependecy which is not detected by rosdep for some reasons
 RUN apt update \
-    && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl\
+    && apt install -y --no-install-recommends ros-${ROS_DISTRO}-rosdoc-lite curl ros-${ROS_DISTRO}-ros-babel-fish/focal\
     && rm -rf /var/lib/apt/lists/*
 
 COPY .docker/install_wiringpi.sh /opt/install_wiringpi.sh
