@@ -19,6 +19,7 @@ from niryo_robot_database.msg import FilePath as FilePathMsg, Setting as Setting
 
 # srv
 from niryo_robot_database.srv import SetSettings, GetSettings, AddFilePath, GetAllByType, RmFilePath
+from niryo_robot_msgs.srv import GetString
 
 
 class DatabaseNode:
@@ -28,12 +29,12 @@ class DatabaseNode:
 
         sqlite_db_file_path = os.path.join(rospy.get_param('~database_path'),
                                            rospy.get_param('~hardware_version') + ".db")
-        db_path = os.path.expanduser(sqlite_db_file_path)
+        self.db_path = os.path.expanduser(sqlite_db_file_path)
 
-        if not os.path.isfile(db_path):
+        if not os.path.isfile(self.db_path):
             raise RuntimeError('Database Node - Unable to open the database.')
 
-        sqlite_dao = SQLiteDAO(db_path)
+        sqlite_dao = SQLiteDAO(self.db_path)
 
         rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
         rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
@@ -47,6 +48,7 @@ class DatabaseNode:
             GetAllByType,
             self.__callback_get_all_by_type,
         )
+        rospy.Service('~get_db_file_path', GetString, lambda _: self.db_path)
 
         self.__version = Version(sqlite_dao)
 
@@ -71,7 +73,7 @@ class DatabaseNode:
     def __callback_get_settings(self, req):
         response = system_api_client.get_setting(req.name)
         if not response.success:
-            return CommandStatus.DATABASE_DB_ERROR, response.detail
+            return CommandStatus.DATABASE_DB_ERROR, response.detail, ''
         value = response.data[req.name]
         value_type = response.data['type']
 

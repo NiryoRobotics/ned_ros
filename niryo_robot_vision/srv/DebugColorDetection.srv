@@ -1,3 +1,5 @@
 string color
 ---
+int32 status
+string message
 sensor_msgs/CompressedImage img

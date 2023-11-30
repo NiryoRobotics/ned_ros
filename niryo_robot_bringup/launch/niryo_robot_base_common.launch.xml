@@ -16,6 +16,15 @@
     <!-- for conveniency -->
     <arg name="ros_version" value="$(env ROS_DISTRO)"/>
 
+    <!-- Launching TF ROS Bridge-->
+    <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+        <arg name="port" value="9090"/>
+        <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
+    </include>
+
+    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
@@ -34,13 +43,6 @@
             <param name="action_preempt_timeout" type="int" value="60"/>
         </group>
     </group>
-
-    <!-- Launching TF ROS Bridge-->
-    <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
-    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
-        <arg name="port" value="9090"/>
-        <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
-    </include>
 
     <!-- Including launch files -->
     <include file="$(find niryo_robot_hardware_interface)/launch/controllers.launch">
@@ -80,6 +82,11 @@
     </include>
 
     <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
+    </include>
+
+    <include file="$(find niryo_robot_programs_manager_v2)/launch/programs_manager.launch">
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="log_level" value="$(arg log_level)"/>
     </include>

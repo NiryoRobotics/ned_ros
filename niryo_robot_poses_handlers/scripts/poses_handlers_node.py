@@ -3,6 +3,9 @@
 # Libs
 import rospy
 import logging
+import tf
+import tf2_ros
+import tf2_geometry_msgs
 
 from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -16,15 +19,17 @@ from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from geometry_msgs.msg import Point, Quaternion
+from geometry_msgs.msg import Point, Quaternion, PoseStamped
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
+from niryo_robot_msgs.msg import BasicObject, BasicObjectArray
+
 from niryo_robot_poses_handlers.msg import NiryoPose, DynamicFrame
 from std_msgs.msg import Int32
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList
+from niryo_robot_msgs.srv import GetNameDescriptionList, GetNameDescriptionListResponse, SetString
 
 from niryo_robot_poses_handlers.srv import GetTargetPose, GetTransformPose
 from niryo_robot_poses_handlers.srv import GetWorkspaceRatio
@@ -42,6 +47,7 @@ class PoseHandlerNode:
         - created of grips
         - convertion of workspace-relative poses (e.g. from camera) to robot poses
     """
+
     def __init__(self):
         rospy.logdebug("Poses Handlers - Entering in Init")
 
@@ -76,7 +82,9 @@ class PoseHandlerNode:
 
         rospy.Service('~manage_pose', ManagePose, self.__callback_manage_pose)
         rospy.Service('~get_pose', GetPose, self.__callback_get_pose)
-        rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_position_list)
+        rospy.Service('~get_pose_list', GetNameDescriptionList, self.__callback_get_pose_list)
+        self.__pose_list_publisher = rospy.Publisher('~pose_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__publish_pose_list()
 
         # Dynamic Frame
         self.__tf_listener = None
@@ -85,11 +93,25 @@ class PoseHandlerNode:
         self.dynamic_frame_manager = DynamicFrameManager(dynamic_frame_dir)
         rospy.Service('~manage_dynamic_frame', ManageDynamicFrame, self.__callback_manage_dynamic_frame)
         rospy.Service('~get_dynamic_frame', GetDynamicFrame, self.__callback_get_dynamic_frame)
-        rospy.Service('~get_dynamic_frame_list', GetNameDescriptionList, self.__callback_get_dynamic_frame_list)
         rospy.Service('~get_transform_pose', GetTransformPose, self.__callback_get_transform_pose)
+        rospy.Service('~get_dynamic_frame_list', GetNameDescriptionList, self.__callback_get_dynamic_frame_list)
+        self.__dynamic_frame_list_publisher = rospy.Publisher('~dynamic_frame_list',
+                                                              BasicObjectArray,
+                                                              queue_size=10,
+                                                              latch=True)
+        self.__publish_dynamic_frame_list()
+
         self.dynamic_frame_manager.restore_publisher()
-        # Publisher dynamic frames
         self.dynamic_frame_manager.publish_frames()
+
+        # Relative pose
+        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=10)
+        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback, queue_size=1)
+        self.__current_pose = [0] * 6
+
+        self.__relative_transform = None
+        rospy.Service('~set_relative_transform_frame', SetString, self.__callback_set_relative_transform_frame)
+        rospy.Timer(rospy.Duration.from_sec(1 / 30), lambda _: self.__publish_relative_pose())
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
@@ -97,10 +119,12 @@ class PoseHandlerNode:
         self.__ws_manager = WorkspaceManager(ws_dir)
         rospy.Service('~manage_workspace', ManageWorkspace, self.__callback_manage_workspace)
         rospy.Service('~get_workspace_ratio', GetWorkspaceRatio, self.__callback_workspace_ratio)
-        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_workspace_list)
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses, self.__callback_get_workspace_poses)
         rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
         rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
+        rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_get_workspace_list)
+        self.__workspace_list_publisher = rospy.Publisher('workspace_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__publish_workspace_list()
 
         if rospy.has_param('~gazebo_workspaces'):
             for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
@@ -133,10 +157,11 @@ class PoseHandlerNode:
                     len(workspace.poses))
             try:
                 self.create_workspace(workspace.name, workspace.description, workspace.poses)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Created workspace '{}'".format(workspace.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
-            except (ValueError, Exception) as e:
+            except Exception as e:
                 return CommandStatus.WORKSPACE_CREATION_FAILED, str(e)
 
         elif cmd == req.SAVE_WITH_POINTS:
@@ -145,6 +170,7 @@ class PoseHandlerNode:
                     len(workspace.points))
             try:
                 self.create_workspace_from_points(workspace.name, workspace.description, workspace.points)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Created workspace '{}'".format(workspace.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -153,6 +179,7 @@ class PoseHandlerNode:
         elif cmd == req.DELETE:
             try:
                 self.remove_workspace(workspace.name)
+                self.__publish_workspace_list()
                 return CommandStatus.SUCCESS, "Removed workspace '{}'".format(workspace.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -165,14 +192,6 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", ratio
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), 0
-
-    def __callback_workspace_list(self, _):
-        try:
-            ws_list, description_list = self.get_available_workspaces()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting workspace list: {}".format(e))
-            ws_list = description_list = []
-        return {"name_list": ws_list, "description_list": description_list}
 
     def __callback_get_workspace_poses(self, req):
         try:
@@ -195,6 +214,17 @@ class PoseHandlerNode:
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), [], []
 
+    def __callback_get_workspace_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_workspaces)
+
+    def __publish_workspace_list(self):
+        workspace_array = BasicObjectArray()
+        workspace_array.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(*self.get_available_workspaces())
+        ]
+        self.__workspace_list_publisher.publish(workspace_array)
+
     # Grips
     def __callback_target_pose(self, req):
         try:
@@ -204,13 +234,6 @@ class PoseHandlerNode:
             return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
 
     # Position
-    def __callback_get_position_list(self, _):
-        try:
-            pos_list, description_list = self.get_available_poses()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting position list: {}".format(e))
-            pos_list = description_list = []
-        return {"name_list": pos_list, "description_list": description_list}
 
     def __callback_get_pose(self, req):
         try:
@@ -225,18 +248,35 @@ class PoseHandlerNode:
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), NiryoPose()
 
+    def __callback_get_pose_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_poses)
+
+    def __callback_set_relative_transform_frame(self, req):
+        if req.value == '':
+            self.__relative_transform = None
+        elif req.value not in self.dynamic_frame_manager.get_all_names():
+            return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
+
+        try:
+            self.__relative_transform = self.get_transform(req.value, 'world')
+        except tf2_ros.LookupException as lookup_exception:
+            return CommandStatus.TF_ERROR, str(lookup_exception)
+        return CommandStatus.SUCCESS, f'Successfully set relative transform frame to "{req.value}"'
+
     def __callback_manage_pose(self, req):
         cmd = req.cmd
         pose = req.pose
         if cmd == req.SAVE:
             try:
                 self.create_pose(pose.name, pose.description, pose.joints, pose.position, pose.rpy, pose.orientation)
+                self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_CREATION_FAILED, str(e)
         elif cmd == req.DELETE:
             try:
                 self.remove_pose(pose.name)
+                self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Removed Position '{}'".format(pose.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -257,6 +297,7 @@ class PoseHandlerNode:
                                                      frame.description,
                                                      frame.poses,
                                                      frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -271,6 +312,7 @@ class PoseHandlerNode:
                                                       frame.description,
                                                       frame.points,
                                                       frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Created dynamic frame '{}'".format(frame.name)
             except NiryoRobotFileException as e:
                 return CommandStatus.FILE_ALREADY_EXISTS, str(e)
@@ -282,6 +324,7 @@ class PoseHandlerNode:
                         "Can't remove a dynamic frame which belong to a workspace")
             try:
                 self.remove_dynamic_frame(frame.name, frame.belong_to_workspace)
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Removed dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.POSES_HANDLER_REMOVAL_FAILED, str(e)
@@ -301,6 +344,7 @@ class PoseHandlerNode:
                 if frame.new_name != '':
                     self.dynamic_frame_manager.edit_name(frame.name, frame.new_name)
 
+                self.__publish_dynamic_frame_list()
                 return CommandStatus.SUCCESS, "Edited dynamic frame '{}'".format(frame.name)
             except Exception as e:
                 return CommandStatus.DYNAMIC_FRAME_EDIT_FAILED, str(e)
@@ -314,24 +358,46 @@ class PoseHandlerNode:
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), None
 
-    def __callback_get_dynamic_frame_list(self, _):
-        try:
-            dynamic_frame_list, description_list = self.get_available_dynamic_frame_w_description()
-        except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting dynamic frames list: {}".format(e))
-            dynamic_frame_list = description_list = []
-        return {"name_list": dynamic_frame_list, "description_list": description_list}
-
     def __callback_get_transform_pose(self, req):
         try:
             pose = [req.position.x, req.position.y, req.position.z, req.rpy.roll, req.rpy.pitch, req.rpy.yaw]
-            position, rpy = self.get_transform_pose(pose, req.source_frame, req.local_frame)
+            transform_pose = self.transform_pose_from_frame(pose, req.source_frame, req.local_frame)
+            position = transform_pose.pose.position
+            rpy = self.quaternion_to_rpy(transform_pose.pose.orientation)
             return CommandStatus.SUCCESS, "Success", position, rpy
 
         except Exception as e:
             rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
             position = rpy = []
             return CommandStatus.CONVERT_FAILED, str(e), position, rpy
+
+    def __callback_get_dynamic_frame_list(self, _):
+        return self.name_description_list_from_fun(self.get_available_dynamic_frame_w_description)
+
+    def __publish_dynamic_frame_list(self):
+        dynamic_frame_array = BasicObjectArray()
+        dynamic_frame_array.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(*self.get_available_dynamic_frame_w_description())
+        ]
+        self.__dynamic_frame_list_publisher.publish(dynamic_frame_array)
+
+    def __publish_pose_list(self):
+        pose_array = BasicObjectArray()
+        pose_array.objects = [
+            BasicObject(name=name, description=description) for name, description in zip(*self.get_available_poses())
+        ]
+        self.__pose_list_publisher.publish(pose_array)
+
+    def __robot_state_callback(self, msg):
+        self.__current_pose = [msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw]
+
+    def __publish_relative_pose(self):
+        if self.__relative_transform is None:
+            return
+
+        transform_pose = self.transform_pose(self.__relative_transform, self.__current_pose)
+        self.__relative_pose_publisher.publish(transform_pose)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
@@ -607,52 +673,61 @@ class PoseHandlerNode:
         """
         return self.dynamic_frame_manager.get_all_names_w_description()
 
-    def get_transform_pose(self, pose, source_frame, local_frame):
+    def get_transform(self, source_frame, local_frame):
+        if self.__tf_buffer is None or self.__tf_listener is None:
+            self.__tf_buffer = tf2_ros.Buffer()
+            self.__tf_listener = tf2_ros.TransformListener(self.__tf_buffer)
+
+        # Get transform
+        transform = self.__tf_buffer.lookup_transform(source_frame, local_frame, rospy.Time(0), rospy.Duration(4))
+        return transform
+
+    def transform_pose(self, transform, pose):
+        pose_stamped = tf2_geometry_msgs.PoseStamped()
+        pose_stamped.pose.position = Point(*pose[:3])
+        quaternion = tf.transformations.quaternion_from_euler(*pose[3:])
+        pose_stamped.pose.orientation = Quaternion(*quaternion)
+        pose_stamped.header.frame_id = transform.child_frame_id
+        pose_stamped.header.stamp = rospy.Time.now()
+
+        # Calculate pose in world frame
+        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, transform)
+
+        return transform_pose
+
+    def transform_pose_from_frame(self, pose, source_frame, local_frame):
         """
         Get the transform pose in source_frame from local_frame
 
         :return: transform pose
         :rtype : list[float]
         """
-        import tf2_ros
-        import tf2_geometry_msgs
-        import tf
 
-        if self.__tf_buffer is None or self.__tf_listener is None:
-            self.__tf_buffer = tf2_ros.Buffer()
-            self.__tf_listener = tf2_ros.TransformListener(self.__tf_buffer)
-
-        # Get transform
-        try:
-            transform = self.__tf_buffer.lookup_transform(source_frame,
-                                                          local_frame,
-                                                          rospy.Time.now(),
-                                                          rospy.Duration(4.0))
-        except Exception as e:
-            return str(e)
-
-        # Pose in local_frame
-        pose_stamped = tf2_geometry_msgs.PoseStamped()
-        pose_stamped.pose.position = Point(*pose[:3])
-        quaternion = tf.transformations.quaternion_from_euler(*pose[3:])
-        pose_stamped.pose.orientation = Quaternion(*quaternion)
-        pose_stamped.header.frame_id = local_frame
-        pose_stamped.header.stamp = rospy.Time.now()
-
-        # Calculate pose in world frame
-        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, transform)
-
-        quaternion = transform_pose.pose.orientation
-        euler = tf.transformations.euler_from_quaternion(self.quaternion_to_list(quaternion))
-        position = transform_pose.pose.position
-
-        rpy = RPY(*euler)
-
-        return position, rpy
+        transform = self.get_transform(source_frame, local_frame)
+        return self.transform_pose(transform, pose)
 
     @staticmethod
-    def quaternion_to_list(quaternion):
-        return [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
+    def quaternion_to_rpy(quaternion):
+        euler = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
+        return RPY(*euler)
+
+    @staticmethod
+    def name_description_list_from_fun(fun):
+        response = GetNameDescriptionListResponse()
+        response.status = CommandStatus.SUCCESS
+
+        try:
+            response.name_list, response.description_list = fun()
+        except Exception as e:
+            rospy.logerr("Poses Handlers - Error occured when getting list: {}".format(e))
+            response.status = CommandStatus.POSES_HANDLER_READ_FAILURE
+            response.message = str(e)
+
+        response.objects = [
+            BasicObject(name=name, description=description) for name,
+            description in zip(response.name_list, response.description_list)
+        ]
+        return response
 
 
 if __name__ == "__main__":

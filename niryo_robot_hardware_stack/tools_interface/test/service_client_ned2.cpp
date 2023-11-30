@@ -350,15 +350,15 @@ TEST_F(ToolTestControlSuite, ToolReboot)
 {
     ASSERT_NE(id, -1);
 
-    auto client = nh_g->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
+    auto client = nh_g->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/tools/reboot");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    std_srvs::Trigger srv;
+    niryo_robot_msgs::Trigger srv;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.success, true);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
     EXPECT_EQ(srv.response.message, "Tool reboot succeeded");
 }
 
