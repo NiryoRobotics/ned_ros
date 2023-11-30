@@ -208,14 +208,12 @@ class ProgramManagerNode:
 
     # Autorun
     def __callback_set_program_autorun(self, req):
-        if req.mode:
-            self.__autorun_mode = req.mode
-            mode_str = self.__autorun_mode_to_str[req.mode]
-            self.__set_setting_service('autorun_mode', mode_str, 'str')
+        self.__autorun_mode = req.mode
+        mode_str = self.__autorun_mode_to_str[req.mode]
+        self.__set_setting_service('autorun_mode', mode_str, 'str')
 
-        if req.program_id:
-            self.__autorun_id = req.program_id
-            self.__set_setting_service('autorun_id', req.program_id, 'str')
+        self.__autorun_id = req.program_id
+        self.__set_setting_service('autorun_id', req.program_id, 'str')
 
         return CommandStatus.SUCCESS, 'Successfully set autorun'
 
