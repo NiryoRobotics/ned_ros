@@ -2,6 +2,13 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.2.1
+___________
+**Features**
+**Improvements**
+**Bugfixes**
+  * the service set_program_autorun wasn't taking the mode into account when passing "DISABLE"
+
 v5.2.0
 ___________
 **Features**
