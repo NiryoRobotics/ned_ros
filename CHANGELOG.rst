@@ -2,6 +2,13 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.2.1
+___________
+**Features**
+**Improvements**
+**Bugfixes**
+  * the service set_program_autorun wasn't taking the mode into account when passing "DISABLE"
+
 v5.2.0
 ___________
 **Features**
@@ -15,10 +22,8 @@ ___________
    * This topic publish the TCP pose relative to a dynamic frame
  * New service: /niryo_robot_poses_handlers/set_relative_transform_frame
    * Use this service to set the dynamic frame which should be used for the relative pose
-
-
- * New services:
-   * /niryo_robot_database/get_db_file_path
+ * New service: /niryo_robot_database/get_db_file_path
+   * Use this service to retrieve the database file path
 
 **Improvements**
  * Refacto of the programs manager
