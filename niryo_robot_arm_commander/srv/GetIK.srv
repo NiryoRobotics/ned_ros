@@ -1,4 +1,5 @@
 niryo_robot_msgs/RobotState pose
 ---
-bool success
+int32 status
+string message
 float32[] joints

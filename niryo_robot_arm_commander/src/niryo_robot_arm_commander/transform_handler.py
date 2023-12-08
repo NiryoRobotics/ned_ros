@@ -17,6 +17,7 @@ class ArmTCPTransformHandler:
     """
     This class uses a TransformListener to handle transforms related to the TCP.
     """
+
     def __init__(self):
         self.__tf_buffer = Buffer()
         self.__tf_listener = TransformListener(self.__tf_buffer)
@@ -30,10 +31,16 @@ class ArmTCPTransformHandler:
 
             transform_world_to_tcp_target = self.transform_from_pose(pose, "base_link", "ee_link_target")
 
+            transform_time = rospy.Time.now()
+            transform_world_to_tcp_target.header.stamp = transform_time
+            transform_tcp_to_ee_link.header.stamp = transform_time
             self.__tf_buffer.set_transform(transform_world_to_tcp_target, "default_authority")
             self.__tf_buffer.set_transform(transform_tcp_to_ee_link, "default_authority")
 
-            ee_link_target_transform = self.__tf_buffer.lookup_transform("base_link", "tcp_target", rospy.Time(0))
+            ee_link_target_transform = self.__tf_buffer.lookup_transform("base_link",
+                                                                         "tcp_target",
+                                                                         rospy.Time(0),
+                                                                         rospy.Duration.from_sec(1.0))
 
             return self.pose_from_transform(ee_link_target_transform.transform)
         except ArmTCPTransformHandlerException:

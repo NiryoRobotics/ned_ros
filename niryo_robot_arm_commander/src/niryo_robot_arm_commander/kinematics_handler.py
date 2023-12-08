@@ -12,7 +12,7 @@ from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 
-from niryo_robot_msgs.msg import RobotState, RPY
+from niryo_robot_msgs.msg import RobotState, RPY, CommandStatus
 
 # Services
 from moveit_msgs.srv import GetPositionFK, GetPositionIK
@@ -38,7 +38,12 @@ class KinematicsHandler:
 
     # -- Callbacks
     def __callback_get_forward_kinematics(self, req):
-        return self.get_forward_kinematics(joints=req.joints)
+        forward_kinematics = self.get_forward_kinematics(joints=req.joints)
+        if forward_kinematics is None:
+            return (CommandStatus.FORWARD_KINEMATICS_FAILURE,
+                    'An error occurred while computing forward kinematics.',
+                    RobotState())
+        return CommandStatus.SUCCESS, 'Successfully computed forward kinematic', forward_kinematics
 
     def __callback_get_inverse_kinematics(self, req):
         pose = req.pose
@@ -48,7 +53,11 @@ class KinematicsHandler:
             pose.orientation = Quaternion(qx, qy, qz, qw)
         pose = Pose(pose.position, pose.orientation)
         success, joints = self.get_inverse_kinematics(pose=pose)
-        return success, joints
+        if not success:
+            return (CommandStatus.INVERT_KINEMATICS_FAILURE,
+                    'An error occurred while computing the inverse kinematic',
+                    joints)
+        return CommandStatus.SUCCESS, '', joints
 
     def get_forward_kinematics(self, joints):
         """
@@ -61,7 +70,7 @@ class KinematicsHandler:
             rospy.wait_for_service('compute_fk', 2)
         except (rospy.ServiceException, rospy.ROSException) as e:
             rospy.logerr("Arm commander - Impossible to connect to FK service : " + str(e))
-            return RobotState()
+            return None
         try:
             moveit_fk = rospy.ServiceProxy('compute_fk', GetPositionFK)
             fk_link = ['base_link', 'tool_link']
@@ -72,17 +81,17 @@ class KinematicsHandler:
             response = moveit_fk(header, fk_link, rs)
         except rospy.ServiceException as e:
             rospy.logerr("Arm commander - Failed to get FK : " + str(e))
-            return RobotState()
+            return None
 
         pose = self.__transform_handler.ee_link_to_tcp_pose_target(response.pose_stamped[1].pose, "tool_link")
 
         quaternion = [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w]
         rpy = euler_from_quaternion(quaternion)
-        quaternion = (round(quaternion[0], 3), round(quaternion[1], 3), round(quaternion[2], 3),
+        quaternion = (round(quaternion[0], 3),
+                      round(quaternion[1], 3),
+                      round(quaternion[2], 3),
                       round(quaternion[3], 3))
-        point = (round(pose.position.x, 3),
-                 round(pose.position.y, 3),
-                 round(pose.position.z, 3))
+        point = (round(pose.position.x, 3), round(pose.position.y, 3), round(pose.position.z, 3))
 
         return RobotState(position=Point(*point), rpy=RPY(*rpy), orientation=Quaternion(*quaternion))
 
