@@ -1,3 +1,7 @@
 ---
+int32 status
+string message
+# this service embed both old and new way to structure the datas in order to stay compatible with NS1/2
 string[] name_list
 string[] description_list
+BasicObject[] objects

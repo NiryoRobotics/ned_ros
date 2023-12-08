@@ -1,0 +1,1 @@
+niryo_robot_msgs/BasicObject[] objects

@@ -2,6 +2,61 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.2.2
+___________
+**Features**
+**Improvements**
+  * The service /niryo_robot/kinematics/forward now returns status and message in its response
+  * The service /niryo_robot/kinematics/inverse now returns status and message in its response
+**Bugfixes**
+  * Fixed the service /niryo_robot/kinematics/forward which sometimes crashed because of transform extrapolation
+
+v5.2.1
+___________
+**Features**
+**Improvements**
+**Bugfixes**
+  * the service set_program_autorun wasn't taking the mode into account when passing "DISABLE"
+
+v5.2.0
+___________
+**Features**
+ * Added a foxglove bridge server
+ * new messages: BasicObject and BasicObjectList
+ * New topics:
+   * /niryo_robot_arm_commander/trajectory_list (BasicObjectArray)
+   * /niryo_robot_poses_handler/pose_list (BasicObjectArray)
+   * /niryo_robot_poses_handler/dynamic_frame_list (BasicObjectArray)
+ * New topic: /niryo_robot_poses_handlers/relative_pose
+   * This topic publish the TCP pose relative to a dynamic frame
+ * New service: /niryo_robot_poses_handlers/set_relative_transform_frame
+   * Use this service to set the dynamic frame which should be used for the relative pose
+ * New service: /niryo_robot_database/get_db_file_path
+   * Use this service to retrieve the database file path
+
+**Improvements**
+ * Refacto of the programs manager
+   * It now uses programs ids to handle the programs
+   * A program is now defined as a python program which can have a blockly program attached
+   * An action server is used to execute a program rather than a service
+   * The autorun and the programs properties are stored in the database
+   * Named programs_manager_v2 in order to keep the old programs manager for NS1
+ * The service GetNameDescription takes an array of BasicObject (for future compatibility)
+ * remove ros_wrapper_2
+
+ * modified service type:
+   * /niryo_robot/tools/reboot
+     * std_srvs/Trigger -> niryo_robot_msgs/Trigger
+   * /niryo_robot_vision/debug_markers
+     * Added "status" and "message" to service response
+   * /niryo_robot_vision/debug_colors
+     * Added "status" and "message" to service response
+   * /niryo_robot_vision/visualization
+     * Added "message" to service response
+
+**Bugfixes**
+  * Removed double assignment of the const REBOOT_MOTOR in RobotStatus.msg
+
 v5.1.3
 ___________
 **Features**

@@ -3,10 +3,11 @@ from threading import Lock
 
 
 class SQLiteDAO:
+
     def __init__(self, db_path):
         self.__lock = Lock()
         self.__con = sqlite3.connect(db_path, check_same_thread=False)
-        self.__con.row_factory = self.dict_factory
+        self.__con.row_factory = sqlite3.Row
         self.__cursor = self.__con.cursor()
 
     def __del__(self):
@@ -14,19 +15,6 @@ class SQLiteDAO:
             self.__con.close()
         except AttributeError:
             pass
-
-    # Format the queries result as dict instead of tuples
-    def dict_factory(self, cursor, row):
-        d = {}
-        for idx, col in enumerate(cursor.description):
-            value = row[idx]
-            if value is None:
-                value = ''
-            elif not isinstance(value, str):
-                value = value.encode('utf-8')
-
-            d[col[0]] = value
-        return d
 
     @property
     def last_row_id(self):

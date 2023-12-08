@@ -339,18 +339,19 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
  * @param res
  * @return
  */
-bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request & /*req*/, std_srvs::Trigger::Response &res)
+bool ToolsInterfaceCore::_callbackToolReboot(niryo_robot_msgs::Trigger::Request & /*req*/, niryo_robot_msgs::Trigger::Response &res)
 {
-    res.success = false;
+    bool success = false;
 
     if (_toolState && _toolState->isValid())
     {
-        res.success = rebootHardware(true);
-        res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
+        success = rebootHardware(true);
+        res.status = (success) ? niryo_robot_msgs::CommandStatus::SUCCESS : niryo_robot_msgs::CommandStatus::TOOL_FAILURE;
+        res.message = (success) ? "Tool reboot succeeded" : "Tool reboot failed";
     }
     else
     {
-        res.success = true;
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
         res.message = "No Tool";
     }
 

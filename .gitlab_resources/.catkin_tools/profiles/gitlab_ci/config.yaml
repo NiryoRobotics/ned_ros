@@ -1,4 +1,4 @@
-blacklist: []
+blacklist: [foxglove_bridge]
 build_space: build/gitlab_ci
 catkin_make_args: []
 cmake_args:

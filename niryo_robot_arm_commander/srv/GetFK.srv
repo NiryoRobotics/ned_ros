@@ -1,3 +1,5 @@
 float32[] joints
 ---
+int32 status
+string message
 niryo_robot_msgs/RobotState pose

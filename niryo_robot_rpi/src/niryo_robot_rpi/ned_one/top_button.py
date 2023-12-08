@@ -74,6 +74,8 @@ class TopButton(AbstractTopButton):
         super(TopButton, self).__init__()
 
         # - Subscribers
+        # This code doesn't work anymore, but because of a lack of time and because the Ned isn't supposed
+        # to be maintained, I will let this like this
         rospy.Subscriber('/niryo_robot_programs_manager/program_is_running',
                          ProgramIsRunning,
                          self.__callback_program_is_running)

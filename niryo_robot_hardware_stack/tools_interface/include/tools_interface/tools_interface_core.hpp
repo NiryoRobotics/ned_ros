@@ -31,13 +31,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/util/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
+#include "niryo_robot_msgs/Trigger.h"
 #include "ttl_driver/ttl_interface_core.hpp"
-
 #include "tools_interface/PingDxlTool.h"
 #include "tools_interface/ToolCommand.h"
 #include "tools_interface/Tool.h"
 
-#include "std_srvs/Trigger.h"
 #include "std_msgs/Int32.h"
 
 using ::common::model::EHardwareType;
@@ -84,7 +83,7 @@ namespace tools_interface
         bool _callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
         bool _callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
-        bool _callbackToolReboot(std_srvs::Trigger::Request &, std_srvs::Trigger::Response &res);
+        bool _callbackToolReboot(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res);
 
         bool _callbackPullAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
         bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
