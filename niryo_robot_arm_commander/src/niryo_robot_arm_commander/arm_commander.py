@@ -14,7 +14,7 @@ from .trajectory_handler import TrajectoryHandlerNode
 from .utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
     angle_between_2_points
 # Command Status
-from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_msgs.msg import CommandStatus, RobotState
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
@@ -356,8 +356,10 @@ class ArmCommander:
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
             return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0", None
-        list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for
-                         tcp_pose in list_tcp_poses]
+        list_ee_poses = [
+            self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link)
+            for tcp_pose in list_tcp_poses
+        ]
 
         dist_smoothing = arm_cmd.dist_smoothing
 
@@ -367,8 +369,10 @@ class ArmCommander:
                 plan = self.__traj_executor.compute_cartesian_plan(list_ee_poses)
                 if plan is None:
                     raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "")
-                plan = self.__traj_executor.retime_plan(plan, self.__arm_state.velocity_scaling_factor,
-                                                        self.__arm_state.acceleration_scaling_factor, optimize=False)
+                plan = self.__traj_executor.retime_plan(plan,
+                                                        self.__arm_state.velocity_scaling_factor,
+                                                        self.__arm_state.acceleration_scaling_factor,
+                                                        optimize=False)
 
             except ArmCommanderException as e:
                 if e.status == CommandStatus.NO_PLAN_AVAILABLE:
@@ -434,12 +438,16 @@ class ArmCommander:
             ind_ref = -1 if reverse else 0
             reference_pos = self.__kinematics_handler.get_forward_kinematics(
                 plan_.joint_trajectory.points[ind_ref].positions)
+            if reference_pos is None:
+                reference_pos = RobotState()
             for raw_ind in range(1, len_plan):
                 if reverse:
                     ind = len_plan - raw_ind - 1
                 else:
                     ind = raw_ind
                 pose_i = self.__kinematics_handler.get_forward_kinematics(plan_.joint_trajectory.points[ind].positions)
+                if pose_i is None:
+                    pose_i = RobotState()
                 dist_pose_to_target = dist_2_poses(reference_pos, pose_i)
 
                 if dist_pose_to_target > dist_smooth:
@@ -467,7 +475,7 @@ class ArmCommander:
             return np.array(big_plan.joint_trajectory.points[ind].positions)
 
         def bezier(p0, p1, p2, t):
-            return ((1 - t) ** 2) * p0 + 2 * (1 - t) * t * p1 + (t ** 2) * p2
+            return ((1 - t)**2) * p0 + 2 * (1 - t) * t * p1 + (t**2) * p2
 
         for smooth_zone in smooth_zones:
             begin_index, mid_index, end_index = smooth_zone
@@ -478,38 +486,21 @@ class ArmCommander:
                 big_plan.joint_trajectory.points[point_index].positions = bezier_result
 
         final_plan = self.__traj_executor.retime_plan(
-            big_plan, optimize=True,
+            big_plan,
+            optimize=True,
             velocity_scaling_factor=self.__arm_state.velocity_scaling_factor,
-            acceleration_scaling_factor=self.__arm_state.acceleration_scaling_factor
-        )
+            acceleration_scaling_factor=self.__arm_state.acceleration_scaling_factor)
         return final_plan
-
-    @staticmethod
-    def __filtering_plan(plan):
-        """
-        Remove duplicated points
-        """
-        if plan is None or len(plan.joint_trajectory.points) == 0:
-            return None
-
-        new_plan = RobotTrajectory()
-        new_plan.joint_trajectory.header = plan.joint_trajectory.header
-        new_plan.joint_trajectory.joint_names = plan.joint_trajectory.joint_names
-        new_plan.joint_trajectory.points = []
-        new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[0])
-
-        for point in plan.joint_trajectory.points[1:]:
-            if point.time_from_start > new_plan.joint_trajectory.points[-1].time_from_start:
-                new_plan.joint_trajectory.points.append(point)
-
-        # print([point.time_from_start.to_sec() for point in new_plan.joint_trajectory.points])
-        return new_plan
 
     # - General Purposes
     def display_traj(self, plan, id_=1):
         if rospy.get_param("~display_trajectories"):
-            points = [self.__kinematics_handler.get_forward_kinematics(joints.positions).position for joints in
-                      plan.joint_trajectory.points]
+            points = []
+            for joints in plan.joint_trajectory.points:
+                forward_kinematics = self.__kinematics_handler.get_forward_kinematics(joints.positions)
+                if forward_kinematics is None:
+                    forward_kinematics = RobotState()
+                points.append(forward_kinematics.position)
             self.__traj_executor.display_traj(points, id_)
 
     def __validate_params_move(self, command_type, *args):
@@ -557,11 +548,12 @@ class ArmCommander:
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
-                                  response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
-                    raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                                "Target joints would lead to a collision between links {} and {} "
-                                                .format(response.contacts[0].contact_body_1,
-                                                        response.contacts[0].contact_body_2))
+                                  response.contacts[0].contact_body_1,
+                                  response.contacts[0].contact_body_2)
+                    raise ArmCommanderException(
+                        CommandStatus.INVALID_PARAMETERS,
+                        "Target joints would lead to a collision between links {} and {} ".format(
+                            response.contacts[0].contact_body_1, response.contacts[0].contact_body_2))
                 else:  # didn't succeed to get the contacts on the real robot
                     rospy.logwarn(
                         'Arm commander - Joints target unreachable because of collision between two parts of Ned')

@@ -674,8 +674,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_arm_commander.srv import GetIK
         state = RobotState(position=Point(x, y, z), rpy=RPY(roll, pitch, yaw))
         result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, state)
-        if not result.success:
-            raise NiryoRosWrapperException("Failed to perform invert kinematic")
+        self._check_result_status(result)
 
         return result.joints
 

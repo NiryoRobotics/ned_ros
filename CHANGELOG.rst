@@ -2,6 +2,15 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.2.2
+___________
+**Features**
+**Improvements**
+  * The service /niryo_robot/kinematics/forward now returns status and message in its response
+  * The service /niryo_robot/kinematics/inverse now returns status and message in its response
+**Bugfixes**
+  * Fixed the service /niryo_robot/kinematics/forward which sometimes crashed because of transform extrapolation
+
 v5.2.1
 ___________
 **Features**
