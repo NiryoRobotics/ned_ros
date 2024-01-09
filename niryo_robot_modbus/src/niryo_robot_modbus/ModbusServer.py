@@ -32,6 +32,6 @@ class ModbusServer:
         await StartAsyncTcpServer(context=self.context, identity=self.identity, address=self.address)
 
     @staticmethod
-    def stop(self):
+    def stop():
         logger.info("Modbus - Closing Server")
         ServerStop()
