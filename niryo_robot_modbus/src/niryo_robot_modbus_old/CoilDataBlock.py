@@ -8,17 +8,6 @@ from .WrapperAddress import DigitalWrapperAddress
 from tools_interface.msg import Tool
 """
 Coil:
-0-50 DO state
-51 scan tool
-52 tool id
-53 open gripper
-54 close gripper
-55 pull vacuum pump
-56 push vacuum pump
-57 tcp transformation enabled
-60*2 scan and attach conveyor
-62*2 detach conveyor
-64*2 conveyor enabled
 66*2 conveyor direction (0 = backward, 1 = forward)
 70 stop move
 71 linear mode

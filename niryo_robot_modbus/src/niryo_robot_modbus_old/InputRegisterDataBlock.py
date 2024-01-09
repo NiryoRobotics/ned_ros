@@ -60,24 +60,24 @@ class InputRegisterDataBlock(WrapperDataBlock):
             **AnalogWrapperAddress.dynamic_addressing(60,
                                                       n_conveyors,
                                                       read=lambda ix: self._safe_conveyor_feedback(ix).conveyor_id),
-            60:  # raspberry temperature
+            70:  # raspberry temperature
             AnalogWrapperAddress(read=lambda: self._ros_wrapper.get_hardware_status().rpi_temperature, data_type=int),
-            61:  # raspberry available disk size
+            71:  # raspberry available disk size
             AnalogWrapperAddress(read=self._ros_wrapper.get_available_disk_size, data_type=int),
-            62:  # raspberry ros logs size
+            72:  # raspberry ros logs size
             AnalogWrapperAddress(read=self._ros_wrapper.get_ros_logs_size, data_type=int),
-            63:  # robot version
+            73:  # robot version
             AnalogWrapperAddress(read=lambda: hw_version, data_type=int),
-            64:  # system version major number
+            74:  # system version major number
             AnalogWrapperAddress(read=lambda: int(system_api_client.get_system_version_current().data['system'][0]),
                                  data_type=int),
-            65:  # system version minor number
+            75:  # system version minor number
             AnalogWrapperAddress(read=lambda: int(system_api_client.get_system_version_current().data['system'][2]),
                                  data_type=int),
-            66:  # system version patch number
+            76:  # system version patch number
             AnalogWrapperAddress(read=lambda: int(system_api_client.get_system_version_current().data['system'][4]),
                                  data_type=int),
-            67:  # system version build number
+            77:  # system version build number
             AnalogWrapperAddress(read=lambda: int(system_api_client.get_system_version_current().data['system'][7:9]),
                                  data_type=int),
             # analog inputs state

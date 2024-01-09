@@ -4,11 +4,10 @@ import rospy
 from pymodbus.exceptions import InvalidMessageReceivedException
 
 from .WrapperDataBlock import WrapperDataBlock
-from .WrapperAddress import AnalogWrapperAddress
 """
 Holding register:
-0-11 Joints (mrad)
-12-23 pose xyz/rpy
+0-11 Joints target (mrad)
+12-23 pose target xyz/rpy
 24-35 tcp transformation
 40 gripper open speed
 41 gripper close speed
@@ -20,11 +19,8 @@ Holding register:
 106 height offset
 107 wanted shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: TRIANGLE)
 108 wanted color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)
-110'130 workspace's name
+110-130 workspace's name
 200-299: user store
-
-Discrete input:
-xx Is executing command flag
 
 """
 

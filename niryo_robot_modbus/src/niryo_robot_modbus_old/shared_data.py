@@ -15,7 +15,7 @@ def set_linear_mode(v):
 is_executing_command = False
 
 # vision
-workspace_name = ''
+workspace_name = 'ws_2'
 height_offset = 0
 shape = ObjectShape.ANY
 color = ObjectColor.ANY
