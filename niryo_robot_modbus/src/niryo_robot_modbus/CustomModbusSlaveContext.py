@@ -4,7 +4,8 @@ from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 from pymodbus.datastore import ModbusBaseSlaveContext
 
 from . import logger
-from .register_entries import ABCRegisterEntry, ABCRegisterEntries
+from .abc_register_entries import ABCRegisterEntry, ABCRegisterEntries
+from .CommonStore import CommonStore
 from .util import RegisterType, PayloadHandler
 
 
@@ -18,8 +19,8 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
             RegisterType.HOLDING_REGISTER: [],
             RegisterType.DISCRETE_INPUT: [],
         }
+
         self.__mapping: Dict[int, ABCRegisterEntry] = {}
-        self.build_register()
 
     # - Mandatory ModbusBaseSlaveContext methods - #
 
@@ -37,7 +38,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
             values = []
             for offset in range(0, count):
                 entry = self.__mapping[self.__to_index(fx, address)]
-                values += self.__payload_handler.encode(entry.read(), entry.get_data_type())
+                values += self.__payload_handler.encode(entry.read(), entry.data_type)
             return values
         except Exception as e:
             logger.exception(f'getValues: {e}')
@@ -45,7 +46,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
     def setValues(self, fx, address, values):
         try:
             entry = self.__mapping[self.__to_index(fx, address)]
-            decoded_payload = self.__payload_handler.decode(values, entry.get_data_type())
+            decoded_payload = self.__payload_handler.decode(values, entry.data_type)
             entry.write(decoded_payload)
             logger.info(f'setValues: fx: {fx}, address: {address}, values: {values}')
         except Exception as e:
@@ -77,7 +78,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     def write(self, function_code: int, address: int, payload: List[int]) -> None:
         entry = self.__mapping[self.__to_index(function_code, address)]
-        decoded_payload = self.__payload_handler.decode(payload, entry.get_data_type())
+        decoded_payload = self.__payload_handler.decode(payload, entry.data_type)
         entry.write(decoded_payload)
 
     def add(self, register_type: RegisterType, register_entry: ABCRegisterEntry) -> None:
@@ -108,6 +109,12 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     # - class decorators - #
 
-    def coil(self, cls: ABCRegisterEntry):
-        self.__registered_entries[RegisterType.COIL].append(cls)
-        return cls
+    def coil(self, address: int):
+
+        def decorator(cls: ABCRegisterEntry):
+            cls.starting_address = address
+            cls.data_type = bool
+            self.__registered_entries[RegisterType.COIL].append(cls)
+            return cls
+
+        return decorator

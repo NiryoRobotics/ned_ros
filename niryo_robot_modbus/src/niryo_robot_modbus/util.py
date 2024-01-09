@@ -1,6 +1,6 @@
 from __future__ import annotations
-from enum import Enum
-from typing import List, Callable, Dict, Tuple, Union, Any
+from enum import Enum, auto
+from typing import List, Callable, Dict, Tuple, Union, Any, Iterable
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 from . import logger
@@ -38,6 +38,12 @@ class RegisterType(Enum):
         raise ValueError(f'"{function_code}" is not an implemented function code')
 
 
+class MoveType(Enum):
+    MOVE_JOINT = auto()
+    MOVE_POSE = auto()
+    MOVE_LINEAR = auto()
+
+
 class PayloadHandler:
     __MAX_STRING_LENGTH = 200
     __type_to_binary_payload_func: Dict[type, Tuple[Callable, Callable]] = {
@@ -73,3 +79,21 @@ class PayloadHandler:
         decoder = BinaryPayloadDecoder(payload)
         logger.info(f'decoded payload: {decoder_func(decoder)}')
         return decoder_func(decoder)
+
+
+# - Utility functions - #
+
+
+def safe_get(iterable: Iterable, item: Any, default_value: Any) -> Any:
+    """
+    Safely retrieve an element in an iterable object, else return  a default value
+
+    :param iterable: an iterable
+    :param item: the key to access the element in iterable
+    :param default_value: The default value to be returned if the item is not found
+    :return: the got item or the default value if not found
+    """
+    try:
+        return iterable[item]
+    except (IndexError, KeyError):
+        return default_value

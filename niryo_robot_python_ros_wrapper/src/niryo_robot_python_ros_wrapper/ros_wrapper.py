@@ -1612,7 +1612,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         If deactivation is requested, the TCP will be coincident with the tool_link
 
         :param enable: True to enable, False otherwise.
-        :type enable: Bool
+        :type enable: bool
         :return: status, message
         :rtype: (int, str)
         """
