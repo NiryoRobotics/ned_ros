@@ -1,40 +1,21 @@
 #!/usr/bin/env python
+import asyncio
 
-import rospy
-import socket
-import logging
-from threading import Thread
-
-from pymodbus.server.sync import ModbusTcpServer
 from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
+from pymodbus.datastore import ModbusServerContext
+from pymodbus.server import StartAsyncTcpServer, ServerStop
 
-from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-
-from . import shared_data
-from .CoilDataBlock import CoilDataBlock
-from .DiscreteInputDataBlock import DiscreteInputDataBlock
-from .HoldingRegisterDataBlock import HoldingRegisterDataBlock
-from .InputRegisterDataBlock import InputRegisterDataBlock
+from . import logger
+from .mapping import slave_context
 
 
 class ModbusServer:
 
     def __init__(self, address, port):
-        self.__ros_wrapper = NiryoRosWrapper()
-        self.__ros_wrapper.wait_for_nodes_initialization()
+        self.address = (address, port)
 
-        logger = logging.getLogger("pymodbus.server")
-        logger.addHandler(logging.StreamHandler())
-
-        # zero_mode is to start the registers at address 0 instead of 1
-        self.store = ModbusSlaveContext(di=DiscreteInputDataBlock(self.__ros_wrapper, shared_data),
-                                        co=CoilDataBlock(self.__ros_wrapper, shared_data),
-                                        hr=HoldingRegisterDataBlock(self.__ros_wrapper, shared_data),
-                                        ir=InputRegisterDataBlock(self.__ros_wrapper, shared_data),
-                                        zero_mode=True)
-
-        self.context = ModbusServerContext(slaves=self.store, single=True)
+        self.slave_context = slave_context
+        self.context = ModbusServerContext(slaves=slave_context, single=True)
 
         self.identity = ModbusDeviceIdentification()
         self.identity.VendorName = 'pymodbus'
@@ -43,28 +24,14 @@ class ModbusServer:
         self.identity.ModelName = 'pymodbus Server'
         self.identity.MajorMinorRevision = '1.0'
 
-        try:
-            self.server = ModbusTcpServer(context=self.context,
-                                          framer=None,
-                                          identity=self.identity,
-                                          address=(address, port))
-
-        except socket.error as err:
-            rospy.logerr("ModbusServer.init : TCP server unable to start : %s", err)
-            self.server = None
-
     def start(self):
-        t = Thread(target=self.__start_server)
-        t.start()
+        self.slave_context.build_register()
+        asyncio.run(self.__start_server())
 
-    def __start_server(self):
-        if self.server is not None:
-            self.server.serve_forever()
+    async def __start_server(self):
+        await StartAsyncTcpServer(context=self.context, identity=self.identity, address=self.address)
 
+    @staticmethod
     def stop(self):
-        rospy.loginfo("Modbus - Stopping ROS subscribers")
-
-        if self.server is not None:
-            rospy.loginfo("Modbus - Closing Server")
-            self.server.server_close()
-            self.server.shutdown()
+        logger.info("Modbus - Closing Server")
+        ServerStop()
