@@ -38,13 +38,13 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     def getValues(self, fx, address, count=1):
         try:
+            if count == 0:
+                return []
+
             logger.info(f'getValues: fx: {fx}, address: {address}, count: {count}')
-            values = []
-            for offset in range(0, count):
-                entry = self.__mapping[self.__to_index(fx, address + offset)]
-                # values += self.__payload_handler.encode(entry.read(), entry.data_type)
-                values += entry.read()
-            return values
+            entry = self.__mapping[self.__to_index(fx, address)]
+            n_address_per_entry = get_data_type_addresses_number(entry.data_type)
+            return entry.read() + self.getValues(fx, address + n_address_per_entry, count - 1)
         except Exception as e:
             logger.exception(f'getValues: {e}')
 
@@ -58,12 +58,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
             fx %= 10
             entry = self.__mapping[self.__to_index(fx, address)]
             n_address_per_entry = get_data_type_addresses_number(entry.data_type)
-
-            decoder = BinaryPayloadDecoder.fromRegisters(values[:n_address_per_entry])
-            entry.write()
-
-            logger.info(f'Decoded "{data}" from {values[:n_address_per_entry]} for {entry.__class__.__name__}')
-            entry.write(data)
+            entry.write(values[:n_address_per_entry])
 
             self.setValues(fx, address + n_address_per_entry, values[n_address_per_entry:])
         except Exception as e:
