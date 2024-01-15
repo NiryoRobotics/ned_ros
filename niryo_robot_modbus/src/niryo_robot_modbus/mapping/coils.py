@@ -174,5 +174,16 @@ class CalibrationEntry(ABCRegisterEntry):
 
 
 @slave_context.coil
+class CollisionDetectedEntry(ABCRegisterEntry):
+
+    def get(self) -> bool:
+        return self._ros_wrapper.collision_detected
+
+    def set(self, value: bool):
+        if value is False:
+            self._ros_wrapper.clear_collision_detected()
+
+
+@slave_context.coil
 class CoilUserStoreEntries(ABCUserStoreEntries):
     pass
