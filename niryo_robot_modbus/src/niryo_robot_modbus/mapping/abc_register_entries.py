@@ -11,7 +11,7 @@ from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 from ..CommonStore import CommonStore
-from ..util import safe_get, SupportedType
+from ..util import safe_get, SupportedType, modbus_exceptions_codes
 
 
 class ABCRegisterEntries(ABC):
@@ -111,7 +111,11 @@ class ABCRegisterEntries(ABC):
             CommonStore.last_command_result = 0
         except Exception as exception:
             # TODO: use custom exceptions to handle more precisely the command result
-            CommonStore.last_command_result = 1
+            try:
+                CommonStore.last_command_result = modbus_exceptions_codes[exception.__class__]
+            except KeyError:
+                CommonStore.last_command_result = 1
+
             raise exception
         finally:
             CommonStore.is_executing_command = False

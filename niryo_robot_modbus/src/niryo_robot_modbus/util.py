@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import math
-from enum import Enum, auto
+from enum import Enum
 from typing import List, Callable, Dict, Union, Any, Iterable
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
+
+from niryo_robot_utils import NiryoRosWrapperException
 
 from . import logger
 
@@ -17,6 +19,16 @@ STRING_BLOCK_SIZE = math.ceil(MAX_STRING_LENGTH * N_BITS_PER_CHAR / BLOCK_SIZE)
 SupportedType = Union[bool, float, int, str]
 
 # - Utility classes - #
+
+
+class ModbusException(Exception):
+    pass
+
+
+modbus_exceptions_codes = {
+    ModbusException: 1,
+    NiryoRosWrapperException: 2,
+}
 
 
 class RegisterType(Enum):
