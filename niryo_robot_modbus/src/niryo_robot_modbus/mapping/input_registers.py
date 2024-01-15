@@ -12,7 +12,7 @@ from .abc_register_entries import (
 from ..CommonStore import CommonStore
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class AnalogInputEntries(ABCRegisterEntries):
     data_type = float
 
@@ -30,7 +30,7 @@ class AnalogInputEntries(ABCRegisterEntries):
         return pin_value
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class CurrentJointStateEntries(ABCRegisterEntries):
     data_type = float
 
@@ -42,7 +42,7 @@ class CurrentJointStateEntries(ABCRegisterEntries):
         return self._ros_wrapper.get_joints()[self._index]
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class CurrentPoseStateEntries(ABCRegisterEntries):
     data_type = float
 
@@ -54,7 +54,7 @@ class CurrentPoseStateEntries(ABCRegisterEntries):
         return self._ros_wrapper.get_pose_as_list()[self._index]
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class AbsoluteFromRelativePoseEntries(ABCRegisterEntries):
     data_type = float
 
@@ -78,7 +78,7 @@ class AbsoluteFromRelativePoseEntries(ABCRegisterEntries):
         ][self._index]
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class VisionTargetPoseEntries(ABCRegisterEntries):
     data_type = float
 
@@ -93,7 +93,7 @@ class VisionTargetPoseEntries(ABCRegisterEntries):
                                                           CommonStore.target_color)[1][self._index]
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class VisionTargetShapeEntry(ABCVisionRegisterEntry):
     data_type = int
 
@@ -101,7 +101,7 @@ class VisionTargetShapeEntry(ABCVisionRegisterEntry):
         return self._get_vision_target()['shape']
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class VisionTargetColorEntry(ABCVisionRegisterEntry):
     data_type = int
 
@@ -109,7 +109,7 @@ class VisionTargetColorEntry(ABCVisionRegisterEntry):
         return self._get_vision_target()['color']
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class ConveyorIDEntries(ABCConveyorRegisterEntries):
     data_type = int
 
@@ -117,13 +117,13 @@ class ConveyorIDEntries(ABCConveyorRegisterEntries):
         return self._safe_conveyor_feedback().conveyor_id
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class LastCommandResultEntry(ABCCommonStoreEntry):
     data_type = int
     common_store_attribute = 'last_command_result'
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class CurrentToolIDEntry(ABCRegisterEntry):
     data_type = int
 
@@ -131,7 +131,7 @@ class CurrentToolIDEntry(ABCRegisterEntry):
         return self._ros_wrapper.get_current_tool_id()
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class RaspberryTemperatureEntry(ABCRegisterEntry):
     data_type = int
 
@@ -139,7 +139,7 @@ class RaspberryTemperatureEntry(ABCRegisterEntry):
         return self._ros_wrapper.get_hardware_status().rpi_temperature
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class RaspberryAvailableDiskSizeEntry(ABCRegisterEntry):
     data_type = int
 
@@ -147,7 +147,7 @@ class RaspberryAvailableDiskSizeEntry(ABCRegisterEntry):
         return self._ros_wrapper.get_available_disk_size()
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class RaspberryLogsSizeEntry(ABCRegisterEntry):
     data_type = int
 
@@ -155,7 +155,7 @@ class RaspberryLogsSizeEntry(ABCRegisterEntry):
         return self._ros_wrapper.get_ros_logs_size()
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class HardwareVersionEntry(ABCRegisterEntry):
     data_type = str
 
@@ -163,7 +163,7 @@ class HardwareVersionEntry(ABCRegisterEntry):
         return self._ros_wrapper.get_hardware_version()
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class SystemVersionMajorEntry(ABCRegisterEntry):
     data_type = int
 
@@ -171,7 +171,7 @@ class SystemVersionMajorEntry(ABCRegisterEntry):
         return int(system_api_client.get_system_version_current().data['system'][0])
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class SystemVersionMinorEntry(ABCRegisterEntry):
     data_type = int
 
@@ -179,7 +179,7 @@ class SystemVersionMinorEntry(ABCRegisterEntry):
         return int(system_api_client.get_system_version_current().data['system'][2])
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class SystemVersionPatchEntry(ABCRegisterEntry):
     data_type = int
 
@@ -187,7 +187,7 @@ class SystemVersionPatchEntry(ABCRegisterEntry):
         return int(system_api_client.get_system_version_current().data['system'][4])
 
 
-@slave_context.holding_register
+@slave_context.input_register
 class SystemVersionBuildEntry(ABCRegisterEntry):
     data_type = int
 
