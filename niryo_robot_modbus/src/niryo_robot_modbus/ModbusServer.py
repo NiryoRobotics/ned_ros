@@ -24,14 +24,19 @@ class ModbusServer:
         self.identity.ModelName = 'pymodbus Server'
         self.identity.MajorMinorRevision = '1.0'
 
+        self.__server_started = False
+
     def start(self):
         self.slave_context.build_register()
+        self.slave_context.pretty_print_registers()
         asyncio.run(self.__start_server())
+        logger.info("Modbus - Server Started")
 
     async def __start_server(self):
+        self.__server_started = True
         await StartAsyncTcpServer(context=self.context, identity=self.identity, address=self.address)
 
-    @staticmethod
-    def stop():
+    def stop(self):
         logger.info("Modbus - Closing Server")
-        ServerStop()
+        if self.__server_started:
+            ServerStop()

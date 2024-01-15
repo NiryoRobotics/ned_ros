@@ -2,7 +2,7 @@
 
 # ! You need to launch the server first !
 
-from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.client import ModbusTcpClient
 import time
 
 
@@ -16,7 +16,7 @@ def number_to_raw_data(val):
 
 def raw_data_to_number(val):
     if (val >> 15) == 1:
-        val = - (val & 0x7FFF)
+        val = -(val & 0x7FFF)
     return val
 
 

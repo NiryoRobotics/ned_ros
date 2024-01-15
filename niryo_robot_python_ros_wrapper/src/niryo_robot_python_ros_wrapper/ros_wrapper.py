@@ -1468,7 +1468,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
-        :rtype: ToolID
+        :rtype: Union[ToolID, int]
         """
         return self.__tools.get_current_tool_id()
 
@@ -1618,13 +1618,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__tools.enable_tcp(enable)
 
-    def get_tcp(self):
+    def get_tcp(self, as_list=False):
         """
         Returns the TCP state
+        :param as_list: True to return the tcp position as a list of float
+        :type as_list: bool
         :return: the tcp (enabled, position and orientation)
         :rtype: Tool msg object
         """
-        return self.__tools.get_tcp()
+        tcp = self.__tools.get_tcp()
+        if as_list:
+            return [tcp.position.x, tcp.position.y, tcp.position.z, tcp.rpy.roll, tcp.rpy.pitch, tcp.rpy.yaw]
+        return tcp
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """
@@ -1739,8 +1744,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
-        :return: state
-        :rtype: PinState
+        :return: pin voltage
+        :rtype: float
         """
         from niryo_robot_rpi.srv import GetAnalogIO
         result = self._call_service('/niryo_robot_rpi/get_analog_io', GetAnalogIO, pin_id)

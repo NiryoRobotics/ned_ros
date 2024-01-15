@@ -1,18 +1,20 @@
 from __future__ import annotations
+
+import math
 from enum import Enum, auto
-from typing import List, Callable, Dict, Tuple, Union, Any, Iterable
+from typing import List, Callable, Dict, Union, Any, Iterable
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 from . import logger
 
-# - Custom types - #
+# - Constants - #
+
+MAX_STRING_LENGTH = 40
+N_BITS_PER_CHAR = 8
+BLOCK_SIZE = 16
+STRING_BLOCK_SIZE = math.ceil(MAX_STRING_LENGTH * N_BITS_PER_CHAR / BLOCK_SIZE)
 
 SupportedType = Union[bool, float, int, str]
-ReadCallback = Callable[[], SupportedType]
-WriteCallback = Callable[[SupportedType], Any]
-
-MultipleReadCallback = Callable[[int], SupportedType]
-MultipleWriteCallback = Callable[[int, SupportedType], None]
 
 # - Utility classes - #
 
@@ -31,7 +33,6 @@ class RegisterType(Enum):
 
     @classmethod
     def from_function_code(cls, function_code: int) -> RegisterType:
-        function_code = function_code % 10
         for register_type in cls:
             if function_code in register_type.value:
                 return register_type
@@ -39,27 +40,21 @@ class RegisterType(Enum):
 
 
 class MoveType(Enum):
-    MOVE_JOINT = auto()
-    MOVE_POSE = auto()
-    MOVE_LINEAR = auto()
+    MOVE_JOINT = 0
+    MOVE_POSE = 1
+    MOVE_LINEAR = 2
 
 
 class PayloadHandler:
-    __MAX_STRING_LENGTH = 200
-    __type_to_binary_payload_func: Dict[type, Tuple[Callable, Callable]] = {
+    __type_to_binary_payload_func: Dict[type, (Callable, Callable)] = {
         float: (BinaryPayloadBuilder.add_32bit_float, BinaryPayloadDecoder.decode_32bit_float),
-        int: (BinaryPayloadBuilder.add_8bit_int, BinaryPayloadDecoder.decode_8bit_int),
+        int: (BinaryPayloadBuilder.add_32bit_int, BinaryPayloadDecoder.decode_32bit_int),
         str: (BinaryPayloadBuilder.add_string,
-              lambda decoder: BinaryPayloadDecoder.decode_string(decoder, PayloadHandler.__MAX_STRING_LENGTH)),
-    }
-    __type_size: Dict[type, int] = {
-        float: 2,
-        int: 1,
-        str: 1,
+              lambda decoder: BinaryPayloadDecoder.decode_string(decoder, MAX_STRING_LENGTH)),
     }
 
     def encode(self, payload: SupportedType, data_type: type) -> List[int]:
-        logger.info(f'payload to encode: {payload}')
+        logger.info(f'payload to encode: {payload} ({data_type.__name__})')
         if data_type == bool:
             return [int(payload)]
 
@@ -71,17 +66,29 @@ class PayloadHandler:
         return builder.to_registers()
 
     def decode(self, payload: List[int], data_type: type) -> SupportedType:
-        logger.info(f'payload to decode: {payload} ({data_type})')
+        logger.info(f'payload to decode: {payload} ({data_type.__name__})')
         if data_type == bool:
             logger.info(f'decoded payload: {bool(payload[0])}')
             return bool(payload[0])
-        decoder_func = self.__type_to_binary_payload_func[data_type][0]
-        decoder = BinaryPayloadDecoder(payload)
-        logger.info(f'decoded payload: {decoder_func(decoder)}')
-        return decoder_func(decoder)
+        decoder_func = self.__type_to_binary_payload_func[data_type][1]
+        decoder = BinaryPayloadDecoder.fromRegisters(payload)
+        decoded_payload = decoder_func(decoder)
+        logger.info(f'decoded payload: {decoded_payload}')
+        return decoded_payload
 
 
 # - Utility functions - #
+
+
+def get_data_type_addresses_number(data_type: SupportedType) -> int:
+    if data_type is None:
+        raise ValueError("Data type can't be None")
+    elif data_type == float:
+        return 2
+    elif data_type == str:
+        return STRING_BLOCK_SIZE
+    else:
+        return 1
 
 
 def safe_get(iterable: Iterable, item: Any, default_value: Any) -> Any:
