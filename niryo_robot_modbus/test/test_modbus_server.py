@@ -183,3 +183,10 @@ def test_conveyors(client):
         finally:
             # always try to stop conveyor
             write_coil(client, 73 + conveyor_offset, False, read_check_delay=conveyor_check_delay)
+
+
+def test_tcp(client):
+    for tcp_value, tcp_enabled in [(0.1, True), (0.0, False)]:
+        for address in range(75, 86, 2):
+            write_holding_register(client, address, tcp_value, float)
+        write_coil(client, 52, tcp_enabled)
