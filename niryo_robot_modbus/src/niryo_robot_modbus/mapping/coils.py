@@ -95,7 +95,6 @@ class ConveyorAttachedEntries(ABCConveyorRegisterEntries):
         return self._safe_conveyor_feedback().conveyor_id != 0
 
     def set(self, value: bool) -> None:
-        logger.info(f'value: {value}, number: {self._conveyor_number}')
         if value and self._conveyor_number == ConveyorID.NONE:
             self._ros_wrapper.set_conveyor()
         elif not value:
