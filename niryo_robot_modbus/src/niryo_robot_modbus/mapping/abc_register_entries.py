@@ -2,14 +2,16 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
+from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 import rospy
 
 from conveyor_interface.msg import ConveyorFeedback
 
-from niryo_robot_python_ros_wrapper import NiryoRosWrapper
-from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
+from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID
 
+from .. import logger
 from ..CommonStore import CommonStore
 from ..util import safe_get, SupportedType, modbus_exceptions_codes
 
@@ -20,6 +22,7 @@ class ABCRegisterEntries(ABC):
     """
     data_type = None
     reserved_addresses = 0
+    starting_address = 0
 
     @classmethod
     def is_read_only(cls: ABCRegisterEntries) -> bool:
@@ -90,7 +93,7 @@ class ABCRegisterEntries(ABC):
         if self.data_type in [int, bool]:
             return value[0]
 
-        decoder = BinaryPayloadDecoder(value)
+        decoder = BinaryPayloadDecoder.fromRegisters(value)
         if self.data_type == float:
             return decoder.decode_32bit_float()
         elif self.data_type == str:
@@ -193,6 +196,17 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         """
         super().__init__(ros_wrapper, ix)
 
+    @property
+    def _conveyor_number(self) -> ConveyorID:
+        """
+        Returns the ros wrapper conveyor number
+        :return: The conveyor number
+        """
+        try:
+            return self._ros_wrapper.get_conveyors_number()[self._index]
+        except IndexError:
+            return ConveyorID.NONE
+
     def _safe_conveyor_feedback(self):
         """
         Safely retrieves conveyor feedback information.
@@ -220,8 +234,10 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         if speed is None:
             speed = feedback.speed
         if direction is None:
-            direction = feedback.direction
+            # dirty fix because the conveyors directions is the inverse of the requested one
+            direction = -feedback.direction
 
+        logger.info([conveyors_id[self._index], bool_control_on, speed, direction])
         self._ros_wrapper.control_conveyor(conveyors_id[self._index], bool_control_on, speed, direction)
 
 

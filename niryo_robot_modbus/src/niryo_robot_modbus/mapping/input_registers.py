@@ -15,6 +15,7 @@ from ..CommonStore import CommonStore
 @slave_context.input_register
 class AnalogInputEntries(ABCRegisterEntries):
     data_type = float
+    reserved_addresses = 50
 
     @staticmethod
     def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:

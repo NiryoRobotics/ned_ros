@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 from pymodbus.datastore import ModbusBaseSlaveContext
@@ -31,6 +31,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
         try:
             # convert any multiple write code to single write as we only use single writes internally
             fx %= 10
+            logger.info(f'validate: fx: {fx}, address: {address}, count: {count}')
             addresses = range(address, address + count)
             return all(self.__to_index(fx, offset) in self.__mapping for offset in addresses)
         except Exception as e:
@@ -53,7 +54,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
             if not values:
                 return
 
-            # logger.info(f'setValues: fx: {fx}, address: {address}, values: {values}')
+            logger.info(f'setValues: fx: {fx}, address: {address}, values: {values}')
             # convert any multiple write code to single write as we only use single writes internally
             fx %= 10
             entry = self.__mapping[self.__to_index(fx, address)]
@@ -93,21 +94,18 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
         address = int.from_bytes(index_bytes[1:], 'big')
         return function_code, address
 
-    def exists(self, register_type: RegisterType, address: int) -> bool:
+    def build_register(self) -> None:
         """
-        Check if the given address exists in the given register type
-        :param register_type: a modbus register type
-        :param address: a register address
-        :return: True if the given address exists in the given register
+        Must be called before starting the server
+        Build the register according to each entry's specs by attributing an address to each one of them
         """
-        return self.__to_index(register_type.value[0], address) in self.__mapping
-
-    def build_register(self):
         ros_wrapper = NiryoRosWrapper()
 
         for register_type, entries in self.__registered_entries.items():
             register_offset = 0
             for entry in entries:
+                if entry.starting_address > 0:
+                    register_offset = entry.starting_address
                 address = register_offset
                 n_address_per_entry = get_data_type_addresses_number(entry.data_type)
                 n_addresses = entry.get_address_count(ros_wrapper)
@@ -126,12 +124,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
                 register_offset += entry.reserved_addresses or n_addresses * n_address_per_entry
 
-    def print_registers(self):
-        for index, entry in self.__mapping.items():
-            text = f'{self.__from_index(index)}({index}): {entry.__class__.__name__}'
-            logger.info(text)
-
-    def pretty_print_registers(self):
+    def get_addressing(self) -> Dict[RegisterType, Dict[Tuple[int, int], ABCRegisterEntries]]:
         reversed_mapping = {r: {} for r in RegisterType}
         for index, entry in self.__mapping.items():
             function_code, address = self.__from_index(index)
@@ -140,13 +133,24 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
                 reversed_mapping[register_type][entry.__class__] = set()
             reversed_mapping[register_type][entry.__class__].add(address)
 
-        for register, entries in reversed_mapping.items():
+        addressing = {}
+        for register_type, entries in reversed_mapping.items():
+            addressing[register_type] = {}
             for entry, addresses in entries.items():
                 addresses = sorted(addresses)
-                if len(addresses) < 2:
-                    logger.info(f'| {addresses[0]} | {entry.__name__} |')
+                addressing[register_type][(addresses[0], addresses[-1])] = entry
+        return addressing
+
+    def pretty_print_registers(self):
+        for register_type, entries in self.get_addressing().items():
+            logger.info('==============')
+            logger.info(register_type.name)
+            logger.info('==============')
+            for (low_addr, high_addr), entry in entries.items():
+                if low_addr == high_addr:
+                    logger.info(f'| {low_addr} | {entry.__name__} |')
                 else:
-                    logger.info(f'| {addresses[0]} - {addresses[-1]} | {entry.__name__} |')
+                    logger.info(f'| {low_addr} - {high_addr} | {entry.__name__} |')
 
     # - class decorators - #
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-from niryo_robot_python_ros_wrapper import NiryoRosWrapper
+from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinState, ConveyorDirection, ConveyorID, PinID
 
 from tools_interface.msg import Tool
@@ -9,10 +9,11 @@ from tools_interface.msg import Tool
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_tools_commander.api.tools_ros_wrapper_enums import ToolID
 
-from .abc_register_entries import ABCRegisterEntry, ABCRegisterEntries, ABCConveyorRegisterEntries, ABCUserStoreEntries
+from .. import logger
 from ..CommonStore import CommonStore
 from ..util import MoveType
 from . import slave_context
+from .abc_register_entries import ABCRegisterEntry, ABCRegisterEntries, ABCConveyorRegisterEntries, ABCUserStoreEntries
 
 
 @slave_context.coil
@@ -60,22 +61,21 @@ class ToolActuationEntry(ABCRegisterEntry):
         if tool_id == ToolID.NONE:
             return
 
+        action_is_grasp = value
         tool_is_gripper = tool_id in [ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4]
 
-        if value:
-            if tool_is_gripper:
-                self._ros_wrapper.close_gripper(CommonStore.gripper_close_speed,
-                                                CommonStore.gripper_close_max_torque,
-                                                CommonStore.gripper_close_hold_torque)
-            else:
-                self._ros_wrapper.grasp_with_tool(PinID.DO4.value)
+        if action_is_grasp and tool_is_gripper:
+            self._ros_wrapper.close_gripper(CommonStore.gripper_close_speed,
+                                            CommonStore.gripper_close_max_torque,
+                                            CommonStore.gripper_close_hold_torque)
+        elif action_is_grasp and not tool_is_gripper:
+            self._ros_wrapper.grasp_with_tool(PinID.DO4)
+        elif tool_is_gripper:
+            self._ros_wrapper.open_gripper(CommonStore.gripper_open_speed,
+                                           CommonStore.gripper_open_max_torque,
+                                           CommonStore.gripper_open_hold_torque)
         else:
-            if tool_is_gripper:
-                self._ros_wrapper.open_gripper(CommonStore.gripper_open_speed,
-                                               CommonStore.gripper_close_max_torque,
-                                               CommonStore.gripper_close_hold_torque)
-            else:
-                self._ros_wrapper.release_with_tool(PinID.DO4.value)
+            self._ros_wrapper.release_with_tool(PinID.DO4)
 
 
 @slave_context.coil
@@ -92,12 +92,14 @@ class TCPEnabledEntry(ABCRegisterEntry):
 class ConveyorAttachedEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> bool:
-        return self._safe_conveyor_feedback().connection_state
+        return self._safe_conveyor_feedback().conveyor_id != 0
 
     def set(self, value: bool) -> None:
-        result = ConveyorID.NONE
-        while result.value != ConveyorID.NONE.value:
-            result = self._ros_wrapper.set_conveyor()
+        logger.info(f'value: {value}, number: {self._conveyor_number}')
+        if value and self._conveyor_number == ConveyorID.NONE:
+            self._ros_wrapper.set_conveyor()
+        elif not value:
+            self._ros_wrapper.unset_conveyor(self._conveyor_number)
 
 
 @slave_context.coil
@@ -115,7 +117,10 @@ class ConveyorDirectionEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> bool:
         feedback = self._safe_conveyor_feedback()
-        return feedback.direction == ConveyorDirection.FORWARD
+        direction = feedback.direction == ConveyorDirection.FORWARD
+        # inverse direction in order to counter the feedback inversed value
+        direction = not direction
+        return direction
 
     def set(self, value: bool) -> None:
         direction = ConveyorDirection.FORWARD if value else ConveyorDirection.BACKWARD
@@ -186,4 +191,4 @@ class CollisionDetectedEntry(ABCRegisterEntry):
 
 @slave_context.coil
 class CoilUserStoreEntries(ABCUserStoreEntries):
-    pass
+    starting_address = 200

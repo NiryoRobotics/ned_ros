@@ -101,14 +101,14 @@ class TCPTransformationEntry(ABCRegisterEntries):
 
 @slave_context.holding_register
 class ConveyorSpeedEntries(ABCConveyorRegisterEntries):
-    data_type = float
+    data_type = int
 
-    def get(self) -> float:
+    def get(self) -> int:
         feedback = self._safe_conveyor_feedback()
         return feedback.speed
 
-    def set(self, value: float) -> None:
-        self._safe_control_conveyor(speed=value)
+    def set(self, value: int) -> None:
+        self._safe_control_conveyor(speed=value, bool_control_on=True)
 
 
 @slave_context.holding_register
@@ -192,4 +192,4 @@ class TargetColorEntry(ABCCommonStoreEntry):
 @slave_context.holding_register
 class FloatUserStoreEntries(ABCUserStoreEntries):
     data_type = float
-    pass
+    starting_address = 200

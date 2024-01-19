@@ -34,7 +34,7 @@ class ExecutingCommandEntry(ABCCommonStoreEntry):
 
 
 @slave_context.discrete_input
-class VisionTargetFound(ABCVisionRegisterEntry):
+class VisionTargetFoundEntry(ABCVisionRegisterEntry):
 
     def get(self) -> bool:
         return self._get_vision_target()['found']
