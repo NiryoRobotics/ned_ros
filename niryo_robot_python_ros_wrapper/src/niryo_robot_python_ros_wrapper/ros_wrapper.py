@@ -290,7 +290,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Gets the max velocity scaling factor
         :return: max velocity scaling factor
-        :rtype: float
+        :rtype: Int32
         """
         return self.__max_velocity_scaling_factor_ntv.value
 

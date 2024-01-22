@@ -190,6 +190,17 @@ class TargetColorEntry(ABCCommonStoreEntry):
 
 
 @slave_context.holding_register
+class ArmSpeedEntry(ABCRegisterEntry):
+    data_type = int
+
+    def get(self) -> int:
+        return self._ros_wrapper.get_max_velocity_scaling_factor().data
+
+    def set(self, value: int) -> None:
+        self._ros_wrapper.set_arm_max_velocity(value)
+
+
+@slave_context.holding_register
 class FloatUserStoreEntries(ABCUserStoreEntries):
     data_type = float
     starting_address = 200

@@ -141,6 +141,8 @@ class RobotMovingEntry(ABCRegisterEntry):
                 self._ros_wrapper.move_pose(*CommonStore.pose_target)
             elif CommonStore.move_type == MoveType.MOVE_JOINT:
                 self._ros_wrapper.move_joints(*CommonStore.joint_target)
+            else:
+                raise ValueError(f"Unknown move type: {CommonStore.move_type}")
         else:
             self._ros_wrapper.stop_move()
 
