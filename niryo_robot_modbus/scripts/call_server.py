@@ -1,8 +1,10 @@
 import argparse
 import builtins
+import math
 
 from pymodbus.client import ModbusTcpClient
 from pymodbus.payload import BinaryPayloadDecoder, BinaryPayloadBuilder
+from pymodbus.pdu import ModbusExceptions
 
 
 def read_modbus(server_ip, registry_type, registry_address, count=1, data_type=None):
@@ -21,6 +23,13 @@ def read_modbus(server_ip, registry_type, registry_address, count=1, data_type=N
         print("Invalid registry type. Supported types: coil, discrete_input, holding_register, input_register")
         return
 
+    if response.isError():
+        if not hasattr(response, 'exception_code'):
+            print(f'read at address {registry_address} failed: {response}')
+            return
+        print(f'read at address {registry_address} failed: {ModbusExceptions.decode(response.exception_code)}')
+        return
+
     if data_type:
         decoded_response = decode_response(response, data_type)
         print(decoded_response)
@@ -32,13 +41,14 @@ def decode_response(response, data_type):
     if data_type == bool:
         return response.bits[0]
     elif data_type == int:
-        return response.registers[0]
+        return response.registers
     decoder = BinaryPayloadDecoder.fromRegisters(response.registers)
 
     if data_type == float:
-        return decoder.decode_32bit_float()
+        n_float = math.ceil(len(response.registers) / 2)
+        return [decoder.decode_32bit_float() for _ in range(n_float)]
     elif data_type == str:
-        return decoder.decode_string()
+        return decoder.decode_string(200)
     else:
         print("Invalid data type. Supported types: int, float, str, bool")
         return None
@@ -50,14 +60,13 @@ def write_modbus(server_ip, registry_type, registry_address, values, data_type=N
     if registry_type.lower() == 'coil':
         response = client.write_coils(registry_address, values)
     elif registry_type.lower() == 'holding_register':
-
         if data_type == int:
-            payload = values
+            payload = [int(value) for value in values]
         else:
             builder = BinaryPayloadBuilder()
             for value in values:
                 if data_type == float:
-                    builder.add_32bit_float(value)
+                    builder.add_32bit_float(float(value))
                 elif data_type == str:
                     builder.add_string(value)
                 else:
@@ -65,6 +74,14 @@ def write_modbus(server_ip, registry_type, registry_address, values, data_type=N
                     return
             payload = builder.to_registers()
         response = client.write_registers(registry_address, payload)
+
+        if response.isError():
+            if not hasattr(response, 'exception_code'):
+                print(f'write at address {registry_address} failed: {response}')
+                return
+            print(f'write at address {registry_address} failed: {ModbusExceptions.decode(response.exception_code)}')
+            return
+
     else:
         print("Invalid registry type. Supported types: coil, holding_register")
         return
@@ -81,7 +98,7 @@ def main():
                         help="Modbus registry type")
     parser.add_argument("registry_address", type=int, help="Modbus registry address")
     parser.add_argument("--count", type=int, default=1, help="Number of registers to read (default is 1)")
-    parser.add_argument("--values", type=int, nargs='+', help="Values to write to the registers")
+    parser.add_argument("--values", nargs='+', help="Values to write to the registers")
     parser.add_argument("--data_type",
                         type=lambda type_name: getattr(builtins, type_name),
                         choices=[int, float, str, bool],

@@ -1,3 +1,5 @@
+import math
+
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 
 from . import slave_context
@@ -5,9 +7,10 @@ from .abc_register_entries import (ABCRegisterEntries,
                                    ABCRegisterEntry,
                                    ABCConveyorRegisterEntries,
                                    ABCCommonStoreEntry,
-                                   ABCUserStoreEntries)
+                                   ABCUserStoreEntries,
+                                   ABCStringEntries)
 from ..CommonStore import CommonStore
-from ..util import MoveType
+from ..util import MoveType, CHAR_PER_BLOCK, MAX_STRING_LENGTH
 
 
 @slave_context.holding_register
@@ -166,9 +169,26 @@ class RelativeYawEntry(ABCCommonStoreEntry):
 
 
 @slave_context.holding_register
-class WorkspaceNameEntry(ABCCommonStoreEntry):
+class WorkspaceNameEntries(ABCStringEntries):
+
     data_type = str
-    common_store_attribute = 'workspace_name'
+
+    @staticmethod
+    def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
+        return math.ceil(MAX_STRING_LENGTH / CHAR_PER_BLOCK)
+
+    def get(self) -> str:
+        try:
+            return CommonStore.workspace_name[self._index:self._upper_index]
+        except IndexError:
+            return ''
+
+    def set(self, value: str):
+        while len(CommonStore.workspace_name) < self._index:
+            CommonStore.workspace_name += ' '
+        workspace_name_prefix = CommonStore.workspace_name[:self._index]
+        workspace_name_suffix = CommonStore.workspace_name[self._upper_index:]
+        CommonStore.workspace_name = workspace_name_prefix + value + workspace_name_suffix
 
 
 @slave_context.holding_register

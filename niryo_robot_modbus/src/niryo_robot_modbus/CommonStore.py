@@ -24,8 +24,8 @@ class CommonStore:
     # vision
     workspace_name = ''
     height_offset = 0
-    target_shape = ObjectShape.ANY
-    target_color = ObjectColor.ANY
+    target_shape = 0
+    target_color = 0
 
     relative_x = 0
     relative_y = 0

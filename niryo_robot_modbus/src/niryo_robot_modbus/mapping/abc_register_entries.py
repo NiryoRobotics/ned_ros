@@ -9,11 +9,11 @@ import rospy
 from conveyor_interface.msg import ConveyorFeedback
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID, ObjectShape, ObjectColor
 
 from .. import logger
 from ..CommonStore import CommonStore
-from ..util import safe_get, SupportedType, modbus_exceptions_codes
+from ..util import SupportedType, modbus_exceptions_codes, CHAR_PER_BLOCK, MAX_STRING_LENGTH
 
 
 class ABCRegisterEntries(ABC):
@@ -42,6 +42,15 @@ class ABCRegisterEntries(ABC):
         :rtype: int
         """
         pass
+
+    @classmethod
+    def get_n_addresses(cls) -> int:
+        if cls.data_type is None:
+            raise ValueError("Data type can't be None")
+        elif cls.data_type == float:
+            return 2
+        else:
+            return 1
 
     def __init__(self, ros_wrapper: NiryoRosWrapper, ix: int):
         """
@@ -97,7 +106,10 @@ class ABCRegisterEntries(ABC):
         if self.data_type == float:
             return decoder.decode_32bit_float()
         elif self.data_type == str:
-            return decoder.decode_string(200)
+            decoded_string = decoder.decode_string(MAX_STRING_LENGTH).decode()
+            # a bit contains 2 char, so if there is an uneven number of char, the last one will be the NULL character
+            decoded_string = decoded_string.replace('\x00', '')
+            return decoded_string
         else:
             raise TypeError(f"Unsupported data type: {self.data_type} for entry {self.__class__.__name__}")
 
@@ -214,7 +226,11 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         :return: Conveyor feedback information.
         :rtype: ConveyorFeedback
         """
-        return safe_get(self._ros_wrapper.get_conveyors_feedback(), self._index, ConveyorFeedback())
+        feedback = self._ros_wrapper.get_conveyors_feedback()
+        try:
+            return feedback[self._index]
+        except (IndexError, KeyError):
+            return ConveyorFeedback()
 
     def _safe_control_conveyor(self, bool_control_on=None, speed=None, direction=None):
         """
@@ -246,6 +262,11 @@ class ABCVisionRegisterEntry(ABCRegisterEntry, ABC):
     Abstract base class for defining vision-related register entries.
     """
 
+    _int_to_shape = {0: ObjectShape.ANY, 1: ObjectShape.CIRCLE, 2: ObjectShape.SQUARE}
+    _shape_to_int = {shape: i for i, shape in _int_to_shape.items()}
+    _int_to_color = {0: ObjectColor.ANY, 1: ObjectColor.RED, 2: ObjectColor.GREEN, 3: ObjectColor.BLUE}
+    _color_to_int = {color: i for i, color in _int_to_color.items()}
+
     def _get_vision_target(self):
         """
         Retrieves the vision target information.
@@ -254,8 +275,8 @@ class ABCVisionRegisterEntry(ABCRegisterEntry, ABC):
         :rtype: Dict
         """
         target = self._ros_wrapper.detect_object(CommonStore.workspace_name,
-                                                 CommonStore.target_shape,
-                                                 CommonStore.target_color)
+                                                 self._int_to_shape[CommonStore.target_shape],
+                                                 self._int_to_color[CommonStore.target_color])
         return dict(zip(['found', 'rel_pose', 'shape', 'color'], target))
 
 
@@ -310,7 +331,7 @@ class ABCCommonStoreEntry(ABCRegisterEntry, ABC):
         setattr(CommonStore, self.common_store_attribute, value)
 
 
-class ABCUserStoreEntries(ABCRegisterEntries):
+class ABCUserStoreEntries(ABCRegisterEntries, ABC):
     """
     Abstract base class for defining user store-related register entries.
     """
@@ -352,3 +373,10 @@ class ABCUserStoreEntries(ABCRegisterEntries):
         :param SupportedType value: The value to be set.
         """
         self.__internal_value = value
+
+
+class ABCStringEntries(ABCRegisterEntries, ABC):
+
+    def __init__(self, ros_wrapper: NiryoRosWrapper, ix: int):
+        super().__init__(ros_wrapper, ix * CHAR_PER_BLOCK)
+        self._upper_index = self._index + CHAR_PER_BLOCK

@@ -9,7 +9,6 @@ from tools_interface.msg import Tool
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_tools_commander.api.tools_ros_wrapper_enums import ToolID
 
-from .. import logger
 from ..CommonStore import CommonStore
 from ..util import MoveType
 from . import slave_context

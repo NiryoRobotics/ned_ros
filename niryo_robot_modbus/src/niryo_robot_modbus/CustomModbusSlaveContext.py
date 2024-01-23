@@ -2,17 +2,15 @@ from typing import Dict, List, Tuple
 
 from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 from pymodbus.datastore import ModbusBaseSlaveContext
-from pymodbus.payload import BinaryPayloadDecoder
 
 from . import logger
 from .mapping.abc_register_entries import ABCRegisterEntry, ABCRegisterEntries
-from .util import RegisterType, PayloadHandler, get_data_type_addresses_number
+from .util import RegisterType
 
 
 class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     def __init__(self):
-        self.__payload_handler = PayloadHandler()
         self.__registered_entries = {
             RegisterType.COIL: [],
             RegisterType.INPUT_REGISTER: [],
@@ -31,7 +29,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
         try:
             # convert any multiple write code to single write as we only use single writes internally
             fx %= 10
-            logger.info(f'validate: fx: {fx}, address: {address}, count: {count}')
+            logger.debug(f'validate: fx: {fx}, address: {address}, count: {count}')
             addresses = range(address, address + count)
             return all(self.__to_index(fx, offset) in self.__mapping for offset in addresses)
         except Exception as e:
@@ -39,13 +37,17 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     def getValues(self, fx, address, count=1):
         try:
-            if count == 0:
+            if count <= 0:
                 return []
 
-            logger.info(f'getValues: fx: {fx}, address: {address}, count: {count}')
+            logger.debug(f'getValues: fx: {fx}, address: {address}, count: {count}')
             entry = self.__mapping[self.__to_index(fx, address)]
-            n_address_per_entry = get_data_type_addresses_number(entry.data_type)
-            return entry.read() + self.getValues(fx, address + n_address_per_entry, count - 1)
+            entry_read = entry.read()
+            if len(entry_read) <= 0:
+                return []
+            elif len(entry_read) > count:
+                entry_read = entry_read[:count]
+            return entry_read + self.getValues(fx, address + len(entry_read), count - len(entry_read))
         except Exception as e:
             logger.exception(f'getValues: {e}')
 
@@ -54,11 +56,11 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
             if not values:
                 return
 
-            logger.info(f'setValues: fx: {fx}, address: {address}, values: {values}')
+            logger.debug(f'setValues: fx: {fx}, address: {address}, values: {values}')
             # convert any multiple write code to single write as we only use single writes internally
             fx %= 10
             entry = self.__mapping[self.__to_index(fx, address)]
-            n_address_per_entry = get_data_type_addresses_number(entry.data_type)
+            n_address_per_entry = entry.get_n_addresses()
             entry.write(values[:n_address_per_entry])
 
             self.setValues(fx, address + n_address_per_entry, values[n_address_per_entry:])
@@ -107,7 +109,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
                 if entry.starting_address > 0:
                     register_offset = entry.starting_address
                 address = register_offset
-                n_address_per_entry = get_data_type_addresses_number(entry.data_type)
+                n_address_per_entry = entry.get_n_addresses()
                 n_addresses = entry.get_address_count(ros_wrapper)
                 for ix in range(n_addresses):
                     if issubclass(entry, ABCRegisterEntry):

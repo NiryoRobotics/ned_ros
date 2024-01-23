@@ -8,6 +8,7 @@ from .abc_register_entries import (
     ABCVisionRegisterEntry,
     ABCConveyorRegisterEntries,
     ABCCommonStoreEntry,
+    ABCStringEntries,
 )
 from ..CommonStore import CommonStore
 
@@ -99,7 +100,7 @@ class VisionTargetShapeEntry(ABCVisionRegisterEntry):
     data_type = int
 
     def get(self) -> int:
-        return self._get_vision_target()['shape']
+        return self._shape_to_int[self._get_vision_target()['shape']]
 
 
 @slave_context.input_register
@@ -107,7 +108,7 @@ class VisionTargetColorEntry(ABCVisionRegisterEntry):
     data_type = int
 
     def get(self) -> int:
-        return self._get_vision_target()['color']
+        return self._color_to_int[self._get_vision_target()['color']]
 
 
 @slave_context.input_register
@@ -157,11 +158,16 @@ class RaspberryLogsSizeEntry(ABCRegisterEntry):
 
 
 @slave_context.input_register
-class HardwareVersionEntry(ABCRegisterEntry):
+class HardwareVersionEntry(ABCStringEntries):
     data_type = str
+    reserved_addresses = 4
+
+    @staticmethod
+    def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
+        return 2
 
     def get(self) -> str:
-        return self._ros_wrapper.get_hardware_version()
+        return self._ros_wrapper.get_hardware_version()[self._index:self._upper_index]
 
 
 @slave_context.input_register
