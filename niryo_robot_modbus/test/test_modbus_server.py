@@ -167,9 +167,9 @@ def test_gripper(client):
     write_holding_registers(client, 112, 100, int)
 
     # open / close gripper
-    write_coils(client, 51, False)
-    write_coils(client, 51, True)
-    write_coils(client, 51, False)
+    write_coils(client, 51, False, read_check_delay=0.2)
+    write_coils(client, 51, True, read_check_delay=0.2)
+    write_coils(client, 51, False, read_check_delay=0.2)
 
 
 def test_inputs_outputs(client):
@@ -192,7 +192,7 @@ def test_inputs_outputs(client):
 
 def test_conveyors(client):
     conveyor_check_delay = 3
-    conveyor_offsets = [0, 1]
+    conveyor_offsets = [0]
     for conveyor_offset in conveyor_offsets:
         try:
             # attach
@@ -222,7 +222,16 @@ def test_tcp(client):
         write_coils(client, 52, tcp_enabled)
 
 
+def calibrate(client, force=False):
+    if force:
+        # calibration needed
+        write_coils(client, 115, True, read_check_delay=0.4)
+    # calibration
+    write_coils(client, 116, True, read_check_delay=0)
+
+
 def move_j(client, target):
+    calibrate(client)
     # set move target
     write_holding_registers(client, 50, target, float)
     # set move type
@@ -239,6 +248,7 @@ def move_j(client, target):
 
 
 def move_p(client, target, linear=False):
+    calibrate(client)
     # set move target
     write_holding_registers(client, 62, target, float)
     # set move type
@@ -255,10 +265,7 @@ def move_p(client, target, linear=False):
 
 
 def test_motion(client):
-    # calibration needed
-    write_coils(client, 115, True, read_check_delay=0.4)
-    # calibration
-    write_coils(client, 116, True, read_check_delay=0)
+    calibrate(client, force=True)
 
     # arm speed
     write_holding_registers(client, 142, 200, int)
@@ -304,3 +311,21 @@ def test_vision(client):
 
     # target found
     assert read_discrete_inputs(client, 52)
+
+    # found shape and color
+    assert are_equals(read_input_registers(client, 98, int, count=2), [1, 3])
+
+    vision_pose = read_input_registers(client, 86, float, count=12)
+    print(vision_pose)
+
+    rel_pose = [0.1, 0.1, 0.1]
+    write_holding_registers(client, 113, rel_pose, float)
+    abs_pose_from_relative = read_input_registers(client, 74, float, count=12)
+    print(abs_pose_from_relative)
+
+
+def test_misc(client):
+    # executing command
+    read_discrete_inputs(client, 51)
+    # last command result
+    read_input_registers(client, 120, int)

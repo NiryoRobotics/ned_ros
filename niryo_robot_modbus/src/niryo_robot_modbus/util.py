@@ -3,6 +3,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Union
 
+from niryo_robot_python_ros_wrapper import ObjectShape, ObjectColor
+
 from niryo_robot_utils import NiryoRosWrapperException
 
 # - Constants - #
@@ -13,6 +15,11 @@ BLOCK_SIZE = 16
 CHAR_PER_BLOCK = BLOCK_SIZE // N_BITS_PER_CHAR
 
 SupportedType = Union[bool, float, int, str]
+
+int_to_shape = {0: ObjectShape.ANY, 1: ObjectShape.CIRCLE, 2: ObjectShape.SQUARE}
+shape_to_int = {shape: i for i, shape in int_to_shape.items()}
+int_to_color = {0: ObjectColor.ANY, 1: ObjectColor.RED, 2: ObjectColor.GREEN, 3: ObjectColor.BLUE}
+color_to_int = {color: i for i, color in int_to_color.items()}
 
 
 class ModbusException(Exception):

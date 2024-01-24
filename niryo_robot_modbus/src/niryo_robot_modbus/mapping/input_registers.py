@@ -9,6 +9,7 @@ from .abc_register_entries import (
     ABCConveyorRegisterEntries,
     ABCCommonStoreEntry,
     ABCStringEntries,
+    ABCVisionRegisterEntries,
 )
 from ..CommonStore import CommonStore
 
@@ -81,18 +82,18 @@ class AbsoluteFromRelativePoseEntries(ABCRegisterEntries):
 
 
 @slave_context.input_register
-class VisionTargetPoseEntries(ABCRegisterEntries):
+class VisionTargetPoseEntries(ABCVisionRegisterEntries):
     data_type = float
 
     @staticmethod
     def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
         return len(ros_wrapper.get_pose_as_list())
 
+    def __init__(self, ros_wrapper: NiryoRosWrapper, ix: int):
+        super().__init__(ros_wrapper, ix)
+
     def get(self) -> float:
-        return self._ros_wrapper.get_target_pose_from_cam(CommonStore.workspace_name,
-                                                          CommonStore.height_offset,
-                                                          CommonStore.target_shape,
-                                                          CommonStore.target_color)[1][self._index]
+        return self._target_pose()[self._index]
 
 
 @slave_context.input_register
@@ -100,7 +101,7 @@ class VisionTargetShapeEntry(ABCVisionRegisterEntry):
     data_type = int
 
     def get(self) -> int:
-        return self._shape_to_int[self._get_vision_target()['shape']]
+        return self._target_shape()
 
 
 @slave_context.input_register
@@ -108,7 +109,7 @@ class VisionTargetColorEntry(ABCVisionRegisterEntry):
     data_type = int
 
     def get(self) -> int:
-        return self._color_to_int[self._get_vision_target()['color']]
+        return self._target_color()
 
 
 @slave_context.input_register

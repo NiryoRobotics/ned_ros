@@ -30,11 +30,11 @@ class MotorConnectionEntry(ABCRegisterEntry):
 
 @slave_context.discrete_input
 class ExecutingCommandEntry(ABCCommonStoreEntry):
-    command_in_progress = 'is_executing_command'
+    common_store_attribute = 'is_executing_command'
 
 
 @slave_context.discrete_input
 class VisionTargetFoundEntry(ABCVisionRegisterEntry):
 
     def get(self) -> bool:
-        return self._get_vision_target()['found']
+        return self._is_target_found()

@@ -9,11 +9,17 @@ import rospy
 from conveyor_interface.msg import ConveyorFeedback
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID, ObjectShape, ObjectColor
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID
 
-from .. import logger
 from ..CommonStore import CommonStore
-from ..util import SupportedType, modbus_exceptions_codes, CHAR_PER_BLOCK, MAX_STRING_LENGTH
+from ..util import (SupportedType,
+                    modbus_exceptions_codes,
+                    CHAR_PER_BLOCK,
+                    MAX_STRING_LENGTH,
+                    int_to_shape,
+                    int_to_color,
+                    shape_to_int,
+                    color_to_int)
 
 
 class ABCRegisterEntries(ABC):
@@ -251,33 +257,46 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
             speed = feedback.speed
         if direction is None:
             # dirty fix because the conveyors directions is the inverse of the requested one
+            # FIXME: the requested direction should be the same as the feedback
             direction = -feedback.direction
 
-        logger.info([conveyors_id[self._index], bool_control_on, speed, direction])
         self._ros_wrapper.control_conveyor(conveyors_id[self._index], bool_control_on, speed, direction)
 
 
-class ABCVisionRegisterEntry(ABCRegisterEntry, ABC):
+class ABCVisionRegisterEntries(ABCRegisterEntries, ABC):
     """
     Abstract base class for defining vision-related register entries.
     """
 
-    _int_to_shape = {0: ObjectShape.ANY, 1: ObjectShape.CIRCLE, 2: ObjectShape.SQUARE}
-    _shape_to_int = {shape: i for i, shape in _int_to_shape.items()}
-    _int_to_color = {0: ObjectColor.ANY, 1: ObjectColor.RED, 2: ObjectColor.GREEN, 3: ObjectColor.BLUE}
-    _color_to_int = {color: i for i, color in _int_to_color.items()}
+    def __get_vision_target(self) -> dict:
+        (found, pose, shape, color) = self._ros_wrapper.get_target_pose_from_cam(CommonStore.workspace_name,
+                                                                                 CommonStore.height_offset,
+                                                                                 int_to_shape[CommonStore.target_shape],
+                                                                                 int_to_color[CommonStore.target_color])
+        if found:
+            pose_as_list = [
+                pose.position.x, pose.position.y, pose.position.z, pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw
+            ]
+        else:
+            pose_as_list = [0, 0, 0, 0, 0, 0]
 
-    def _get_vision_target(self):
-        """
-        Retrieves the vision target information.
+        return {'found': found, 'pose': pose_as_list, 'shape': shape, 'color': color}
 
-        :return: Vision target information.
-        :rtype: Dict
-        """
-        target = self._ros_wrapper.detect_object(CommonStore.workspace_name,
-                                                 self._int_to_shape[CommonStore.target_shape],
-                                                 self._int_to_color[CommonStore.target_color])
-        return dict(zip(['found', 'rel_pose', 'shape', 'color'], target))
+    def _is_target_found(self) -> bool:
+        return self.__get_vision_target()['found']
+
+    def _target_pose(self) -> list:
+        return self.__get_vision_target()['pose']
+
+    def _target_shape(self) -> int:
+        return shape_to_int[self.__get_vision_target()['shape']]
+
+    def _target_color(self) -> int:
+        return color_to_int[self.__get_vision_target()['color']]
+
+
+class ABCVisionRegisterEntry(ABCRegisterEntry, ABCVisionRegisterEntries, ABC):
+    pass
 
 
 class ABCCommonStoreEntry(ABCRegisterEntry, ABC):

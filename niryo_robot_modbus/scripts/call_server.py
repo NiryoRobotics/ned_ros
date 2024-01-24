@@ -14,6 +14,7 @@ def read_modbus(server_ip, registry_type, registry_address, count=1, data_type=N
         data_type = bool
         response = client.read_coils(registry_address, count)
     elif registry_type.lower() == 'discrete_input':
+        data_type = bool
         response = client.read_discrete_inputs(registry_address, count)
     elif registry_type.lower() == 'holding_register':
         response = client.read_holding_registers(registry_address, count)
@@ -39,7 +40,7 @@ def read_modbus(server_ip, registry_type, registry_address, count=1, data_type=N
 
 def decode_response(response, data_type):
     if data_type == bool:
-        return response.bits[0]
+        return response.bits
     elif data_type == int:
         return response.registers
     decoder = BinaryPayloadDecoder.fromRegisters(response.registers)
@@ -54,10 +55,15 @@ def decode_response(response, data_type):
         return None
 
 
+def to_bool(value):
+    return value in ['True', 'true', True, 1, 1.0]
+
+
 def write_modbus(server_ip, registry_type, registry_address, values, data_type=None):
     client = ModbusTcpClient(server_ip, 5020)
 
     if registry_type.lower() == 'coil':
+        values = [to_bool(value) for value in values]
         response = client.write_coils(registry_address, values)
     elif registry_type.lower() == 'holding_register':
         if data_type == int:

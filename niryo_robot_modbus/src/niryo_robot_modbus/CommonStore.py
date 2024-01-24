@@ -1,5 +1,3 @@
-from niryo_robot_python_ros_wrapper import ObjectShape, ObjectColor
-
 from .util import MoveType
 
 
