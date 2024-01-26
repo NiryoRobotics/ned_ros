@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" default="ned"/>
     <arg name="server_address" default="0.0.0.0"/>
     <arg name="server_port" default="5020"/>
 
@@ -11,6 +10,5 @@
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="server_address" value="$(arg server_address)"/>
         <param name="server_port" value="$(arg server_port)"/>
-        <param name="hardware_version" value="$(arg hardware_version)"/>
     </node>
 </launch>
