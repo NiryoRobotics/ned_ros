@@ -25,6 +25,7 @@ from niryo_robot_vision.srv import SetImageParameter
 
 
 class VideoStream(object):
+
     def __init__(self, calibration_object, publisher_compressed_stream, flip_img=False):
         self._calibration_object = calibration_object
         self._publisher_compressed_stream = publisher_compressed_stream
@@ -52,7 +53,9 @@ class VideoStream(object):
 
         self._publisher_camera_stream_running = rospy.Publisher('~video_stream_is_active', Bool, queue_size=2)
         self._publisher_stream_parameters = rospy.Publisher('~video_stream_parameters',
-                                                            ImageParameters, queue_size=2, latch=True)
+                                                            ImageParameters,
+                                                            queue_size=2,
+                                                            latch=True)
         self._publish_image_parameters()
 
         rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~is_active_rate")), self._publish_is_active)
@@ -68,9 +71,8 @@ class VideoStream(object):
         command = ["stopping", "starting"][int(req.value)]
         if command == "stopping":
             if not self._running:
-                message = "The video stream is already stopped. Cannot stop it"
-                rospy.logwarn("Vision Node - " + message)
-                return CommandStatus.VIDEO_STREAM_ON_OFF_FAILURE, message
+                message = "The video stream is already stopped."
+                return CommandStatus.SUCCESS, message
 
             else:
                 self._should_run = False
@@ -92,10 +94,8 @@ class VideoStream(object):
 
         else:
             if self._running:
-                message = "The video stream is already running. Cannot start it"
-                rospy.logwarn("Vision Node - " + message)
-
-                return CommandStatus.VIDEO_STREAM_ON_OFF_FAILURE, message
+                message = "The video stream is already running."
+                return CommandStatus.SUCCESS, message
             else:
                 rospy.loginfo("Vision Node - Trying to launch the stream ...")
                 self._should_run = True
@@ -315,9 +315,9 @@ class GazeboStream(VideoStream):
     def __init__(self, calibration_object, publisher_compressed_stream, flip_img=False):
         super(GazeboStream, self).__init__(calibration_object, publisher_compressed_stream, flip_img)
 
-        self.__image_raw_sub = rospy.Subscriber('/gazebo_camera/image_raw', Image,
-                                                self.__callback_sub_image_raw)
-        self.__image_compressed_sub = rospy.Subscriber('/gazebo_camera/image_raw/compressed', CompressedImage,
+        self.__image_raw_sub = rospy.Subscriber('/gazebo_camera/image_raw', Image, self.__callback_sub_image_raw)
+        self.__image_compressed_sub = rospy.Subscriber('/gazebo_camera/image_raw/compressed',
+                                                       CompressedImage,
                                                        self.__callback_sub_image_compressed)
         self.__bridge = CvBridge()
         self.__last_image_raw = None
