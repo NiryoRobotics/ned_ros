@@ -1963,21 +1963,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     # - Vision
 
-    def __start_stop_video_stream(self, value):
-        result = self._call_service('/niryo_robot_vision/start_stop_video_streaming', SetBool, value)
+    def control_video_stream(self, stream_on):
+        """
+        Control if the video stream should be activated or not
+        :param stream_on: if True, activate the video stream. Deactivate it otherwise
+        :return: None
+        """
+        result = self._call_service('/niryo_robot_vision/start_stop_video_streaming', SetBool, stream_on)
         self._check_result_status(result)
-
-    def start_video_stream(self):
-        """
-        Start the video stream
-        """
-        self.__start_stop_video_stream(True)
-
-    def stop_video_stream(self):
-        """
-        Stop the video stream
-        """
-        self.__start_stop_video_stream(False)
 
     def get_compressed_image(self, with_seq=False):
         """
