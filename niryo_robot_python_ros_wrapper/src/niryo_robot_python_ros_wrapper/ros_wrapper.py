@@ -1963,6 +1963,22 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     # - Vision
 
+    def __start_stop_video_stream(self, value):
+        result = self._call_service('/niryo_robot_vision/start_stop_video_streaming', SetBool, value)
+        self._check_result_status(result)
+
+    def start_video_stream(self):
+        """
+        Start the video stream
+        """
+        self.__start_stop_video_stream(True)
+
+    def stop_video_stream(self):
+        """
+        Stop the video stream
+        """
+        self.__start_stop_video_stream(False)
+
     def get_compressed_image(self, with_seq=False):
         """
         Gets last stream image in a compressed format
