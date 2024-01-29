@@ -64,16 +64,6 @@ install(
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-)
-
-install(
-  DIRECTORY examples/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/examples
-)
-
 if (rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/

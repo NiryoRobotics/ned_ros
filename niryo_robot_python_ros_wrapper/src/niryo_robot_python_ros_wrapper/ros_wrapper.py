@@ -14,6 +14,8 @@ from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
+from tools_interface.msg import Tool
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
@@ -21,7 +23,7 @@ from niryo_robot_msgs.msg import BasicObjectArray
 
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
-from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState
+from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState, StorageStatus
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
 from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
@@ -93,6 +95,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__digital_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/digital_io_state', DigitalIOState)
         self.__analog_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/analog_io_state', AnalogIOState)
         self.__max_velocity_scaling_factor_ntv = NiryoTopicValue('/niryo_robot/max_velocity_scaling_factor', Int32)
+        self.__storage_status_ntv = NiryoTopicValue('/niryo_robot_rpi/storage_status', StorageStatus)
+        self.__tool_motor_state_ntv = NiryoTopicValue('/niryo_robot_hardware/tools/motor', Tool)
 
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
@@ -103,6 +107,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                                                queue_size=1)
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
+
+        self.__conveyor_id_to_number = {}
+        for conveyor_protocol_enum in [ConveyorTTL, ConveyorCan]:
+            self.__conveyor_id_to_number[conveyor_protocol_enum.ID_1.value] = ConveyorID.ID_1
+            self.__conveyor_id_to_number[conveyor_protocol_enum.ID_2.value] = ConveyorID.ID_2
 
         # Software
         self.__software_version_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/software_version',
@@ -281,7 +290,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Gets the max velocity scaling factor
         :return: max velocity scaling factor
-        :rtype: float
+        :rtype: Int32
         """
         return self.__max_velocity_scaling_factor_ntv.value
 
@@ -1453,14 +1462,23 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                 robot_state.rpy.yaw)
 
     # -- Tools
+
     def get_current_tool_id(self):
         """
         Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
-        :rtype: ToolID
+        :rtype: Union[ToolID, int]
         """
         return self.__tools.get_current_tool_id()
+
+    def get_current_tool_state(self):
+        """
+        Return the hardware state of the tool
+        :return: the hardware state
+        :rtype: int
+        """
+        return self.__tool_motor_state_ntv.value.state
 
     def update_tool(self):
         """
@@ -1594,11 +1612,24 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         If deactivation is requested, the TCP will be coincident with the tool_link
 
         :param enable: True to enable, False otherwise.
-        :type enable: Bool
+        :type enable: bool
         :return: status, message
         :rtype: (int, str)
         """
         return self.__tools.enable_tcp(enable)
+
+    def get_tcp(self, as_list=False):
+        """
+        Returns the TCP state
+        :param as_list: True to return the tcp position as a list of float
+        :type as_list: bool
+        :return: the tcp (enabled, position and orientation)
+        :rtype: Tool msg object
+        """
+        tcp = self.__tools.get_tcp()
+        if as_list:
+            return [tcp.position.x, tcp.position.y, tcp.position.z, tcp.rpy.roll, tcp.rpy.pitch, tcp.rpy.yaw]
+        return tcp
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """
@@ -1653,9 +1684,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Sets pin number pin_id to mode pin_mode
 
         :param pin_id:
-        :type pin_id: PinID
+        :type pin_id: str
         :param pin_mode:
-        :type pin_mode: PinMode
+        :type pin_mode: int
         :return: status, message
         :rtype: (int, str)
         """
@@ -1713,8 +1744,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param pin_id: The name of the pin
         :type pin_id: Union[ PinID, str]
-        :return: state
-        :rtype: PinState
+        :return: pin voltage
+        :rtype: float
         """
         from niryo_robot_rpi.srv import GetAnalogIO
         result = self._call_service('/niryo_robot_rpi/get_analog_io', GetAnalogIO, pin_id)
@@ -1732,6 +1763,38 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_analog_io_state(self):
         return self.__analog_io_state_ntv.value
+
+    def get_digital_io_mode(self, pin_id):
+        """
+        Get a digital IO mode
+
+        :param pin_id: the pin id of a digital io
+        :type pin_id: str
+        :return: The mode of the digital io (Input or Output)
+        :rtype: PinMode
+        """
+        dio_states = self.get_digital_io_state()
+        if pin_id in [dio.name for dio in dio_states.digital_inputs]:
+            return PinMode.INPUT
+        return PinMode.OUTPUT
+
+    def get_available_disk_size(self):
+        """
+        Get the RPI available space on the SD card
+        :return: the number of MegaBytes available
+        :rtype: int
+        """
+        self.__storage_status_ntv.wait_for_message()
+        return self.__storage_status_ntv.value.available_disk_size
+
+    def get_ros_logs_size(self):
+        """
+        Get the ros logs size on the SD card
+        :return: the size of the ros logs in MB
+        :rtype: int
+        """
+        self.__storage_status_ntv.wait_for_message()
+        return self.__storage_status_ntv.value.log_size
 
     def get_hardware_version(self):
         """
@@ -1894,12 +1957,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return conveyor_id
 
     def __conveyor_id_to_conveyor_number(self, conveyor_id):
-        ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
-        try:
-            conveyor_number = dict(zip(ids, [ConveyorID.ID_1, ConveyorID.ID_2]))[conveyor_id]
-        except KeyError:
-            conveyor_number = ConveyorID.NONE
-        return conveyor_number
+        if conveyor_id not in self.__conveyor_id_to_number:
+            return ConveyorID.NONE
+        return self.__conveyor_id_to_number[conveyor_id]
 
     # - Vision
 
@@ -1990,7 +2050,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return img_param_msg.brightness_factor, img_param_msg.contrast_factor, img_param_msg.saturation_factor
 
-    def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
+    def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel, as_list=False):
         """
         Given a pose (x_rel, y_rel, yaw_rel) relative to a workspace, this function
         returns the robot pose in which the current tool will be able to pick an object at this pose.
@@ -2020,9 +2080,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                     y_rel,
                                     yaw_rel)
         self._check_result_status(result)
+        if as_list:
+            return [
+                result.target_pose.position.x,
+                result.target_pose.position.y,
+                result.target_pose.position.z,
+                result.target_pose.rpy.roll,
+                result.target_pose.rpy.pitch,
+                result.target_pose.rpy.yaw
+            ]
         return result.target_pose
 
-    def get_target_pose_from_cam(self, workspace_name, height_offset, shape, color):
+    def get_target_pose_from_cam(self, workspace_name, height_offset, shape, color, as_list=False):
         """
         First detects the specified object using the camera and then returns the robot pose in which the object can
         be picked with the current tool
@@ -2041,7 +2110,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, None, "", ""
-        obj_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        obj_pose = self.get_target_pose_from_rel(workspace_name,
+                                                 height_offset,
+                                                 rel_pose.x,
+                                                 rel_pose.y,
+                                                 rel_pose.yaw,
+                                                 as_list=as_list)
         return True, obj_pose, obj_shape, obj_color
 
     def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):

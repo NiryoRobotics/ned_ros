@@ -16,3 +16,4 @@ class SystemApiEndpoint(Enum):
     ETHERNET_PROFILE = '/ethernetProfile'
     SET_SETTING = '/setSetting'
     GET_SETTING = '/getSetting'
+    SYSTEM_VERSION_CURRENT = '/system/version/current'
