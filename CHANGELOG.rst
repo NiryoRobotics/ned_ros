@@ -2,6 +2,13 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.3.0
+-----------
+**Features**
+**Improvements**
+  * Brand new modbus server
+**Bugfixes**
+
 v5.2.2
 ___________
 **Features**
