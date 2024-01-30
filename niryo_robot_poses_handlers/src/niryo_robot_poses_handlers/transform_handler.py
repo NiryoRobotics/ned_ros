@@ -6,7 +6,6 @@ import copy
 import rospy
 import tf2_ros
 import niryo_robot_poses_handlers.transform_functions as transformations
-from tf2_ros import StaticTransformBroadcaster
 import threading
 import numpy as np
 
@@ -126,8 +125,18 @@ class PosesTransformHandler:
 
         :returns: transform base_link -> object_base
         """
-        t = self.transform_from_euler(x_off, y_off, z_off, roll_off, pitch_off, yaw_off, "object_base", "pick_target")
-        self.__tf_buffer.set_transform(t, "default_authority")
+        t_base_to_object = self.__tf_buffer.lookup_transform("base_link", "object_base", rospy.Time(0))
+        t_object_to_pick = self.transform_from_euler(x_off,
+                                                     y_off,
+                                                     z_off,
+                                                     roll_off,
+                                                     pitch_off,
+                                                     yaw_off,
+                                                     "object_base",
+                                                     "pick_target")
+        t_base_to_object.header.stamp = t_object_to_pick.header.stamp
+        self.__tf_buffer.set_transform(t_base_to_object, "default_authority")
+        self.__tf_buffer.set_transform(t_object_to_pick, "default_authority")
 
         return self.__tf_buffer.lookup_transform("base_link", "pick_target", rospy.Time(0))
 
