@@ -133,9 +133,8 @@ class PosesTransformHandler:
                                                      pitch_off,
                                                      yaw_off,
                                                      "object_base",
-                                                     "pick_target")
-        t_base_to_object.header.stamp = t_object_to_pick.header.stamp
-        self.__tf_buffer.set_transform(t_base_to_object, "default_authority")
+                                                     "pick_target",
+                                                     t_base_to_object.header.stamp)
         self.__tf_buffer.set_transform(t_object_to_pick, "default_authority")
 
         return self.__tf_buffer.lookup_transform("base_link", "pick_target", rospy.Time(0))
@@ -176,7 +175,7 @@ class PosesTransformHandler:
         return calib_tip_position
 
     @staticmethod
-    def transform_from_euler(x, y, z, roll, pitch, yaw, header_frame_id, child_frame_id):
+    def transform_from_euler(x, y, z, roll, pitch, yaw, header_frame_id, child_frame_id, stamp=None):
         """
         Creates a new stamped transform from translation and euler-orientation
 
@@ -188,9 +187,12 @@ class PosesTransformHandler:
         :param yaw: orientation yaw
         :param header_frame_id: transform from this frame
         :param child_frame_id: transform to this frame
+        :param stamp: the timestamp of the transform. Default = current time
 
         :returns: transform
         """
+        if stamp is None:
+            stamp = rospy.Time.now()
         t = TransformStamped()
         t.transform.translation.x = x
         t.transform.translation.y = y
@@ -203,7 +205,7 @@ class PosesTransformHandler:
         t.transform.rotation.w = q[3]
 
         t.header.frame_id = header_frame_id
-        t.header.stamp = rospy.Time.now()
+        t.header.stamp = stamp
         t.child_frame_id = child_frame_id
 
         return t
