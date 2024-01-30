@@ -102,6 +102,7 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
         Build the register according to each entry's specs by attributing an address to each one of them
         """
         ros_wrapper = NiryoRosWrapper()
+        ros_wrapper.wait_for_node_initialization('niryo_robot_rpi')
 
         for register_type, entries in self.__registered_entries.items():
             register_offset = 0
@@ -145,14 +146,14 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
 
     def pretty_print_registers(self):
         for register_type, entries in self.get_addressing().items():
-            logger.info('==============')
-            logger.info(register_type.name)
-            logger.info('==============')
+            logger.debug('==============')
+            logger.debug(register_type.name)
+            logger.debug('==============')
             for (low_addr, high_addr), entry in entries.items():
                 if low_addr == high_addr:
-                    logger.info(f'| {low_addr} | {entry.__name__} |')
+                    logger.debug(f'| {low_addr} | {entry.__name__} |')
                 else:
-                    logger.info(f'| {low_addr} - {high_addr} | {entry.__name__} |')
+                    logger.debug(f'| {low_addr} - {high_addr} | {entry.__name__} |')
 
     # - class decorators - #
 

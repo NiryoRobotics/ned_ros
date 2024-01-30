@@ -176,15 +176,22 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return CommandStatus.SUCCESS, self.__node_name
 
     @classmethod
+    def wait_for_node_initialization(cls, node_name, timeout=30, sleep_time=0.1):
+        param_name = f'/{node_name}/initialized'
+        t_start = rospy.Time.now()
+        while not rospy.has_param(param_name):
+            if (rospy.Time.now() - t_start).to_sec() > timeout:
+                raise NiryoRosWrapperException(f'Timeout exceeded while waiting for node {node_name} initialization')
+            rospy.sleep(sleep_time)
+
+    @classmethod
     def wait_for_nodes_initialization(cls, simulation_mode=False):
-        params_checked = [
-            '/niryo_robot_poses_handlers/initialized',
-            '/niryo_robot_arm_commander/initialized',
+        nodes_to_check = [
+            'niryo_robot_poses_handlers',
+            'niryo_robot_arm_commander',
         ]
-        while not all([rospy.has_param(param) for param in params_checked]):
-            rospy.sleep(0.1)
-        if simulation_mode:
-            rospy.sleep(1)  # Waiting to be sure Gazebo is open
+        for node in nodes_to_check:
+            cls.wait_for_node_initialization(node, sleep_time=1 if simulation_mode else 0.1)
 
     # -- Publishers
     # Blockly
