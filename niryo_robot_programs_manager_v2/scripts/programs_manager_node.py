@@ -133,7 +133,7 @@ class ProgramManagerNode:
 
     def __callback_get_program(self, req):
         program = self.program_msg_from_program_manager(self.__programs_manager.get(req.program_id))
-        return CommandStatus.SUCCESS, f'Successfully retrieved program "{program["id"]}"', program
+        return CommandStatus.SUCCESS, f'Successfully retrieved program "{program.program_id}"', program
 
     def __callback_get_program_list(self, _):
         ros_programs = [self.program_msg_from_program_manager(program) for program in self.__programs_manager.programs]

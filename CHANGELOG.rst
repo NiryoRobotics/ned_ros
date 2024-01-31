@@ -2,6 +2,19 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.4.0
+-----------
+**Features**
+**Improvements**
+  * Brand new modbus server
+  * New ros_wrapper functions: get_current_tool_state, get_tcp, get_digital_io_mode, get_available_disk_size, get_ros_logs_size, control_video_stream
+  * New system_api_client endpoint: get_system_version_current
+**Bugfixes**
+  * in ros_wrapper, __conveyor_id_to_conveyor_number not longer rely on the currently attached conveyors
+  * fixed some incorrect ros_wrapper's docstring
+  * fixed a bug which prevented to do vision picks with a TCP transformation enabled
+  * fixed a bug which caused an executed program's process to not totally stop
+
 v5.2.2
 ___________
 **Features**

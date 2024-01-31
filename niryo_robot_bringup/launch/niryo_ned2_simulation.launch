@@ -12,6 +12,8 @@
     <arg name="gazebo" default="false"/>
     <arg name="no_summary" default="false"/>
     <arg name="database" default="false"/>
+    <arg name="hardware_version" default="ned2"/>
+
 
     <group if="$(arg no_summary)">
         <node pkg="niryo_robot_bringup" type="timed_launch.sh"

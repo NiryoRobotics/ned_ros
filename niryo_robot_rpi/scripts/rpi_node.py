@@ -5,6 +5,7 @@ import logging
 
 
 class NiryoRobotRpiNode:
+
     def __init__(self):
         rospy.logdebug("NiryoRobotRpi - Entering in Init")
 
@@ -14,6 +15,9 @@ class NiryoRobotRpiNode:
             from niryo_robot_rpi.ned_one.robot_rpi import RobotRpi
 
         self.__niryo_robot_rpi = RobotRpi()
+
+        # Set a bool to mention this node is initialized
+        rospy.set_param('~initialized', True)
 
 
 if __name__ == '__main__':
