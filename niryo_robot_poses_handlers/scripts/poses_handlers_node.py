@@ -368,8 +368,7 @@ class PoseHandlerNode:
 
         except Exception as e:
             rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
-            position = rpy = []
-            return CommandStatus.CONVERT_FAILED, str(e), position, rpy
+            return CommandStatus.CONVERT_FAILED, str(e), Point(), RPY()
 
     def __callback_get_dynamic_frame_list(self, _):
         return self.name_description_list_from_fun(self.get_available_dynamic_frame_w_description)

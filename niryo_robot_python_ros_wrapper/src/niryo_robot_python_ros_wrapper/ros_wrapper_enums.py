@@ -1,13 +1,9 @@
 from enum import Enum, unique
 
-# Others enums
 from niryo_robot_tools_commander.api import ToolID
 
 
 class ShiftPose:
-
-    def __init__(self):
-        pass
 
     AXIS_X = 0
     AXIS_Y = 1
@@ -21,9 +17,6 @@ class ToolID:
     """
     Tools IDs (need to match tools ids in niryo_robot_tools_commander package)
     """
-
-    def __init__(self):
-        pass
 
     NONE = 0
     # CALIBRATION_TIP = 1
@@ -40,9 +33,6 @@ class PinMode:
     Pin Mode is either OUTPUT or INPUT
     """
 
-    def __init__(self):
-        pass
-
     OUTPUT = 0
     INPUT = 1
 
@@ -52,9 +42,6 @@ class PinState:
     Pin State is either LOW or HIGH
     """
 
-    def __init__(self):
-        pass
-
     LOW = False
     HIGH = True
 
@@ -63,9 +50,6 @@ class PinID:
     """
     Pins ID
     """
-
-    def __init__(self):
-        pass
 
     GPIO_1A = "1A"
     GPIO_1B = "1B"
@@ -131,9 +115,6 @@ class ConveyorTTL(Enum):
 
 class ConveyorDirection:
 
-    def __init__(self):
-        pass
-
     FORWARD = 1
     BACKWARD = -1
 
@@ -143,9 +124,6 @@ class ConveyorDirection:
 
 class ObjectColor:
 
-    def __init__(self):
-        pass
-
     RED = "RED"
     GREEN = "GREEN"
     BLUE = "BLUE"
@@ -154,18 +132,12 @@ class ObjectColor:
 
 class ObjectShape:
 
-    def __init__(self):
-        pass
-
     CIRCLE = "CIRCLE"
     SQUARE = "SQUARE"
     ANY = "ANY"
 
 
 class ProgramLanguage:
-
-    def __init__(self):
-        pass
 
     NONE = -1
     ALL = 0
@@ -176,18 +148,12 @@ class ProgramLanguage:
 
 class AutorunMode:
 
-    def __init__(self):
-        pass
-
     DISABLE = 0
     ONE_SHOT = 1
     LOOP = 2
 
 
 class ButtonAction:
-
-    def __init__(self):
-        pass
 
     HANDLE_HELD_ACTION = 0
     LONG_PUSH_ACTION = 1

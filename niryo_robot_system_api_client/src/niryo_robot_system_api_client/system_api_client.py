@@ -76,3 +76,7 @@ def set_setting(name, value):
 
 def get_setting(name, with_type=True):
     return __request('GET', SystemApiEndpoint.GET_SETTING, {'name': name, 'with_type': with_type})
+
+
+def get_system_version_current():
+    return __request('GET', SystemApiEndpoint.SYSTEM_VERSION_CURRENT)

@@ -10,7 +10,7 @@ from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool, Int32
 from niryo_robot_msgs.msg import RPY
-from niryo_robot_tools_commander.msg import ToolCommand
+from niryo_robot_tools_commander.msg import ToolCommand, TCP
 
 # Services
 from niryo_robot_msgs.srv import SetBool, SetInt, Trigger
@@ -23,11 +23,13 @@ from .tools_ros_wrapper_enums import ToolID
 
 
 class ToolsRosWrapper(AbstractNiryoRosWrapper):
+
     def __init__(self, service_timeout=0.2):
         super(ToolsRosWrapper, self).__init__(service_timeout)
 
         # -- Subscribers
         self.__current_tool_id_ntv = NiryoTopicValue('/niryo_robot_tools_commander/current_id', Int32)
+        self.__tcp_ntv = NiryoTopicValue('/niryo_robot_tools_commander/tcp', TCP)
 
         # -- Tool action
         self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction, ToolGoal)
@@ -219,12 +221,20 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         If deactivation is requested, the TCP will be coincident with the tool_link.
 
         :param enable: True to enable, False otherwise.
-        :type enable: Bool
+        :type enable: bool
         :return: status, message
         :rtype: (int, str)
         """
         result = self._call_service('/niryo_robot_tools_commander/enable_tcp', SetBool, enable)
         return self._classic_return_w_check(result)
+
+    def get_tcp(self):
+        """
+        Returns the TCP state
+        :return: the tcp (enabled, position and orientation)
+        :rtype: Tool msg object
+        """
+        return self.__tcp_ntv.value
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """

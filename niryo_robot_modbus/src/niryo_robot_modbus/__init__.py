@@ -1,1 +1,3 @@
-from .enums import *
+import logging
+
+logger = logging.getLogger('rosout')
