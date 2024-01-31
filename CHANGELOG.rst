@@ -13,6 +13,7 @@ v5.4.0
   * in ros_wrapper, __conveyor_id_to_conveyor_number not longer rely on the currently attached conveyors
   * fixed some incorrect ros_wrapper's docstring
   * fixed a bug which prevented to do vision picks with a TCP transformation enabled
+  * fixed a bug which caused an executed program's process to not totally stop
 
 v5.2.2
 ___________
