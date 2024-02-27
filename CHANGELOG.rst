@@ -2,7 +2,16 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-v5.4.0
+v5.3.1
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  * Fixed a bug which didn't handled when a goal was timed out in NiryoActionClient
+
+v5.3.0
 -----------
 **Features**
 
