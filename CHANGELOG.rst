@@ -10,6 +10,7 @@ v5.3.1
 
 **Bugfixes**
   * Fixed a bug which didn't handled when a goal was timed out in NiryoActionClient
+  * Fixed a bug which could lead to the tool commander's action server to always be locked in active mode
 
 v5.3.0
 -----------
