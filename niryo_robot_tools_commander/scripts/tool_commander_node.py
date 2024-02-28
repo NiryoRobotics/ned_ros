@@ -164,12 +164,9 @@ class ToolCommander:
             return
 
         # 4. Execute cmd -> retrieve cmd name in command list and execute on current tool
-        self.__current_tool.set_as_active()
-
-        function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
-        success, message = self.__current_tool(function_name, cmd)  # Execute function from name
-
-        self.__current_tool.set_as_non_active()
+        with self.__current_tool:
+            function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
+            success, message = self.__current_tool(function_name, cmd)  # Execute function from name
 
         # 5. Return success or error
         if not success:
