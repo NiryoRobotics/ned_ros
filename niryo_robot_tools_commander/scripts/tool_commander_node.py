@@ -8,7 +8,11 @@ import moveit_commander
 from actionlib import ServerGoalHandle
 from actionlib_msgs.msg import GoalStatus
 
-from niryo_robot_tools_commander.tools_classes import Gripper, Electromagnet, VacuumPump, NoTool, ToolValidationException
+from niryo_robot_tools_commander.tools_classes import (Gripper,
+                                                       Electromagnet,
+                                                       VacuumPump,
+                                                       NoTool,
+                                                       ToolValidationException)
 from niryo_robot_tools_commander.tool_ros_command_interface import ToolRosCommandInterface
 from niryo_robot_tools_commander.transform_handler import ToolTransformHandler
 
