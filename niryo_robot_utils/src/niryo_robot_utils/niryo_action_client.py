@@ -61,6 +61,9 @@ class NiryoActionClient(object):
         # Send goal and check response
         goal_state, response = self.__send_goal_and_wait_for_completed(goal)
 
+        if goal_state == CommandStatus.GOAL_TIMEOUT:
+            return goal_state, response
+
         if response.status == CommandStatus.GOAL_STILL_ACTIVE:
             rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
             self.__action_server.cancel_goal()
