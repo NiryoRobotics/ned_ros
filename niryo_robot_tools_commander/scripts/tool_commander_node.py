@@ -97,7 +97,7 @@ class ToolCommander:
         rospy.Service('~equip_electromagnet', SetInt, self.__callback_equip_electromagnet)
 
         # Action Server
-        self.__current_goal_handle: ServerGoalHandle = ServerGoalHandle()
+        self.__current_goal_handle: ServerGoalHandle = None
 
         self.__action_server = actionlib.ActionServer('~action_server',
                                                       ToolAction,
@@ -140,7 +140,7 @@ class ToolCommander:
         cmd = goal_handle.goal.goal.cmd
         rospy.logdebug("Tool Commander - received goal : " + str(goal_handle.goal))
 
-        if self.__current_goal_handle.get_goal_status() == GoalStatus.ACTIVE:
+        if self.__current_goal_handle is not None and self.__current_goal_handle.get_goal_status() == GoalStatus.ACTIVE:
             message = 'Goal has been rejected because there is already a goal handled'
             self.__current_goal_handle.set_rejected(ToolResult(status=CommandStatus.REJECTED, message=message), message)
 
