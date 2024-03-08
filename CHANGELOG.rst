@@ -2,6 +2,15 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.3.2
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  * Stopping a program now send SIGTERM instead of SIGKILL in order to let the program handle its exit
+
 v5.3.1
 -----------
 **Features**

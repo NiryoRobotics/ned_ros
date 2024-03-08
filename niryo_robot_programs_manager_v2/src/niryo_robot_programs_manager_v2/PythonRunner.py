@@ -98,6 +98,6 @@ class PythonRunner:
             return
 
         try:
-            self.__process.kill()
+            self.__process.terminate()
         except Exception as e:
             raise ExecutionException(str(e))
