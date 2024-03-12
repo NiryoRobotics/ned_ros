@@ -681,7 +681,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
     def test_high_speed(self, report):
 
-        self.__robot.set_arm_max_velocity(200)
+        self.__robot.set_arm_max_velocity(170)
         self.__robot.set_arm_max_acceleration(100)
 
         default_joint_pose = 6 * [0.0]

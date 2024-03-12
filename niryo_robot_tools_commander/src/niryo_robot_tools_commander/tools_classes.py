@@ -40,10 +40,10 @@ class Tool(object):
     def validate_command(self, cmd):
         raise NotImplementedError
 
-    def set_as_active(self):
+    def __enter__(self):
         self._is_active = True
 
-    def set_as_non_active(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self._is_active = False
 
     def is_active(self):

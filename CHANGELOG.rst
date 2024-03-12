@@ -2,15 +2,37 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-v5.4.0
+v5.3.2
 -----------
 **Features**
+
+**Improvements**
+
+**Bugfixes**
+  * Stopping a program now send SIGTERM instead of SIGKILL in order to let the program handle its exit
+
+v5.3.1
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  * Fixed a bug which didn't handled when a goal was timed out in NiryoActionClient
+  * Fixed a bug which could lead to the tool commander's action server to always be locked in active mode
+  * Fixed a bug which prevented the tool commander action server to accept new goals once a goal with a future date was published
+
+v5.3.0
+-----------
+**Features**
+
 **Improvements**
   * Brand new modbus server
   * New ros_wrapper functions: get_current_tool_state, get_tcp, get_digital_io_mode, get_available_disk_size, get_ros_logs_size, control_video_stream
   * New system_api_client endpoint: get_system_version_current
+
 **Bugfixes**
-  * in ros_wrapper, __conveyor_id_to_conveyor_number not longer rely on the currently attached conveyors
+  * in ros_wrapper, __conveyor_id_to_conveyor_number no longer rely on the currently attached conveyors
   * fixed some incorrect ros_wrapper's docstring
   * fixed a bug which prevented to do vision picks with a TCP transformation enabled
   * fixed a bug which caused an executed program's process to not totally stop
@@ -18,16 +40,20 @@ v5.4.0
 v5.2.2
 ___________
 **Features**
+
 **Improvements**
   * The service /niryo_robot/kinematics/forward now returns status and message in its response
   * The service /niryo_robot/kinematics/inverse now returns status and message in its response
+
 **Bugfixes**
   * Fixed the service /niryo_robot/kinematics/forward which sometimes crashed because of transform extrapolation
 
 v5.2.1
 ___________
 **Features**
+
 **Improvements**
+
 **Bugfixes**
   * the service set_program_autorun wasn't taking the mode into account when passing "DISABLE"
 
@@ -128,6 +154,7 @@ ___________
 
 **Bugfixes**
 * Fixed a bug preventing the downloaded update to be applied successfully
+
 Forthcoming
 -----------
 
