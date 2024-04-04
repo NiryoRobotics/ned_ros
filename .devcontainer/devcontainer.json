@@ -1,7 +1,6 @@
 {
   "name": "noetic desktop-full",
   "remoteUser": "rosdev",
-  "containerUser": "rosdev",
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
