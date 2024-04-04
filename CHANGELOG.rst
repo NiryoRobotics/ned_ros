@@ -2,6 +2,16 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.3.3
+-----------
+**Features**
+
+**Improvements**
+  * Increase threshold for end effector collision detection
+
+**Bugfixes**
+
+
 v5.3.2
 -----------
 **Features**
