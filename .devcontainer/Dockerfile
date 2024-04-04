@@ -1,0 +1,32 @@
+FROM ros:noetic-perception-focal
+
+# Add vscode user with same UID and GID as your host system
+# (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)
+ARG USERNAME=rosdev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Create and switch to user
+RUN groupadd -g $USER_GID $USERNAME \
+    && useradd -lm -u $USER_UID -g $USERNAME -s /bin/bash $USERNAME \
+    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER $USERNAME
+
+# Add user to video group to allow access to webcam
+RUN sudo usermod --append --groups video $USERNAME
+
+# Create workspace so that user own this directory
+RUN mkdir -p /home/$USERNAME/catkin_ws/src
+WORKDIR /home/$USERNAME/catkin_ws
+
+# Update all packages
+RUN sudo apt update && sudo apt upgrade -y
+
+# Install Git
+RUN sudo apt install -y git
+
+# Rosdep update
+RUN rosdep update
+
+# Source the ROS setup file
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
