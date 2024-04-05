@@ -6,9 +6,10 @@
 # email c.sanchez@niryo.com
 # ---
 import time
+
 from smbus2 import SMBus
 
-__version__ = "1.1.0-auto.0"
+__version__ = "1.1.1-auto.0"
 
 # Internal constants:
 _ADC80501_DEFAULT_ADDRESS = 0x49
@@ -62,13 +63,17 @@ class DACx0501(object):
 
         # if vref different to 2.5V
         if self.v_ref == 2.5:
+            # use internal Vref
             self._send_data_(_CONFIG, 0x00, 0x00)
+            # set REF-DIV (Vref divided by 1 -> bit 8) to 0 and BUFF-gain (gain x2 -> bit 0) to 1.
+            self._send_data_(_GAIN, 0x00, 0x01)
+            self.vout_max = 5.0
         else:
             # use external Vref
             self._send_data_(_CONFIG, 0x01, 0x00)
-
-        # set REF-DIV (Vref divided by 2 -> bit 8) and BUFF-gain (gain x2 -> bit 0) to 1. (VDD = 3.3V) p.4
-        self._send_data_(_GAIN, 0x01, 0x01)
+            # set REF-DIV (Vref divided by 2 -> bit 8) to 1 and BUFF-gain (gain x2 -> bit 0) to 1.
+            self._send_data_(_GAIN, 0x01, 0x01)
+            self.vout_max = self.v_ref
 
     def _send_data_(self, addr, byte1, byte2):
         """Send byte1 and byte2 to addr address"""
@@ -82,10 +87,10 @@ class DACx0501(object):
 
     def set_voltage_(self, voltage):
         """Set a value, then calculate DAC value to send to device"""
-        if not 0 <= voltage <= self.v_ref:
-            raise DACx0501Exception("Voltage must be between 0 and Vref = {}".format(self.v_ref))
+        if not 0 <= voltage <= self.vout_max:
+            raise DACx0501Exception("Voltage must be between 0 and Vout_max = {}".format(self.vout_max))
 
-        dac_value = int((voltage * ((1 << self.res) - 1) / self.v_ref))
+        dac_value = int((voltage * ((1 << self.res) - 1) / self.vout_max))
 
         if self.res == 12:
             byte1 = (dac_value >> 4)
