@@ -1,0 +1,43 @@
+{
+  "name": "noetic desktop-full",
+  "remoteUser": "rosdev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USERNAME": "rosdev",
+      "GID": "1000",
+      "UID": "1000"
+    }
+  },
+  "runArgs": [
+    "--network=host"
+  ],
+  "workspaceFolder": "/home/rosdev/catkin_ws",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/rosdev/.bash_history,type=bind"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "eeyore.yapf",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-iot.vscode-ros",
+        "smilerobotics.urdf",
+        "redhat.vscode-xml",
+        "tamasfe.even-better-toml",
+        "timonwong.shellcheck",
+        "yzhang.markdown-all-in-one",
+      ],
+      "settings": {
+        "files.associations": {
+          "*.rviz": "yaml",
+          "*.srdf": "xml",
+          "*.urdf": "xml",
+          "*.xacro": "xml"
+        }
+      }
+    }
+  }
+}
