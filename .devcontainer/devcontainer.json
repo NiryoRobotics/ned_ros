@@ -9,9 +9,20 @@
       "UID": "1000"
     }
   },
-  "runArgs": [
-    "--network=host"
-  ],
+  "remoteEnv": {
+    "CATKIN_SHELL": "bash",
+    "ROS_VERSION": "1",
+    "PKG_CONFIG_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/pkgconfig",
+    "ROS_PYTHON_VERSION": "3",
+    "ROS_PACKAGE_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/share",
+    "ROS_ETC_DIR": "/opt/ros/${containerEnv:ROS_DISTRO}/etc/ros",
+    "CMAKE_PREFIX_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}",
+    "PYTHONPATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/python3/dist-packages",
+    "ROS_MASTER_URI": "http://localhost:11311",
+    "LD_LIBRARY_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib",
+    "PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/bin:${containerEnv:PATH}",
+    "ROS_ROOT": "/opt/ros/${containerEnv:ROS_DISTRO}/share/ros",
+  },
   "workspaceFolder": "/home/rosdev/catkin_ws",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
   "mounts": [
