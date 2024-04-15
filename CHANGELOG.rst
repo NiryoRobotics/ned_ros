@@ -1,6 +1,14 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+v5.3.4
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+ * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
 
 v5.3.3
 -----------
