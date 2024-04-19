@@ -1,0 +1,51 @@
+dynamixels:
+    dxl_1:
+        # assembly offset position (rad)
+        offset_position: -3.1415
+        # home position (rad)
+        home_position: 0.0
+        # assembly direction (1 or -1)
+        limit_position_max: 2.093
+        limit_position_min: -2.093
+        direction: 1
+        position_P_gain: 3264
+        position_I_gain: 0
+        position_D_gain: 9520
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 400
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200
+
+    dxl_2:
+        offset_position: 3.1415
+        home_position: 0.0
+        limit_position_max: 1.919
+        limit_position_min: -1.919
+        direction: -1
+        position_P_gain: 2560
+        position_I_gain: 0
+        position_D_gain: 352
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200
+
+    dxl_3:
+        offset_position: -3.1415
+        home_position: 0.0
+        limit_position_max: 2.53
+        limit_position_min: -2.53
+        direction: 1
+        position_P_gain: 2560
+        position_I_gain: 0
+        position_D_gain: 1424
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200

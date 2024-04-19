@@ -1,0 +1,4 @@
+tools_params:
+    id_list: [11,12,13,31]
+    type_list: ["fakeDxl","fakeDxl","fakeDxl","fakeDxl"]
+    name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump"]

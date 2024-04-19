@@ -83,8 +83,8 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
 {
     bool torque_status{false};
 
-    robot_hwnh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
-    if (_hardware_version == "ned2")
+    robot_hwnh.getParam("/niryo_robot/hardware_version", _hardware_version);
+    if (_hardware_version == "ned2" || _hardware_version == "ned3")
         torque_status = true;
     else if (_hardware_version == "ned" || _hardware_version == "one")
         torque_status = false;
@@ -119,7 +119,7 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 
         // gather info in joint  states (polymorphic)
-        if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
+        if (eType == EHardwareType::STEPPER || eType == EHardwareType::NED3_STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {
             // stepper
             std::string currentNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -314,12 +314,18 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+            if("ned3" == _hardware_version)
+                profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577);
+            else
+                profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
+            if("ned3" == _hardware_version)
+                profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 1000);
+            else
+                profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_max"))
         {

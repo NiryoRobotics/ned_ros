@@ -64,7 +64,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
 
-        if self.__hardware_version in ['ned', 'ned2']:
+        if self.__hardware_version in ['ned', 'ned2', 'ned3']:
             self.__node_name = rospy.get_name()
             rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
             rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
@@ -87,7 +87,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
-        self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
+        self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState, timeout=100)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -138,7 +138,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_status.api import RobotStatusRosWrapper
         self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
 
-        if self.__hardware_version == 'ned2':
+        if self.__hardware_version in ['ned2', 'ned3']:
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
             from niryo_robot_led_ring.api import LedRingRosWrapper
             from niryo_robot_sound.api import SoundRosWrapper
@@ -166,7 +166,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             self._collision_detected = True
 
     def __advertise_stop(self):
-        if self.__hardware_version in ['ned', 'ned2']:
+        if self.__hardware_version in ['ned', 'ned2', 'ned3']:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
             except (rospy.ServiceException, rospy.ROSException):

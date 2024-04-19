@@ -22,6 +22,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cassert>
 
 using ::std::ostringstream;
 using ::std::shared_ptr;
@@ -144,6 +145,9 @@ int AbstractEndEffectorDriver::writeSingleCmd(const std::unique_ptr<common::mode
         case common::model::EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH:
             writeCollisionThresh(cmd->getId(), cmd->getParam());
             break;
+        case common::model::EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH_ALGO_2:
+            writeCollisionThreshAlgo2(cmd->getId(), cmd->getParam());
+            break;
         default:
             std::cout << "Command not implemented" << std::endl;
         }
@@ -159,6 +163,18 @@ int AbstractEndEffectorDriver::writeSingleCmd(const std::unique_ptr<common::mode
 int AbstractEndEffectorDriver::writeSyncCmd(int /*type*/, const std::vector<uint8_t> & /*ids*/, const std::vector<uint32_t> & /*params*/)
 {
     std::cout << "Synchronized cmd not implemented for end effector" << std::endl;
+
+    return 0;
+}
+
+// This method is used for ned3_stepper driver however since it is be called in writeSingleCmd() it must be implemented by AbstractEndEffectorDriver
+/**
+ * @brief AbstractEndEffectorDriver::writeCollisionThreshAlgo2
+ * @return
+ */
+int AbstractEndEffectorDriver::writeCollisionThreshAlgo2(uint8_t id, int thresh)
+{
+    std::cout << "writeCollisionThreshAlgo2 not implemented for end effector" << std::endl;
 
     return 0;
 }

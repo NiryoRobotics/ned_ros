@@ -1,0 +1,50 @@
+# fake params using in fake driver
+fake_params:
+    steppers:
+        id: [2, 3, 4]
+        position: [1950, 0, 0]
+        velocity: [0, 0, 0]
+        temperature: [50, 52, 54]
+        # these are raw parameters, as they should appear on the bus
+        voltage: [12100, 12200, 12300]
+        min_position: [0, 0, 0]
+        max_position: [4096, 4096, 4096]
+        model_number: [1, 1, 1]
+        firmware: ["0.0.1", "0.0.1", "0.0.1"]
+    dynamixels:
+        id: [5, 6, 7]
+        position: [2048, 2048, 2048]
+        velocity: [0, 0, 0]
+        temperature: [50, 52, 54]
+        # these are raw parameters, as they should appear on the bus
+        voltage: [50, 50, 50]
+        min_position: [0, 0, 0]
+        max_position: [4096, 4096, 4096]
+        model_number: [1, 1, 1]
+        firmware: ["0.0.1", "0.0.1", "0.0.1"]
+    end_effector:
+        id: [0]
+        temperature: [32]
+        voltage: [5000]
+        firmware: ["0.0.1"]
+    tool:
+        id: [11]
+        position: [370]
+        velocity: [0]
+        temperature: [56]
+        voltage: [50]
+        min_position: [0]
+        max_position: [4096]
+        model_number: [1]
+        firmware: ["0.0.1"]
+    conveyors:
+        id: [8]
+        position: [0]
+        velocity: [0]
+        temperature: [54]
+        # these are raw parameters, as they should appear on the bus
+        voltage: [12300]
+        min_position: [0]
+        max_position: [4096]
+        model_number: [2]
+        firmware: ["0.0.1"]

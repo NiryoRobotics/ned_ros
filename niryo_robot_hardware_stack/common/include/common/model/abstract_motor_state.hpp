@@ -116,7 +116,7 @@ int AbstractMotorState::getTorque() const
 inline
 bool AbstractMotorState::isStepper() const
 {
-    return (EHardwareType::STEPPER == _hw_type ||
+    return (EHardwareType::STEPPER == _hw_type || EHardwareType::NED3_STEPPER == _hw_type ||
             EHardwareType::FAKE_STEPPER_MOTOR == _hw_type);
 }
 

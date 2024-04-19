@@ -45,7 +45,7 @@
                      izz="0.00030089"/>
         </inertial>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/stl/shoulder_link.stl"/>
             </geometry>
@@ -76,7 +76,7 @@
                      izz="0.00022753"/>
         </inertial>
         <collision>
-            <origin xyz="0 0 0" rpy="0 ${PI} 0"/>
+            <origin xyz="0 0 0" rpy="0 ${PI} ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/stl/elbow_link.stl"/>
             </geometry>
@@ -92,7 +92,7 @@
                      izz="0.00023715"/>
         </inertial>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/stl/forearm_link.stl"/>
             </geometry>
@@ -123,7 +123,7 @@
         </inertial>
         <collision>
             <origin xyz="0 0 0"
-                    rpy="0 0 0"/>
+                    rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/stl/wrist_link.stl"/>
             </geometry>
@@ -138,7 +138,7 @@
             <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
         </inertial>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/stl/hand_link.stl"/>
             </geometry>
@@ -159,7 +159,7 @@
     </joint>
 
     <joint name="joint_1" type="revolute">
-        <origin xyz="0 0 0.1013" rpy="0 0 ${-PI/2}"/>
+        <origin xyz="0 0 0.1013" rpy="0 0 0"/>
         <parent link="base_link"/>
         <child link="shoulder_link"/>
         <axis xyz="0 0 1"/>
@@ -168,7 +168,7 @@
     </joint>
 
     <joint name="joint_2" type="revolute">
-        <origin xyz="0 0 0.065" rpy="${PI/2} 0 ${PI/2}"/>
+        <origin xyz="0 0 0.065" rpy="${PI/2} 0 0"/>
         <parent link="shoulder_link"/>
         <child link="arm_link"/>
         <axis xyz="0 0 1"/>
@@ -178,7 +178,7 @@
     </joint>
 
     <joint name="joint_3" type="revolute">
-        <origin xyz="0.012 0.221 0" rpy="0 0 0"/>
+        <origin xyz="0.012 0.221 0" rpy="0 0 ${PI/2}"/>
         <parent link="arm_link"/>
         <child link="elbow_link"/>
         <axis xyz="0 0 1"/>
@@ -188,7 +188,7 @@
     </joint>
 
     <joint name="joint_4" type="revolute">
-        <origin xyz="0.065 0.0325 0" rpy="0 ${PI/2} 0"/>
+        <origin xyz="0.0325 -0.065 0" rpy="${PI/2} 0 0"/>
         <parent link="elbow_link"/>
         <child link="forearm_link"/>
         <axis xyz="0 0 1"/>
@@ -197,7 +197,7 @@
     </joint>
 
     <joint name="joint_5" type="revolute">
-        <origin xyz="0 0 0.17" rpy="${PI} ${-PI/2} ${PI}"/>
+        <origin xyz="0 0 0.17" rpy="${-PI/2} 0 0"/>
         <parent link="forearm_link"/>
         <child link="wrist_link"/>
         <axis xyz="0 0 1"/>
@@ -207,7 +207,7 @@
     </joint>
 
     <joint name="joint_6" type="revolute">
-        <origin xyz="0.0197 0.00925 0" rpy="0 ${PI/2} 0"/>
+        <origin xyz="0.00925 -0.0197 0" rpy="${PI/2} 0 0"/>
         <parent link="wrist_link"/>
         <child link="hand_link"/>
         <axis xyz="0 0 1"/>
@@ -218,7 +218,7 @@
     <joint name="hand_tool_joint" type="fixed">
         <parent link="hand_link"/>
         <child link="tool_link"/>
-        <origin xyz="0 0 ${distance_hand_tool}" rpy="${-PI/2} ${-PI/2} 0"/>
+        <origin xyz="0 0 ${distance_hand_tool}" rpy="0 0 0"/>
     </joint>
 
     <!--

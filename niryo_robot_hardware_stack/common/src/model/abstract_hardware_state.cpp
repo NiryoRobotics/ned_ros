@@ -107,7 +107,7 @@ void AbstractHardwareState::setTemperature(uint8_t temp) { _temperature = temp; 
 void AbstractHardwareState::setRawVoltage(double raw_volt)
 {
     if (EHardwareType::STEPPER == _hw_type || EHardwareType::FAKE_STEPPER_MOTOR == _hw_type || EHardwareType::END_EFFECTOR == _hw_type ||
-        EHardwareType::FAKE_END_EFFECTOR == _hw_type)
+        EHardwareType::FAKE_END_EFFECTOR == _hw_type || EHardwareType::NED3_STEPPER == _hw_type || EHardwareType:: NED3_END_EFFECTOR == _hw_type)
         _voltage = raw_volt / 1000;
     else
         _voltage = raw_volt / 10;

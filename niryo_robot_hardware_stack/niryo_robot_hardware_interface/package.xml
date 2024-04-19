@@ -23,6 +23,8 @@
   <build_depend>message_generation</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>common</build_depend>
+  <build_depend>niryo_robot_status</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>tools_interface</build_export_depend>

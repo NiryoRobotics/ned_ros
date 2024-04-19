@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "xm430_reg.hpp"
 #include "xl330_reg.hpp"
 #include "xl320_reg.hpp"
+#include "xh430_reg.hpp"
 
 namespace ttl_driver
 {
@@ -1485,6 +1486,65 @@ namespace ttl_driver
     inline int DxlDriver<XL330Reg>::writeShutdownConfiguration(uint8_t id, uint8_t configuration)
     {
         return write<typename XL330Reg::TYPE_ALARM_SHUTDOWN>(XL330Reg::ADDR_ALARM_SHUTDOWN, id, configuration);
+    }
+
+    // XH430
+
+    template <>
+    inline std::string DxlDriver<XH430Reg>::interpretErrorState(uint32_t hw_state) const
+    {
+        std::string hardware_message;
+
+        if (hw_state & 1 << 0) // 0b00000001
+        {
+            hardware_message += "Input Voltage";
+        }
+        if (hw_state & 1 << 2) // 0b00000100
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "OverHeating";
+        }
+        if (hw_state & 1 << 3) // 0b00001000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Motor Encoder";
+        }
+        if (hw_state & 1 << 4) // 0b00010000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Electrical Shock";
+        }
+        if (hw_state & 1 << 5) // 0b00100000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Overload";
+        }
+        if (hw_state & 1 << 7) // 0b10000000 => added by us : disconnected error
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Disconnection";
+        }
+        if (!hardware_message.empty())
+            hardware_message += " Error";
+
+        return hardware_message;
+    }
+
+    template <>
+    inline int DxlDriver<XH430Reg>::writeTorqueGoal(uint8_t id, uint16_t torque)
+    {
+        return write<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id, torque);
+    }
+
+    template <>
+    inline int DxlDriver<XH430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> & id_list, const std::vector<uint16_t> & torque_list)
+    {
+        return syncWrite<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id_list, torque_list);
     }
 
 } // ttl_driver

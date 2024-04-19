@@ -111,7 +111,7 @@ def send_reboot_command(learning_mode=True):
 
 
 def send_led_state(state):
-    if rospy.get_param("/niryo_robot_rpi/hardware_version") == 'ned2':
+    if rospy.get_param("/niryo_robot_rpi/hardware_version") in ['ned2', 'ned3']:
         return
 
     try:

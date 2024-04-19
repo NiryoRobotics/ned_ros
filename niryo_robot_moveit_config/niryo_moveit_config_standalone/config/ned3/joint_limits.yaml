@@ -1,0 +1,35 @@
+# ned3/joint_limits.yaml
+# joint_limits.yaml allows the dynamics properties specified in the URDF to be overwritten or augmented as needed
+# Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
+# Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
+joint_limits:
+  joint_1:
+    has_velocity_limits: true
+    max_velocity: 1.57 # = stepper velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 4.363 # = stepper acceleration profile in rad/s²
+  joint_2:
+    has_velocity_limits: true
+    max_velocity: 1.047 # = stepper velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 2.18 # = stepper acceleration profile in rad/s²
+  joint_3:
+    has_velocity_limits: true
+    max_velocity: 1.57 # = stepper velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 4.363 # = stepper acceleration profile in rad/s²
+  joint_4:
+    has_velocity_limits: true
+    max_velocity: 4.076 # = dxl velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 29.96 # = dxl acceleration profile in rad/s²
+  joint_5:
+    has_velocity_limits: true
+    max_velocity: 3.357 # = dxl velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 26.215 # = dxl acceleration profile in rad/s²
+  joint_6:
+    has_velocity_limits: true
+    max_velocity: 5.036 # = dxl velocity profile in rad/s
+    has_acceleration_limits: true
+    max_acceleration: 39.323 # = dxl acceleration profile in rad/s²

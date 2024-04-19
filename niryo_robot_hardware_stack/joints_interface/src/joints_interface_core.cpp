@@ -75,7 +75,7 @@ bool JointsInterfaceCore::init(ros::NodeHandle &nh)
     initParameters(nh);
 
     // in ned2, mode is not learning mode in the first time
-    _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
+    _previous_state_learning_mode = (("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
     startServices(nh);
@@ -196,8 +196,8 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     std::string result_message;
-    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
-    _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
+    activateLearningMode((("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode), result, result_message);
+    _previous_state_learning_mode = (("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode);
 
     _enable_control_loop = false;
     bool res = _robot->rebootAll(torque_on);
@@ -228,7 +228,7 @@ void JointsInterfaceCore::rosControlLoop()
 
     while (ros::ok())
     {
-        if (_enable_control_loop)
+        if (_enable_control_loop && !_estop_flag)
         {
             _robot->read(current_time, elapsed_time);
 
@@ -285,7 +285,7 @@ void JointsInterfaceCore::resetController()
 {
     _robot->setCommandToCurrentPosition();
     // set pos and command equal
-    if ("ned2" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
     {
         _robot->write(ros::Time::now(), ros::Duration(0.0));
         _lock_write_cnt = 150;
@@ -355,7 +355,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     _enable_control_loop = false;
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     // first activate learning mode for ned and one
-    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
+    activateLearningMode((("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode), result, result_message);
 
     result = _robot->calibrateJoints(calibration_mode, result_message);
     res.status = result;
@@ -366,7 +366,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         // we have to reset controller to avoid ros controller set command to the previous position
         // before the calibration
         _reset_controller = true;
-        _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
+        _previous_state_learning_mode = (("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode);
         _enable_control_loop = true;
     }
 

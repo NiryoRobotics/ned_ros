@@ -23,7 +23,16 @@ WORKDIR /home/$USERNAME/catkin_ws
 RUN sudo apt update && sudo apt upgrade -y
 
 # Install Git
-RUN sudo apt install -y git
+RUN sudo apt install -y git 
+
+# Install other packages
+RUN sudo apt update && sudo apt install -y \
+    ros-noetic-xacro \
+    python3-catkin-tools \
+    ros-noetic-ros-babel-fish \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    rsync
 
 # Rosdep update
 RUN rosdep update
