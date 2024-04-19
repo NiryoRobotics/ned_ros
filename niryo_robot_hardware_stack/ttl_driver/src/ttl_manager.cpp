@@ -48,11 +48,13 @@
 
 #include "ttl_driver/dxl_driver.hpp"
 #include "ttl_driver/end_effector_driver.hpp"
+#include "ttl_driver/ned3_end_effector_driver.hpp"
 #include "ttl_driver/fake_ttl_data.hpp"
 #include "ttl_driver/mock_dxl_driver.hpp"
 #include "ttl_driver/mock_end_effector_driver.hpp"
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
+#include "ttl_driver/ned3_stepper_driver.hpp"
 
 using ::std::ostringstream;
 using ::std::set;
@@ -736,7 +738,17 @@ bool TtlManager::readEndEffectorStatus()
 {
     bool res = false;
 
-    EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+    // hardware_version is not available within this class to know whether there is a ned2/ned3 eef
+    // however if hardware_type == ned2 _driver_map will contain EHardwareType::END_EFFECTOR and if hardware_type == ned3 _driver_map will contain EHardwareType::NED3_END_EFFECTOR
+    EHardwareType ee_type;
+
+    if (_simulation_mode)
+        ee_type = EHardwareType::FAKE_END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+        ee_type = EHardwareType::END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::NED3_END_EFFECTOR))
+        ee_type = EHardwareType::NED3_END_EFFECTOR;
+
 
     if (_driver_map.count(ee_type))
     {
@@ -843,7 +855,16 @@ bool TtlManager::checkCollision()
 {
     bool res = false;
 
-    EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+    // hardware_version is not available within this class to know whether there is a ned2/ned3 eef
+    // however if hardware_type == ned2 _driver_map will contain EHardwareType::END_EFFECTOR and if hardware_type == ned3 _driver_map will contain EHardwareType::NED3_END_EFFECTOR
+    EHardwareType ee_type;
+
+    if (_simulation_mode)
+        ee_type = EHardwareType::FAKE_END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+        ee_type = EHardwareType::END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::NED3_END_EFFECTOR))
+        ee_type = EHardwareType::NED3_END_EFFECTOR;
 
     if (_driver_map.count(ee_type))
     {
@@ -916,7 +937,16 @@ bool TtlManager::readCollisionStatus()
 {
     bool res = false;
 
-    EHardwareType ee_type = _simulation_mode ? EHardwareType::FAKE_END_EFFECTOR : EHardwareType::END_EFFECTOR;
+    // hardware_version is not available within this class to know whether there is a ned2/ned3 eef
+    // however if hardware_type == ned2 _driver_map will contain EHardwareType::END_EFFECTOR and if hardware_type == ned3 _driver_map will contain EHardwareType::NED3_END_EFFECTOR
+    EHardwareType ee_type;
+
+    if (_simulation_mode)
+        ee_type = EHardwareType::FAKE_END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+        ee_type = EHardwareType::END_EFFECTOR;
+    else if (_driver_map.count(EHardwareType::NED3_END_EFFECTOR))
+        ee_type = EHardwareType::NED3_END_EFFECTOR;
 
     if (_driver_map.count(ee_type))
     {
@@ -1933,6 +1963,13 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
             // stepper need calibration
             _calibration_status = common::model::EStepperCalibrationStatus::UNINITIALIZED;
             break;
+        case EHardwareType::NED3_STEPPER:
+            _default_stepper_driver = std::make_shared<Ned3StepperDriver<Ned3StepperReg>>(_portHandler, _packetHandler);
+            _driver_map.insert(std::make_pair(hardware_type, _default_stepper_driver));
+            // TODO(Isaac) check when working on calibration bypassed for ned3 development
+            // stepper need calibration
+            _calibration_status = common::model::EStepperCalibrationStatus::OK;
+            break;
         case EHardwareType::FAKE_STEPPER_MOTOR:
             _default_stepper_driver = std::make_shared<MockStepperDriver>(_fake_data);
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
@@ -1953,11 +1990,17 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
         case EHardwareType::XL330:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg>>(_portHandler, _packetHandler)));
             break;
+        case EHardwareType::XH430:
+            _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XH430Reg>>(_portHandler, _packetHandler)));
+            break;
         case EHardwareType::FAKE_DXL_MOTOR:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
             break;
         case EHardwareType::END_EFFECTOR:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg>>(_portHandler, _packetHandler)));
+            break;
+        case EHardwareType::NED3_END_EFFECTOR:
+            _driver_map.insert(std::make_pair(hardware_type, std::make_shared<Ned3EndEffectorDriver<Ned3EndEffectorReg>>(_portHandler, _packetHandler)));
             break;
         case EHardwareType::FAKE_END_EFFECTOR:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));

@@ -41,7 +41,7 @@ class ArmState(object):
         self.__velocity_percentage_scaling_factor = 100.0
 
         # specific values for ned2
-        if self.__hardware_version == 'ned2':
+        if self.__hardware_version in ['ned2', 'ned3']:
             self.__velocity_scaling_factor = 0.5
             self.__velocity_percentage_scaling_factor = 200.0
 
@@ -248,7 +248,7 @@ class ArmState(object):
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
-        if set_bool and self.__hardware_version == 'ned2':
+        if set_bool and self.__hardware_version in ['ned2', 'ned3']:
             return True
         try:
             return self.__learning_mode_service(

@@ -103,7 +103,7 @@ class ToolRosCommandInterface:
             return CommandStatus.TOOL_ROS_INTERFACE_ERROR, "Cannot ping dxl tool"
 
     def digital_output_tool_setup(self, gpio_name):
-        if rospy.get_param("/niryo_robot/hardware_version") == "ned2":
+        if rospy.get_param("/niryo_robot/hardware_version") in ['ned2', 'ned3']:
             return CommandStatus.SUCCESS, "Success"
 
         try:

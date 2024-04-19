@@ -127,8 +127,12 @@ class RobotStatusHandler(object):
 
     def __build_robot_status(self):
         try:
-            # - Ros status -> Booting, Node crash, etc..
-            new_robot_status, new_robot_message = self.__check_ros_state()
+
+            new_robot_status, new_robot_message = self.__check_estop_state()
+
+            if new_robot_status == RobotStatus.UNKNOWN:
+                # - Ros status -> Booting, Node crash, etc..
+                new_robot_status, new_robot_message = self.__check_ros_state()
 
             if new_robot_status == RobotStatus.UNKNOWN:
                 # Motor Error
@@ -168,6 +172,17 @@ class RobotStatusHandler(object):
         if RobotStatus.SHUTDOWN < robot_status_msg.robot_status < RobotStatus.NONE:
             rospy.logwarn("[Robot Status] - {} - {}".format(robot_status_msg.robot_status_str,
                                                             robot_status_msg.robot_message))
+
+    def __check_estop_state(self):
+        new_robot_status = RobotStatus.UNKNOWN
+        new_robot_message = ""
+
+        if self.__robot_status_observer.estop_detected:
+            new_robot_status = RobotStatus.ESTOP
+            new_robot_message = "Emergency stop triggered"
+        
+        return new_robot_status, new_robot_message
+
 
     def __check_hardware_error(self):
         new_robot_status = RobotStatus.UNKNOWN

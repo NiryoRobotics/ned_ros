@@ -524,7 +524,7 @@ void TtlInterfaceCore::controlLoop()
 
     while (ros::ok())
     {
-        if (!_debug_flag)
+        if (!_debug_flag && !_estop_flag)
         {
             // 1. check connection status of motors
             if (!_ttl_manager->isConnectionOk())
@@ -611,7 +611,7 @@ void TtlInterfaceCore::controlLoop()
         ros::spinOnce();
     }
 
-    if ("ned2" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
         _ttl_manager->resetTorques();
 }
 
@@ -967,6 +967,7 @@ void TtlInterfaceCore::waitSyncQueueFree()
 /**
  * @brief TtlInterfaceCore::waitSingleQueueFree
  */
+//TODO PRINT MESSAGES DANS LA QUEUE
 void TtlInterfaceCore::waitSingleQueueFree()
 {
     while (!_single_cmds_queue.empty())

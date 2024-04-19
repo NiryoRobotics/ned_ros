@@ -151,6 +151,8 @@ namespace ttl_driver
 
         bool readHomingAbsPosition();
 
+        void setEstopFlag(bool value);
+
     private:
         void initParameters(ros::NodeHandle &nh) override;
         void startServices(ros::NodeHandle &nh) override;
@@ -218,6 +220,8 @@ namespace ttl_driver
 
         std::vector<std::pair<uint8_t, uint32_t>> _joint_trajectory_cmd;
 
+        bool _estop_flag{false};
+
         // ttl cmds
         // TODO(CC) it seems like having two queues can lead to pbs if a sync is launched before the sincle queue is finished
         // and vice versa. So having a unique queue would be preferable (see calibration)
@@ -241,6 +245,11 @@ namespace ttl_driver
 
         static constexpr int QUEUE_OVERFLOW = 20;
     };
+
+    inline void TtlInterfaceCore::setEstopFlag(bool value)
+    {
+        _estop_flag = value;
+    }
 
     /**
      * @brief TtlInterfaceCore::isConnectionOk

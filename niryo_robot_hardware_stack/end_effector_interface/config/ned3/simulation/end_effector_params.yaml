@@ -1,0 +1,3 @@
+hardware_type : "fake_end_effector"
+collision_thresh : 5
+

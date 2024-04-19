@@ -118,6 +118,8 @@ class EndEffectorState : public AbstractHardwareState
         void setCollisionStatus(bool status);
         int getCollisionThresh() const;
         void setCollisionThresh(int thresh);
+        int getCollisionThreshAlgo2() const;
+        void setCollisionThreshAlgo2(int thresh);
 
         bool getDigitalIn() const;
         void setDigitalIn(bool digital_in);
@@ -131,6 +133,7 @@ class EndEffectorState : public AbstractHardwareState
 
         bool _collision_status{false};
         int _collision_thresh{0};
+        int _collision_thresh_algo_2{0};
 
         bool _digital_in{false};
         bool _digital_out{false};
@@ -196,6 +199,16 @@ inline
 int EndEffectorState::getCollisionThresh() const
 {
   return _collision_thresh;
+}
+
+/**
+ * @brief EndEffectorState::getCollisionThreshAlgo2
+ * @return
+ */
+inline
+int EndEffectorState::getCollisionThreshAlgo2() const
+{
+  return _collision_thresh_algo_2;
 }
 
 /**

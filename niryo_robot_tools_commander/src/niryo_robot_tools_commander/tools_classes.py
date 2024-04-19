@@ -149,7 +149,7 @@ class Gripper(Tool):
             return False, "A communication problem occured, please retry"
 
     def open_gripper(self, cmd):
-        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
+        if self.hardware_version not in ['ned2', 'ned3'] or cmd.max_torque_percentage < 0:
             max_torque = self.open_max_torque
         else:
             if self.open_max_torque > 0:
@@ -157,7 +157,7 @@ class Gripper(Tool):
             else:
                 max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
 
-        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
+        if self.hardware_version not in ['ned2', 'ned3'] or cmd.hold_torque_percentage < 0:
             hold_torque = self.open_hold_torque
         else:
             if self.open_hold_torque > 0:
@@ -170,7 +170,7 @@ class Gripper(Tool):
         return self.return_gripper_status(state)
 
     def close_gripper(self, cmd):
-        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
+        if self.hardware_version not in ['ned2', 'ned3'] or cmd.max_torque_percentage < 0:
             max_torque = self.close_max_torque
         else:
             if self.close_max_torque > 0:
@@ -178,7 +178,7 @@ class Gripper(Tool):
             else:
                 max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
 
-        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
+        if self.hardware_version not in ['ned2', 'ned3'] or cmd.hold_torque_percentage < 0:
             hold_torque = self.close_hold_torque
         else:
             if self.close_hold_torque > 0:

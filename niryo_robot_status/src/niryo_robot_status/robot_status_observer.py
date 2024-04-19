@@ -37,6 +37,7 @@ class RobotStatusObserver(object):
         self.collision_detected = False
         self.rpi_overheating = False
         self.learning_trajectory = False
+        self.estop_detected = False
 
         self.rpi_overheating_temperature = rospy.get_param(
             "niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold", 75)
@@ -83,6 +84,15 @@ class RobotStatusObserver(object):
         self.__learning_trajectory_sub = rospy.Subscriber('/niryo_robot_arm_commander/learning_trajectory',
                                                           Bool,
                                                           self.__callback_learning_trajectory)
+
+        self.__estop_state_sub = rospy.Subscriber('/niryo_robot_rpi/12v_status',
+                                                          Bool,
+                                                          self.__callback_estop_state)
+
+    def __callback_estop_state(self, msg):
+        if self.estop_detected != msg.data:
+            self.estop_detected = msg.data
+            self.__robot_status_handler.advertise_new_state()
 
     def __callback_pause(self, msg):
         if self.pause_state != msg.state:
@@ -164,10 +174,12 @@ class RobotStatusObserver(object):
             return
 
         current_out_of_bounds_state = False
+        # Add a small offset during limit checking to avoid flaky out of bound state
+        delta = 0.008 # Corresponds about to 0.5 deg
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
                 if (joint_name in self.joint_limits
-                        and not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
+                        and not (self.joint_limits[joint_name].min - delta <= joint_pose <= self.joint_limits[joint_name].max + delta)):
                     current_out_of_bounds_state = True
                     break
 

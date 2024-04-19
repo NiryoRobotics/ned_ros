@@ -5,7 +5,7 @@
     <arg name="hardware_version" default="ned2"/>
     <arg name="simulation_mode" default="false"/>
 
-    <group if="$(eval hardware_version =='ned2')">
+    <group if="$(eval (hardware_version == 'ned2') or (hardware_version == 'ned3'))" >
         <include file="$(find niryo_robot_sound)/launch/sound_interface_base.launch.xml"/>
 
         <node pkg="niryo_robot_sound" type="sound_interface_node.py"

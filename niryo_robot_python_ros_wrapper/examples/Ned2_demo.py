@@ -262,7 +262,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
             self.__set_led_state_service(False, 0, 0, 0)
 
     def say(self, text, prio=0):  # prio is here to speak even if USE_VOCAL = False
-        if (USE_VOCAL or prio == 1) and self.__hardware_version in ['ned2']:
+        if (USE_VOCAL or prio == 1) and self.__hardware_version in ['ned2', 'ned3']:
             try:
                 self.__robot.sound.say(text, 1)
             except Exception:
@@ -372,7 +372,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
                 report.append(str(e))
                 raise TestFailure(e)
 
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             test_i2c()
 
     def test_calibration(self, report):
@@ -398,7 +398,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
             self.__robot.move_to_sleep_pose()
 
     def test_led_ring(self, report):
-        if self.__hardware_version not in ['ned2']:
+        if self.__hardware_version not in ['ned2' , 'ned3']:
             report.append("Led ring test - Skipped on {}".format(self.__hardware_version))
             return
 
@@ -416,7 +416,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
     def test_sound(self, report):
-        if self.__hardware_version not in ['ned2']:
+        if self.__hardware_version not in ['ned2' , 'ned3']:
             report.append("Sound test - Skipped on {}".format(self.__hardware_version))
             return
 
@@ -459,7 +459,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
     def test_freedrive(self, report):
-        if self.__hardware_version not in ['ned2']:
+        if self.__hardware_version not in ['ned2' , 'ned3']:
             report.append("Freemotion test - Skipped on {}".format(self.__hardware_version))
             return
 
@@ -521,7 +521,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
         rospy.sleep(1)
 
     def test_io(self, report):
-        if self.__hardware_version not in ['ned2']:
+        if self.__hardware_version not in ['ned2' , 'ned3']:
             report.append("IO test - Skipped on {}".format(self.__hardware_version))
             return
 
@@ -569,7 +569,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
             report.execute(test_analog_io_value, 'Test analog input {} is 0V'.format(ai.name), [ai.name, 0.0])
 
     def test_joint_limits(self, report):
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             self.__robot.led_ring.rainbow_cycle()
             # self.say("Test des limites des joints")
 
@@ -601,7 +601,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
                                args=[joint_position, precision, duration])
 
     def test_spiral(self, report):
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             self.__robot.led_ring.rainbow_cycle()
             # self.say("Test des spirales")
 
@@ -611,7 +611,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
             report.execute(self.__robot.move_spiral, "Loop {} - Execute spiral".format(loop_index), [0.15, 5, 216, 3])
 
     def test_fun_poses(self, report):
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             self.__robot.led_ring.rainbow_cycle()
             # self.say("Test de divers movements")
 
@@ -628,7 +628,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
     def test_pick_and_place(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
 
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             self.say("Mettre le grippeur et appuyer sur CUSTOM")
             self.__robot.led_ring.flashing(YELLOW)
             self.wait_custom_button_press()
@@ -801,7 +801,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
     def end_test(self, report):
         report.execute(self.move_and_compare, "Move to 0.0", args=[6 * [0], 1])
 
-        if self.__hardware_version in ['ned2']:
+        if self.__hardware_version in ['ned2' , 'ned3']:
             self.__robot.led_ring.flashing(BLUE)
             report.append("End")
             if FULL == 0:

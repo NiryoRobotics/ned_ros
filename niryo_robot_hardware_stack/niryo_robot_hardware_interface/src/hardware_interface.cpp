@@ -32,6 +32,13 @@ using ::common::model::EBusProtocol;
 
 namespace niryo_robot_hardware_interface
 {
+
+// List of topics to cancel goals, when the motors are stopped
+static const char* ACTION_CANCEL_TOPICS[] = {"/niryo_robot_arm_commander/robot_action/cancel",
+                                             "/niryo_robot_programs_manager_v2/execute_program/cancel",
+                                             "/niryo_robot_tools_commander/action_server/cancel"};
+
+
 /**
  * @brief HardwareInterface::HardwareInterface
  * @param nh
@@ -211,17 +218,67 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
     _sw_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>("/niryo_robot_hardware_interface/software_version", 10);
 
     _sw_version_publisher_timer = nh.createTimer(_sw_version_publisher_duration, &HardwareInterface::_publishSoftwareVersion, this);
+
+    // Cancel goals publisher used if an emergency stop is detected
+    _cancel_goal_publishers.clear();
+    for (auto& cancel_topic_name : ACTION_CANCEL_TOPICS)
+    {
+      _cancel_goal_publishers.push_back(nh.advertise<actionlib_msgs::GoalID>(cancel_topic_name, 10));
+    }
 }
 
 /**
  * @brief HardwareInterface::startSubscribers
  * @param nh
  */
-void HardwareInterface::startSubscribers(ros::NodeHandle & /*nh*/) { ROS_DEBUG("HardwareInterface::startSubscribers - no subscribers to start"); }
+void HardwareInterface::startSubscribers(ros::NodeHandle & nh) { 
+    
+    _robot_status_subscriber = nh.subscribe("/niryo_robot_status/robot_status", 10, &HardwareInterface::_callbackRobotStatus, this);
+}
 
 // ********************
 //  Callbacks
 // ********************
+
+void HardwareInterface::_callbackRobotStatus(const niryo_robot_status::RobotStatus::ConstPtr& msg) {
+
+    if (msg->robot_status == niryo_robot_status::RobotStatus::ESTOP) {
+        
+        // Cancel all action goals
+        for (auto &pub : _cancel_goal_publishers) {
+            pub.publish(actionlib_msgs::GoalID());
+        }
+
+        // Pause hardware status reading and control loop
+        _joints_interface->setEstopFlag(true);
+        _ttl_interface->setEstopFlag(true);
+        
+    }
+
+    // Handle emergency stop
+    if ((msg->robot_status != niryo_robot_status::RobotStatus::ESTOP) 
+        && (_previous_robot_status == niryo_robot_status::RobotStatus::ESTOP)
+        && _hardware_state != niryo_robot_msgs::HardwareStatus::REBOOT) {
+
+        _ttl_interface->setEstopFlag(false);
+        _joints_interface->setEstopFlag(false);
+
+        int32_t status;
+        std::string message;
+        int ret = rebootMotors(status, message);
+
+        if (!ret)
+        {
+            ROS_INFO("Hardware Interface - Reboot motors done");
+        }
+        else
+        {
+            ROS_ERROR("Hardware Interface - Reboot motors Problems: %s", message.c_str());
+        }
+    }
+
+    _previous_robot_status = msg->robot_status;
+}
 
 /**
  * @brief HardwareInterface::_callbackStopMotorsReport
@@ -318,15 +375,29 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
  */
 bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request & /*req*/, niryo_robot_msgs::Trigger::Response &res)
 {
-    res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    rebootMotors(res.status, res.message);
+    // no reboot for can interface for now
+
+    return true;
+}
+
+
+/**
+ * @brief HardwareInterface::rebootMotors
+ * @param status
+ * @param message
+ * @return Number of hardware interfaces that failed to reboot
+ */
+int HardwareInterface::rebootMotors(int32_t &status, std::string &message) {
+
+    status = niryo_robot_msgs::CommandStatus::FAILURE;
     _hardware_state = niryo_robot_msgs::HardwareStatus::REBOOT;
 
     // for each interface, call for reboot
     int ret = 0;
-    std::string message;
-    bool torque_on = ("ned2" == _hardware_version);
+    bool torque_on = ("ned2" == _hardware_version || "ned3" == _hardware_version);
 
-    if ("ned2" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
         ros::Duration(3).sleep();
 
     if (_joints_interface && !_joints_interface->rebootAll(torque_on))
@@ -346,21 +417,20 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         message += "End Effector Panel Interface, ";
     }
 
-    // no reboot for can interface for now
-
     if (!ret)
     {
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "Reboot motors done";
+        status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        message = "Reboot motors done";
     }
     else
     {
-        res.message = "Reboot motors Problems: " + message;
+        message = "Reboot motors Problems: " + message;
     }
 
     _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
-    return true;
-}
+
+    return ret;
+} 
 
 /**
  * @brief HardwareInterface::_publishHardwareStatus

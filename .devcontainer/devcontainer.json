@@ -9,6 +9,9 @@
       "UID": "1000"
     }
   },
+  "runArgs": [
+    "--network=host"
+  ],
   "remoteEnv": {
     "CATKIN_SHELL": "bash",
     "ROS_VERSION": "1",
@@ -26,8 +29,10 @@
   "workspaceFolder": "/home/rosdev/catkin_ws",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/rosdev/.bash_history,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/rosdev/.bash_history,type=bind",
+    "source=${localEnv:DEV_TOOLS_PATH},target=/home/rosdev/development-tools,type=bind"
   ],
+  "postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y",
   "customizations": {
     "vscode": {
       "extensions": [

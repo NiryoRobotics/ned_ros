@@ -29,6 +29,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <mutex>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
+#include <actionlib_msgs/GoalID.h>
 
 #include <ros/ros.h>
 
@@ -77,6 +78,8 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         bool isCalibrationInProgress() const;
         bool isFreeMotion() const;
 
+        void setEstopFlag(bool value);
+
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
     private:
@@ -103,6 +106,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
         bool _reset_controller{true};
+        bool _estop_flag{false};
 
         std::string _joint_controller_name;
 
@@ -129,6 +133,13 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         int _lock_write_cnt{-1};
 };
+
+
+inline
+void JointsInterfaceCore::setEstopFlag(bool value)
+{
+    _estop_flag = value;
+}
 
 /**
  * @brief JointsInterfaceCore::needCalibration
