@@ -180,9 +180,8 @@ class RobotStatusHandler(object):
         if self.__robot_status_observer.estop_detected:
             new_robot_status = RobotStatus.ESTOP
             new_robot_message = "Emergency stop triggered"
-        
-        return new_robot_status, new_robot_message
 
+        return new_robot_status, new_robot_message
 
     def __check_hardware_error(self):
         new_robot_status = RobotStatus.UNKNOWN
