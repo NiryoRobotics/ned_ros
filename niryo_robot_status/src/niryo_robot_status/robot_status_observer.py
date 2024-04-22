@@ -85,9 +85,7 @@ class RobotStatusObserver(object):
                                                           Bool,
                                                           self.__callback_learning_trajectory)
 
-        self.__estop_state_sub = rospy.Subscriber('/niryo_robot_rpi/12v_status',
-                                                          Bool,
-                                                          self.__callback_estop_state)
+        self.__estop_state_sub = rospy.Subscriber('/niryo_robot_rpi/12v_status', Bool, self.__callback_estop_state)
 
     def __callback_estop_state(self, msg):
         if self.estop_detected != msg.data:
@@ -175,11 +173,11 @@ class RobotStatusObserver(object):
 
         current_out_of_bounds_state = False
         # Add a small offset during limit checking to avoid flaky out of bound state
-        delta = 0.008 # Corresponds about to 0.5 deg
+        delta = 0.008  # Corresponds about to 0.5 deg
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
-                if (joint_name in self.joint_limits
-                        and not (self.joint_limits[joint_name].min - delta <= joint_pose <= self.joint_limits[joint_name].max + delta)):
+                if (joint_name in self.joint_limits and not (self.joint_limits[joint_name].min - delta <= joint_pose <=
+                                                             self.joint_limits[joint_name].max + delta)):
                     current_out_of_bounds_state = True
                     break
 

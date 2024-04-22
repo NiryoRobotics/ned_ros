@@ -967,7 +967,6 @@ void TtlInterfaceCore::waitSyncQueueFree()
 /**
  * @brief TtlInterfaceCore::waitSingleQueueFree
  */
-//TODO PRINT MESSAGES DANS LA QUEUE
 void TtlInterfaceCore::waitSingleQueueFree()
 {
     while (!_single_cmds_queue.empty())

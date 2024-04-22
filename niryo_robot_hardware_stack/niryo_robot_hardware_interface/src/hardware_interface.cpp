@@ -231,8 +231,7 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
  * @brief HardwareInterface::startSubscribers
  * @param nh
  */
-void HardwareInterface::startSubscribers(ros::NodeHandle & nh) { 
-    
+void HardwareInterface::startSubscribers(ros::NodeHandle & nh) {
     _robot_status_subscriber = nh.subscribe("/niryo_robot_status/robot_status", 10, &HardwareInterface::_callbackRobotStatus, this);
 }
 
@@ -241,9 +240,7 @@ void HardwareInterface::startSubscribers(ros::NodeHandle & nh) {
 // ********************
 
 void HardwareInterface::_callbackRobotStatus(const niryo_robot_status::RobotStatus::ConstPtr& msg) {
-
     if (msg->robot_status == niryo_robot_status::RobotStatus::ESTOP) {
-        
         // Cancel all action goals
         for (auto &pub : _cancel_goal_publishers) {
             pub.publish(actionlib_msgs::GoalID());
@@ -252,14 +249,12 @@ void HardwareInterface::_callbackRobotStatus(const niryo_robot_status::RobotStat
         // Pause hardware status reading and control loop
         _joints_interface->setEstopFlag(true);
         _ttl_interface->setEstopFlag(true);
-        
     }
 
     // Handle emergency stop
-    if ((msg->robot_status != niryo_robot_status::RobotStatus::ESTOP) 
+    if ((msg->robot_status != niryo_robot_status::RobotStatus::ESTOP)
         && (_previous_robot_status == niryo_robot_status::RobotStatus::ESTOP)
         && _hardware_state != niryo_robot_msgs::HardwareStatus::REBOOT) {
-
         _ttl_interface->setEstopFlag(false);
         _joints_interface->setEstopFlag(false);
 
@@ -388,8 +383,8 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
  * @param message
  * @return Number of hardware interfaces that failed to reboot
  */
-int HardwareInterface::rebootMotors(int32_t &status, std::string &message) {
-
+int HardwareInterface::rebootMotors(int32_t &status, std::string &message)
+{
     status = niryo_robot_msgs::CommandStatus::FAILURE;
     _hardware_state = niryo_robot_msgs::HardwareStatus::REBOOT;
 
@@ -430,7 +425,7 @@ int HardwareInterface::rebootMotors(int32_t &status, std::string &message) {
     _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
 
     return ret;
-} 
+}
 
 /**
  * @brief HardwareInterface::_publishHardwareStatus

@@ -54,6 +54,7 @@ add_message_files(
     ArrayMotorHardwareStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
+    CalibrationStatus.msg
 )
 
 add_service_files(

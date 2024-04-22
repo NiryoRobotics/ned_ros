@@ -85,12 +85,14 @@ namespace ttl_driver
 
         // AbstractNed3StepperDriver interface
     public:
+        common::model::EStepperCalibrationStatus interpretHomingData(uint8_t status) const override;
+        
         int writeOperatingMode(uint8_t id, const uint8_t &operating_mode);
 
         int writeVelocityProfile(uint8_t id, const uint32_t &velocity_profile);
         int writeAccelerationProfile(uint8_t id, const uint32_t &acceleration_profile);
 
-        int writeControl(uint8_t id, const uint32_t &control);
+        int factoryCalibration(const uint8_t id, const uint32_t &control);
         int readStatus(uint8_t id, const uint32_t &status);
         int readEncAngle(uint8_t id, const uint32_t &enc_angle);
 
@@ -516,6 +518,27 @@ namespace ttl_driver
     //*****************************
 
     /**
+     * @brief AbstractStepperDriver::interpretHomingData
+     * @param status
+     * @return
+     */
+    template <typename reg_type>
+    common::model::EStepperCalibrationStatus Ned3StepperDriver<reg_type>::interpretHomingData(uint8_t status) const
+    {
+        enum Ned3StepperCalibrationStatus {
+            UNINITIALIZED_MASK = 0,
+            IN_PROGRESS_MASK = 2,
+            OK_MASK = 4,
+            FAIL_MASK = 8
+        };
+
+        return status & IN_PROGRESS_MASK ? common::model::EStepperCalibrationStatus::IN_PROGRESS 
+               : status & FAIL_MASK ? common::model::EStepperCalibrationStatus::FAIL
+               : status & OK_MASK ? common::model::EStepperCalibrationStatus::OK
+               : common::model::EStepperCalibrationStatus::FAIL;
+    }
+
+    /**
      * @brief Ned3StepperDriver<reg_type>::writeOperatingMode
      * @param id
      * @param operating_mode
@@ -552,15 +575,15 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3StepperDriver<reg_type>::writeControl
+     * @brief Ned3StepperDriver<reg_type>::factoryCalibration
      * @param id
      * @param control
      * @return
      */
     template <typename reg_type>
-    int Ned3StepperDriver<reg_type>::writeControl(uint8_t id, const uint32_t &control)
+    int Ned3StepperDriver<reg_type>::factoryCalibration(const uint8_t id, const uint32_t &command)
     {
-        return write<typename reg_type::TYPE_CONTROL>(reg_type::ADDR_CONTROL, id, control);
+        return write<typename reg_type::TYPE_CONTROL>(reg_type::ADDR_CONTROL, id, command);
     }
 
     /**

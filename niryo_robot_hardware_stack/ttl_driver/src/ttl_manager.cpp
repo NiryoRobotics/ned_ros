@@ -55,6 +55,7 @@
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
 #include "ttl_driver/ned3_stepper_driver.hpp"
+#include "ttl_driver/CalibrationStatus.h"
 
 using ::std::ostringstream;
 using ::std::set;
@@ -135,6 +136,8 @@ bool TtlManager::init(ros::NodeHandle &nh)
         readFakeConfig(use_simu_gripper, use_simu_conveyor);
         _default_ttl_driver = std::make_shared<MockStepperDriver>(_fake_data);
     }
+
+    _calibration_status_publisher = nh.advertise<ttl_driver::CalibrationStatus>("calibration_status", 1, true);
 
     return true;
 }
@@ -1123,133 +1126,141 @@ bool TtlManager::readHardwareStatus()
 uint8_t TtlManager::readSteppersStatus()
 {
     uint8_t hw_errors_increment = 0;
-    EHardwareType hw_type = _simulation_mode ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::STEPPER;
 
     // take all hw status dedicated drivers
     if (_default_stepper_driver)
     {
-        // 1. read calibration status if needed
-
-        // we want to check calibration (done at startup and when calibration is started)
-        if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && _ids_map.count(hw_type))
+        if (_driver_map.count(EHardwareType::STEPPER))
         {
-            // When calibration is running, sometimes at an unexpected position, calibration make EE thinks that there is a collision
-            // Have to disable the feature collision detection in this period
-            _isRealCollision = false;
+            EHardwareType hw_type = _simulation_mode ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::STEPPER;
 
-            vector<uint8_t> id_list = _ids_map.at(hw_type);
-            vector<uint8_t> stepper_id_list;
-            std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list),
-                         [this](uint8_t id) { return _state_map[id] && _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR; });
+            // 1. read calibration status if needed
 
-            /* Truth Table
-             * still_in_progress | state | new state
-             *        0          | IDLE  =  IDLE
-             *        0          | START =  START
-             *        0          | PROG  >  UPDAT
-             *        0          | UPDAT R  IDLE
-             *        1          | IDLE  =  IDLE
-             *        1          | START >  PROG
-             *        1          | PROG  =  PROG
-             *        1          | UPDAT =  UPDAT
-             */
-
-            // ***********  calibration status, only if initialized
-            std::vector<uint8_t> homing_status_list;
-            if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(stepper_id_list, homing_status_list))
+            // we want to check calibration (done at startup and when calibration is started)
+            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && _ids_map.count(hw_type))
             {
-                if (stepper_id_list.size() == homing_status_list.size())
+                // When calibration is running, sometimes at an unexpected position, calibration make EE thinks that there is a collision
+                // Have to disable the feature collision detection in this period
+                _isRealCollision = false;
+
+                vector<uint8_t> id_list = _ids_map.at(hw_type);
+                vector<uint8_t> stepper_id_list;
+                std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list),
+                            [this](uint8_t id) { return _state_map[id] && _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR; });
+
+                /* Truth Table
+                * still_in_progress | state | new state
+                *        0          | IDLE  =  IDLE
+                *        0          | START =  START
+                *        0          | PROG  >  UPDAT
+                *        0          | UPDAT R  IDLE
+                *        1          | IDLE  =  IDLE
+                *        1          | START >  PROG
+                *        1          | PROG  =  PROG
+                *        1          | UPDAT =  UPDAT
+                */
+
+                // ***********  calibration status, only if initialized
+                std::vector<uint8_t> homing_status_list;
+                if (COMM_SUCCESS == _default_stepper_driver->syncReadHomingStatus(stepper_id_list, homing_status_list))
                 {
-                    // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
-                    int max_status = -1;
-
-                    // debug only
-                    std::ostringstream ss_debug;
-                    ss_debug << "homing status : ";
-
-                    bool still_in_progress = false;
-
-                    // set states accordingly
-                    for (size_t i = 0; i < homing_status_list.size(); ++i)
+                    if (stepper_id_list.size() == homing_status_list.size())
                     {
-                        uint8_t id = stepper_id_list.at(i);
-                        ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
+                        // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
+                        int max_status = -1;
 
-                        if (_state_map.count(id))
+                        // debug only
+                        std::ostringstream ss_debug;
+                        ss_debug << "homing status : ";
+
+                        bool still_in_progress = false;
+
+                        // set states accordingly
+                        for (size_t i = 0; i < homing_status_list.size(); ++i)
                         {
-                            EStepperCalibrationStatus status = _default_stepper_driver->interpretHomingData(homing_status_list.at(i));
+                            uint8_t id = stepper_id_list.at(i);
+                            ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
 
-                            // set status in state
-                            auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-                            if (stepperState && !stepperState->isConveyor())
+                            if (_state_map.count(id))
                             {
-                                stepperState->setCalibration(status, 1);
+                                EStepperCalibrationStatus status = _default_stepper_driver->interpretHomingData(homing_status_list.at(i));
 
-                                // get max status of all motors (to retrieve potential errors)
-                                // carefull to those possible cases :
-                                // 1, 1, 1
-                                // 1, 2, 1
-                                // 0, 2, 2
-                                // 2, 0, 2
-
-                                // if 0, uninitialized, else, take max
-                                // we need to keep the status unconverted to have the correct order
-                                if (0 != max_status && homing_status_list.at(i) > max_status)
-                                    max_status = homing_status_list.at(i);
-
-                                // if one status is in progress or uinitialized, we are really in progress
-                                if ((0 == homing_status_list.at(i)) || EStepperCalibrationStatus::IN_PROGRESS == status)
+                                // set status in state
+                                auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                                if (stepperState && !stepperState->isConveyor())
                                 {
-                                    still_in_progress = true;
+                                    stepperState->setCalibration(status, 1);
+
+                                    // get max status of all motors (to retrieve potential errors)
+                                    // carefull to those possible cases :
+                                    // 1, 1, 1
+                                    // 1, 2, 1
+                                    // 0, 2, 2
+                                    // 2, 0, 2
+
+                                    // if 0, uninitialized, else, take max
+                                    // we need to keep the status unconverted to have the correct order
+                                    if (0 != max_status && homing_status_list.at(i) > max_status)
+                                        max_status = homing_status_list.at(i);
+
+                                    // if one status is in progress or uinitialized, we are really in progress
+                                    if ((0 == homing_status_list.at(i)) || EStepperCalibrationStatus::IN_PROGRESS == status)
+                                    {
+                                        still_in_progress = true;
+                                    }
                                 }
                             }
+                        }  // for homing_status_list
+
+                        ss_debug << " => max_status: " << static_cast<int>(max_status);
+
+                        ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
+
+                        // see truth table above
+                        // timeout is here to prevent being stuck here if retrying calibration when already at the butee (then the system has no time to switch to "in progress"
+                        // before "ok" or "error"
+                        if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
+                            (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
+                            (!still_in_progress && _calib_machine_state.isTimeout()))
+                        {
+                            _calib_machine_state.next();
                         }
-                    }  // for homing_status_list
 
-                    ss_debug << " => max_status: " << static_cast<int>(max_status);
+                        // see truth table above
+                        if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
+                        {
+                            _calibration_status = _default_stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
+                            _calib_machine_state.reset();
 
-                    ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
-
-                    // see truth table above
-                    // timeout is here to prevent being stuck here if retrying calibration when already at the butee (then the system has no time to switch to "in progress"
-                    // before "ok" or "error"
-                    if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
-                        (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
-                        (!still_in_progress && _calib_machine_state.isTimeout()))
-                    {
-                        _calib_machine_state.next();
+                            // In this CalibrationMachineState, the calibration is considered as finished => can activate collision detection here
+                            // we need to wait a short period to make sure no collision detected
+                            // calibration make a wrong collision, so we have to read the collision status once time to reset it.
+                            _isWrongAction = true;
+                            _isRealCollision = true;
+                            _last_collision_detection_activating = ros::Time::now().toSec();
+                        }
                     }
-
-                    // see truth table above
-                    if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
+                    else
                     {
-                        _calibration_status = _default_stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
-                        _calib_machine_state.reset();
+                        ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
+                                "vector mistmatch (id_list size %d, homing_status_list size %d)",
+                                static_cast<int>(stepper_id_list.size()), static_cast<int>(homing_status_list.size()));
 
-                        // In this CalibrationMachineState, the calibration is considered as finished => can activate collision detection here
-                        // we need to wait a short period to make sure no collision detected
-                        // calibration make a wrong collision, so we have to read the collision status once time to reset it.
-                        _isWrongAction = true;
-                        _isRealCollision = true;
-                        _last_collision_detection_activating = ros::Time::now().toSec();
+                        hw_errors_increment++;
                     }
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
-                              "vector mistmatch (id_list size %d, homing_status_list size %d)",
-                              static_cast<int>(stepper_id_list.size()), static_cast<int>(homing_status_list.size()));
-
                     hw_errors_increment++;
                 }
-            }
-            else
-            {
-                hw_errors_increment++;
-            }
-        }  // if (_driver_map.count(hw_type) && _driver_map.at(hw_type))
+            }  // if (_driver_map.count(hw_type) && _driver_map.at(hw_type))
+        }
+        else if (_driver_map.count(EHardwareType::NED3_STEPPER))
+        {
+            hw_errors_increment = readNed3SteppersStatus();
+        }
 
-        // 2. read conveyors states if has
+         // 2. read conveyors states if has
         if (!_conveyor_list.empty())
         {
             std::vector<uint32_t> velocity_list;
@@ -1282,8 +1293,8 @@ uint8_t TtlManager::readSteppersStatus()
                 else
                 {
                     ROS_ERROR("TtlManager::readSteppersStatus : syncReadVelocity failed - "
-                              "vector mistmatch (_conveyor_list size %d, velocity_list size %d)",
-                              static_cast<int>(_conveyor_list.size()), static_cast<int>(velocity_list.size()));
+                            "vector mistmatch (_conveyor_list size %d, velocity_list size %d)",
+                            static_cast<int>(_conveyor_list.size()), static_cast<int>(velocity_list.size()));
 
                     hw_errors_increment++;
                 }
@@ -1299,6 +1310,98 @@ uint8_t TtlManager::readSteppersStatus()
     ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus: _calib_machine_state: %d", static_cast<int>(_calib_machine_state.status()));
 
     return hw_errors_increment;
+}
+
+uint8_t TtlManager::readNed3SteppersStatus()
+{
+  uint8_t hw_errors_increment = 0;
+
+  EHardwareType hw_type = EHardwareType::NED3_STEPPER;
+
+  // 1. read calibration status if needed
+
+  // we want to check calibration (done at startup and when calibration is started)
+  if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && _ids_map.count(hw_type))
+  {
+    // When calibration is running, sometimes at an unexpected position, calibration make EE thinks that
+    // there is a collision Have to disable the feature collision detection in this period
+    _isRealCollision = false;
+
+    vector<uint8_t> id_list = _ids_map.at(hw_type);
+    vector<uint8_t> stepper_id_list;
+    std::copy_if(id_list.begin(), id_list.end(), std::back_inserter(stepper_id_list), [this](uint8_t id) {
+      return _state_map[id] &&
+             _state_map.at(id)->getComponentType() != common::model::EComponentType::CONVEYOR;
+    });
+
+    // ***********  calibration status, only if initialized
+    std::vector<uint8_t> homing_status_list;
+    if (COMM_SUCCESS ==
+        _default_stepper_driver->syncReadHomingStatus(stepper_id_list, homing_status_list))
+    {
+      if (stepper_id_list.size() == homing_status_list.size())
+      {
+        // TODO(i.ambit) publish calibration message
+        ttl_driver::CalibrationStatus calibration_status_msg;
+
+        EStepperCalibrationStatus highest_priority_status = EStepperCalibrationStatus::UNINITIALIZED;
+        // set states accordingly
+        for (size_t i = 0; i < homing_status_list.size(); ++i)
+        {
+          uint8_t id = stepper_id_list.at(i);
+
+          if (_state_map.count(id))
+          {
+            // set status in state
+            auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+            if (stepperState && !stepperState->isConveyor())
+            {
+              auto status = _default_stepper_driver->interpretHomingData(homing_status_list.at(i));
+              stepperState->setCalibration(status, 1);
+
+              if (status > highest_priority_status)
+                highest_priority_status = status;
+
+              calibration_status_msg.ids.push_back(id);
+
+              switch (status)
+              {
+              case EStepperCalibrationStatus::IN_PROGRESS:
+                calibration_status_msg.status.push_back(ttl_driver::CalibrationStatus::CALIBRATING);
+                break;
+              case EStepperCalibrationStatus::OK:
+                calibration_status_msg.status.push_back(ttl_driver::CalibrationStatus::CALIBRATED);
+                break;
+              case EStepperCalibrationStatus::FAIL:
+                calibration_status_msg.status.push_back(ttl_driver::CalibrationStatus::CALIBRATION_ERROR);
+                break;
+              default:
+                calibration_status_msg.status.push_back(ttl_driver::CalibrationStatus::CALIBRATION_ERROR);
+                break;
+              }
+
+              _calibration_status_publisher.publish(calibration_status_msg);
+            }
+          }
+        }  // for homing_status_list
+        _calibration_status = highest_priority_status;
+      }
+      else
+      {
+        ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
+                  "vector mistmatch (id_list size %d, homing_status_list size %d)",
+                  static_cast<int>(stepper_id_list.size()), static_cast<int>(homing_status_list.size()));
+
+        hw_errors_increment++;
+      }
+    }
+    else
+    {
+      hw_errors_increment++;
+    }
+  }  // if (_driver_map.count(hw_type) && _driver_map.at(hw_type))
+
+  return hw_errors_increment;
 }
 
 /**
@@ -1832,12 +1935,15 @@ void TtlManager::startCalibration()
 {
     ROS_DEBUG("TtlManager::startCalibration: starting...");
 
-    _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
-    _calib_machine_state.start();
-
     std::vector<uint8_t> stepper_list;
     if (_ids_map.count(EHardwareType::STEPPER))
+    {
+        _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
+        _calib_machine_state.start();
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
+    }
+    else if (_ids_map.count(EHardwareType::NED3_STEPPER))
+        stepper_list = _ids_map.at(EHardwareType::NED3_STEPPER);
 
     for (auto const &id : stepper_list)
     {
@@ -1860,12 +1966,15 @@ void TtlManager::resetCalibration()
 {
     ROS_DEBUG("TtlManager::resetCalibration: reseting...");
 
-    _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
-    _calib_machine_state.reset();
-
     std::vector<uint8_t> stepper_list;
     if (_ids_map.count(EHardwareType::STEPPER))
-        stepper_list = _ids_map.at(EHardwareType::STEPPER);
+    {
+        _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
+        _calib_machine_state.reset();
+        stepper_list = _ids_map.at(EHardwareType::NED3_STEPPER);
+    }
+    else if (_ids_map.count(EHardwareType::NED3_STEPPER))
+        stepper_list = _ids_map.at(EHardwareType::NED3_STEPPER);
 
     for (auto const id : stepper_list)
     {
@@ -1968,7 +2077,7 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
             _driver_map.insert(std::make_pair(hardware_type, _default_stepper_driver));
             // TODO(Isaac) check when working on calibration bypassed for ned3 development
             // stepper need calibration
-            _calibration_status = common::model::EStepperCalibrationStatus::OK;
+            _calibration_status = common::model::EStepperCalibrationStatus::UNINITIALIZED;
             break;
         case EHardwareType::FAKE_STEPPER_MOTOR:
             _default_stepper_driver = std::make_shared<MockStepperDriver>(_fake_data);

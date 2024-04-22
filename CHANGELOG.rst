@@ -1,14 +1,26 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-v5.3.4
+v5.4.1 (WIP)
 -----------
 **Features**
+- Add Ned3 Calibration support
 
 **Improvements**
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
+
+v5.4.0
+-----------
+**Features**
+  * Implemented NED3 hardware changes into niryo_robot_rpi package
+**Improvements**
+  * Use the I/O panel version instead of the robot hardware version to differentiate the implementations
+  * Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
+  * Update of the DACx0501 driver
+
+**Bugfixes**
 
 v5.4.0
 -----------

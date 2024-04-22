@@ -95,6 +95,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+        bool _callbackFactoryCalibrateMotors(FactoryCalibration::Request &req, FactoryCalibration::Response &res);
 
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
@@ -125,6 +126,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
         ros::ServiceServer _calibrate_motors_server;
+        ros::ServiceServer _factory_calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
 

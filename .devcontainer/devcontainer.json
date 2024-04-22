@@ -29,7 +29,10 @@
   "workspaceFolder": "/home/rosdev/catkin_ws",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/rosdev/.bash_history,type=bind",
+    "source=${localEnv:HOME}/.bash_history,target=/home/rosdev/.bash_history,type=bind",
+    "source=${localEnv:HOME}/.bashrc,target=/home/rosdev/.bashrc,type=bind",
+    "source=${localEnv:HOME}/.inputrc,target=/home/rosdev/.inputrc,type=bind",
+    "source=${localEnv:HOME}/.bash_aliases,target=/home/rosdev/.bash_aliases,type=bind",
     "source=${localEnv:DEV_TOOLS_PATH},target=/home/rosdev/development-tools,type=bind"
   ],
   "postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y",

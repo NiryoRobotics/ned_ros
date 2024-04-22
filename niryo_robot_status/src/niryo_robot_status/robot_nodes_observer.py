@@ -7,6 +7,7 @@ from std_msgs.msg import Bool
 
 
 class RobotNodesObserver(object):
+
     def __init__(self, robot_status_handler):
         """
 

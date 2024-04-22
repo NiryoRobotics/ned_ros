@@ -33,6 +33,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "can_driver/can_interface_core.hpp"
 
 #include "niryo_robot_msgs/CommandStatus.h"
+#include "joints_interface/FactoryCalibration.h"
 
 namespace joints_interface
 {
@@ -56,6 +57,7 @@ namespace joints_interface
         CalibrationManager &operator=(const CalibrationManager &) = delete;
 
         int startCalibration(int mode, std::string &result_message);
+        int startFactoryCalibration(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, std::string &result_message);
 
         common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 

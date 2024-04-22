@@ -32,7 +32,8 @@ RUN sudo apt update && sudo apt install -y \
     ros-noetic-ros-babel-fish \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
-    rsync
+    rsync \
+    bash-completion
 
 # Rosdep update
 RUN rosdep update

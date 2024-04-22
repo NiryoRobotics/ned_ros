@@ -25,6 +25,7 @@
 
 #include "common/util/util_defs.hpp"
 #include "joints_interface/joints_interface_core.hpp"
+#include "joints_interface/FactoryCalibration.h"
 
 namespace joints_interface
 {
@@ -120,6 +121,8 @@ void JointsInterfaceCore::startServices(ros::NodeHandle &nh)
     _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate", &JointsInterfaceCore::_callbackActivateLearningMode, this);
 
     _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller", &JointsInterfaceCore::_callbackResetController, this);
+
+    _factory_calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/factory_calibrate_motors", &JointsInterfaceCore::_callbackFactoryCalibrateMotors, this);
 }
 
 /**
@@ -355,7 +358,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     _enable_control_loop = false;
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     // first activate learning mode for ned and one
-    activateLearningMode((("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode), result, result_message);
+    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
 
     result = _robot->calibrateJoints(calibration_mode, result_message);
     res.status = result;
@@ -366,9 +369,42 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         // we have to reset controller to avoid ros controller set command to the previous position
         // before the calibration
         _reset_controller = true;
-        _previous_state_learning_mode = (("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode);
+        _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
         _enable_control_loop = true;
     }
+
+    return true;
+}
+
+/**
+ * @brief JointsInterfaceCore::_callbackFactoryCalibrateMotors
+ * @param req
+ * @param res
+ * @return
+ */
+bool JointsInterfaceCore::_callbackFactoryCalibrateMotors(FactoryCalibration::Request &req, FactoryCalibration::Response &res)
+{
+    ROS_DEBUG("JointsInterfaceCore::_callbackFactoryCalibrateMotors - Received a calibration request");
+
+    if ("ned3" != _hardware_version)
+    {
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "JointHardwareInterface::factoryCalibrateJoints - Can't be calibratd wrong hardware version: " + _hardware_version;
+        return true;
+    }
+
+    _enable_control_loop = false;
+
+    res.status = _robot->factoryCalibrateJoints(req.command, req.ids, res.message);
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
+    {
+        // we have to reset controller to avoid ros controller set command to the previous position
+        // before the calibration
+        _reset_controller = true;
+        _previous_state_learning_mode = (!_simulation_mode);
+    }
+
+    _enable_control_loop = true;
 
     return true;
 }
