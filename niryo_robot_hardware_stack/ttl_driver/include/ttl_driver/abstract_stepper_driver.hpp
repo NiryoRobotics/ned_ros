@@ -45,7 +45,7 @@ namespace ttl_driver
         int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
         int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 
-        common::model::EStepperCalibrationStatus interpretHomingData(uint8_t status) const;
+        virtual common::model::EStepperCalibrationStatus interpretHomingData(uint8_t status) const;
         std::string interpretErrorState(uint32_t hw_state) const override;
 
     protected:
@@ -58,6 +58,7 @@ namespace ttl_driver
         // ram write
         virtual int startHoming(uint8_t id) = 0;
         virtual int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) = 0;
+        virtual int factoryCalibration(const uint8_t id, const uint32_t &command);
 
         // read
         virtual int readHomingStatus(uint8_t id, uint8_t &status) = 0;

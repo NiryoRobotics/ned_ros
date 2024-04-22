@@ -314,7 +314,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            if("ned3" == _hardware_version)
+            if ("ned3" == _hardware_version)
                 profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577);
             else
                 profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
@@ -322,7 +322,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            if("ned3" == _hardware_version)
+            if ("ned3" == _hardware_version)
                 profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 1000);
             else
                 profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
@@ -647,7 +647,7 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
             else
                 _ttl_interface->startCalibration();
 
-            // sleep for 2.5 seconds, waiting for light and sound
+            // sleep for 2 seconds, waiting for light and sound
             ros::Duration(2.0).sleep();
 
             calib_res = _calibration_manager->startCalibration(mode, result_message);
@@ -664,6 +664,33 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     }
 
     return calib_res;
+}
+
+/**
+ * @brief JointHardwareInterface::factoryCalibrateJoints
+ * @param mode
+ * @param result_message
+ * @return
+ */
+int JointHardwareInterface::factoryCalibrateJoints(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, string &result_message)
+{
+    if (FactoryCalibration::Request::START == command)
+    {
+        // 1. change status in interfaces (needed to trigger lights and sound at startup)
+        _ttl_interface->startCalibration();
+
+        result_message = "Calibration Interface - Calibration started";
+        return _calibration_manager->startFactoryCalibration(command, ids, result_message);
+    }
+
+    if (FactoryCalibration::Request::STOP == command)
+    {
+        result_message = "Calibration Interface - Calibration done";
+        return _calibration_manager->startFactoryCalibration(command, ids, result_message);
+    }
+
+    result_message = std::string("JointHardwareInterface::factoryCalibrateJoints - Command not available: " + std::to_string(command));
+    return niryo_robot_msgs::CommandStatus::ABORTED;
 }
 
 /**

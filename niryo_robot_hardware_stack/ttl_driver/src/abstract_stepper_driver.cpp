@@ -64,6 +64,8 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
             return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
+        case EStepperCommandType::CMD_TYPE_FACTORY_CALIBRATION:
+            return factoryCalibration(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP:
             return writeHomingSetup(cmd->getId(), static_cast<uint8_t>(cmd->getParams().at(0)), static_cast<uint8_t>(cmd->getParams().at(1)));
         case EStepperCommandType::CMD_TYPE_PING:
@@ -229,4 +231,15 @@ common::model::EStepperCalibrationStatus AbstractStepperDriver::interpretHomingD
     return homing_status;
 }
 
+/**
+ * @brief AbstractStepperDriver::factoryCalibration
+ * @param id
+ * @return
+ */
+int AbstractStepperDriver::factoryCalibration(const uint8_t id, const uint32_t &command)
+{
+    ROS_WARN("AbstractStepperDriver::factoryCalibration - not implemented");
+
+    return 0;
+}
 }  // namespace ttl_driver

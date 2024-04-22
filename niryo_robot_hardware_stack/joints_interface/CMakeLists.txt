@@ -41,6 +41,7 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
+      message_generation
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -52,6 +53,17 @@ endif()
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  FactoryCalibration.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+    std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -76,6 +88,8 @@ catkin_package(
         niryo_robot_msgs
         roscpp
         ttl_driver
+        std_msgs
+        message_runtime
 )
 
 ###########

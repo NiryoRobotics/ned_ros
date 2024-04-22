@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // std
 #include <memory>
 #include <algorithm>
+#include <vector>
 
 // ros
 #include <ros/ros.h>
@@ -36,6 +37,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "common/model/joint_state.hpp"
+#include "joints_interface/FactoryCalibration.h"
 
 namespace joints_interface
 {
@@ -50,6 +52,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
         int calibrateJoints(int mode, std::string &result_message);
+        int factoryCalibrateJoints(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, std::string &result_message);
         void setNeedCalibration();
         void activateLearningMode(bool activated);
         void synchronizeMotors(bool synchronize);

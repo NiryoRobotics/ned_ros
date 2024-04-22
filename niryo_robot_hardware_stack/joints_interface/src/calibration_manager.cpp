@@ -244,6 +244,47 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
 }
 
 /**
+ * @brief CalibrationManager::factoryCalibration
+ * @param  * @param result_message
+ * @return
+ */
+int CalibrationManager::startFactoryCalibration(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, std::string &result_message)
+{
+    ROS_INFO("CalibrationManager::startFactoryCalibration : Starting calibration...");
+    int res = niryo_robot_msgs::CommandStatus::CALIBRATION_NOT_DONE;
+
+    // if ttl connection is ok AND (can not present OR can connection ok)
+    if ((_ttl_interface && _ttl_interface->isConnectionOk()) && (_stepper_bus_interface && _stepper_bus_interface->isConnectionOk()))
+    {
+        for (const auto &id : ids)
+        {
+            // Check if id is associated to stepper
+            if (std::find_if(_joint_states_list.begin(), _joint_states_list.end(), [id](const std::shared_ptr<common::model::JointState> joint_state)
+            {return joint_state->getId() == id && joint_state->isStepper();}) != _joint_states_list.end())
+            {
+                StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_FACTORY_CALIBRATION, id, {command});
+                _stepper_bus_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
+                res = niryo_robot_msgs::CommandStatus::SUCCESS;
+            }
+            else
+            {
+                result_message = "Calibration Interface - Not calibratable joint ID: " + std::to_string(id);
+                res = niryo_robot_msgs::CommandStatus::FAILURE;
+                break;
+            }
+        }
+    }
+    else
+    {
+        result_message = "Calibration Interface - Please ensure that all motors are connected";
+    }
+
+    ROS_ERROR_COND(niryo_robot_msgs::CommandStatus::SUCCESS != res, "Calibration Interface - Calibration error : %s", result_message.c_str());
+
+    return res;
+}
+
+/**
  * @brief CalibrationManager::getCalibrationStatus
  * @return
  */

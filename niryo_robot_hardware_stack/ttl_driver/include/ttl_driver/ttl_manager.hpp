@@ -129,6 +129,7 @@ public:
     bool readHardwareStatus();
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
+    uint8_t readNed3SteppersStatus();
     bool readJointsStatus();
     bool readHomingAbsPosition();
     bool readCollisionStatus();
@@ -238,6 +239,8 @@ private:
     double _last_collision_detection_activating{0.0};
     bool _isRealCollision{true};
     bool _isWrongAction{false};
+
+    ros::Publisher _calibration_status_publisher;
 
     class CalibrationMachineState
     {
