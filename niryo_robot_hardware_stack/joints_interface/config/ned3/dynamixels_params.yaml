@@ -3,7 +3,7 @@ dynamixels:
         # assembly offset position (rad)
         offset_position: -3.1415
         # home position (rad)
-        home_position: 0.0
+        default_home_position: 0.0
         direction: 1
         # assembly direction (1 or -1)
         limit_position_max: 2.09
@@ -20,7 +20,7 @@ dynamixels:
 
     dxl_2:
         offset_position: 2.35619
-        home_position: 0.0
+        default_home_position: 0.0
         direction: -1
         limit_position_max: 1.92
         limit_position_min: -1.92
@@ -36,7 +36,7 @@ dynamixels:
 
     dxl_3:
         offset_position: -3.1415
-        home_position: 0.0
+        default_home_position: 0.0
         direction: 1
         limit_position_max: 3.1415
         limit_position_min: -3.1415

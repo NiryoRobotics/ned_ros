@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <string>
+#include <limits>
 
 
 namespace common
@@ -60,6 +61,7 @@ public:
     double getHomePosition() const;
     double getLimitPositionMax() const;
     double getLimitPositionMin() const;
+    bool isValidPosition(double position);
 
     virtual bool operator==(const JointState &other) const;
 
@@ -110,6 +112,16 @@ std::string JointState::getName() const
     return _name;
 }
 
+/**
+ * @brief JointState::isValidPosition
+ * @return
+ */
+inline
+bool JointState::isValidPosition(double position)
+{
+    return (position >= (_limit_position_min - std::numeric_limits<float>::epsilon())
+        && position <= (_limit_position_max + std::numeric_limits<float>::epsilon()));
+}
 
 /**
  * @brief JointState::getOffsetPosition
