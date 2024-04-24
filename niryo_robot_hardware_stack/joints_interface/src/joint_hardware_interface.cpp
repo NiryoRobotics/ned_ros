@@ -34,6 +34,9 @@
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/util/util_defs.hpp"
 
+#include "niryo_robot_database/GetSettings.h"
+#include "niryo_robot_database/SetSettings.h"
+
 using ::std::dynamic_pointer_cast;
 using ::std::shared_ptr;
 using ::std::string;
@@ -70,13 +73,20 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle &rootnh, ros::Nod
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
+    // Used to get or initialize motors home position
+    _get_settings_client = robot_hwnh.serviceClient<niryo_robot_database::GetSettings>("/niryo_robot_database/settings/get");
+    _set_settings_client = robot_hwnh.serviceClient<niryo_robot_database::SetSettings>("/niryo_robot_database/settings/set");
+    _get_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/get_home_position", &JointHardwareInterface::callbackGetHomePosition, this);
+    _set_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/set_home_position", &JointHardwareInterface::callbackSetHomePosition, this);
+    _reset_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/reset_home_position", &JointHardwareInterface::callbackResetHomePosition, this);
+
     init(rootnh, robot_hwnh);
 
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_state_list, _ttl_interface, _can_interface);
 }
 
 /**
- * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
+ * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciatRing
  * correct state (dxl or stepper)
  */
 bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle &robot_hwnh)
@@ -255,12 +265,156 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
         }
     }  // end for (size_t j = 0; j < nb_joints; j++)
 
+    // Initialize motors home position if missing from database
+    if (!_get_settings_client.waitForExistence(ros::Duration(5.0)))
+    {
+        ROS_WARN("JointHardwareInterface::init - Failed to reach /niryo_robot_database/settings/get service server, keeping home position to default value");
+    }
+    else
+    {
+        std::vector<double> custom_home_positions;
+        _default_home_position.clear();
+        for (auto &jState : _joint_state_list)
+        {
+            // save the default home position
+            _default_home_position.push_back(jState->getHomePosition());
+
+            // read the custom home position
+            auto get_request = niryo_robot_database::GetSettings();
+            auto setting_name = "custom_home_position_" + jState->getName();
+            get_request.request.name = setting_name;
+            if (_get_settings_client.call(get_request)
+                && get_request.response.status == niryo_robot_msgs::CommandStatus::SUCCESS
+                && !get_request.response.value.empty())
+            {
+                custom_home_positions.push_back(std::stod(get_request.response.value));
+            }
+        }
+
+        // make sure that the custom home positions are set for all joints
+        if (custom_home_positions.size() == _joint_state_list.size())
+        {
+            for (size_t i = 0; i < custom_home_positions.size(); ++i)
+            {
+                _joint_state_list[i]->setHomePosition(custom_home_positions[i]);
+            }
+        }
+        else
+        {
+            ROS_WARN("JointHardwareInterface::init - Custom home positions are not set for all joints, keeping home position to default value");
+        }
+    }
+
     // register the interfaces
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
 
     return true;
 }
+
+
+bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request &, niryo_robot_msgs::GetFloatList::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackGetHomePosition - Get home position requested");
+
+    for (auto &jState : _joint_state_list)
+    {
+        res.values.push_back(jState->getHomePosition());
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions retrieved successfully";
+
+    return true;
+}
+
+
+bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request &req, niryo_robot_msgs::SetFloatList::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackSetHomePosition - Set new home position requested");
+
+    niryo_robot_database::SetSettings set_service = niryo_robot_database::SetSettings();
+
+    // Check if requested home position values match the joints number
+    if (req.values.size() != _joint_state_list.size())
+    {
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "Failed to set home positions : " + std::to_string(_joint_state_list.size()) + " values required for home positions.";
+        return true;
+    }
+
+    // Check if requested home positions are in valid ranges
+    std::string out_of_range_positions = "";
+    for (size_t i = 0; i < req.values.size(); ++i) {
+        if (!_joint_state_list[i]->isValidPosition(req.values[i]))
+        {
+            out_of_range_positions += _joint_state_list[i]->getName() + " ";
+        }
+    }
+    if (!out_of_range_positions.empty())
+    {
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "Failed to set home positions : home position for axis (" + out_of_range_positions + ") are out of range.";
+        return true;
+    }
+
+    int counter = 0;
+    for (auto &jState : _joint_state_list)
+    {
+        set_service.request.name = "custom_home_position_" + jState->getName();
+        set_service.request.type = "float";
+        set_service.request.value = std::to_string(req.values[counter]);
+        if (_set_settings_client.call(set_service))
+        {
+            if (set_service.response.status == niryo_robot_msgs::CommandStatus::SUCCESS)
+            {
+                jState->setHomePosition(req.values[counter]);
+            }
+            else
+            {
+                res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+                res.message = "Failed to set home position in db for axis " + jState->getName();
+                return true;
+            }
+        }
+        else
+        {
+            res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+            res.message = "Failed to call service /niryo_robot_database/settings/set";
+            return true;
+        }
+
+    counter++;
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions set successfully";
+
+    return true;
+}
+
+bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackResetHomePosition - Reset home position requested");
+
+    auto set_service = niryo_robot_database::SetSettings();
+
+    for (size_t i=0; i < _joint_state_list.size(); ++i)
+    {
+        auto &jState = _joint_state_list[i];
+        set_service.request.name = "custom_home_position_" + jState->getName();
+        set_service.request.type = "float";
+        set_service.request.value = "";
+        _set_settings_client.call(set_service);
+
+        jState->setHomePosition(_default_home_position[i]);
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions reset to default values";
+    return true;
+}
+
 
 /**
  * @brief JointHardwareInterface::initStepper
@@ -287,7 +441,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
-        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/default_home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
@@ -344,12 +498,12 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         }
 
         // add parameters
+        stepperState->setHomePosition(home_position);
         stepperState->setOffsetPosition(offsetPos);
         stepperState->setGearRatio(gear_ratio);
         stepperState->setDirection(static_cast<int8_t>(direction));
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
-        stepperState->setHomePosition(home_position);
         stepperState->setLimitPositionMax(limit_position_max);
         stepperState->setLimitPositionMin(limit_position_min);
         stepperState->setMotorRatio(motor_ratio);
@@ -405,13 +559,13 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh, const std
         robot_hwnh.getParam(currentNamespace + "/velocity_profile", velocityProfile);
         robot_hwnh.getParam(currentNamespace + "/acceleration_profile", accelerationProfile);
 
-        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/default_home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
 
         dxlState->setOffsetPosition(offsetPos);
-        dxlState->setHomePosition(home_position);
         dxlState->setDirection(static_cast<int8_t>(direction));
+        dxlState->setHomePosition(home_position);
 
         dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
         dxlState->setPositionIGain(static_cast<uint32_t>(positionIGain));

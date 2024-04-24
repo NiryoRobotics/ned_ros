@@ -41,6 +41,7 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
+      niryo_robot_database
       message_generation
 )
 
@@ -88,6 +89,7 @@ catkin_package(
         niryo_robot_msgs
         roscpp
         ttl_driver
+        niryo_robot_database
         std_msgs
         message_runtime
 )
@@ -120,6 +122,7 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
+    ${catkin_EXPORTED_TARGETS}
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
