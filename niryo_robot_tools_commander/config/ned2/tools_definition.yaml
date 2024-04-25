@@ -105,5 +105,22 @@ tool_list:
     transformation:
       translation: [0.045, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
-
+  - name: "Vacuum Pump 2"
+    type: "vacuum_pump"
+    id: 32
+    available_commands:
+      - pull_air_vacuum_pump
+      - push_air_vacuum_pump
+    specs:
+      pull_air_position: 600
+      pull_air_max_torque: 1200
+      pull_air_hold_torque: 800
+      push_air_position: 1800
+      push_air_max_torque: -1000
+      torque_limit:
+        min: -1000
+        max: 1000
+    transformation:
+      translation: [0.045, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
 

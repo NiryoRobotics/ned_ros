@@ -1,6 +1,6 @@
 tools_params:
-    id_list: [11,12,13,31]
-    type_list: ["xl330","xl330","xl330","xl330"]
-    name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump"]
+    id_list: [11,12,13,31,32]
+    type_list: ["xl330","xl330","xl330","xl330","xl330"]
+    name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump", "Vacuum Pump v2"]
     temperature_limit: 50 # DO NOT MODIFY THIS VALUE
     shutdown_configuration: 53 # DO NOT MODIFY THIS VALUE
