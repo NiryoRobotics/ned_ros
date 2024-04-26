@@ -242,6 +242,10 @@ private:
 
     ros::Publisher _calibration_status_publisher;
 
+    std::vector<uint32_t> _position_list;
+    std::vector<uint8_t> _position_goal_ids;
+    std::vector<uint32_t> _position_goal_params;
+
     class CalibrationMachineState
     {
 

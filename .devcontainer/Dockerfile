@@ -29,6 +29,7 @@ RUN sudo apt install -y git
 RUN sudo apt update && sudo apt install -y \
     ros-noetic-xacro \
     python3-catkin-tools \
+    ros-noetic-plotjuggler-ros \
     ros-noetic-ros-babel-fish \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
@@ -40,3 +41,4 @@ RUN rosdep update
 
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
+

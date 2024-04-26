@@ -511,9 +511,6 @@ void TtlManager::resetTorques()
             // we retrieve all the associated id for the type of the current driver
             vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list;
-
             for (size_t i = 0; i < ids_list.size(); ++i)
             {
                 ROS_DEBUG("TtlManager::resetTorques - Torque ON on stepper ID: %d", static_cast<int>(ids_list.at(i)));
@@ -650,53 +647,64 @@ bool TtlManager::readJointsStatus()
         auto hw_type = it.first;
         auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
 
-        if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
+        if (!driver)
         {
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> ids_list = _ids_map.at(hw_type);
+            continue;
+        }
+        auto id_list_it = _ids_map.find(hw_type);
+        if (id_list_it == _ids_map.end())
+        {
+            continue;
+        }
+        auto ids_list = id_list_it->second;
 
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list;
+        if (ids_list.empty())
+        {
+            continue;
+        }
 
-            // retrieve joint status
-            int res = driver->syncReadPosition(ids_list, position_list);
-            if (COMM_SUCCESS == res)
+        // we retrieve all the associated id for the type of the current driver
+        _position_list.clear();
+
+        // retrieve joint status
+        int res = driver->syncReadPosition(ids_list, _position_list);
+        if (COMM_SUCCESS == res)
+        {
+            if (ids_list.size() == _position_list.size())
             {
-                if (ids_list.size() == position_list.size())
+                // set motors states accordingly
+                for (size_t i = 0; i < ids_list.size(); ++i)
                 {
-                    // set motors states accordingly
-                    for (size_t i = 0; i < ids_list.size(); ++i)
-                    {
-                        uint8_t id = ids_list.at(i);
+                    uint8_t id = ids_list.at(i);
 
-                        if (_state_map.count(id))
+                    if (_state_map.count(id))
+                    {
+                        auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
+                        if (state)
                         {
-                            auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
-                            if (state)
-                            {
-                                state->setPosition(static_cast<int>((position_list.at(i))));
-                            }
+                            state->setPosition(static_cast<int>((_position_list.at(i))));
                         }
                     }
-                }
-                else
-                {
-                    // warn to avoid sound and light error on high level (error on ROS_ERROR)
-                    ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
-                             "vector mismatch (id_list size %d, position_list size %d)",
-                             static_cast<int>(ids_list.size()), static_cast<int>(position_list.size()));
-                    hw_errors_increment++;
                 }
             }
             else
             {
-                // debug to avoid sound and light error on high level (error on ROS_ERROR)
-                // also for Ned which has much more errors on XL320 motor
-                ROS_DEBUG("TtlManager::readJointStatus : Fail to sync read joint state - "
-                          "driver fail to syncReadPosition");
+                // warn to avoid sound and light error on high level (error on ROS_ERROR)
+                ROS_WARN("TtlManager::readJointStatus : Fail to sync read joint state - "
+                            "vector mismatch (id_list size %d, position_list size %d)",
+                            static_cast<int>(ids_list.size()), static_cast<int>(_position_list.size()));
                 hw_errors_increment++;
             }
         }
+        else
+        {
+            // debug to avoid sound and light error on high level (error on ROS_ERROR)
+            // also for Ned which has much more errors on XL320 motor
+            ROS_DEBUG("TtlManager::readJointStatus : Fail to sync read joint state - "
+                        "driver fail to syncReadPosition");
+            hw_errors_increment++;
+        }
+
     }  // for driver_map
 
     // check collision by END_EFFECTOR
@@ -1897,14 +1905,14 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
     for (auto const &it : _driver_map)
     {
         // build list of ids and params for this motor
-        std::vector<uint8_t> ids;
-        std::vector<uint32_t> params;
+        _position_goal_ids.clear();
+        _position_goal_params.clear();
         for (auto const &cmd : cmd_vec)
         {
             if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
             {
-                ids.emplace_back(cmd.first);
-                params.emplace_back(cmd.second);
+                _position_goal_ids.emplace_back(cmd.first);
+                _position_goal_params.emplace_back(cmd.second);
             }
         }
 
@@ -1913,14 +1921,13 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
 
         if (driver)
         {
-            int err = driver->syncWritePositionGoal(ids, params);
+            int err = driver->syncWritePositionGoal(_position_goal_ids, _position_goal_params);
             if (err != COMM_SUCCESS)
             {
                 ROS_WARN("TtlManager::executeJointTrajectoryCmd - Failed to write position");
                 _debug_error_message = "TtlManager - Failed to write position";
             }
         }
-        ros::Duration(0.001).sleep();
     }
 }
 

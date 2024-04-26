@@ -573,15 +573,15 @@ void TtlInterfaceCore::controlLoop()
             if (_control_loop_flag)
             {
                 lock_guard<mutex> lck(_control_loop_mutex);
-                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
-                {
-                    _ttl_manager->readJointsStatus();
-                    _time_hw_data_last_read = ros::Time::now().toSec();
-                }
                 if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
+                }
+                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
+                {
+                    _ttl_manager->readJointsStatus();
+                    _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
@@ -621,42 +621,34 @@ void TtlInterfaceCore::controlLoop()
 // create a unique queue using polymorphism
 void TtlInterfaceCore::_executeCommand()
 {
-    bool _need_sleep = false;
     if (!_joint_trajectory_cmd.empty())
     {
         _ttl_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
         _joint_trajectory_cmd.clear();
-        _need_sleep = true;
+        return;
     }
     if (!_single_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_single_cmd_queue_mutex);
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
         _single_cmds_queue.pop();
-        _need_sleep = true;
+        return;
     }
     if (!_conveyor_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
         _conveyor_cmds_queue.pop();
+        return;
     }
     if (!_sync_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_sync_cmd_queue_mutex);
-
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
         _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds_queue.front()));
         _sync_cmds_queue.pop();
-        _need_sleep = true;
+        return;
+
     }
-    if (_need_sleep)
-        ros::Duration(0.001).sleep();
 }
 
 // *************
