@@ -274,9 +274,9 @@ void JointsInterfaceCore::rosControlLoop()
                 _lock_write_cnt = -1;
                 _reset_controller = true;
             }
-            bool isFreqMet = _control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet, "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", _control_loop_rate.expectedCycleTime().toSec(),
-                           _control_loop_rate.cycleTime().toSec());
+            // bool isFreqMet = _control_loop_rate.sleep();
+            // ROS_DEBUG_COND(!isFreqMet, "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", _control_loop_rate.expectedCycleTime().toSec(),
+            //                _control_loop_rate.cycleTime().toSec());
         }
     }
 }
