@@ -58,9 +58,9 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
         case EDxlCommandType::CMD_TYPE_EFFORT:
             return writeTorqueGoal(cmd->getId(), static_cast<uint16_t>(cmd->getParam()));
         case EDxlCommandType::CMD_TYPE_TORQUE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
         case EDxlCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EDxlCommandType::CMD_TYPE_PID:
@@ -128,7 +128,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t> &ids, c
         {
             params_conv.emplace_back(static_cast<uint8_t>(p));
         }
-        return syncWriteTorqueEnable(ids, params_conv);
+        return syncWriteTorquePercentage(ids, params_conv);
     }
     case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
     {
@@ -138,7 +138,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t> &ids, c
         {
             params_inv.emplace_back(!p);
         }
-        return syncWriteTorqueEnable(ids, params_inv);
+        return syncWriteTorquePercentage(ids, params_inv);
     }
     default:
         std::cout << "Command not implemented " << type << std::endl;

@@ -67,11 +67,11 @@ namespace ttl_driver
 
         int changeId(uint8_t id, uint8_t new_id) override;
 
-        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+        int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) override;
         int writePositionGoal(uint8_t id, uint32_t position) override;
         int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
 
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
+        int syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
@@ -200,17 +200,15 @@ namespace ttl_driver
     // ram write
 
     /**
-     * @brief Ned3StepperDriver<reg_type>::writeTorqueEnable
+     * @brief Ned3StepperDriver<reg_type>::writeTorquePercentage
      * @param id
      * @param torque_enable
      * @return
      */
     template <typename reg_type>
-    int Ned3StepperDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
+    int Ned3StepperDriver<reg_type>::writeTorquePercentage(uint8_t id, uint8_t torque_percentage)
     {
-        constexpr auto TORQUE_ON_PERCENT = 40;
-        auto torque_percent = torque_enable ? TORQUE_ON_PERCENT : 0;
-        return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_percent);
+        return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_percentage);
     }
 
     /**
@@ -239,18 +237,15 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3StepperDriver<reg_type>::syncWriteTorqueEnable
+     * @brief Ned3StepperDriver<reg_type>::syncWriteTorquePercentage
      * @param id_list
-     * @param torque_enable_list
+     * @param torque_percentage_list
      * @return
      */
     template <typename reg_type>
-    int Ned3StepperDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
+    int Ned3StepperDriver<reg_type>::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list)
     {
-        std::vector<uint8_t> torque_enable_list_tmp;
-        for (const auto &torque_enable : torque_enable_list)
-            torque_enable > 0 ? torque_enable_list_tmp.push_back(40) : torque_enable_list_tmp.push_back(0);
-        return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_enable_list_tmp);
+        return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_percentage_list);
     }
 
     /**
@@ -668,7 +663,9 @@ namespace ttl_driver
         int res = COMM_RX_FAIL;
         double wait_duration = 0.05;
 
-        writeTorqueEnable(id, 1);
+        // Random positive value to activate the torque, we need this to write on other registers
+        constexpr auto ACTIVE_TORQUE_PERCENT = 40;  
+        writeTorquePercentage(id, ACTIVE_TORQUE_PERCENT);
 
         tries = 10;
         while (tries > 0) // try 10 times

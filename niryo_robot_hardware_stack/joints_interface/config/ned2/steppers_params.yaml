@@ -22,6 +22,7 @@ steppers:
         d_max: 4.363
         d_1: 2.143
         v_stop: 0.0209
+        torque_percentage: 100 # For Ned2's steppers, it only takes either 0 or 1. 100 by default means 1.
 
     stepper_2:
         motor_ratio: 0.0868
@@ -38,6 +39,7 @@ steppers:
         d_max: 2.18
         d_1: 1.07
         v_stop: 0.0209
+        torque_percentage: 100 # For Ned2's steppers, it only takes either 0 or 1. 100 by default means 1.
         
     stepper_3:
         motor_ratio: 0.0868
@@ -54,4 +56,4 @@ steppers:
         d_max: 4.363
         d_1: 2.143
         v_stop: 0.0209
-
+        torque_percentage: 100 # For Ned2's steppers, it only takes either 0 or 1. 100 by default means 1.
