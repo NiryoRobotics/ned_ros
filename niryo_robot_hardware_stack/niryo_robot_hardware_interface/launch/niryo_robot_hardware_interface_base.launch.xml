@@ -9,7 +9,7 @@
     <arg name="simu_gripper" default="false"/>
     <arg name="simu_conveyor" default="false"/>
 
-    <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/niryo_controllers.yaml" command="load" />
 
     <group ns="niryo_robot_hardware_interface">
         <!-- use can_driver config -->
