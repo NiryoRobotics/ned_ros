@@ -589,7 +589,9 @@ namespace ttl_driver
         int res = COMM_RX_FAIL;
         double wait_duration = 0.05;
 
-        writeTorquePercentage(id, 1);
+        // Random positive value to activate the torque, we need this to write on other registers
+        constexpr auto ACTIVE_TORQUE_PERCENT = 1;  
+        writeTorquePercentage(id, ACTIVE_TORQUE_PERCENT);
 
         // only rewrite the params which is not success
         while (tries > 0) // try 10 times
@@ -713,7 +715,9 @@ namespace ttl_driver
         int res = 0;
         double wait_duration = 0.05;
 
-        writeTorquePercentage(id, true);
+        // Random positive value to activate the torque, we need this to write on other registers
+        constexpr auto ACTIVE_TORQUE_PERCENT = 1;  
+        writeTorquePercentage(id, ACTIVE_TORQUE_PERCENT);
         ros::Duration(wait_duration).sleep();
 
         if (COMM_SUCCESS != write<typename reg_type::TYPE_HOMING_DIRECTION>(reg_type::ADDR_HOMING_DIRECTION, id, direction))

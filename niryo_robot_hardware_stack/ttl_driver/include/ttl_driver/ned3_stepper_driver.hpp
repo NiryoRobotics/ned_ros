@@ -663,7 +663,9 @@ namespace ttl_driver
         int res = COMM_RX_FAIL;
         double wait_duration = 0.05;
 
-        writeTorquePercentage(id, 40);
+        // Random positive value to activate the torque, we need this to write on other registers
+        constexpr auto ACTIVE_TORQUE_PERCENT = 40;  
+        writeTorquePercentage(id, ACTIVE_TORQUE_PERCENT);
 
         tries = 10;
         while (tries > 0) // try 10 times
