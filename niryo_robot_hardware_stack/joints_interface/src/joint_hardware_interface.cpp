@@ -871,7 +871,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const &jState : _joint_state_list)
     {
@@ -882,7 +882,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
                 if (jState->isDynamixel())
                     dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
                 else
-                    stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                    stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated ? 0 : jState->getTorquePercentage());
             }
             else
             {

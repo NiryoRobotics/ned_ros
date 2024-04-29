@@ -511,10 +511,20 @@ void TtlManager::resetTorques()
             // we retrieve all the associated id for the type of the current driver
             vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
+            auto jStates = getMotorsStates();
+
             for (size_t i = 0; i < ids_list.size(); ++i)
             {
+                auto jState_it = std::find_if(jStates.begin(), jStates.end(), [i](const std::shared_ptr<JointState> &jState){
+                    return i == jState->getId();
+                });
+                if (jState_it == jStates.end()) 
+                {
+                    continue;
+                }
+                auto jState = *jState_it;
                 ROS_DEBUG("TtlManager::resetTorques - Torque ON on stepper ID: %d", static_cast<int>(ids_list.at(i)));
-                driver->writeTorquePercentage(ids_list.at(i), 1);
+                driver->writeTorquePercentage(ids_list.at(i), jState->getTorquePercentage());
             }  // for ids_list
         }
     }  // for _driver_map
@@ -2034,9 +2044,10 @@ void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor
 std::vector<std::shared_ptr<JointState>> TtlManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<JointState>> states;
+
     for (const auto &it : _state_map)
-    {
-        if (it.second && EHardwareType::UNKNOWN != it.second->getHardwareType() && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
+    {   
+        if (it.second && HardwareTypeEnum::isMotor(it.second->getHardwareType()))
         {
             states.emplace_back(std::dynamic_pointer_cast<JointState>(it.second));
         }
