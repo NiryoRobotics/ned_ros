@@ -54,6 +54,7 @@ public:
     void setHomePosition(double home_position);
     void setLimitPositionMax(double max_position);
     void setLimitPositionMin(double min_position);
+    void setTorquePercentage(uint8_t torque_percentage);
 
     std::string getName() const;
     int8_t getDirection() const;
@@ -61,6 +62,7 @@ public:
     double getHomePosition() const;
     double getLimitPositionMax() const;
     double getLimitPositionMin() const;
+    uint8_t getTorquePercentage() const;
     bool isValidPosition(double position);
 
     virtual bool operator==(const JointState &other) const;
@@ -87,6 +89,7 @@ protected:
     int8_t _direction{1};
     double _offset_position{0.0};
     double _home_position{0.0};
+    uint8_t _torque_percentage{0};
 
     // joint limit used to calibration ned/one and protect joint move out of bound
     double _limit_position_min{0.0};
@@ -171,6 +174,16 @@ inline
 int8_t JointState::getDirection() const
 {
     return _direction;
+}
+
+/**
+ * @brief JointState::getTorquePercentage
+ * @return
+ */
+inline
+uint8_t JointState::getTorquePercentage() const
+{
+    return _torque_percentage;
 }
 
 } // namespace model

@@ -229,6 +229,7 @@ namespace ttl_driver
     template <typename reg_type>
     int StepperDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
     {
+        torque_enable = torque_enable > 0 ? 1 : 0;
         return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_enable);
     }
 

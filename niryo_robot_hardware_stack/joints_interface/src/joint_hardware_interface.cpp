@@ -436,6 +436,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         double limit_position_min = 0.0;
         double limit_position_max = 0.0;
         double motor_ratio = 0.0;
+        double torque_percentage = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
@@ -445,6 +446,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
+        robot_hwnh.getParam(currentNamespace + "/torque_percentage", torque_percentage);
 
         // acceleration and velocity profiles (with conversion from RPM and RPM-2)
         common::model::VelocityProfile profile{};
@@ -507,6 +509,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         stepperState->setLimitPositionMax(limit_position_max);
         stepperState->setLimitPositionMin(limit_position_min);
         stepperState->setMotorRatio(motor_ratio);
+        stepperState->setTorquePercentage(torque_percentage);
 
         // update ratio used to convert rad to pos motor
         stepperState->updateMultiplierRatio();
@@ -679,9 +682,18 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
         {
             // first set torque state
             if (jState->isStepper())
-                _ttl_interface->addSingleCommandToQueue(
-                    std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{torque_on}));
-
+            {
+                if (_hardware_version == "ned3" && torque_on) 
+                {
+                    _ttl_interface->addSingleCommandToQueue(
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{jState->getTorquePercentage()}));
+                }
+                else
+                {
+                    _ttl_interface->addSingleCommandToQueue(
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{torque_on}));
+                }
+            }
             ros::Duration(0.2).sleep();
 
             if (_ttl_interface->rebootHardware(jState))
@@ -738,8 +750,16 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                     _ttl_interface->addSingleCommandToQueue(
                         std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, stepperState->getId(), stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
+                    if (_hardware_version == "ned3" && torque_on) 
+                    {
+                        _ttl_interface->addSingleCommandToQueue(
+                            std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(), std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
+                    }
+                    else 
+                    {
+                        _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
                                                                                                   std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
+                    }
                 }
             }
         }
