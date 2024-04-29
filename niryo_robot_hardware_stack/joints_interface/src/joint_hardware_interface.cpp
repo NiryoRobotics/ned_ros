@@ -436,7 +436,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         double limit_position_min = 0.0;
         double limit_position_max = 0.0;
         double motor_ratio = 0.0;
-        double torque_percentage = 0.0;
+        int torque_percentage = 0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
@@ -682,18 +682,9 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
         {
             // first set torque state
             if (jState->isStepper())
-            {
-                if (_hardware_version == "ned3" && torque_on) 
-                {
-                    _ttl_interface->addSingleCommandToQueue(
-                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{jState->getTorquePercentage()}));
-                }
-                else
-                {
-                    _ttl_interface->addSingleCommandToQueue(
-                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{torque_on}));
-                }
-            }
+                _ttl_interface->addSingleCommandToQueue(
+                    std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{jState->getTorquePercentage()}));
+            
             ros::Duration(0.2).sleep();
 
             if (_ttl_interface->rebootHardware(jState))
@@ -750,16 +741,8 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                     _ttl_interface->addSingleCommandToQueue(
                         std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, stepperState->getId(), stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
-                    if (_hardware_version == "ned3" && torque_on) 
-                    {
-                        _ttl_interface->addSingleCommandToQueue(
-                            std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(), std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
-                    }
-                    else 
-                    {
-                        _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
-                                                                                                  std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
-                    }
+                    _ttl_interface->addSingleCommandToQueue(
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(), std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
                 }
             }
         }

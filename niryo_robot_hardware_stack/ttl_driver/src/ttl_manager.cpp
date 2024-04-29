@@ -514,7 +514,7 @@ void TtlManager::resetTorques()
             for (size_t i = 0; i < ids_list.size(); ++i)
             {
                 ROS_DEBUG("TtlManager::resetTorques - Torque ON on stepper ID: %d", static_cast<int>(ids_list.at(i)));
-                driver->writeTorqueEnable(ids_list.at(i), 1);
+                driver->writeTorquePercentage(ids_list.at(i), 1);
             }  // for ids_list
         }
     }  // for _driver_map

@@ -85,12 +85,12 @@ namespace ttl_driver
         // ram write
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t> &data_list) override;
 
-        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+        int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) override;
 
         int writePositionGoal(uint8_t id, uint32_t position) override;
         int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
 
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
+        int syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
@@ -343,14 +343,15 @@ namespace ttl_driver
     }
 
     /**
-     * @brief DxlDriver<reg_type>::writeTorqueEnable
+     * @brief DxlDriver<reg_type>::writeTorquePercentage
      * @param id
-     * @param torque_enable
+     * @param torque_percentage
      * @return
      */
     template <typename reg_type>
-    int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
+    int DxlDriver<reg_type>::writeTorquePercentage(uint8_t id, uint8_t torque_percentage)
     {
+        auto torque_enable = torque_percentage > 0 ? 1 : 0;
         return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_enable);
     }
 
@@ -381,14 +382,20 @@ namespace ttl_driver
     }
 
     /**
-     * @brief DxlDriver<reg_type>::syncWriteTorqueEnable
+     * @brief DxlDriver<reg_type>::syncWriteTorquePercentage
      * @param id_list
-     * @param torque_enable_list
+     * @param torque_percentage_list
      * @return
      */
     template <typename reg_type>
-    int DxlDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
+    int DxlDriver<reg_type>::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list)
     {
+        std::vector<uint8_t> torque_enable_list;
+        for(const auto &torque_percentage : torque_percentage_list)
+        {
+            auto torque_enable = torque_percentage > 0 ? 1 : 0;
+            torque_enable_list.push_back(torque_enable);
+        }
         return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
     }
 
