@@ -15,7 +15,7 @@ steppers:
         # assembly direction (1 or -1)
         direction: 1
         a_max: 4.363
-        v_max: 1.571
+        v_max: 2.45
 
     stepper_2:
         motor_ratio: 0.001
@@ -35,5 +35,5 @@ steppers:
         limit_position_max: 1.57
         direction: 1
         a_max: 4.363
-        v_max: 1.571
+        v_max: 1.5
 
