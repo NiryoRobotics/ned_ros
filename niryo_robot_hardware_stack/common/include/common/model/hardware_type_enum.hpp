@@ -60,6 +60,23 @@ public:
     HardwareTypeEnum(EHardwareType e=EHardwareType::UNKNOWN);
     HardwareTypeEnum(const char* str);
 
+
+    static bool isMotor(EHardwareType hw_type){
+        switch(hw_type) {
+            case EHardwareType::STEPPER:
+            case EHardwareType::XL430:
+            case EHardwareType::XL320:
+            case EHardwareType::XL330:
+            case EHardwareType::XC430:
+            case EHardwareType::XM430:
+            case EHardwareType::NED3_STEPPER:
+            case EHardwareType::XH430:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 private:
     friend class AbstractEnum<HardwareTypeEnum, EHardwareType>;
     static std::map<EHardwareType, std::string> initialize();
