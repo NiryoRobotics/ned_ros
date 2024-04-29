@@ -59,9 +59,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         case EStepperCommandType::CMD_TYPE_POSITION:
             return writePositionGoal(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
         case EStepperCommandType::CMD_TYPE_FACTORY_CALIBRATION:
@@ -122,7 +122,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t> &id
         {
             params_conv.emplace_back(static_cast<uint8_t>(p));
         }
-        return syncWriteTorqueEnable(ids, params_conv);
+        return syncWriteTorquePercentage(ids, params_conv);
     }
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
     {
@@ -132,7 +132,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t> &id
         {
             params_inv.emplace_back(!p);
         }
-        return syncWriteTorqueEnable(ids, params_inv);
+        return syncWriteTorquePercentage(ids, params_inv);
     }
     case EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION:
         return syncWriteHomingAbsPosition(ids, params);

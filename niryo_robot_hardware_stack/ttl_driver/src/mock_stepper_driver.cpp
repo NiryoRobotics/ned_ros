@@ -215,12 +215,12 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 // ram write
 
 /**
- * @brief MockStepperDriver::writeTorqueEnable
+ * @brief MockStepperDriver::writeTorquePercentage
  * @param id
  * @param torque_enable
  * @return
  */
-int MockStepperDriver::writeTorqueEnable(uint8_t id, uint8_t /*torque_enable*/)
+int MockStepperDriver::writeTorquePercentage(uint8_t id, uint8_t /*torque_percentage*/)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -260,12 +260,12 @@ int MockStepperDriver::writeVelocityGoal(uint8_t id, uint32_t velocity)
 }
 
 /**
- * @brief MockStepperDriver::syncWriteTorqueEnable
+ * @brief MockStepperDriver::syncWriteTorquePercentage
  * @param id_list
- * @param torque_enable_list
+ * @param torque_percentage_list
  * @return
  */
-int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> & /*torque_enable_list*/)
+int MockStepperDriver::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> & /*torque_percentage_list*/)
 {
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;
