@@ -16,6 +16,7 @@ steppers:
         direction: 1
         a_max: 4.363
         v_max: 2.45
+        torque_percentage: 40
 
     stepper_2:
         motor_ratio: 0.001
@@ -26,6 +27,7 @@ steppers:
         direction: 1
         a_max: 2.18
         v_max: 1.047
+        torque_percentage: 60
         
     stepper_3:
         motor_ratio: 0.001
@@ -36,4 +38,5 @@ steppers:
         direction: 1
         a_max: 4.363
         v_max: 1.5
+        torque_percentage: 40
 
