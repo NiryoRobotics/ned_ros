@@ -33,9 +33,9 @@ niryo_robot_follow_joint_trajectory_controller:
         joint_1: {trajectory: 0.5, goal: 0.01}
         joint_2: {trajectory: 0.5, goal: 0.01}
         joint_3: {trajectory: 0.5, goal: 0.01}
-        joint_4: {trajectory: 0.5, goal: 0.01}
-        joint_5: {trajectory: 0.5, goal: 0.01}
-        joint_6: {trajectory: 0.5, goal: 0.01}
+        joint_4: {trajectory: 0.5, goal: 0.04}
+        joint_5: {trajectory: 0.5, goal: 0.04}
+        joint_6: {trajectory: 0.5, goal: 0.04}
     stop_trajectory_duration: 0.0
     state_publish_rate: 20
     allow_partial_joints_goal: true # to send partial joints, so they are not all updated for the jog joints
