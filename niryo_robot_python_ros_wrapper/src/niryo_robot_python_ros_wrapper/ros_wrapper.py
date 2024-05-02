@@ -22,7 +22,7 @@ from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
 from niryo_robot_msgs.msg import BasicObjectArray
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
+from niryo_robot_msgs.srv import SetBool, SetInt, Trigger, Ping, SetFloat, GetFloatList, SetFloatList
 from niryo_robot_rpi.msg import DigitalIOState, AnalogIOState, StorageStatus
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
@@ -398,13 +398,54 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     @move_command
     def move_to_sleep_pose(self):
         """
-        Moves to Sleep pose which allows the user to activate the learning mode without the risk
-        of the robot hitting something because of gravity
+        Moves the robot to a predefined home position
 
         :return: status, message
         :rtype: (int, str)
         """
-        return self.move_joints(0.0, 0.50, -1.25, 0.0, 0.0, 0.0)
+        result = self._call_service('/niryo_robot_joints_interface/get_home_position', GetFloatList)
+        self._classic_return_w_check(result)
+        return self.move_joints(*result.values)
+
+    def get_sleep_pose(self):
+        """
+        Get current robot's home position
+
+        :return: status, message
+        :rtype: list[float]
+        """
+        result = self._call_service('/niryo_robot_joints_interface/get_home_position', GetFloatList)
+        self._classic_return_w_check(result)
+        return result.values
+
+    def set_sleep_pose(self, joints_positions_list):
+        """
+        Set user defined robot's home position in the database.
+        Raises NiryoRosWrapperException if the number of joint values does not match the robot's joints number
+        or if failed.
+
+        :param joints_positions_list: List containing 6 joint positions defining the sleep pose
+        :type joints_positions_list: list[float]
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        if len(joints_positions_list) != 6:
+            raise NiryoRosWrapperException(f'Pose requires 6 values. Currently {len(joints_positions_list)} given')
+        result = self._call_service('/niryo_robot_joints_interface/set_home_position',
+                                    SetFloatList,
+                                    joints_positions_list)
+        return self._classic_return_w_check(result)
+
+    def reset_sleep_pose(self):
+        """
+        Reset robot's home position to factory default
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self._call_service('/niryo_robot_joints_interface/reset_home_position', Trigger)
+        return self._classic_return_w_check(result)
 
     @move_command
     def move_pose(self, x, y, z, roll, pitch, yaw, frame=''):
@@ -2403,7 +2444,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Example: ::
 
             from niryo_robot_python_ros_wrapper.ros_wrapper import *
+            import rospy
 
+            rospy.init_node('ros_wrapper_node')
             robot = NiryoRosWrapper()
             robot.led_ring.solid(color=[255, 255, 255])
 
@@ -2420,7 +2463,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Example: ::
 
             from niryo_robot_python_ros_wrapper.ros_wrapper import *
+            import rospy
 
+            rospy.init_node('ros_wrapper_node')
             robot = NiryoRosWrapper()
             robot.sound.play(sound.sounds[0])
 
@@ -2437,7 +2482,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Example: ::
 
             from niryo_robot_python_ros_wrapper.ros_wrapper import *
+            import rospy
 
+            rospy.init_node('ros_wrapper_node')
             robot = NiryoRosWrapper()
             print(robot.custom_button.state)
 
