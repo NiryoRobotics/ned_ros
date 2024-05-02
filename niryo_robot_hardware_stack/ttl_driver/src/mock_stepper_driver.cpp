@@ -678,6 +678,25 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 //*****************************
 // AbstractStepperDriver interface
 //*****************************
+
+int MockStepperDriver::readControlMode(uint8_t id, uint8_t &mode)
+{
+    if (_fake_data->stepper_registers.count(id))
+        mode = _fake_data->stepper_registers.at(id).operating_mode;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
+}
+
+int MockStepperDriver::writeControlMode(uint8_t id, uint8_t mode)
+{
+    if (_fake_data->stepper_registers.count(id))
+        _fake_data->stepper_registers.at(id).operating_mode = mode;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
+}
+
 /**
  * @brief MockStepperDriver::readVelocityProfile
  * @param id
@@ -874,5 +893,9 @@ int MockStepperDriver::syncWriteHomingAbsPosition(const std::vector<uint8_t> &id
     }
     return COMM_SUCCESS;
 }
+
+
+float MockStepperDriver::velocityUnit() const { return 1.0; }
+
 
 }  // namespace ttl_driver

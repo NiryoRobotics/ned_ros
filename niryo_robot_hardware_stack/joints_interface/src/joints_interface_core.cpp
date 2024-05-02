@@ -358,7 +358,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     _enable_control_loop = false;
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     // first activate learning mode for ned and one
-    activateLearningMode(("ned2" != _hardware_version && !_simulation_mode), result, result_message);
+    activateLearningMode((("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode), result, result_message);
 
     result = _robot->calibrateJoints(calibration_mode, result_message);
     res.status = result;
@@ -369,7 +369,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         // we have to reset controller to avoid ros controller set command to the previous position
         // before the calibration
         _reset_controller = true;
-        _previous_state_learning_mode = ("ned2" != _hardware_version && !_simulation_mode);
+        _previous_state_learning_mode = (("ned2" != _hardware_version && "ned3" != _hardware_version) && !_simulation_mode);
         _enable_control_loop = true;
     }
 

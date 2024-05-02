@@ -55,7 +55,7 @@ namespace ttl_driver
         static constexpr uint16_t ADDR_HW_ERROR_STATUS = 70;
         using TYPE_HW_ERROR_STATUS = uint8_t;
 
-        // unit = 0.001 RPM
+        static constexpr float VELOCITY_UNIT = 0.001;
         static constexpr uint16_t ADDR_GOAL_VELOCITY = 104;
         using TYPE_GOAL_VELOCITY = uint32_t;
 

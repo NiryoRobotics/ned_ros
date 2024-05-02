@@ -5,6 +5,7 @@ v5.4.1 (WIP)
 -----------
 **Features**
 - Add Ned3 Calibration support
+- Add support for Conveyor with ned3 stepper
 
 **Improvements**
 

@@ -79,15 +79,17 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
             }
 
             // convert direction and speed into signed speed
-            int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
+            uint32_t dir = static_cast<uint32_t>(cmd->getParams().at(2));
             // normal warning : we need to put an int32 inside an uint32_t
-            // param received from user/app is in percentage. It have to be converted to speed (unit 0.01 rpm) accepted by ttl conveyor
-            // TODO(Thuc) avoid hardcode 6000 here
-            uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir * 5000 / 100);
+            constexpr auto MAX_RPM = 50;
+            uint32_t speed = static_cast<uint32_t>(dir * static_cast<int>(cmd->getParams().at(1) * MAX_RPM / (100 * velocityUnit())));
+            ROS_INFO("AbstractStepperDriver::writeSingleCmd: speed = %d", speed);
             return writeVelocityGoal(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());
+        case EStepperCommandType::CMD_TYPE_OPERATING_MODE:
+            return writeControlMode(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }

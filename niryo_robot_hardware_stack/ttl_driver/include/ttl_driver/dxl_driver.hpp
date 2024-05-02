@@ -1202,13 +1202,6 @@ namespace ttl_driver
     }
 
     template <>
-    inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
-    {
-        std::cout << "writeControlMode not available for motor XL320" << std::endl;
-        return COMM_SUCCESS;
-    }
-
-    template <>
     inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t & /*data*/)
     {
         std::cout << "readControlMode not available for motor XL320" << std::endl;

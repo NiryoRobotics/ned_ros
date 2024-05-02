@@ -88,6 +88,9 @@ namespace ttl_driver
 
         // AbstractStepperDriver interface
     public:
+        int readControlMode(uint8_t id, uint8_t &operating_mode) override;
+        int writeControlMode(uint8_t id, uint8_t operating_mode);
+
         int readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list) override;
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t> &data_list) override;
 
@@ -101,6 +104,8 @@ namespace ttl_driver
 
         int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) override;
         int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) override;
+
+        float velocityUnit() const;
 
     private:
         int writeVStart(uint8_t id, uint32_t v_start);
@@ -540,6 +545,18 @@ namespace ttl_driver
     // AbstractStepperDriver interface
     //*****************************
 
+    template <typename reg_type>
+    int StepperDriver<reg_type>::readControlMode(uint8_t id, uint8_t &operating_mode)
+    {
+        return read<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, operating_mode);
+    }
+
+    template <typename reg_type>
+    int StepperDriver<reg_type>::writeControlMode(uint8_t id, const uint8_t operating_mode)
+    {
+        return write<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, operating_mode);
+    }
+
     /**
      * @brief StepperDriver::readVelocityProfile
      * @param id
@@ -896,6 +913,12 @@ namespace ttl_driver
     int StepperDriver<reg_type>::writeVStop(uint8_t id, uint32_t v_stop)
     {
         return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_VSTOP, id, v_stop);
+    }
+
+    template <typename reg_type>
+    float StepperDriver<reg_type>::velocityUnit() const
+    {
+        return reg_type::VELOCITY_UNIT;
     }
 
 } // ttl_driver
