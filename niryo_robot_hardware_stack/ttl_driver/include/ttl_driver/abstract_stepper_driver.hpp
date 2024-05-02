@@ -68,6 +68,13 @@ namespace ttl_driver
 
         virtual int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) = 0;
         virtual int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) = 0;
+
+        // parameters
+
+        /**
+         * @brief writeVelocityGoal: define the unit of the velocity in RPM
+        */
+        virtual float velocityUnit() const = 0;
     };
 
 } // ttl_driver

@@ -647,7 +647,6 @@ void TtlInterfaceCore::_executeCommand()
         _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds_queue.front()));
         _sync_cmds_queue.pop();
         return;
-
     }
 }
 
@@ -733,19 +732,19 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  */
 int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> &state)
 {
-    int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
-
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    if (_ttl_manager->ping(state->getId()))
-    {
-        // add hw component before to get driver
-        result = _ttl_manager->addHardwareComponent(state);
-    }
-    else
+    if (!_ttl_manager->ping(state->getId()))
     {
         ROS_DEBUG("TtlInterfaceCore::setConveyor - No conveyor found");
+        return niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
     }
+
+    // add hw component before to get driver
+    auto result = _ttl_manager->addHardwareComponent(state);
+
+    ROS_INFO("TtlInterfaceCore::setConveyor - setConveyor: id %d, err: %d", state->getId(), result);
+
     return result;
 }
 

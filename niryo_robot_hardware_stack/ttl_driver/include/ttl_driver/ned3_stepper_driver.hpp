@@ -22,7 +22,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "ros/duration.h"
+
+#include <ros/duration.h>
+#include <ros/console.h>
 
 #include "abstract_stepper_driver.hpp"
 
@@ -83,12 +85,11 @@ namespace ttl_driver
         int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
         int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2>> &data_array_list) override;
 
-        // AbstractNed3StepperDriver interface
+        // AbstractStepperDriver interface
     public:
         common::model::EStepperCalibrationStatus interpretHomingData(uint8_t status) const override;
         
-        int writeOperatingMode(uint8_t id, const uint8_t &operating_mode);
-
+        int writeControlMode(uint8_t id, uint8_t operating_mode) override;
         int writeVelocityProfile(uint8_t id, const uint32_t &velocity_profile);
         int writeAccelerationProfile(uint8_t id, const uint32_t &acceleration_profile);
 
@@ -102,6 +103,7 @@ namespace ttl_driver
         int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
+        int readControlMode(uint8_t id, uint8_t &operating_mode) override;
         int readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list) override;
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t> &data_list) override;
 
@@ -114,6 +116,9 @@ namespace ttl_driver
         int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list);
         int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position);
         int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position);
+
+        // parameters
+        float velocityUnit() const override;
     };
 
     // definition of methods
@@ -509,7 +514,7 @@ namespace ttl_driver
     }
 
     //*****************************
-    // AbstractNed3StepperDriver interface
+    // AbstractStepperDriver interface
     //*****************************
 
     /**
@@ -540,7 +545,7 @@ namespace ttl_driver
      * @return
      */
     template <typename reg_type>
-    int Ned3StepperDriver<reg_type>::writeOperatingMode(uint8_t id, const uint8_t &operating_mode)
+    int Ned3StepperDriver<reg_type>::writeControlMode(uint8_t id, uint8_t operating_mode)
     {
         return write<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, operating_mode);
     }
@@ -649,6 +654,14 @@ namespace ttl_driver
     };
 
     template <typename reg_type>
+    int Ned3StepperDriver<reg_type>::readControlMode(uint8_t id, uint8_t &mode)
+    {
+        ROS_WARN("Ned3StepperDriver::readControlMode - Not implemented");
+
+        return COMM_NOT_AVAILABLE;
+    };
+
+    template <typename reg_type>
     int Ned3StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list)
     {
         ROS_WARN("Ned3StepperDriver::readVelocityProfile std::vector<uint32_t> &data_list - Not implemented");
@@ -730,6 +743,12 @@ namespace ttl_driver
 
         return COMM_NOT_AVAILABLE;
     };
+
+    template <typename reg_type>
+    float Ned3StepperDriver<reg_type>::velocityUnit() const
+    {
+        return reg_type::VELOCITY_UNIT;
+    }
 } // ttl_driver
 
 #endif // NED3_STEPPER_DRIVER_HPP

@@ -56,6 +56,7 @@ namespace common
             CMD_TYPE_WRITE_HOMING_ABS_POSITION = 17,
             CMD_TYPE_READ_HOMING_ABS_POSITION = 18,
             CMD_TYPE_FACTORY_CALIBRATION = 19,
+            CMD_TYPE_OPERATING_MODE = 20,
             CMD_TYPE_UNKNOWN = 100
         };
 

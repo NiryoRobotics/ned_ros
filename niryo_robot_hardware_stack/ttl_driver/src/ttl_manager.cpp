@@ -205,56 +205,69 @@ int TtlManager::setupCommunication()
  */
 int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state)  // NOLINT
 {
-    if (state)
+    if (!state)
     {
-        EHardwareType hardware_type = state->getHardwareType();
-        uint8_t id = state->getId();
-
-        ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
-
-        // add state to state map
-        _state_map[id] = state;
-
-        // add id to ids_map
-        _ids_map[hardware_type].emplace_back(id);
-
-        // add to global lists
-        if (common::model::EComponentType::CONVEYOR == state->getComponentType())
-        {
-            if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
-                _conveyor_list.emplace_back(id);
-        }
-
-        addHardwareDriver(hardware_type);
-
-        // update firmware version
-        if (_driver_map.at(hardware_type))
-        {
-            std::string version;
-            int res = COMM_RX_FAIL;
-            for (int tries = 10; tries > 0; tries--)
-            {
-                res = _driver_map.at(hardware_type)->readFirmwareVersion(id, version);
-                if (COMM_SUCCESS == res)
-                {
-                    state->setFirmwareVersion(version);
-                    break;
-                }
-                ros::Duration(0.1).sleep();
-            }
-
-            if (COMM_SUCCESS != res)
-            {
-                ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
-                         "hardware id %d : result = %d",
-                         id, res);
-            }
-        }
-
-        setLeds(_led_state);
-        return niryo_robot_msgs::CommandStatus::SUCCESS;
+        return niryo_robot_msgs::CommandStatus::FAILURE;
     }
-    return niryo_robot_msgs::CommandStatus::FAILURE;
+
+    EHardwareType hardware_type = state->getHardwareType();
+    uint8_t id = state->getId();
+
+    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
+
+    addHardwareDriver(hardware_type);
+
+    auto driver_it = _driver_map.find(hardware_type);
+    if (driver_it == _driver_map.end())
+    {
+        ROS_ERROR("TtlManager::addHardwareComponent - No driver found for hardware type %d", static_cast<int>(hardware_type));
+        return niryo_robot_msgs::CommandStatus::FAILURE;
+    }
+    auto driver = driver_it->second;
+
+    // check if the driver is valid for this hardware
+    if (driver->checkModelNumber(id) != COMM_SUCCESS)
+    {
+        ROS_ERROR("TtlManager::addHardwareComponent - Model number check failed for hardware id %d", id);
+        return niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
+    }
+
+    // update firmware version
+    std::string version;
+    int res = COMM_RX_FAIL;
+    for (int tries = 10; tries > 0; tries--)
+    {
+        res = driver->readFirmwareVersion(id, version);
+        if (COMM_SUCCESS == res)
+        {
+            state->setFirmwareVersion(version);
+            break;
+        }
+        ros::Duration(0.1).sleep();
+    }
+
+    if (COMM_SUCCESS != res)
+    {
+        ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
+                    "hardware id %d : result = %d",
+                    id, res);
+    }
+
+    // add state to state map
+    _state_map[id] = state;
+
+    // add id to ids_map
+    _ids_map[hardware_type].emplace_back(id);
+
+    // add to global lists
+    if (common::model::EComponentType::CONVEYOR == state->getComponentType())
+    {
+        if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
+            _conveyor_list.emplace_back(id);
+    }
+
+    setLeds(_led_state);
+    return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
 /**
@@ -714,7 +727,6 @@ bool TtlManager::readJointsStatus()
                         "driver fail to syncReadPosition");
             hw_errors_increment++;
         }
-
     }  // for driver_map
 
     // check collision by END_EFFECTOR

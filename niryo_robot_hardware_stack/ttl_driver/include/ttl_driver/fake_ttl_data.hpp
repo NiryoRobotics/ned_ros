@@ -61,6 +61,7 @@ class FakeTtlData
             uint32_t d_1{0};
             uint32_t v_stop{2};
             int32_t  homing_abs_position{0};
+            uint8_t  operating_mode{0};;
         };
 
         struct FakeDxlRegister : public AbstractFakeRegister
