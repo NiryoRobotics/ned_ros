@@ -531,7 +531,7 @@ void TtlManager::resetTorques()
                 auto jState_it = std::find_if(jStates.begin(), jStates.end(), [i](const std::shared_ptr<JointState> &jState){
                     return i == jState->getId();
                 });
-                if (jState_it == jStates.end()) 
+                if (jState_it == jStates.end())
                 {
                     continue;
                 }
@@ -2058,7 +2058,7 @@ std::vector<std::shared_ptr<JointState>> TtlManager::getMotorsStates() const
     std::vector<std::shared_ptr<JointState>> states;
 
     for (const auto &it : _state_map)
-    {   
+    {
         if (it.second && HardwareTypeEnum::isMotor(it.second->getHardwareType()))
         {
             states.emplace_back(std::dynamic_pointer_cast<JointState>(it.second));

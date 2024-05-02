@@ -684,7 +684,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
             if (jState->isStepper())
                 _ttl_interface->addSingleCommandToQueue(
                     std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{jState->getTorquePercentage()}));
-            
+
             ros::Duration(0.2).sleep();
 
             if (_ttl_interface->rebootHardware(jState))
@@ -742,7 +742,8 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                         std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, stepperState->getId(), stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
                     _ttl_interface->addSingleCommandToQueue(
-                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(), std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
+                                                              std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
                 }
             }
         }
