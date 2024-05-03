@@ -132,6 +132,7 @@ bool AbstractMotorState::isDynamixel() const
            (EHardwareType::XL330 == _hw_type) ||
            (EHardwareType::XL430 == _hw_type) ||
            (EHardwareType::XM430 == _hw_type) ||
+           (EHardwareType::XH430 == _hw_type) ||
            (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
 }
 

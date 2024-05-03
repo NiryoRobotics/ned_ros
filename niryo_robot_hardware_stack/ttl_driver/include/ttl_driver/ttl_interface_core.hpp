@@ -195,6 +195,7 @@ namespace ttl_driver
         mutable std::mutex _single_cmd_queue_mutex;
         mutable std::mutex _conveyor_cmd_queue_mutex;
         mutable std::mutex _sync_cmd_queue_mutex;
+        mutable std::mutex _traj_cmd_mutex;
 
         std::thread _control_loop_thread;
 
