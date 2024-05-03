@@ -838,7 +838,7 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uin
 
     std::lock_guard<std::mutex> lock(_traj_cmd_mutex);
 
-    _joint_trajectory_cmd = cmd; 
+    _joint_trajectory_cmd = cmd;
 }  // NOLINT
 
 /**
