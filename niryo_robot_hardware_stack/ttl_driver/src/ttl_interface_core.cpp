@@ -834,8 +834,8 @@ void TtlInterfaceCore::clearSyncCommandQueue()
  * @brief TtlInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t>> &&cmd) {
-
+void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t>> &&cmd)
+{
     std::lock_guard<std::mutex> lock(_traj_cmd_mutex);
 
     _joint_trajectory_cmd = cmd;
