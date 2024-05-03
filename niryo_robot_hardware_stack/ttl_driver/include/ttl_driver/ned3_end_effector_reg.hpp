@@ -27,7 +27,7 @@ namespace ttl_driver
         static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::END_EFFECTOR;
 
         static constexpr float PROTOCOL_VERSION = 2.0;
-        static constexpr int MODEL_NUMBER = 2001;
+        static constexpr int MODEL_NUMBER = 2101;
         static constexpr int VOLTAGE_CONVERSION = 1000;
 
         // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm

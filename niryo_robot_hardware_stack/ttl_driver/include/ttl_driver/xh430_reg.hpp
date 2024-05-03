@@ -4,6 +4,8 @@ namespace ttl_driver
 {
     struct XH430Reg : XL430Reg
     {
+        static constexpr int MODEL_NUMBER = 1010;
+
         static constexpr uint16_t ADDR_CURRENT_LIMIT = 38;
         using TYPE_CURRENT_LIMIT = uint16_t;
 
