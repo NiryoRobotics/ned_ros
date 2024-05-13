@@ -43,10 +43,11 @@ def move_command(move_function):
 
         result = move_function(self, *args, **kwargs)
 
+        ### This error is very anoying
         # check if a collision happened during the move
-        if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
-            _, message = result
-            raise NiryoRosWrapperException(message)
+        #if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
+        #    status, message = result
+        #    raise NiryoRosWrapperException(message, status=status, message=message)
         return result
 
     return wrapper
@@ -80,6 +81,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         # Break point publisher (for break point blocks in Blockly interface)
         self.__break_point_publisher = rospy.Publisher('/niryo_robot_blockly/break_point', Int32, queue_size=10)
+        # Notify others nodes about collision detection
+        self.__collision_detected_publisher = rospy.Publisher('/niryo_robot/collision_detected', Bool, queue_size=10)
 
         # -- Subscribers
 
@@ -167,11 +170,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return self._collision_detected
 
     def clear_collision_detected(self):
-        self._collision_detected = False
+        self.__collision_detected_publisher.publish(False)
 
     def __callback_collision_detected(self, msg):
-        if msg.data:
-            self._collision_detected = True
+        self._collision_detected = msg.data
 
     def __advertise_stop(self):
         if self.__hardware_version in ['ned', 'ned2']:
@@ -303,11 +305,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_max_velocity_scaling_factor(self):
         """
-        Gets the max velocity scaling factor
+        Gets the max velocity scaling factor (in %)
+        
         :return: max velocity scaling factor
-        :rtype: Int32
+        :rtype: int
         """
-        return self.__max_velocity_scaling_factor_ntv.value
+        return self.__max_velocity_scaling_factor_ntv.value.data
 
     def set_arm_max_velocity(self, percentage):
         """
@@ -603,12 +606,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def stop_move(self):
         """
         Stops the robot movement
-
-        :return: list of joints value
-        :rtype: list[float]
         """
-        result = self._call_service('/niryo_robot_commander/stop_command', Trigger)
-        return self._classic_return_w_check(result)
+        self.__robot_action_nac.action_server.cancel_goal()
 
     def set_jog_use_state(self, state):
         """
@@ -779,9 +778,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param with_desc: If True it returns the poses descriptions
         :type with_desc: bool
-        :return: list of positions name
-        :rtype: list[str]
+        :return: list of positions name, positions descriptions if 'with_desc' is True
+        :rtype: list[str], list[str] if with_desc is True
         """
+        # TODO: Better way in past?
         pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
         names = [pose.name for pose in pose_list.objects]
         if with_desc:
@@ -909,6 +909,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of trajectory name
         :rtype: list[str]
         """
+        # TODO: Better way in past?
         trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
         return [trajectory.name for trajectory in trajectories.objects]
 
@@ -1011,6 +1012,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                     ", expected 'pose' or 'joint'")
 
         elif len(list_type) == len(list_pose_joints):
+            i = 0
             # convert every joints to poses
             for target, type_ in zip(list_pose_joints, list_type):
                 if type_ == 'joint':
@@ -1020,9 +1022,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                     list_pose_waypoints.append(target)
                 else:
                     raise NiryoRosWrapperException(
-                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' +
-                        str(i) +  # TODO: check non existant variable i
+                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
                         ' got ' + type_ + ", expected 'pose' or 'joint'")
+                i += 1
 
         else:
             raise NiryoRosWrapperException('Executes trajectory from poses and joints - List of waypoints (size ' +
@@ -1272,6 +1274,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
+        # TODO: Better way in past?
         dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
                                                     BasicObjectArray,
                                                     2)
@@ -1483,7 +1486,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
-        :rtype: Union[ToolID, int]
+        :rtype: int
         """
         return self.__tools.get_current_tool_id()
 
@@ -1493,6 +1496,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: the hardware state
         :rtype: int
         """
+        # TODO: I talk about possible return values
         return self.__tool_motor_state_ntv.value.state
 
     def update_tool(self):
@@ -1639,7 +1643,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param as_list: True to return the tcp position as a list of float
         :type as_list: bool
         :return: the tcp (enabled, position and orientation)
-        :rtype: Tool msg object
+        :rtype: Tool msg object or list[float] if as_list is True
         """
         tcp = self.__tools.get_tcp()
         if as_list:
@@ -1836,8 +1840,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Returns the joints and positions min and max values
 
-        :return: An object containing all the values
-        :rtype: dict
+        :return: if an error occur, An object containing all the values
+        :rtype: bool, dict
         """
         path_pattern = '/niryo_robot/robot_command_validation/{}/{}/{}'
         axis_limits = {
@@ -2092,7 +2096,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param yaw_rel:
         :type yaw_rel: float
         :return: target_pose
-        :rtype: RobotState
+        :rtype: RobotState or list[float] if as_list is True
         """
         from niryo_robot_poses_handlers.srv import GetTargetPose
 
@@ -2134,11 +2138,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, None, "", ""
-        obj_pose = self.get_target_pose_from_rel(workspace_name,
-                                                 height_offset,
-                                                 rel_pose.x,
-                                                 rel_pose.y,
-                                                 rel_pose.yaw,
+        obj_pose = self.get_target_pose_from_rel(workspace_name, height_offset,
+                                                 rel_pose.x, rel_pose.y, rel_pose.yaw, 
                                                  as_list=as_list)
         return True, obj_pose, obj_shape, obj_color
 
@@ -2376,6 +2377,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of workspaces name
         :rtype: list[str]
         """
+        # TODO: Better way in past?
         workspace_list = rospy.wait_for_message('/niryo_robot_workspaces_handlers/workspace_list', BasicObjectArray, 2)
         names = [workspace.name for workspace in workspace_list.objects]
         if with_desc:
