@@ -161,7 +161,7 @@ class RaspberryLogsSizeEntry(ABCRegisterEntry):
 @slave_context.input_register
 class HardwareVersionEntry(ABCStringEntries):
     data_type = str
-    reserved_addresses = 4
+    reserved_addresses = 5
 
     @staticmethod
     def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
@@ -198,6 +198,43 @@ class SystemVersionPatchEntry(ABCRegisterEntry):
 @slave_context.input_register
 class SystemVersionBuildEntry(ABCRegisterEntry):
     data_type = int
+    reserved_addresses = 7
 
     def get(self) -> int:
         return int(system_api_client.get_system_version_current().data['system'][7:9])
+
+
+@slave_context.input_register
+class HardwareTemperaturesEntry(ABCStringEntries):
+    data_type = float
+
+    @staticmethod
+    def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
+        return len(ros_wrapper.get_hardware_status().temperatures)
+
+    def get(self) -> float:
+        return self._ros_wrapper.get_hardware_status().temperatures[self._index]
+
+
+@slave_context.input_register
+class HardwareVoltagesEntry(ABCStringEntries):
+    data_type = float
+
+    @staticmethod
+    def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
+        return len(ros_wrapper.get_hardware_status().voltages)
+
+    def get(self) -> float:
+        return self._ros_wrapper.get_hardware_status().voltages[self._index]
+
+
+@slave_context.input_register
+class HardwareErrorsEntry(ABCStringEntries):
+    data_type = float
+
+    @staticmethod
+    def get_address_count(ros_wrapper: NiryoRosWrapper) -> int:
+        return len(ros_wrapper.get_hardware_status().hardware_errors)
+
+    def get(self) -> float:
+        return self._ros_wrapper.get_hardware_status().hardware_errors[self._index]
