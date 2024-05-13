@@ -139,7 +139,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
 
         if self.__hardware_version == 'ned2':
-            from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
+            from niryo_robot_python_ros_wrapper.buttons import (
+                CustomButtonRosWrapper, 
+                FreeMotionButtonRosWrapper, 
+                SaveButtonRosWrapper
+            )
             from niryo_robot_led_ring.api import LedRingRosWrapper
             from niryo_robot_sound.api import SoundRosWrapper
 
@@ -149,8 +153,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
             # - Custom button
             self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
+            # - Free motion button
+            self.__free_drive_button = FreeMotionButtonRosWrapper(self.__hardware_version)
+            # - Same button
+            self.__save_pos_button = SaveButtonRosWrapper(self.__hardware_version)
         else:
-            self.__led_ring = self.__sound = self.__custom_button = None
+            self.__led_ring = self.__sound = self.__custom_button = self.__free_drive_button = self.__save_pos_button = None
 
         rospy.loginfo("Python ROS Wrapper ready")
 
@@ -2445,6 +2453,40 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype:  CustomButtonRosWrapper
         """
         return self.__custom_button
+    
+    @property
+    def free_motion_button(self):
+        """
+        Manages the free motion button
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            print(robot.free_motion_button.state)
+
+        :return: FreeMotionButtonRosWrapper API instance
+        :rtype:  FreeMotionButtonRosWrapper
+        """
+        return self.__free_drive_button
+    
+    @property
+    def save_button(self):
+        """
+        Manages the save button
+
+        Example: ::
+
+            from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+            robot = NiryoRosWrapper()
+            print(robot.save_button.state)
+
+        :return: SaveButtonRosWrapper API instance
+        :rtype:  SaveButtonRosWrapper
+        """
+        return self.__save_pos_button
 
     @property
     def robot_status(self):

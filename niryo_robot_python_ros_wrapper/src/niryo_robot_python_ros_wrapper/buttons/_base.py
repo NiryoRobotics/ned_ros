@@ -8,7 +8,7 @@ from end_effector_interface.msg import EEButtonStatus
 from niryo_robot_msgs.msg import CommandStatus
 
 
-class CustomButtonRosWrapperException(Exception):
+class ButtonRosWrapperException(Exception):
     pass
 
 
@@ -20,7 +20,7 @@ def check_ned2_version(func):
     def wrap(*args, **kwargs):
         robot_instance = args[0]
         if robot_instance.hardware_version != 'ned2':
-            raise CustomButtonRosWrapperException(
+            raise ButtonRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))
 
@@ -29,8 +29,8 @@ def check_ned2_version(func):
     return wrap
 
 
-class CustomButtonRosWrapper:
-    def __init__(self, hardware_version='ned2'):
+class BaseButtonRosWrapper:
+    def __init__(self, button_name, hardware_version='ned2'):
         self.__hardware_version = hardware_version
 
         self.__action_lock = Lock()
@@ -42,15 +42,15 @@ class CustomButtonRosWrapper:
             ButtonAction.NO_ACTION: Event(),
         }
 
-        self.__custom_button_state = EEButtonStatus.NO_ACTION
+        self.__button_state = EEButtonStatus.NO_ACTION
 
-        self.__custom_button_topic = rospy.Subscriber(
-            '/niryo_robot_hardware_interface/end_effector_interface/custom_button_status',
-            EEButtonStatus, self.__callback_custom_pos_button_status)
+        rospy.Subscriber(
+            '/niryo_robot_hardware_interface/end_effector_interface/{}_button_status'.format(button_name),
+            EEButtonStatus, self.__callback_button_status)
 
     def __check_ned_2_version(self):
         if self.__hardware_version != 'ned2':
-            raise CustomButtonRosWrapperException(
+            raise ButtonRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))
 
@@ -67,7 +67,7 @@ class CustomButtonRosWrapper:
         :rtype: int
         """
         self.__check_ned_2_version()
-        return self.__custom_button_state
+        return self.__button_state
 
     def is_pressed(self):
         """
@@ -76,7 +76,7 @@ class CustomButtonRosWrapper:
         :rtype: bool
         """
         self.__check_ned_2_version()
-        return self.__custom_button_state != EEButtonStatus.NO_ACTION
+        return self.__button_state != EEButtonStatus.NO_ACTION
 
     def wait_for_action(self, action, timeout=0):
         """
@@ -119,7 +119,7 @@ class CustomButtonRosWrapper:
                 a_event.clear()
 
     def __set(self, action):
-        self.__custom_button_state = action
+        self.__button_state = action
         if action in self.__action_events:
             with self.__action_lock:
                 self.__action_events[action].set()
@@ -174,5 +174,5 @@ class CustomButtonRosWrapper:
 
         return (rospy.Time.now() - pressed_time).to_sec()
 
-    def __callback_custom_pos_button_status(self, custom_button_status):
-        self.__set(custom_button_status.action)
+    def __callback_button_status(self, button_status):
+        self.__set(button_status.action)
