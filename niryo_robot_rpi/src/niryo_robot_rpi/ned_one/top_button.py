@@ -178,6 +178,9 @@ class TopButton(AbstractTopButton):
                 rospy.sleep(0.2)
                 self._send_pause_state(PausePlanExecution.RESUME)
                 self._pause_state = PausePlanExecution.PLAY
+        # Program cancelled: execute it another time
+        elif self._pause_state in PausePlanExecution.CANCEL:
+            self._trigger_sequence_autorun()
 
     def double_press(self):
         start_time = rospy.Time.now()
