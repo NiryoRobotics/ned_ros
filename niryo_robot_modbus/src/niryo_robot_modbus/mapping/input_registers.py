@@ -205,7 +205,7 @@ class SystemVersionBuildEntry(ABCRegisterEntry):
 
 
 @slave_context.input_register
-class HardwareTemperaturesEntry(ABCStringEntries):
+class HardwareTemperaturesEntry(ABCRegisterEntries):
     data_type = float
 
     @staticmethod
@@ -217,7 +217,7 @@ class HardwareTemperaturesEntry(ABCStringEntries):
 
 
 @slave_context.input_register
-class HardwareVoltagesEntry(ABCStringEntries):
+class HardwareVoltagesEntry(ABCRegisterEntries):
     data_type = float
 
     @staticmethod
@@ -229,7 +229,7 @@ class HardwareVoltagesEntry(ABCStringEntries):
 
 
 @slave_context.input_register
-class HardwareErrorsEntry(ABCStringEntries):
+class HardwareErrorsEntry(ABCRegisterEntries):
     data_type = float
 
     @staticmethod

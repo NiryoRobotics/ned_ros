@@ -781,7 +781,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of positions name, positions descriptions if 'with_desc' is True
         :rtype: list[str], list[str] if with_desc is True
         """
-        # TODO: Better way in past?
         pose_list = rospy.wait_for_message('/niryo_robot_poses_handlers/pose_list', BasicObjectArray, 2)
         names = [pose.name for pose in pose_list.objects]
         if with_desc:
@@ -909,7 +908,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of trajectory name
         :rtype: list[str]
         """
-        # TODO: Better way in past?
         trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
         return [trajectory.name for trajectory in trajectories.objects]
 
@@ -1008,11 +1006,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
             else:
                 raise NiryoRosWrapperException(
-                    "Executes trajectory from poses and joints - Wrong list_type argument : got " + list_type[0] +
+                    "Executes trajectory from poses and joints - Wrong list_type argument: got " + list_type[0] +
                     ", expected 'pose' or 'joint'")
 
         elif len(list_type) == len(list_pose_joints):
-            i = 0
             # convert every joints to poses
             for target, type_ in zip(list_pose_joints, list_type):
                 if type_ == 'joint':
@@ -1022,9 +1019,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                     list_pose_waypoints.append(target)
                 else:
                     raise NiryoRosWrapperException(
-                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
-                        ' got ' + type_ + ", expected 'pose' or 'joint'")
-                i += 1
+                        'Executes trajectory from poses and joints - Wrong list_type argument: got ' + 
+                        type_ + ", expected 'pose' or 'joint'")
 
         else:
             raise NiryoRosWrapperException('Executes trajectory from poses and joints - List of waypoints (size ' +
@@ -1274,7 +1270,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
-        # TODO: Better way in past?
         dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
                                                     BasicObjectArray,
                                                     2)
@@ -1840,7 +1835,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Returns the joints and positions min and max values
 
-        :return: if an error occur, An object containing all the values
+        :return: error, A dictionnary containing all the values
         :rtype: bool, dict
         """
         path_pattern = '/niryo_robot/robot_command_validation/{}/{}/{}'
@@ -2377,7 +2372,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of workspaces name
         :rtype: list[str]
         """
-        # TODO: Better way in past?
         workspace_list = rospy.wait_for_message('/niryo_robot_workspaces_handlers/workspace_list', BasicObjectArray, 2)
         names = [workspace.name for workspace in workspace_list.objects]
         if with_desc:
