@@ -12,24 +12,9 @@ class ButtonRosWrapperException(Exception):
     pass
 
 
-def check_ned2_version(func):
-    """
-    Decorator that check the robot version
-    """
-
-    def wrap(*args, **kwargs):
-        robot_instance = args[0]
-        if robot_instance.hardware_version != 'ned2':
-            raise ButtonRosWrapperException(
-                "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
-                    CommandStatus.BAD_HARDWARE_VERSION))
-
-        return func(*args, **kwargs)
-
-    return wrap
-
-
 class BaseButtonRosWrapper:
+    _error_class = ButtonRosWrapperException
+    
     def __init__(self, button_name, hardware_version='ned2'):
         self.__hardware_version = hardware_version
 
@@ -50,7 +35,7 @@ class BaseButtonRosWrapper:
 
     def __check_ned_2_version(self):
         if self.__hardware_version != 'ned2':
-            raise ButtonRosWrapperException(
+            raise self._error_class(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))
 
