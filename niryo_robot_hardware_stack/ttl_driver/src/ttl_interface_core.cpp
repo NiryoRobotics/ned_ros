@@ -627,7 +627,6 @@ void TtlInterfaceCore::_executeCommand()
         {
             _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
             _single_cmds_queue.pop();
-            return;
         }
     }
 
@@ -637,7 +636,6 @@ void TtlInterfaceCore::_executeCommand()
         {
             _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
             _conveyor_cmds_queue.pop();
-            return;
         }
     }
 
@@ -647,7 +645,6 @@ void TtlInterfaceCore::_executeCommand()
         {
             _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds_queue.front()));
             _sync_cmds_queue.pop();
-            return;
         }
     }
 
@@ -657,7 +654,6 @@ void TtlInterfaceCore::_executeCommand()
         {
             _ttl_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
             _joint_trajectory_cmd.clear();
-            return;
         }
     }
 }
