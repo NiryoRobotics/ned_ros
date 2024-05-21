@@ -1,0 +1,2 @@
+control_loop_frequency: 30 # Hz
+niryo_studio_timeout: 4 # Seconds

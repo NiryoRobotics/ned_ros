@@ -48,6 +48,7 @@ enum class EHardwareType {
                             FAKE_END_EFFECTOR=22,
                             END_EFFECTOR=30,
                             NED3_END_EFFECTOR=31,
+                            PROGRAM_PLAYER=40,
                             UNKNOWN=100
                           };
 
