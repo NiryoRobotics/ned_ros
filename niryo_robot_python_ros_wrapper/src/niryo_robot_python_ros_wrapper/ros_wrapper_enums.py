@@ -26,6 +26,7 @@ class ToolID:
     GRIPPER_4 = 14
     ELECTROMAGNET_1 = 30
     VACUUM_PUMP_1 = 31
+    VACUUM_PUMP_2 = 32
 
 
 class PinMode:
