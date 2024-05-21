@@ -43,11 +43,10 @@ def move_command(move_function):
 
         result = move_function(self, *args, **kwargs)
 
-        ### This error is very anoying
         # check if a collision happened during the move
-        #if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
-        #    status, message = result
-        #    raise NiryoRosWrapperException(message, status=status, message=message)
+        if self._collision_detected and self._collision_policy == CollisionPolicy.HARD:
+            status, message = result
+            raise NiryoRosWrapperException(message, status=status, message=message)
         return result
 
     return wrapper
