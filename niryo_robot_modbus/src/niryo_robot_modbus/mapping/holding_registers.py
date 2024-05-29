@@ -214,7 +214,7 @@ class ArmSpeedEntry(ABCRegisterEntry):
     data_type = int
 
     def get(self) -> int:
-        return self._ros_wrapper.get_max_velocity_scaling_factor().data
+        return self._ros_wrapper.get_max_velocity_scaling_factor()
 
     def set(self, value: int) -> None:
         self._ros_wrapper.set_arm_max_velocity(value)

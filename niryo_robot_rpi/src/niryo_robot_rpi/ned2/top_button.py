@@ -102,3 +102,5 @@ class TopButton(AbstractTopButton):
             self._pause_program()
         elif self._pause_state == PausePlanExecution.PAUSE:
             self._resume_program()
+        elif self._pause_state == PausePlanExecution.CANCEL:
+            self._trigger_sequence_autorun()

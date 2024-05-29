@@ -135,10 +135,38 @@ Custom Button
     :members: custom_button
     :member-order: bysource
 
-.. automodule:: niryo_robot_python_ros_wrapper.custom_button_ros_wrapper
+.. automodule:: niryo_robot_python_ros_wrapper.buttons
    :members: CustomButtonRosWrapper
 
 .. autoclass:: CustomButtonRosWrapper
+    :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
+    :member-order: bysource
+
+Free Motion Button
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: free_motion_button
+    :member-order: bysource
+
+.. automodule:: niryo_robot_python_ros_wrapper.buttons
+   :members: FreeMotionButtonRosWrapper
+
+.. autoclass:: FreeMotionButtonRosWrapper
+    :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
+    :member-order: bysource
+
+Save Button
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: save_button
+    :member-order: bysource
+
+.. automodule:: niryo_robot_python_ros_wrapper.buttons
+   :members: SaveButtonRosWrapper
+
+.. autoclass:: SaveButtonRosWrapper
     :members: state, is_pressed, wait_for_action, wait_for_any_action, get_and_wait_press_duration
     :member-order: bysource
 

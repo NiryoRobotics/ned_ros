@@ -56,7 +56,8 @@ class AbstractNiryoRosWrapper(object):
     @staticmethod
     def _check_result_status(result):
         if result.status < 0:
-            raise NiryoRosWrapperException("Error Code : {}\nMessage : {}".format(result.status, result.message))
+            raise NiryoRosWrapperException("Error Code : {}\nMessage : {}".format(result.status, result.message),
+                                           status=result.status, message=result.message)
 
     @staticmethod
     def return_success(message=""):
