@@ -129,6 +129,17 @@ int ToolsInterfaceCore::initHardware(bool torque_on, uint8_t temperature_limit, 
             uint8_t control_mode = 5;  // torque + position
             _ttl_interface->addSingleCommandToQueue(
                 std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE, motor_id, std::initializer_list<uint32_t>{control_mode}));
+
+            // Add a slow velocity/acceleration profile to help the pump avoid giving too much effort
+            auto tool_name = _toolState->getToolName();
+            if (tool_name == "Vacuum Pump v2")
+            {
+                _ttl_interface->addSingleCommandToQueue(
+                    std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE,
+                    motor_id,
+                    std::initializer_list<uint32_t>{static_cast<uint32_t>(_velocity_profile),
+                    static_cast<uint32_t>(_acceleration_profile)}));
+            }
         }
 
         // TORQUE cmd on if ned2, off otherwise
@@ -145,6 +156,9 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     double tool_connection_frequency{1.0};
     nh.getParam("check_tool_connection_frequency", tool_connection_frequency);
+    nh.getParam("vacuum_pump_timeout", _vacuum_pump_timeout);
+    nh.getParam("gripper_timemout", _gripper_timeout);
+
 
     ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", tool_connection_frequency);
 
@@ -161,6 +175,9 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
     nh.getParam("tools_params/name_list", nameList);
     nh.getParam("tools_params/temperature_limit", _temperature_limit);
     nh.getParam("tools_params/shutdown_configuration", _shutdown_configuration);
+
+    nh.getParam("tools_params/vacuum_pump_v2/velocity_profile", _velocity_profile);
+    nh.getParam("tools_params/vacuum_pump_v2/acceleration_profile", _acceleration_profile);
 
     // check that the three lists have the same size
     if (idList.size() == typeList.size() && idList.size() == nameList.size())
@@ -373,19 +390,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Requ
     {
         _toolCommand(req.position, req.max_torque, req.speed);
 
-        double seconds_to_wait = 1;
-        if (EHardwareType::XL320 == _toolState->getHardwareType())
-        {
-            auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-            assert(dxl_speed != 0.00);
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-            seconds_to_wait = dxl_steps_to_do / dxl_speed + 0.25;  // sec
-        }
-
-        ROS_DEBUG("ToolsInterfaceCore::_callbackOpenGripper : Waiting for %f seconds", seconds_to_wait);
-        ros::Duration(seconds_to_wait).sleep();
-
-        // TODO(cc) find a way to have feedback on this instead of a delay waiting
+        _waitForToolStop(req.id, _gripper_timeout);
 
         // set hold torque
         _toolCommand(req.position, req.hold_torque, req.speed);
@@ -416,22 +421,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Req
 
         _toolCommand(position_command, req.max_torque, req.speed);
 
-        double seconds_to_wait = 1;
-        if (EHardwareType::XL320 == _toolState->getHardwareType())
-        {
-            // calculate close duration
-            // cc to be removed => acknowledge instead ?
-            auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-            assert(dxl_speed != 0.0);
-
-            // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-            seconds_to_wait = dxl_steps_to_do / dxl_speed + 0.25;  // sec
-        }
-
-        ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
-
-        ros::Duration(seconds_to_wait).sleep();
+        _waitForToolStop(req.id, _gripper_timeout);
 
         // set hold torque
         _toolCommand(position_command, req.hold_torque, req.speed);
@@ -471,21 +461,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::ToolCommand
             {
                 _toolCommand(pull_air_position, pull_air_max_torque, pull_air_velocity);
 
-                double seconds_to_wait = 1;
-                if (EHardwareType::XL320 == _toolState->getHardwareType())
-                {
-                    // calculate close duration
-                    // cc to be removed => acknoledge instead
-                    auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-                    assert(dxl_speed != 0.0);
-
-                    // position
-                    double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-                    seconds_to_wait = dxl_steps_to_do / dxl_speed + 0.5;  // sec
-                }
-                ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
-
-                ros::Duration(seconds_to_wait).sleep();
+                _waitForToolStop(req.id, _vacuum_pump_timeout);
 
                 // set hold torque
                 _toolCommand(pull_air_position, pull_air_hold_torque, pull_air_velocity);
@@ -523,19 +499,7 @@ bool ToolsInterfaceCore::_callbackPushAirVacuumPump(tools_interface::ToolCommand
             {
                 _toolCommand(push_air_position, req.max_torque, push_air_velocity);
 
-                // cc to be removed => acknowledge instead
-                double seconds_to_wait = 1;
-                if (EHardwareType::XL320 == _toolState->getHardwareType())
-                {
-                    auto dxl_speed = static_cast<double>(req.speed * _toolState->getStepsForOneSpeed());  // position . sec-1
-                    assert(dxl_speed != 0.0);
-
-                    // position
-                    double dxl_steps_to_do = std::abs(static_cast<double>(req.position) - _toolState->getPosition());
-                    seconds_to_wait = dxl_steps_to_do / dxl_speed + 0.25;  // sec
-                }
-                ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
-                ros::Duration(seconds_to_wait).sleep();
+                _waitForToolStop(req.id, _vacuum_pump_timeout);
 
                 // set torque to 0
                 _toolCommand(push_air_position, 0, push_air_velocity);
@@ -547,6 +511,41 @@ bool ToolsInterfaceCore::_callbackPushAirVacuumPump(tools_interface::ToolCommand
     }
 
     return true;
+}
+
+/**
+ * @brief ToolsInterfaceCore::_waitForToolStop
+ * @param id
+ * @param timeout
+*/
+void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
+{
+    // Wait for moving status to acknowledge that the motion has stopped or return if timeout
+    std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+    int moving_counter{0};
+    while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start_time).count() < timeout)
+    {
+        uint8_t moving_status;
+        _ttl_interface->readMoving(id, moving_status);
+
+        // Count the number of times the tool has been detected as not moving consecutively
+        if (moving_status == 0)
+        {
+            moving_counter++;
+        }
+        else
+        {
+            moving_counter = 0;
+        }
+
+        // If the vacuum pump has been detected as not moving 5 times in a row, we consider that the vacuum pump cannot move anymore
+        if (moving_counter > 5)
+        {
+            break;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 }
 
 /**

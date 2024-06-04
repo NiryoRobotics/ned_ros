@@ -146,6 +146,8 @@ public:
 
     int readControlMode(uint8_t id, uint8_t& control_mode);
 
+    int readMoving(uint8_t id, uint8_t &status);
+
     //calibration
     void startCalibration() override;
     void resetCalibration() override;

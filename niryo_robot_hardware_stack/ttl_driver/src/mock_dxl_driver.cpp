@@ -888,6 +888,21 @@ int MockDxlDriver::readLoad(uint8_t id, uint16_t &present_load)
 }
 
 /**
+ * @brief MockDxlDriver::readMoving
+ * @param id
+ * @param status
+ * @return
+ */
+int MockDxlDriver::readMoving(uint8_t id, uint8_t &status)
+{
+    (void)status;  // unused
+
+    if (_fake_data->dxl_registers.count(id))
+        return COMM_SUCCESS;
+    return COMM_RX_FAIL;
+}
+
+/**
  * @brief MockDxlDriver::syncReadLoad
  * @param id_list
  * @param load_list

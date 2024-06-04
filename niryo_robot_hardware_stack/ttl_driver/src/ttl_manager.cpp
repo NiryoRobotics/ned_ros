@@ -225,13 +225,6 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     }
     auto driver = driver_it->second;
 
-    // check if the driver is valid for this hardware
-    if (driver->checkModelNumber(id) != COMM_SUCCESS)
-    {
-        ROS_ERROR("TtlManager::addHardwareComponent - Model number check failed for hardware id %d", id);
-        return niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
-    }
-
     // update firmware version
     std::string version;
     int res = COMM_RX_FAIL;
@@ -1752,6 +1745,45 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
     else
     {
         ROS_ERROR_THROTTLE(1, "TtlManager::readVelocityProfile - driver for motor id %d unknown", static_cast<int>(id));
+        result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+    }
+
+    ros::Duration(0.005).sleep();
+    return result;
+}
+
+/**
+ * @brief TtlManager::readMoving
+ * @param id
+ * @param status
+ * @return
+ */
+int TtlManager::readMoving(uint8_t id, uint8_t &status)
+{
+    int result = COMM_RX_FAIL;
+
+    if (_state_map.count(id) != 0 && _state_map.at(id))
+    {
+        EHardwareType motor_type = _state_map.at(id)->getHardwareType();
+
+        // Only used for xl330 and xl320 for now
+        if (_driver_map.count(motor_type) && (motor_type == EHardwareType::XL330 || motor_type == EHardwareType::XL320))
+        {
+            auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
+            if (driver)
+            {
+                result = driver->readMoving(id, status);
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::readMoving - register MOVING for motor %s not available", HardwareTypeEnum(motor_type).toString().c_str());
+            result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+        }
+    }
+    else
+    {
+        ROS_ERROR_THROTTLE(1, "TtlManager::readMoving - driver for motor id %d unknown", static_cast<int>(id));
         result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
 

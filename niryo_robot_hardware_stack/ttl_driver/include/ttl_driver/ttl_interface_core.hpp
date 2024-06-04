@@ -150,6 +150,7 @@ namespace ttl_driver
         void waitSingleQueueFree();
 
         bool readHomingAbsPosition();
+        int readMoving(uint8_t id, uint8_t& status);
 
         void setEstopFlag(bool value);
 

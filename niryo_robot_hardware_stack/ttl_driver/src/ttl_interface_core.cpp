@@ -422,6 +422,15 @@ bool TtlInterfaceCore::readHomingAbsPosition()
     return _ttl_manager->readHomingAbsPosition();
 }
 
+/**
+ * @brief TtlInterfaceCore::readMoving
+ */
+int TtlInterfaceCore::readMoving(uint8_t id, uint8_t &status)
+{
+    lock_guard<mutex> lck(_control_loop_mutex);
+    return _ttl_manager->readMoving(id, status);
+}
+
 // ****************
 //  Control Loop
 // ****************
