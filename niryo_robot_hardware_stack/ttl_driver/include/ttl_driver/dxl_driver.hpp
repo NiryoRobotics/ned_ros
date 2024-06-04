@@ -121,6 +121,8 @@ namespace ttl_driver
         int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
         int readControlMode(uint8_t id, uint8_t &control_mode) override;
 
+        int readMoving(uint8_t id, uint8_t &status) override;
+
         // ram write
         int writePID(uint8_t id, const std::vector<uint16_t> &data) override;
         int writeControlMode(uint8_t id, uint8_t control_mode) override;
@@ -779,6 +781,18 @@ namespace ttl_driver
         }
 
         return COMM_SUCCESS;
+    }
+
+    /**
+     * @brief DxlDriver<reg_type>::readMoving
+     * @param id
+     * @param status
+     * @return
+     */
+    template <typename reg_type>
+    int DxlDriver<reg_type>::readMoving(uint8_t id, uint8_t &status)
+    {
+        return read<typename reg_type::TYPE_MOVING>(reg_type::ADDR_MOVING, id, status);
     }
 
     /**

@@ -1,16 +1,19 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-v5.4.1 (WIP)
+Forthcoming
 -----------
 **Features**
 - Add Ned3 Calibration support
 - Add support for Conveyor with ned3 stepper
+- Add support for vacuum pump v2
+- Add velocity and acceleration profile for vacuum pump v2
 
 **Improvements**
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
+ * Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time
 
 v5.4.0
 -----------

@@ -4,3 +4,7 @@ tools_params:
     name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump", "Vacuum Pump v2"]
     temperature_limit: 50 # DO NOT MODIFY THIS VALUE
     shutdown_configuration: 53 # DO NOT MODIFY THIS VALUE
+
+    vacuum_pump_v2:
+        velocity_profile: 80
+        acceleration_profile: 40

@@ -116,6 +116,8 @@ namespace ttl_driver
         int readLoad(uint8_t id, uint16_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
 
+        int readMoving(uint8_t id, uint8_t &status) override;
+
     private:
         std::shared_ptr<FakeTtlData> _fake_data;
         std::vector<uint8_t> _id_list;

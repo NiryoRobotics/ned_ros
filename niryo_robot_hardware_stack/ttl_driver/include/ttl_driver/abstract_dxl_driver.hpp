@@ -58,6 +58,8 @@ namespace ttl_driver
 
         virtual int readPID(uint8_t id, std::vector<uint16_t> &data) = 0;
 
+        virtual int readMoving(uint8_t id, uint8_t &status) = 0;
+
         // ram write
         virtual int writePID(uint8_t id, const std::vector<uint16_t> &data) = 0;
 
