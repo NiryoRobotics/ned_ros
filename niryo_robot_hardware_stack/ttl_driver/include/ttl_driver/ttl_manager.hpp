@@ -52,6 +52,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
+#include "common/model/conveyor_state.hpp"
+
 
 namespace ttl_driver
 {
@@ -163,7 +165,8 @@ public:
     uint32_t getPosition(const common::model::JointState &motor_state);
     int getLedState() const;
 
-    std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
+    std::vector<std::shared_ptr<common::model::JointState>> getMotorsStates() const;
+    std::vector<std::shared_ptr<common::model::ConveyorState>> getConveyorsStates() const;
     std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
     std::vector<uint8_t> getRemovedMotorList() const override;
@@ -188,6 +191,12 @@ private:
 
     bool checkCollision();
 
+    struct GetJointsStepperDriverResult {
+        std::shared_ptr<ttl_driver::AbstractStepperDriver> driver;
+        common::model::EHardwareType hardware_type;
+    };
+    GetJointsStepperDriverResult getJointsStepperDriver();
+
 private:
     ros::NodeHandle _nh;
     std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -210,7 +219,6 @@ private:
 
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
-    std::shared_ptr<ttl_driver::AbstractStepperDriver> _default_stepper_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary

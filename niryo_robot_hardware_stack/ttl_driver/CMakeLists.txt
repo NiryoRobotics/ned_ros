@@ -22,8 +22,7 @@ execute_process( COMMAND
     )
 
 ## c++ options
-## Compile as C++14, supported in ROS Melodic and newer
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,

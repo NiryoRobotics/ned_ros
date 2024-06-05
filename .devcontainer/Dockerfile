@@ -19,6 +19,9 @@ RUN sudo usermod --append --groups video $USERNAME
 RUN mkdir -p /home/$USERNAME/catkin_ws/src
 WORKDIR /home/$USERNAME/catkin_ws
 
+# Change ownership
+RUN sudo chown -R $USERNAME:$USERNAME /home/$USERNAME/catkin_ws
+
 # Update all packages
 RUN sudo apt update && sudo apt upgrade -y
 

@@ -23,12 +23,15 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
 
 namespace ttl_driver
 {
+
+inline constexpr auto MAX_CONVEYOR_RPM = 50;
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
@@ -80,9 +83,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
 
             // convert direction and speed into signed speed
             uint32_t dir = static_cast<uint32_t>(cmd->getParams().at(2));
+            uint32_t speed_percent = std::clamp(static_cast<uint32_t>(cmd->getParams().at(1)), 0u, 100u);
             // normal warning : we need to put an int32 inside an uint32_t
-            constexpr auto MAX_RPM = 50;
-            uint32_t speed = static_cast<uint32_t>(dir * static_cast<int>(cmd->getParams().at(1) * MAX_RPM / (100 * velocityUnit())));
+            uint32_t speed = static_cast<uint32_t>(dir * static_cast<int>(speed_percent * MAX_CONVEYOR_RPM / (100 * velocityUnit())));
             ROS_INFO("AbstractStepperDriver::writeSingleCmd: speed = %d", speed);
             return writeVelocityGoal(cmd->getId(), speed);
         }
@@ -244,4 +247,26 @@ int AbstractStepperDriver::factoryCalibration(const uint8_t id, const uint32_t &
 
     return 0;
 }
+
+/**
+ * @brief Returns the velocity of the conveyor in percentage
+*/
+int AbstractStepperDriver::readConveyorVelocity(uint8_t id, int32_t &velocity_percent, int32_t &direction)
+{
+    uint32_t present_velocity = 0;
+    auto res = readVelocity(id, present_velocity);
+    if (res != COMM_SUCCESS )
+    {
+        ROS_ERROR("AbstractStepperDriver::readConveyorVelocity: readVelocity failed with error %d", res);
+        return res;
+    }
+
+    auto velocity_unit = velocityUnit();
+    auto velocity_rpms = present_velocity / velocity_unit;
+    direction = present_velocity > 0 ? 1 : -1;
+    velocity_percent = static_cast<int32_t>(std::abs(velocity_rpms * 100 / MAX_CONVEYOR_RPM));
+
+    return COMM_SUCCESS;
+}
+
 }  // namespace ttl_driver

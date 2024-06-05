@@ -143,5 +143,10 @@ void AbstractHardwareState::setConnectionStatus(bool connected)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg) { _hw_error_message = std::move(hw_error_msg); }
 
+void AbstractHardwareState::setStrictModelNumber(bool strict_model_number)
+{
+    _strict_model_number = strict_model_number;
+}
+
 }  // namespace model
 }  // namespace common
