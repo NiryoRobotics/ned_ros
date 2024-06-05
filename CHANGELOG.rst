@@ -7,7 +7,8 @@ v5.4.1 (WIP)
 - Add Ned3 Calibration support
 - Add support for Conveyor with ned3 stepper
 
-**Improvements**
+**Improvements***
+ * Add speed limit pourcentage for the conveyor
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully

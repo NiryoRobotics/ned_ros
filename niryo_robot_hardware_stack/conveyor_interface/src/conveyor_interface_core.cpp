@@ -480,7 +480,13 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
  */
 bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res)
 {
-    ROS_INFO("Conveyor interface - ControlConveyorCallback received id %d speed %d direction %d ", req.id, req.speed, req.direction);
+    if (req.speed < 0 || req.speed > 100)
+    {
+        res.message = "Speed value must be between 0 and 100";
+        res.status = niryo_robot_msgs::CommandStatus::INVALID_PARAMETERS;
+        return true;
+    }
+
     std::lock_guard<std::mutex> lck(_state_map_mutex);
 
     // retrieve corresponding iterator in vector
@@ -514,7 +520,6 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     }
     else
     {
-        ROS_INFO("Conveyor interface - Conveyor id %d isn't set", req.id);
         res.message = "Conveyor id ";
         res.message += to_string(req.id);
         res.message += " is not set";
