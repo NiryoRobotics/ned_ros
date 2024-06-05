@@ -69,6 +69,10 @@ namespace ttl_driver
         virtual int syncReadHomingAbsPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &abs_position) = 0;
         virtual int syncWriteHomingAbsPosition(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &abs_position) = 0;
 
+        // Important Remark: It is weird to have conveyor specific functions in a stepper driver
+        // This is temporary waiting for a new driver abstraction design
+        int readConveyorVelocity(uint8_t id, int32_t &velocity, int32_t &direction);
+
         // parameters
 
         /**

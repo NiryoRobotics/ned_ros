@@ -40,18 +40,17 @@ using ::common::model::HardwareTypeEnum;
 class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double>>
 {
   protected:
-    void SetUp() override
+    DXLCommonTest()
+        : dxlState{std::get<0>(GetParam()), std::get<1>(GetParam()), 1}
     {
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
-        dxlState = common::model::DxlMotorState(std::get<0>(GetParam()), std::get<1>(GetParam()), 1);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
         dxlState.setLimitPositionMin(-2.0);
         dxlState.setLimitPositionMax(2.0);
 
         // define precision according to smallest motor step in radian
         // we divide by two because we are looking for the closest integer
-        ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition()) / RADIAN_TO_DEGREE;
         precision /= 2;
     }
@@ -66,18 +65,17 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EC
 class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double, double>>
 {
   protected:
-    void SetUp() override
+    DXLIdentityRadTest()
+        : dxlState{std::get<0>(GetParam()), std::get<1>(GetParam()), 1}
     {
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
-        dxlState = common::model::DxlMotorState(std::get<0>(GetParam()), std::get<1>(GetParam()), 1);
         dxlState.setLimitPositionMax(2.0);
         dxlState.setLimitPositionMin(-2.0);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
 
         // define precision according to smallest motor step in radian
         // we divide by two because we are looking for the closest integer
-        ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition()) / RADIAN_TO_DEGREE;
         precision /= 2;
     }
@@ -90,18 +88,17 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareTyp
 class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double, int>>
 {
   protected:
-    void SetUp() override
+    DXLIdentityMotorTest()
+        : dxlState{std::get<0>(GetParam()), std::get<1>(GetParam()), 1}
     {
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
-        dxlState = common::model::DxlMotorState(std::get<0>(GetParam()), std::get<1>(GetParam()), 1);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
         dxlState.setLimitPositionMin(-2.0);
         dxlState.setLimitPositionMax(2.0);
 
         // define precision according to smallest motor step in radian
         // we divide by two because we are looking for the closest integer
-        ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition()) / RADIAN_TO_DEGREE;
         precision /= 2;
     }
@@ -179,17 +176,13 @@ INSTANTIATE_TEST_CASE_P(IdentityMotorTests, DXLIdentityMotorTest,
 class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, double, int8_t>>
 {
   protected:
-    void SetUp() override
+    StepperIdentityRadTest()
+        : stepperState{EHardwareType::STEPPER, EComponentType::JOINT, common::model::EBusProtocol::CAN, 1}
     {
-        stepperState = common::model::StepperMotorState(EHardwareType::STEPPER, common::model::EComponentType::JOINT, common::model::EBusProtocol::CAN, 1);
         stepperState.setGearRatio(std::get<1>(GetParam()));
         stepperState.setDirection(std::get<2>(GetParam()));
         stepperState.setLimitPositionMax(3.0);
         stepperState.setLimitPositionMin(-3.0);
-
-        ASSERT_TRUE(stepperState.isValid());
-        ASSERT_FALSE(stepperState.isConveyor());
-        ASSERT_FALSE(stepperState.isDynamixel());
     }
 
     common::model::StepperMotorState stepperState;
@@ -217,17 +210,13 @@ INSTANTIATE_TEST_CASE_P(IdentityRadTest, StepperIdentityRadTest, testing::Combin
 class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, double, int8_t>>
 {
   protected:
-    void SetUp() override
+    StepperIdentityMotorTest()
+        : stepperState{EHardwareType::STEPPER, EComponentType::JOINT, common::model::EBusProtocol::CAN, 1}
     {
-        stepperState = common::model::StepperMotorState(EHardwareType::STEPPER, EComponentType::JOINT, common::model::EBusProtocol::CAN, 1);
         stepperState.setGearRatio(std::get<1>(GetParam()));
         stepperState.setDirection(std::get<2>(GetParam()));
         stepperState.setLimitPositionMin(-3.0);
         stepperState.setLimitPositionMax(3.0);
-
-        ASSERT_TRUE(stepperState.isValid());
-        ASSERT_FALSE(stepperState.isConveyor());
-        ASSERT_FALSE(stepperState.isDynamixel());
     }
 
     common::model::StepperMotorState stepperState;

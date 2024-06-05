@@ -58,6 +58,7 @@ public:
     double getVoltage() const;
     uint32_t getHardwareError() const;
     std::string getHardwareErrorMessage() const;
+    bool getStrictModelNumber() const;
 
     // setters
     void setFirmwareVersion(const std::string &firmware_version);
@@ -67,6 +68,7 @@ public:
     void setHardwareError(uint32_t hw_error);
     void setHardwareError(std::string hw_error_msg);
     void setConnectionStatus(bool connected);
+    void setStrictModelNumber(bool strict_model_number);
 
     // operators
     virtual bool operator==(const AbstractHardwareState& other);
@@ -91,14 +93,15 @@ protected:
     std::string _hw_error_message{};
 
     uint8_t _id{0};
+    bool _strict_model_number{false};
 
 protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractHardwareState( const AbstractHardwareState& ) = default;
-    AbstractHardwareState( AbstractHardwareState&& ) = default;
+    AbstractHardwareState( const AbstractHardwareState& ) = delete;
+    AbstractHardwareState( AbstractHardwareState&& ) = delete;
 
-    AbstractHardwareState& operator= ( AbstractHardwareState && ) = default;
-    AbstractHardwareState& operator= ( const AbstractHardwareState& ) = default;
+    AbstractHardwareState& operator= ( AbstractHardwareState && ) = delete;
+    AbstractHardwareState& operator= ( const AbstractHardwareState& ) = delete;
 };
 
 /**
@@ -191,6 +194,13 @@ std::string AbstractHardwareState::getHardwareErrorMessage() const
 {
     return _hw_error_message;
 }
+
+inline
+bool AbstractHardwareState::getStrictModelNumber() const
+{
+    return _strict_model_number;
+}
+
 
 } // model
 } // common
