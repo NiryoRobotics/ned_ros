@@ -9,7 +9,8 @@ Forthcoming
 - Add support for vacuum pump v2
 - Add velocity and acceleration profile for vacuum pump v2
 
-**Improvements**
+**Improvements***
+ * Add speed limit pourcentage for the conveyor
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
