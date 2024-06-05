@@ -20,6 +20,9 @@ from collections import OrderedDict, namedtuple
 
 from std_msgs.msg import Bool
 
+# Utils
+from niryo_robot_utils import debounce
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_rpi.msg import I2CComponent
@@ -153,6 +156,7 @@ class IOPanel(AbstractIOPanel):
 
         return resp
 
+    @debounce(0.5)
     def __on_12v_change_callback(self, value):
-        msg = Bool(bool(value))
+        msg = Bool(value == 1)
         self.__12v_status_pub.publish(msg)
