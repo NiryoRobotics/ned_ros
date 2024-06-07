@@ -1,20 +1,49 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Forthcoming
 -----------
 **Features**
-- Add Ned3 Calibration support
-- Add support for Conveyor with ned3 stepper
-- Add support for vacuum pump v2
-- Add velocity and acceleration profile for vacuum pump v2
+  - Add Ned3 Calibration support
+  - Add support for Conveyor with ned3 stepper
+  - Add support for vacuum pump v2
+  - Add velocity and acceleration profile for vacuum pump v2
+  - Change the robot's URDF in order to follow the Denavit-Hartenberg convention.
+  - New Pose and JointsPosition
+  - The `/niryo_robot_arm_commander/robot_action` action server can handle old and new TCP versions using ``tcp_version`` in ``ArmMoveCommand.msg``
+  - Edit niryo_robot_poses_handlers' grip files according to the new TCP orientation
+  - Added ``pose_version`` and ``tcp_version`` to ``NiryoPose.msg``
+  - New generic classes designed to be the universal classes to represent the data:
 
-**Improvements***
- * Add speed limit pourcentage for the conveyor
+    - JointsPosition
+    - JointsPositionMetadata
+    - Pose
+    - PoseMetadata
+
+  - New niryo_robot_poses_handlers/transform_functions function: ``convert_legacy_rpy_to_dh_convention()``
+  - New ros_wrapper.NiryoRosWrapper functions which can't take either Pose or JointsPosition objects:
+
+    - move replace move_joints, move_pose and move_linear_pose.
+    - jog_shift, replace jog_joints_shift and jog_pose_shift.
+    - pick, replace pick_from_pose.
+    - place, replace place_from_pose.
+    - execute_trajectory, replace execute_trajectory_from_poses and execute_trajectory_from_poses_and_joints.
+    - compute_trajectory, replace compute_trajectory_from_poses and compute_trajectory_from_poses_and_joints.
+
+  - New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY
+  - New tools translation transforms according to the new TCP orientation
+
+**Improvements**
+  - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
+  - Add speed limit pourcentage for the conveyor
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
  * Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time
+ * Renaming a dynamic frame also rename its name in the transform
+ * NiryoRosWrapper.get_workspace_list no longer return an error
+ * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
 
 v5.4.0
 -----------

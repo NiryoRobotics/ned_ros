@@ -116,7 +116,9 @@ class DynamicFrameManager(FileManager):
     def edit_name(self, name, new_name):
         self.check_exist(name)
 
-        self.dict_dynamic_frame[new_name] = self.dict_dynamic_frame.pop(name)
+        transform_stamped = self.dict_dynamic_frame.pop(name)
+        transform_stamped['transform'].child_frame_id = new_name
+        self.dict_dynamic_frame[new_name] = transform_stamped
 
         dynamic_frame = self.read(name)
         FileManager.remove(self, name)

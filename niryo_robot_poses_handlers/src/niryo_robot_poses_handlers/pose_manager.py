@@ -1,42 +1,41 @@
 #!/usr/bin/env python
 
-from niryo_robot_poses_handlers.file_manager import FileManager
+from .file_manager import FileManager
+
+from niryo_robot_utils.dataclasses.ABCSerializable import ABCSerializable
+from niryo_robot_utils.dataclasses.Pose import Pose
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 
 
-class PoseObj:
+class PoseObj(ABCSerializable):
 
-    def __init__(self, name, description):
+    def __init__(self, name: str, description: str, joints: JointsPosition, pose: Pose):
         self.name = name
         self.description = description
-        self.joints = None
-        self.position = None
-        self.rpy = None
-        self.orientation = None
+        self.joints = joints
+        self.pose = pose
 
     def to_dict(self):
-        dict_ = dict()
-        dict_["name"] = self.name
-        dict_["description"] = self.description
-        dict_["joints"] = self.joints
-        dict_["position"] = self.position
-        dict_["rpy"] = self.rpy
-        dict_["orientation"] = self.orientation
-        return dict_
+        return {
+            'name': self.name,
+            'description': self.description,
+            'joints': self.joints.to_dict(),
+            'pose': self.pose.to_dict()
+        }
 
     @classmethod
-    def from_dict(cls, dict_):
-        pos = cls(dict_["name"], dict_["description"])
-        pos.joints = dict_["joints"]
-        pos.position = dict_["position"]
-        pos.rpy = dict_["rpy"]
-        pos.orientation = dict_["orientation"]
-        return pos
-
-    def get_value(self):
-        return [self.joints, self.position, self.rpy, self.orientation]
-
-    def __str__(self):
-        return "{} {} {}".format(self.name, self.position, self.rpy)
+    def from_dict(cls, d):
+        if 'pose' not in d:
+            d['joints'] = {f'joint_{n}': joint for n, joint in enumerate(d['joints'])}
+            d['pose'] = {
+                'x': d['position'][0],
+                'y': d['position'][1],
+                'z': d['position'][2],
+                'roll': d['rpy'][0],
+                'pitch': d['rpy'][1],
+                'yaw': d['rpy'][2]
+            }
+        return cls(d['name'], d['description'], JointsPosition.from_dict(d['joints']), Pose.from_dict(d['pose']))
 
 
 class PoseManager(FileManager):
@@ -50,10 +49,5 @@ class PoseManager(FileManager):
     def __init__(self, position_dir):
         super(PoseManager, self).__init__(position_dir, "position")
 
-    def create(self, pos_name, joints, position, rpy, orientation, description=""):
-        position_obj = PoseObj(pos_name, description)
-        position_obj.joints = joints
-        position_obj.rpy = rpy
-        position_obj.position = position
-        position_obj.orientation = orientation
-        self._write(pos_name, position_obj)
+    def create(self, pose_obj):
+        self._write(pose_obj.name, pose_obj)
