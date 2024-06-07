@@ -1,7 +1,5 @@
 from enum import Enum, unique
 
-from niryo_robot_tools_commander.api import ToolID
-
 
 class ShiftPose:
 
@@ -174,6 +172,9 @@ class CommandEnum(Enum):
     GET_LEARNING_MODE = 2
     SET_ARM_MAX_VELOCITY = 3
     SET_JOG_CONTROL = 4
+    GET_COLLISION_DETECTED = 5
+    CLEAR_COLLISION_DETECTED = 6
+    HANDSHAKE = 7
 
     # - Move
     # Pose
@@ -195,6 +196,9 @@ class CommandEnum(Enum):
     FORWARD_KINEMATICS = 27
     INVERSE_KINEMATICS = 28
 
+    MOVE = 29
+    JOG = 30
+
     # Saved Pose
     GET_POSE_SAVED = 50
     SAVE_POSE = 51
@@ -206,6 +210,8 @@ class CommandEnum(Enum):
     PICK_FROM_POSE = 60
     PLACE_FROM_POSE = 61
     PICK_AND_PLACE = 62
+    PICK = 63
+    PLACE = 64
 
     # Trajectories
     GET_TRAJECTORY_SAVED = 80
@@ -218,6 +224,7 @@ class CommandEnum(Enum):
     UPDATE_TRAJECTORY_INFOS = 87
     DELETE_TRAJECTORY = 88
     CLEAN_TRAJECTORY_MEMORY = 89
+    EXECUTE_TRAJECTORY = 90
 
     # Dynamic frames
     GET_SAVED_DYNAMIC_FRAME_LIST = 95

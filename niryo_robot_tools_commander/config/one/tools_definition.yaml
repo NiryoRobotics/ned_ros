@@ -36,7 +36,7 @@ tool_list:
         min: 1
         max: 1023
     transformation:
-      translation: [0.085, 0.0, -0.0075]
+      translation: [-0.0075, 0.0, 0.085]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Gripper 2"
     type: "gripper"
@@ -60,7 +60,7 @@ tool_list:
         min: 1
         max: 1023
     transformation:
-      translation: [0.117, 0.0, -0.015]
+      translation: [-0.015, 0.0, 0.117]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Gripper 3"
     type: "gripper"
@@ -84,7 +84,7 @@ tool_list:
         min: 1
         max: 1023
     transformation:
-      translation: [0.13, 0.0, -0.0175]
+      translation: [-0.0175, 0.0, 0.13]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Electromagnet 1"
     type: "electromagnet"
@@ -96,7 +96,7 @@ tool_list:
     specs:
       [ ]
     transformation:
-      translation: [0.032, 0.0, 0.025]
+      translation: [0.025, 0.0, 0.032]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Vacuum Pump 1"
     type: "vacuum_pump"
@@ -113,6 +113,6 @@ tool_list:
       push_air_position: 760
       push_air_max_torque: 1023
     transformation:
-      translation: [0.041, 0.0, -0.01]
+      translation: [-0.01, 0.0, 0.041]
       quaternion: [0.0, 0.0, 0.0, 1.0]
 

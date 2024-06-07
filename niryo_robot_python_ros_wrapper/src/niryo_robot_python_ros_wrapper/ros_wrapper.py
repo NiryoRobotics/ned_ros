@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 # Lib
 import functools
+import warnings
+from typing import Union, List, overload
+
+from niryo_robot_poses_handlers.msg import NiryoPose
+
+from niryo_robot_utils.dataclasses.Pose import Pose
+from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
+from niryo_robot_utils.dataclasses.types import RobotPosition
 
 # Enums
-from niryo_robot_python_ros_wrapper.CollisionPolicy import CollisionPolicy
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
 from niryo_robot_tools_commander.api import ToolsRosWrapper
 
 import rospy
@@ -12,8 +19,11 @@ import rospy
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
-from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import Pose as RosPose, Point, Quaternion
+from niryo_robot_utils.dataclasses.enums import TcpVersion
+
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
+from tf.transformations import euler_from_quaternion, quaternion_from_euler, quaternion_multiply
 from tools_interface.msg import Tool
 
 # Command Status
@@ -29,6 +39,9 @@ from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, Niryo
 from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
 from std_msgs.msg import Bool, Int32, String
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
+
+from .CollisionPolicy import CollisionPolicy
+from .ros_wrapper_enums import ConveyorCan, ConveyorID, ConveyorTTL, PinMode, PinState
 
 
 def move_command(move_function):
@@ -341,7 +354,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of joints value
         :rtype: list[float]
         """
-        return list(self.__joints_ntv.value.position[:6])
+        return JointsPosition(*self.__joints_ntv.value.position)
 
     def get_joint_names(self):
         """
@@ -350,7 +363,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of the name of the joints
         :rtype: list[string]
         """
-        return list(self.__joints_ntv.value.name[:6])
+        return list(self.__joints_ntv.value.name)
 
     def get_pose(self):
         """
@@ -369,11 +382,64 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: list[float]
         """
         p = self.get_pose()
-        return [p.position.x, p.position.y, p.position.z, p.rpy.roll, p.rpy.pitch, p.rpy.yaw]
+        return self.pose_from_msg(p)
+
+    @overload
+    def move(self, robot_position: Pose, move_cmd: int = ArmMoveCommand.POSE):
+        ...
+
+    @overload
+    def move(self, robot_position: JointsPosition, move_cmd: int = ArmMoveCommand.JOINTS):
+        ...
+
+    @move_command
+    def move(self, robot_position, move_cmd: int = None):
+        """
+        Moves the robot end effector to the given goal position. The goal position can be either a joint position or a
+        pose
+
+        :param robot_position: Position of the goal position
+        :type robot_position: Union[Pose, JointsPosition]
+        :param move_cmd: Command used to move the robot. If not provided, the command will be the basic move (either
+        joint or pose depending on the robot_position type)
+        :type move_cmd: int
+        :return: status, message
+        :rtype: (int, str)
+        """
+        if move_cmd is None:
+            move_cmd = ArmMoveCommand.JOINTS if isinstance(robot_position, JointsPosition) else ArmMoveCommand.POSE
+
+        move_goal = ArmMoveCommand(cmd_type=move_cmd)
+        if move_cmd == ArmMoveCommand.JOINTS:
+            if not isinstance(robot_position, JointsPosition):
+                raise NiryoRosWrapperException("goal must be a JointsPosition in order to do a move joints")
+            move_goal.joints = list(robot_position)
+        else:
+            if not isinstance(robot_position, Pose):
+                raise NiryoRosWrapperException("goal must be a Pose in order to do a move pose")
+            robot_position.normalize()
+            if robot_position.metadata.frame != '':
+                robot_position = self.__calculate_transform_in_frame(robot_position)
+            move_goal.position.x = robot_position.x
+            move_goal.position.y = robot_position.y
+            move_goal.position.z = robot_position.z
+            move_goal.rpy.roll = robot_position.roll
+            move_goal.rpy.pitch = robot_position.pitch
+            move_goal.rpy.yaw = robot_position.yaw
+            if robot_position.metadata.tcp_version == TcpVersion.LEGACY:
+                move_goal.tcp_version = ArmMoveCommand.LEGACY
+            else:
+                move_goal.tcp_version = ArmMoveCommand.DH_CONVENTION
+
+        goal = RobotMoveGoal(cmd=move_goal)
+        return self.__robot_action_nac.execute(goal)
 
     @move_command
     def move_joints(self, j1, j2, j3, j4, j5, j6):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`move` with a `JointsPosition` object.
+
         Executes Move joints action
 
         :param j1:
@@ -391,9 +457,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.JOINTS, joints=[j1, j2, j3, j4, j5, j6])
-        goal = RobotMoveGoal(cmd=cmd)
-        return self.__robot_action_nac.execute(goal)
+        warnings.warn("You should use move with a JointsPosition object.", DeprecationWarning)
+        return self.move(JointsPosition(j1, j2, j3, j4, j5, j6))
 
     @move_command
     def move_to_sleep_pose(self):
@@ -405,36 +470,38 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         result = self._call_service('/niryo_robot_joints_interface/get_home_position', GetFloatList)
         self._classic_return_w_check(result)
-        return self.move_joints(*result.values)
+        joints_position = JointsPosition(*result.values)
+        return self.move(joints_position)
 
-    def get_sleep_pose(self):
+    def get_sleep_pose(self) -> JointsPosition:
         """
         Get current robot's home position
 
-        :return: status, message
-        :rtype: list[float]
+        :return: the sleep pose
+        :rtype: JointsPosition
         """
         result = self._call_service('/niryo_robot_joints_interface/get_home_position', GetFloatList)
         self._classic_return_w_check(result)
-        return result.values
+        joints_position = JointsPosition(*result.values)
+        return joints_position
 
-    def set_sleep_pose(self, joints_positions_list):
+    def set_sleep_pose(self, joints_position: JointsPosition):
         """
         Set user defined robot's home position in the database.
         Raises NiryoRosWrapperException if the number of joint values does not match the robot's joints number
         or if failed.
 
-        :param joints_positions_list: List containing 6 joint positions defining the sleep pose
-        :type joints_positions_list: list[float]
+        :param joints_position: joint position of the sleep pose
+        :type joints_position: JointsPosition
 
         :return: status, message
         :rtype: (int, str)
         """
-        if len(joints_positions_list) != 6:
-            raise NiryoRosWrapperException(f'Pose requires 6 values. Currently {len(joints_positions_list)} given')
+        if len(joints_position) != 6:
+            raise NiryoRosWrapperException(f'Pose requires 6 values. Currently {len(joints_position)} given')
         result = self._call_service('/niryo_robot_joints_interface/set_home_position',
                                     SetFloatList,
-                                    joints_positions_list)
+                                    list(joints_position))
         return self._classic_return_w_check(result)
 
     def reset_sleep_pose(self):
@@ -450,6 +517,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     @move_command
     def move_pose(self, x, y, z, roll, pitch, yaw, frame=''):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`move` with a `Pose` object.
+
         Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose,
         in a particular frame if defined
 
@@ -470,21 +540,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        if frame != '':
-            point, rot = self.__calculate_transform_in_frame(frame, x, y, z, roll, pitch, yaw)
-
-            return self.__move_pose_with_cmd(ArmMoveCommand.POSE,
-                                             point.x,
-                                             point.y,
-                                             point.z,
-                                             rot.roll,
-                                             rot.pitch,
-                                             rot.yaw)
-
-        return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
+        warnings.warn("You should use move with a Pose object.", DeprecationWarning)
+        return self.move(Pose(x, y, z, roll, pitch, yaw, PoseMetadata.v1(frame=frame)))
 
     def move_circle(self, x, y, z):
-        return self.__move_pose_with_cmd(ArmMoveCommand.DRAW_CIRCLE, x, y, z, 0, 0, 0)
+        return self.move(Pose(x, y, z, 0, 0, 0), ArmMoveCommand.DRAW_CIRCLE)
 
     def move_pose_saved(self, pose_name):
         """
@@ -495,27 +555,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        x, y, z, roll, pitch, yaw = self.get_pose_saved(pose_name)
-        return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
+        return self.move(self.get_pose_saved(pose_name))
 
     @move_command
-    def __move_pose_with_cmd(self, cmd_type, *pose):
-        """
-        Executes Move pose action
-
-        :param cmd_type: Command Type
-        :type cmd_type: ArmMoveCommand -> POSE, LINEAR_POSE
-        :param pose: tuple corresponding to x, y, z, roll, pitch, yaw
-        :return: status, message
-        :rtype: (int, str)
-        """
-        x, y, z, roll, pitch, yaw = pose
-        cmd = ArmMoveCommand(cmd_type=cmd_type, position=Point(x, y, z), rpy=RPY(roll=roll, pitch=pitch, yaw=yaw))
-        goal = RobotMoveGoal(cmd=cmd)
-        return self.__robot_action_nac.execute(goal)
-
-    @move_command
-    def shift_pose(self, axis, value):
+    def shift_pose(self, axis, value, linear=False):
         """
         Executes Shift pose action
 
@@ -523,17 +566,23 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type axis: ShiftPose
         :param value: shift value
         :type value: float
+        :param linear: Whether the movement has to be linear or not
+        :type linear: bool
         :return: status, message
         :rtype: (int, str)
         """
         from niryo_robot_arm_commander.msg import ShiftPose
-        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.SHIFT_POSE, shift=ShiftPose(axis_number=axis, value=value))
+        move_cmd = ArmMoveCommand.SHIFT_LINEAR_POSE if linear else ArmMoveCommand.SHIFT_POSE
+        cmd = ArmMoveCommand(cmd_type=move_cmd, shift=ShiftPose(axis_number=axis, value=value))
         goal = RobotMoveGoal(cmd=cmd)
         return self.__robot_action_nac.execute(goal)
 
     @move_command
     def shift_linear_pose(self, axis, value):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`shift_linear` with linear=True.
+
         Executes Shift pose action with a linear trajectory
 
         :param axis: Value of RobotAxis enum corresponding to where the shift happens
@@ -543,13 +592,15 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_arm_commander.msg import ShiftPose
-        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.SHIFT_LINEAR_POSE, shift=ShiftPose(axis_number=axis, value=value))
-        goal = RobotMoveGoal(cmd=cmd)
-        return self.__robot_action_nac.execute(goal)
+        warnings.warn("You should use shift_linear with linear=True.", DeprecationWarning)
+        return self.shift_pose(axis, value, linear=True)
 
+    @move_command
     def move_linear_pose(self, x, y, z, roll, pitch, yaw, frame=''):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`move` with a `Pose` object and `move_cmd=ArmMoveCommand.LINEAR_POSE`
+
         Moves robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, with a linear trajectory,
         in a particular frame if defined
 
@@ -570,18 +621,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        if frame != '':
-            point, rot = self.__calculate_transform_in_frame(frame, x, y, z, roll, pitch, yaw)
-
-            return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE,
-                                             point.x,
-                                             point.y,
-                                             point.z,
-                                             rot.roll,
-                                             rot.pitch,
-                                             rot.yaw)
-
-        return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
+        warnings.warn("You should use move with a Pose object and move_cmd=ArmMoveCommand.LINEAR_POSE",
+                      DeprecationWarning)
+        pose = Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1(frame=frame))
+        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE)
 
     @move_command
     def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
@@ -657,6 +700,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def jog_joints_shift(self, shift_values):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`jog_shift` with a `JointsPosition` object.
+
         Makes a Jog on joints position
 
         :param shift_values: list corresponding to the shift to be applied to each joint
@@ -664,11 +710,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_arm_commander.srv import JogShiftRequest
-        return self.__jog_shift(JogShiftRequest.JOINTS_SHIFT, shift_values)
+        warnings.warn("You should use jog_shift with a JointsPosition object.", DeprecationWarning)
+        return self.jog_shift(JointsPosition(*shift_values))
 
     def jog_pose_shift(self, shift_values):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`jog_shift` with a `Pose` object.
+
         Makes a Jog on end-effector position
 
         :param shift_values: list corresponding to the shift to be applied to the position
@@ -676,68 +725,124 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_arm_commander.srv import JogShiftRequest
-        return self.__jog_shift(JogShiftRequest.POSE_SHIFT, shift_values)
+        warnings.warn("You should use jog_shift with a Pose object.", DeprecationWarning)
+        return self.jog_shift(Pose(*shift_values, metadata=PoseMetadata.v1()))
 
-    def __jog_shift(self, cmd, shift_values):
-        from niryo_robot_arm_commander.srv import JogShift
-        result = self._call_service('/niryo_robot/jog_interface/jog_shift_commander', JogShift, cmd, shift_values)
+    def jog_shift(self, shift_values: RobotPosition):
+        """
+        Makes a Jog oof the robot position
 
+        :param shift_values: robot position corresponding to the shift to be applied to the current position
+        :type shift_values: RobotPosition
+        :return: status, message
+        :rtype: (int, str)
+        """
+        from niryo_robot_arm_commander.srv import JogShiftRequest, JogShift
+
+        if isinstance(shift_values, JointsPosition):
+            shift_request = JogShiftRequest.JOINTS_SHIFT
+        else:
+            shift_request = JogShiftRequest.POSE_SHIFT
+            shift_values.normalize()
+        result = self._call_service('/niryo_robot/jog_interface/jog_shift_commander',
+                                    JogShift,
+                                    shift_request,
+                                    list(shift_values))
         return self._classic_return_w_check(result)
 
-    def forward_kinematics(self, j1, j2, j3, j4, j5, j6):
+    @staticmethod
+    def __get_obj_from_args(obj_class: type, kw: str, args: tuple, kwargs: dict) -> RobotPosition:
         """
-        Computes forward kinematics
+        Helper function for getting object from args and kwargs
 
-        :param j1:
-        :type j1: float
-        :param j2:
-        :type j2: float
-        :param j3:
-        :type j3: float
-        :param j4:
-        :type j4: float
-        :param j5:
-        :type j5: float
-        :param j6:
-        :type j6: float
-        :return: list corresponding to [x, y, z, roll, pitch, yaw]
-        :rtype: list[float]
+        :param obj_class: class of object
+        :type obj_class: type
+        :param kw: keyword to get
+        :type kw: str
+        :param args: positional arguments
+        :type args: tuple
+        :param kwargs: keyword arguments
+        :type kwargs: dict
+        :return: object from args
+        :rtype: object
+        """
+        if len(args) + len(kwargs) == 6:
+            obj = obj_class(*args, **kwargs)
+        elif 'pose' in kwargs and isinstance(kwargs[kw], obj_class):
+            obj = kwargs[kw]
+        elif len(args) > 0 and isinstance(args[0], obj_class):
+            obj = args[0]
+        else:
+            raise NiryoRosWrapperException(
+                f'Invalid arguments. '
+                f'Parameters must be either 6 floats or a {obj_class.__name__} instance. Got: {args}, {kwargs}')
+        return obj
+
+    @overload
+    def forward_kinematics(self, j1: float, j2: float, j3: float, j4: float, j5: float, j6: float) -> Pose:
+        ...
+
+    @overload
+    def forward_kinematics(self, joints_position: JointsPosition) -> Pose:
+        ...
+
+    def forward_kinematics(self, *args, **kwargs) -> Pose:
+        """
+        Computes the forward kinematics given joint positions.
+
+        This function is overloaded to accept multiple forms of input:
+
+        :param args: Variable-length positional arguments. This can be either individual joint angles
+                     (j1, j2, j3, j4, j5, j6) or a single JointsPosition object.
+        :type args: tuple
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: dict
+
+        :returns: The pose of the end effector in the robot's workspace.
+        :rtype: Pose
         """
         from niryo_robot_arm_commander.srv import GetFK
-        joints = [j1, j2, j3, j4, j5, j6]
+
+        joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
+        joints = list(joints_position)
         result = self._call_service('/niryo_robot/kinematics/forward', GetFK, joints)
-        return self.robot_state_msg_to_list(result.pose)
+        return self.pose_from_msg(result.pose)
 
-    def inverse_kinematics(self, x, y, z, roll, pitch, yaw):
+    @overload
+    def inverse_kinematics(self, x: float, y: float, z: float, roll: float, pitch: float, yaw: float) -> JointsPosition:
+        ...
+
+    @overload
+    def inverse_kinematics(self, pose: Pose) -> JointsPosition:
+        ...
+
+    def inverse_kinematics(self, *args, **kwargs) -> JointsPosition:
         """
-        Computes inverse kinematics
+        Computes the inverse kinematics given a pose.
 
-        :param x:
-        :type x: float
-        :param y:
-        :type y: float
-        :param z:
-        :type z: float
-        :param roll:
-        :type roll: float
-        :param pitch:
-        :type pitch: float
-        :param yaw:
-        :type yaw: float
-        :return: list of joints value
-        :rtype: list[float]
+        This function is overloaded to accept multiple forms of input:
+
+        :param args: Variable-length positional arguments. This can be either individual pose components
+                     (x, y, z, roll, pitch, yaw) or a single Pose object.
+        :type args: tuple
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: dict
+
+        :returns: The joint position of the robot.
+        :rtype: JointsPosition
         """
         from niryo_robot_arm_commander.srv import GetIK
-        state = RobotState(position=Point(x, y, z), rpy=RPY(roll, pitch, yaw))
-        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, state)
+
+        pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
+        pose.normalize()
+        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose))
         self._check_result_status(result)
 
-        return result.joints
+        return JointsPosition(*result.joints)
 
     # - Saved Pose
 
-    def get_pose_saved(self, pose_name):
+    def get_pose_saved(self, pose_name: str) -> Pose:
         """
         Gets saved pose from robot intern storage
         Will raise error if position does not exist
@@ -745,45 +850,47 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param pose_name: Pose Name
         :type pose_name: str
         :return: x, y, z, roll, pitch, yaw
-        :rtype: tuple[float]
+        :rtype: Pose
         """
         from niryo_robot_poses_handlers.srv import GetPose
 
         result = self._call_service('/niryo_robot_poses_handlers/get_pose', GetPose, pose_name)
         self._check_result_status(result)
-        pose = result.pose
-        x, y, z = pose.position.x, pose.position.y, pose.position.z
-        roll, pitch, yaw = pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw
-        return x, y, z, roll, pitch, yaw
+        pose = self.pose_from_msg(result.pose)
+        return pose
 
-    def save_pose(self, name, x, y, z, roll, pitch, yaw):
+    @overload
+    def save_pose(self, name: str, x: float, y: float, z: float, roll: float, pitch: float, yaw: float):
+        ...
+
+    @overload
+    def save_pose(self, name: str, pose: Pose):
+        ...
+
+    def save_pose(self, *args, **kwargs):
         """
         Saves pose in robot's memory
-
-        :param name:
-        :type name: str
-        :param x:
-        :type x: float
-        :param y:
-        :type y: float
-        :param z:
-        :type z: float
-        :param roll:
-        :type roll: float
-        :param pitch:
-        :type pitch: float
-        :param yaw:
-        :type yaw: float
-        :return: status, message
-        :rtype: (int, str)
         """
         from niryo_robot_poses_handlers.srv import ManagePose, ManagePoseRequest
 
+        if 'name' in kwargs:
+            name = kwargs.pop('name')
+        else:
+            name = args[0]
+            args = args[1:]
+
+        pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
+
+        if len(args) + len(kwargs) > 2:
+            pose.metadata = PoseMetadata.v1(pose.metadata.frame)
+        pose.normalize()
+
         req = ManagePoseRequest()
         req.cmd = ManagePoseRequest.SAVE
+        req.pose = self.msg_from_pose(pose, NiryoPose)
         req.pose.name = name
-        req.pose.position = Point(x, y, z)
-        req.pose.rpy = RPY(roll, pitch, yaw)
+        req.pose.pose_version = pose.metadata.version
+        req.pose.tcp_version = pose.metadata.tcp_version.name
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
@@ -824,8 +931,41 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     # - Pick/Place
 
+    def __get_high_pose(self, robot_position: RobotPosition, z_offset=0.05):
+        if isinstance(robot_position, JointsPosition):
+            high_pick_pose = self.forward_kinematics(*robot_position)
+        else:
+            high_pick_pose = robot_position.copy()
+        high_pick_pose.z += z_offset
+        return high_pick_pose
+
+    def pick(self, robot_position: RobotPosition):
+        self.release_with_tool()
+
+        high_pick_pose = self.__get_high_pose(robot_position)
+
+        self.move(high_pick_pose)
+        self.move(robot_position)
+
+        self.grasp_with_tool()
+
+        return self.move(high_pick_pose)
+
+    def place(self, robot_position: RobotPosition):
+        high_pick_pose = self.__get_high_pose(robot_position)
+
+        self.move(high_pick_pose)
+        self.move(robot_position)
+
+        self.release_with_tool()
+
+        return self.move(high_pick_pose)
+
     def pick_from_pose(self, x, y, z, roll, pitch, yaw):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`pick` with a `Pose` or `JointsPosition` object instead
+
         Executes a picking from a position. If an error happens during the movement, error will be raised
         A picking is described as :
         - going over the object
@@ -848,17 +988,21 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
        """
+        warnings.warn("You should use pick with a Pose or JointsPosition object instead", DeprecationWarning)
         self.release_with_tool()
 
-        self.move_pose(x, y, z + 0.05, roll, pitch, yaw)
-        self.move_pose(x, y, z, roll, pitch, yaw)
+        self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+        self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()))
 
         self.grasp_with_tool()
 
-        return self.move_pose(x, y, z + 0.05, roll, pitch, yaw)
+        return self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
 
     def place_from_pose(self, x, y, z, roll, pitch, yaw):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`place` with a `Pose` or `JointsPosition` object instead
+
         Executes a placing from a position. If an error happens during the movement, error will be raised
         A placing is described as :
         - going over the place
@@ -881,12 +1025,22 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        self.move_pose(x, y, z + 0.05, roll, pitch, yaw)
-        self.move_pose(x, y, z, roll, pitch, yaw)
+        warnings.warn("You should use place with a Pose or JointsPosition object instead", DeprecationWarning)
+
+        self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+        self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()))
 
         self.release_with_tool()
 
-        return self.move_pose(x, y, z + 0.05, roll, pitch, yaw)
+        return self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+
+    @overload
+    def pick_and_place(self, pick_pose: list, place_pose: list, dist_smoothing=0.0):
+        ...
+
+    @overload
+    def pick_and_place(self, pick_pose: RobotPosition, place_pose: RobotPosition, dist_smoothing=0.0):
+        ...
 
     def pick_and_place(self, pick_pose, place_pose, dist_smoothing=0.0):
         """
@@ -902,23 +1056,215 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
+        if isinstance(pick_pose, list):
+            pick_pose = Pose(*pick_pose, metadata=PoseMetadata.v1())
+        if isinstance(place_pose, list):
+            place_pose = Pose(*place_pose, metadata=PoseMetadata.v1())
+
         self.release_with_tool()
 
-        pick_pose_high = self.copy_position_with_offsets(pick_pose, z_offset=0.05)
-        place_pose_high = self.copy_position_with_offsets(place_pose, z_offset=0.05)
+        pick_pose_high = self.__get_high_pose(pick_pose)
+        place_pose_high = self.__get_high_pose(place_pose)
 
-        self.execute_trajectory_from_poses([pick_pose_high, pick_pose], dist_smoothing)
+        self.execute_trajectory([pick_pose_high, pick_pose], dist_smoothing=dist_smoothing)
         self.grasp_with_tool()
 
-        self.execute_trajectory_from_poses([pick_pose_high, place_pose_high, place_pose], dist_smoothing)
+        self.execute_trajectory([pick_pose_high, place_pose_high, place_pose], dist_smoothing=dist_smoothing)
 
         self.release_with_tool()
 
-        return self.move_pose(*place_pose_high)
+        return self.move(place_pose_high)
 
     # - Trajectories
 
-    def get_trajectory_saved(self, trajectory_name):
+    def __ros_poses_from_robot_positions(self, robot_positions: List[RobotPosition]) -> List[RosPose]:
+        """
+        Converts a list of robot positions to a list of ROS poses. Also convert the poses to DH conventions if needed.
+        :param robot_positions: a list of objects
+        :type robot_positions: list[RobotPosition]
+        :return: a list of ROS poses
+        :rtype: list[RosPose]
+        """
+        list_poses = []
+        for pose in robot_positions:
+            if isinstance(pose, JointsPosition):
+                pose = Pose(*self.forward_kinematics(*pose))
+            pose.normalize()
+
+            point = Point(x=pose.x, y=pose.y, z=pose.z)
+            quaternion = pose.quaternion()
+            orientation = Quaternion(x=quaternion[0], y=quaternion[1], z=quaternion[2], w=quaternion[3])
+            list_poses.append(RosPose(position=point, orientation=orientation))
+        return list_poses
+
+    @staticmethod
+    def __robot_positions_from_raw_poses(raw_poses: List[List[float]], list_type=None) -> List[RobotPosition]:
+        if list_type is None or len(list_type) == 1 and list_type[0] == 'pose':
+            list_type = ['pose'] * len(raw_poses)
+        elif len(list_type) == 1 and list_type[0] == 'joints':
+            list_type = ['joints'] * len(raw_poses)
+
+        robot_position = []
+        for raw_pose, pose_type in zip(raw_poses, list_type):
+            if pose_type == 'pose':
+                if len(raw_pose) == 7:  # quaternion
+                    raw_pose = raw_pose[:3] + list(euler_from_quaternion(raw_pose[3:]))
+                robot_position.append(Pose(*raw_pose, metadata=PoseMetadata.v1()))
+            elif pose_type == 'joints':
+                robot_position.append(JointsPosition(*raw_pose))
+            else:
+                raise NiryoRosWrapperException(f'Invalid type "{pose_type}". Only "pose" and "joints" are supported')
+        return robot_position
+
+    #   - Compute
+
+    def compute_trajectory(self, robot_positions: List[RobotPosition], dist_smoothing=0.0):
+        """
+        Generate a trajectory from a list of poses and joints.
+        :param robot_positions: a list of poses and / or joints
+        :type robot_positions: list[RobotPosition]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+
+        :return: a trajectory
+        :rtype: JointTrajectory
+        """
+        from niryo_robot_arm_commander.srv import ComputeTrajectory
+
+        if len(robot_positions) < 2:
+            return "Give me at least 2 points"
+        list_poses = self.__ros_poses_from_robot_positions(robot_positions)
+
+        result = self._call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
+                                    ComputeTrajectory,
+                                    list_poses,
+                                    dist_smoothing)
+        self._classic_return_w_check(result)
+        return result.trajectory
+
+    def compute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
+        """
+        .. deprecated:: 5.5.0
+           You should use :func:`compute_trajectory` with `JointsPosition` and `Pose` objects.
+
+        Generate a trajectory from a list of poses and joints.
+        :param list_pose_joints: a list of poses and / or joints
+        :type list_pose_joints: list[list[float]]
+        :param list_type: a list indicating if the corresponding element is a pose or joints
+        :type list_type: list[str]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+
+        :return: a trajectory
+        :rtype: JointTrajectory
+        """
+        warnings.warn("You should use compute_trajectory with JointsPosition and Pose objects.", DeprecationWarning)
+        robot_positions = self.__robot_positions_from_raw_poses(list_pose_joints, list_type)
+        return self.compute_trajectory(robot_positions, dist_smoothing)
+
+    def compute_trajectory_from_poses(self, list_poses_raw, dist_smoothing=0.0):
+        """
+        .. deprecated:: 5.5.0
+           You should use :func:`compute_trajectory` with `Pose` objects.
+
+        Generate a trajectory from a list of robot positions.
+        :param list_poses_raw: a list of poses
+        :type list_poses_raw: list[list[float]]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+
+        :return: a trajectory
+        :rtype: JointTrajectory
+        """
+        warnings.warn("You should use compute_trajectory with Pose objects.", DeprecationWarning)
+        robot_positions = self.__robot_positions_from_raw_poses(list_poses_raw, list_type=['pose'])
+        return self.compute_trajectory(robot_positions, dist_smoothing)
+
+    #   - Execute
+
+    @move_command
+    def execute_trajectory(self, robot_positions: List[RobotPosition], dist_smoothing=0.0):
+        """
+        Executes trajectory from list of poses and joints
+
+        :param robot_positions: List of poses and / or joints
+        :type robot_positions: list[RobotPosition]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
+        goal.cmd.list_poses = self.__ros_poses_from_robot_positions(robot_positions)
+        goal.cmd.dist_smoothing = dist_smoothing
+        return self.__robot_action_nac.execute(goal)
+
+    def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
+        """
+        .. deprecated:: 5.5.0
+           You should use :func:`execute_trajectory` with `JointsPosition` and `Pose` objects.
+
+        Executes trajectory from list of poses and joints
+
+        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
+            or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+        :type list_pose_joints: list[list[float]]
+        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
+            If None, it is assumed there are only poses in the list.
+        :type list_type: list[string]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        warnings.warn("You should use execute_trajectory with JointsPosition and Pose objects.", DeprecationWarning)
+        robot_positions = self.__robot_positions_from_raw_poses(list_pose_joints, list_type)
+        return self.execute_trajectory(robot_positions, dist_smoothing)
+
+    def execute_trajectory_from_poses(self, list_poses_raw: List[Union[List[float], Pose]], dist_smoothing=0.0):
+        """
+        .. deprecated:: 5.5.0
+           You should use :func:`execute_trajectory` with `Pose` objects.
+
+        Executes trajectory from a list of pose
+
+        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
+        :type list_poses_raw: List[Union[List[float], Pose]]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        warnings.warn("You should use execute_trajectory with Pose objects.", DeprecationWarning)
+        robot_positions = self.__robot_positions_from_raw_poses(list_poses_raw, list_type=['pose'])
+        return self.execute_trajectory(robot_positions, dist_smoothing)
+
+    @move_command
+    def execute_registered_trajectory(self, trajectory_name: str):
+        """
+        Sends execution command to the trajectory manager service
+
+        :param trajectory_name: name
+        :type trajectory_name: str
+        :return: status, message
+        :rtype: (int, str)
+        """
+        from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest
+        req = ManageTrajectoryRequest(cmd=ManageTrajectoryRequest.EXECUTE_REGISTERED, name=trajectory_name)
+        result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
+        return self._classic_return_w_check(result)
+
+    @move_command
+    def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
+        goal.cmd.trajectory = moveit_robot_trajectory
+        return self.__robot_action_nac.execute(goal)
+
+    #   - Other
+
+    def get_trajectory_saved(self, trajectory_name) -> List[JointsPosition]:
         """
         Gets saved trajectory from robot intern storage
         Will raise error if position does not exist
@@ -933,9 +1279,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         result = self._call_service('/niryo_robot_arm_commander/get_trajectory', GetTrajectory, trajectory_name)
         self._check_result_status(result)
-        return [t.positions for t in result.trajectory.points]
+        return [JointsPosition(*t.positions) for t in result.trajectory.points]
 
-    def get_saved_trajectory_list(self):
+    @staticmethod
+    def get_saved_trajectory_list() -> List[str]:
         """
         Asks the pose trajectory service which trajectories are available
 
@@ -945,133 +1292,16 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         trajectories = rospy.wait_for_message('/niryo_robot_arm_commander/trajectory_list', BasicObjectArray, 2)
         return [trajectory.name for trajectory in trajectories.objects]
 
-    def execute_registered_trajectory(self, trajectory_name):
-        """
-        Sends execution command to the trajectory manager service
-
-        :param trajectory_name: name
-        :type trajectory_name: str
-        :return: status, message
-        :rtype: (int, str)
-        """
-        from niryo_robot_arm_commander.srv import ManageTrajectory, ManageTrajectoryRequest
-        req = ManageTrajectoryRequest(cmd=ManageTrajectoryRequest.EXECUTE_REGISTERED, name=trajectory_name)
-        result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
-        return self._classic_return_w_check(result)
-
-    def execute_trajectory_from_poses(self, list_poses_raw, dist_smoothing=0.0):
-        """
-        Executes trajectory from a list of pose
-
-        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
-        :type list_poses_raw: list[list[float]]
-        :param dist_smoothing: Distance from waypoints before smoothing trajectory
-        :type dist_smoothing: float
-        :return: status, message
-        :rtype: (int, str)
-        """
-
-        if len(list_poses_raw) < 2:
-            return "Give me at least 2 points"
-        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
-        return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
-
-    def compute_trajectory_from_poses(self, list_poses_raw, dist_smoothing=0.0):
-        from niryo_robot_arm_commander.srv import ComputeTrajectory
-
-        if len(list_poses_raw) < 2:
-            return "Give me at least 2 points"
-        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
-
-        result = self._call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
-                                    ComputeTrajectory,
-                                    list_poses,
-                                    dist_smoothing)
-        self._classic_return_w_check(result)
-        return result.trajectory
-
-    def __list_pose_raw_to_list_poses(self, list_poses_raw):
-        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
-
-        list_poses = []
-        for pose in list_poses_raw:
-            point = Point(*pose[:3])
-            angle = pose[3:]
-            if len(angle) == 3:
-                quaternion = quaternion_from_euler(*angle)
-            else:
-                quaternion = angle
-            orientation = Quaternion(*quaternion)
-            list_poses.append(Pose(point, orientation))
-        return list_poses
-
-    def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
-        """
-        Executes trajectory from list of poses and joints
-
-        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
-            or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
-        :type list_pose_joints: list[list[float]]
-        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
-            If None, it is assumed there are only poses in the list.
-        :type list_type: list[string]
-        :param dist_smoothing: Distance from waypoints before smoothing trajectory
-        :type dist_smoothing: float
-        :return: status, message
-        :rtype: (int, str)
-        """
-        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
-        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
-
-    def compute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
-        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
-        return self.compute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
-
-    def __list_pose_joints_to_list_poses(self, list_pose_joints, list_type=None):
-        if list_type is None:
-            list_type = ['pose']
-        list_pose_waypoints = []
-
-        if len(list_type) == 1:  # only one type of object
-            if list_type[0] == "pose":  # every elem in list is a pose
-                list_pose_waypoints = list_pose_joints
-            elif list_type[0] == "joint":  # every elem in list is a joint
-                list_pose_waypoints = [self.forward_kinematics(*joint) for joint in list_pose_joints]
-
-            else:
-                raise NiryoRosWrapperException(
-                    "Executes trajectory from poses and joints - Wrong list_type argument : got " + list_type[0] +
-                    ", expected 'pose' or 'joint'")
-
-        elif len(list_type) == len(list_pose_joints):
-            # convert every joints to poses
-            for target, type_ in zip(list_pose_joints, list_type):
-                if type_ == 'joint':
-                    pose_from_joint = self.forward_kinematics(*target)
-                    list_pose_waypoints.append(pose_from_joint)
-                elif type_ == 'pose':
-                    list_pose_waypoints.append(target)
-                else:
-                    raise NiryoRosWrapperException(
-                        'Executes trajectory from poses and joints - Wrong list_type argument at index ' +
-                        str(i) +  # TODO: check non existant variable i
-                        ' got ' + type_ + ", expected 'pose' or 'joint'")
-
-        else:
-            raise NiryoRosWrapperException('Executes trajectory from poses and joints - List of waypoints (size ' +
-                                           str(len(list_pose_joints)) + ') and list of type (size ' +
-                                           str(len(list_type)) + ') must be the same size.')
-
-        return list_pose_waypoints
-
     def save_trajectory(self, trajectory_points, trajectory_name, trajectory_description):
         """
         Saves trajectory object and sends it to the trajectory manager service
 
+        :param trajectory_points: list of waypoints that constitute the trajectory
+        :type trajectory_points: Union[List[float], JointsPosition]
         :param trajectory_name: name which will have the trajectory
         :type trajectory_name: str
-        :param trajectory_points: list of trajectory_msgs/JointTrajectoryPoint
-        :type trajectory_points: list[trajectory_msgsJointTrajectorypoint]
+        :param trajectory_description: A short text describing the trajectory
+        :type trajectory_description: str
         :return: status, message
         :rtype: (int, str)
         """
@@ -1080,9 +1310,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req = ManageTrajectoryRequest()
         req.cmd = ManageTrajectoryRequest.SAVE
         req.name = trajectory_name
-        req.trajectory = JointTrajectory(header=Header(stamp=rospy.Time.now()),
-                                         joint_names=self.get_joint_names(),
-                                         points=trajectory_points)
+
+        req.trajectory = JointTrajectory(
+            header=Header(stamp=rospy.Time.now()),
+            joint_names=self.get_joint_names(),
+            points=[JointTrajectoryPoint(positions=list(trajectory_point)) for trajectory_point in trajectory_points])
+
         req.description = trajectory_description
         result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
         return self._classic_return_w_check(result)
@@ -1115,22 +1348,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_arm_commander/manage_trajectory', ManageTrajectory, req)
         return self._classic_return_w_check(result)
 
-    @move_command
-    def __execute_trajectory_from_formatted_poses(self, list_poses, dist_smoothing=0.0):
-
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
-        goal.cmd.list_poses = list_poses
-        goal.cmd.dist_smoothing = dist_smoothing
-        return self.__robot_action_nac.execute(goal)
-
-    @move_command
-    def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
-        goal.cmd.trajectory = moveit_robot_trajectory
-        return self.__robot_action_nac.execute(goal)
-
     def delete_trajectory(self, trajectory_name):
         """
         Sends delete command to the trajectory manager service
@@ -1159,7 +1376,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     # - Dynamic frame
 
-    def save_dynamic_frame_from_poses(self, frame_name, description, list_robot_poses, belong_to_workspace=False):
+    def save_dynamic_frame_from_poses(self,
+                                      frame_name,
+                                      description,
+                                      list_robot_poses: List[Union[Pose, List[float]]],
+                                      belong_to_workspace=False):
         """
         Create a dynamic frame with 3 poses (origin, x, y)
 
@@ -1176,13 +1397,16 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import ManageDynamicFrame, ManageDynamicFrameRequest
 
-        list_poses = [self.list_to_robot_state_msg(*pose) for pose in list_robot_poses]
+        for ix, pose in enumerate(list_robot_poses):
+            if isinstance(pose, list):
+                list_robot_poses[ix] = Pose(*pose, metadata=PoseMetadata.v1())
+            list_robot_poses[ix].normalize()
 
         req = ManageDynamicFrameRequest()
         req.cmd = ManageDynamicFrameRequest.SAVE
         req.dynamic_frame.name = frame_name
         req.dynamic_frame.description = description
-        req.dynamic_frame.poses = list_poses
+        req.dynamic_frame.poses = [self.msg_from_pose(pose) for pose in list_robot_poses]
         req.dynamic_frame.belong_to_workspace = belong_to_workspace
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_dynamic_frame', ManageDynamicFrame, req)
@@ -1298,14 +1522,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return [name, description, [position.x, position.y, position.z, rpy.roll, rpy.pitch, rpy.yaw]]
 
     @staticmethod
-    def get_saved_dynamic_frame_list(self):
+    def get_saved_dynamic_frame_list():
         """
         Get list of saved dynamic frames
 
         :return: list of dynamic frames name, list of description of dynamic frames
         :rtype: list[str], list[str]
         """
-        dynamic_frame_list = rospy.wait_for_message('/niryo_robot_arm_commander/dynamic_frame_list',
+        dynamic_frame_list = rospy.wait_for_message('/niryo_robot_poses_handlers/dynamic_frame_list',
                                                     BasicObjectArray,
                                                     2)
         names = [dynamic_frame.name for dynamic_frame in dynamic_frame_list.objects]
@@ -1354,64 +1578,45 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return transform_pose
 
-    def __calculate_transform_in_frame(self, frame_name, x, y, z, roll, pitch, yaw):
+    def __calculate_transform_in_frame(self, pose: Pose):
         """
         Calculate the pose (x,y,z,roll,pitch,yaw) in the frame (frame_name)
 
-        :param frame_name:, name of the frame
-        :type frame_name : str
-        :param x:
-        :type x: float
-        :param y:
-        :type y: float
-        :param z:
-        :type z: float
-        :param roll:
-        :type roll: float
-        :param pitch:
-        :type pitch: float
-        :param yaw:
-        :type yaw: float
-        :return: point, rotation
-        :rtype: (Position, RPY)
+        :param pose: a pose
+        :type pose : Pose
+        :return: the transformed frame
+        :rtype: Pose
         """
-        import tf
-        import geometry_msgs
 
-        pose = geometry_msgs.msg.Pose()
-        pose.position = Point(x, y, z)
-        quaternion = tf.transformations.quaternion_from_euler(roll, pitch, yaw)
-        pose.orientation = Quaternion(*quaternion)
+        ros_pose = RosPose()
+        ros_pose.position = Point(pose.x, pose.y, pose.z)
+        quaternion = quaternion_from_euler(pose.roll, pose.pitch, pose.yaw)
+        ros_pose.orientation = Quaternion(*quaternion)
 
-        world_pose = self.__transform_pose(pose, frame_name, "world")
+        world_pose = self.__transform_pose(ros_pose, pose.metadata.frame, "world")
 
         point = world_pose.pose.position
         quaternion = world_pose.pose.orientation
-        euler = tf.transformations.euler_from_quaternion(self.quaternion_to_list(quaternion))
-        rot = RPY(*euler)
+        euler = euler_from_quaternion(self.quaternion_to_list(quaternion))
 
-        return point, rot
+        return Pose(point.x, point.y, point.z, euler[0], euler[1], euler[2])
 
     def __calculate_relative(self, frame_name, offset):
         """
-        Calculate the pose by a relative movement (x,y,z,roll,pitch,yaw) in the frame (frame_name)
-
         :param frame_name:, name of the frame
         :type frame_name : str
         :param offset: list[x, y, z, roll, pitch, yaw]
         :type offset: list[6*float]
-        :return: status, message
-        :rtype: (int, str)
+        :return: point, rotation
+        :rtype: (list, list)
         """
-        from tf.transformations import quaternion_multiply, euler_from_quaternion, quaternion_from_euler
-        import geometry_msgs
 
         world_pose = self.get_pose()
         pose_local = self.__transform_pose(world_pose, "world", frame_name)
         offset = list(map(float, offset))
 
         # Aim pose
-        pose = geometry_msgs.msg.Pose()
+        pose = RosPose()
 
         offset_position = [a + b for a, b in zip(self.point_to_list(pose_local.pose.position), offset[:3])]
         pose.position = Point(*offset_position)
@@ -1425,34 +1630,33 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         point = new_world_pose.pose.position
         quaternion = new_world_pose.pose.orientation
-        euler = euler_from_quaternion(self.quaternion_to_list(quaternion))
-        rot = RPY(*euler)
-        return point, rot
+        roll, pitch, yaw = euler_from_quaternion(self.quaternion_to_list(quaternion))
+        return Pose(point.x, point.y, point.z, roll, pitch, yaw)
 
     @move_command
-    def move_relative(self, offset, frame="world"):
+    def move_relative(self, offset, frame="world", linear=False):
         """
-        Move robot end of a offset in a frame
+        Move robot end of an offset in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
         :param frame: name of local frame
         :type frame: str
+        :param linear: Whether the movement has to be linear or not
+        :type linear: bool
         :return: status, message
         :rtype: (int, str)
         """
-        point, rot = self.__calculate_relative(frame, offset)
-
-        # Move arm
-        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.POSE, position=point, rpy=rot)
-        goal = RobotMoveGoal(cmd=cmd)
-
-        return self.__robot_action_nac.execute(goal)
+        move_cmd = ArmMoveCommand.LINEAR_POSE if linear else ArmMoveCommand.POSE
+        pose = self.__calculate_relative(frame, offset)
+        return self.move(pose, move_cmd=move_cmd)
 
     @move_command
     def move_linear_relative(self, offset, frame="world"):
         """
-        Move robot end of a offset by a linear movement in a frame
+        .. deprecated:: 5.5.0
+           You should use :func:`move_relative` with linear=True.
+        Move robot end of an offset by a linear movement in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
@@ -1461,13 +1665,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        point, rot = self.__calculate_relative(frame, offset)
-
-        # Move arm
-        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.LINEAR_POSE, position=point, rpy=rot)
-        goal = RobotMoveGoal(cmd=cmd)
-
-        return self.__robot_action_nac.execute(goal)
+        warnings.warn("You should use move_relative with linear=True.", DeprecationWarning)
+        return self.move_relative(offset, frame=frame, linear=True)
 
     # - Useful Pose functions
 
@@ -1480,34 +1679,28 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return [point.x, point.y, point.z]
 
     @staticmethod
-    def copy_position_with_offsets(copied_pose, x_offset=0.0, y_offset=0.0, z_offset=0.0):
-        """
-        Copies a position and adds offset to some coordinates
-        """
-        new_pose = [v for v in copied_pose]  # Copying all values
-        new_pose[0] += x_offset  # adjust x
-        new_pose[1] += y_offset  # adjust y
-        new_pose[2] += z_offset  # adjust z
-        return new_pose
+    def msg_from_pose(pose: Pose, msg_type=RobotState):
+        pose.normalize()
+        msg = msg_type()
+
+        for attr in ['position', 'rpy']:
+            if not hasattr(msg, attr):
+                raise TypeError(f'"{msg_type.name}" object has no attribute "{attr}"')
+
+        msg.position.x = pose.x
+        msg.position.y = pose.y
+        msg.position.z = pose.z
+        msg.rpy.roll = pose.roll
+        msg.rpy.pitch = pose.pitch
+        msg.rpy.yaw = pose.yaw
+        return msg
 
     @staticmethod
-    def list_to_robot_state_msg(x, y, z, roll, pitch, yaw):
-        """
-        Translates (x, y, z, roll, pitch, yaw) to a RobotState Object
-        """
-        return RobotState(position=Point(x, y, z), rpy=RPY(roll, pitch, yaw))
-
-    @staticmethod
-    def robot_state_msg_to_list(robot_state):
-        """
-        Translates a RobotState Object to (x, y, z, roll, pitch, yaw)
-        """
-        return (robot_state.position.x,
-                robot_state.position.y,
-                robot_state.position.z,
-                robot_state.rpy.roll,
-                robot_state.rpy.pitch,
-                robot_state.rpy.yaw)
+    def pose_from_msg(msg) -> Pose:
+        pose = Pose(msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw)
+        if isinstance(msg, NiryoPose):
+            pose.metadata = PoseMetadata(version=msg.pose_version, tcp_version=TcpVersion[msg.tcp_version])
+        return pose
 
     # -- Tools
 
@@ -2124,6 +2317,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type y_rel: float
         :param yaw_rel:
         :type yaw_rel: float
+        :param as_list: whether return the pose as a list or a Pose object
+        :type as_list: bool
         :return: target_pose
         :rtype: RobotState
         """
@@ -2161,6 +2356,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type shape: ObjectShape
         :param color: color of the target
         :type color: ObjectColor
+        :param as_list: whether return the pose as a list or a Pose object
+        :type as_list: bool
         :return: object_found, object_pose, object_shape, object_color
         :rtype: (bool, RobotState, str, str)
         """
@@ -2175,29 +2372,52 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                                  as_list=as_list)
         return True, obj_pose, obj_shape, obj_color
 
-    def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):
+    def vision_pick_w_obs_joints(self,
+                                 workspace_name,
+                                 height_offset,
+                                 shape,
+                                 color,
+                                 observation_joints: Union[list, JointsPosition]):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`vision_pick` by setting obs_pose with a `JointsPosition` object.
+
         Move Joints to observation_joints, then executes a vision pick
         """
-        self.move_joints(*observation_joints)
-        return self.vision_pick(workspace_name, height_offset, shape, color)
+        warnings.warn("You should use vision_pick by setting obs_pose with a JointsPosition object.",
+                      DeprecationWarning)
+        if isinstance(observation_joints, list):
+            observation_joints = JointsPosition(*observation_joints)
+        return self.vision_pick(workspace_name, height_offset, shape, color, obs_pose=observation_joints)
 
-    def vision_pick_w_obs_pose(self, workspace_name, height_offset, shape, color, observation_pose_list):
+    def vision_pick_w_obs_pose(self,
+                               workspace_name,
+                               height_offset,
+                               shape,
+                               color,
+                               observation_pose_list: Union[list, Pose]):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`vision_pick` by setting obs_pose with a `Pose` object.
+
         Move Pose to observation_pose, then executes a vision pick
         """
-        self.move_pose(*observation_pose_list)
-        return self.vision_pick(workspace_name, height_offset, shape, color)
+        warnings.warn("You should use vision_pick by setting obs_pose with a Pose object.", DeprecationWarning)
+        if isinstance(observation_pose_list, list):
+            observation_pose_list = Pose(*observation_pose_list, metadata=PoseMetadata.v1())
+        return self.vision_pick(workspace_name, height_offset, shape, color, obs_pose=observation_pose_list)
 
-    def vision_pick(self, workspace_name, height_offset, shape, color):
+    def vision_pick(self, workspace_name, height_offset, shape, color, obs_pose: RobotPosition = None):
         """
         Picks the specified object from the workspace. This function has multiple phases:
-        1. detects object using the camera
-        2. prepares the current tool for picking
-        3. approaches the object
-        4. moves down to the correct picking pose
-        5. actuates the current tool
-        6. lifts the object
+
+        1. move to the observation pose (if specified)
+        2. detects object using the camera
+        3. prepares the current tool for picking
+        4. approaches the object
+        5. moves down to the correct picking pose
+        6. actuates the current tool
+        7. lifts the object
 
         :param workspace_name: name of the workspace
         :type workspace_name: str
@@ -2207,9 +2427,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type shape: ObjectShape
         :param color: color of the target
         :type color: ObjectColor
+        :param obs_pose: The observation pose
+        :type obs_pose: RobotPosition
         :return: object_found, object_shape, object_color
         :rtype: (bool, ObjectShape, ObjectColor)
         """
+        if obs_pose is not None:
+            self.move(obs_pose)
+
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, "", ""
@@ -2223,12 +2448,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         self.release_with_tool()
 
-        self.move_pose(*self.robot_state_msg_to_list(approach_pose))
-        self.move_pose(*self.robot_state_msg_to_list(pick_pose))
+        self.move(self.pose_from_msg(approach_pose))
+        self.move(self.pose_from_msg(pick_pose))
 
         self.grasp_with_tool()
 
-        self.move_pose(*self.robot_state_msg_to_list(approach_pose))
+        self.move(self.pose_from_msg(approach_pose))
         return True, obj_shape, obj_color
 
     def move_to_object(self, workspace, height_offset, shape, color):
@@ -2250,7 +2475,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             workspace, height_offset, shape, color)
         if not obj_found:
             return False, "", ""
-        self.move_pose(*self.robot_state_msg_to_list(obj_pose))
+        self.move(self.pose_from_msg(obj_pose))
         return True, obj_shape, obj_color
 
     def detect_object(self, workspace_name, shape, color):
@@ -2301,7 +2526,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return result
 
     # - Workspace
-    def save_workspace_from_poses(self, name, list_poses_raw):
+    def save_workspace_from_poses(self, name, list_poses_raw: List[Union[List[float], Pose]]):
         """
         Saves workspace by giving the poses of the robot to point its 4 corners
         with the calibration Tip. Corners should be in the good order
@@ -2315,7 +2540,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import ManageWorkspace, ManageWorkspaceRequest
 
-        list_poses = [self.list_to_robot_state_msg(*pose) for pose in list_poses_raw]
+        if len(list_poses_raw) > 0 and isinstance(list_poses_raw[0], list):
+            list_poses_raw = [Pose(*pose, metadata=PoseMetadata.v1()) for pose in list_poses_raw]
+
+        for pose in list_poses_raw:
+            pose.normalize()
+
+        list_poses = [self.msg_from_pose(pose) for pose in list_poses_raw]
+
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE
         if len(name) > 30:
@@ -2379,11 +2611,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_poses_handlers/get_workspace_poses', GetWorkspaceRobotPoses, name)
         self._check_result_status(result)
 
-        poses = result.poses
-        list_p_raw = []
-        for p in poses:
-            pose = [p.position.x, p.position.y, p.position.z, p.rpy.roll, p.rpy.pitch, p.rpy.yaw]
-            list_p_raw.append(pose)
+        list_p_raw = [self.pose_from_msg(p) for p in result.poses]
         return list_p_raw
 
     def get_workspace_ratio(self, name):
@@ -2409,7 +2637,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of workspaces name
         :rtype: list[str]
         """
-        workspace_list = rospy.wait_for_message('/niryo_robot_workspaces_handlers/workspace_list', BasicObjectArray, 2)
+        workspace_list = rospy.wait_for_message('/niryo_robot_poses_handlers/workspace_list', BasicObjectArray, 2)
         names = [workspace.name for workspace in workspace_list.objects]
         if with_desc:
             descriptions = [workspace.description for workspace in workspace_list.objects]

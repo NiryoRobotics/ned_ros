@@ -52,10 +52,24 @@ def dist_2_poses(p1, p2):
     :return: The distance (in meters) between the two poses
     :rtype: float
     """
-    np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
-                         p1.orientation.z, p1.orientation.w])
-    np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
-                         p2.orientation.z, p2.orientation.w])
+    np_pose1 = np.array([
+        p1.position.x,
+        p1.position.y,
+        p1.position.z,
+        p1.orientation.x,
+        p1.orientation.y,
+        p1.orientation.z,
+        p1.orientation.w
+    ])
+    np_pose2 = np.array([
+        p2.position.x,
+        p2.position.y,
+        p2.position.z,
+        p2.orientation.x,
+        p2.orientation.y,
+        p2.orientation.z,
+        p2.orientation.w
+    ])
 
     return np.linalg.norm(np_pose1 - np_pose2)
 
@@ -100,10 +114,24 @@ def poses_too_close(p1, p2):
     :return: True if the distance between p1 and p2 is smaller than 1mm
     :rtype: bool
     """
-    np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
-                         p1.orientation.z, p1.orientation.w])
-    np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
-                         p2.orientation.z, p2.orientation.w])
+    np_pose1 = np.array([
+        p1.position.x,
+        p1.position.y,
+        p1.position.z,
+        p1.orientation.x,
+        p1.orientation.y,
+        p1.orientation.z,
+        p1.orientation.w
+    ])
+    np_pose2 = np.array([
+        p2.position.x,
+        p2.position.y,
+        p2.position.z,
+        p2.orientation.x,
+        p2.orientation.y,
+        p2.orientation.z,
+        p2.orientation.w
+    ])
 
     dist = np.linalg.norm(np_pose1 - np_pose2)
 

@@ -1,5 +1,8 @@
 import numpy as np
 import math
+import tf2_ros
+import rospy
+import tf2_geometry_msgs
 
 __all__ = [
     'concatenate_matrices',
@@ -7,8 +10,11 @@ __all__ = [
     'euler_from_matrix',
     'euler_from_quaternion',
     'quaternion_matrix',
-    'quaternion_from_euler'
+    'quaternion_from_euler',
+    'convert_legacy_rpy_to_dh_convention',
 ]
+
+from geometry_msgs.msg import PoseStamped
 
 # epsilon for testing whether a number is close to zero
 _EPS = np.finfo(float).eps * 4.0
@@ -223,3 +229,14 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
 
 def euclidian_dist(point_a, point_b):
     return np.linalg.norm(np.array(point_a) - np.array(point_b))
+
+
+def convert_legacy_rpy_to_dh_convention(roll, pitch, yaw):
+    rotation_angles = (0, -1.57, 3.14)
+    initial_rotation = euler_matrix(roll, pitch, yaw)
+    rotation = euler_matrix(*rotation_angles)
+
+    final_rotation = np.matmul(initial_rotation, rotation)
+
+    final_orientation = euler_from_matrix(final_rotation)
+    return final_orientation

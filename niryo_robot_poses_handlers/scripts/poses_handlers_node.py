@@ -11,7 +11,7 @@ from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
-from niryo_robot_poses_handlers.pose_manager import PoseManager
+from niryo_robot_poses_handlers.pose_manager import PoseManager, PoseObj
 from niryo_robot_poses_handlers.workspace_manager import WorkspaceManager
 from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
 
@@ -37,6 +37,11 @@ from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses, GetWorkspaceM
 from niryo_robot_poses_handlers.srv import GetDynamicFrame, ManageWorkspace
 from niryo_robot_poses_handlers.srv import GetPose, ManagePose
 from niryo_robot_poses_handlers.srv import ManageDynamicFrame
+
+from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
+from niryo_robot_utils.dataclasses.enums import TcpVersion
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
+from niryo_robot_utils.dataclasses.Pose import Pose
 
 
 class PoseHandlerNode:
@@ -123,7 +128,10 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
         rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
         rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_get_workspace_list)
-        self.__workspace_list_publisher = rospy.Publisher('workspace_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__workspace_list_publisher = rospy.Publisher('~workspace_list',
+                                                          BasicObjectArray,
+                                                          latch=True,
+                                                          queue_size=10)
         self.__publish_workspace_list()
 
         if rospy.has_param('~gazebo_workspaces'):
@@ -237,13 +245,7 @@ class PoseHandlerNode:
 
     def __callback_get_pose(self, req):
         try:
-            pos_read = self.get_pose(req.name)
-            pos_msg = NiryoPose(pos_read.name,
-                                pos_read.description,
-                                pos_read.joints,
-                                pos_read.position,
-                                pos_read.rpy,
-                                pos_read.orientation)
+            pos_msg = self.get_pose(req.name)
             return CommandStatus.SUCCESS, "Success", pos_msg
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), NiryoPose()
@@ -268,7 +270,17 @@ class PoseHandlerNode:
         pose = req.pose
         if cmd == req.SAVE:
             try:
-                self.create_pose(pose.name, pose.description, pose.joints, pose.position, pose.rpy, pose.orientation)
+                pose_obj = PoseObj(name=pose.name,
+                                   description=pose.description,
+                                   joints=JointsPosition(*pose.joints),
+                                   pose=Pose(pose.position.x,
+                                             pose.position.y,
+                                             pose.position.z,
+                                             pose.rpy.roll,
+                                             pose.rpy.pitch,
+                                             pose.rpy.yaw,
+                                             metadata=PoseMetadata(pose.pose_version, TcpVersion[pose.tcp_version])))
+                self.__pos_manager.create(pose_obj)
                 self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
             except Exception as e:
@@ -418,9 +430,9 @@ class PoseHandlerNode:
             point = self.__transform_handler.get_calibration_tip_position(pose)
             rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
-            pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
+            pose_obj = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
-            robot_poses_raw.append(pose_raw)
+            robot_poses_raw.append(pose_obj)
 
         self.__ws_manager.create(name, points, robot_poses_raw, description)
 
@@ -532,22 +544,6 @@ class PoseHandlerNode:
         return pose
 
     # -- Pose
-    def create_pose(self, name, description, joints, point, rpy, quaternion):
-        """
-        Create a pose from ManagePose message fields
-
-        :type name: str
-        :type description: str
-        :type joints: list[float]
-        :type point: Point
-        :type rpy: RPY
-        :type quaternion: Quaternion
-        :return: None
-        """
-        point_raw = [point.x, point.y, point.z]
-        rpy_raw = [rpy.roll, rpy.pitch, rpy.yaw]
-        quaternion_raw = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
-        self.__pos_manager.create(name, joints, point_raw, rpy_raw, quaternion_raw, description)
 
     def get_pose(self, name):
         """
@@ -558,12 +554,17 @@ class PoseHandlerNode:
         :return: The pose object
         :rtype: NiryoPose
         """
-        pose_raw = self.__pos_manager.read(name)
+        pose_obj = self.__pos_manager.read(name)
         pose = NiryoPose()
-        pose.joints = pose_raw.joints
-        pose.position = Point(*pose_raw.position)
-        pose.rpy = RPY(*pose_raw.rpy)
-        pose.orientation = Quaternion(*pose_raw.orientation)
+        pose.name = pose_obj.name
+        pose.description = pose_obj.description
+        pose.joints = list(pose_obj.joints)
+        pose.position = Point(x=pose_obj.pose.x, y=pose_obj.pose.y, z=pose_obj.pose.z)
+        pose.rpy = RPY(roll=pose_obj.pose.roll, pitch=pose_obj.pose.pitch, yaw=pose_obj.pose.yaw)
+        rx, ry, rz, w = pose_obj.pose.quaternion()
+        pose.orientation = Quaternion(x=rx, y=ry, z=rz, w=w)
+        pose.pose_version = pose_obj.pose.metadata.version
+        pose.tcp_version = pose_obj.pose.metadata.tcp_version.name
         return pose
 
     def remove_pose(self, name):
@@ -632,6 +633,8 @@ class PoseHandlerNode:
 
         :param name: dynamic frame name
         :type name: str
+        :param belong_to_workspace: whether the dynamic frame belong to a workspace or not
+        :type belong_to_workspace: bool
         :return: None
         """
         self.dynamic_frame_manager.remove(name, belong_to_workspace)
@@ -646,14 +649,14 @@ class PoseHandlerNode:
         :rtype: Pose
         """
         frame_read = self.dynamic_frame_manager.read(name)
-        pose_raw = frame_read.static_transform_stamped
+        pose_obj = frame_read.static_transform_stamped
 
         frame = DynamicFrame()
         frame.name = frame_read.name
         frame.description = frame_read.description
         frame.belong_to_workspace = frame_read.belong_to_workspace
-        point = Point(*pose_raw[0])
-        quaternion = Quaternion(*pose_raw[1])
+        point = Point(*pose_obj[0])
+        quaternion = Quaternion(*pose_obj[1])
         roll, pitch, yaw = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
         rpy = RPY(roll, pitch, yaw)
 
