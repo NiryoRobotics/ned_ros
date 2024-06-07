@@ -229,7 +229,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     // check if the driver is valid for this hardware
     if (state->getStrictModelNumber() && driver->checkModelNumber(id) != COMM_SUCCESS)
     {
-        ROS_ERROR("TtlManager::addHardwareComponent - Model number check failed for hardware id %d", id);
+        ROS_WARN("TtlManager::addHardwareComponent - Model number check failed for hardware id %d", id);
         return niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
     }
 
@@ -1293,7 +1293,6 @@ uint8_t TtlManager::readSteppersStatus()
         }
         else if (hw_type == EHardwareType::NED3_STEPPER)
         {
-            ROS_INFO("TtlManager::readCalibrationStatus : NED3_STEPPER");
             hw_errors_increment = readNed3SteppersStatus();
         }
 
