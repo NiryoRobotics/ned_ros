@@ -38,6 +38,7 @@ Forthcoming
   - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
   - Add speed limit pourcentage for the conveyor
   - When a tool stops moving, a position-holding command is sent instead of resending the command with the max position, drastically reducing temperature rise
+  - Update dynamixels PID (Axis 4 to 6)
 
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
