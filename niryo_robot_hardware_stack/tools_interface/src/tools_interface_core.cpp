@@ -393,7 +393,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Requ
         _waitForToolStop(req.id, _gripper_timeout);
 
         // set hold torque
-        _toolCommand(req.position, req.hold_torque, req.speed);
+        _toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
 
         _toolState->setState(ToolState::GRIPPER_STATE_OPEN);
 
@@ -424,7 +424,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Req
         _waitForToolStop(req.id, _gripper_timeout);
 
         // set hold torque
-        _toolCommand(position_command, req.hold_torque, req.speed);
+        _toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
 
         _toolState->setState(ToolState::GRIPPER_STATE_CLOSE);
         ROS_DEBUG("Closed !");
@@ -464,7 +464,8 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::ToolCommand
                 _waitForToolStop(req.id, _vacuum_pump_timeout);
 
                 // set hold torque
-                _toolCommand(pull_air_position, pull_air_hold_torque, pull_air_velocity);
+                _toolCommand(_toolState->getPosition(), pull_air_hold_torque, pull_air_velocity);
+
                 _toolState->setState(ToolState::VACUUM_PUMP_STATE_PULLED);
             }
         }
@@ -502,7 +503,7 @@ bool ToolsInterfaceCore::_callbackPushAirVacuumPump(tools_interface::ToolCommand
                 _waitForToolStop(req.id, _vacuum_pump_timeout);
 
                 // set torque to 0
-                _toolCommand(push_air_position, 0, push_air_velocity);
+                _toolCommand(_toolState->getPosition(), 0, push_air_velocity);
 
                 _toolState->setState(ToolState::VACUUM_PUMP_STATE_PUSHED);
             }
