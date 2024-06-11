@@ -539,8 +539,8 @@ void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
             moving_counter = 0;
         }
 
-        // If the vacuum pump has been detected as not moving 5 times in a row, we consider that the vacuum pump cannot move anymore
-        if (moving_counter > 5)
+        // If the vacuum pump has been detected as not moving 10 times in a row, we consider that the vacuum pump cannot move anymore
+        if (moving_counter > 10)
         {
             break;
         }
