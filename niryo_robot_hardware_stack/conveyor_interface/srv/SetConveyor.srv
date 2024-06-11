@@ -8,3 +8,4 @@ uint8 REMOVE = 2
 int16 id
 int16 status
 string message
+string hardware_id

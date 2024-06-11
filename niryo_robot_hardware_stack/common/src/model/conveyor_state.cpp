@@ -29,26 +29,6 @@ namespace common
 namespace model
 {
 
-/**
- * @brief ConveyorState::ConveyorState
- * @param default_id
- */
-ConveyorState::ConveyorState(uint8_t default_id) : _default_id(default_id) {}
-
-/**
- * @brief ConveyorState::ConveyorState
- * @param bus_proto
- * @param default_id
- */
-ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t default_id) : ConveyorState(EHardwareType::STEPPER, bus_proto, 1, default_id) {}
-
-/**
- * @brief ConveyorState::ConveyorState
- * @param type
- * @param bus_proto
- * @param default_id
- */
-ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t default_id) : ConveyorState(type, bus_proto, 1, default_id) {}
 
 /**
  * @brief ConveyorState::ConveyorState
@@ -57,8 +37,8 @@ ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t
  * @param id
  * @param default_id
  */
-ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id)
-    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id), _default_id(default_id)
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id, std::string hardware_id)
+    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id), _default_id(default_id), _hardware_id(hardware_id)
 {
 }
 

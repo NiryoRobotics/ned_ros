@@ -205,6 +205,9 @@ void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/) { ROS_DEB
  */
 conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
 {
+    auto constexpr CONVEYOR_V2_HWID = "niryo/conveyor2";
+    auto constexpr CONVEYOR_V3_HWID = "niryo/conveyor2";
+
     conveyor_interface::SetConveyor::Response res;
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
     res.id = 0;
@@ -217,7 +220,7 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
             // take first
             uint8_t conveyor_id = *bus.pool_id_list.begin();
 
-            auto conveyor_state = std::make_shared<ConveyorState>(EHardwareType::NED3_STEPPER, protocol, bus.default_id, bus.default_id);
+            auto conveyor_state = std::make_shared<ConveyorState>(EHardwareType::NED3_STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V3_HWID);
 
             // we want to check the model number for this conveyor
             // if it fails, we will recover with the old stepper hardware without checking the model number
@@ -234,7 +237,7 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
                 if (result == niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED)
                 {
                     // retry with the old stepper
-                    conveyor_state = std::make_shared<ConveyorState>(EHardwareType::STEPPER, protocol, bus.default_id, bus.default_id);
+                    conveyor_state = std::make_shared<ConveyorState>(EHardwareType::STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V2_HWID);
                     ROS_INFO("ConveyorInterfaceCore::addConveyor - Set NED3 conveyor on id %d", conveyor_id);
 
                     bus.type = EHardwareType::STEPPER;
@@ -249,6 +252,7 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
                     res.message += to_string(conveyor_id);
                     res.message += " OK";
                     res.id = conveyor_id;
+                    res.hardware_id = conveyor_state->getHardwareId();
                     res.status = static_cast<int16_t>(result);
 
                     ros::Duration(0.05).sleep();
