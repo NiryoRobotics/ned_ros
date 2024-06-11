@@ -256,6 +256,7 @@ class PoseHandlerNode:
     def __callback_set_relative_transform_frame(self, req):
         if req.value == '':
             self.__relative_transform = None
+            return CommandStatus.SUCCESS, 'Disabled the relative transform'
         elif req.value not in self.dynamic_frame_manager.get_all_names():
             return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
 
