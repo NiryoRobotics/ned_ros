@@ -523,8 +523,9 @@ void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
 {
     // Wait for moving status to acknowledge that the motion has stopped or return if timeout
     std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-    int moving_counter{0};
-    while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start_time).count() < timeout)
+    int moving_counter{10};
+
+    while(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start_time).count() < timeout)
     {
         uint8_t moving_status;
         _ttl_interface->readMoving(id, moving_status);
@@ -532,15 +533,15 @@ void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
         // Count the number of times the tool has been detected as not moving consecutively
         if (moving_status == 0)
         {
-            moving_counter++;
+            moving_counter--;
         }
         else
         {
-            moving_counter = 0;
+            moving_counter++;
         }
 
         // If the vacuum pump has been detected as not moving 10 times in a row, we consider that the vacuum pump cannot move anymore
-        if (moving_counter > 10)
+        if(moving_counter <= 0)
         {
             break;
         }
