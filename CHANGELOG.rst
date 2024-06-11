@@ -33,6 +33,7 @@ Forthcoming
 
   - New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY
   - New tools translation transforms according to the new TCP orientation
+  - Add Hardware ID to the conveyors, only for v2 and v3
 
 **Improvements**
   - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
