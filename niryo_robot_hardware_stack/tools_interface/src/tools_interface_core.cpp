@@ -421,12 +421,10 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Req
 
         _toolCommand(position_command, req.max_torque, req.speed);
 
-        //_waitForToolStop(req.id, _gripper_timeout);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        _waitForToolStop(req.id, _gripper_timeout);
 
         // set hold torque
-        //_toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
-        _toolCommand(position_command, req.hold_torque, req.speed);
+        _toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
 
         _toolState->setState(ToolState::GRIPPER_STATE_CLOSE);
         ROS_DEBUG("Closed !");
@@ -541,8 +539,8 @@ void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
             moving_counter = 0;
         }
 
-        // If the vacuum pump has been detected as not moving 10 times in a row, we consider that the vacuum pump cannot move anymore
-        if (moving_counter > 10)
+        // If the vacuum pump has been detected as not moving 5 times in a row, we consider that the vacuum pump cannot move anymore
+        if (moving_counter > 5)
         {
             break;
         }
