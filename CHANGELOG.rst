@@ -15,6 +15,7 @@ Forthcoming
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
  * Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time
+ * Debounce emergency stop resume to avoid to resume on small 12v spikes
 
 v5.4.0
 -----------
