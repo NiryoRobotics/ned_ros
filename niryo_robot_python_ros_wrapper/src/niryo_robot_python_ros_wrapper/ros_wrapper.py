@@ -41,8 +41,11 @@ from std_msgs.msg import Bool, Int32, String
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 
 from .CollisionPolicy import CollisionPolicy
-from .ros_wrapper_enums import ConveyorCan, ConveyorID, ConveyorTTL, PinMode, PinState
 
+# Can't remove this star import because blockly generated programs use
+# from niryo_robot_python_ros_wrapper.ros_wrapper import *
+# to import all the package
+from .ros_wrapper_enums import *
 
 def move_command(move_function):
 
