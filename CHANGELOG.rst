@@ -46,6 +46,7 @@ Forthcoming
  * Renaming a dynamic frame also rename its name in the transform
  * NiryoRosWrapper.get_workspace_list no longer return an error
  * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
+ * Fix intermitent delay in the control loop caused by a ROS spinOnce call in the control loop
 
 v5.4.0
 -----------
