@@ -105,6 +105,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState, timeout=100)
+        self.__pose_v2_ntv = NiryoTopicValue('/niryo_robot/robot_state_v2', RobotState, timeout=100)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -371,21 +372,54 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_pose(self):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`get_pose_v2`.
+
+        Return the legacy pose of the robot (i.e the legacy TCP orientation)
         Uses /niryo_robot/robot_state topic to get pose status
 
         :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
         :rtype: RobotState
         """
+        warnings.warn("You should use get_pose_v2.", DeprecationWarning)
         return self.__pose_ntv.value
 
     def get_pose_as_list(self):
         """
+        .. deprecated:: 5.5.0
+           You should use :func:`get_pose_v2_as_list`.
+
+        Return the legacy pose of the robot (i.e the legacy TCP orientation) as a list
         Uses /niryo_robot/robot_state topic to get pose status
 
         :return: list corresponding to [x, y, z, roll, pitch, yaw]
         :rtype: list[float]
         """
-        p = self.get_pose()
+        warnings.warn("You should use get_pose_v2_as_list.", DeprecationWarning)
+        p_msg = self.get_pose()
+        pose = self.pose_from_msg(p_msg)
+        pose.metadata = PoseMetadata.v1()
+        return pose
+
+    def get_pose_v2(self):
+        """
+        Return the pose of the robot (i.e the legacy TCP orientation)
+        Uses /niryo_robot/robot_state_v2 topic to get pose status
+
+        :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
+        :rtype: RobotState
+        """
+        return self.__pose_v2_ntv.value
+
+    def get_pose_v2_as_list(self):
+        """
+        Return the pose of the robot (i.e the legacy TCP orientation) as a list
+        Uses /niryo_robot/robot_state_v2 topic to get pose status
+
+        :return: list corresponding to [x, y, z, roll, pitch, yaw]
+        :rtype: list[float]
+        """
+        p = self.get_pose_v2()
         return self.pose_from_msg(p)
 
     @overload

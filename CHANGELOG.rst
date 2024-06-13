@@ -21,7 +21,7 @@ Forthcoming
     - Pose
     - PoseMetadata
 
-  - New niryo_robot_poses_handlers/transform_functions function: ``convert_legacy_rpy_to_dh_convention()``
+  - New niryo_robot_poses_handlers/transform_functions functions: ``convert_legacy_rpy_to_dh_convention()`` and ``convert_dh_convention_to_legacy_rpy()``
   - New ros_wrapper.NiryoRosWrapper functions which can't take either Pose or JointsPosition objects:
 
     - move replace move_joints, move_pose and move_linear_pose.
@@ -33,6 +33,8 @@ Forthcoming
 
   - New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY
   - New tools translation transforms according to the new TCP orientation
+  - The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios
+  - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
 
 **Improvements**
   - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
