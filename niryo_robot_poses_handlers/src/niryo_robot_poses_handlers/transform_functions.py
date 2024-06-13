@@ -1,8 +1,5 @@
 import numpy as np
 import math
-import tf2_ros
-import rospy
-import tf2_geometry_msgs
 
 __all__ = [
     'concatenate_matrices',
@@ -12,9 +9,8 @@ __all__ = [
     'quaternion_matrix',
     'quaternion_from_euler',
     'convert_legacy_rpy_to_dh_convention',
+    'convert_dh_convention_to_legacy_rpy'
 ]
-
-from geometry_msgs.msg import PoseStamped
 
 # epsilon for testing whether a number is close to zero
 _EPS = np.finfo(float).eps * 4.0
@@ -231,12 +227,21 @@ def euclidian_dist(point_a, point_b):
     return np.linalg.norm(np.array(point_a) - np.array(point_b))
 
 
-def convert_legacy_rpy_to_dh_convention(roll, pitch, yaw):
-    rotation_angles = (0, -1.57, 3.14)
-    initial_rotation = euler_matrix(roll, pitch, yaw)
-    rotation = euler_matrix(*rotation_angles)
+def __apply_rotation(initial_rpy, rpy_to_apply):
+    initial_rotation = euler_matrix(*initial_rpy)
+    rotation = euler_matrix(*rpy_to_apply)
 
     final_rotation = np.matmul(initial_rotation, rotation)
 
     final_orientation = euler_from_matrix(final_rotation)
     return final_orientation
+
+
+def convert_legacy_rpy_to_dh_convention(roll, pitch, yaw):
+    legacy_to_dh_rotation = (0, -math.pi / 2, math.pi)
+    return __apply_rotation((roll, pitch, yaw), legacy_to_dh_rotation)
+
+
+def convert_dh_convention_to_legacy_rpy(roll, pitch, yaw):
+    dh_to_legacy_rotation = (math.pi, -math.pi / 2, 0)
+    return __apply_rotation((roll, pitch, yaw), dh_to_legacy_rotation)

@@ -243,11 +243,6 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
     return res;
 }
 
-/**
- * @brief CalibrationManager::factoryCalibration
- * @param  * @param result_message
- * @return
- */
 int CalibrationManager::startFactoryCalibration(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, std::string &result_message)
 {
     ROS_INFO("CalibrationManager::startFactoryCalibration : Starting calibration...");

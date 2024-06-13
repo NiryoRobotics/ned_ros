@@ -615,9 +615,6 @@ void TtlInterfaceCore::controlLoop()
         {
             ros::Duration(0.5).sleep();
         }
-
-        // essential to allow publishers and subscribers to do their job
-        ros::spinOnce();
     }
 
     if ("ned2" == _hardware_version || "ned3" == _hardware_version)
