@@ -47,6 +47,7 @@ from .CollisionPolicy import CollisionPolicy
 # to import all the package
 from .ros_wrapper_enums import *
 
+
 def move_command(move_function):
 
     @functools.wraps(move_function)
