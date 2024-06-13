@@ -74,7 +74,7 @@ class Tool(object):
 
     def __repr__(self):
         return self.__str__()
-    
+
     def remap(self, value, old_min, old_max, new_min, new_max):
         """Remap given value from an old range to a new range
         """
