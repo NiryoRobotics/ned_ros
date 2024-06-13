@@ -33,6 +33,7 @@ Forthcoming
 
   - New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY
   - New tools translation transforms according to the new TCP orientation
+  - Add Hardware ID to the conveyors, only for v2 and v3
   - The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios
   - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
 

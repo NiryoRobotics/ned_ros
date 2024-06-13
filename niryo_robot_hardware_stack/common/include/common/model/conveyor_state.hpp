@@ -35,13 +35,8 @@ class ConveyorState : public StepperMotorState
 {
 
 public:
-    ConveyorState() = default;
-    ConveyorState(uint8_t default_id);
-    ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
     ConveyorState(EHardwareType type,
-                  EBusProtocol bus_proto, uint8_t default_id);
-    ConveyorState(EHardwareType type,
-                  EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
+                  EBusProtocol bus_proto, uint8_t id, uint8_t default_id, std::string hardware_id);
 
     void updateId(uint8_t id);
 
@@ -54,6 +49,7 @@ public:
     bool getState() const;
     int16_t getSpeed() const;
     int8_t getGoalDirection() const;
+    std::string getHardwareId() const;
     // other getters
 
     bool operator==(const ConveyorState& other);
@@ -68,6 +64,7 @@ private:
     bool _state{false};
     int16_t _speed{0};
     uint8_t _default_id{0};
+    std::string _hardware_id;
 };
 
 /**
@@ -98,6 +95,15 @@ inline
 int8_t ConveyorState::getGoalDirection() const
 {
     return _goal_direction;
+}
+
+/**
+ * @brief Get the hardware id of the conveyor
+ */
+inline
+std::string ConveyorState::getHardwareId() const 
+{ 
+    return _hardware_id; 
 }
 
 /**
