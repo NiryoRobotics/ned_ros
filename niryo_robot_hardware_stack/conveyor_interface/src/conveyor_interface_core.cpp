@@ -206,7 +206,7 @@ void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/) { ROS_DEB
 conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
 {
     auto constexpr CONVEYOR_V2_HWID = "niryo/conveyor2";
-    auto constexpr CONVEYOR_V3_HWID = "niryo/conveyor2";
+    auto constexpr CONVEYOR_V3_HWID = "niryo/conveyor3";
 
     conveyor_interface::SetConveyor::Response res;
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
