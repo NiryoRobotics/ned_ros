@@ -14,6 +14,7 @@ from niryo_robot_poses_handlers.grip_manager import GripManager
 from niryo_robot_poses_handlers.pose_manager import PoseManager, PoseObj
 from niryo_robot_poses_handlers.workspace_manager import WorkspaceManager
 from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
+from niryo_robot_poses_handlers.transform_functions import convert_dh_convention_to_legacy_rpy
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -110,8 +111,9 @@ class PoseHandlerNode:
         self.dynamic_frame_manager.publish_frames()
 
         # Relative pose
-        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=10)
-        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback, queue_size=1)
+        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=1)
+        self.__relative_pose_v2_publisher = rospy.Publisher('~relative_pose_v2', PoseStamped, queue_size=1)
+        rospy.Subscriber('/niryo_robot/robot_state_v2', RobotState, self.__robot_state_callback, queue_size=1)
         self.__current_pose = [0] * 6
 
         self.__relative_transform = None
@@ -256,6 +258,7 @@ class PoseHandlerNode:
     def __callback_set_relative_transform_frame(self, req):
         if req.value == '':
             self.__relative_transform = None
+            return CommandStatus.SUCCESS, 'Disabled the relative transform'
         elif req.value not in self.dynamic_frame_manager.get_all_names():
             return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
 
@@ -379,7 +382,7 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", position, rpy
 
         except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
+            rospy.logerr("Poses Handlers - Error occurred when getting transform: {}".format(e))
             return CommandStatus.CONVERT_FAILED, str(e), Point(), RPY()
 
     def __callback_get_dynamic_frame_list(self, _):
@@ -407,8 +410,12 @@ class PoseHandlerNode:
         if self.__relative_transform is None:
             return
 
-        transform_pose = self.transform_pose(self.__relative_transform, self.__current_pose)
-        self.__relative_pose_publisher.publish(transform_pose)
+        transform_pose_v2 = self.transform_pose(self.__relative_transform, self.__current_pose)
+        self.__relative_pose_v2_publisher.publish(transform_pose_v2)
+
+        current_pose_v1 = self.__current_pose[:3] + list(convert_dh_convention_to_legacy_rpy(*self.__current_pose[3:]))
+        transform_pose_v1 = self.transform_pose(self.__relative_transform, current_pose_v1)
+        self.__relative_pose_publisher.publish(transform_pose_v1)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
