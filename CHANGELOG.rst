@@ -2,9 +2,10 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+v5.4.0
 -----------
 **Features**
+  - Implemented NED3 hardware changes into niryo_robot_rpi package
   - Add Ned3 Calibration support
   - Add support for Conveyor with ned3 stepper
   - Add support for vacuum pump v2
@@ -38,6 +39,9 @@ Forthcoming
   - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
 
 **Improvements**
+  - Use the I/O panel version instead of the robot hardware version to differentiate the implementations
+  - Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
+  - Update of the DACx0501 driver
   - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
   - Add speed limit pourcentage for the conveyor
   - When a tool stops moving, a position-holding command is sent instead of resending the command with the max position, drastically reducing temperature rise
@@ -52,25 +56,6 @@ Forthcoming
  * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
  * Fix intermitent delay in the control loop caused by a ROS spinOnce call in the control loop
 
-v5.4.0
------------
-**Features**
-  * Implemented NED3 hardware changes into niryo_robot_rpi package
-**Improvements**
-  * Use the I/O panel version instead of the robot hardware version to differentiate the implementations
-  * Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
-  * Update of the DACx0501 driver
-
-**Bugfixes**
-
-v5.4.0
------------
-**Features**
-  * Implemented NED3 hardware changes into niryo_robot_rpi package
-**Improvements**
-  * Use the I/O panel version instead of the robot hardware version to differentiate the implementations
-  * Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
-  * Update of the DACx0501 driver
 
 **Bugfixes**
 
