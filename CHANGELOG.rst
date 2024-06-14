@@ -46,6 +46,7 @@ Forthcoming
 **Bugfixes**
  * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
  * Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time
+ * Debounce emergency stop resume to avoid to resume on small 12v spikes
  * Renaming a dynamic frame also rename its name in the transform
  * NiryoRosWrapper.get_workspace_list no longer return an error
  * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
