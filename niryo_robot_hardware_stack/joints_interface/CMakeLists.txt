@@ -124,6 +124,7 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
+    ${PROJECT_NAME}_generate_messages_cpp
     ${catkin_EXPORTED_TARGETS}
 )
 

@@ -149,7 +149,6 @@
     <link name="tool_link">
     </link>
 
-
     <!-- Joints -->
 
     <joint name="joint_world" type="fixed">
@@ -220,6 +219,7 @@
         <child link="tool_link"/>
         <origin xyz="0 0 ${distance_hand_tool}" rpy="0 0 0"/>
     </joint>
+
 
     <!--
     <joint name="joint_test" type="fixed">

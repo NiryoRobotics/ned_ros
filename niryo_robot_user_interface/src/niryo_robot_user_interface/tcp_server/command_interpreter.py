@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import rospy
 from enum import Enum
+
+from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import (ShiftPose,
                                                               PinMode,
                                                               PinState,
@@ -11,7 +13,12 @@ from niryo_robot_python_ros_wrapper.ros_wrapper_enums import (ShiftPose,
                                                               ConveyorTTL,
                                                               ConveyorCan)
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-from niryo_robot_user_interface.tcp_server.communication_functions import dict_to_packet
+from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
+from niryo_robot_utils.dataclasses.Pose import Pose
+
+from .communication_functions import dict_to_packet
+from .const_communication import HANDSHAKE_MSG_CLIENT_OUTDATED, minimum_client_version
 
 
 class TcpCommandException(Exception):
@@ -22,12 +29,17 @@ def check_nb_args(expected_nbr):
     """
     Decorator used to check number of arguments before running a function
     """
+
+    if isinstance(expected_nbr, int):
+        expected_nbr = [expected_nbr]
+
     def decorator(function):
+
         def wrapper(*args):
             nbr_args = len(args) - 1  # Because "self"
-            if nbr_args != expected_nbr:
+            if nbr_args not in expected_nbr:
                 err = "{} parameters expected but {} given".format(expected_nbr, nbr_args)
-                raise TcpCommandException(err + "\nIn function".format(function.__name__))
+                raise TcpCommandException(err + "\nIn function {}".format(function.__name__))
             result = function(*args)
             return result
 
@@ -40,6 +52,7 @@ class CommandInterpreter:
     """
     Object which interpret commands from TCP Client, and then, call Niryo Python ROS Wrapper to execute these commands
     """
+
     def __init__(self):
         # Niryo Python Ros Wrapper instance
         self.__niryo_robot = NiryoRosWrapper()
@@ -118,6 +131,8 @@ class CommandInterpreter:
             for string, index in self.__tools_string_dict_convertor.items()
         }
 
+        self.__handshake_made = False
+
     # Error Handlers
     def __raise_exception_expected_choice(self, expected_choice, given):
         raise TcpCommandException("Expected one of the following: {}.\nGiven: {}".format(expected_choice, given))
@@ -151,6 +166,7 @@ class CommandInterpreter:
             status, list_ret_param, payload = self.__commands_dict[command_name](*param_list)
             rospy.logdebug("Command Interpreter - {} - {}".format(status, list_ret_param))
         except (TcpCommandException, TypeError, NotImplementedError) as e:
+            rospy.logerr(f"Command Interpreter - {e}, dict_command_received: {dict_command_received}", exc_info=True)
             return dict_to_packet(self.generate_dict_failure(command=command_name, message=str(e)))
 
         # Save answer Format parameters
@@ -192,9 +208,11 @@ class CommandInterpreter:
 
         return dict_c
 
-    @staticmethod
-    def generate_dict_failure(command="", message="Failure in command_interpreter"):
-        return {"command": command, "status": "KO", "message": message, "list_ret_param": []}
+    def generate_dict_failure(self, command="", message="Failure in command_interpreter"):
+        if not self.__handshake_made:
+            message += ("\nNo handshake has been made between the client and the server. "
+                        "This error could be the cause of an incompatible versions of the server and the client")
+        return {"command": command, "status": "KO", "message": message, "list_ret_param": [], "payload_size": 0}
 
     def __send_answer(self, *params):
         """
@@ -204,7 +222,8 @@ class CommandInterpreter:
 
     @staticmethod
     def __send_answer_with_payload(payload, *params):
-        return "OK", params, payload.encode()
+        encoded_payload = payload if isinstance(payload, bytes) else payload.encode()
+        return "OK", params, encoded_payload
 
     def __check_list_belonging(self, value, list_):
         """
@@ -262,6 +281,10 @@ class CommandInterpreter:
         except ValueError:
             self.__raise_exception_expected_type(type_.__name__, value)
 
+    def __obj_from_dict(self, obj_dict):
+        obj_class = JointsPosition if obj_dict.pop('obj_type') == 'JOINTS' else Pose
+        return obj_class.from_dict(obj_dict)
+
     # --- FUNCTION LIST
     def __not_implemented_function(self, *_):
         raise NotImplementedError
@@ -300,6 +323,24 @@ class CommandInterpreter:
         ret = self.__niryo_robot.set_jog_use_state(state)
         return self.__send_answer(ret)
 
+    @check_nb_args(0)
+    def __get_collision_detected(self):
+        return self.__send_answer(self.__niryo_robot.collision_detected)
+
+    @check_nb_args(0)
+    def __clear_collision_detected(self):
+        self.__niryo_robot.clear_collision_detected()
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __handshake(self, client_version):
+        response = {}
+        if client_version < minimum_client_version:
+            response['message'] = HANDSHAKE_MSG_CLIENT_OUTDATED
+
+        self.__handshake_made = True
+        return self.__send_answer(response)
+
     # - Pose
 
     @check_nb_args(0)
@@ -332,6 +373,21 @@ class CommandInterpreter:
             arm_pose.orientation.w
         ]
         return self.__send_answer(*data_answer)
+
+    @check_nb_args(2)
+    def __move(self, robot_position, linear):
+        linear = self.__boolean_string_dict_converter[linear]
+        robot_position_obj = self.__obj_from_dict(robot_position)
+
+        if isinstance(robot_position_obj, JointsPosition) and linear:
+            raise TcpCommandException("The robot can only do a linear move with a pose, not with joints")
+        elif isinstance(robot_position_obj, JointsPosition):
+            move_cmd = ArmMoveCommand.JOINTS
+        else:
+            move_cmd = ArmMoveCommand.LINEAR_POSE if linear else ArmMoveCommand.POSE
+
+        self.__niryo_robot.move(robot_position_obj, move_cmd)
+        return self.__send_answer()
 
     @check_nb_args(6)
     def __move_joints(self, *param_list):
@@ -379,6 +435,12 @@ class CommandInterpreter:
         self.__niryo_robot.jog_pose_shift(shift_values_list)
         return self.__send_answer()
 
+    @check_nb_args(1)
+    def __jog(self, robot_position_dict):
+        robot_position = self.__obj_from_dict(robot_position_dict)
+        self.__niryo_robot.jog_shift(robot_position)
+        return self.__send_answer()
+
     @check_nb_args(7)
     def __move_linear_pose(self, *param_list):
         parameters_value_array = self.__map_list(param_list[:-1], float)
@@ -388,33 +450,31 @@ class CommandInterpreter:
         self.__niryo_robot.move_linear_pose(*param)
         return self.__send_answer()
 
-    @check_nb_args(6)
-    def __forward_kinematics(self, *param_list):
-        joint_list = self.__map_list(param_list, float)
+    @check_nb_args(1)
+    def __forward_kinematics(self, joints_position):
+        joints_position_obj = JointsPosition.from_dict(joints_position)
+        return self.__send_answer(self.__niryo_robot.forward_kinematics(joints_position_obj).to_dict())
 
-        return self.__send_answer(self.__niryo_robot.forward_kinematics(*joint_list))
-
-    @check_nb_args(6)
-    def __inverse_kinematics(self, *param_list):
-        parameters_value_array = self.__map_list(param_list, float)
-
-        return self.__send_answer(self.__niryo_robot.inverse_kinematics(*parameters_value_array))
+    @check_nb_args(1)
+    def __inverse_kinematics(self, pose):
+        pose_obj = Pose.from_dict(pose)
+        return self.__send_answer(self.__niryo_robot.inverse_kinematics(pose_obj).to_dict())
 
     # - Saved Pose
 
     @check_nb_args(1)
     def __get_pose_saved(self, *param_list):
         pose = self.__niryo_robot.get_pose_saved(*param_list)
-        return self.__send_answer(*pose)
+        return self.__send_answer(pose.to_dict())
 
-    @check_nb_args(7)
+    @check_nb_args([2, 7])
     def __save_pose(self, *param_list):
-        try:
-            parameters_value_array = self.__map_list(param_list[1:], float)
-        except ValueError:
-            self.__raise_exception_expected_type("float", param_list)
+        if len(param_list) == 7:
+            pose = Pose(*param_list[1:], metadata=PoseMetadata.v1())
         else:
-            self.__niryo_robot.save_pose(param_list[0], *parameters_value_array)
+            pose = Pose.from_dict(param_list[1])
+
+        self.__niryo_robot.save_pose(param_list[0], pose)
         return self.__send_answer()
 
     @check_nb_args(1)
@@ -443,12 +503,30 @@ class CommandInterpreter:
         self.__niryo_robot.place_from_pose(*parameters_value_array)
         return self.__send_answer()
 
-    @check_nb_args(3)
-    def __pick_and_place(self, *param_list):
-        pick_pose = self.__map_list(param_list[0], float)
-        place_pose = self.__map_list(param_list[1], float)
+    @check_nb_args(1)
+    def __pick(self, robot_position):
+        robot_position_obj = self.__obj_from_dict(robot_position)
+        self.__niryo_robot.pick(robot_position_obj)
+        return self.__send_answer()
 
-        dist_smoothing = param_list[2]
+    @check_nb_args(1)
+    def __place(self, robot_position):
+        robot_position_obj = self.__obj_from_dict(robot_position)
+        self.__niryo_robot.place(robot_position_obj)
+        return self.__send_answer()
+
+    @check_nb_args(3)
+    def __pick_and_place(self, pick_pose, place_pos, dist_smoothing):
+        if not isinstance(pick_pose, dict):
+            pick_pose = Pose(*pick_pose, metadata=PoseMetadata.v1())
+        else:
+            pick_pose = self.__obj_from_dict(pick_pose)
+
+        if not isinstance(place_pos, dict):
+            place_pose = Pose(*place_pos, metadata=PoseMetadata.v1())
+        else:
+            place_pose = self.__obj_from_dict(place_pos)
+
         self.__check_type(dist_smoothing, float)
 
         self.__niryo_robot.pick_and_place(pick_pose, place_pose, dist_smoothing)
@@ -458,7 +536,8 @@ class CommandInterpreter:
     @check_nb_args(1)
     def __get_trajectory_saved(self, *param_list):
         traj = self.__niryo_robot.get_trajectory_saved(*param_list)
-        return self.__send_answer(traj)
+        dict_traj = [waypoint.to_dict() for waypoint in traj]
+        return self.__send_answer(dict_traj)
 
     @check_nb_args(0)
     def __get_saved_trajectory_list(self):
@@ -504,14 +583,24 @@ class CommandInterpreter:
         self.__niryo_robot.execute_trajectory_from_poses_and_joints(list_poses_joints, list_type, dist_smoothing)
         return self.__send_answer()
 
+    @check_nb_args(2)
+    def __execute_trajectory(self, robot_positions, dist_smoothing):
+        robot_positions_obj = []
+        for robot_position in robot_positions:
+            robot_position_obj = self.__obj_from_dict(robot_position)
+            robot_positions_obj.append(robot_position_obj)
+        self.__niryo_robot.execute_trajectory(robot_positions_obj, dist_smoothing)
+        return self.__send_answer()
+
     @check_nb_args(3)
-    def __save_trajectory(self, *param_list):
-        list_trajpoint = []
-        for trajpoint in param_list[0]:
-            if len(trajpoint) != 6:
-                self.__raise_exception_expected_parameters_nbr('6', len(trajpoint))
-            list_trajpoint.append(self.__map_list(trajpoint, float))
-        self.__niryo_robot.save_trajectory(list_trajpoint, param_list[1], param_list[2])
+    def __save_trajectory(self, trajectory, trajectory_name, trajectory_description):
+        obj_list = []
+        for traj_point in trajectory:
+            if isinstance(traj_point, dict):
+                obj_list.append(JointsPosition.from_dict(traj_point))
+            else:
+                obj_list.append(self.__map_list(traj_point, float))
+        self.__niryo_robot.save_trajectory(obj_list, trajectory_name, trajectory_description)
         return self.__send_answer()
 
     @check_nb_args(2)
@@ -549,8 +638,15 @@ class CommandInterpreter:
     def __save_dynamic_frame_from_poses(self, *param_list):
         name = param_list[0]
         description = param_list[1]
-        list_poses = list(param_list[2:-1])
-        belong_to_workspace = bool(param_list[-1])
+
+        list_poses = []
+        for raw_pose in param_list[2:-1]:
+            if isinstance(raw_pose, dict):
+                list_poses.append(Pose.from_dict(raw_pose))
+            else:
+                list_poses.append(Pose(*raw_pose, metadata=PoseMetadata.v1()))
+
+        belong_to_workspace = self.__boolean_string_dict_converter[param_list[-1]]
 
         self.__niryo_robot.save_dynamic_frame_from_poses(name, description, list_poses, belong_to_workspace)
         return self.__send_answer()
@@ -560,7 +656,7 @@ class CommandInterpreter:
         name = param_list[0]
         description = param_list[1]
         list_poses = list(param_list[2:-1])
-        belong_to_workspace = bool(param_list[-1])
+        belong_to_workspace = self.__boolean_string_dict_converter[param_list[-1]]
 
         self.__niryo_robot.save_dynamic_frame_from_points(name, description, list_poses, belong_to_workspace)
         return self.__send_answer()
@@ -573,7 +669,7 @@ class CommandInterpreter:
     @check_nb_args(2)
     def __delete_dynamic_frame(self, *param_list):
         name = param_list[0]
-        belong_to_workspace = bool(param_list[1])
+        belong_to_workspace = self.__boolean_string_dict_converter[param_list[1]]
         self.__niryo_robot.delete_dynamic_frame(name, belong_to_workspace)
         return self.__send_answer()
 
@@ -797,8 +893,7 @@ class CommandInterpreter:
     @check_nb_args(0)
     def __get_connected_conveyors_id(self):
         conveyors = self.__niryo_robot.get_conveyors_number()
-        conveyors_list = [self.__conveyor_id_string_dict_convertor_inv[conveyor_id]
-                          for conveyor_id in conveyors]
+        conveyors_list = [self.__conveyor_id_string_dict_convertor_inv[conveyor_id] for conveyor_id in conveyors]
         return self.__send_answer(conveyors_list)
 
     # - Vision
@@ -836,7 +931,7 @@ class CommandInterpreter:
 
         target_msg = self.__niryo_robot.get_target_pose_from_rel(workspace, height_offset, x_rel, y_rel, yaw_rel)
 
-        pose_list = self.__niryo_robot.robot_state_msg_to_list(target_msg)
+        pose_list = self.__niryo_robot.pose_from_msg(target_msg).to_list()
         return self.__send_answer(pose_list)
 
     @check_nb_args(4)
@@ -847,11 +942,11 @@ class CommandInterpreter:
 
         pose_list = []
         if obj_found:
-            pose_list = self.__niryo_robot.robot_state_msg_to_list(target_msg)
+            pose_list = self.__niryo_robot.pose_from_msg(target_msg).to_list()
 
         return self.__send_answer(obj_found, pose_list, obj_shape, obj_color)
 
-    @check_nb_args(4)
+    @check_nb_args([4, 5])
     def __vision_pick(self, *param_list):
         self.__check_type(param_list[1], float)
 
@@ -875,7 +970,13 @@ class CommandInterpreter:
     @check_nb_args(5)
     def __save_workspace_from_poses(self, *param_list):
         name = param_list[0]
-        list_poses = list(param_list[1:])
+
+        list_poses = []
+        for raw_pose in param_list[1:]:
+            if isinstance(raw_pose, dict):
+                list_poses.append(Pose.from_dict(raw_pose))
+            else:
+                list_poses.append(Pose(*raw_pose, metadata=PoseMetadata.v1()))
 
         self.__niryo_robot.save_workspace_from_poses(name, list_poses)
         return self.__send_answer()

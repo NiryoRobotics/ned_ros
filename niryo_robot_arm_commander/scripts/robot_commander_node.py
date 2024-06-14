@@ -14,6 +14,7 @@ from niryo_robot_arm_commander.arm_state import ArmState
 import moveit_commander
 
 from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException
+from niryo_robot_poses_handlers.transform_functions import convert_legacy_rpy_to_dh_convention
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -338,6 +339,11 @@ class RobotCommanderNode:
         :return: status, message
         """
         cmd_type = cmd.cmd_type
+        if cmd.tcp_version != cmd.DH_CONVENTION:
+            roll, pitch, yaw = convert_legacy_rpy_to_dh_convention(cmd.rpy.roll, cmd.rpy.pitch, cmd.rpy.yaw)
+            cmd.rpy.roll = roll
+            cmd.rpy.pitch = pitch
+            cmd.rpy.yaw = yaw
         return self.dict_interpreter_move_cmd[cmd_type](cmd)
 
     def __cancel_command(self):
