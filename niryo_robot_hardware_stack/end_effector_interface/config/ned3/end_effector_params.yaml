@@ -1,3 +1,3 @@
 hardware_type : "ned3_end_effector"
-collision_thresh : 3000000
-collision_thresh_algo_2 : 11000000
+collision_thresh : 2000000
+collision_thresh_algo_2 : 8500000
