@@ -422,6 +422,15 @@ bool TtlInterfaceCore::readHomingAbsPosition()
     return _ttl_manager->readHomingAbsPosition();
 }
 
+/**
+ * @brief TtlInterfaceCore::readMoving
+ */
+int TtlInterfaceCore::readMoving(uint8_t id, uint8_t &status)
+{
+    lock_guard<mutex> lck(_control_loop_mutex);
+    return _ttl_manager->readMoving(id, status);
+}
+
 // ****************
 //  Control Loop
 // ****************
@@ -524,7 +533,7 @@ void TtlInterfaceCore::controlLoop()
 
     while (ros::ok())
     {
-        if (!_debug_flag)
+        if (!_debug_flag && !_estop_flag)
         {
             // 1. check connection status of motors
             if (!_ttl_manager->isConnectionOk())
@@ -573,15 +582,15 @@ void TtlInterfaceCore::controlLoop()
             if (_control_loop_flag)
             {
                 lock_guard<mutex> lck(_control_loop_mutex);
-                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
-                {
-                    _ttl_manager->readJointsStatus();
-                    _time_hw_data_last_read = ros::Time::now().toSec();
-                }
                 if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
+                }
+                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
+                {
+                    _ttl_manager->readJointsStatus();
+                    _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
@@ -606,12 +615,9 @@ void TtlInterfaceCore::controlLoop()
         {
             ros::Duration(0.5).sleep();
         }
-
-        // essential to allow publishers and subscribers to do their job
-        ros::spinOnce();
     }
 
-    if ("ned2" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
         _ttl_manager->resetTorques();
 }
 
@@ -621,42 +627,41 @@ void TtlInterfaceCore::controlLoop()
 // create a unique queue using polymorphism
 void TtlInterfaceCore::_executeCommand()
 {
-    bool _need_sleep = false;
-    if (!_joint_trajectory_cmd.empty())
-    {
-        _ttl_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
-        _joint_trajectory_cmd.clear();
-        _need_sleep = true;
-    }
-    if (!_single_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_single_cmd_queue_mutex);
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
-        _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
-        _single_cmds_queue.pop();
-        _need_sleep = true;
+        if (!_single_cmds_queue.empty())
+        {
+            _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
+            _single_cmds_queue.pop();
+        }
     }
-    if (!_conveyor_cmds_queue.empty())
+
     {
         std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
-        _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
-        _conveyor_cmds_queue.pop();
+        if (!_conveyor_cmds_queue.empty())
+        {
+            _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
+            _conveyor_cmds_queue.pop();
+        }
     }
-    if (!_sync_cmds_queue.empty())
+
     {
         std::lock_guard<std::mutex> lock(_sync_cmd_queue_mutex);
-
-        if (_need_sleep)
-            ros::Duration(0.001).sleep();
-        _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds_queue.front()));
-        _sync_cmds_queue.pop();
-        _need_sleep = true;
+        if (!_sync_cmds_queue.empty())
+        {
+            _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds_queue.front()));
+            _sync_cmds_queue.pop();
+        }
     }
-    if (_need_sleep)
-        ros::Duration(0.001).sleep();
+
+    {
+        std::lock_guard<std::mutex> lock(_traj_cmd_mutex);
+        if (!_joint_trajectory_cmd.empty())
+        {
+            _ttl_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
+            _joint_trajectory_cmd.clear();
+        }
+    }
 }
 
 // *************
@@ -741,19 +746,19 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  */
 int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> &state)
 {
-    int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
-
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    if (_ttl_manager->ping(state->getId()))
-    {
-        // add hw component before to get driver
-        result = _ttl_manager->addHardwareComponent(state);
-    }
-    else
+    if (!_ttl_manager->ping(state->getId()))
     {
         ROS_DEBUG("TtlInterfaceCore::setConveyor - No conveyor found");
+        return niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
     }
+
+    // add hw component before to get driver
+    auto result = _ttl_manager->addHardwareComponent(state);
+
+    ROS_INFO("TtlInterfaceCore::setConveyor - setConveyor: id %d, err: %d", state->getId(), result);
+
     return result;
 }
 
@@ -831,7 +836,12 @@ void TtlInterfaceCore::clearSyncCommandQueue()
  * @brief TtlInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t>> &&cmd) { _joint_trajectory_cmd = cmd; }  // NOLINT
+void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t>> &&cmd)
+{
+    std::lock_guard<std::mutex> lock(_traj_cmd_mutex);
+
+    _joint_trajectory_cmd = cmd;
+}  // NOLINT
 
 /**
  * @brief TtlInterfaceCore::setSyncCommand
@@ -862,21 +872,21 @@ void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
     {
         if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
         {
+            std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
             if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
                 ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
             else
             {
-                std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
                 _conveyor_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
             }
         }
         else
         {
+            std::lock_guard<std::mutex> lock(_single_cmd_queue_mutex);
             if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
                 ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %d", static_cast<int>(_single_cmds_queue.size()));
             else
             {
-                std::lock_guard<std::mutex> lock(_single_cmd_queue_mutex);
                 _single_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
             }
         }

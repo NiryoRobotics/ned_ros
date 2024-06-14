@@ -24,7 +24,7 @@ def check_ned2_version(func):
 
     def wrap(*args, **kwargs):
         robot_instance = args[0]
-        if robot_instance.hardware_version != 'ned2':
+        if robot_instance.hardware_version not in ['ned2', 'ned3']:
             raise SoundRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))
@@ -41,7 +41,7 @@ class SoundRosWrapper(object):
 
         self.__sounds = []
         self.__sound_duration = {}
-        if hardware_version == 'ned2':
+        if hardware_version in ['ned2', 'ned3']:
             rospy.Subscriber('/niryo_robot_sound/sound_database', SoundList, self.__sound_database_callback)
 
     @property
@@ -49,7 +49,7 @@ class SoundRosWrapper(object):
         return self.__hardware_version
 
     def __check_ned_2_version(self):
-        if self.__hardware_version != 'ned2':
+        if self.__hardware_version not in ['ned2', 'ned3']:
             raise SoundRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))

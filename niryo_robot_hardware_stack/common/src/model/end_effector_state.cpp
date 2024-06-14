@@ -176,6 +176,12 @@ void EndEffectorState::setCollisionStatus(bool status) { _collision_status = sta
 void EndEffectorState::setCollisionThresh(int thresh) { _collision_thresh = thresh; }
 
 /**
+ * @brief EndEffectorState::setCollisionThresh
+ * @param thresh
+ */
+void EndEffectorState::setCollisionThreshAlgo2(int thresh) { _collision_thresh_algo_2 = thresh; }
+
+/**
  * @brief EndEffectorState::setDigitalIn
  * @param digital_in
  */

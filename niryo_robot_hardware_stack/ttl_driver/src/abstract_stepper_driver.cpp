@@ -23,12 +23,15 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
 
 namespace ttl_driver
 {
+
+inline constexpr auto MAX_CONVEYOR_RPM = 50;
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
@@ -59,11 +62,13 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         case EStepperCommandType::CMD_TYPE_POSITION:
             return writePositionGoal(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
+            return writeTorquePercentage(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
+        case EStepperCommandType::CMD_TYPE_FACTORY_CALIBRATION:
+            return factoryCalibration(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP:
             return writeHomingSetup(cmd->getId(), static_cast<uint8_t>(cmd->getParams().at(0)), static_cast<uint8_t>(cmd->getParams().at(1)));
         case EStepperCommandType::CMD_TYPE_PING:
@@ -77,15 +82,17 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
             }
 
             // convert direction and speed into signed speed
-            int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
+            uint32_t dir = static_cast<uint32_t>(cmd->getParams().at(2));
+            uint32_t speed_percent = std::clamp(static_cast<uint32_t>(cmd->getParams().at(1)), 0u, 100u);
             // normal warning : we need to put an int32 inside an uint32_t
-            // param received from user/app is in percentage. It have to be converted to speed (unit 0.01 rpm) accepted by ttl conveyor
-            // TODO(Thuc) avoid hardcode 6000 here
-            uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir * 5000 / 100);
+            uint32_t speed = static_cast<uint32_t>(dir * static_cast<int>(speed_percent * MAX_CONVEYOR_RPM / (100 * velocityUnit())));
+            ROS_INFO("AbstractStepperDriver::writeSingleCmd: speed = %d", speed);
             return writeVelocityGoal(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());
+        case EStepperCommandType::CMD_TYPE_OPERATING_MODE:
+            return writeControlMode(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
@@ -120,7 +127,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t> &id
         {
             params_conv.emplace_back(static_cast<uint8_t>(p));
         }
-        return syncWriteTorqueEnable(ids, params_conv);
+        return syncWriteTorquePercentage(ids, params_conv);
     }
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
     {
@@ -130,7 +137,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t> &id
         {
             params_inv.emplace_back(!p);
         }
-        return syncWriteTorqueEnable(ids, params_inv);
+        return syncWriteTorquePercentage(ids, params_inv);
     }
     case EStepperCommandType::CMD_TYPE_WRITE_HOMING_ABS_POSITION:
         return syncWriteHomingAbsPosition(ids, params);
@@ -227,6 +234,39 @@ common::model::EStepperCalibrationStatus AbstractStepperDriver::interpretHomingD
     }
 
     return homing_status;
+}
+
+/**
+ * @brief AbstractStepperDriver::factoryCalibration
+ * @param id
+ * @return
+ */
+int AbstractStepperDriver::factoryCalibration(const uint8_t id, const uint32_t &command)
+{
+    ROS_WARN("AbstractStepperDriver::factoryCalibration - not implemented");
+
+    return 0;
+}
+
+/**
+ * @brief Returns the velocity of the conveyor in percentage
+*/
+int AbstractStepperDriver::readConveyorVelocity(uint8_t id, int32_t &velocity_percent, int32_t &direction)
+{
+    uint32_t present_velocity = 0;
+    auto res = readVelocity(id, present_velocity);
+    if (res != COMM_SUCCESS )
+    {
+        ROS_ERROR("AbstractStepperDriver::readConveyorVelocity: readVelocity failed with error %d", res);
+        return res;
+    }
+
+    auto velocity_unit = velocityUnit();
+    auto velocity_rpms = present_velocity / velocity_unit;
+    direction = present_velocity > 0 ? 1 : -1;
+    velocity_percent = static_cast<int32_t>(std::abs(velocity_rpms * 100 / MAX_CONVEYOR_RPM));
+
+    return COMM_SUCCESS;
 }
 
 }  // namespace ttl_driver

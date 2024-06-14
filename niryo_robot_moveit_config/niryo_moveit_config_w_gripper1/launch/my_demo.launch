@@ -32,7 +32,9 @@
 
     </node>
     <!-- Ros Control -->
-    <include file="$(find niryo_moveit_config_w_gripper1)/launch/ros_controllers.launch"/>
+    <include file="$(find niryo_moveit_config_w_gripper1)/launch/ros_controllers.launch">
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+    </include>
 
     <!-- Given the published joint states, publish tf for the robot links -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true"

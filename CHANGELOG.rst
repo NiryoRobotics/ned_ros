@@ -2,6 +2,78 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+**Features**
+  - Add Ned3 Calibration support
+  - Add support for Conveyor with ned3 stepper
+  - Add support for vacuum pump v2
+  - Add velocity and acceleration profile for vacuum pump v2
+  - Change the robot's URDF in order to follow the Denavit-Hartenberg convention.
+  - New Pose and JointsPosition
+  - The `/niryo_robot_arm_commander/robot_action` action server can handle old and new TCP versions using ``tcp_version`` in ``ArmMoveCommand.msg``
+  - Edit niryo_robot_poses_handlers' grip files according to the new TCP orientation
+  - Added ``pose_version`` and ``tcp_version`` to ``NiryoPose.msg``
+  - New generic classes designed to be the universal classes to represent the data:
+
+    - JointsPosition
+    - JointsPositionMetadata
+    - Pose
+    - PoseMetadata
+
+  - New niryo_robot_poses_handlers/transform_functions functions: ``convert_legacy_rpy_to_dh_convention()`` and ``convert_dh_convention_to_legacy_rpy()``
+  - New ros_wrapper.NiryoRosWrapper functions which can't take either Pose or JointsPosition objects:
+
+    - move replace move_joints, move_pose and move_linear_pose.
+    - jog_shift, replace jog_joints_shift and jog_pose_shift.
+    - pick, replace pick_from_pose.
+    - place, replace place_from_pose.
+    - execute_trajectory, replace execute_trajectory_from_poses and execute_trajectory_from_poses_and_joints.
+    - compute_trajectory, replace compute_trajectory_from_poses and compute_trajectory_from_poses_and_joints.
+
+  - New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY
+  - New tools translation transforms according to the new TCP orientation
+  - Add Hardware ID to the conveyors, only for v2 and v3
+  - The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios
+  - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
+
+**Improvements**
+  - NiryoRosWrapper.vision_pick now can take an optional observation pose ``obs_pose``
+  - Add speed limit pourcentage for the conveyor
+  - When a tool stops moving, a position-holding command is sent instead of resending the command with the max position, drastically reducing temperature rise
+  - Update dynamixels PID (Axis 4 to 6)
+
+**Bugfixes**
+ * Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn't exit gracefully
+ * Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time
+ * Debounce emergency stop resume to avoid to resume on small 12v spikes
+ * Renaming a dynamic frame also rename its name in the transform
+ * NiryoRosWrapper.get_workspace_list no longer return an error
+ * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
+ * Fix intermitent delay in the control loop caused by a ROS spinOnce call in the control loop
+
+v5.4.0
+-----------
+**Features**
+  * Implemented NED3 hardware changes into niryo_robot_rpi package
+**Improvements**
+  * Use the I/O panel version instead of the robot hardware version to differentiate the implementations
+  * Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
+  * Update of the DACx0501 driver
+
+**Bugfixes**
+
+v5.4.0
+-----------
+**Features**
+  * Implemented NED3 hardware changes into niryo_robot_rpi package
+**Improvements**
+  * Use the I/O panel version instead of the robot hardware version to differentiate the implementations
+  * Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled
+  * Update of the DACx0501 driver
+
+**Bugfixes**
+
 v5.3.3
 -----------
 **Features**

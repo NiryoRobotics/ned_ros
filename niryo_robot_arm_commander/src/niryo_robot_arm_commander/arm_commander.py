@@ -11,8 +11,7 @@ import numpy as np
 from .trajectories_executor import TrajectoriesExecutor
 from .jog_controller import JogController
 from .trajectory_handler import TrajectoryHandlerNode
-from .utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
-    angle_between_2_points
+from .utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, angle_between_2_points
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, RobotState
 

@@ -215,12 +215,12 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 // ram write
 
 /**
- * @brief MockStepperDriver::writeTorqueEnable
+ * @brief MockStepperDriver::writeTorquePercentage
  * @param id
  * @param torque_enable
  * @return
  */
-int MockStepperDriver::writeTorqueEnable(uint8_t id, uint8_t /*torque_enable*/)
+int MockStepperDriver::writeTorquePercentage(uint8_t id, uint8_t /*torque_percentage*/)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -260,12 +260,12 @@ int MockStepperDriver::writeVelocityGoal(uint8_t id, uint32_t velocity)
 }
 
 /**
- * @brief MockStepperDriver::syncWriteTorqueEnable
+ * @brief MockStepperDriver::syncWriteTorquePercentage
  * @param id_list
- * @param torque_enable_list
+ * @param torque_percentage_list
  * @return
  */
-int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> & /*torque_enable_list*/)
+int MockStepperDriver::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> & /*torque_percentage_list*/)
 {
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;
@@ -678,6 +678,25 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 //*****************************
 // AbstractStepperDriver interface
 //*****************************
+
+int MockStepperDriver::readControlMode(uint8_t id, uint8_t &mode)
+{
+    if (_fake_data->stepper_registers.count(id))
+        mode = _fake_data->stepper_registers.at(id).operating_mode;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
+}
+
+int MockStepperDriver::writeControlMode(uint8_t id, uint8_t mode)
+{
+    if (_fake_data->stepper_registers.count(id))
+        _fake_data->stepper_registers.at(id).operating_mode = mode;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
+}
+
 /**
  * @brief MockStepperDriver::readVelocityProfile
  * @param id
@@ -874,5 +893,9 @@ int MockStepperDriver::syncWriteHomingAbsPosition(const std::vector<uint8_t> &id
     }
     return COMM_SUCCESS;
 }
+
+
+float MockStepperDriver::velocityUnit() const { return 1.0; }
+
 
 }  // namespace ttl_driver

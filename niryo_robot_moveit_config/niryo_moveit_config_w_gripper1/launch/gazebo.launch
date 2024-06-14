@@ -21,6 +21,8 @@
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model niryo_$(arg hardware_version) -x 0 -y 0 -z 0"
     respawn="false" output="screen" />
 
-  <include file="$(find niryo_moveit_config_w_gripper1)/launch/ros_controllers.launch"/>
+  <include file="$(find niryo_moveit_config_w_gripper1)/launch/ros_controllers.launch">
+    <arg name="hardware_version" value="$(arg hardware_version)"/>
+  </include>
 
 </launch>

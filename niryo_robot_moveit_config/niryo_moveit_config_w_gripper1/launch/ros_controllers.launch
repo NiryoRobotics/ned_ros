@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/ros_controllers.yaml" command="load"/>
+  <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
 
   <!-- Load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log" 

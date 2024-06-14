@@ -57,17 +57,20 @@ public:
     virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
 
     // ram write
+    
+    virtual int writeControlMode(uint8_t id, uint8_t mode) = 0;
     virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) = 0;
 
-    virtual int writeTorqueEnable(uint8_t id, uint8_t torque_enable) = 0;
+    virtual int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) = 0;
     virtual int writePositionGoal(uint8_t id, uint32_t position) = 0;
     virtual int writeVelocityGoal(uint8_t id, uint32_t velocity) = 0;
 
-    virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& torque_enable_list) = 0;
+    virtual int syncWriteTorquePercentage(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& torque_percentage_list) = 0;
     virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;
     virtual int syncWriteVelocityGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& velocity_list) = 0;
 
     // ram read
+    virtual int readControlMode(uint8_t id, uint8_t& mode) = 0;
     virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;
 
     virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;

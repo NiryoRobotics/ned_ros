@@ -1,0 +1,45 @@
+calibration_timeout: 5
+calibration_file:  "~/.niryo/simulation"
+
+calibration_params:
+    stepper_1:
+        id: 2
+        v_start: 1
+        a_1: 450
+        v_1: 3
+        a_max: 1200
+        v_max: 7
+        d_max: 1200
+        d_1: 450
+        v_stop: 2
+        stall_threshold: 7
+        direction: 1
+        delay: 200
+
+    stepper_2:
+        id: 3
+        v_start: 1
+        a_1: 300
+        v_1: 3
+        a_max: 600
+        v_max: 6
+        d_max: 600
+        d_1: 300
+        v_stop: 2
+        stall_threshold: 6
+        direction: 1
+        delay: 1000
+
+    stepper_3:
+        id: 4
+        v_start: 1
+        a_1: 450
+        v_1: 3
+        a_max: 750
+        v_max: 6
+        d_max: 750
+        d_1: 450
+        v_stop: 2
+        stall_threshold: 6
+        direction: -1
+        delay: 1000

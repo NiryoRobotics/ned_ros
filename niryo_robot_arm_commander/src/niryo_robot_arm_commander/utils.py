@@ -7,7 +7,9 @@ import numpy as np
 from tf.transformations import quaternion_from_euler, euler_from_quaternion, quaternion_multiply
 
 # Messages
-from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import Pose, Point, Quaternion, Twist, Vector3
+
+from niryo_robot_msgs.msg import RPY
 
 
 # - Useful functions
@@ -52,10 +54,24 @@ def dist_2_poses(p1, p2):
     :return: The distance (in meters) between the two poses
     :rtype: float
     """
-    np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
-                         p1.orientation.z, p1.orientation.w])
-    np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
-                         p2.orientation.z, p2.orientation.w])
+    np_pose1 = np.array([
+        p1.position.x,
+        p1.position.y,
+        p1.position.z,
+        p1.orientation.x,
+        p1.orientation.y,
+        p1.orientation.z,
+        p1.orientation.w
+    ])
+    np_pose2 = np.array([
+        p2.position.x,
+        p2.position.y,
+        p2.position.z,
+        p2.orientation.x,
+        p2.orientation.y,
+        p2.orientation.z,
+        p2.orientation.w
+    ])
 
     return np.linalg.norm(np_pose1 - np_pose2)
 
@@ -100,10 +116,24 @@ def poses_too_close(p1, p2):
     :return: True if the distance between p1 and p2 is smaller than 1mm
     :rtype: bool
     """
-    np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
-                         p1.orientation.z, p1.orientation.w])
-    np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
-                         p2.orientation.z, p2.orientation.w])
+    np_pose1 = np.array([
+        p1.position.x,
+        p1.position.y,
+        p1.position.z,
+        p1.orientation.x,
+        p1.orientation.y,
+        p1.orientation.z,
+        p1.orientation.w
+    ])
+    np_pose2 = np.array([
+        p2.position.x,
+        p2.position.y,
+        p2.position.z,
+        p2.orientation.x,
+        p2.orientation.y,
+        p2.orientation.z,
+        p2.orientation.w
+    ])
 
     dist = np.linalg.norm(np_pose1 - np_pose2)
 
@@ -128,3 +158,40 @@ def diff_quat(q1, q2):
     q2_inv = invert_quat(q2_list)
 
     return quaternion_multiply(q1_list, q2_inv)
+
+
+def get_orientation_from_angles(r, p, y):
+    quaternion = quaternion_from_euler(r, p, y)
+    orientation = Quaternion()
+    orientation.x = quaternion[0]
+    orientation.y = quaternion[1]
+    orientation.z = quaternion[2]
+    orientation.w = quaternion[3]
+    return orientation
+
+
+def get_rpy_from_quaternion(rot):
+    euler = euler_from_quaternion(rot)
+    # Force angles in [-PI, PI]
+    for i, angle in enumerate(euler):
+        if angle > np.pi:
+            euler[i] = angle % (2 * np.pi) - 2 * np.pi
+        elif angle < -np.pi:
+            euler[i] = angle % (2 * np.pi)
+    return euler
+
+
+def quaternion_to_list(quat):
+    return [quat.x, quat.y, quat.z, quat.w]
+
+
+def vector3_to_list(vect):
+    return [vect.x, vect.y, vect.z]
+
+
+def list_to_vector3(list_):
+    return Vector3(x=list_[0], y=list_[1], z=list_[2])
+
+
+def list_to_rpy(list_):
+    return RPY(roll=list_[0], pitch=list_[1], yaw=list_[2])

@@ -39,6 +39,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/HardwareStatus.h"
 #include "niryo_robot_msgs/SoftwareVersion.h"
 #include "niryo_robot_msgs/CommandStatus.h"
+#include "niryo_robot_status/RobotStatus.h"
 
 namespace niryo_robot_hardware_interface
 {
@@ -68,9 +69,13 @@ class HardwareInterface : common::util::IInterfaceCore
 
         void initNodes(ros::NodeHandle &nh);
 
+        int rebootMotors(int32_t &status, std::string &message);
+
         bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+
+        void _callbackRobotStatus(const niryo_robot_status::RobotStatus::ConstPtr& msg);
 
         void _publishHardwareStatus(const ros::TimerEvent&);
         void _publishSoftwareVersion(const ros::TimerEvent&);
@@ -86,9 +91,13 @@ class HardwareInterface : common::util::IInterfaceCore
         ros::Timer _sw_version_publisher_timer;
         ros::Duration _sw_version_publisher_duration{1.0};
 
+        std::vector<ros::Publisher> _cancel_goal_publishers;
+
         ros::ServiceServer _motors_report_service;
         ros::ServiceServer _stop_motors_report_service;
         ros::ServiceServer _reboot_motors_service;
+
+        ros::Subscriber _robot_status_subscriber;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
@@ -103,13 +112,15 @@ class HardwareInterface : common::util::IInterfaceCore
         bool _can_enabled{false};
         bool _ttl_enabled{false};
         bool _end_effector_enabled{false};
-        int8_t _hardware_state = niryo_robot_msgs::HardwareStatus::NORMAL;
+        int8_t _hardware_state{niryo_robot_msgs::HardwareStatus::NORMAL};
 
         common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
         std::string _hardware_version;
+
+        int32_t _previous_robot_status{niryo_robot_status::RobotStatus::UNKNOWN};
 };
 
 } // namespace niryo_robot_hardware_interface

@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3">
+    <!-- Import Properties -->
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3/niryo_ned3_param.urdf.xacro" />
+
+    <!-- Links -->
+
+    <link name="world" />
+
+    <link name="base_link">
+        <inertial>
+            <origin xyz="-0.00437 -0.00535 0.0254" rpy="0 0 0" />
+            <mass value="3.70" />
+            <inertia ixx="0.01627370211" ixy="0.0" ixz="0.0" iyy="0.01633345071" iyz="0.0"
+                izz="0.0254462446" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/base_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="led_ring_link">
+    </link>
+
+    <link name="shoulder_link">
+        <inertial>
+            <origin xyz="0.01176 0.03686 0.05004" rpy="0 0 0" />
+            <mass value="1.018" />
+            <inertia ixx="0.00274167942" ixy="0.0" ixz="0.0" iyy="0.00195272317" iyz="0.0"
+                izz="0.00292927208" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3/stl/shoulder_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/shoulder_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <link name="arm_link">
+        <inertial>
+            <origin xyz="0.12272 0.00524 -0.00850" rpy="0 0 0" />
+            <mass value="1.0" />
+            <inertia ixx="0.00148330442" ixy="0.0" ixz="0.0" iyy="0.00937134365" iyz="0.0"
+                izz="0.00879836087" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${PI}" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/arm_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${PI}" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/arm_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <link name="elbow_link">
+        <inertial>
+            <origin xyz="0.01691 0.00297 -0.00754" rpy="0 0 0" />
+            <mass value="0.350" />
+            <inertia ixx="0.00033180114" ixy="0.0" ixz="0.0" iyy="0.00039973587" iyz="0.0"
+                izz="0.00043216299" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${PI} 0 ${-PI/2}" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3/stl/elbow_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${PI} 0 ${-PI/2}" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/elbow_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <link name="forearm_link">
+        <inertial>
+            <origin xyz="0.00020 0.01040 0.15904" rpy="0 0 0" />
+            <mass value="0.35538" />
+            <inertia ixx="0.00199244039" ixy="0.0" ixz="0.0" iyy="0.00181907606" iyz="0.0"
+                izz="0.00029473313" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${PI} 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3/stl/forearm_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${PI} 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/forearm_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="wrist_link">
+        <inertial>
+            <origin xyz="-0.00490 -0.00622 0.00048" rpy="0 0 0" />
+            <mass value="0.19887" />
+            <inertia ixx="0.00006072214" ixy="0.0" ixz="0.0" iyy="0.00018104057" iyz="0.0"
+                izz="0.00019643162" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0"
+                rpy="0 0 ${PI/2}" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3/stl/wrist_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0"
+                rpy="0 0 ${PI/2}" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/wrist_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <link name="hand_link">
+        <inertial>
+            <origin xyz="-0.00004 0 -0.00035" rpy="0 0 0" />
+            <mass value="0.01083" />
+            <inertia ixx="0.00000138319" ixy="0.0" ixz="0.0" iyy="0.00000138107" iyz="0.0"
+                izz="0.00000040812" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/hand_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/hand_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+
+    <link name="tool_link">
+    </link>
+
+
+    <!-- Joints -->
+
+    <joint name="joint_world" type="fixed">
+        <parent link="world" />
+        <child link="base_link" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="joint_1" type="revolute">
+        <origin xyz="0 0 0.0748" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="shoulder_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="10.0" velocity="10.0"
+            lower="${(limit_low_shoulder_rotation +
+        safety_pos_margin)}"
+            upper="${(limit_up_shoulder_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="joint_2" type="revolute">
+        <origin xyz="0 0 0.0925" rpy="${PI/2} 0 0" />
+        <parent link="shoulder_link" />
+        <child link="arm_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="10.0" velocity="8.0"
+            lower="${(limit_low_arm_rotation +
+        safety_pos_margin)}"
+            upper="${(limit_up_arm_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="joint_3" type="revolute">
+        <origin xyz="0 0.23061 0" rpy="0 0 ${PI/2}" /> 
+        <parent link="arm_link" />
+        <child link="elbow_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="7.0" velocity="8.0"
+            lower="${(limit_low_elbow_rotation +
+        safety_pos_margin)}"
+            upper="${(limit_up_elbow_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="joint_4" type="revolute">
+        <origin xyz="0.0325 0 0" rpy="${PI/2} 0 0" />
+        <parent link="elbow_link" />
+        <child link="forearm_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="7.0" velocity="2.0"
+            lower="${(limit_low_forearm_rotation + safety_pos_margin)}"
+            upper="${(limit_up_forearm_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="joint_5" type="revolute">
+        <origin xyz="0 0 0.23975" rpy="${-PI/2} 0 0" />
+        <parent link="forearm_link" />
+        <child link="wrist_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="6.0" velocity="2.0"
+            lower="${(limit_low_wrist_rotation + safety_pos_margin)}"
+            upper="${(limit_up_wrist_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="joint_6" type="revolute">
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
+        <parent link="wrist_link" />
+        <child link="hand_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="5.0" velocity="2.0"
+            lower="${(limit_low_hand_rotation + safety_pos_margin)}"
+            upper="${(limit_up_hand_rotation - safety_pos_margin)}" />
+    </joint>
+
+    <joint name="hand_tool_joint" type="fixed">
+        <parent link="hand_link" />
+        <child link="tool_link" />
+        <origin xyz="0 0 ${distance_hand_tool}" rpy="0 0 0" />
+    </joint>
+
+    <joint name="joint_led_ring" type="fixed">
+        <parent link="world" />
+        <child link="led_ring_link" />
+        <origin xyz="0 0 0.0933" rpy="0 0 0" />
+    </joint>
+
+</robot>

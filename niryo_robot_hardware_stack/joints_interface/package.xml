@@ -24,6 +24,8 @@
   <build_depend>can_driver</build_depend>
   <build_depend>actionlib</build_depend>
   <build_depend>common</build_depend>
+  <build_depend>niryo_robot_database</build_depend>
+  <build_depend>message_generation</build_depend>
   
   <build_export_depend>hardware_interface</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
@@ -33,6 +35,8 @@
   <build_export_depend>can_driver</build_export_depend>
   <build_export_depend>ttl_driver</build_export_depend>
   <build_export_depend>common</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_database</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
@@ -46,7 +50,9 @@
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>common</exec_depend>
-  <exec_depend>niryo_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>  
+  <exec_depend>niryo_robot_database</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>code_coverage</test_depend>

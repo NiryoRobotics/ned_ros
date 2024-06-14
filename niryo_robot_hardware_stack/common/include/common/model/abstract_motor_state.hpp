@@ -116,7 +116,7 @@ int AbstractMotorState::getTorque() const
 inline
 bool AbstractMotorState::isStepper() const
 {
-    return (EHardwareType::STEPPER == _hw_type ||
+    return (EHardwareType::STEPPER == _hw_type || EHardwareType::NED3_STEPPER == _hw_type ||
             EHardwareType::FAKE_STEPPER_MOTOR == _hw_type);
 }
 
@@ -132,6 +132,7 @@ bool AbstractMotorState::isDynamixel() const
            (EHardwareType::XL330 == _hw_type) ||
            (EHardwareType::XL430 == _hw_type) ||
            (EHardwareType::XM430 == _hw_type) ||
+           (EHardwareType::XH430 == _hw_type) ||
            (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
 }
 

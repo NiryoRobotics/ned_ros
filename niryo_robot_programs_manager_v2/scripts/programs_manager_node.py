@@ -29,7 +29,6 @@ from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAut
 
 
 class ProgramManagerNode:
-
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
@@ -174,6 +173,7 @@ class ProgramManagerNode:
                 if len(self.__programs_manager.execution_output) > len(feedback.output):
                     feedback.output = self.__programs_manager.execution_output
                     goal_handle.publish_feedback(feedback)
+                rospy.sleep(0.1)
 
             # set the final goal status
             if goal_handle.get_goal_status().status == GoalStatus.ACTIVE:

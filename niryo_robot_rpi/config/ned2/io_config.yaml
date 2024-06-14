@@ -32,6 +32,7 @@ end_effector_ios:
    digital_output: DO4
 
 shutdown_manager:
+  pins_type: mcp
   digital_output: 7
   digital_input: 6
 

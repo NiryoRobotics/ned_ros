@@ -100,7 +100,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore> 
                 robot_hwnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
                 robot_hwnh.getParam(currentStepperNamespace + "/direction", direction);
                 robot_hwnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
-                robot_hwnh.getParam(currentStepperNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentStepperNamespace + "/default_home_position", home_position);
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_min", limit_position_min);
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_max", limit_position_max);
                 robot_hwnh.getParam(currentStepperNamespace + "/motor_ratio", motor_ratio);
@@ -205,7 +205,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore> 
                 robot_hwnh.getParam(currentDxlNamespace + "/velocity_profile", velocityProfile);
                 robot_hwnh.getParam(currentDxlNamespace + "/acceleration_profile", accelerationProfile);
 
-                robot_hwnh.getParam(currentDxlNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentDxlNamespace + "/default_home_position", home_position);
                 robot_hwnh.getParam(currentDxlNamespace + "/limit_position_min", limit_position_min);
                 robot_hwnh.getParam(currentDxlNamespace + "/limit_position_max", limit_position_max);
 
@@ -292,7 +292,7 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager> &ttl_drv
                 robot_hwnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
                 robot_hwnh.getParam(currentStepperNamespace + "/direction", direction);
                 robot_hwnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
-                robot_hwnh.getParam(currentStepperNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentStepperNamespace + "/default_home_position", home_position);
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_min", limit_position_min);
                 robot_hwnh.getParam(currentStepperNamespace + "/limit_position_max", limit_position_max);
                 robot_hwnh.getParam(currentStepperNamespace + "/motor_ratio", motor_ratio);
@@ -398,7 +398,7 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager> &ttl_drv
                 robot_hwnh.getParam(currentDxlNamespace + "/velocity_profile", velocityProfile);
                 robot_hwnh.getParam(currentDxlNamespace + "/acceleration_profile", accelerationProfile);
 
-                robot_hwnh.getParam(currentDxlNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentDxlNamespace + "/default_home_position", home_position);
                 robot_hwnh.getParam(currentDxlNamespace + "/limit_position_min", limit_position_min);
                 robot_hwnh.getParam(currentDxlNamespace + "/limit_position_max", limit_position_max);
 
