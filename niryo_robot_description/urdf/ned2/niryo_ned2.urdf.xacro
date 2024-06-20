@@ -116,7 +116,7 @@
                      izz="0.00023715"/>
         </inertial>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
+            <origin xyz="0 0 0.065" rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/collada/forearm_link.dae"/>
             </geometry>
@@ -175,7 +175,7 @@
             <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
         </inertial>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 ${-PI/2}"/>
+            <origin xyz="0 0 0.0197" rpy="0 0 ${-PI/2}"/>
             <geometry>
                 <mesh filename="package://niryo_robot_description/meshes/ned2/collada/hand_link.dae"/>
             </geometry>
@@ -231,7 +231,7 @@
     </joint>
 
     <joint name="joint_4" type="revolute">
-        <origin xyz="0.0325 -0.065 0" rpy="${PI/2} 0 0"/>
+        <origin xyz="0.0325 0 0" rpy="${PI/2} 0 0"/>
         <parent link="elbow_link"/>
         <child link="forearm_link"/>
         <axis xyz="0 0 1"/>
@@ -240,7 +240,7 @@
     </joint>
 
     <joint name="joint_5" type="revolute">
-        <origin xyz="0 0 0.17" rpy="${-PI/2} 0 0"/>
+        <origin xyz="0 0 0.235" rpy="${-PI/2} 0 0"/>
         <parent link="forearm_link"/>
         <child link="wrist_link"/>
         <axis xyz="0 0 1"/>
@@ -250,7 +250,7 @@
     </joint>
 
     <joint name="joint_6" type="revolute">
-        <origin xyz="0.00925 -0.0197 0" rpy="${PI/2} 0 0"/>
+        <origin xyz="0.00925 0 0" rpy="${PI/2} 0 0"/>
         <parent link="wrist_link"/>
         <child link="hand_link"/>
         <axis xyz="0 0 1"/>
