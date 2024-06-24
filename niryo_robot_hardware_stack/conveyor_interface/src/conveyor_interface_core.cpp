@@ -179,6 +179,8 @@ void ConveyorInterfaceCore::startServices(ros::NodeHandle &nh)
     _ping_and_set_stepper_server = nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor", &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
 
     _control_conveyor_server = nh.advertiseService("/niryo_robot/conveyor/control_conveyor", &ConveyorInterfaceCore::_callbackControlConveyor, this);
+
+    _get_hardware_id_server = nh.advertiseService("/niryo_robot/conveyor/get_hardware_id", &ConveyorInterfaceCore::_callbackGetHardwareId, this);
 }
 
 /**
@@ -534,6 +536,31 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
     }
 
+    return true;
+}
+
+bool ConveyorInterfaceCore::_callbackGetHardwareId(conveyor_interface::GetHardwareId::Request &req, conveyor_interface::GetHardwareId::Response &res)
+{
+    std::lock_guard<std::mutex> lck(_state_map_mutex);
+
+    // Conveyor lookup from id
+    auto id = req.id;
+    auto it = std::find_if(_conveyor_state_list.begin(), _conveyor_state_list.end(), [id](std::shared_ptr<ConveyorState> c) { return (c->getId() == id); });
+
+    // Handle conveyor not found
+    if (it == _conveyor_state_list.end())
+    {
+        res.message = "Conveyor id ";
+        res.message += to_string(req.id);
+        res.message += " is not set";
+        res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
+        return true;
+    }
+
+    // Conveyor found, get its hardware id
+    auto conveyor = *it;
+    res.hardware_id = conveyor->getHardwareId();
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     return true;
 }
 
