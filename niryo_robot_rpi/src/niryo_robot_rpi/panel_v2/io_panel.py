@@ -71,9 +71,9 @@ class IOPanel(AbstractIOPanel):
         # This pin is only available for the ned3
         if rospy.has_param('~monitor_12v_pin'):
             self.__gpio_manager = GpioManager()
-            self.__12v_status_pub = rospy.Publisher('/niryo_robot_rpi/12v_status', Bool, queue_size=10)
+            self.__estop_status_pub = rospy.Publisher('/niryo_robot_rpi/estop_status', Bool, queue_size=10)
             self.__monitor_12v = self.__gpio_manager.add_input(rospy.get_param('~monitor_12v_pin'), 'monitor 12v')
-            self.__monitor_12v.on_change(self.__on_12v_change_callback)
+            self.__monitor_12v.on_change(self.__on_estop_change_callback)
 
     def shutdown(self):
         super(IOPanel, self).shutdown()
@@ -155,8 +155,9 @@ class IOPanel(AbstractIOPanel):
             resp.message = "I2C scan failed"
 
         return resp
-
-    @debounce(0.5)
-    def __on_12v_change_callback(self, value):
+    
+    @debounce(2.0, lambda self, value: value != 1)
+    def __on_estop_change_callback(self, value):
         msg = Bool(value == 1)
-        self.__12v_status_pub.publish(msg)
+        self.__estop_status_pub.publish(msg)
+
