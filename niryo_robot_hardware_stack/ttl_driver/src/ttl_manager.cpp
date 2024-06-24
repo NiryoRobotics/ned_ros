@@ -1303,12 +1303,12 @@ uint8_t TtlManager::readSteppersStatus()
             auto conveyor_hw_type = conveyor_state->getHardwareType();
             auto conveyor_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(_driver_map[conveyor_hw_type]);
             int32_t conveyor_speed_percent = 0;
-            int32_t velocity_int = 0;
-            if (COMM_SUCCESS == conveyor_driver->readConveyorVelocity(conveyor_id, conveyor_speed_percent, velocity_int))
+            int32_t direction = 0;
+            if (COMM_SUCCESS == conveyor_driver->readConveyorVelocity(conveyor_id, conveyor_speed_percent, direction))
             {
-                conveyor_state->setGoalDirection(conveyor_state->getDirection() * (velocity_int > 0 ? 1 : -1));
+                conveyor_state->setGoalDirection(direction);
                 conveyor_state->setSpeed(conveyor_speed_percent);
-                conveyor_state->setState(velocity_int);
+                conveyor_state->setState(conveyor_speed_percent);
             }
             else
             {
