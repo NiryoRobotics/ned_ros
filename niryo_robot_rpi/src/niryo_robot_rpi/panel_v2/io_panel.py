@@ -155,9 +155,8 @@ class IOPanel(AbstractIOPanel):
             resp.message = "I2C scan failed"
 
         return resp
-    
+
     @debounce(2.0, lambda self, value: value != 1)
     def __on_estop_change_callback(self, value):
         msg = Bool(value == 1)
         self.__estop_status_pub.publish(msg)
-
