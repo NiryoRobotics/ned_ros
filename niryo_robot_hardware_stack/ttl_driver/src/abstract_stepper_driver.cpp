@@ -253,19 +253,22 @@ int AbstractStepperDriver::factoryCalibration(const uint8_t id, const uint32_t &
 */
 int AbstractStepperDriver::readConveyorVelocity(uint8_t id, int32_t &velocity_percent, int32_t &direction)
 {
-    uint32_t present_velocity = 0;
-    auto res = readVelocity(id, present_velocity);
+    uint32_t unsigned_present_velocity = 0;
+    auto res = readVelocity(id, unsigned_present_velocity);
     if (res != COMM_SUCCESS )
     {
         ROS_ERROR("AbstractStepperDriver::readConveyorVelocity: readVelocity failed with error %d", res);
         return res;
     }
 
+    // The typed returned by the hardware is actually an int32_t, it is just that the API returns it as an uint32_t
+    // We can safely cast it to int32_t
+    int32_t present_velocity = static_cast<int32_t>(unsigned_present_velocity);
+
     auto velocity_unit = velocityUnit();
-    auto velocity_rpms = present_velocity / velocity_unit;
+    auto velocity_rpms = present_velocity * velocity_unit;
     direction = present_velocity > 0 ? 1 : -1;
     velocity_percent = static_cast<int32_t>(std::abs(velocity_rpms * 100 / MAX_CONVEYOR_RPM));
-
     return COMM_SUCCESS;
 }
 

@@ -4,12 +4,9 @@ set -e
 # setup ros environment
 source "/opt/ros/$ROS_DISTRO/setup.bash"
 
-if [ -f ${HOME}/catkin_ws/install/release/setup.bash ]; then
-    source "${HOME}/catkin_ws/install/release/setup.bash"
-elif [ -f ${HOME}/catkin_ws/devel/setup.bash ]; then
-    source "${HOME}/catkin_ws/devel/setup.bash"
-fi
+CATKIN_WS_PATH=/home/niryo/catkin_ws
 
-mkdir -p ${HOME}/catkin_ws;
-cd ${HOME}/catkin_ws;
+mkdir -p ${CATKIN_WS_PATH};
+cd ${CATKIN_WS_PATH};
 exec "$@"
+

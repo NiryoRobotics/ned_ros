@@ -37,6 +37,7 @@ v5.4.0
   - Add Hardware ID to the conveyors, only for v2 and v3
   - The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios
   - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
+  - Add a service to get conveyor hardware ID to be able to differentiate them (conveyor v2 and v3), service name: `/niryo_robot/conveyor/get_hardware_id`
 
 **Improvements**
   - Use the I/O panel version instead of the robot hardware version to differentiate the implementations
