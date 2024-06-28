@@ -435,7 +435,7 @@ class ArmCommander:
         def find_limit_point(plan_, dist_smooth, reverse):
             len_plan = len(plan_.joint_trajectory.points)
             ind_ref = -1 if reverse else 0
-            reference_pos = self.__kinematics_handler.get_forward_kinematics(
+            reference_pos = self.__kinematics_handler.get_forward_kinematics_v2(
                 plan_.joint_trajectory.points[ind_ref].positions)
             if reference_pos is None:
                 reference_pos = RobotState()
@@ -444,7 +444,8 @@ class ArmCommander:
                     ind = len_plan - raw_ind - 1
                 else:
                     ind = raw_ind
-                pose_i = self.__kinematics_handler.get_forward_kinematics(plan_.joint_trajectory.points[ind].positions)
+                pose_i = self.__kinematics_handler.get_forward_kinematics_v2(
+                    plan_.joint_trajectory.points[ind].positions)
                 if pose_i is None:
                     pose_i = RobotState()
                 dist_pose_to_target = dist_2_poses(reference_pos, pose_i)
@@ -496,7 +497,7 @@ class ArmCommander:
         if rospy.get_param("~display_trajectories"):
             points = []
             for joints in plan.joint_trajectory.points:
-                forward_kinematics = self.__kinematics_handler.get_forward_kinematics(joints.positions)
+                forward_kinematics = self.__kinematics_handler.get_forward_kinematics_v2(joints.positions)
                 if forward_kinematics is None:
                     forward_kinematics = RobotState()
                 points.append(forward_kinematics.position)
