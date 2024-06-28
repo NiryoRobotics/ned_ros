@@ -3,12 +3,14 @@
 # Libs
 import rospy
 import copy
-from tf2_ros import Buffer, StaticTransformBroadcaster, TransformListener, ConnectivityException, LookupException
+from tf2_ros import Buffer, StaticTransformBroadcaster, TransformListener
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 # Messages
 from niryo_robot_msgs.msg import CommandStatus
 from geometry_msgs.msg import TransformStamped, Quaternion
+
+from niryo_robot_poses_handlers.transform_functions import convert_dh_convention_to_legacy_rpy
 from niryo_robot_tools_commander.msg import TCP
 
 # Services
@@ -32,6 +34,7 @@ class ToolTransformHandler:
 
         # Publisher
         self.__tcp_publisher = rospy.Publisher('~tcp', TCP, queue_size=10, latch=True)
+        self.__tcp_v2_publisher = rospy.Publisher('~tcp_v2', TCP, queue_size=10, latch=True)
         rospy.Timer(rospy.Duration.from_sec(0.5), self.__send_tcp_transform)
 
         # Services
@@ -43,13 +46,20 @@ class ToolTransformHandler:
         self.__enable_tcp = True
 
         t = self.empty_transform()
+
         if req.orientation == Quaternion():
             t.transform.rotation = Quaternion(*quaternion_from_euler(req.rpy.roll, req.rpy.pitch, req.rpy.yaw))
         else:
             t.transform.rotation = req.orientation
+
         t.transform.translation.x = req.position.x
         t.transform.translation.y = req.position.y
         t.transform.translation.z = req.position.z
+
+        if req.tcp_version != req.DH_CONVENTION:
+            t.transform.translation.x = req.position.z
+            t.transform.translation.y = -req.position.y
+            t.transform.translation.z = req.position.x
 
         self.set_tcp(t)
         return CommandStatus.SUCCESS, "Success"
@@ -97,16 +107,29 @@ class ToolTransformHandler:
         msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw = euler_from_quaternion(
             [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w])
 
-        self.__tcp_publisher.publish(msg)
+        self.__tcp_v2_publisher.publish(msg)
+
+        rpy_v1 = convert_dh_convention_to_legacy_rpy(*euler_from_quaternion([
+            self.__tcp_transform.transform.rotation.x,
+            self.__tcp_transform.transform.rotation.y,
+            self.__tcp_transform.transform.rotation.z,
+            self.__tcp_transform.transform.rotation.w
+        ]))
+        quaternion_v1 = quaternion_from_euler(*rpy_v1)
+
+        msg_v1 = TCP()
+        msg_v1.enabled = self.__enable_tcp
+        msg_v1.position.x = self.__tcp_transform.transform.translation.z
+        msg_v1.position.y = -self.__tcp_transform.transform.translation.y
+        msg_v1.position.z = self.__tcp_transform.transform.translation.x
+        msg_v1.rpy.roll, msg_v1.rpy.pitch, msg_v1.rpy.yaw = rpy_v1
+        msg_v1.orientation.x, msg_v1.orientation.y, msg_v1.orientation.z, msg_v1.orientation.w = quaternion_v1
+
+        self.__tcp_publisher.publish(msg_v1)
 
     def __send_tcp_transform(self, _):
         t = self.__tcp_transform if self.__enable_tcp else self.empty_transform()
-        # temporary thing to check if we still have TF_REPEATED_DATA
         t.header.stamp = rospy.Time.now()
-        # try:
-        #     t.header.stamp = self.__tf_buffer.lookup_transform('base_link', 'tool_link', rospy.Time(0)).header.stamp
-        # except (ConnectivityException, LookupException):
-        #     t.header.stamp = rospy.Time.now()
 
         self.__static_broadcaster.sendTransform(t)
 
