@@ -2526,7 +2526,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param color: color of the target
         :type color: ObjectColor
         :return: object_found, object_pose, object_shape, object_color
-        :rtype: (bool, RobotState, str, str)
+        :rtype: (bool, ObjectPose, str, str)
         """
         from niryo_robot_vision.srv import ObjDetection
 
