@@ -95,13 +95,13 @@ class KinematicsHandler:
         :type joints: Pose
         :return: A RobotState object
         """
-
         robot_state = self.get_forward_kinematics_v2(joints)
 
         rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
         quaternion_v1 = quaternion_from_euler(*rpy_v1)
 
-        return RobotState(position=Point(*robot_state.point), rpy=RPY(*rpy_v1), orientation=Quaternion(*quaternion_v1))
+        return RobotState(position=Point(robot_state.position.x, robot_state.position.y, robot_state.position.z),
+                            rpy=RPY(*rpy_v1), orientation=Quaternion(*quaternion_v1))
 
     def get_forward_kinematics_v2(self, joints):
         """
@@ -149,9 +149,11 @@ class KinematicsHandler:
         rpy = euler_from_quaternion([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
         rpy_legacy = convert_dh_convention_to_legacy_rpy(*rpy)
 
-        legacy_pose = Pose(position=pose.position, orientation=quaternion_from_euler(*rpy_legacy))
+        qx, qy, qz, qw = quaternion_from_euler(*rpy_legacy)
 
-        return self.get_inverse_kinematics_v2(self, legacy_pose)
+        legacy_pose = Pose(position=pose.position, orientation=Quaternion(qx, qy, qz, qw))
+
+        return self.get_inverse_kinematics_v2(legacy_pose)
 
     def get_inverse_kinematics_v2(self, pose):
         """
