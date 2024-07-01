@@ -473,7 +473,7 @@ class JogController:
 
         self.__validate_params_pose(self._new_robot_state)
 
-        success, joints = self.__kinematics_handler.get_inverse_kinematics(
+        success, joints = self.__kinematics_handler.get_inverse_kinematics_v2(
             Pose(self._new_robot_state.position, self._new_robot_state.orientation))
         return success, joints
 
