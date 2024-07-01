@@ -101,7 +101,8 @@ class KinematicsHandler:
         quaternion_v1 = quaternion_from_euler(*rpy_v1)
 
         return RobotState(position=Point(robot_state.position.x, robot_state.position.y, robot_state.position.z),
-                            rpy=RPY(*rpy_v1), orientation=Quaternion(*quaternion_v1))
+                          rpy=RPY(*rpy_v1),
+                          orientation=Quaternion(*quaternion_v1))
 
     def get_forward_kinematics_v2(self, joints):
         """
