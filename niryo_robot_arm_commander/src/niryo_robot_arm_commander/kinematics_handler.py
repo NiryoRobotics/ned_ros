@@ -96,7 +96,7 @@ class KinematicsHandler:
         :return: A RobotState object
         """
 
-        robot_state = self.get_forward_kinematics_v2(self, joints)
+        robot_state = self.get_forward_kinematics_v2(joints)
 
         rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
         quaternion_v1 = quaternion_from_euler(*rpy_v1)
