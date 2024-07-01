@@ -37,10 +37,7 @@ RUN sudo apt update && sudo apt install -y \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
     rsync \
-    bash-completion
-
-# Rosdep update
-RUN rosdep update
+    bash-completion 
 
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
