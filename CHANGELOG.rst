@@ -38,6 +38,9 @@ v5.4.0
   - The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios
   - The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios
   - Add a service to get conveyor hardware ID to be able to differentiate them (conveyor v2 and v3), service name: `/niryo_robot/conveyor/get_hardware_id`
+  - Add services to get forward and inverse kinematics using the new TCP convention (Z axis pointing forward)
+  - Add a ROS wrapper function to get the forward kinematics using the new TCP convention (Z axis pointing forward)
+  - Add a ROS topic `/niryo_robot_tools_commander/tcp_v2` which publishes the transform from hand_link to the TCP following the new TCP convention
 
 **Improvements**
   - Use the I/O panel version instead of the robot hardware version to differentiate the implementations
