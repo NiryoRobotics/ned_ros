@@ -827,6 +827,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def forward_kinematics(self, *args, **kwargs) -> Pose:
         """
         Computes the forward kinematics given joint positions.
+        The end effector pose is given for a end effector frame following the right hand rule and with the x axis pointing forward.
 
         This function is overloaded to accept multiple forms of input:
 
@@ -844,6 +845,37 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
         joints = list(joints_position)
         result = self._call_service('/niryo_robot/kinematics/forward', GetFK, joints)
+        return self.pose_from_msg(result.pose)
+
+    @overload
+    def forward_kinematics_v2(self, j1: float, j2: float, j3: float, j4: float, j5: float, j6: float) -> Pose:
+        ...
+
+    @overload
+    def forward_kinematics_v2(self, joints_position: JointsPosition) -> Pose:
+        ...
+
+    def forward_kinematics_v2(self, *args, **kwargs) -> Pose:
+        """
+        Computes the forward kinematics given joint positions.
+        The end effector pose is given for a end effector frame following the right hand rule and with the z axis pointing forward.
+
+        This function is overloaded to accept multiple forms of input:
+
+        :param args: Variable-length positional arguments. This can be either individual joint angles
+                     (j1, j2, j3, j4, j5, j6) or a single JointsPosition object.
+        :type args: tuple
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: dict
+
+        :returns: The pose of the end effector in the robot's workspace.
+        :rtype: Pose
+        """
+        from niryo_robot_arm_commander.srv import GetFK
+
+        joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
+        joints = list(joints_position)
+        result = self._call_service('/niryo_robot/kinematics/forward_v2', GetFK, joints)
         return self.pose_from_msg(result.pose)
 
     @overload
