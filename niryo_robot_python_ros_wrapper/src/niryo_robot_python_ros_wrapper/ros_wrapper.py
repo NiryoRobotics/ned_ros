@@ -827,7 +827,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def forward_kinematics(self, *args, **kwargs) -> Pose:
         """
         Computes the forward kinematics given joint positions.
-        The end effector pose is given for a end effector frame following the right hand rule and with the x axis pointing forward.
+        The end effector pose is given for an end effector frame following the right hand rule and with the x axis
+        pointing forward.
 
         This function is overloaded to accept multiple forms of input:
 
@@ -858,7 +859,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def forward_kinematics_v2(self, *args, **kwargs) -> Pose:
         """
         Computes the forward kinematics given joint positions.
-        The end effector pose is given for a end effector frame following the right hand rule and with the z axis pointing forward.
+        The end effector pose is given for an end effector frame following the right hand rule and with the z axis
+        pointing forward.
 
         This function is overloaded to accept multiple forms of input:
 
