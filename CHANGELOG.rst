@@ -41,6 +41,7 @@ v5.4.0
   - Add services to get forward and inverse kinematics using the new TCP convention (Z axis pointing forward)
   - Add a ROS wrapper function to get the forward kinematics using the new TCP convention (Z axis pointing forward)
   - Add a ROS topic `/niryo_robot_tools_commander/tcp_v2` which publishes the transform from hand_link to the TCP following the new TCP convention
+  - Change robot's pose limits for Ned3 to match its reachability
 
 **Improvements**
   - Use the I/O panel version instead of the robot hardware version to differentiate the implementations

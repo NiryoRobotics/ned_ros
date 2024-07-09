@@ -13,7 +13,7 @@ position_limits:
         max: 0.50
     z:
         min: -0.15
-        max: 0.60
+        max: 0.70
 
 rpy_limits:
     roll:
