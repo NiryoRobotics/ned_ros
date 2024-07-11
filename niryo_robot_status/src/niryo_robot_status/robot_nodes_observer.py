@@ -15,12 +15,12 @@ class RobotNodesObserver(object):
         """
         self.__robot_status_handler = robot_status_handler
 
-        self.__log_nodes = rospy.get_param("~node_logs")
-        self.__initialization_params = rospy.get_param("~initialisation_params")
+        self.__log_nodes = rospy.get_param('~node_logs')
+        self.__initialization_params = rospy.get_param('~initialisation_params')
 
-        self.__vital_nodes = rospy.get_param("~vital_nodes_common")
+        self.__vital_nodes = rospy.get_param('~vital_nodes_common')
         if rospy.has_param('/niryo_robot/simulation_mode') and not rospy.get_param('/niryo_robot/simulation_mode'):
-            self.__vital_nodes += rospy.get_param("~vital_nodes_real")
+            self.__vital_nodes += rospy.get_param('~vital_nodes_real')
 
         self.__are_vital_nodes_alive = False
         self.__missing_vital_nodes = []
@@ -61,15 +61,30 @@ class RobotNodesObserver(object):
             self.pyniryo_connected = (rospy.Time.now() - self.__pyniryo_node_ping_time).to_sec() < 0.5
         self.__robot_status_handler.advertise_new_state()
 
-    @property
-    def check_user_node(self):
-        return bool(self.__python_wrapper_nodes)
-
-    def check_vital_nodes(self):
+    def __get_alive_nodes(self):
         try:
             alive_nodes = rosnode.get_node_names()
         except rosnode.ROSNodeIOException:
             alive_nodes = []
+        return alive_nodes
+
+    @property
+    def check_user_node(self):
+        alive_nodes = self.__get_alive_nodes()
+
+        # remove dead nodes
+        self.__python_wrapper_nodes = {
+            pywrapper_node
+            for pywrapper_node in self.__python_wrapper_nodes
+            if pywrapper_node in alive_nodes and rosnode.rosnode_ping(pywrapper_node, 1)
+        }
+
+        rospy.logwarn(f'remaining user logs: {self.__python_wrapper_nodes}')
+
+        return bool(self.__python_wrapper_nodes)
+
+    def check_vital_nodes(self):
+        alive_nodes = self.__get_alive_nodes()
 
         self.__python_wrapper_nodes = {
             pywrapper_node
@@ -100,7 +115,7 @@ class RobotNodesObserver(object):
 
     def start_nodes_check_loop(self):
         if self.__check_nodes_timer is None:
-            self.__check_nodes_timer = rospy.Timer(rospy.Duration(1. / rospy.get_param("~check_nodes_frequency")),
+            self.__check_nodes_timer = rospy.Timer(rospy.Duration(1.0 / rospy.get_param('~check_nodes_frequency')),
                                                    self.__check_vital_nodes_callback)
 
     def __check_vital_nodes_callback(self, _):

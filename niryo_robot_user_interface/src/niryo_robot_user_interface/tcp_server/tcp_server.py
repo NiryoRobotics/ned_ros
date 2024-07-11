@@ -5,11 +5,9 @@ import rospy
 # Communication imports
 import select
 import socket
-from niryo_robot_user_interface.tcp_server.communication_functions import (create_socket_server,
-                                                                           receive_dict,
-                                                                           dict_to_packet)
 
-from niryo_robot_user_interface.tcp_server.command_interpreter import CommandInterpreter
+from .communication_functions import create_socket_server, receive_dict, dict_to_packet
+from .command_interpreter import CommandInterpreter
 
 # Threading
 from threading import Thread, Lock
@@ -17,6 +15,7 @@ import queue
 
 
 class TcpServer:
+
     def __init__(self, ip_address='', port=40001, on_client_connection_cb=None, on_client_disconnection_cb=None):
         # Server TCP
         self.__ip_address = ip_address
@@ -133,6 +132,7 @@ class TcpServer:
         try:
             result_data = self.__interpreter.interpret_command(dict_command_received)
         except Exception as e:
+            rospy.logerr("tcp server - {}".format(e), exc_info=True)
             command_name = dict_command_received["command"]
             self.__answer_error(command_name, e)
         else:

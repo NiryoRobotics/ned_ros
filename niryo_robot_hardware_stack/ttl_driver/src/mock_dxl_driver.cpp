@@ -261,12 +261,12 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 // ram write
 
 /**
- * @brief MockDxlDriver::writeTorqueEnable
+ * @brief MockDxlDriver::writeTorquePercentage
  * @param id
  * @param torque_enable
  * @return
  */
-int MockDxlDriver::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
+int MockDxlDriver::writeTorquePercentage(uint8_t id, uint8_t torque_enable)
 {
     if (_fake_data->dxl_registers.count(id))
         _fake_data->dxl_registers.at(id).torque = torque_enable;
@@ -327,12 +327,12 @@ int MockDxlDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t> 
 }
 
 /**
- * @brief MockDxlDriver::syncWriteTorqueEnable
+ * @brief MockDxlDriver::syncWriteTorquePercentage
  * @param id_list
- * @param torque_enable_list
+ * @param torque_percentage_list
  * @return
  */
-int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
+int MockDxlDriver::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list)
 {
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;
@@ -342,7 +342,7 @@ int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, co
         auto result = countSet.insert(id_list.at(i));
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
-        writeTorqueEnable(id_list.at(i), torque_enable_list.at(i));
+        writeTorquePercentage(id_list.at(i), torque_percentage_list.at(i));
     }
     return COMM_SUCCESS;
 }
@@ -881,6 +881,21 @@ int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, cons
 int MockDxlDriver::readLoad(uint8_t id, uint16_t &present_load)
 {
     (void)present_load;  // unused
+
+    if (_fake_data->dxl_registers.count(id))
+        return COMM_SUCCESS;
+    return COMM_RX_FAIL;
+}
+
+/**
+ * @brief MockDxlDriver::readMoving
+ * @param id
+ * @param status
+ * @return
+ */
+int MockDxlDriver::readMoving(uint8_t id, uint8_t &status)
+{
+    (void)status;  // unused
 
     if (_fake_data->dxl_registers.count(id))
         return COMM_SUCCESS;

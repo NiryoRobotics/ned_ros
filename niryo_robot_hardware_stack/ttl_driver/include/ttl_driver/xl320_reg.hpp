@@ -53,8 +53,8 @@ struct XL320Reg
     static constexpr uint16_t ADDR_CCW_ANGLE_LIMIT     = 8;
     using TYPE_CCW_ANGLE_LIMIT = uint16_t;
 
-    static constexpr uint16_t ADDR_CONTROL_MODE        = 11;
-    using TYPE_CONTROL_MODE = uint8_t;
+    static constexpr uint16_t ADDR_OPERATING_MODE        = 11;
+    using TYPE_OPERATING_MODE = uint8_t;
 
     static constexpr uint16_t ADDR_TEMPERATURE_LIMIT   = 12;
     using TYPE_TEMPERATURE_LIMIT = uint8_t;

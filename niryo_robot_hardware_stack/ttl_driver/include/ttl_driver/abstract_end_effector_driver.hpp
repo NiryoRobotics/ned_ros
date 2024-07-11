@@ -62,6 +62,7 @@ public:
     virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
     virtual int writeCollisionThresh(uint8_t id, int thresh) = 0;
+    int writeCollisionThreshAlgo2(uint8_t id, int thresh);
 
     std::string interpretErrorState(uint32_t hw_state) const override;
 

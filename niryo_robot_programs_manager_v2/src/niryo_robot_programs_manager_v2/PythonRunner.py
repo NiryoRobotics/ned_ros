@@ -17,7 +17,6 @@ class PythonRunner:
     It captures the program's standard output and provides methods to check the
     execution status and retrieve the program output.
     """
-
     def __init__(self) -> None:
         """
         Initialize the ProgramRunner.
@@ -100,4 +99,12 @@ class PythonRunner:
         try:
             self.__process.terminate()
         except Exception as e:
-            raise ExecutionException(str(e))
+            rospy.logerr(str(e))
+
+        # Wait for the process to terminate
+        WAIT_TIMEOUT_SECONDS = 3
+        try:
+            self.__process.wait(WAIT_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            # Kill the process tree
+            self.__process.kill()

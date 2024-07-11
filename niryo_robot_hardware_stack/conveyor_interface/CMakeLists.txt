@@ -22,8 +22,8 @@ execute_process( COMMAND
     )
     
 ## c++ options
-## Compile as C++14, supported in ROS Melodic and newer
-set(CMAKE_CXX_STANDARD 14)
+## Compile as C++17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
@@ -63,6 +63,7 @@ add_service_files(
   FILES
   ControlConveyor.srv
   SetConveyor.srv
+  GetHardwareId.srv
 )
 
 generate_messages(

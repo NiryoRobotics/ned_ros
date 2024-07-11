@@ -14,6 +14,10 @@ int32 EXECUTE_RAW_TRAJ = 12
 
 int32 cmd_type
 
+int32 LEGACY = 1
+int32 DH_CONVENTION = 2
+int32 tcp_version
+
 float64[] joints
 geometry_msgs/Point position
 niryo_robot_msgs/RPY rpy

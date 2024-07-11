@@ -91,6 +91,8 @@ namespace tools_interface
         void _toolCommand(uint32_t position, int torque, uint32_t velocity);
         void _publishToolConnection(const ros::TimerEvent &);
 
+        void _waitForToolStop(int id, int timeout);
+
     private:
         struct ToolConfig
         {
@@ -99,6 +101,9 @@ namespace tools_interface
         };
         int _temperature_limit{60};
         int _shutdown_configuration{53};
+        int _velocity_profile{0}, _acceleration_profile{0};
+        int _vacuum_pump_timeout{3};
+        int _gripper_timeout{3};
 
         std::mutex _tool_mutex;
 
@@ -118,6 +123,7 @@ namespace tools_interface
 
         std::shared_ptr<common::model::ToolState> _toolState;
         std::map<uint8_t, ToolConfig> _available_tools_map;
+        
     };
 
     /**

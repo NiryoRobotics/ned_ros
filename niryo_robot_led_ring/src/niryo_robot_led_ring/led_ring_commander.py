@@ -207,10 +207,8 @@ class LedRingCommander(object):
 
         self.led_ring_anim.set_led_color(req.led_id, req.color)
 
-        return CommandStatus.SUCCESS, "Successfully set led {} at color {}" .format(req.led_id,
-                                                                                    [req.color.r,
-                                                                                     req.color.g,
-                                                                                     req.color.b])
+        return CommandStatus.SUCCESS, "Successfully set led {} at color {}".format(
+            req.led_id, [req.color.r, req.color.g, req.color.b])
 
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
@@ -355,7 +353,10 @@ class LedRingCommander(object):
         self.start_led_ring_thread(command)
 
     def get_robot_status_led_ring_cmd(self):
-        if self.robot_out_of_bounds:
+        # Prioritize Emergency Stop animation
+        if self.robot_status in ROBOT_STATUS_TO_ANIM and self.robot_status in ROBOT_CRITICAL_STATUS:
+            animation, colors = ROBOT_STATUS_TO_ANIM[self.robot_status]
+        elif self.robot_out_of_bounds:
             animation, colors = ROBOT_STATUS_TO_ANIM["out_of_bound"]
         elif self.rpi_overheating:
             animation, colors = ROBOT_STATUS_TO_ANIM["overheating"]

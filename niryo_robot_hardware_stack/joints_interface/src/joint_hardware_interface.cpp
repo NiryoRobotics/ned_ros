@@ -34,6 +34,9 @@
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/util/util_defs.hpp"
 
+#include "niryo_robot_database/GetSettings.h"
+#include "niryo_robot_database/SetSettings.h"
+
 using ::std::dynamic_pointer_cast;
 using ::std::shared_ptr;
 using ::std::string;
@@ -70,21 +73,28 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle &rootnh, ros::Nod
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
+    // Used to get or initialize motors home position
+    _get_settings_client = robot_hwnh.serviceClient<niryo_robot_database::GetSettings>("/niryo_robot_database/settings/get");
+    _set_settings_client = robot_hwnh.serviceClient<niryo_robot_database::SetSettings>("/niryo_robot_database/settings/set");
+    _get_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/get_home_position", &JointHardwareInterface::callbackGetHomePosition, this);
+    _set_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/set_home_position", &JointHardwareInterface::callbackSetHomePosition, this);
+    _reset_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/reset_home_position", &JointHardwareInterface::callbackResetHomePosition, this);
+
     init(rootnh, robot_hwnh);
 
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_state_list, _ttl_interface, _can_interface);
 }
 
 /**
- * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
+ * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciatRing
  * correct state (dxl or stepper)
  */
 bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
     bool torque_status{false};
 
-    robot_hwnh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
-    if (_hardware_version == "ned2")
+    robot_hwnh.getParam("/niryo_robot/hardware_version", _hardware_version);
+    if (_hardware_version == "ned2" || _hardware_version == "ned3")
         torque_status = true;
     else if (_hardware_version == "ned" || _hardware_version == "one")
         torque_status = false;
@@ -119,7 +129,7 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 
         // gather info in joint  states (polymorphic)
-        if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
+        if (eType == EHardwareType::STEPPER || eType == EHardwareType::NED3_STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {
             // stepper
             std::string currentNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -255,12 +265,156 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
         }
     }  // end for (size_t j = 0; j < nb_joints; j++)
 
+    // Initialize motors home position if missing from database
+    if (!_get_settings_client.waitForExistence(ros::Duration(5.0)))
+    {
+        ROS_WARN("JointHardwareInterface::init - Failed to reach /niryo_robot_database/settings/get service server, keeping home position to default value");
+    }
+    else
+    {
+        std::vector<double> custom_home_positions;
+        _default_home_position.clear();
+        for (auto &jState : _joint_state_list)
+        {
+            // save the default home position
+            _default_home_position.push_back(jState->getHomePosition());
+
+            // read the custom home position
+            auto get_request = niryo_robot_database::GetSettings();
+            auto setting_name = "custom_home_position_" + jState->getName();
+            get_request.request.name = setting_name;
+            if (_get_settings_client.call(get_request)
+                && get_request.response.status == niryo_robot_msgs::CommandStatus::SUCCESS
+                && !get_request.response.value.empty())
+            {
+                custom_home_positions.push_back(std::stod(get_request.response.value));
+            }
+        }
+
+        // make sure that the custom home positions are set for all joints
+        if (custom_home_positions.size() == _joint_state_list.size())
+        {
+            for (size_t i = 0; i < custom_home_positions.size(); ++i)
+            {
+                _joint_state_list[i]->setHomePosition(custom_home_positions[i]);
+            }
+        }
+        else
+        {
+            ROS_WARN("JointHardwareInterface::init - Custom home positions are not set for all joints, keeping home position to default value");
+        }
+    }
+
     // register the interfaces
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
 
     return true;
 }
+
+
+bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request &, niryo_robot_msgs::GetFloatList::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackGetHomePosition - Get home position requested");
+
+    for (auto &jState : _joint_state_list)
+    {
+        res.values.push_back(jState->getHomePosition());
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions retrieved successfully";
+
+    return true;
+}
+
+
+bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request &req, niryo_robot_msgs::SetFloatList::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackSetHomePosition - Set new home position requested");
+
+    niryo_robot_database::SetSettings set_service = niryo_robot_database::SetSettings();
+
+    // Check if requested home position values match the joints number
+    if (req.values.size() != _joint_state_list.size())
+    {
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "Failed to set home positions : " + std::to_string(_joint_state_list.size()) + " values required for home positions.";
+        return true;
+    }
+
+    // Check if requested home positions are in valid ranges
+    std::string out_of_range_positions = "";
+    for (size_t i = 0; i < req.values.size(); ++i) {
+        if (!_joint_state_list[i]->isValidPosition(req.values[i]))
+        {
+            out_of_range_positions += _joint_state_list[i]->getName() + " ";
+        }
+    }
+    if (!out_of_range_positions.empty())
+    {
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "Failed to set home positions : home position for axis (" + out_of_range_positions + ") are out of range.";
+        return true;
+    }
+
+    int counter = 0;
+    for (auto &jState : _joint_state_list)
+    {
+        set_service.request.name = "custom_home_position_" + jState->getName();
+        set_service.request.type = "float";
+        set_service.request.value = std::to_string(req.values[counter]);
+        if (_set_settings_client.call(set_service))
+        {
+            if (set_service.response.status == niryo_robot_msgs::CommandStatus::SUCCESS)
+            {
+                jState->setHomePosition(req.values[counter]);
+            }
+            else
+            {
+                res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+                res.message = "Failed to set home position in db for axis " + jState->getName();
+                return true;
+            }
+        }
+        else
+        {
+            res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+            res.message = "Failed to call service /niryo_robot_database/settings/set";
+            return true;
+        }
+
+    counter++;
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions set successfully";
+
+    return true;
+}
+
+bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res)
+{
+    ROS_DEBUG("JointHardwareInterface::callbackResetHomePosition - Reset home position requested");
+
+    auto set_service = niryo_robot_database::SetSettings();
+
+    for (size_t i=0; i < _joint_state_list.size(); ++i)
+    {
+        auto &jState = _joint_state_list[i];
+        set_service.request.name = "custom_home_position_" + jState->getName();
+        set_service.request.type = "float";
+        set_service.request.value = "";
+        _set_settings_client.call(set_service);
+
+        jState->setHomePosition(_default_home_position[i]);
+    }
+
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "Home positions reset to default values";
+    return true;
+}
+
 
 /**
  * @brief JointHardwareInterface::initStepper
@@ -282,15 +436,17 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         double limit_position_min = 0.0;
         double limit_position_max = 0.0;
         double motor_ratio = 0.0;
+        int torque_percentage = 0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
-        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/default_home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
+        robot_hwnh.getParam(currentNamespace + "/torque_percentage", torque_percentage);
 
         // acceleration and velocity profiles (with conversion from RPM and RPM-2)
         common::model::VelocityProfile profile{};
@@ -314,12 +470,18 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
+            if ("ned3" == _hardware_version)
+                profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577);
+            else
+                profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
+            if ("ned3" == _hardware_version)
+                profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 1000);
+            else
+                profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_max"))
         {
@@ -338,15 +500,16 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         }
 
         // add parameters
+        stepperState->setHomePosition(home_position);
         stepperState->setOffsetPosition(offsetPos);
         stepperState->setGearRatio(gear_ratio);
         stepperState->setDirection(static_cast<int8_t>(direction));
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
-        stepperState->setHomePosition(home_position);
         stepperState->setLimitPositionMax(limit_position_max);
         stepperState->setLimitPositionMin(limit_position_min);
         stepperState->setMotorRatio(motor_ratio);
+        stepperState->setTorquePercentage(torque_percentage);
 
         // update ratio used to convert rad to pos motor
         stepperState->updateMultiplierRatio();
@@ -399,13 +562,13 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh, const std
         robot_hwnh.getParam(currentNamespace + "/velocity_profile", velocityProfile);
         robot_hwnh.getParam(currentNamespace + "/acceleration_profile", accelerationProfile);
 
-        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/default_home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
 
         dxlState->setOffsetPosition(offsetPos);
-        dxlState->setHomePosition(home_position);
         dxlState->setDirection(static_cast<int8_t>(direction));
+        dxlState->setHomePosition(home_position);
 
         dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
         dxlState->setPositionIGain(static_cast<uint32_t>(positionIGain));
@@ -520,7 +683,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
             // first set torque state
             if (jState->isStepper())
                 _ttl_interface->addSingleCommandToQueue(
-                    std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{torque_on}));
+                    std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), std::initializer_list<uint32_t>{jState->getTorquePercentage()}));
 
             ros::Duration(0.2).sleep();
 
@@ -578,8 +741,9 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
                     _ttl_interface->addSingleCommandToQueue(
                         std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, stepperState->getId(), stepperState->getVelocityProfile().to_list()));
                     // TORQUE cmd
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
-                                                                                                  std::initializer_list<uint32_t>({static_cast<uint32_t>(torque_on)})));
+                    _ttl_interface->addSingleCommandToQueue(
+                        std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE, stepperState->getId(),
+                                                              std::initializer_list<uint32_t>{stepperState->getTorquePercentage()}));
                 }
             }
         }
@@ -641,7 +805,7 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
             else
                 _ttl_interface->startCalibration();
 
-            // sleep for 2.5 seconds, waiting for light and sound
+            // sleep for 2 seconds, waiting for light and sound
             ros::Duration(2.0).sleep();
 
             calib_res = _calibration_manager->startCalibration(mode, result_message);
@@ -658,6 +822,33 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     }
 
     return calib_res;
+}
+
+/**
+ * @brief JointHardwareInterface::factoryCalibrateJoints
+ * @param mode
+ * @param result_message
+ * @return
+ */
+int JointHardwareInterface::factoryCalibrateJoints(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, string &result_message)
+{
+    if (FactoryCalibration::Request::START == command)
+    {
+        // 1. change status in interfaces (needed to trigger lights and sound at startup)
+        _ttl_interface->startCalibration();
+
+        result_message = "Calibration Interface - Calibration started";
+        return _calibration_manager->startFactoryCalibration(command, ids, result_message);
+    }
+
+    if (FactoryCalibration::Request::STOP == command)
+    {
+        result_message = "Calibration Interface - Calibration done";
+        return _calibration_manager->startFactoryCalibration(command, ids, result_message);
+    }
+
+    result_message = std::string("JointHardwareInterface::factoryCalibrateJoints - Command not available: " + std::to_string(command));
+    return niryo_robot_msgs::CommandStatus::ABORTED;
 }
 
 /**
@@ -681,7 +872,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const &jState : _joint_state_list)
     {
@@ -692,7 +883,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
                 if (jState->isDynamixel())
                     dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
                 else
-                    stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                    stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated ? 0 : jState->getTorquePercentage());
             }
             else
             {

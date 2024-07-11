@@ -76,7 +76,7 @@ class ArmParametersValidator:
                                         "Joint array must have {} joints".format(len(self.joints_limits)))
 
         for joint_index, joint_cmd in enumerate(joint_array):
-            if self.joints_limits[joint_index] and not self.joints_limits[joint_index].lower <= joint_cmd <= \
+            if self.joints_limits[joint_index] and not self.joints_limits[joint_index].lower <= round(joint_cmd, 3) <= \
                                                        self.joints_limits[joint_index].upper:
                 raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
                                             "joint_{} not in range ({}, {})".format(joint_index + 1, self.joints_limits[

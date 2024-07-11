@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "xm430_reg.hpp"
 #include "xl330_reg.hpp"
 #include "xl320_reg.hpp"
+#include "xh430_reg.hpp"
 
 namespace ttl_driver
 {
@@ -84,12 +85,12 @@ namespace ttl_driver
         // ram write
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t> &data_list) override;
 
-        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+        int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) override;
 
         int writePositionGoal(uint8_t id, uint32_t position) override;
         int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
 
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
+        int syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
@@ -119,6 +120,8 @@ namespace ttl_driver
 
         int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
         int readControlMode(uint8_t id, uint8_t &control_mode) override;
+
+        int readMoving(uint8_t id, uint8_t &status) override;
 
         // ram write
         int writePID(uint8_t id, const std::vector<uint16_t> &data) override;
@@ -342,14 +345,15 @@ namespace ttl_driver
     }
 
     /**
-     * @brief DxlDriver<reg_type>::writeTorqueEnable
+     * @brief DxlDriver<reg_type>::writeTorquePercentage
      * @param id
-     * @param torque_enable
+     * @param torque_percentage
      * @return
      */
     template <typename reg_type>
-    int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
+    int DxlDriver<reg_type>::writeTorquePercentage(uint8_t id, uint8_t torque_percentage)
     {
+        auto torque_enable = torque_percentage > 0 ? 1 : 0;
         return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_enable);
     }
 
@@ -380,14 +384,20 @@ namespace ttl_driver
     }
 
     /**
-     * @brief DxlDriver<reg_type>::syncWriteTorqueEnable
+     * @brief DxlDriver<reg_type>::syncWriteTorquePercentage
      * @param id_list
-     * @param torque_enable_list
+     * @param torque_percentage_list
      * @return
      */
     template <typename reg_type>
-    int DxlDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
+    int DxlDriver<reg_type>::syncWriteTorquePercentage(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_percentage_list)
     {
+        std::vector<uint8_t> torque_enable_list;
+        for(const auto &torque_percentage : torque_percentage_list)
+        {
+            auto torque_enable = torque_percentage > 0 ? 1 : 0;
+            torque_enable_list.push_back(torque_enable);
+        }
         return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
     }
 
@@ -771,6 +781,18 @@ namespace ttl_driver
         }
 
         return COMM_SUCCESS;
+    }
+
+    /**
+     * @brief DxlDriver<reg_type>::readMoving
+     * @param id
+     * @param status
+     * @return
+     */
+    template <typename reg_type>
+    int DxlDriver<reg_type>::readMoving(uint8_t id, uint8_t &status)
+    {
+        return read<typename reg_type::TYPE_MOVING>(reg_type::ADDR_MOVING, id, status);
     }
 
     /**
@@ -1194,13 +1216,6 @@ namespace ttl_driver
     }
 
     template <>
-    inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
-    {
-        std::cout << "writeControlMode not available for motor XL320" << std::endl;
-        return COMM_SUCCESS;
-    }
-
-    template <>
     inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t & /*data*/)
     {
         std::cout << "readControlMode not available for motor XL320" << std::endl;
@@ -1485,6 +1500,65 @@ namespace ttl_driver
     inline int DxlDriver<XL330Reg>::writeShutdownConfiguration(uint8_t id, uint8_t configuration)
     {
         return write<typename XL330Reg::TYPE_ALARM_SHUTDOWN>(XL330Reg::ADDR_ALARM_SHUTDOWN, id, configuration);
+    }
+
+    // XH430
+
+    template <>
+    inline std::string DxlDriver<XH430Reg>::interpretErrorState(uint32_t hw_state) const
+    {
+        std::string hardware_message;
+
+        if (hw_state & 1 << 0) // 0b00000001
+        {
+            hardware_message += "Input Voltage";
+        }
+        if (hw_state & 1 << 2) // 0b00000100
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "OverHeating";
+        }
+        if (hw_state & 1 << 3) // 0b00001000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Motor Encoder";
+        }
+        if (hw_state & 1 << 4) // 0b00010000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Electrical Shock";
+        }
+        if (hw_state & 1 << 5) // 0b00100000
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Overload";
+        }
+        if (hw_state & 1 << 7) // 0b10000000 => added by us : disconnected error
+        {
+            if (!hardware_message.empty())
+                hardware_message += ", ";
+            hardware_message += "Disconnection";
+        }
+        if (!hardware_message.empty())
+            hardware_message += " Error";
+
+        return hardware_message;
+    }
+
+    template <>
+    inline int DxlDriver<XH430Reg>::writeTorqueGoal(uint8_t id, uint16_t torque)
+    {
+        return write<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id, torque);
+    }
+
+    template <>
+    inline int DxlDriver<XH430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> & id_list, const std::vector<uint16_t> & torque_list)
+    {
+        return syncWrite<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id_list, torque_list);
     }
 
 } // ttl_driver

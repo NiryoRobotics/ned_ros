@@ -70,7 +70,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.close_gripper()
-        elif tool_id == ToolID.VACUUM_PUMP_1:
+        elif tool_id in (ToolID.VACUUM_PUMP_1, ToolID.VACUUM_PUMP_2):
             return self.pull_air_vacuum_pump()
         elif tool_id == ToolID.ELECTROMAGNET_1:
             return self.activate_electromagnet(pin_id)
@@ -92,7 +92,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper()
-        elif tool_id == ToolID.VACUUM_PUMP_1:
+        elif tool_id in (ToolID.VACUUM_PUMP_1, ToolID.VACUUM_PUMP_2):
             return self.push_air_vacuum_pump()
         elif tool_id == ToolID.ELECTROMAGNET_1:
             return self.deactivate_electromagnet(pin_id)
@@ -161,7 +161,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
 
     def __deal_with_vacuum_pump(self, command_int):
         goal = ToolGoal()
-        goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
+        goal.cmd.tool_id = self.get_current_tool_id()
         goal.cmd.cmd_type = command_int
 
         return self.__tool_action_nac.execute(goal)

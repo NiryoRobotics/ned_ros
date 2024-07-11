@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.12)
 project(ttl_driver)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+
+add_compile_definitions(ROSCONSOLE_MIN_SEVERITY=1)
 
 set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
 # for preprocessor directives
@@ -20,8 +22,7 @@ execute_process( COMMAND
     )
 
 ## c++ options
-## Compile as C++14, supported in ROS Melodic and newer
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
@@ -54,6 +55,7 @@ add_message_files(
     ArrayMotorHardwareStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
+    CalibrationStatus.msg
 )
 
 add_service_files(

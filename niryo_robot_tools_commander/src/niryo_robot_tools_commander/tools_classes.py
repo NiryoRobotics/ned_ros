@@ -75,6 +75,11 @@ class Tool(object):
     def __repr__(self):
         return self.__str__()
 
+    def remap(self, value, old_min, old_max, new_min, new_max):
+        """Remap given value from an old range to a new range
+        """
+        return new_min + (new_max - new_min) * ((value - old_min) / (old_max - old_min))
+
 
 class NoTool(Tool):
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
@@ -149,42 +154,18 @@ class Gripper(Tool):
             return False, "A communication problem occured, please retry"
 
     def open_gripper(self, cmd):
-        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
-            max_torque = self.open_max_torque
-        else:
-            if self.open_max_torque > 0:
-                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["max"])
-            else:
-                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
-
-        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
-            hold_torque = self.open_hold_torque
-        else:
-            if self.open_hold_torque > 0:
-                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["max"])
-            else:
-                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["min"])
+        # Remap percentage to real torque value
+        max_torque = int(self.remap(cmd.max_torque_percentage, 0, 100, 0, self.torque_limits["max"]))
+        hold_torque = int(self.remap(cmd.hold_torque_percentage, 0, 100, 0, self.torque_limits["max"]))
 
         state = self.ros_command_interface.open_gripper(
             self._id, self.open_position, cmd.speed, hold_torque, max_torque)
         return self.return_gripper_status(state)
 
     def close_gripper(self, cmd):
-        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
-            max_torque = self.close_max_torque
-        else:
-            if self.close_max_torque > 0:
-                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["max"])
-            else:
-                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
-
-        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
-            hold_torque = self.close_hold_torque
-        else:
-            if self.close_hold_torque > 0:
-                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["max"])
-            else:
-                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["min"])
+        # Remap percentage to real torque value
+        max_torque = int(self.remap(cmd.max_torque_percentage, 0, 100, 0, self.torque_limits["min"]))
+        hold_torque = int(self.remap(cmd.hold_torque_percentage, 0, 100, 0, self.torque_limits["min"]))
 
         state = self.ros_command_interface.close_gripper(
             self._id, self.close_position, cmd.speed, hold_torque, max_torque)

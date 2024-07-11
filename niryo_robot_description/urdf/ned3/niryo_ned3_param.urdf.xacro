@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3">
+    <xacro:property name="PI" value="3.14159265359"/>
+
+    <!-- Properties -->
+
+    <xacro:property name="distance_hand_tool" value="0.0275"/>
+
+    <xacro:property name="limit_low_shoulder_rotation" value="-2.96"/>
+    <xacro:property name="limit_up_shoulder_rotation" value="2.96"/>
+    <xacro:property name="limit_low_arm_rotation" value="-1.75"/>
+    <xacro:property name="limit_up_arm_rotation" value="0.44"/>
+    <xacro:property name="limit_low_elbow_rotation" value="-1.22"/>
+    <xacro:property name="limit_up_elbow_rotation" value="1.57"/>
+    <xacro:property name="limit_low_forearm_rotation" value="-2.09"/>
+    <xacro:property name="limit_up_forearm_rotation" value="2.09"/>
+    <xacro:property name="limit_low_wrist_rotation" value="-1.92"/>
+    <xacro:property name="limit_up_wrist_rotation" value="1.92"/>
+    <xacro:property name="limit_low_hand_rotation" value="-3.14"/>
+    <xacro:property name="limit_up_hand_rotation" value="3.14"/>
+
+    <xacro:property name="safety_pos_margin" value="0.0"/>
+
+</robot>

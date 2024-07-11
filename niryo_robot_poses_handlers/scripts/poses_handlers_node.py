@@ -11,9 +11,10 @@ from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
-from niryo_robot_poses_handlers.pose_manager import PoseManager
+from niryo_robot_poses_handlers.pose_manager import PoseManager, PoseObj
 from niryo_robot_poses_handlers.workspace_manager import WorkspaceManager
 from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
+from niryo_robot_poses_handlers.transform_functions import convert_dh_convention_to_legacy_rpy
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -37,6 +38,11 @@ from niryo_robot_poses_handlers.srv import GetWorkspaceRobotPoses, GetWorkspaceM
 from niryo_robot_poses_handlers.srv import GetDynamicFrame, ManageWorkspace
 from niryo_robot_poses_handlers.srv import GetPose, ManagePose
 from niryo_robot_poses_handlers.srv import ManageDynamicFrame
+
+from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
+from niryo_robot_utils.dataclasses.enums import TcpVersion
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
+from niryo_robot_utils.dataclasses.Pose import Pose
 
 
 class PoseHandlerNode:
@@ -105,8 +111,9 @@ class PoseHandlerNode:
         self.dynamic_frame_manager.publish_frames()
 
         # Relative pose
-        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=10)
-        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback, queue_size=1)
+        self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=1)
+        self.__relative_pose_v2_publisher = rospy.Publisher('~relative_pose_v2', PoseStamped, queue_size=1)
+        rospy.Subscriber('/niryo_robot/robot_state_v2', RobotState, self.__robot_state_callback, queue_size=1)
         self.__current_pose = [0] * 6
 
         self.__relative_transform = None
@@ -123,7 +130,10 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_points', GetWorkspacePoints, self.__callback_get_workspace_points)
         rospy.Service('~get_workspace_matrix_poses', GetWorkspaceMatrixPoses, self.__callback_get_workspace_matrix)
         rospy.Service('~get_workspace_list', GetNameDescriptionList, self.__callback_get_workspace_list)
-        self.__workspace_list_publisher = rospy.Publisher('workspace_list', BasicObjectArray, latch=True, queue_size=10)
+        self.__workspace_list_publisher = rospy.Publisher('~workspace_list',
+                                                          BasicObjectArray,
+                                                          latch=True,
+                                                          queue_size=10)
         self.__publish_workspace_list()
 
         if rospy.has_param('~gazebo_workspaces'):
@@ -237,13 +247,7 @@ class PoseHandlerNode:
 
     def __callback_get_pose(self, req):
         try:
-            pos_read = self.get_pose(req.name)
-            pos_msg = NiryoPose(pos_read.name,
-                                pos_read.description,
-                                pos_read.joints,
-                                pos_read.position,
-                                pos_read.rpy,
-                                pos_read.orientation)
+            pos_msg = self.get_pose(req.name)
             return CommandStatus.SUCCESS, "Success", pos_msg
         except Exception as e:
             return CommandStatus.POSES_HANDLER_READ_FAILURE, str(e), NiryoPose()
@@ -254,6 +258,7 @@ class PoseHandlerNode:
     def __callback_set_relative_transform_frame(self, req):
         if req.value == '':
             self.__relative_transform = None
+            return CommandStatus.SUCCESS, 'Disabled the relative transform'
         elif req.value not in self.dynamic_frame_manager.get_all_names():
             return CommandStatus.DYNAMIC_FRAME_DOES_NOT_EXISTS, f'Dynamic frame "{req.value}" does not exists'
 
@@ -268,7 +273,17 @@ class PoseHandlerNode:
         pose = req.pose
         if cmd == req.SAVE:
             try:
-                self.create_pose(pose.name, pose.description, pose.joints, pose.position, pose.rpy, pose.orientation)
+                pose_obj = PoseObj(name=pose.name,
+                                   description=pose.description,
+                                   joints=JointsPosition(*pose.joints),
+                                   pose=Pose(pose.position.x,
+                                             pose.position.y,
+                                             pose.position.z,
+                                             pose.rpy.roll,
+                                             pose.rpy.pitch,
+                                             pose.rpy.yaw,
+                                             metadata=PoseMetadata(pose.pose_version, TcpVersion[pose.tcp_version])))
+                self.__pos_manager.create(pose_obj)
                 self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
             except Exception as e:
@@ -367,7 +382,7 @@ class PoseHandlerNode:
             return CommandStatus.SUCCESS, "Success", position, rpy
 
         except Exception as e:
-            rospy.logerr("Poses Handlers - Error occured when getting transform: {}".format(e))
+            rospy.logerr("Poses Handlers - Error occurred when getting transform: {}".format(e))
             return CommandStatus.CONVERT_FAILED, str(e), Point(), RPY()
 
     def __callback_get_dynamic_frame_list(self, _):
@@ -395,8 +410,12 @@ class PoseHandlerNode:
         if self.__relative_transform is None:
             return
 
-        transform_pose = self.transform_pose(self.__relative_transform, self.__current_pose)
-        self.__relative_pose_publisher.publish(transform_pose)
+        transform_pose_v2 = self.transform_pose(self.__relative_transform, self.__current_pose)
+        self.__relative_pose_v2_publisher.publish(transform_pose_v2)
+
+        current_pose_v1 = self.__current_pose[:3] + list(convert_dh_convention_to_legacy_rpy(*self.__current_pose[3:]))
+        transform_pose_v1 = self.transform_pose(self.__relative_transform, current_pose_v1)
+        self.__relative_pose_publisher.publish(transform_pose_v1)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
@@ -418,9 +437,9 @@ class PoseHandlerNode:
             point = self.__transform_handler.get_calibration_tip_position(pose)
             rospy.logdebug("Tip point\n{}".format(point))
             points.append([point.x, point.y, point.z])
-            pose_raw = [[pose.position.x, pose.position.y, pose.position.z],
+            pose_obj = [[pose.position.x, pose.position.y, pose.position.z],
                         [pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw]]
-            robot_poses_raw.append(pose_raw)
+            robot_poses_raw.append(pose_obj)
 
         self.__ws_manager.create(name, points, robot_poses_raw, description)
 
@@ -532,22 +551,6 @@ class PoseHandlerNode:
         return pose
 
     # -- Pose
-    def create_pose(self, name, description, joints, point, rpy, quaternion):
-        """
-        Create a pose from ManagePose message fields
-
-        :type name: str
-        :type description: str
-        :type joints: list[float]
-        :type point: Point
-        :type rpy: RPY
-        :type quaternion: Quaternion
-        :return: None
-        """
-        point_raw = [point.x, point.y, point.z]
-        rpy_raw = [rpy.roll, rpy.pitch, rpy.yaw]
-        quaternion_raw = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
-        self.__pos_manager.create(name, joints, point_raw, rpy_raw, quaternion_raw, description)
 
     def get_pose(self, name):
         """
@@ -558,12 +561,17 @@ class PoseHandlerNode:
         :return: The pose object
         :rtype: NiryoPose
         """
-        pose_raw = self.__pos_manager.read(name)
+        pose_obj = self.__pos_manager.read(name)
         pose = NiryoPose()
-        pose.joints = pose_raw.joints
-        pose.position = Point(*pose_raw.position)
-        pose.rpy = RPY(*pose_raw.rpy)
-        pose.orientation = Quaternion(*pose_raw.orientation)
+        pose.name = pose_obj.name
+        pose.description = pose_obj.description
+        pose.joints = list(pose_obj.joints)
+        pose.position = Point(x=pose_obj.pose.x, y=pose_obj.pose.y, z=pose_obj.pose.z)
+        pose.rpy = RPY(roll=pose_obj.pose.roll, pitch=pose_obj.pose.pitch, yaw=pose_obj.pose.yaw)
+        rx, ry, rz, w = pose_obj.pose.quaternion()
+        pose.orientation = Quaternion(x=rx, y=ry, z=rz, w=w)
+        pose.pose_version = pose_obj.pose.metadata.version
+        pose.tcp_version = pose_obj.pose.metadata.tcp_version.name
         return pose
 
     def remove_pose(self, name):
@@ -632,6 +640,8 @@ class PoseHandlerNode:
 
         :param name: dynamic frame name
         :type name: str
+        :param belong_to_workspace: whether the dynamic frame belong to a workspace or not
+        :type belong_to_workspace: bool
         :return: None
         """
         self.dynamic_frame_manager.remove(name, belong_to_workspace)
@@ -646,14 +656,14 @@ class PoseHandlerNode:
         :rtype: Pose
         """
         frame_read = self.dynamic_frame_manager.read(name)
-        pose_raw = frame_read.static_transform_stamped
+        pose_obj = frame_read.static_transform_stamped
 
         frame = DynamicFrame()
         frame.name = frame_read.name
         frame.description = frame_read.description
         frame.belong_to_workspace = frame_read.belong_to_workspace
-        point = Point(*pose_raw[0])
-        quaternion = Quaternion(*pose_raw[1])
+        point = Point(*pose_obj[0])
+        quaternion = Quaternion(*pose_obj[1])
         roll, pitch, yaw = euler_from_quaternion([quaternion.x, quaternion.y, quaternion.z, quaternion.w])
         rpy = RPY(roll, pitch, yaw)
 

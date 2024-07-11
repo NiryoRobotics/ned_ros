@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.12)
 project(joints_interface)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+
+add_compile_definitions(ROSCONSOLE_MIN_SEVERITY=1)
 
 set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
 # for preprocessor directives
@@ -41,6 +43,8 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
+      niryo_robot_database
+      message_generation
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -52,6 +56,17 @@ endif()
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  FactoryCalibration.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+    std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -76,6 +91,9 @@ catkin_package(
         niryo_robot_msgs
         roscpp
         ttl_driver
+        niryo_robot_database
+        std_msgs
+        message_runtime
 )
 
 ###########
@@ -106,6 +124,8 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
+    ${PROJECT_NAME}_generate_messages_cpp
+    ${catkin_EXPORTED_TARGETS}
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs

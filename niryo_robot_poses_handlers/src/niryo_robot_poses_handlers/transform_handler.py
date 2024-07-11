@@ -119,7 +119,7 @@ class PosesTransformHandler:
 
         return tmp_buffer.lookup_transform("base_link", "tool_link_target", rospy.Time(0))
 
-    def get_object_transform(self, x_off=0.0, y_off=0.0, z_off=0.0, roll_off=0.0, pitch_off=1.5708, yaw_off=0.0):
+    def get_object_transform(self, x_off=0.0, y_off=0.0, z_off=0.0, roll_off=0.0, pitch_off=np.pi, yaw_off=np.pi):
         """
         Reads the transform base_link -> object_base from local tfBuffer
 

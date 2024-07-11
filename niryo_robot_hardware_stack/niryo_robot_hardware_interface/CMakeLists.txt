@@ -40,6 +40,8 @@ find_package(catkin REQUIRED
       niryo_robot_msgs
       roscpp
       tools_interface
+      niryo_robot_status
+      actionlib_msgs
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
