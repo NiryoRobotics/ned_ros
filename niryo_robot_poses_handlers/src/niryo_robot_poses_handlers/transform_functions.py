@@ -7,7 +7,9 @@ __all__ = [
     'euler_from_matrix',
     'euler_from_quaternion',
     'quaternion_matrix',
-    'quaternion_from_euler'
+    'quaternion_from_euler',
+    'convert_legacy_rpy_to_dh_convention',
+    'convert_dh_convention_to_legacy_rpy'
 ]
 
 # epsilon for testing whether a number is close to zero
@@ -223,3 +225,23 @@ def quaternion_from_euler(ai, aj, ak, axes='sxyz'):
 
 def euclidian_dist(point_a, point_b):
     return np.linalg.norm(np.array(point_a) - np.array(point_b))
+
+
+def __apply_rotation(initial_rpy, rpy_to_apply):
+    initial_rotation = euler_matrix(*initial_rpy)
+    rotation = euler_matrix(*rpy_to_apply)
+
+    final_rotation = np.matmul(initial_rotation, rotation)
+
+    final_orientation = euler_from_matrix(final_rotation)
+    return final_orientation
+
+
+def convert_legacy_rpy_to_dh_convention(roll, pitch, yaw):
+    legacy_to_dh_rotation = (0, -math.pi / 2, math.pi)
+    return __apply_rotation((roll, pitch, yaw), legacy_to_dh_rotation)
+
+
+def convert_dh_convention_to_legacy_rpy(roll, pitch, yaw):
+    dh_to_legacy_rotation = (math.pi, -math.pi / 2, 0)
+    return __apply_rotation((roll, pitch, yaw), dh_to_legacy_rotation)

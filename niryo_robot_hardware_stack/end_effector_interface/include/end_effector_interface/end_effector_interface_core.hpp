@@ -95,6 +95,8 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
         uint8_t _id{1};
         bool _simulation{false};
+
+        std::string _hardware_version{""};
 };
 
 /**

@@ -57,11 +57,11 @@ namespace ttl_driver
         virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) = 0;
 
         virtual int readPID(uint8_t id, std::vector<uint16_t> &data) = 0;
-        virtual int readControlMode(uint8_t id, uint8_t &control_mode) = 0;
+
+        virtual int readMoving(uint8_t id, uint8_t &status) = 0;
 
         // ram write
         virtual int writePID(uint8_t id, const std::vector<uint16_t> &data) = 0;
-        virtual int writeControlMode(uint8_t id, uint8_t data) = 0;
 
         virtual int writeLed(uint8_t id, uint8_t led_value) = 0;
         virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) = 0;

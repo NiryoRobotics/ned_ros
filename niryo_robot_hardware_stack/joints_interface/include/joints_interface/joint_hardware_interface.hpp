@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // std
 #include <memory>
 #include <algorithm>
+#include <vector>
 
 // ros
 #include <ros/ros.h>
@@ -36,6 +37,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "common/model/joint_state.hpp"
+#include "niryo_robot_msgs/GetFloatList.h"
+#include "niryo_robot_msgs/SetFloatList.h"
+#include "niryo_robot_msgs/Trigger.h"
+#include "joints_interface/FactoryCalibration.h"
 
 namespace joints_interface
 {
@@ -50,6 +55,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
         int calibrateJoints(int mode, std::string &result_message);
+        int factoryCalibrateJoints(FactoryCalibration::Request::_command_type command, FactoryCalibration::Request::_ids_type ids, std::string &result_message);
         void setNeedCalibration();
         void activateLearningMode(bool activated);
         void synchronizeMotors(bool synchronize);
@@ -72,6 +78,11 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
+        bool callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request &req, niryo_robot_msgs::SetFloatList::Response &res);
+        bool callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request &req, niryo_robot_msgs::GetFloatList::Response &res);
+        bool callbackResetHomePosition(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        
+
         bool initStepperState(ros::NodeHandle &robot_hwnh,
                          const std::shared_ptr<common::model::StepperMotorState>& stepperState,
                          const std::string& currentNamespace) const;
@@ -93,6 +104,14 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_state_list;
         std::string _hardware_version;
+
+        ros::ServiceClient _get_settings_client;
+        ros::ServiceClient _set_settings_client;
+        ros::ServiceServer _get_home_position_service;
+        ros::ServiceServer _set_home_position_service;
+        ros::ServiceServer _reset_home_position_service;
+        std::vector<double> _default_home_position;
+
 };
 
 /**

@@ -35,6 +35,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ttl_interface_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
+#include "conveyor_interface/GetHardwareId.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
@@ -82,6 +83,9 @@ private:
         bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req,
                                       conveyor_interface::ControlConveyor::Response &res);
 
+        bool _callbackGetHardwareId(conveyor_interface::GetHardwareId::Request &req,
+                                    conveyor_interface::GetHardwareId::Response &res);
+
         void _publishConveyorsFeedback(const ros::TimerEvent&);
 
         bool isCalibrationInProgress() const;
@@ -115,6 +119,8 @@ private:
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;
+        ros::ServiceServer _get_hardware_id_server;
+
 
         ros::Publisher _conveyors_feedback_publisher;
         ros::Publisher _conveyor_status_publisher;

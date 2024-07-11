@@ -1,0 +1,4 @@
+baudrate : 1000000
+lcd_box_id : 10                 # button box ID
+screen_size : 16                # number of chars
+program_number_delimiter : "."  # delimiter format between program number and program name

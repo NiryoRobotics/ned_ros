@@ -52,6 +52,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
+#include "common/model/conveyor_state.hpp"
+
 
 namespace ttl_driver
 {
@@ -129,6 +131,7 @@ public:
     bool readHardwareStatus();
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
+    uint8_t readNed3SteppersStatus();
     bool readJointsStatus();
     bool readHomingAbsPosition();
     bool readCollisionStatus();
@@ -145,6 +148,8 @@ public:
 
     int readControlMode(uint8_t id, uint8_t& control_mode);
 
+    int readMoving(uint8_t id, uint8_t &status);
+
     //calibration
     void startCalibration() override;
     void resetCalibration() override;
@@ -160,7 +165,8 @@ public:
     uint32_t getPosition(const common::model::JointState &motor_state);
     int getLedState() const;
 
-    std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
+    std::vector<std::shared_ptr<common::model::JointState>> getMotorsStates() const;
+    std::vector<std::shared_ptr<common::model::ConveyorState>> getConveyorsStates() const;
     std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
     std::vector<uint8_t> getRemovedMotorList() const override;
@@ -185,6 +191,12 @@ private:
 
     bool checkCollision();
 
+    struct GetJointsStepperDriverResult {
+        std::shared_ptr<ttl_driver::AbstractStepperDriver> driver;
+        common::model::EHardwareType hardware_type;
+    };
+    GetJointsStepperDriverResult getJointsStepperDriver();
+
 private:
     ros::NodeHandle _nh;
     std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -207,7 +219,6 @@ private:
 
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
-    std::shared_ptr<ttl_driver::AbstractStepperDriver> _default_stepper_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
@@ -238,6 +249,12 @@ private:
     double _last_collision_detection_activating{0.0};
     bool _isRealCollision{true};
     bool _isWrongAction{false};
+
+    ros::Publisher _calibration_status_publisher;
+
+    std::vector<uint32_t> _position_list;
+    std::vector<uint8_t> _position_goal_ids;
+    std::vector<uint32_t> _position_goal_params;
 
     class CalibrationMachineState
     {
@@ -376,7 +393,7 @@ bool TtlManager::isCalibrationInProgress() const
 inline
 bool TtlManager::hasEndEffector() const
 {
-    return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) ||
+    return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) || _driver_map.count(common::model::EHardwareType::NED3_END_EFFECTOR) ||
             _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
 }
 

@@ -2,9 +2,9 @@ alert_report:
   get_rom_usage:
     frequency: 'LOW'
     threshold: 90
-  get_cpu_usage:
-    frequency: 'HIGH'
-    threshold: 90
+#  get_cpu_usage:
+#    frequency: 'HIGH'
+#    threshold: 90
   get_cpu_temperature:
     frequency: 'HIGH'
     threshold: 70

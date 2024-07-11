@@ -1,0 +1,62 @@
+{
+  "name": "noetic desktop-full",
+  "remoteUser": "rosdev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USERNAME": "rosdev",
+      "GID": "1000",
+      "UID": "1000"
+    }
+  },
+  "runArgs": [
+    "--network=host"
+  ],
+  "remoteEnv": {
+    "CATKIN_SHELL": "bash",
+    "ROS_VERSION": "1",
+    "PKG_CONFIG_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/pkgconfig",
+    "ROS_PYTHON_VERSION": "3",
+    "ROS_PACKAGE_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/share",
+    "ROS_ETC_DIR": "/opt/ros/${containerEnv:ROS_DISTRO}/etc/ros",
+    "CMAKE_PREFIX_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}",
+    "PYTHONPATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/python3/dist-packages",
+    "ROS_MASTER_URI": "http://localhost:11311",
+    "LD_LIBRARY_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib",
+    "PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/bin:${containerEnv:PATH}",
+    "ROS_ROOT": "/opt/ros/${containerEnv:ROS_DISTRO}/share/ros",
+  },
+  "workspaceFolder": "/home/rosdev/catkin_ws",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
+  "mounts": [
+    "source=${localEnv:HOME}/.bash_history,target=/home/rosdev/.bash_history,type=bind",
+    "source=${localEnv:HOME}/.bashrc,target=/home/rosdev/.bashrc,type=bind",
+    "source=${localEnv:HOME}/.inputrc,target=/home/rosdev/.inputrc,type=bind",
+    "source=${localEnv:HOME}/.bash_aliases,target=/home/rosdev/.bash_aliases,type=bind",
+    "source=${localEnv:DEV_TOOLS_PATH},target=/home/rosdev/development-tools,type=bind"
+  ],
+  "postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "eeyore.yapf",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-iot.vscode-ros",
+        "smilerobotics.urdf",
+        "redhat.vscode-xml",
+        "tamasfe.even-better-toml",
+        "timonwong.shellcheck",
+        "yzhang.markdown-all-in-one",
+      ],
+      "settings": {
+        "files.associations": {
+          "*.rviz": "yaml",
+          "*.srdf": "xml",
+          "*.urdf": "xml",
+          "*.xacro": "xml"
+        }
+      }
+    }
+  }
+}

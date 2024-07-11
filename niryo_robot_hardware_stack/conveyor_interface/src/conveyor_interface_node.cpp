@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_driver;
     std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
 
-    if (hardware_version == "ned2")
+    if (hardware_version == "ned2" || hardware_version == "ned3")
     {
         ros::NodeHandle nh_ttl("ttl_driver");
         ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);

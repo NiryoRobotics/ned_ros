@@ -50,7 +50,7 @@ class ABCReportMicroService(ABCMicroService):
     def send(self, payload):
         endpoint = f'{self._base_url}/{self.MICROSERVICE_URI}'
         try:
-            rospy.loginfo(f'url: {endpoint}, headers: {self._headers}, payload: {payload}')
+            rospy.loginfo(f'url: {endpoint}, payload: {payload}')
             response = requests.post(endpoint, headers=self._headers, json=payload)
         except requests.ConnectionError as connection_error:
             raise MicroServiceError(str(connection_error), code=MicroServiceError.Code.CONNECTION_ERROR)

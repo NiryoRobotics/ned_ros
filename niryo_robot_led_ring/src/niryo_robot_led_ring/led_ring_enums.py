@@ -35,9 +35,12 @@ ROBOT_STATUS_TO_ANIM = {
     RobotStatus.LEARNING_MODE_AUTONOMOUS: [LedRingAnimation.SOLID, GREEN],
     RobotStatus.LEARNING_TRAJECTORY: [LedRingAnimation.SNAKE, PURPLE],
     RobotStatus.REBOOT_MOTOR: [LedRingAnimation.SNAKE, YELLOW],
+    RobotStatus.ESTOP: [LedRingAnimation.FLASHING, RED],
     "overheating": [LedRingAnimation.FLASHING, RED],
     "out_of_bound": [LedRingAnimation.SOLID, ORANGE]
 }
+
+ROBOT_CRITICAL_STATUS = {RobotStatus.REBOOT_MOTOR, RobotStatus.ESTOP}
 
 ROBOT_ANIM_TO_STRING = {
     LedRingAnimation.NONE: "None",

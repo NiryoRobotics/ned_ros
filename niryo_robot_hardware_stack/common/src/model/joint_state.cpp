@@ -85,6 +85,12 @@ void JointState::setLimitPositionMin(double min_position) { _limit_position_min 
  */
 void JointState::setDirection(int8_t direction) { _direction = direction; }
 
+/**
+ * @brief JointState::setTorquePercentage
+ * @param torque_percentagetorque_percentage
+ */
+void JointState::setTorquePercentage(uint8_t torque_percentage) { _torque_percentage = torque_percentage > 100 ? 100 : torque_percentage; }
+
 // ***********************
 //  AbstractMotor intf
 // ***********************

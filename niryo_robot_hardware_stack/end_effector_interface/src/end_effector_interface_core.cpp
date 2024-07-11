@@ -103,6 +103,8 @@ bool EndEffectorInterfaceCore::rebootHardware()
  */
 void EndEffectorInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
+    nh.getParam("hardware_version", _hardware_version);
+
     int id = -1;
     nh.getParam("end_effector_id", id);
     _id = static_cast<uint8_t>(id);
@@ -129,6 +131,13 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle &nh)
     _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
 
     _end_effector_state->setCollisionThresh(collision_thresh);
+
+    if (nh.hasParam("collision_thresh_algo_2"))
+    {
+        int collision_thresh_algo2;  // used
+        nh.getParam("collision_thresh_algo_2", collision_thresh_algo2);
+        _end_effector_state->setCollisionThreshAlgo2(collision_thresh_algo2);
+    }
 
     uint8_t button_id = 0;
     while (nh.hasParam("button_" + std::to_string(button_id) + "/type"))
@@ -212,6 +221,13 @@ int EndEffectorInterfaceCore::initHardware()
     if (_end_effector_state)
     {
         uint8_t thresh = _end_effector_state->getCollisionThresh();
+        if (_hardware_version == "ned3")
+        {
+            uint8_t thresh_algo_2 = _end_effector_state->getCollisionThreshAlgo2();
+            _ttl_interface->addSingleCommandToQueue(
+            std::make_unique<EndEffectorSingleCmd>(
+                EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH_ALGO_2, _end_effector_state->getId(), std::initializer_list<uint32_t>{thresh, thresh_algo_2}));
+        }
         _ttl_interface->addSingleCommandToQueue(
             std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH, _end_effector_state->getId(), std::initializer_list<uint32_t>{thresh}));
     }

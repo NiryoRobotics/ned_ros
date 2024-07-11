@@ -19,7 +19,7 @@ def check_ned2_version(func):
 
     def wrap(*args, **kwargs):
         robot_instance = args[0]
-        if robot_instance.hardware_version != 'ned2':
+        if robot_instance.hardware_version not in ['ned2', 'ned3']:
             raise CustomButtonRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))
@@ -49,7 +49,7 @@ class CustomButtonRosWrapper:
             EEButtonStatus, self.__callback_custom_pos_button_status)
 
     def __check_ned_2_version(self):
-        if self.__hardware_version != 'ned2':
+        if self.__hardware_version not in ['ned2', 'ned3']:
             raise CustomButtonRosWrapperException(
                 "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
                     CommandStatus.BAD_HARDWARE_VERSION))

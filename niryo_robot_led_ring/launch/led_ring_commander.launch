@@ -5,7 +5,7 @@
     <arg name="hardware_version" default="ned2"/>
     <arg name="simulation_mode" default="false" />
 
-    <group if="$(eval hardware_version =='ned2')" >
+    <group if="$(eval (hardware_version == 'ned2') or (hardware_version == 'ned3'))" >
         <include file="$(find niryo_robot_led_ring)/launch/led_ring_commander_base.launch.xml" />
 
         <node unless="$(arg simulation_mode)" pkg="niryo_robot_led_ring" type="led_ring_node.py"

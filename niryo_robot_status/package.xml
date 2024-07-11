@@ -24,9 +24,6 @@
   <build_export_depend>std_msgs</build_export_depend>
 
   <exec_depend>message_runtime</exec_depend>
-  <exec_depend>niryo_robot_arm_commander</exec_depend>
-  <exec_depend>niryo_robot_hardware_interface</exec_depend>
-  <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 </package>
