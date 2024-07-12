@@ -74,22 +74,21 @@ build_docker:
       - .docker/*
 
 .abstract_catkin_build:
-  image: ${CI_REGISTRY_IMAGE}/${CI_PROJECT_NAME}:latest
   stage: build
   before_script:
-    - git config --global --add safe.directory /development-tools
-    - cd /development-tools
+    - git config --global --add safe.directory $DEVELOPMENT_TOOLS_PATH
+    - cd $DEVELOPMENT_TOOLS_PATH
     - git pull $(git remote get-url origin | sed "s#https://#https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@#")
   script:
     - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - $DEVELOPMENT_TOOLS_PATH/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
     - cd ${NIRYO_HOME_FOLDER}
     - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME}
     - mv ${NIRYO_HOME_FOLDER} ${CI_PROJECT_DIR}
   variables:
-    CATKIN_PROFILE: rpi4_ned2
     ROS_DISTRO: noetic
+    DEVELOPMENT_TOOLS_PATH: /root/development-tools
   artifacts:
     expire_in: 1 week
     paths:
@@ -102,8 +101,6 @@ catkin_make_amd:
 
 catkin_make_arm:
   extends: .abstract_catkin_build
-  tags:
-    - arm64-build
   variables:
     GITLAB_CATKIN_PROFILE_NAME: release_cross_compilation
 
