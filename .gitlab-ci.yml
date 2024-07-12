@@ -88,7 +88,7 @@ build_docker:
     - mv ${NIRYO_HOME_FOLDER} ${CI_PROJECT_DIR}
   variables:
     ROS_DISTRO: noetic
-    DEVELOPMENT_TOOLS_PATH: /root/development-tools
+    DEVELOPMENT_TOOLS_PATH: /development-tools
   artifacts:
     expire_in: 1 week
     paths:
