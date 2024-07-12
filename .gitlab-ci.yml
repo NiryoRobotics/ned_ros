@@ -62,7 +62,7 @@ include:
   before_script:
     - git config --global --add safe.directory $DEVELOPMENT_TOOLS_PATH
     - cd $DEVELOPMENT_TOOLS_PATH
-    - git pull $(git remote get-url origin | sed "s#https://#https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@#")
+    - git pull $DEVELOPMENT_TOOLS_REPO
   script:
     - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
@@ -73,6 +73,7 @@ include:
   variables:
     ROS_DISTRO: noetic
     DEVELOPMENT_TOOLS_PATH: /development-tools
+    DEVELOPMENT_TOOLS_REPO: https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@gitlab01.niryotech.com/robot/common/development-tools
   artifacts:
     expire_in: 1 week
     paths:
