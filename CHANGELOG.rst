@@ -2,6 +2,15 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  - Remove a collision checking in niryo_robot_arm_commander which was a duplicate of ROS control's joint trajectory controller
+
 v5.4.0
 -----------
 **Features**
@@ -61,8 +70,6 @@ v5.4.0
  * TCP server ``__send_answer_with_payload`` encode the payload only if it's not already encoded
  * Fix intermitent delay in the control loop caused by a ROS spinOnce call in the control loop
 
-
-**Bugfixes**
 
 v5.3.3
 -----------
