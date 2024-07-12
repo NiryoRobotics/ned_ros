@@ -57,22 +57,6 @@ include:
     ref: master
     file: 'various/release_gitlab/release_gitlab_config.yml'
 
-
-build_docker:
-  image:
-    name: gcr.io/kaniko-project/executor:v1.9.0-debug
-    entrypoint: [ "" ]
-  stage: build_docker
-  script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/.docker/Dockerfile"
-      --customPlatform "linux/amd64"
-      --destination "${CI_REGISTRY_IMAGE}/${CI_PROJECT_NAME}:latest"
-  only:
-    changes:
-      - .docker/*
-
 .abstract_catkin_build:
   stage: build
   before_script:
