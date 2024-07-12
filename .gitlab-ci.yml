@@ -57,28 +57,12 @@ include:
     ref: master
     file: 'various/release_gitlab/release_gitlab_config.yml'
 
-
-build_docker:
-  image:
-    name: gcr.io/kaniko-project/executor:v1.9.0-debug
-    entrypoint: [ "" ]
-  stage: build_docker
-  script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/.docker/Dockerfile"
-      --customPlatform "linux/amd64"
-      --destination "${CI_REGISTRY_IMAGE}/${CI_PROJECT_NAME}:latest"
-  only:
-    changes:
-      - .docker/*
-
 .abstract_catkin_build:
   stage: build
   before_script:
     - git config --global --add safe.directory $DEVELOPMENT_TOOLS_PATH
     - cd $DEVELOPMENT_TOOLS_PATH
-    - git pull $(git remote get-url origin | sed "s#https://#https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@#")
+    - git pull $DEVELOPMENT_TOOLS_REPO
   script:
     - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
@@ -88,7 +72,8 @@ build_docker:
     - mv ${NIRYO_HOME_FOLDER} ${CI_PROJECT_DIR}
   variables:
     ROS_DISTRO: noetic
-    DEVELOPMENT_TOOLS_PATH: /root/development-tools
+    DEVELOPMENT_TOOLS_PATH: /development-tools
+    DEVELOPMENT_TOOLS_REPO: https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@gitlab01.niryotech.com/robot/common/development-tools
   artifacts:
     expire_in: 1 week
     paths:
