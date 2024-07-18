@@ -2396,7 +2396,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import GetTargetPose
 
-        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose',
+        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose_v2',
                                     GetTargetPose,
                                     workspace_name,
                                     height_offset,
