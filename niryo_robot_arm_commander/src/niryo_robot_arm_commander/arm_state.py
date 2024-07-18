@@ -64,9 +64,9 @@ class ArmState(object):
         rospy.Service('/niryo_robot_arm_commander/set_acceleration_factor',
                       SetFloat,
                       self.__callback_set_acceleration_factor)
-        
-        self.__write_custom_value_service = rospy.ServiceProxy("/niryo_robot/ttl_driver/send_custom_value", WriteCustomValue)
 
+        self.__write_custom_value_service = rospy.ServiceProxy("/niryo_robot/ttl_driver/send_custom_value",
+                                                               WriteCustomValue)
 
         # Joint State
         self.__joint_states = None
@@ -172,26 +172,31 @@ class ArmState(object):
             self.__set_max_acceleration_scaling_percentage(req.value)
 
             # write stepper velocity & acceleration profiles with scaled values
-            for i in range(1,4):
+            for i in range(1, 4):
                 RADIAN_PER_SECONDS_SQ_TO_RPM_SQ = 572.957795131
                 RADIAN_PER_SECONDS_TO_RPM = 9.549296586
 
-                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'+ str(i) +'/v_max')
-                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'+ str(i) +'/a_max')
-                _id = i+1
+                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_' +
+                                               str(i) + '/v_max')
+                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_' +
+                                               str(i) + '/a_max')
+                _id = i + 1
                 scaled_velocity = int(default_vmax * self.__velocity_scaling_factor * RADIAN_PER_SECONDS_TO_RPM * 1000)
-                scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)
-                self.__write_custom_value_service(id=_id, value=scaled_velocity, reg_address = 112, byte_number=4)
-                self.__write_custom_value_service(id=_id, value=scaled_acceleration, reg_address = 108, byte_number=4)
+                scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor *
+                                          RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)
+                self.__write_custom_value_service(id=_id, value=scaled_velocity, reg_address=112, byte_number=4)
+                self.__write_custom_value_service(id=_id, value=scaled_acceleration, reg_address=108, byte_number=4)
             # write dxl velocity & acceleration profiles with scaled values
-            for i in range(1,4):
-                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'+ str(i) +'/velocity_profile')
-                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'+ str(i) +'/acceleration_profile')
-                _id = i+3
+            for i in range(1, 4):
+                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_' +
+                                               str(i) + '/velocity_profile')
+                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_' +
+                                               str(i) + '/acceleration_profile')
+                _id = i + 3
                 scaled_velocity = int(default_vmax * self.__velocity_scaling_factor)
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor)
-                self.__write_custom_value_service(id=_id, value = scaled_velocity, reg_address = 112, byte_number=4)
-                self.__write_custom_value_service(id=_id, value = scaled_acceleration, reg_address = 108, byte_number=4)
+                self.__write_custom_value_service(id=_id, value=scaled_velocity, reg_address=112, byte_number=4)
+                self.__write_custom_value_service(id=_id, value=scaled_acceleration, reg_address=108, byte_number=4)
         except ArmCommanderException as e:
             return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
 
@@ -226,7 +231,7 @@ class ArmState(object):
         self.__velocity_scaling_factor = percentage / self.__velocity_percentage_scaling_factor
         self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
         self.__publish_velocity_scaling_percentage()
-    
+
     def __set_max_acceleration_scaling_percentage(self, percentage):
         """
         Ask MoveIt to set the relative acceleration to (percentage)%
