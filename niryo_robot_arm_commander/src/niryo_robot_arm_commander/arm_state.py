@@ -171,32 +171,61 @@ class ArmState(object):
             self.__set_max_velocity_scaling_percentage(req.value)
             self.__set_max_acceleration_scaling_percentage(req.value)
 
-            # write stepper velocity & acceleration profiles with scaled values
-            for i in range(1, 4):
-                RADIAN_PER_SECONDS_SQ_TO_RPM_SQ = 572.957795131
-                RADIAN_PER_SECONDS_TO_RPM = 9.549296586
+            RADIAN_PER_SECONDS_SQ_TO_RPM_SQ = 572.957795131
+            RADIAN_PER_SECONDS_TO_RPM = 9.549296586
 
-                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_' +
-                                               str(i) + '/v_max')
-                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/steppers/stepper_' +
-                                               str(i) + '/a_max')
-                _id = i + 1
-                scaled_velocity = int(default_vmax * self.__velocity_scaling_factor * RADIAN_PER_SECONDS_TO_RPM * 1000)
+            VEL_PROFILE_ADDR = 112
+            VEL_PROFILE_BYTE_LEN = 4
+            ACC_PROFILE_ADDR = 108
+            ACC_PROFILE_BYTE_LEN = 4
+
+            # write stepper velocity & acceleration profiles with scaled values
+            i = 1
+            STEPPER_ID_OFFSET = 1
+            stepper_param_ns = '/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'
+            while rospy.has_param(stepper_param_ns + str(i) + '/v_max') and rospy.get_param(stepper_param_ns + str(i) +
+                                                                                            '/a_max'):
+                default_vmax = rospy.get_param(stepper_param_ns + str(i) + '/v_max')
+                default_amax = rospy.get_param(stepper_param_ns + str(i) + '/a_max')
+
+                _id = i + STEPPER_ID_OFFSET
+                scaled_velocity = int(default_vmax * self.__velocity_scaling_factor * RADIAN_PER_SECONDS_TO_RPM *
+                                      1000)  # rpm to stepper value
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_velocity,
+                                                  reg_address=VEL_PROFILE_ADDR,
+                                                  byte_number=VEL_PROFILE_BYTE_LEN)
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor *
-                                          RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)
-                self.__write_custom_value_service(id=_id, value=scaled_velocity, reg_address=112, byte_number=4)
-                self.__write_custom_value_service(id=_id, value=scaled_acceleration, reg_address=108, byte_number=4)
+                                          RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)  # rpm2 to stepper value
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_acceleration,
+                                                  reg_address=ACC_PROFILE_ADDR,
+                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                i = i + 1
+
             # write dxl velocity & acceleration profiles with scaled values
-            for i in range(1, 4):
-                default_vmax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_' +
-                                               str(i) + '/velocity_profile')
-                default_amax = rospy.get_param('/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_' +
-                                               str(i) + '/acceleration_profile')
-                _id = i + 3
+            i = 1
+            DXL_ID_OFFSET = 4
+            dxl_param_ns = '/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'
+            while rospy.has_param(dxl_param_ns + str(i) +
+                                  '/velocity_profile') and rospy.get_param(dxl_param_ns + str(i) +
+                                                                           '/acceleration_profile'):
+                default_vmax = rospy.get_param(dxl_param_ns + str(i) + '/velocity_profile')
+                default_amax = rospy.get_param(dxl_param_ns + str(i) + '/acceleration_profile')
+
+                _id = i + DXL_ID_OFFSET
                 scaled_velocity = int(default_vmax * self.__velocity_scaling_factor)
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_velocity,
+                                                  reg_address=VEL_PROFILE_ADDR,
+                                                  byte_number=VEL_PROFILE_BYTE_LEN)
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor)
-                self.__write_custom_value_service(id=_id, value=scaled_velocity, reg_address=112, byte_number=4)
-                self.__write_custom_value_service(id=_id, value=scaled_acceleration, reg_address=108, byte_number=4)
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_acceleration,
+                                                  reg_address=ACC_PROFILE_ADDR,
+                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                i = i + 1
+
         except ArmCommanderException as e:
             return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
 
