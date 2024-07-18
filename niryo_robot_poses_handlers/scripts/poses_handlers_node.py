@@ -75,6 +75,7 @@ class PoseHandlerNode:
         grip_dir = rospy.get_param("~grip_dir")
         self.__grip_manager = GripManager(grip_dir, self.__tool_id_gripname_dict.values())
         rospy.Service('~get_target_pose', GetTargetPose, self.__callback_target_pose)
+        rospy.Service('~get_target_pose_v2', GetTargetPose, self.__callback_target_pose_v2)
 
         # Transform Handlers
         self.__transform_handler = PosesTransformHandler(self.__grip_manager, self)
@@ -237,6 +238,16 @@ class PoseHandlerNode:
 
     # Grips
     def __callback_target_pose(self, req):
+        try:
+            pose = self.get_target_pose(req.workspace, req.height_offset, req.x_rel, req.y_rel, req.yaw_rel)
+            pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw = convert_dh_convention_to_legacy_rpy(pose.rpy.roll,
+                                                                                              pose.rpy.pitch,
+                                                                                              pose.rpy.yaw)
+            return CommandStatus.SUCCESS, "Success", pose
+        except Exception as e:
+            return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
+
+    def __callback_target_pose_v2(self, req):
         try:
             pose = self.get_target_pose(req.workspace, req.height_offset, req.x_rel, req.y_rel, req.yaw_rel)
             return CommandStatus.SUCCESS, "Success", pose
