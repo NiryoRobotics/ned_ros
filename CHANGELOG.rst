@@ -10,6 +10,7 @@ Forthcoming
 
 **Bugfixes**
   * Remove a collision checking in niryo_robot_arm_commander which was a duplicate of ROS control's joint trajectory controller
+  * Created get_target_pose_v2 service in order to keep get_target_pose original behaviors
 
 v5.4.0
 -----------
