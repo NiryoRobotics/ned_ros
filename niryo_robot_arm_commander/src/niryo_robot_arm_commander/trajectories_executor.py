@@ -54,7 +54,6 @@ class TrajectoriesExecutor:
         # Others params
         self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
         self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
-        self.__error_tolerance = rospy.get_param("~error_tolerance")
         self.__cartesian_path_eef_steps = rospy.get_param("~eef_step")
         self.__cartesian_path_jump_threshold = rospy.get_param("~jump_threshold")
 
@@ -65,9 +64,6 @@ class TrajectoriesExecutor:
 
         rospy.Subscriber('{}/follow_joint_trajectory/result'.format(joint_controller_base_name),
                          FollowJointTrajectoryActionResult, self.__callback_goal_result)
-
-        rospy.Subscriber('{}/follow_joint_trajectory/feedback'.format(joint_controller_base_name),
-                         FollowJointTrajectoryActionFeedback, self.__callback_current_feedback)
 
         # collision detected by End Effector could be a real or fake collision.
         # In a movement, if a collision detected, that will be a real collision, without a movement, it will be fake
@@ -114,16 +110,6 @@ class TrajectoriesExecutor:
         # rospy.loginfo('CALLBACK NEW GOAL')
         self.__current_goal_id = msg.goal_id.id
         rospy.logdebug("Arm commander - Got a goal id : {}".format(self.__current_goal_id))
-
-    def __callback_current_feedback(self, msg):
-        self.__current_feedback = msg
-        feedback = msg.feedback
-        for joint_name, error, tolerance in zip(feedback.joint_names, feedback.error.positions,
-                                                self.__error_tolerance):
-            if abs(error) > tolerance:
-                self.stop_current_plan()
-                rospy.logwarn("Arm commander - Collision detected {}".format(joint_name))
-                break
 
     def __callback_collision_detected(self, msg):
         # The collision detected by EE is used only here. It just means if there is a movement.
