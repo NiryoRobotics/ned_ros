@@ -2,7 +2,7 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+v5.4.1
 -----------
 **Features**
 
