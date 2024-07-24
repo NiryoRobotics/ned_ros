@@ -27,18 +27,21 @@ class Trajectory:
 
     @classmethod
     def from_dict(cls, dict_):
-        traj = cls(dict_["name"], dict_["description"])
-        traj.list_poses = [trajectory_point for trajectory_point in dict_["list_poses"]]
-        # for trajectory_point in dict_["list_poses"]:
-        # positions = trajectory_point["positions"]
-        # velocities = trajectory_point["velocities"]
-        # accelerations = trajectory_point["accelerations"]
-        # effort = trajectory_point["effort"]
-        # time_from_start_secs = trajectory_point["time_from_start_secs"]
-        # time_from_start_nsecs = trajectory_point["time_from_start_nsecs"]
-        # traj.list_poses.append([positions, velocities, accelerations, effort,
-        #  [time_from_start_secs, time_from_start_nsecs]])
-        return traj
+        try:
+            traj = cls(dict_["name"], dict_["description"])
+            traj.list_poses = [trajectory_point for trajectory_point in dict_["list_poses"]]
+            # for trajectory_point in dict_["list_poses"]:
+            # positions = trajectory_point["positions"]
+            # velocities = trajectory_point["velocities"]
+            # accelerations = trajectory_point["accelerations"]
+            # effort = trajectory_point["effort"]
+            # time_from_start_secs = trajectory_point["time_from_start_secs"]
+            # time_from_start_nsecs = trajectory_point["time_from_start_nsecs"]
+            # traj.list_poses.append([positions, velocities, accelerations, effort,
+            #  [time_from_start_secs, time_from_start_nsecs]])
+            return traj
+        except Exception:
+            return None
 
     def get_value(self):
         return self.list_poses

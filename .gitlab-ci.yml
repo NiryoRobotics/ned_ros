@@ -1,30 +1,11 @@
 image: gitlab01.niryotech.com:5050/robot/common/development-tools/development-tools:latest
 
 variables:
-  ROS_LANG_DISABLE: genlisp:geneus:gennodejs
-
-  ########### Part that needs to be overwrite for each documentation ###########
-
-  # Documentation name
-  DOCUMENTATION_NAME: ros
-
   DOCUMENTATION_OUTPUT_FOLDER: "output_build"
-
-  BASE_GITLAB_CI_RESSOURCE_URL: "https://gitlab01.niryotech.com/pipelines/gitlab-ci-jobs/-/raw/master/"
-
   GITLAB_CATKIN_PROFILE_NAME: gitlab_ci
-
-  ##############################################################################
-
-  # Allow to pull the directory containing front-end files
-#  GIT_SUBMODULE_STRATEGY: recursive
-#  GIT_STRATEGY: fetch
-#  GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
-#  GET_SOURCES_ATTEMPTS: 3
 
 stages:
-  - build_docker
   - build
   - documentation
   - build_tests
@@ -59,10 +40,6 @@ include:
 
 .abstract_catkin_build:
   stage: build
-  before_script:
-    - git config --global --add safe.directory $DEVELOPMENT_TOOLS_PATH
-    - cd $DEVELOPMENT_TOOLS_PATH
-    - git pull $DEVELOPMENT_TOOLS_REPO
   script:
     - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
@@ -73,7 +50,6 @@ include:
   variables:
     ROS_DISTRO: noetic
     DEVELOPMENT_TOOLS_PATH: /development-tools
-    DEVELOPMENT_TOOLS_REPO: https://access_token:${DEVELOPMENT_TOOLS_ACCESS_TOKEN}@gitlab01.niryotech.com/robot/common/development-tools
   artifacts:
     expire_in: 1 week
     paths:
@@ -202,8 +178,6 @@ catkin_lint_job:
 
 
 code_quality:
-  tags:
-    - dind
   artifacts:
     expire_in: 1 week
     paths: [ gl-code-quality-report.json ]
@@ -241,8 +215,6 @@ upload_staging_job:
     name: staging
     deployment_tier: staging
     action: start
-  tags:
-    - staging
   variables:
     CI_COMMIT_TAG: v0.0.1
     <<: *staging_variables
@@ -280,8 +252,6 @@ upload_production_job:
     name: production
     deployment_tier: production
     action: start
-  tags:
-    - production
   variables:
     <<: *production_variables
   extends: .abstract_upload

@@ -95,6 +95,7 @@ class CommandInterpreter:
             "GRIPPER_4": ToolID.GRIPPER_4,
             "ELECTROMAGNET_1": ToolID.ELECTROMAGNET_1,
             "VACUUM_PUMP_1": ToolID.VACUUM_PUMP_1,
+            "VACUUM_PUMP_2": ToolID.VACUUM_PUMP_2
         }
 
         self.__grippers_string_dict_convertor = {

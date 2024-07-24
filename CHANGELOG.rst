@@ -12,6 +12,9 @@ v5.4.1
   * Remove a collision checking in niryo_robot_arm_commander which was a duplicate of ROS control's joint trajectory controller
   * Created get_target_pose_v2 service in order to keep get_target_pose original behaviors
   * The robot velocity and acceleration are now synced with moveit scaling
+  * Add TCP server support for vacuum pump v2
+  * Ill-formatted trajectories, poses, workspaces and dynamic frames won't make the stack crash
+  * Add save pose compatibility with legacy poses
 
 v5.4.0
 -----------

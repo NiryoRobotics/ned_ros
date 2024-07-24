@@ -76,6 +76,9 @@ class FileManager(object):
                 raise NiryoRobotFileException("Could not read object '{}' : {}".format(name, e))
 
     def read_description(self, name):
+        if self.check_file_format(name) is False:
+            return None
+
         obj = self.read(name)
         return obj.description
 
@@ -96,6 +99,16 @@ class FileManager(object):
         except OSError as e:
             raise NiryoRobotFileException("Could not remove object '{}' : {}".format(name, e))
 
+    def check_file_format(self, file):
+        try:
+            obj = self.read(file)
+            if obj is None:
+                return False
+        except Exception:
+            return False
+
+        return True
+
     def get_all_names(self):
         """
         Get all filenames available in storage
@@ -106,7 +119,11 @@ class FileManager(object):
         :rtype: list[str]
         """
         try:
-            filenames = sorted(os.listdir(self._base_dir))
+            filenames_tmp = sorted(os.listdir(self._base_dir))
+            filenames = []
+            for file in filenames_tmp:
+                if self.check_file_format(file):
+                    filenames.append(file)
         except OSError as e:
             raise NiryoRobotFileException("Could not retrieve files. " + str(e))
         return [self._name_from_filename(f) for f in filenames if f.endswith(self._suffix)]
@@ -119,7 +136,7 @@ class FileManager(object):
         :rtype: list[str]
         """
         list_name = self.get_all_names()
-        list_description = [self.read_description(name=n) for n in list_name]
+        list_description = [self.read_description(name=n) for n in list_name if self.read_description(name=n)]
         return list_name, list_description
 
     def exists(self, name):
@@ -165,7 +182,4 @@ class PickleFileManager(FileManager):
             raise NiryoRobotFileException("Object '{}' does not exist".format(name))
 
         with open(self._path_from_name(name), 'br') as f:
-            try:
-                return self.object_type.from_dict(pickle.load(f))
-            except Exception as e:
-                raise NiryoRobotFileException("Could not read object '{}' : {}".format(name, e))
+            return self.object_type.from_dict(pickle.load(f))
