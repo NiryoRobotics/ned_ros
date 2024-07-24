@@ -284,6 +284,8 @@ class PoseHandlerNode:
         pose = req.pose
         if cmd == req.SAVE:
             try:
+                if pose.tcp_version == '':
+                    pose.tcp_version = 'LEGACY'
                 pose_obj = PoseObj(name=pose.name,
                                    description=pose.description,
                                    joints=JointsPosition(*pose.joints),

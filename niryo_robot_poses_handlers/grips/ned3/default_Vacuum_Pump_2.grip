@@ -1,5 +1,5 @@
 {
-  "name": "default_Vacuum_Pump_1", 
+  "name": "default_Vacuum_Pump_2", 
   "transform": {
     "header_frame_id": "object_base", 
     "translation": [

@@ -66,9 +66,13 @@ class TrajectoryHandlerNode:
         if name:
             if self.check_trajectory_existence(name):
                 if (not self.check_trajectory_existence(new_name) and name != new_name) or (name == new_name):
-                    trajectory = self.get_trajectory(name)
-                    self.remove_trajectory_file(name)
-                    self.create_trajectory_file(new_name, description, trajectory.points)
+                    try:
+                        trajectory = self.get_trajectory(name)
+                        self.remove_trajectory_file(name)
+                        self.create_trajectory_file(new_name, description, trajectory.points)
+                    except Exception:
+                        rospy.logwarn("TrajectoryHandlerNode::update_trajectory - Wrong trajectory format")
+                        status = False
                 else:
                     status = False
             else:
@@ -120,8 +124,11 @@ class TrajectoryHandlerNode:
         :return: The trajectory's first pose object
         :rtype: Joints
         """
-        trajectory = self.get_trajectory(name)
-        return trajectory.points[0].positions
+        try:
+            trajectory = self.get_trajectory(name)
+            return trajectory.points[0].positions
+        except Exception as e:
+            rospy.logwarn(f'TrajectoryHandlerNode::get_trajectory_first_point - {e}')
 
     def get_trajectory_file(self, name):
         """
@@ -132,7 +139,10 @@ class TrajectoryHandlerNode:
         :return: The trajectory file
         :rtype: dict
         """
-        return self.traj_file_manager.read(str(name))
+        try:
+            return self.traj_file_manager.read(str(name))
+        except Exception as e:
+            rospy.logwarn(f'TrajectoryHandlerNode::get_trajectory_file - {e}')
 
     def remove_trajectory_file(self, name):
         """
@@ -179,9 +189,12 @@ class TrajectoryHandlerNode:
         if len(trajectory.points) > 1:
             self.save_trajectory(trajectory)
             self.blockly_save_trajectory()
-            result = self.get_trajectory("last_executed_trajectory")
-            if EXECUTE_AFTER_LEARNED:
-                self.__traj_executor.execute_joint_trajectory(result)
+            try:
+                result = self.get_trajectory("last_executed_trajectory")
+                if EXECUTE_AFTER_LEARNED:
+                    self.__traj_executor.execute_joint_trajectory(result)
+            except Exception:
+                rospy.logwarn("TrajectoryHandlerNode::record - Wrong trajectory format")
         else:
             print("Not enough points to create Trajectory")
 
