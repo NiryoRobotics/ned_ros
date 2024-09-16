@@ -96,7 +96,7 @@ void ProgramPlayerDriver<reg_type>::init(const int& baudrate, const std::string&
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 }
 
@@ -139,7 +139,7 @@ int ProgramPlayerDriver<reg_type>::ping(uint8_t id)
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 
   return COMM_NOT_AVAILABLE;
@@ -205,7 +205,7 @@ int ProgramPlayerDriver<reg_type>::writeLCDLine1(uint8_t id, std::string& displa
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 
   return COMM_NOT_AVAILABLE;
@@ -224,7 +224,7 @@ int ProgramPlayerDriver<reg_type>::writeLCDLine2(uint8_t id, std::string& displa
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 
   return COMM_NOT_AVAILABLE;
@@ -293,7 +293,7 @@ int ProgramPlayerDriver<reg_type>::read(uint16_t address, uint8_t id, T& data)
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 
   if (error)
@@ -321,7 +321,7 @@ int ProgramPlayerDriver<reg_type>::write(uint16_t address, uint8_t id, T data)
   }
   catch (const std::exception& e)
   {
-    std::cerr << e.what() << '\n';
+    // std::cerr << e.what() << '\n';
   }
 
   if (error)

@@ -24,6 +24,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <map>
 
 // ros
 
@@ -101,7 +102,7 @@ bool ToolsInterfaceCore::rebootHardware(bool torque_on)
 
         // re init
         if (res)
-            initHardware(torque_on, _temperature_limit, _shutdown_configuration);
+            initHardware(torque_on, _temperature_limit, _shutdown_configuration, _available_tools_map.at(_toolState->getId()));
     }
     // else no tool, return ok
 
@@ -111,7 +112,7 @@ bool ToolsInterfaceCore::rebootHardware(bool torque_on)
 /**
  * @brief ToolsInterfaceCore::initHardware
  */
-int ToolsInterfaceCore::initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration)
+int ToolsInterfaceCore::initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration, const ToolConfig &config)
 {
     uint8_t motor_id;
     if (_toolState)
@@ -130,18 +131,28 @@ int ToolsInterfaceCore::initHardware(bool torque_on, uint8_t temperature_limit, 
             _ttl_interface->addSingleCommandToQueue(
                 std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE, motor_id, std::initializer_list<uint32_t>{control_mode}));
 
-            // Add a slow velocity/acceleration profile to help the pump avoid giving too much effort
-            auto tool_name = _toolState->getToolName();
-            if (tool_name == "Vacuum Pump v2")
-            {
-                _ttl_interface->addSingleCommandToQueue(
+            _toolState->setPositionPGain(static_cast<uint32_t>(config.params.pid.at("p")));
+            _toolState->setPositionIGain(static_cast<uint32_t>(config.params.pid.at("i")));
+            _toolState->setPositionDGain(static_cast<uint32_t>(config.params.pid.at("d")));
+            _ttl_interface->addSingleCommandToQueue(
+                std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
+                motor_id,
+                std::initializer_list<uint32_t>{_toolState->getPositionPGain(),
+                _toolState->getPositionIGain(),
+                _toolState->getPositionDGain(),
+                _toolState->getVelocityPGain(),
+                _toolState->getVelocityIGain(),
+                _toolState->getFF1Gain(),
+                _toolState->getFF2Gain()}));
+
+            _toolState->setVelProfile(config.params.velocity_profile);
+            _toolState->setAccProfile(config.params.acceleration_profile);
+            _ttl_interface->addSingleCommandToQueue(
                     std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE,
                     motor_id,
-                    std::initializer_list<uint32_t>{static_cast<uint32_t>(_velocity_profile),
-                    static_cast<uint32_t>(_acceleration_profile)}));
-            }
+                    std::initializer_list<uint32_t>{_toolState->getVelProfile(),
+                    _toolState->getAccProfile()}));
         }
-
         // TORQUE cmd on if ned2, off otherwise
         _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, std::initializer_list<uint32_t>{torque_on}));
     }
@@ -168,6 +179,8 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
     std::vector<int> idList;
     std::vector<string> typeList;
     std::vector<string> nameList;
+    std::vector<ToolParams> tool_params;
+    XmlRpc::XmlRpcValue params_list;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
@@ -176,8 +189,17 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
     nh.getParam("tools_params/temperature_limit", _temperature_limit);
     nh.getParam("tools_params/shutdown_configuration", _shutdown_configuration);
 
-    nh.getParam("tools_params/vacuum_pump_v2/velocity_profile", _velocity_profile);
-    nh.getParam("tools_params/vacuum_pump_v2/acceleration_profile", _acceleration_profile);
+    if (nh.getParam("tools_params/params_list", params_list)) {
+        for (int i = 0; i < params_list.size(); ++i) {
+            ToolParams params;
+            params.velocity_profile = static_cast<int>(params_list[i]["velocity_profile"]);
+            params.acceleration_profile = static_cast<int>(params_list[i]["acceleration_profile"]);
+            params.pid["p"] = static_cast<int>(params_list[i]["pid"]["p"]);
+            params.pid["i"] = static_cast<int>(params_list[i]["pid"]["i"]);
+            params.pid["d"] = static_cast<int>(params_list[i]["pid"]["d"]);
+            tool_params.push_back(params);
+        }
+    }
 
     // check that the three lists have the same size
     if (idList.size() == typeList.size() && idList.size() == nameList.size())
@@ -188,12 +210,25 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
             auto id = static_cast<uint8_t>(idList.at(i));
             EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
             std::string name = nameList.at(i);
+            int velocity_profile = tool_params.at(i).velocity_profile;
+            int acceleration_profile = tool_params.at(i).acceleration_profile;
+            std::map<std::string, uint32_t> pid = tool_params.at(i).pid;
 
             if (!_available_tools_map.count(id))
             {
                 if (EHardwareType::UNKNOWN != type)
                 {
-                    _available_tools_map.insert(std::make_pair(id, ToolConfig{name, type}));
+                    auto tool_config = ToolConfig{
+                        name,
+                        type,
+                        ToolParams{
+                            velocity_profile,
+                            acceleration_profile,
+                            pid
+                        }
+                    };
+
+                    _available_tools_map.insert(std::make_pair(id, tool_config));
                 }
                 else
                     ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
@@ -312,7 +347,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
 
                 // on success, tool is set, we initialize it and go out of loop
                 if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                    niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(true, _temperature_limit, _shutdown_configuration))
+                    niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(true, _temperature_limit, _shutdown_configuration, _available_tools_map.at(_toolState->getId())))
                 {
                     _toolState->setState(ToolState::TOOL_STATE_PING_OK);
 
@@ -537,16 +572,16 @@ void ToolsInterfaceCore::_waitForToolStop(int id, int timeout)
         }
         else
         {
-            moving_counter++;
+            moving_counter = 10;
         }
 
-        // If the vacuum pump has been detected as not moving 10 times in a row, we consider that the vacuum pump cannot move anymore
+        // If the tool has been detected as not moving 10 times in a row, we consider that the vacuum pump cannot move anymore
         if (moving_counter <= 0)
         {
             break;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 

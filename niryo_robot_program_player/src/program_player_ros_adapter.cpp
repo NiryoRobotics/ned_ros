@@ -46,11 +46,11 @@ ProgramPlayerROSAdapter::ProgramPlayerROSAdapter()
 {
   ROS_DEBUG("ProgramPlayerROSAdapter::ctor");
 
-  initParameters(nh);
-  startPublishers(nh);
-  startSubscribers(nh);
-  startServices(nh);
-  startActions(nh);
+  initParameters(_nh);
+  startPublishers(_nh);
+  startSubscribers(_nh);
+  startServices(_nh);
+  startActions(_nh);
 }
 
 void ProgramPlayerROSAdapter::initParameters(ros::NodeHandle& nh)
@@ -60,6 +60,10 @@ void ProgramPlayerROSAdapter::initParameters(ros::NodeHandle& nh)
   nh.getParam(_control_loop_frequency_param, _control_loop_frequency);
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %f", _control_loop_frequency_param.c_str(),
             _control_loop_frequency);
+
+  nh.getParam(_stop_button_debounce_time_param, _stop_button_debounce_time);
+  ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %d", _stop_button_debounce_time_param.c_str(),
+            _stop_button_debounce_time);
 
   nh.getParam(_niryo_studio_timeout_param, _niryo_studio_timeout);
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %d", _niryo_studio_timeout_param.c_str(),
@@ -146,7 +150,7 @@ bool ProgramPlayerROSAdapter::stop()
 {
   ROS_DEBUG("ProgramPlayerROSAdapter::stop");
 
-  if (!_stop_program_service_client.waitForExistence(ros::Duration(0.1)))
+  if (!_stop_program_service_client.waitForExistence(ros::Duration(5.0)))
   {
     ROS_ERROR("ProgramPlayerROSAdapter::stop - service not ready");
 
@@ -206,9 +210,14 @@ int ProgramPlayerROSAdapter::getDisplaySpecs() const
   return _screen_size;
 }
 
-int ProgramPlayerROSAdapter::getLoopFrequency() const
+double ProgramPlayerROSAdapter::getLoopFrequency() const
 {
   return _control_loop_frequency;
+}
+
+int ProgramPlayerROSAdapter::getStopButtonDebounceTime() const
+{
+  return _stop_button_debounce_time;
 }
 
 int ProgramPlayerROSAdapter::getId() const

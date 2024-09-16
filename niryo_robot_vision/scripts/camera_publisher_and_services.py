@@ -3,6 +3,8 @@
 import rospy
 import logging
 
+from niryo_robot_utils import sentry_init
+
 import rospkg
 
 import yaml
@@ -333,6 +335,8 @@ class VisionNode:
 
 
 if __name__ == '__main__':
+    sentry_init()
+
     # we need to layun
     rospy.init_node('niryo_robot_vision', anonymous=False, log_level=rospy.INFO)
 

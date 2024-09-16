@@ -1,19 +1,19 @@
 joint_1:
     name: "joint_1"
     id: 2
-    type: "ned3_stepper"
+    type: "ned3pro_stepper"
     bus: "ttl"
 
 joint_2:
     name: "joint_2"
     id: 3
-    type: "ned3_stepper"
+    type: "ned3pro_stepper"
     bus: "ttl"
 
 joint_3:
     name: "joint_3"
     id: 4
-    type: "ned3_stepper"
+    type: "ned3pro_stepper"
     bus: "ttl"
 
 joint_4:

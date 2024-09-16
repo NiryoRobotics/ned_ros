@@ -222,7 +222,7 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
             // take first
             uint8_t conveyor_id = *bus.pool_id_list.begin();
 
-            auto conveyor_state = std::make_shared<ConveyorState>(EHardwareType::NED3_STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V3_HWID);
+            auto conveyor_state = std::make_shared<ConveyorState>(EHardwareType::NED3PRO_STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V3_HWID);
 
             // we want to check the model number for this conveyor
             // if it fails, we will recover with the old stepper hardware without checking the model number
@@ -240,7 +240,7 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
                 {
                     // retry with the old stepper
                     conveyor_state = std::make_shared<ConveyorState>(EHardwareType::STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V2_HWID);
-                    ROS_INFO("ConveyorInterfaceCore::addConveyor - Set NED3 conveyor on id %d", conveyor_id);
+                    ROS_INFO("ConveyorInterfaceCore::addConveyor - Set NED3PRO conveyor on id %d", conveyor_id);
 
                     bus.type = EHardwareType::STEPPER;
                     result = bus.interface->setConveyor(conveyor_state);
@@ -364,17 +364,17 @@ int ConveyorInterfaceCore::initHardware(shared_ptr<ConveyorState> conveyor_state
 
     // Update the velocity profile
     auto hwType = conveyor_state->getHardwareType();
-    if (hwType == EHardwareType::NED3_STEPPER)
+    if (hwType == EHardwareType::NED3PRO_STEPPER)
     {
         // Set operating mode
-        constexpr auto CONVEYOR_NED3_OPERATING_MODE = 1;
+        constexpr auto CONVEYOR_NED3PRO_OPERATING_MODE = 1;
         bus_config.interface->addSingleCommandToQueue(
             std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_OPERATING_MODE, conveyor_state->getId(),
-                                                                                                  std::initializer_list<uint32_t>({CONVEYOR_NED3_OPERATING_MODE})));
+                                                                                                  std::initializer_list<uint32_t>({CONVEYOR_NED3PRO_OPERATING_MODE})));
         // Set velocity profile for the conveyor
-        constexpr auto CONVEYOR_NED3_ACCELERATION_PROFILE = 25;  // Arbitrary value, to fine tune
+        constexpr auto CONVEYOR_NED3PRO_ACCELERATION_PROFILE = 25;  // Arbitrary value, to fine tune
         ::common::model::VelocityProfile velocity_profile;
-        velocity_profile.a_max = CONVEYOR_NED3_ACCELERATION_PROFILE;
+        velocity_profile.a_max = CONVEYOR_NED3PRO_ACCELERATION_PROFILE;
         auto interface = bus_config.interface;
         interface->addSingleCommandToQueue(
             std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE, conveyor_state->getId(), velocity_profile.to_list()));

@@ -56,9 +56,39 @@ public:
   ProgramPlayerState getState() override;
 };
 
+// NO_CONNECTION STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+class NoConnectionState : public IProgramPlayerState<ProgramPlayerAdapter, ProgramPlayerDriver>
+{
+public:
+  void tick(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  void execute(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  ProgramPlayerState getState() override;
+};
+
+// CONNECTION STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+class ConnectionState : public IProgramPlayerState<ProgramPlayerAdapter, ProgramPlayerDriver>
+{
+public:
+  void tick(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  void execute(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  ProgramPlayerState getState() override;
+};
+
 // STOP STATE
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 class StopState : public IProgramPlayerState<ProgramPlayerAdapter, ProgramPlayerDriver>
+{
+public:
+  void tick(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  void execute(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
+  ProgramPlayerState getState() override;
+};
+
+// STOPPED STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+class StoppedState : public IProgramPlayerState<ProgramPlayerAdapter, ProgramPlayerDriver>
 {
 public:
   void tick(ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player) override;
@@ -113,23 +143,26 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void IdleState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->getPlayStatus() == common::model::EActionType::SINGLE_PUSH_ACTION)
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
+    program_player->setState(ProgramPlayerState::FAULT);
+
+  else if (program_player->buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
+  {
+    // For safety issues, stop has higher priority in case several buttons are pressed simultaneously, however since no
+    // program is launched it does nothing
+  }
+
+  else if (program_player->buttons_state[Button::PLAY] != common::model::EActionType::NO_ACTION)
     program_player->setState(ProgramPlayerState::PLAY);
 
-  else if (program_player->getStopStatus() == common::model::EActionType::SINGLE_PUSH_ACTION)
-    program_player->setState(ProgramPlayerState::STOP);
-
-  else if (program_player->getUpStatus() == common::model::EActionType::SINGLE_PUSH_ACTION)
+  else if (program_player->buttons_state[Button::UP] != common::model::EActionType::NO_ACTION)
     program_player->setState(ProgramPlayerState::UP);
 
-  else if (program_player->getDownStatus() == common::model::EActionType::SINGLE_PUSH_ACTION)
+  else if (program_player->buttons_state[Button::DOWN] != common::model::EActionType::NO_ACTION)
     program_player->setState(ProgramPlayerState::DOWN);
-
-  else if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-           program_player->hasError(Error::NO_PROGRAM))
-  {
-    program_player->setState(ProgramPlayerState::FAULT);
-  }
 
   else
     program_player->setState(ProgramPlayerState::IDLE);
@@ -153,8 +186,10 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void FaultState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-      program_player->hasError(Error::NO_PROGRAM))
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
     program_player->setState(ProgramPlayerState::FAULT);
 
   else
@@ -167,11 +202,7 @@ void FaultState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
 {
   program_player->stop();
 
-  if (program_player->hasError(Error::NO_CONNECTION))
-  {
-    program_player->initDriver();
-  }
-  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED))
+  if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED))
   {
     auto msg{ "CLIENT CONNECTED" };
     program_player->setDisplayMessage(program_player->getRobotName(), msg);
@@ -189,17 +220,73 @@ ProgramPlayerState FaultState<ProgramPlayerAdapter, ProgramPlayerDriver>::getSta
   return ProgramPlayerState::FAULT;
 }
 
+// NO_CONNECTION STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void NoConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else
+    program_player->setState(ProgramPlayerState::CONNECTION);
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void NoConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  if (program_player->isConnectedPrevious())
+    program_player->stop();
+
+  program_player->initDriver();
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+ProgramPlayerState NoConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::getState()
+{
+  return ProgramPlayerState::NO_CONNECTION;
+}
+
+// CONNECTION STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else
+    program_player->setState(ProgramPlayerState::IDLE);
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  if (!program_player->isConnectedPrevious())
+    program_player->stop();
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+ProgramPlayerState ConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>::getState()
+{
+  return ProgramPlayerState::CONNECTION;
+}
+
 // STOP STATE
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void StopState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-      program_player->hasError(Error::NO_PROGRAM))
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
     program_player->setState(ProgramPlayerState::FAULT);
 
   else
-    program_player->setState(ProgramPlayerState::IDLE);
+    program_player->setState(ProgramPlayerState::STOPPED);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -215,13 +302,59 @@ ProgramPlayerState StopState<ProgramPlayerAdapter, ProgramPlayerDriver>::getStat
   return ProgramPlayerState::STOP;
 }
 
+// STOPPED STATE
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
+    program_player->setState(ProgramPlayerState::FAULT);
+
+  else if (program_player->buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
+  {
+    // For safety issues, stop has higher priority in case several buttons are pressed simultaneously, however since no
+    // program is launched it does nothing
+  }
+
+  else if (program_player->buttons_state[Button::PLAY] != common::model::EActionType::NO_ACTION)
+    program_player->setState(ProgramPlayerState::PLAY);
+
+  else if (program_player->buttons_state[Button::UP] != common::model::EActionType::NO_ACTION)
+    program_player->setState(ProgramPlayerState::UP);
+
+  else if (program_player->buttons_state[Button::DOWN] != common::model::EActionType::NO_ACTION)
+    program_player->setState(ProgramPlayerState::DOWN);
+
+  else
+    program_player->setState(ProgramPlayerState::STOPPED);
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
+    ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
+{
+  std::string line2 = "STOP:" + program_player->getCurrentProgram();
+  program_player->setDisplayMessage(program_player->getRobotName(), line2);
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+ProgramPlayerState StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>::getState()
+{
+  return ProgramPlayerState::STOPPED;
+}
+
 // PLAY STATE
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void PlayState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-      program_player->hasError(Error::NO_PROGRAM))
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
     program_player->setState(ProgramPlayerState::FAULT);
 
   else
@@ -246,18 +379,21 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void PlayingState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->getStopStatus() == common::model::EActionType::SINGLE_PUSH_ACTION)
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
+    program_player->setState(ProgramPlayerState::FAULT);
+
+  else if (program_player->buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
     program_player->setState(ProgramPlayerState::STOP);
 
+  // Case where running program raises an error due to its execution
   else if (program_player->getProgramState() == ProgramExecutionState::ERROR)
     program_player->setState(ProgramPlayerState::IDLE);
 
   else if (program_player->getProgramState() == ProgramExecutionState::DONE)
     program_player->setState(ProgramPlayerState::IDLE);
-
-  else if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-           program_player->hasError(Error::NO_PROGRAM))
-    program_player->setState(ProgramPlayerState::FAULT);
 
   else
     program_player->setState(ProgramPlayerState::PLAYING);
@@ -267,7 +403,7 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void PlayingState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  std::string line2 = "Playing: " + program_player->getCurrentProgram();
+  std::string line2 = "PLAY:" + program_player->getCurrentProgram();
   program_player->setDisplayMessage(program_player->getRobotName(), line2);
 }
 
@@ -282,8 +418,10 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void UpState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-      program_player->hasError(Error::NO_PROGRAM))
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
     program_player->setState(ProgramPlayerState::FAULT);
 
   else
@@ -325,8 +463,10 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void DownState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  if (program_player->hasError(Error::NO_CONNECTION) || program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) ||
-      program_player->hasError(Error::NO_PROGRAM))
+  if (program_player->hasError(Error::NO_CONNECTION))
+    program_player->setState(ProgramPlayerState::NO_CONNECTION);
+
+  else if (program_player->hasError(Error::NIRYO_STUDIO_CONNECTED) || program_player->hasError(Error::NO_PROGRAM))
     program_player->setState(ProgramPlayerState::FAULT);
 
   else

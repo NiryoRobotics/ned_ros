@@ -2,6 +2,7 @@
 
 # Libs
 import rospy
+from niryo_robot_utils import sentry_init
 
 from niryo_robot_metrics.PsutilWrapper import PsutilWrapper
 from niryo_robot_metrics.TuptimeWrapper import TuptimeWrapper
@@ -51,6 +52,8 @@ class MetricsNode:
 
 
 if __name__ == "__main__":
+    sentry_init()
+
     rospy.init_node('niryo_robot_metrics', anonymous=False, log_level=rospy.INFO)
 
     try:

@@ -2,6 +2,7 @@
 
 import rospy
 import logging
+from niryo_robot_utils import sentry_init
 
 import actionlib
 import moveit_commander
@@ -318,6 +319,8 @@ class ToolCommander:
 
 
 if __name__ == '__main__':
+    sentry_init()
+
     rospy.init_node('niryo_robot_tools_commander', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter

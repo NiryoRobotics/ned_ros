@@ -26,7 +26,10 @@ enum class ProgramPlayerState
 {
   IDLE,
   FAULT,
+  NO_CONNECTION,
+  CONNECTION,
   STOP,
+  STOPPED,
   PLAY,
   PLAYING,
   UP,
@@ -48,6 +51,15 @@ enum class ProgramExecutionState
   DONE,
   ERROR,
   NONE,
+};
+
+enum class Button
+{
+  PLAY,
+  STOP,
+  UP,
+  DOWN,
+  CUSTOM,
 };
 
 }  // namespace niryo_robot_program_player

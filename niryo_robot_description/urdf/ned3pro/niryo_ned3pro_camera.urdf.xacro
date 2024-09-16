@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3pro">
     <!-- Including base robot -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3/niryo_ned3_gazebo.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3pro/niryo_ned3pro_gazebo.urdf.xacro"/>
 
     <!-- Properties -->
     <xacro:property name="cameraWidth" value="0.01"/>

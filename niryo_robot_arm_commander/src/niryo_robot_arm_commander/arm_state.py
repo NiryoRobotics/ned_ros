@@ -42,7 +42,7 @@ class ArmState(object):
         self.__acceleration_percentage_scaling_factor = 100.0
 
         # specific values for ned2
-        if self.__hardware_version in ['ned2', 'ned3']:
+        if self.__hardware_version in ['ned2', 'ned3pro']:
             self.__velocity_scaling_factor = 0.5
             self.__acceleration_scaling_factor = 0.5
             self.__velocity_percentage_scaling_factor = 200.0
@@ -169,7 +169,10 @@ class ArmState(object):
 
         try:
             self.__set_max_velocity_scaling_percentage(req.value)
-            self.__set_max_acceleration_scaling_percentage(req.value)
+
+            # if acceleration is lower than 40% motors will not move
+            acceleration_percentage = max(40, req.value)
+            self.__set_max_acceleration_scaling_percentage(acceleration_percentage)
 
             RADIAN_PER_SECONDS_SQ_TO_RPM_SQ = 572.957795131
             RADIAN_PER_SECONDS_TO_RPM = 9.549296586
@@ -235,7 +238,49 @@ class ArmState(object):
         if not 0.1 <= req.value <= 1:
             return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 0.1 and 1'}
 
-        self.__set_max_acceleration_scaling_percentage(req.value)
+        try:
+            # if acceleration is lower than 40% motors will not move
+            acceleration_percentage = max(40, req.value)
+            self.__set_max_acceleration_scaling_percentage(acceleration_percentage)
+
+            RADIAN_PER_SECONDS_SQ_TO_RPM_SQ = 572.957795131
+
+            ACC_PROFILE_ADDR = 108
+            ACC_PROFILE_BYTE_LEN = 4
+
+            # write stepper velocity & acceleration profiles with scaled values
+            i = 1
+            STEPPER_ID_OFFSET = 1
+            stepper_param_ns = '/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'
+            while rospy.has_param(stepper_param_ns + str(i) + '/a_max'):
+                default_amax = rospy.get_param(stepper_param_ns + str(i) + '/a_max')
+
+                _id = i + STEPPER_ID_OFFSET
+                scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor *
+                                          RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)  # rpm2 to stepper value
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_acceleration,
+                                                  reg_address=ACC_PROFILE_ADDR,
+                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                i = i + 1
+
+            # write dxl velocity & acceleration profiles with scaled values
+            i = 1
+            DXL_ID_OFFSET = 4
+            dxl_param_ns = '/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'
+            while rospy.has_param(dxl_param_ns + str(i) + '/acceleration_profile'):
+                default_amax = rospy.get_param(dxl_param_ns + str(i) + '/acceleration_profile')
+
+                _id = i + DXL_ID_OFFSET
+                scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor)
+                self.__write_custom_value_service(id=_id,
+                                                  value=scaled_acceleration,
+                                                  reg_address=ACC_PROFILE_ADDR,
+                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                i = i + 1
+
+        except ArmCommanderException as e:
+            return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
 
         return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
 
@@ -280,7 +325,7 @@ class ArmState(object):
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
-        if set_bool and self.__hardware_version in ['ned2', 'ned3']:
+        if set_bool and self.__hardware_version in ['ned2', 'ned3pro']:
             return True
         try:
             return self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS

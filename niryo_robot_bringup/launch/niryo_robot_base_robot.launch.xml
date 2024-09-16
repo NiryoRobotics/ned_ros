@@ -14,6 +14,7 @@
     <arg name="simu_gripper" default="true" />
     <arg name="simu_conveyor" default="true" />
     <arg name="conf_location" default="$(env HOME)/niryo_robot_saved_files/niryo_robot_versions/version.txt"/>
+    <arg name="program_player_enabled" default="false"/>
 
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro" unless="$(eval simulation_mode)" />
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" if="$(eval simulation_mode and not gazebo)"/>
@@ -63,6 +64,13 @@
     <!-- Launching vision node -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg vision_enabled)">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+    </include>
+
+
+    <!-- Launching program player node -->
+    <include file="$(find niryo_robot_program_player)/launch/program_player_interface.launch" if="$(arg program_player_enabled)">
         <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>

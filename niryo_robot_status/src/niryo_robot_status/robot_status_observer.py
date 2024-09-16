@@ -85,7 +85,7 @@ class RobotStatusObserver(object):
                                                           Bool,
                                                           self.__callback_learning_trajectory)
 
-        self.__estop_state_sub = rospy.Subscriber('/niryo_robot_rpi/12v_status', Bool, self.__callback_estop_state)
+        self.__estop_state_sub = rospy.Subscriber('/niryo_robot_rpi/estop_status', Bool, self.__callback_estop_state)
 
     def __callback_estop_state(self, msg):
         if self.estop_detected != msg.data:

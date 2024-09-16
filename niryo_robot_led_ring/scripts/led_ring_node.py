@@ -5,6 +5,7 @@
 import rospy
 import logging
 import rosnode
+from niryo_robot_utils import sentry_init
 
 from threading import Thread
 from niryo_robot_led_ring.led_ring_commander import LedRingCommander
@@ -16,6 +17,8 @@ class LedRingNode:
 
 
 if __name__ == '__main__':
+    sentry_init()
+
     rospy.init_node('niryo_robot_led_ring_commander', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter

@@ -617,7 +617,7 @@ void TtlInterfaceCore::controlLoop()
         }
     }
 
-    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3pro" == _hardware_version)
         _ttl_manager->resetTorques();
 }
 

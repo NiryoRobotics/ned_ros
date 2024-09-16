@@ -1,5 +1,5 @@
 /*
-ned3_end_effector_driver.hpp
+ned3pro_end_effector_driver.hpp
 Copyright (C) 2024 Niryo
 All rights reserved.
 This program is free software: you can redistribute it and/or modify
@@ -14,8 +14,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef NED3_END_EFFECTOR_DRIVER_HPP
-#define NED3_END_EFFECTOR_DRIVER_HPP
+#ifndef NED3PRO_END_EFFECTOR_DRIVER_HPP
+#define NED3PRO_END_EFFECTOR_DRIVER_HPP
 
 #include <memory>
 #include <vector>
@@ -26,7 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "abstract_end_effector_driver.hpp"
 
-#include "ned3_end_effector_reg.hpp"
+#include "ned3pro_end_effector_reg.hpp"
 #include "common/model/end_effector_command_type_enum.hpp"
 #include "common/model/end_effector_state.hpp"
 
@@ -36,13 +36,13 @@ namespace ttl_driver
 {
 
     /**
-     * @brief The Ned3EndEffectorDriver class
+     * @brief The Ned3ProEndEffectorDriver class
      */
-    template <typename reg_type = Ned3EndEffectorReg>
-    class Ned3EndEffectorDriver : public AbstractEndEffectorDriver
+    template <typename reg_type = Ned3ProEndEffectorReg>
+    class Ned3ProEndEffectorDriver : public AbstractEndEffectorDriver
     {
     public:
-        Ned3EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+        Ned3ProEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
     public:
@@ -93,10 +93,10 @@ namespace ttl_driver
     // definition of methods
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::Ned3EndEffectorDriver
+     * @brief Ned3ProEndEffectorDriver<reg_type>::Ned3ProEndEffectorDriver
      */
     template <typename reg_type>
-    Ned3EndEffectorDriver<reg_type>::Ned3EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+    Ned3ProEndEffectorDriver<reg_type>::Ned3ProEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                                            std::shared_ptr<dynamixel::PacketHandler> packetHandler) : AbstractEndEffectorDriver(std::move(portHandler),
                                                                                                                                                 std::move(packetHandler))
     {
@@ -107,22 +107,22 @@ namespace ttl_driver
     //*****************************
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::str
+     * @brief Ned3ProEndEffectorDriver<reg_type>::str
      * @return
      */
     template <typename reg_type>
-    std::string Ned3EndEffectorDriver<reg_type>::str() const
+    std::string Ned3ProEndEffectorDriver<reg_type>::str() const
     {
         return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::checkModelNumber
+     * @brief Ned3ProEndEffectorDriver<reg_type>::checkModelNumber
      * @param id
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id)
+    int Ned3ProEndEffectorDriver<reg_type>::checkModelNumber(uint8_t id)
     {
         uint16_t model_number = 0;
         int ping_result = getModelNumber(id, model_number);
@@ -139,13 +139,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readFirmwareVersion
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readFirmwareVersion
      * @param id
      * @param version
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
+    int Ned3ProEndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
     {
         int res = COMM_RX_FAIL;
         uint32_t data{};
@@ -157,25 +157,25 @@ namespace ttl_driver
     // ram read
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readTemperature
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readTemperature
      * @param id
      * @param temperature
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t &temperature)
+    int Ned3ProEndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t &temperature)
     {
         return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readVoltage
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readVoltage
      * @param id
      * @param voltage
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double &voltage)
+    int Ned3ProEndEffectorDriver<reg_type>::readVoltage(uint8_t id, double &voltage)
     {
         uint16_t voltage_mV = 0;
         int res = read<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id, voltage_mV);
@@ -184,26 +184,26 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readHwErrorStatus
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readHwErrorStatus
      * @param id
      * @param hardware_error_status
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status)
+    int Ned3ProEndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status)
     {
         hardware_error_status = 0;
         return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadFirmwareVersion
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadFirmwareVersion
      * @param id_list
      * @param firmware_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
     {
         int res = 0;
         firmware_list.clear();
@@ -215,25 +215,25 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadTemperature
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadTemperature
      * @param id_list
      * @param temperature_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &temperature_list)
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &temperature_list)
     {
         return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list, temperature_list);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadVoltage
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadVoltage
      * @param id_list
      * @param voltage_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
     {
         voltage_list.clear();
         std::vector<uint16_t> v_read;
@@ -244,13 +244,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadRawVoltage
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadRawVoltage
      * @param id_list
      * @param voltage_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
     {
         voltage_list.clear();
         std::vector<uint16_t> v_read;
@@ -261,13 +261,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadHwStatus
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadHwStatus
      * @param id_list
      * @param data_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
                                                           std::vector<std::pair<double, uint8_t>> &data_list)
     {
         data_list.clear();
@@ -290,13 +290,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadHwErrorStatus
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadHwErrorStatus
      * @param id_list
      * @param hw_error_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
     {
         return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
     }
@@ -304,13 +304,13 @@ namespace ttl_driver
     // buttons status
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readButton0Status
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readButton0Status
      * @param id
      * @param action
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
+    int Ned3ProEndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
                                                            common::model::EActionType &action)
     {
         uint8_t status;
@@ -320,13 +320,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readButton1Status
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readButton1Status
      * @param id
      * @param action
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType &action)
+    int Ned3ProEndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType &action)
     {
         uint8_t status;
         int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_STATE_BUTTON_SAVE, id, status);
@@ -335,13 +335,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readButton2Status
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readButton2Status
      * @param id
      * @param action
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType &action)
+    int Ned3ProEndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType &action)
     {
         uint8_t status;
         int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_STATE_BUTTON_FREEDRIVE, id, status);
@@ -350,13 +350,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::syncReadButtonsStatus
+     * @brief Ned3ProEndEffectorDriver<reg_type>::syncReadButtonsStatus
      * @param id
      * @param action_list
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t &id,
+    int Ned3ProEndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t &id,
                                                                std::vector<common::model::EActionType> &action_list)
     {
         std::vector<std::array<typename reg_type::TYPE_BUTTON_STATUS, 3>> data_array_list;
@@ -374,49 +374,49 @@ namespace ttl_driver
     // accelerometers and collision
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readAccelerometerXValue
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readAccelerometerXValue
      * @param id
      * @param x_value
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t &x_value)
+    int Ned3ProEndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t &x_value)
     {
         return read<typename reg_type::TYPE_ACCELERO_VALUE_X>(reg_type::ADDR_ACCELERO_VALUE_X, id, x_value);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readAccelerometerYValue
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readAccelerometerYValue
      * @param id
      * @param y_value
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t &y_value)
+    int Ned3ProEndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t &y_value)
     {
         return read<typename reg_type::TYPE_ACCELERO_VALUE_Y>(reg_type::ADDR_ACCELERO_VALUE_Y, id, y_value);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readAccelerometerZValue
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readAccelerometerZValue
      * @param id
      * @param z_value
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t &z_value)
+    int Ned3ProEndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t &z_value)
     {
         return read<typename reg_type::TYPE_ACCELERO_VALUE_Z>(reg_type::ADDR_ACCELERO_VALUE_Z, id, z_value);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readCollisionStatus
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readCollisionStatus
      * @param id
      * @param status
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool &status)
+    int Ned3ProEndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool &status)
     {
         uint8_t value = 0;
         status = false;
@@ -429,13 +429,13 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readDigitalInput
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readDigitalInput
      * @param id
      * @param in
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool &in)
+    int Ned3ProEndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool &in)
     {
         uint8_t value;
         int res = read<typename reg_type::TYPE_DIGITAL_IN>(reg_type::ADDR_DIGITAL_INPUT, id, value);
@@ -444,65 +444,65 @@ namespace ttl_driver
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::setDigitalOutput
+     * @brief Ned3ProEndEffectorDriver<reg_type>::setDigitalOutput
      * @param id
      * @param out  1 : true, 0: false
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
+    int Ned3ProEndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
     {
         return write<typename reg_type::TYPE_DIGITAL_OUT>(reg_type::ADDR_DIGITAL_OUTPUT, id, static_cast<uint8_t>(out));
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::writeCollisionThresh
+     * @brief Ned3ProEndEffectorDriver<reg_type>::writeCollisionThresh
      * @param id
      * @param out  1 : true, 0: false
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
+    int Ned3ProEndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
     {
         return write<typename reg_type::TYPE_COLLISION_THRESHOLD_ALGO_1>(reg_type::ADDR_COLLISION_DETECT_THRESH_ALGO_1, id, static_cast<uint32_t>(thresh));
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readCollisionThresh
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readCollisionThresh
      * @param id
      * @param out  1 : true, 0: false
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readCollisionThresh(uint8_t id, uint32_t &thresh)
+    int Ned3ProEndEffectorDriver<reg_type>::readCollisionThresh(uint8_t id, uint32_t &thresh)
     {
         return read<typename reg_type::TYPE_COLLISION_THRESHOLD_ALGO_1>(reg_type::ADDR_COLLISION_DETECT_THRESH_ALGO_1, id, thresh);
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::writeCollisionThreshAlgo2
+     * @brief Ned3ProEndEffectorDriver<reg_type>::writeCollisionThreshAlgo2
      * @param id
      * @param out  1 : true, 0: false
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::writeCollisionThreshAlgo2(uint8_t id, int thresh)
+    int Ned3ProEndEffectorDriver<reg_type>::writeCollisionThreshAlgo2(uint8_t id, int thresh)
     {
         return write<typename reg_type::TYPE_COLLISION_THRESHOLD_ALGO_2>(reg_type::ADDR_COLLISION_DETECT_THRESH_ALGO_2, id, static_cast<uint32_t>(thresh));
     }
 
     /**
-     * @brief Ned3EndEffectorDriver<reg_type>::readCollisionThreshAlgo2
+     * @brief Ned3ProEndEffectorDriver<reg_type>::readCollisionThreshAlgo2
      * @param id
      * @param out  1 : true, 0: false
      * @return
      */
     template <typename reg_type>
-    int Ned3EndEffectorDriver<reg_type>::readCollisionThreshAlgo2(uint8_t id, uint32_t &thresh)
+    int Ned3ProEndEffectorDriver<reg_type>::readCollisionThreshAlgo2(uint8_t id, uint32_t &thresh)
     {
         return read<typename reg_type::TYPE_COLLISION_THRESHOLD_ALGO_2>(reg_type::ADDR_COLLISION_DETECT_THRESH_ALGO_2, id, thresh);
     }
 
 } // ttl_driver
 
-#endif // Ned3EndEffectorDriver
+#endif // Ned3ProEndEffectorDriver

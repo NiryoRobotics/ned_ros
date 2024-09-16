@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3">
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3/niryo_ned3_camera.urdf.xacro"/>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3pro">
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3pro/niryo_ned3pro_camera.urdf.xacro"/>
 
     <!-- gazebo joint state publisher for all joints. Necessary to control mors -->
     <gazebo>

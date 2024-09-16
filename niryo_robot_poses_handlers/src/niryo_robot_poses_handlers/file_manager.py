@@ -119,14 +119,15 @@ class FileManager(object):
         :rtype: list[str]
         """
         try:
-            filenames_tmp = sorted(os.listdir(self._base_dir))
-            filenames = []
-            for file in filenames_tmp:
-                if self.check_file_format(file):
-                    filenames.append(file)
+            files_tmp = sorted(os.listdir(self._base_dir))
+            file_names = []
+            for file in files_tmp:
+                file_name = self._name_from_filename(file)
+                if self.check_file_format(file_name):
+                    file_names.append(file)
         except OSError as e:
             raise NiryoRobotFileException("Could not retrieve files. " + str(e))
-        return [self._name_from_filename(f) for f in filenames if f.endswith(self._suffix)]
+        return [self._name_from_filename(f) for f in file_names if f.endswith(self._suffix)]
 
     def get_all_names_w_description(self):
         """
@@ -136,7 +137,7 @@ class FileManager(object):
         :rtype: list[str]
         """
         list_name = self.get_all_names()
-        list_description = [self.read_description(name=n) for n in list_name if self.read_description(name=n)]
+        list_description = [self.read_description(name=n) for n in list_name]
         return list_name, list_description
 
     def exists(self, name):

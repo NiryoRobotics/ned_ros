@@ -155,7 +155,7 @@ class TestFunctions(object):
         self.__robot.set_arm_max_velocity(SPEED)
         self.__robot.set_arm_max_acceleration(ACCELERATION)
 
-        if self.__robot_version in ['ned2', 'ned3']:
+        if self.__robot_version in ['ned2', 'ned3pro']:
             rospy.sleep(2)
             self.__robot.led_ring.rainbow()
             # self.__robot.sound.set_volume(100)
@@ -234,7 +234,7 @@ class TestFunctions(object):
             report.append(message)
             raise TestFailure(message)
 
-        if self.__robot_version in ['ned2', 'ned3']:
+        if self.__robot_version in ['ned2', 'ned3pro']:
             if self.__robot.get_simulation_mode():
                 report.append("I2C Bus - Skipped in simulation mode")
                 return

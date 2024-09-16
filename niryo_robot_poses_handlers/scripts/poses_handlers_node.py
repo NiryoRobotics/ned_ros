@@ -7,6 +7,8 @@ import tf
 import tf2_ros
 import tf2_geometry_msgs
 
+from niryo_robot_utils import sentry_init
+
 from niryo_robot_poses_handlers.transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
@@ -284,8 +286,16 @@ class PoseHandlerNode:
         pose = req.pose
         if cmd == req.SAVE:
             try:
-                if pose.tcp_version == '':
-                    pose.tcp_version = 'LEGACY'
+                tcp_version = 'LEGACY'
+                if pose.tcp_version in ['LEGACY', 'DH_CONVENTION']:
+                    tcp_version = pose.tcp_version
+                elif pose.tcp_version == '':
+                    tcp_version = 'LEGACY'
+                else:
+                    return CommandStatus.POSES_HANDLER_CREATION_FAILED, 'tcp_version is not correct'
+
+                pose_version = pose.pose_version
+
                 pose_obj = PoseObj(name=pose.name,
                                    description=pose.description,
                                    joints=JointsPosition(*pose.joints),
@@ -295,7 +305,7 @@ class PoseHandlerNode:
                                              pose.rpy.roll,
                                              pose.rpy.pitch,
                                              pose.rpy.yaw,
-                                             metadata=PoseMetadata(pose.pose_version, TcpVersion[pose.tcp_version])))
+                                             metadata=PoseMetadata(pose_version, TcpVersion[tcp_version])))
                 self.__pos_manager.create(pose_obj)
                 self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
@@ -583,8 +593,16 @@ class PoseHandlerNode:
         pose.rpy = RPY(roll=pose_obj.pose.roll, pitch=pose_obj.pose.pitch, yaw=pose_obj.pose.yaw)
         rx, ry, rz, w = pose_obj.pose.quaternion()
         pose.orientation = Quaternion(x=rx, y=ry, z=rz, w=w)
-        pose.pose_version = pose_obj.pose.metadata.version
-        pose.tcp_version = pose_obj.pose.metadata.tcp_version.name
+        try:
+            pose.pose_version = pose_obj.pose.metadata.version
+        except Exception:
+            # pose_version doesn't exist assume it has legacy format
+            pose.pose_version = 0
+        try:
+            pose.tcp_version = pose_obj.pose.metadata.tcp_version.name
+        except Exception:
+            # tcp_version doesn't exist assume it has legacy format
+            pose.tcp_version = 'LEGACY'
         return pose
 
     def remove_pose(self, name):
@@ -753,6 +771,8 @@ class PoseHandlerNode:
 
 
 if __name__ == "__main__":
+    sentry_init()
+
     rospy.init_node('niryo_robot_poses_handlers', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter

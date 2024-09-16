@@ -409,7 +409,7 @@ class TrajectoriesExecutor:
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
-        if set_bool and self.__hardware_version in ['ned2', 'ned3']:
+        if set_bool and self.__hardware_version in ['ned2', 'ned3pro']:
             return True
 
         try:

@@ -16,6 +16,7 @@ has_blockly BOOLEAN
 """
     _default = [
         ('Ned2_demo', 'Ned2_demo', 'A small demonstration program to show the Ned2 capabilities', False),
+        ('Ned3Pro_demo', 'Ned3Pro_demo', 'A small demonstration program to show the Ned3Pro capabilities', False),
     ]
 
     def update(self, id_, values):

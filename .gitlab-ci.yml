@@ -50,20 +50,28 @@ include:
   variables:
     ROS_DISTRO: noetic
     DEVELOPMENT_TOOLS_PATH: /development-tools
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - devel
-      - build
-      - install
+
 
 catkin_make_amd:
   extends: .abstract_catkin_build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build
+      - devel
+      - install
 
 catkin_make_arm:
   extends: .abstract_catkin_build
   variables:
     GITLAB_CATKIN_PROFILE_NAME: release_cross_compilation
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build
+      - devel
+      - install
+      - src
 
 build_doc_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/ned_ros_stack:latest_amd64
@@ -184,6 +192,8 @@ code_quality:
   # Authenticate with account to not be limited by docker hub pull rate limit
   before_script:
     - docker login -u ${DOCKER_HUB_DOCKER_ID} -p ${DOCKER_HUB_PASSWORD}
+  tags:
+    - dind
 
 code_quality_html:
   extends: code_quality
@@ -192,6 +202,8 @@ code_quality_html:
   artifacts:
     expire_in: 1 week
     paths: [ gl-code-quality-report.html ]
+  tags:
+    - dind
 
 missing_translation_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64

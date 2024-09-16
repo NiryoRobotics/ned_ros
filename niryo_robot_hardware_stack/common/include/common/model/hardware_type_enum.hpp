@@ -41,13 +41,13 @@ enum class EHardwareType {
                             XL330=4,
                             XC430=5,
                             XM430=6,
-                            NED3_STEPPER = 7,
+                            NED3PRO_STEPPER = 7,
                             XH430=8,
                             FAKE_DXL_MOTOR=20,
                             FAKE_STEPPER_MOTOR=21,
                             FAKE_END_EFFECTOR=22,
                             END_EFFECTOR=30,
-                            NED3_END_EFFECTOR=31,
+                            NED3PRO_END_EFFECTOR=31,
                             PROGRAM_PLAYER=40,
                             UNKNOWN=100
                           };
@@ -70,7 +70,7 @@ public:
             case EHardwareType::XL330:
             case EHardwareType::XC430:
             case EHardwareType::XM430:
-            case EHardwareType::NED3_STEPPER:
+            case EHardwareType::NED3PRO_STEPPER:
             case EHardwareType::XH430:
                 return true;
             default:

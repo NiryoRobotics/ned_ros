@@ -94,7 +94,7 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
     bool torque_status{false};
 
     robot_hwnh.getParam("/niryo_robot/hardware_version", _hardware_version);
-    if (_hardware_version == "ned2" || _hardware_version == "ned3")
+    if (_hardware_version == "ned2" || _hardware_version == "ned3pro")
         torque_status = true;
     else if (_hardware_version == "ned" || _hardware_version == "one")
         torque_status = false;
@@ -129,7 +129,7 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 
         // gather info in joint  states (polymorphic)
-        if (eType == EHardwareType::STEPPER || eType == EHardwareType::NED3_STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
+        if (eType == EHardwareType::STEPPER || eType == EHardwareType::NED3PRO_STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {
             // stepper
             std::string currentNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -266,6 +266,11 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
     }  // end for (size_t j = 0; j < nb_joints; j++)
 
     // Initialize motors home position if missing from database
+    _default_home_position.clear();
+    for (auto &jState : _joint_state_list)
+    {
+        _default_home_position.push_back(jState->getHomePosition());
+    }
     if (!_get_settings_client.waitForExistence(ros::Duration(5.0)))
     {
         ROS_WARN("JointHardwareInterface::init - Failed to reach /niryo_robot_database/settings/get service server, keeping home position to default value");
@@ -273,12 +278,8 @@ bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle 
     else
     {
         std::vector<double> custom_home_positions;
-        _default_home_position.clear();
         for (auto &jState : _joint_state_list)
         {
-            // save the default home position
-            _default_home_position.push_back(jState->getHomePosition());
-
             // read the custom home position
             auto get_request = niryo_robot_database::GetSettings();
             auto setting_name = "custom_home_position_" + jState->getName();
@@ -470,7 +471,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            if ("ned3" == _hardware_version)
+            if ("ned3pro" == _hardware_version)
                 profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577);
             else
                 profile.a_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_SQ_TO_RPM_SQ);
@@ -478,7 +479,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh, const
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            if ("ned3" == _hardware_version)
+            if ("ned3pro" == _hardware_version)
                 profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 1000);
             else
                 profile.v_max = static_cast<uint32_t>(data * RADIAN_PER_SECONDS_TO_RPM * 100);

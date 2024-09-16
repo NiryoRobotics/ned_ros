@@ -3,6 +3,8 @@
 import rospy
 import logging
 
+from niryo_robot_utils import sentry_init
+
 
 class NiryoRobotRpiNode:
 
@@ -11,7 +13,7 @@ class NiryoRobotRpiNode:
 
         hardware_version = rospy.get_param('~hardware_version')
 
-        if hardware_version in ["ned2", "ned3"]:
+        if hardware_version in ["ned2", "ned3pro"]:
             from niryo_robot_rpi.panel_v2.robot_rpi import RobotRpi
         else:
             from niryo_robot_rpi.panel_v1.robot_rpi import RobotRpi
@@ -23,6 +25,8 @@ class NiryoRobotRpiNode:
 
 
 if __name__ == '__main__':
+    sentry_init()
+
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter
