@@ -2,19 +2,34 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-v5.4.1
+v5.5.0
 -----------
 **Features**
+  * Add sentry for python nodes
+  * Add Ned3 demo/production program
 
 **Improvements**
+  * Add program player single point of control safety, 
+    * Program player is running a program and it's disconnected program stops
+    * Program running without program player and one is connected program stops
+  * Add PID and vel/acc profiles configurations for the grippers and configure them on initialization
+  * Display stop message for player one when a program is stopped
+  * Rename ned3 to ned3pro
 
 **Bugfixes**
+  * Add retrocompability get pose
+  * Add retrocompability get list of trajectories
+  * Add missing inverse_kinematics_v2() function in ROS wrapper and tag forward_kinematics() and inverse_kinematics() as deprecated
+  * Velocity and acceleration motor profiles are scaled when scaling the robot velocity and synced with moveit scaling
+  * Add save pose compatibility with legacy poses
+  * Ill-formatted trajectories, poses, workspaces and dynamic frames won't make the stack crash
+  * Add TCP server support for vacuum pump v2
   * Remove a collision checking in niryo_robot_arm_commander which was a duplicate of ROS control's joint trajectory controller
   * Created get_target_pose_v2 service in order to keep get_target_pose original behaviors
-  * The robot velocity and acceleration are now synced with moveit scaling
-  * Add TCP server support for vacuum pump v2
-  * Ill-formatted trajectories, poses, workspaces and dynamic frames won't make the stack crash
-  * Add save pose compatibility with legacy poses
+  * Created a foxglove spawner to start the bridge once the robot has finished booting. This prevents some errors that occurs with the clients
+  * Remove move spiral demo Ned3
+  * Reset home position service called uninitialized default_home_position vector, now it's well initialized
+
 
 v5.4.0
 -----------

@@ -221,7 +221,7 @@ int EndEffectorInterfaceCore::initHardware()
     if (_end_effector_state)
     {
         uint8_t thresh = _end_effector_state->getCollisionThresh();
-        if (_hardware_version == "ned3")
+        if (_hardware_version == "ned3pro")
         {
             uint8_t thresh_algo_2 = _end_effector_state->getCollisionThreshAlgo2();
             _ttl_interface->addSingleCommandToQueue(

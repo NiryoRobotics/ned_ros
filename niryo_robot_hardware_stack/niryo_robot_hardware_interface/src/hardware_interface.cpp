@@ -390,9 +390,9 @@ int HardwareInterface::rebootMotors(int32_t &status, std::string &message)
 
     // for each interface, call for reboot
     int ret = 0;
-    bool torque_on = ("ned2" == _hardware_version || "ned3" == _hardware_version);
+    bool torque_on = ("ned2" == _hardware_version || "ned3pro" == _hardware_version);
 
-    if ("ned2" == _hardware_version || "ned3" == _hardware_version)
+    if ("ned2" == _hardware_version || "ned3pro" == _hardware_version)
         ros::Duration(3).sleep();
 
     if (_joints_interface && !_joints_interface->rebootAll(torque_on))

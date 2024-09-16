@@ -68,7 +68,7 @@ class IOPanel(AbstractIOPanel):
                                           bus=rospy.get_param('~sound_card/i2c_bus'))
         rospy.Service("~scan_i2c_bus", ScanI2CBus, self.__callback_scan_i2c_bus)
 
-        # This pin is only available for the ned3
+        # This pin is only available for the ned3pro
         if rospy.has_param('~monitor_12v_pin'):
             self.__gpio_manager = GpioManager()
             self.__estop_status_pub = rospy.Publisher('/niryo_robot_rpi/estop_status', Bool, queue_size=10)

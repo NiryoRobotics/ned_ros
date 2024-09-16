@@ -5,6 +5,8 @@ import logging
 import os
 import yaml
 
+from niryo_robot_utils import sentry_init
+
 from threading import Thread
 
 from niryo_robot_programs_manager.BlocklyManager import BlocklyManager
@@ -414,6 +416,8 @@ class ProgramManagerNode:
 
 
 if __name__ == "__main__":
+    sentry_init()
+
     rospy.init_node('niryo_programs_manager', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter

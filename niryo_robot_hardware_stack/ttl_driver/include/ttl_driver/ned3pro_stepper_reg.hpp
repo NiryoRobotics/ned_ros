@@ -1,5 +1,5 @@
 /*
-ned3_stepper_reg.hpp
+ned3pro_stepper_reg.hpp
 Copyright (C) 2024 Niryo
 All rights reserved.
 This program is free software: you can redistribute it and/or modify
@@ -14,15 +14,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef NED3_STEPPER_REG_HPP
-#define NED3_STEPPER_REG_HPP
+#ifndef NED3PRO_STEPPER_REG_HPP
+#define NED3PRO_STEPPER_REG_HPP
 
 #include <memory>
 #include "common/model/hardware_type_enum.hpp"
 
 namespace ttl_driver
 {
-    struct Ned3StepperReg
+    struct Ned3ProStepperReg
     {
         static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
 
@@ -121,4 +121,4 @@ namespace ttl_driver
     };
 } // ttl_driver
 
-#endif // NED3_STEPPER_REG_HPP
+#endif // NED3PRO_STEPPER_REG_HPP

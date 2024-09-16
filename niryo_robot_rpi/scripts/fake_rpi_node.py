@@ -2,6 +2,9 @@
 
 import rospy
 import logging
+
+from niryo_robot_utils import sentry_init
+
 from std_msgs.msg import Int32, Bool
 from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
@@ -30,7 +33,7 @@ class NiryoFakeRpi(object):
 
         hardware_version = rospy.get_param('~hardware_version')
 
-        if hardware_version in ["ned2", "ned3"]:
+        if hardware_version in ["ned2", "ned3pro"]:
             from niryo_robot_rpi.panel_v2.fake_panel import FakeIOPanel
         else:
             from niryo_robot_rpi.panel_v1.fake_panel import FakeIOPanel
@@ -41,6 +44,8 @@ class NiryoFakeRpi(object):
 
 
 if __name__ == '__main__':
+    sentry_init()
+
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter

@@ -11,4 +11,5 @@ rpi_ws281x~=4.3.4
 spidev~=3.6
 requests~=2.31.0
 pymodbus~=3.6.2
-
+sentry-sdk~=2.11.0
+urllib3~=1.26.11

@@ -167,7 +167,7 @@ int AbstractEndEffectorDriver::writeSyncCmd(int /*type*/, const std::vector<uint
     return 0;
 }
 
-// This method is used for ned3_stepper driver however since it is be called in writeSingleCmd() it must be implemented by AbstractEndEffectorDriver
+// This method is used for ned3pro_stepper driver however since it is be called in writeSingleCmd() it must be implemented by AbstractEndEffectorDriver
 /**
  * @brief AbstractEndEffectorDriver::writeCollisionThreshAlgo2
  * @return

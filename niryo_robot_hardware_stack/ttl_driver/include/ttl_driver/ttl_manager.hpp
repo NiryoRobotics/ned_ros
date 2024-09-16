@@ -131,7 +131,7 @@ public:
     bool readHardwareStatus();
     bool readEndEffectorStatus();
     uint8_t readSteppersStatus();
-    uint8_t readNed3SteppersStatus();
+    uint8_t readNed3ProSteppersStatus();
     bool readJointsStatus();
     bool readHomingAbsPosition();
     bool readCollisionStatus();
@@ -393,7 +393,7 @@ bool TtlManager::isCalibrationInProgress() const
 inline
 bool TtlManager::hasEndEffector() const
 {
-    return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) || _driver_map.count(common::model::EHardwareType::NED3_END_EFFECTOR) ||
+    return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) || _driver_map.count(common::model::EHardwareType::NED3PRO_END_EFFECTOR) ||
             _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
 }
 

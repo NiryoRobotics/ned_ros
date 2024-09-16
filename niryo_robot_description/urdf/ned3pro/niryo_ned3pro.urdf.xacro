@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned3pro">
     <!-- Import Properties -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3/niryo_ned3_param.urdf.xacro" />
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned3pro/niryo_ned3pro_param.urdf.xacro" />
 
     <!-- Links -->
 
@@ -14,10 +14,16 @@
             <inertia ixx="0.01627370211" ixy="0.0" ixz="0.0" iyy="0.01633345071" iyz="0.0"
                 izz="0.0254462446" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/base_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/base_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/base_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -32,10 +38,17 @@
             <inertia ixx="0.00274167942" ixy="0.0" ixz="0.0" iyy="0.00195272317" iyz="0.0"
                 izz="0.00292927208" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3pro/stl/shoulder_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/shoulder_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/shoulder_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -48,10 +61,16 @@
             <inertia ixx="0.00148330442" ixy="0.0" ixz="0.0" iyy="0.00937134365" iyz="0.0"
                 izz="0.00879836087" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${PI}" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/arm_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 ${PI}" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/arm_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/arm_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -64,10 +83,17 @@
             <inertia ixx="0.00033180114" ixy="0.0" ixz="0.0" iyy="0.00039973587" iyz="0.0"
                 izz="0.00043216299" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${PI} 0 ${-PI/2}" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3pro/stl/elbow_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="${PI} 0 ${-PI/2}" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/elbow_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/elbow_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -80,10 +106,17 @@
             <inertia ixx="0.00199244039" ixy="0.0" ixz="0.0" iyy="0.00181907606" iyz="0.0"
                 izz="0.00029473313" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${PI} 0 0" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3pro/stl/forearm_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="${PI} 0 0" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/forearm_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/forearm_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -95,11 +128,19 @@
             <inertia ixx="0.00006072214" ixy="0.0" ixz="0.0" iyy="0.00018104057" iyz="0.0"
                 izz="0.00019643162" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0"
+                rpy="0 0 ${PI/2}" />
+            <geometry>
+                <mesh
+                    filename="package://niryo_robot_description/meshes/ned3pro/stl/wrist_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0"
                 rpy="0 0 ${PI/2}" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/wrist_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/wrist_link.STL" />
             </geometry>
         </collision>
     </link>
@@ -112,10 +153,16 @@
             <inertia ixx="0.00000138319" ixy="0.0" ixz="0.0" iyy="0.00000138107" iyz="0.0"
                 izz="0.00000040812" />
         </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/hand_link.STL" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned3/stl/hand_link.STL" />
+                <mesh filename="package://niryo_robot_description/meshes/ned3pro/stl/hand_link.STL" />
             </geometry>
         </collision>
     </link>

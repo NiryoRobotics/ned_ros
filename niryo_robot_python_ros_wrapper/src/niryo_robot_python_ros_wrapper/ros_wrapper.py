@@ -81,7 +81,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
 
-        if self.__hardware_version in ['ned', 'ned2', 'ned3']:
+        if self.__hardware_version in ['ned', 'ned2', 'ned3pro']:
             self.__node_name = rospy.get_name()
             rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
             rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
@@ -156,7 +156,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_status.api import RobotStatusRosWrapper
         self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
 
-        if self.__hardware_version in ['ned2', 'ned3']:
+        if self.__hardware_version in ['ned2', 'ned3pro']:
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
             from niryo_robot_led_ring.api import LedRingRosWrapper
             from niryo_robot_sound.api import SoundRosWrapper
@@ -184,7 +184,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             self._collision_detected = True
 
     def __advertise_stop(self):
-        if self.__hardware_version in ['ned', 'ned2', 'ned3']:
+        if self.__hardware_version in ['ned', 'ned2', 'ned3pro']:
             try:
                 self.__advertise_ros_wrapper_srv(self.__node_name, False)
             except (rospy.ServiceException, rospy.ROSException):
@@ -826,6 +826,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def forward_kinematics(self, *args, **kwargs) -> Pose:
         """
+
+        .. deprecated:: 5.5.0
+           You should use :func:`forward_kinematics_v2`.
+
         Computes the forward kinematics given joint positions.
         The end effector pose is given for an end effector frame following the right hand rule and with the x axis
         pointing forward.
@@ -842,6 +846,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: Pose
         """
         from niryo_robot_arm_commander.srv import GetFK
+
+        warnings.warn("You should use forward_kinematics_v2 instead", DeprecationWarning)
 
         joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
         joints = list(joints_position)
@@ -890,6 +896,45 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def inverse_kinematics(self, *args, **kwargs) -> JointsPosition:
         """
+
+        .. deprecated:: 5.6.0
+           You should use :func:`inverse_kinematics_v2`.
+
+        Computes the inverse kinematics given a pose.
+
+        This function is overloaded to accept multiple forms of input:
+
+        :param args: Variable-length positional arguments. This can be either individual pose components
+                     (x, y, z, roll, pitch, yaw) or a single Pose object.
+        :type args: tuple
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: dict
+
+        :returns: The joint position of the robot.
+        :rtype: JointsPosition
+        """
+        from niryo_robot_arm_commander.srv import GetIK
+
+        warnings.warn("You should use inverse_kinematics_v2 instead", DeprecationWarning)
+
+        pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
+        pose.normalize()
+        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose))
+        self._check_result_status(result)
+
+        return JointsPosition(*result.joints)
+
+    @overload
+    def inverse_kinematics_v2(self, x: float, y: float, z: float, roll: float, pitch: float,
+                              yaw: float) -> JointsPosition:
+        ...
+
+    @overload
+    def inverse_kinematics_v2(self, pose: Pose) -> JointsPosition:
+        ...
+
+    def inverse_kinematics_v2(self, *args, **kwargs) -> JointsPosition:
+        """
         Computes the inverse kinematics given a pose.
 
         This function is overloaded to accept multiple forms of input:
@@ -907,7 +952,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
         pose.normalize()
-        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose))
+        result = self._call_service('/niryo_robot/kinematics/inverse_v2', GetIK, self.msg_from_pose(pose))
         self._check_result_status(result)
 
         return JointsPosition(*result.joints)

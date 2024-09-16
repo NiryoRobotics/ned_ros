@@ -79,10 +79,11 @@ public:
   // setter
   void setCurrentProgram(const std::string& program);
   void setDisplayMessage(const std::string& line1, const std::string& line2);
-
-  // Error management
   void hasError(const Error& error_type, bool value);
+
+  // check
   bool hasError(const Error& error_type) const;
+  bool isConnectedPrevious() const;
 
 private:
   void scanDevices();
@@ -95,17 +96,12 @@ private:
 
   void display(std::string& line1, std::string& line2);
 
+private:
   int _baudrate{ 1000000 };
   int _screen_size{ 16 };
   int _id{ 10 };
   std::string _program_delimiter{ "." };
   std::string _port_name;
-
-  // std::map<Error, int> _error = {
-  //   { Error::NO_CONNECTION, 0 },
-  //   { Error::NIRYO_STUDIO_CONNECTED, 0 },
-  //   { Error::NO_PROGRAM, 0 },
-  // };
 
   std::set<Error> _error;
 
@@ -123,9 +119,18 @@ private:
   ProgramPlayerAdapter _program_player_adapter;
 
   std::thread _thread;
+  bool _is_connected = false;
+  bool _is_connected_previous = _is_connected;
 
   // States
   std::unordered_map<ProgramPlayerState, std::unique_ptr<StateType>> _states;
+
+public:
+  std::map<Button, common::model::EActionType> buttons_state{
+    { Button::PLAY, common::model::EActionType::NO_ACTION },   { Button::STOP, common::model::EActionType::NO_ACTION },
+    { Button::UP, common::model::EActionType::NO_ACTION },     { Button::DOWN, common::model::EActionType::NO_ACTION },
+    { Button::CUSTOM, common::model::EActionType::NO_ACTION },
+  };
 };
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -136,14 +141,17 @@ ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::ProgramPlayer()
   // List of available states
   _states[ProgramPlayerState::IDLE] = std::make_unique<IdleState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::FAULT] = std::make_unique<FaultState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
+  _states[ProgramPlayerState::NO_CONNECTION] =
+      std::make_unique<NoConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
+  _states[ProgramPlayerState::CONNECTION] =
+      std::make_unique<ConnectionState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::STOP] = std::make_unique<StopState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
+  _states[ProgramPlayerState::STOPPED] = std::make_unique<StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::PLAY] = std::make_unique<PlayState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::PLAYING] = std::make_unique<PlayingState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::UP] = std::make_unique<UpState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
   _states[ProgramPlayerState::DOWN] = std::make_unique<DownState<ProgramPlayerAdapter, ProgramPlayerDriver>>();
-  _current_state = _states.at(ProgramPlayerState::IDLE).get();
-
-  initDriver();
+  _current_state = _states.at(ProgramPlayerState::NO_CONNECTION).get();
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -162,9 +170,6 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::startThread()
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::tick()
 {
-  // update error state
-  pingProgramPlayer();
-
   checkConnectedClients();
 
   checkProgramList();
@@ -205,22 +210,48 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::initDriver()
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::controlLoop()
 {
-  int control_loop_period = 1 / _program_player_adapter.getLoopFrequency();
+  double loop_frequency = _program_player_adapter.getLoopFrequency();
+  int stop_button_debounce_time = _program_player_adapter.getStopButtonDebounceTime();
+
+  auto current_time = std::chrono::system_clock::now();
+  auto next_read_time = current_time;
 
   while (true)
   {
+    auto control_loop_period_ms =
+        std::chrono::system_clock::now() + std::chrono::milliseconds(static_cast<int>(1 / loop_frequency * 1000));
+
+    current_time = std::chrono::system_clock::now();
+    if (current_time >= next_read_time)
+    {
+      buttons_state[Button::PLAY] = getPlayStatus();
+      buttons_state[Button::STOP] = getStopStatus();
+      buttons_state[Button::UP] = getUpStatus();
+      buttons_state[Button::DOWN] = getDownStatus();
+
+      // if STOP has been pressed then don't read button inputs for X sec
+      if (buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
+        next_read_time = current_time + std::chrono::milliseconds(stop_button_debounce_time);
+      else
+        next_read_time = current_time;
+    }
+
     scanDevices();
+    pingProgramPlayer();
 
     tick();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(control_loop_period));
+    std::this_thread::sleep_until(control_loop_period_ms);
   }
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::pingProgramPlayer()
 {
-  hasError(Error::NO_CONNECTION, _program_player_driver.ping(_id) != COMM_SUCCESS);
+  _is_connected_previous = _is_connected;
+  _is_connected = _program_player_driver.ping(_id) == COMM_SUCCESS;
+
+  hasError(Error::NO_CONNECTION, !_is_connected);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -436,10 +467,18 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::hasError(const Er
   }
 }
 
+// checks
+
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 bool ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::hasError(const Error& error_type) const
 {
   return _error.count(error_type);
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+bool ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::isConnectedPrevious() const
+{
+  return _is_connected_previous;
 }
 
 }  // namespace niryo_robot_program_player

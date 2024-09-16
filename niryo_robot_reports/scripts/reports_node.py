@@ -5,6 +5,8 @@ import os
 import rospy
 from distutils.dir_util import mkpath
 
+from niryo_robot_utils import sentry_init
+
 from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
 from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.DailyReportHandler import DailyReportHandler
@@ -123,6 +125,8 @@ class ReportsNode:
 
 
 if __name__ == "__main__":
+    sentry_init()
+
     rospy.init_node('niryo_robot_reports', anonymous=False, log_level=rospy.INFO)
 
     try:

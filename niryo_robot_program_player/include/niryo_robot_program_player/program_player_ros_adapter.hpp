@@ -65,7 +65,8 @@ public:
   // program player device specs
   int getBaudrate() const;
   int getDisplaySpecs() const;
-  int getLoopFrequency() const;
+  double getLoopFrequency() const;
+  int getStopButtonDebounceTime() const;
   int getId() const;
   std::string getDelimiter() const;
   // program player device specs
@@ -89,22 +90,25 @@ private:
 private:
   // ROS PARAMS
 
-  const std::string _control_loop_frequency_param{ "control_loop_frequency" };
+  const std::string _control_loop_frequency_param{ "/niryo_robot_program_player/control_loop_frequency" };
   double _control_loop_frequency{ 30 };
 
-  const std::string _niryo_studio_timeout_param{ "niryo_studio_timeout" };
+  const std::string _stop_button_debounce_time_param{ "/niryo_robot_program_player/stop_button_debounce_time" };
+  int _stop_button_debounce_time{ 500 };
+
+  const std::string _niryo_studio_timeout_param{ "/niryo_robot_program_player/niryo_studio_timeout" };
   int _niryo_studio_timeout{ 3 };
 
-  const std::string _baudrate_param{ "baudrate" };
+  const std::string _baudrate_param{ "/niryo_robot_program_player/baudrate" };
   int32_t _baudrate;
 
-  const std::string _lcd_box_id_param{ "lcd_box_id" };
+  const std::string _lcd_box_id_param{ "/niryo_robot_program_player/lcd_box_id" };
   int _id{ 10 };
 
-  const std::string _screen_size_param{ "screen_size" };
+  const std::string _screen_size_param{ "/niryo_robot_program_player/screen_size" };
   int32_t _screen_size{ 16 };
 
-  const std::string _program_number_delimiter_param{ "program_number_delimiter" };
+  const std::string _program_number_delimiter_param{ "/niryo_robot_program_player/program_number_delimiter" };
   std::string _program_number_delimiter{ "." };
 
   // ROS PUBLISHERS
@@ -146,7 +150,7 @@ private:
   // program status
   ProgramExecutionState _program_state;
 
-  ros::NodeHandle nh;
+  ros::NodeHandle _nh;
 };
 
 }  // namespace niryo_robot_program_player

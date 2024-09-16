@@ -3,7 +3,7 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-<robot name="niryo_ned3">
+<robot name="niryo_ned3pro">
     <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
     <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
@@ -13,25 +13,12 @@
         <chain base_link="base_link" tip_link="tool_link"/>
     </group>
     <group name="tool">
-        <link name="tool_link"/>
+        <link name="base_gripper_1"/>
+        <joint name="joint_to_gripper"/>
+        <joint name="joint_base_to_mors_1"/>
+        <joint name="joint_base_to_mors_2"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="resting" group="arm">
-        <joint name="joint_1" value="0" />
-        <joint name="joint_2" value="0.6" />
-        <joint name="joint_3" value="-1.3" />
-        <joint name="joint_4" value="0" />
-        <joint name="joint_5" value="0" />
-        <joint name="joint_6" value="0" />
-    </group_state>
-    <group_state name="straight_up" group="arm">
-        <joint name="joint_1" value="0" />
-        <joint name="joint_2" value="0" />
-        <joint name="joint_3" value="1.57" />
-        <joint name="joint_4" value="0" />
-        <joint name="joint_5" value="0" />
-        <joint name="joint_6" value="0" />
-    </group_state>
     <group_state name="straight_forward" group="arm">
         <joint name="joint_1" value="0" />
         <joint name="joint_2" value="0" />
@@ -39,6 +26,14 @@
         <joint name="joint_4" value="0" />
         <joint name="joint_5" value="0" />
         <joint name="joint_6" value="0" />
+    </group_state>
+    <group_state name="close" group="tool">
+        <joint name="joint_base_to_mors_1" value="-0.01"/>
+        <joint name="joint_base_to_mors_2" value="-0.01"/>
+    </group_state>
+    <group_state name="open" group="tool">
+        <joint name="joint_base_to_mors_1" value="0.007"/>
+        <joint name="joint_base_to_mors_2" value="0.007"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="tool_eef" parent_link="tool_link" group="tool"/>
@@ -55,8 +50,20 @@
     <disable_collisions link1="elbow_link" link2="hand_link" reason="Never"/>
     <disable_collisions link1="elbow_link" link2="shoulder_link" reason="Never"/>
     <disable_collisions link1="elbow_link" link2="wrist_link" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="mors_1" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="mors_2" reason="Never"/>
     <disable_collisions link1="forearm_link" link2="hand_link" reason="Never"/>
     <disable_collisions link1="forearm_link" link2="wrist_link" reason="Adjacent"/>
     <disable_collisions link1="hand_link" link2="shoulder_link" reason="Never"/>
     <disable_collisions link1="hand_link" link2="wrist_link" reason="Adjacent"/>
+    <disable_collisions link1="hand_link" link2="mors_1" reason="Adjacent"/>
+    <disable_collisions link1="hand_link" link2="mors_2" reason="Adjacent"/>
+    <disable_collisions link1="mors_1" link2="mors_2" reason="User"/>
+    <disable_collisions link1="base_gripper_1" link2="camera_link" reason="Never"/>
+    <disable_collisions link1="base_gripper_1" link2="elbow_link" reason="Never"/>
+    <disable_collisions link1="base_gripper_1" link2="forearm_link" reason="Never"/>
+    <disable_collisions link1="base_gripper_1" link2="hand_link" reason="Adjacent"/>
+    <disable_collisions link1="base_gripper_1" link2="mors_1" reason="User"/>
+    <disable_collisions link1="base_gripper_1" link2="mors_2" reason="User"/>
+    <disable_collisions link1="base_gripper_1" link2="wrist_link" reason="Never"/>
 </robot>

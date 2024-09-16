@@ -24,6 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <memory>
 #include <vector>
 #include <mutex>
+#include <map>
 
 #include <ros/ros.h>
 
@@ -43,7 +44,6 @@ using ::common::model::EHardwareType;
 
 namespace tools_interface
 {
-
     /**
      * @brief The ToolsInterfaceCore class
      */
@@ -71,12 +71,26 @@ namespace tools_interface
         std::shared_ptr<common::model::ToolState> getToolState() const;
 
     private:
+        struct ToolParams
+        {
+            int velocity_profile{0};
+            int acceleration_profile{0};
+            std::map<std::string, uint32_t> pid{{"p", 0}, {"i", 0}, {"d", 0}};
+        };
+
+        struct ToolConfig
+        {
+            std::string name;
+            common::model::EHardwareType type;
+            ToolParams params;
+        };
+
         void initParameters(ros::NodeHandle &nh) override;
         void startServices(ros::NodeHandle &nh) override;
         void startPublishers(ros::NodeHandle &nh) override;
         void startSubscribers(ros::NodeHandle &nh) override;
 
-        int initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration);
+        int initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration, const ToolConfig &tool_config);
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
@@ -94,14 +108,8 @@ namespace tools_interface
         void _waitForToolStop(int id, int timeout);
 
     private:
-        struct ToolConfig
-        {
-            std::string name;
-            common::model::EHardwareType type;
-        };
         int _temperature_limit{60};
         int _shutdown_configuration{53};
-        int _velocity_profile{0}, _acceleration_profile{0};
         int _vacuum_pump_timeout{3};
         int _gripper_timeout{3};
 

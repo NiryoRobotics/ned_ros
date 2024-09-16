@@ -6,6 +6,7 @@ import time
 
 import rospy
 from sqlite3 import OperationalError
+from niryo_robot_utils import sentry_init
 
 from niryo_robot_system_api_client import system_api_client
 
@@ -111,6 +112,8 @@ class DatabaseNode:
 
 
 if __name__ == "__main__":
+    sentry_init()
+
     rospy.init_node('niryo_robot_database', anonymous=False, log_level=rospy.INFO)
     try:
         node = DatabaseNode()

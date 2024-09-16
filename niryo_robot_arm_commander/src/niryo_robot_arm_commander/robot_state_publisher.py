@@ -77,7 +77,7 @@ class StatePublisher(object):
 
         try:
             self.__robot_state_v2_publisher.publish(robot_state)
-        except rospy.ROSException:
+        except Exception:
             return
 
         rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll,
@@ -88,5 +88,5 @@ class StatePublisher(object):
 
         try:
             self.__robot_state_publisher.publish(robot_state)
-        except rospy.ROSException:
+        except Exception:
             return

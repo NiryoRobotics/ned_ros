@@ -23,7 +23,7 @@
         <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
     </include>
 
-    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+    <node name="foxglove_spawner" pkg="niryo_robot_bringup" type="foxglove_spawner.py"/>
 
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
