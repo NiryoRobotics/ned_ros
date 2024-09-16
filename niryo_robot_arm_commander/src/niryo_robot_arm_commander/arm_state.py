@@ -48,21 +48,32 @@ class ArmState(object):
             self.__velocity_percentage_scaling_factor = 200.0
             self.__acceleration_percentage_scaling_factor = 200.0
 
-        # Arm velocity
+        # Arm velocity/acceleration
         self.__max_velocity_scaling_percentage = int(self.__velocity_scaling_factor *
                                                      self.__velocity_percentage_scaling_factor)
+
+        self.__max_acceleration_scaling_percentage = int(self.__acceleration_scaling_factor *
+                                                     self.__acceleration_percentage_scaling_factor)
 
         self.__max_velocity_scaling_factor_pub = rospy.Publisher('/niryo_robot/max_velocity_scaling_factor',
                                                                  Int32,
                                                                  queue_size=10,
                                                                  latch=True)
+
+        self.__max_acceleration_scaling_factor_pub = rospy.Publisher('/niryo_robot/max_acceleration_scaling_factor',
+                                                                 Int32,
+                                                                 queue_size=10,
+                                                                 latch=True)
+
         self.__publish_velocity_scaling_percentage()
+        self.__publish_acceleration_scaling_percentage()
+
         rospy.Service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor',
                       SetInt,
                       self.__callback_set_max_velocity_scaling_factor)
 
         rospy.Service('/niryo_robot_arm_commander/set_acceleration_factor',
-                      SetFloat,
+                      SetInt,
                       self.__callback_set_acceleration_factor)
 
         self.__write_custom_value_service = rospy.ServiceProxy("/niryo_robot/ttl_driver/send_custom_value",
@@ -235,8 +246,16 @@ class ArmState(object):
         return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
 
     def __callback_set_acceleration_factor(self, req):
-        if not 0.1 <= req.value <= 1:
-            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 0.1 and 1'}
+        rospy.logdebug("ArmCommander - __callback_set_acceleration_factor: %d", req.value)
+
+        if not 0 < req.value <= 200:
+            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 200'}
+
+        if 100 < req.value <= 200:
+            rospy.logwarn(
+                "ArmCommander - __callback_set_acceleration_factor %d is above 100%%."
+                "You are now in the experimental mode of the robot",
+                req.value)
 
         try:
             # if acceleration is lower than 40% motors will not move
@@ -287,12 +306,21 @@ class ArmState(object):
     # -- Publishers call
     def __publish_velocity_scaling_percentage(self):
         """
-        Publish Integer between 1 and 100 which correspond to the function name :)
+        Publish velocity scaling percentage
         :return: None
         """
         rospy.logdebug("ArmCommander.init - Velocity_scaling_percentage: %d", self.__max_velocity_scaling_percentage)
         msg = Int32(data=self.__max_velocity_scaling_percentage)
         self.__max_velocity_scaling_factor_pub.publish(msg)
+
+    def __publish_acceleration_scaling_percentage(self):
+        """
+        Publish acceleration scaling percentage
+        :return: None
+        """
+        rospy.logdebug("ArmCommander.init - Acceleration_scaling_percentage: %d", self.__max_acceleration_scaling_percentage)
+        msg = Int32(data=self.__max_acceleration_scaling_percentage)
+        self.__max_acceleration_scaling_factor_pub.publish(msg)
 
     # -- Core
     def __set_max_velocity_scaling_percentage(self, percentage):
@@ -312,8 +340,10 @@ class ArmState(object):
         :param percentage:
         :return: None
         """
+        self.__max_acceleration_scaling_percentage = percentage
         self.__acceleration_scaling_factor = percentage / self.__acceleration_percentage_scaling_factor
         self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
+        self.__publish_acceleration_scaling_percentage()
 
     def set_learning_mode(self, set_bool):
         """

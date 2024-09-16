@@ -340,7 +340,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        result = self._call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat, percentage / 100.)
+        result = self._call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetInt, percentage)
         return self._classic_return_w_check(result)
 
     # - Useful functions
