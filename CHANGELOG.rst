@@ -12,6 +12,7 @@ Forthcoming
 **Bugfixes**
   * Fix a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
   * Fixed the conveyors direction which was inverted in the modbus server
+  * Fixed PoseMetada.from_dict which wasn't passing the 'frame' argument when using a PoseMetadata.v1
 
 
 v5.5.0
