@@ -4,6 +4,7 @@ Changelog for ned_ros_stack
 Forthcoming
 -----------
 **Features**
+  * Add topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
 
 **Improvements**
 
