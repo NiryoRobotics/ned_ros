@@ -7,6 +7,7 @@ Forthcoming
   * Add topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
 
 **Improvements**
+  * Increase error threshold for joints out of bounds detection in order to match hardware limits
 
 **Bugfixes**
   * Fix a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
