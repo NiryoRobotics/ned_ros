@@ -30,7 +30,7 @@ class PoseMetadata(ABCSerializable):
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> 'PoseMetadata':
         if d['version'] == 1:
-            return cls.v1()
+            return cls.v1(d['frame'])
         elif d['version'] == 2:
             return cls.v2(TcpVersion[d['tcp_version']], d['frame'], LengthUnit[d['length_unit']])
 
