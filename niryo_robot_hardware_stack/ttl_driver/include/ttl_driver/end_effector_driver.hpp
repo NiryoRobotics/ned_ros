@@ -84,6 +84,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int writeDigitalOutput(uint8_t id, bool out) override;
 
         int writeCollisionThresh(uint8_t id, int thresh) override;
+        int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
 };
 
 // definition of methods
@@ -454,7 +455,7 @@ int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
 /**
  * @brief EndEffectorDriver<reg_type>::writeCollisionThresh
  * @param id
- * @param out  1 : true, 0: false
+ * @param thresh
  * @return
  */
 template<typename reg_type>
@@ -462,6 +463,21 @@ int EndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
 {
     return write<typename reg_type::TYPE_COLLISION_THRESHOLD>(reg_type::ADDR_COLLISION_THRESHOLD, id, static_cast<uint8_t>(thresh));
 }
+
+/**
+ * @brief EndEffectorDriver<reg_type>::writeCollisionThreshAlgo2
+ * @param id
+ * @param thresh
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::writeCollisionThreshAlgo2(uint8_t id, int thresh)
+{
+    std::cout << "writeCollisionThreshAlgo2 not implemented for end effector" << std::endl;
+
+    return 0;
+}
+
 } // ttl_driver
 
 #endif // EndEffectorDriver
