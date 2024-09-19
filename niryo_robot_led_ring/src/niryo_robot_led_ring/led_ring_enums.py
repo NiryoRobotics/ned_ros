@@ -1,5 +1,5 @@
 from niryo_robot_led_ring.msg import LedRingAnimation
-from niryo_robot_rpi.msg import WifiButtonStatus
+from niryo_robot_rpi.msg import HotspotButtonStatus
 
 # Message
 from niryo_robot_status.msg import RobotStatus
@@ -57,9 +57,4 @@ ROBOT_ANIM_TO_STRING = {
     LedRingAnimation.BREATH: "Breath",
     LedRingAnimation.SNAKE: "Snake",
     LedRingAnimation.CUSTOM: "Custom",
-}
-
-WIFI_BUTTON_STATUS_TO_ANIM = {
-    WifiButtonStatus.LONG_PRESS: [LedRingAnimation.FLASHING, WHITE],
-    WifiButtonStatus.VERY_LONG_PRESS: [LedRingAnimation.FLASHING, PURPLE],
 }
