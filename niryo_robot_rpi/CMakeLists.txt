@@ -21,7 +21,7 @@ add_message_files(
   I2CComponent.msg
   LogStatus.msg
   StorageStatus.msg
-  WifiButtonStatus.msg
+  HotspotButtonStatus.msg
 )
 
 add_service_files(

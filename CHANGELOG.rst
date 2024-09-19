@@ -8,12 +8,14 @@ Forthcoming
 
 **Improvements**
   * Increase error threshold for joints out of bounds detection in order to match hardware limits
+  * Refacto of the wifi button handling: the names reflects its real job, which is managing solely the hotspot
 
 **Bugfixes**
   * Fixed a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
   * Fixed the conveyors direction which was inverted in the modbus server
   * Fixed PoseMetada.from_dict which wasn't passing the 'frame' argument when using a PoseMetadata.v1
   * Fixed collision thresholds settings which was not correctly calling the setting of the 2nd threshold and with the wrong datatype
+  * Fixed a bug in __hotspot_state_callback which still processed the API response even if the request failed
 
 
 v5.5.0

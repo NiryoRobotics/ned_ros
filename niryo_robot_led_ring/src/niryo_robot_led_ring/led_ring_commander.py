@@ -9,11 +9,10 @@ from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_rpi.msg import WifiButtonStatus
+from niryo_robot_rpi.msg import HotspotButtonStatus
 # Message
 from niryo_robot_user_interface.msg import ConnectionState
 from niryo_robot_status.msg import RobotStatus
-from std_msgs.msg import Empty
 from std_msgs.msg import Int32
 
 from niryo_robot_led_ring.led_ring_animations import LedRingAnimations
@@ -91,7 +90,7 @@ class LedRingCommander(object):
         rospy.Subscriber('/niryo_robot_user_interface/niryo_studio_connection',
                          ConnectionState,
                          self.__callback_niryo_studio)
-        rospy.Subscriber('/niryo_robot/wifi_button_state', WifiButtonStatus, self.__callback_wifi_button_state)
+        rospy.Subscriber('/niryo_robot/hotspot_button_state', HotspotButtonStatus, self.__callback_hotspot_button_state)
 
         self.__check_shutdown_timer = rospy.Timer(rospy.Duration(2), self.shutdown_check)
 
@@ -218,14 +217,14 @@ class LedRingCommander(object):
         if msg.state in [ConnectionState.connection, ConnectionState.close] and not self.user_mode:
             self.blink_over_status(PURPLE, 2, 0.5)
 
-    def __callback_wifi_button_state(self, msg):
-        if msg.state == WifiButtonStatus.RELEASED and msg.mode != WifiButtonStatus.IGNORE_PRESS:
+    def __callback_hotspot_button_state(self, msg):
+        if msg.state == HotspotButtonStatus.RELEASED and msg.mode != HotspotButtonStatus.IGNORE_PRESS:
             self.blink(BLUE, 2, 0)
             self.display_user_mode()
-        elif msg.mode in [WifiButtonStatus.LONG_PRESS, WifiButtonStatus.VERY_LONG_PRESS]:
+        elif msg.mode in [HotspotButtonStatus.LONG_PRESS, HotspotButtonStatus.VERY_LONG_PRESS]:
             command = LedUserRequest()
             command.animation_mode.animation = LedRingAnimation.FLASHING
-            command.colors = [PURPLE] if msg.mode == WifiButtonStatus.VERY_LONG_PRESS else [WHITE]
+            command.colors = [PURPLE] if msg.mode == HotspotButtonStatus.VERY_LONG_PRESS else [WHITE]
             self.start_led_ring_thread(command)
         else:
             self.display_user_mode()
