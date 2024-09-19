@@ -121,6 +121,6 @@ tool_list:
         min: -1000
         max: 1000
     transformation:
-      translation: [0.0, 0.0, 0.045]
+      translation: [0.0, 0.0, 0.035]
       quaternion: [0.0, 0.0, 0.0, 1.0]
 
