@@ -241,13 +241,13 @@ class TestFunctions(object):  # definition of each function (some are unused)
         self.__hardware_version = self.__robot.get_hardware_version()
 
         self.__robot.set_arm_max_velocity(SPEED)
-        # self.__robot.set_arm_max_acceleration(ACCELERATION)
+        self.__robot.set_arm_max_acceleration(ACCELERATION)
         self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
         self.led_stop()
 
     def reset(self):
         self.__robot.set_arm_max_velocity(100)
-        # self.__robot.set_arm_max_acceleration(100)
+        self.__robot.set_arm_max_acceleration(100)
 
     def led_error(self, duration=360):
         if self.__hardware_version in ['ned', 'one'] and not self.__robot.get_simulation_mode():
@@ -664,8 +664,8 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
     def test_high_speed(self, report):
 
-        self.__robot.set_arm_max_velocity(170)
-        # self.__robot.set_arm_max_acceleration(100)
+        self.__robot.set_arm_max_velocity(120)
+        self.__robot.set_arm_max_acceleration(100)
 
         default_joint_pose = 6 * [0.0]
 
@@ -713,10 +713,10 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
         for position_index in range(int(len(poses) / 2)):
 
-            if position_index == 3:  # limit of the axe 4
-                self.__robot.set_arm_max_velocity(150)  # to avoid problem
-            if position_index == 4:  # 150% speed is enough
-                self.__robot.set_arm_max_velocity(200)  #
+            if position_index == 3:
+                self.__robot.set_arm_max_velocity(120)
+            if position_index == 4:
+                self.__robot.set_arm_max_velocity(130)
             if position_index == 5:
                 report.execute(self.move_and_compare, "Change payload", args=[default_joint_pose])
                 self.say("Mettre la masse des porter et appuyer sur CUSTOM")  # masse deportee
@@ -740,12 +740,12 @@ class TestFunctions(object):  # definition of each function (some are unused)
         self.say("Enlever la masse des porter et appuyer sur CUSTOM ")
         report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
         self.__robot.set_arm_max_velocity(80)
-        # self.__robot.set_arm_max_acceleration(50)
+        self.__robot.set_arm_max_acceleration(50)
 
     def test_long(self, report):
 
         self.__robot.set_arm_max_velocity(100)
-        # self.__robot.set_arm_max_acceleration(100)
+        self.__robot.set_arm_max_acceleration(100)
         self.__robot.led_ring.solid(GREEN)
         nb_collision, nb_loop = 0, 0
         report.append("Start of the long test")
@@ -801,7 +801,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
         self.__robot.led_ring.solid(BLUE)
         self.__robot.move_to_sleep_pose()
         self.__robot.set_arm_max_velocity(100)
-        # self.__robot.set_arm_max_acceleration(100)
+        self.__robot.set_arm_max_acceleration(100)
 
     def wait_custom_button_press(self, timeout=600):
         if not USE_BUTTON:
