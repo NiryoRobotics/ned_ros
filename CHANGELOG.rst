@@ -16,6 +16,8 @@ Forthcoming
   * Fixed PoseMetada.from_dict which wasn't passing the 'frame' argument when using a PoseMetadata.v1
   * Fixed collision thresholds settings which was not correctly calling the setting of the 2nd threshold and with the wrong datatype
   * Fixed a bug in __hotspot_state_callback which still processed the API response even if the request failed
+  * Fixed tools transforms for Ned3 pro
+  * Fix a missing offset in the URDF for Ned3 pro
 
 
 v5.5.0
