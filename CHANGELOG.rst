@@ -4,15 +4,16 @@ Changelog for ned_ros_stack
 Forthcoming
 -----------
 **Features**
-  * Add topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
+  * Added topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
 
 **Improvements**
   * Increase error threshold for joints out of bounds detection in order to match hardware limits
 
 **Bugfixes**
-  * Fix a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
+  * Fixed a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
   * Fixed the conveyors direction which was inverted in the modbus server
   * Fixed PoseMetada.from_dict which wasn't passing the 'frame' argument when using a PoseMetadata.v1
+  * Fixed collision thresholds settings which was not correctly calling the setting of the 2nd threshold and with the wrong datatype
 
 
 v5.5.0
