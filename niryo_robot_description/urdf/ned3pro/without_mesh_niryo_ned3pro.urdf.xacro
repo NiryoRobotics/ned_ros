@@ -156,7 +156,7 @@
     </joint>
 
     <joint name="joint_3" type="revolute">
-        <origin xyz="0 0.23061 0" rpy="0 0 ${PI/2}" /> 
+        <origin xyz="0.012 0.23031 0" rpy="0 0 ${PI/2}" /> 
         <parent link="arm_link" />
         <child link="elbow_link" />
         <axis xyz="0 0 1" />
@@ -177,7 +177,7 @@
     </joint>
 
     <joint name="joint_5" type="revolute">
-        <origin xyz="0 0 0.23975" rpy="${-PI/2} 0 0" />
+        <origin xyz="0 0 0.22975" rpy="${-PI/2} 0 0" />
         <parent link="forearm_link" />
         <child link="wrist_link" />
         <axis xyz="0 0 1" />
