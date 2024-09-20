@@ -251,6 +251,32 @@ int CalibrationManager::startFactoryCalibration(FactoryCalibration::Request::_co
     // if ttl connection is ok AND (can not present OR can connection ok)
     if ((_ttl_interface && _ttl_interface->isConnectionOk()) && (_stepper_bus_interface && _stepper_bus_interface->isConnectionOk()))
     {
+        // Get all stepper joints ids
+        std::vector<int> stepper_ids{};
+        for (const auto &js : _joint_states_list)
+        {
+            if (js->isStepper())
+            {
+                stepper_ids.push_back(js->getId());
+            }
+        }
+
+        // Set torque of steppers not being calibrated to off to help moving the joints freely for calibration
+        for (const auto &stepper_id : stepper_ids)
+        {
+            if (std::find(ids.begin(), ids.end(), stepper_id) == ids.end())
+            {
+                auto js = _stepper_bus_interface->getJointState(stepper_id);
+                if (command == FactoryCalibration::Request::START)
+                {
+                    setTorqueStepperMotor(js, 0);
+                }
+                else {
+                    setTorqueStepperMotor(js, js->getTorquePercentage());
+                }
+            }
+        }
+
         for (const auto &id : ids)
         {
             // Check if id is associated to stepper
@@ -565,7 +591,7 @@ EStepperCalibrationStatus CalibrationManager::manualCalibration()
  * @param pState
  * @param status
  */
-void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState> &pState, bool status)
+void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState> &pState, uint8_t percentage)
 {
     _ttl_interface->waitSyncQueueFree();
 
@@ -575,11 +601,11 @@ void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>
 
         if (_can_interface && EBusProtocol::CAN == pState->getBusProtocol())
         {
-            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(StepperSingleCmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status})));
+            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(StepperSingleCmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {percentage})));
         }
         else if (_ttl_interface && EBusProtocol::TTL == pState->getBusProtocol())
         {
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status})));
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {percentage})));
         }
     }
 }
