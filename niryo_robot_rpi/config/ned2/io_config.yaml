@@ -23,7 +23,7 @@ fans:
     temperature_on_threshold: 55
     temperature_off_threshold: 50
 
-wifi:
+hotspot:
   led_pin: 4
   button_pin: 5
 

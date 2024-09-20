@@ -86,7 +86,7 @@ namespace ttl_driver
         int writeCollisionThresh(uint8_t id, int thresh) override;
         int readCollisionThresh(uint8_t id, uint32_t &thresh);
 
-        int writeCollisionThreshAlgo2(uint8_t id, int thresh);
+        int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
         int readCollisionThreshAlgo2(uint8_t id, uint32_t &thresh);
     };
 
@@ -458,7 +458,7 @@ namespace ttl_driver
     /**
      * @brief Ned3ProEndEffectorDriver<reg_type>::writeCollisionThresh
      * @param id
-     * @param out  1 : true, 0: false
+     * @param thresh
      * @return
      */
     template <typename reg_type>
@@ -470,7 +470,7 @@ namespace ttl_driver
     /**
      * @brief Ned3ProEndEffectorDriver<reg_type>::readCollisionThresh
      * @param id
-     * @param out  1 : true, 0: false
+     * @param thresh
      * @return
      */
     template <typename reg_type>
@@ -482,7 +482,7 @@ namespace ttl_driver
     /**
      * @brief Ned3ProEndEffectorDriver<reg_type>::writeCollisionThreshAlgo2
      * @param id
-     * @param out  1 : true, 0: false
+     * @param thresh
      * @return
      */
     template <typename reg_type>
@@ -494,7 +494,7 @@ namespace ttl_driver
     /**
      * @brief Ned3ProEndEffectorDriver<reg_type>::readCollisionThreshAlgo2
      * @param id
-     * @param out  1 : true, 0: false
+     * @param thresh
      * @return
      */
     template <typename reg_type>

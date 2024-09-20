@@ -256,9 +256,7 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         if speed is None:
             speed = feedback.speed
         if direction is None:
-            # dirty fix because the conveyors directions is the inverse of the requested one
-            # FIXME: the requested direction should be the same as the feedback
-            direction = -feedback.direction
+            direction = feedback.direction
 
         self._ros_wrapper.control_conveyor(conveyors_id[self._index], bool_control_on, speed, direction)
 

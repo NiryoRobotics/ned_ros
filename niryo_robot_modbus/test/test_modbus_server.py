@@ -9,8 +9,8 @@ from pymodbus.pdu import ModbusExceptions
 
 
 @pytest.fixture(scope='module')
-def client():
-    return ModbusTcpClient('192.168.1.50', port=5020, timeout=30)
+def client(server_ip):
+    return ModbusTcpClient(server_ip, port=5020, timeout=30)
 
 
 def encode(value, data_type):
@@ -190,10 +190,9 @@ def test_inputs_outputs(client):
     read_discrete_inputs(client, 4)
 
 
-def test_conveyors(client):
+def test_conveyors(client, n_conveyors):
     conveyor_check_delay = 3
-    conveyor_offsets = [0]
-    for conveyor_offset in conveyor_offsets:
+    for conveyor_offset in range(n_conveyors):
         try:
             # attach
             result = read_coils(client, 53 + conveyor_offset)
@@ -204,8 +203,8 @@ def test_conveyors(client):
             for speed in [100, 66, 33]:
                 write_holding_registers(client, 87 + conveyor_offset, speed, int, read_check_delay=0)
                 time.sleep(conveyor_check_delay)
-                result = read_holding_registers(client, 87, int)
-                assert is_conveyor_speed_ok(speed, result), f'Conveyor speed didnt reach expected speed'
+                result = read_holding_registers(client, 87 + conveyor_offset, int)
+                assert is_conveyor_speed_ok(speed, result), 'Conveyor speed didnt reach expected speed'
 
             # direction
             for bool_value in [True, False]:

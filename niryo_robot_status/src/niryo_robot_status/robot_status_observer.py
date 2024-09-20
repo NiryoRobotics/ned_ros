@@ -173,7 +173,7 @@ class RobotStatusObserver(object):
 
         current_out_of_bounds_state = False
         # Add a small offset during limit checking to avoid flaky out of bound state
-        delta = 0.008  # Corresponds about to 0.5 deg
+        delta = 0.04  # Corresponds to about 2 deg which is the diff between hardware and software limits for the Ned3
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
                 if (joint_name in self.joint_limits and not (self.joint_limits[joint_name].min - delta <= joint_pose <=

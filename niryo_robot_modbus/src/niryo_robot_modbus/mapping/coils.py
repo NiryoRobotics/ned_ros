@@ -116,8 +116,6 @@ class ConveyorDirectionEntries(ABCConveyorRegisterEntries):
     def get(self) -> bool:
         feedback = self._safe_conveyor_feedback()
         direction = feedback.direction == ConveyorDirection.FORWARD
-        # inverse direction in order to counter the feedback inversed value
-        direction = not direction
         return direction
 
     def set(self, value: bool) -> None:
