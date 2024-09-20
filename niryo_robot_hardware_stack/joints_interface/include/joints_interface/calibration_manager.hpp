@@ -73,7 +73,7 @@ namespace joints_interface
         bool steppersConnected();
 
         // commands
-        void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState> &pState, bool status);
+        void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState> &pState, uint8_t percentage);
 
         void initVelocityProfiles();
         void resetVelocityProfiles();

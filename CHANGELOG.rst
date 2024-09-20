@@ -5,6 +5,7 @@ Forthcoming
 -----------
 **Features**
   * Added topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
+  * Disabled torque of steppers not being calibrated during factory calibration
 
 **Improvements**
   * Increase error threshold for joints out of bounds detection in order to match hardware limits
