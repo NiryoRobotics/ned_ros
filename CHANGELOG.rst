@@ -4,12 +4,12 @@ Changelog for ned_ros_stack
 Forthcoming
 -----------
 **Features**
-  * Added topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
-  * Disabled torque of steppers not being calibrated during factory calibration
 
 **Improvements**
   * Increase error threshold for joints out of bounds detection in order to match hardware limits
+  * Added topic '/niryo_robot/max_acceleration_scaling_factor' to check current acceleration percentage
   * Refacto of the wifi button handling: the names reflects its real job, which is managing solely the hotspot
+  * Disabled torque of steppers not being calibrated during factory calibration
 
 **Bugfixes**
   * Fixed a bug while setting acceleration from the '/niryo_robot_arm_commander/set_acceleration_factor' service which always set it to 40%
