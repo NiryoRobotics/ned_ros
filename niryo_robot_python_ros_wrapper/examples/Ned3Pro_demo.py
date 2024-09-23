@@ -625,7 +625,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
         z_offset = 0.15 if self.__robot.get_current_tool_id() <= 0 else 0.02
         sleep_pose = [0.3, 0, 0.3, 0, 1.57, 0]
-        home_pose = [0.3, 0, 0.3, 0, 0, 0]
+        home_pose = [0.3, 0, 0.25, 0, 0, 0]
         pick_1 = [0, 0.2, z_offset, 0, 1.57, 0]
         pick_2 = [0, -0.2, z_offset, 0, 1.57, 0]
         place_1 = [0.15, 0, z_offset, 0, 1.57, 0]
