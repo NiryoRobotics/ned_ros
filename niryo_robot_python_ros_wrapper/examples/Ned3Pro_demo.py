@@ -177,7 +177,7 @@ class TestProduction:  # Here we create the program who contain each function th
         if FULL == 3:  # Expedition test
             self.__sub_tests = [
                 TestStep(self.__functions.name, "Program name", critical=True),
-                # TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
+                TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
                 TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
                 TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
                 TestStep(self.__functions.test_sound, "Test haut parleurs", critical=True),
@@ -664,7 +664,7 @@ class TestFunctions(object):  # definition of each function (some are unused)
 
     def test_high_speed(self, report):
 
-        self.__robot.set_arm_max_velocity(120)
+        self.__robot.set_arm_max_velocity(105)
         self.__robot.set_arm_max_acceleration(100)
 
         default_joint_pose = 6 * [0.0]
@@ -714,12 +714,15 @@ class TestFunctions(object):  # definition of each function (some are unused)
         for position_index in range(int(len(poses) / 2)):
 
             if position_index == 3:
-                self.__robot.set_arm_max_velocity(120)
+                self.__robot.set_arm_max_velocity(105)
             if position_index == 4:
-                self.__robot.set_arm_max_velocity(130)
+                report.execute(self.move_and_compare, "Change payload", args=[default_joint_pose])
+                self.say("Mettre la masse boule et appuyer sur CUSTOM")  # masse deportee
+                report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
+                self.__robot.set_arm_max_velocity(110)
             if position_index == 5:
                 report.execute(self.move_and_compare, "Change payload", args=[default_joint_pose])
-                self.say("Mettre la masse des porter et appuyer sur CUSTOM")  # masse deportee
+                self.say("Mettre la masse et appuyer sur CUSTOM")
                 report.execute(self.wait_custom_button_press, "Wait custom button press to validate")
 
             for loop_index in range(HIGH_SPEED_LOOP + c[position_index]):
