@@ -2,6 +2,15 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  * fix: use forward_kinematics_v2 in __ros_poses_from_robot_positions
+
 v5.5.1
 -----------
 **Features**
