@@ -20,6 +20,7 @@ v5.5.1
   * Fixed a bug in __hotspot_state_callback which still processed the API response even if the request failed
   * Fixed tools transforms for Ned3 pro
   * Fix a missing offset in the URDF for Ned3 pro
+  * Fixed a goal tolerance too low for the joint 1
 
 
 v5.5.0

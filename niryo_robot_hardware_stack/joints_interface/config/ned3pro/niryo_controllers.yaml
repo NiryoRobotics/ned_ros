@@ -31,7 +31,7 @@ niryo_robot_follow_joint_trajectory_controller:
         goal_time: 1.0 
         stopped_velocity_tolerance: 0.001
         # Trajectory threshold are high to disable it since we do not correct trajectory
-        joint_1: {trajectory: 6.28, goal: 0.001}
+        joint_1: {trajectory: 6.28, goal: 0.002}
         joint_2: {trajectory: 6.28, goal: 0.001}
         joint_3: {trajectory: 6.28, goal: 0.001}
         joint_4: {trajectory: 6.28, goal: 0.03}
