@@ -25,7 +25,7 @@ from .top_button import TopButton
 from .io_panel import IOPanel
 from .fans_manager import FansManager
 from .shutdown_manager import ShutdownManager
-from .wifi_button import WifiButton
+from .hotspot_button import HotspotButton
 from .mcp_io_objects import McpIOManager
 
 
@@ -42,7 +42,7 @@ class RobotRpi:
         self.__shutdown_manager = ShutdownManager(mcp_manager=self.__mcp_manager)
 
         self.__niryo_robot_button = TopButton()
-        self.__wifi_button = WifiButton(mcp_manager=self.__mcp_manager)
+        self.__hotspot_button = HotspotButton(mcp_manager=self.__mcp_manager)
 
         self.__storage_manager = StorageManager()
 
@@ -59,7 +59,7 @@ class RobotRpi:
 
     def shutdown(self):
         self.__fans_manager.shutdown()
-        self.__wifi_button.shutdown()
+        self.__hotspot_button.shutdown()
         self.__io_panel.shutdown()
         self.__mcp_manager.shutdown()
         rospy.sleep(2)

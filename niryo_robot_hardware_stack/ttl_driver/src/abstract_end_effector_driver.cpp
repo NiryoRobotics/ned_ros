@@ -167,16 +167,4 @@ int AbstractEndEffectorDriver::writeSyncCmd(int /*type*/, const std::vector<uint
     return 0;
 }
 
-// This method is used for ned3pro_stepper driver however since it is be called in writeSingleCmd() it must be implemented by AbstractEndEffectorDriver
-/**
- * @brief AbstractEndEffectorDriver::writeCollisionThreshAlgo2
- * @return
- */
-int AbstractEndEffectorDriver::writeCollisionThreshAlgo2(uint8_t id, int thresh)
-{
-    std::cout << "writeCollisionThreshAlgo2 not implemented for end effector" << std::endl;
-
-    return 0;
-}
-
 }  // namespace ttl_driver

@@ -1,4 +1,4 @@
-# wifi_button.py
+# hotspot_button.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.
 #
@@ -18,35 +18,35 @@
 import rospy
 from niryo_robot_system_api_client import system_api_client
 
-from niryo_robot_rpi.msg import WifiButtonStatus
+from niryo_robot_rpi.msg import HotspotButtonStatus
 
 from ..common.rpi_ros_utils import play_connected
 from .mcp_io_objects import McpIOManager
 
 
-class WifiButton:
+class HotspotButton:
 
     def __init__(self, mcp_manager):
         if mcp_manager is None:
             mcp_manager = McpIOManager()
 
-        self.__wifi_led = mcp_manager.add_led(rospy.get_param("~wifi/led_pin"), "Wifi Led")
-        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"),
-                                                    "Wifi Button",
-                                                    pullup=True,
-                                                    reverse_polarity=True)
+        self.__hotspot_led = mcp_manager.add_led(rospy.get_param("~hotspot/led_pin"), "Hotspot Led")
+        self.__hotspot_button = mcp_manager.add_button(rospy.get_param("~hotspot/button_pin"),
+                                                       "Hotspot Button",
+                                                       pullup=True,
+                                                       reverse_polarity=True)
 
         self.__hotspot_on = False
-        self.__wifi_led.off()
+        self.__hotspot_led.off()
 
-        self.wifi_state_timer = rospy.Timer(rospy.Duration(1), self.__wifi_state_callback)
+        self.hotspot_state_timer = rospy.Timer(rospy.Duration(1), self.__hotspot_state_callback)
 
-        self.__button_state_publisher = rospy.Publisher('/niryo_robot/wifi_button_state',
-                                                        WifiButtonStatus,
+        self.__button_state_publisher = rospy.Publisher('/niryo_robot/hotspot_button_state',
+                                                        HotspotButtonStatus,
                                                         queue_size=1)
 
-        self.__wifi_button.on_press(self.on_press)
-        self.__wifi_button.on_release(self.on_release)
+        self.__hotspot_button.on_press(self.on_press)
+        self.__hotspot_button.on_release(self.on_release)
 
         self.__press_mode = None
         self.__is_released = False
@@ -54,35 +54,38 @@ class WifiButton:
     def __del__(self):
         self.shutdown()
 
-    def __wifi_state_callback(self, _):
-        response = system_api_client.wifi_state()
-        if not response.success:
-            self.__hotspot_on = False
+    def __hotspot_state_callback(self, _):
+        response = system_api_client.hotspot_state()
 
-        if self.__hotspot_on != response.data['hotspot_state']:
-            self.__hotspot_on = response.data['hotspot_state']
+        if not response.success:
+            rospy.logwarn_throttle(60, 'Failed to get hotspot state from system api')
+            self.__hotspot_on = False
+            return
+
+        if self.__hotspot_on != response.data['state']:
+            self.__hotspot_on = response.data['state']
             if self.__hotspot_on:
-                self.__wifi_led.on()
+                self.__hotspot_led.on()
             else:
-                self.__wifi_led.off()
+                self.__hotspot_led.off()
 
     def __set_press_mode(self, elapsed_time):
         if elapsed_time > 10:
-            self.__press_mode = WifiButtonStatus.IGNORE_PRESS
+            self.__press_mode = HotspotButtonStatus.IGNORE_PRESS
         elif elapsed_time > 7:
-            self.__press_mode = WifiButtonStatus.LONG_PRESS
+            self.__press_mode = HotspotButtonStatus.LONG_PRESS
         elif elapsed_time > 0:
-            self.__press_mode = WifiButtonStatus.SHORT_PRESS
+            self.__press_mode = HotspotButtonStatus.SHORT_PRESS
         else:
-            self.__press_mode = WifiButtonStatus.IGNORE_PRESS
+            self.__press_mode = HotspotButtonStatus.IGNORE_PRESS
             rospy.logwarn(f'User is a time traveler. elapsed time is {elapsed_time}')
 
     def __do_action(self):
-        if self.__press_mode == WifiButtonStatus.IGNORE_PRESS:
+        if self.__press_mode == HotspotButtonStatus.IGNORE_PRESS:
             return
-        elif self.__press_mode == WifiButtonStatus.LONG_PRESS:
+        elif self.__press_mode == HotspotButtonStatus.LONG_PRESS:
             self.__reset_network()
-        elif self.__press_mode == WifiButtonStatus.SHORT_PRESS:
+        elif self.__press_mode == HotspotButtonStatus.SHORT_PRESS:
             self.__swap_hotspot_state()
 
     def __swap_hotspot_state(self):
@@ -107,20 +110,20 @@ class WifiButton:
             elapsed_time = (rospy.Time.now() - pressed_time).to_sec()
             self.__set_press_mode(elapsed_time)
             if self.__press_mode != previous_press_mode:
-                wifi_button_status = WifiButtonStatus()
-                wifi_button_status.mode = self.__press_mode
-                wifi_button_status.state = WifiButtonStatus.PRESSED
-                self.__button_state_publisher.publish(wifi_button_status)
+                hotspot_button_status = HotspotButtonStatus()
+                hotspot_button_status.mode = self.__press_mode
+                hotspot_button_status.state = HotspotButtonStatus.PRESSED
+                self.__button_state_publisher.publish(hotspot_button_status)
 
     def on_release(self):
         self.__is_released = True
-        wifi_button_status = WifiButtonStatus()
-        wifi_button_status.mode = self.__press_mode
-        wifi_button_status.state = WifiButtonStatus.RELEASED
-        self.__button_state_publisher.publish(wifi_button_status)
+        hotspot_button_status = HotspotButtonStatus()
+        hotspot_button_status.mode = self.__press_mode
+        hotspot_button_status.state = HotspotButtonStatus.RELEASED
+        self.__button_state_publisher.publish(hotspot_button_status)
         self.__do_action()
 
     def shutdown(self):
-        self.__wifi_button.disable_on_press()
-        self.__wifi_button.disable_on_release()
-        self.__wifi_led.off()
+        self.__hotspot_button.disable_on_press()
+        self.__hotspot_button.disable_on_release()
+        self.__hotspot_led.off()
