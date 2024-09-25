@@ -1205,7 +1205,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         list_poses = []
         for pose in robot_positions:
             if isinstance(pose, JointsPosition):
-                pose = Pose(*self.forward_kinematics(*pose))
+                pose = self.forward_kinematics_v2(pose)
             pose.normalize()
 
             point = Point(x=pose.x, y=pose.y, z=pose.z)

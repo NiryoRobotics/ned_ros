@@ -2,6 +2,16 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.5.2
+-----------
+**Features**
+
+**Improvements**
+
+**Bugfixes**
+  * fix: use forward_kinematics_v2 in __ros_poses_from_robot_positions
+  * fix: P changes in DXL' PID
+
 v5.5.1
 -----------
 **Features**
