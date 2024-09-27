@@ -7,6 +7,7 @@ v5.5.2
 **Features**
 
 **Improvements**
+  * perf: add send_buffer_limit rosarg in foxglove spawner
 
 **Bugfixes**
   * fix: use forward_kinematics_v2 in __ros_poses_from_robot_positions
