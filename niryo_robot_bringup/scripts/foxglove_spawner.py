@@ -41,6 +41,7 @@ class FoxgloveSpawner:
     def __init__(self):
         ros_packages = rospkg.RosPack()
         self.__launchfile_path = ros_packages.get_path('foxglove_bridge') + '/launch/foxglove_bridge.launch'
+        self.__rosargs = {'send_buffer_limit': 200000}
         self.__launch = None
         self.__process_listener = ProcessListener()
         self.__process_listener.on_death = self.__on_death
@@ -48,8 +49,12 @@ class FoxgloveSpawner:
     def start(self):
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
-        self.__launch = roslaunch.parent.ROSLaunchParent(uuid, [self.__launchfile_path],
-                                                         process_listeners=[self.__process_listener])
+        rosargs = [f'{k}:={v}' for k, v in self.__rosargs.items()]
+        self.__launch = roslaunch.parent.ROSLaunchParent(
+            uuid,
+            [(self.__launchfile_path, rosargs)],
+            process_listeners=[self.__process_listener],
+        )
         self.__launch.start()
 
     def stop(self):
