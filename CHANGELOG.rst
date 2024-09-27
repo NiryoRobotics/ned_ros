@@ -11,7 +11,7 @@ v5.5.2
 
 **Bugfixes**
   * fix: use forward_kinematics_v2 in __ros_poses_from_robot_positions
-  * fix: P changes in DXL' PID
+  * fix: DXL' PIDs adjustments
 
 v5.5.1
 -----------
