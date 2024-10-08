@@ -14,6 +14,18 @@ stages:
   - environment_test
   - release_gitlab
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      variables:
+        ENVIRONMENT: "develop"
+    - if: $CI_COMMIT_BRANCH == "staging"
+      variables:
+        ENVIRONMENT: "staging"
+    - if: $CI_COMMIT_BRANCH == "master"
+      variables:
+        ENVIRONMENT: "production"
+
 include:
   ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
   - template: Code-Quality.gitlab-ci.yml
@@ -50,6 +62,7 @@ include:
   variables:
     ROS_DISTRO: noetic
     DEVELOPMENT_TOOLS_PATH: /development-tools
+    GIT_SUBMODULE_STRATEGY: recursive
 
 
 catkin_make_amd:
@@ -72,6 +85,17 @@ catkin_make_arm:
       - devel
       - install
       - src
+
+generate_tar_artifacts:
+  stage: build
+  needs:
+    - catkin_make_arm
+  script:
+    - tar --exclude 'src/.git*' -czf artifacts.tar.gz build devel install src
+  artifacts:
+    paths:
+      - artifacts.tar.gz
+    expire_in: 1 week
 
 build_doc_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/ned_ros_stack:latest_amd64
@@ -268,6 +292,7 @@ upload_production_job:
     <<: *production_variables
   extends: .abstract_upload
 
+
 linkchecker_production_job:
   rules: *production_rules
   stage: environment_test
@@ -280,3 +305,23 @@ linkchecker_production_job:
 release_gitlab_job:
   rules: *production_rules
   stage: release_gitlab
+
+
+trigger_job:
+  image: curlimages/curl
+  stage: .post
+  needs: []
+  script: # TODO: rm "ref=auto-img" when auto-img is merged
+    - >
+      curl --fail --show-error 
+      --form "token=$CI_JOB_TOKEN"
+      --form "ref=master"
+      --form variables[ENVIRONMENT]="$ENVIRONMENT"
+      "${CI_API_V4_URL}/projects/${TARGET_REPO_ID}/trigger/pipeline"
+  variables:
+    TARGET_REPO_ID: 36
+  only:
+    refs:
+      - develop
+      - staging
+      - master
