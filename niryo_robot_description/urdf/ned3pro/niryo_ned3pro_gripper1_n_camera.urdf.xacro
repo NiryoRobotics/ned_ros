@@ -19,8 +19,8 @@
         <parent link="tool_link"/>
         <child link="base_gripper_1"/>
         <origin
-                xyz="0.003 0 -0.007"
-                rpy="0 ${-PI/2} ${PI/2}"/>
+                xyz="-0.007 0 0.003"
+                rpy="${-PI/2} 0 0"/>
     </joint>
 
     <!-- Base Gripper -->
