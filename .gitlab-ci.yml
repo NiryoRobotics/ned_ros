@@ -14,18 +14,6 @@ stages:
   - environment_test
   - release_gitlab
 
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      variables:
-        ENVIRONMENT: "develop"
-    - if: $CI_COMMIT_BRANCH == "staging"
-      variables:
-        ENVIRONMENT: "staging"
-    - if: $CI_COMMIT_BRANCH == "master"
-      variables:
-        ENVIRONMENT: "production"
-
 include:
   ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
   - template: Code-Quality.gitlab-ci.yml
@@ -310,8 +298,19 @@ release_gitlab_job:
 trigger_job:
   image: curlimages/curl
   stage: .post
-  needs: []
-  script: # TODO: rm "ref=auto-img" when auto-img is merged
+  script:
+    - >
+      case $CI_COMMIT_BRANCH in
+        production)
+          ENVIRONMENT=production
+          ;;
+        staging)
+          ENVIRONMENT=staging
+          ;;
+        *)
+          ENVIRONMENT=develop
+          ;;
+      esac
     - >
       curl --fail --show-error 
       --form "token=$CI_JOB_TOKEN"
