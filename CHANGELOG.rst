@@ -2,6 +2,17 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+**Features**
+
+**Improvements**
+
+
+**Bugfixes**
+  * Fixed wrong camera and gripper transforms in Ned3pro and Ned2's URDF for simulation
+  * Fixed a bug which prevented the jog feature to work
+
 v5.5.2
 -----------
 **Features**
