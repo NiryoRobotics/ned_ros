@@ -36,6 +36,8 @@ RUN sudo apt update && sudo apt install -y \
     ros-noetic-ros-babel-fish \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
+    clang \
+    clang-format \
     rsync \
     bash-completion 
 
