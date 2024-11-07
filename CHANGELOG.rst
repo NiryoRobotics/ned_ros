@@ -13,6 +13,7 @@ Forthcoming
   * Fixed wrong camera and gripper transforms in Ned3pro and Ned2's URDF for simulation
   * Fixed a bug which prevented the jog feature to work
   * Use lazy loading from database when getting the joints home position settings to prevent a bug where the robot was unable to access the database at boot time
+  * Ned3pro digital inputs are now not inverted
 
 v5.5.2
 -----------
