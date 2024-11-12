@@ -96,6 +96,8 @@ class ArmState(object):
         rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
                          HardwareStatus,
                          self.__callback_hardware_status)
+
+        rospy.Subscriber('/niryo_robot/robot_state_v2', Bool, self.__callback_sub_robot_state)
         self.__robot_state = None
 
         # Init move group
@@ -166,6 +168,9 @@ class ArmState(object):
         return self.__acceleration_scaling_factor
 
     # -- Callbacks
+    def __callback_sub_robot_state(self, robot_state):
+        self.__robot_state = robot_state
+
     def __callback_joint_states(self, joint_states_msg):
         self.__joint_states = list(joint_states_msg.position[:6])
 
