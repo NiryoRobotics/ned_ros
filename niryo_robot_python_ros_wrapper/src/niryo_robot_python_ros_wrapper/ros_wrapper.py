@@ -172,6 +172,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         rospy.loginfo("Python ROS Wrapper ready")
 
+    @classmethod
+    def init_with_node(cls, *args, **kwargs):
+        """
+        Initialize a ros node before returning a new instance of the class
+        """
+        rospy.init_node(cls.__name__, anonymous=True)
+        return cls(*args, **kwargs)
+
     @property
     def collision_detected(self):
         return self._collision_detected
@@ -791,22 +799,28 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     @staticmethod
     def __get_obj_from_args(obj_class: type, kw: str, args: tuple, kwargs: dict) -> RobotPosition:
         """
-        Helper function for getting object from args and kwargs
+        Helper function for the overloaded methods. Its goal is to return the desired object no matter the input.
 
-        :param obj_class: class of object
+        Example: ::
+
+            __get_obj_from_args(Pose, 'pose', (1, 2, 3, 4, 5, 6), {}) -> Pose(1, 2, 3, 4, 5, 6)
+            __get_obj_from_args(Pose, 'pose', (), {'pose': Pose(1, 2, 3, 4, 5, 6)}) -> Pose(1, 2, 3, 4, 5, 6)
+            __get_obj_from_args(Pose, 'pose', (Pose(1, 2, 3, 4, 5, 6)), {}) -> Pose(1, 2, 3, 4, 5, 6)
+
+        :param obj_class: class of the object to retrieve
         :type obj_class: type
-        :param kw: keyword to get
+        :param kw: keyword to search for in kwargs
         :type kw: str
-        :param args: positional arguments
+        :param args: the positional arguments
         :type args: tuple
-        :param kwargs: keyword arguments
+        :param kwargs: the keyword arguments
         :type kwargs: dict
-        :return: object from args
+        :return: the object found in the arguments
         :rtype: object
         """
         if len(args) + len(kwargs) == 6:
             obj = obj_class(*args, **kwargs)
-        elif 'pose' in kwargs and isinstance(kwargs[kw], obj_class):
+        elif kw in kwargs and isinstance(kwargs[kw], obj_class):
             obj = kwargs[kw]
         elif len(args) > 0 and isinstance(args[0], obj_class):
             obj = args[0]
@@ -852,17 +866,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
         joints = list(joints_position)
         result = self._call_service('/niryo_robot/kinematics/forward', GetFK, joints)
-        return self.pose_from_msg(result.pose)
+        pose = self.pose_from_msg(result.pose)
+        pose.metadata.tcp_version = TcpVersion.LEGACY
+        return pose
 
-    @overload
-    def forward_kinematics_v2(self, j1: float, j2: float, j3: float, j4: float, j5: float, j6: float) -> Pose:
-        ...
-
-    @overload
     def forward_kinematics_v2(self, joints_position: JointsPosition) -> Pose:
-        ...
-
-    def forward_kinematics_v2(self, *args, **kwargs) -> Pose:
         """
         Computes the forward kinematics given joint positions.
         The end effector pose is given for an end effector frame following the right hand rule and with the z axis
@@ -870,18 +878,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         This function is overloaded to accept multiple forms of input:
 
-        :param args: Variable-length positional arguments. This can be either individual joint angles
-                     (j1, j2, j3, j4, j5, j6) or a single JointsPosition object.
-        :type args: tuple
-        :param kwargs: Arbitrary keyword arguments.
-        :type kwargs: dict
+        :param joints_position: the joints position to be used for the forward kinematics computation
+        :type joints_position: JointsPosition
 
         :returns: The pose of the end effector in the robot's workspace.
         :rtype: Pose
         """
         from niryo_robot_arm_commander.srv import GetFK
 
-        joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
         joints = list(joints_position)
         result = self._call_service('/niryo_robot/kinematics/forward_v2', GetFK, joints)
         return self.pose_from_msg(result.pose)
@@ -918,28 +922,20 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         warnings.warn("You should use inverse_kinematics_v2 instead", DeprecationWarning)
 
         pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
-        pose.normalize()
-        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose))
+        pose.metadata = PoseMetadata.v1()
+
+        result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose, normalize=False))
         self._check_result_status(result)
 
         return JointsPosition(*result.joints)
 
-    @overload
-    def inverse_kinematics_v2(self, x: float, y: float, z: float, roll: float, pitch: float,
-                              yaw: float) -> JointsPosition:
-        ...
-
-    @overload
     def inverse_kinematics_v2(self, pose: Pose) -> JointsPosition:
-        ...
-
-    def inverse_kinematics_v2(self, *args, **kwargs) -> JointsPosition:
         """
         Computes the inverse kinematics given a pose.
 
         This function is overloaded to accept multiple forms of input:
 
-        :param args: Variable-length positional arguments. This can be either individual pose components
+        :param pose: Variable-length positional arguments. This can be either individual pose components
                      (x, y, z, roll, pitch, yaw) or a single Pose object.
         :type args: tuple
         :param kwargs: Arbitrary keyword arguments.
@@ -950,7 +946,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_arm_commander.srv import GetIK
 
-        pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
         pose.normalize()
         result = self._call_service('/niryo_robot/kinematics/inverse_v2', GetIK, self.msg_from_pose(pose))
         self._check_result_status(result)
@@ -1718,61 +1713,29 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return Pose(point.x, point.y, point.z, euler[0], euler[1], euler[2])
 
-    def __calculate_relative(self, frame_name, offset):
-        """
-        :param frame_name:, name of the frame
-        :type frame_name : str
-        :param offset: list[x, y, z, roll, pitch, yaw]
-        :type offset: list[6*float]
-        :return: point, rotation
-        :rtype: (list, list)
-        """
-
-        world_pose = self.get_pose()
-        pose_local = self.__transform_pose(world_pose, "world", frame_name)
-        offset = list(map(float, offset))
-
-        # Aim pose
-        pose = RosPose()
-
-        offset_position = [a + b for a, b in zip(self.point_to_list(pose_local.pose.position), offset[:3])]
-        pose.position = Point(*offset_position)
-
-        quaternion = quaternion_multiply(quaternion_from_euler(*offset[3:]),
-                                         self.quaternion_to_list(pose_local.pose.orientation))
-        pose.orientation = Quaternion(*quaternion)
-
-        # Convert pose from a frame to frame world
-        new_world_pose = self.__transform_pose(pose, frame_name, "world")
-
-        point = new_world_pose.pose.position
-        quaternion = new_world_pose.pose.orientation
-        roll, pitch, yaw = euler_from_quaternion(self.quaternion_to_list(quaternion))
-        return Pose(point.x, point.y, point.z, roll, pitch, yaw)
-
     @move_command
-    def move_relative(self, offset, frame="world", linear=False):
+    def move_relative(self, offset, frame="world"):
         """
+        .. deprecated:: 5.5.0
+           You should use move with a frame in the pose metadata.
         Move robot end of an offset in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
         :param frame: name of local frame
         :type frame: str
-        :param linear: Whether the movement has to be linear or not
-        :type linear: bool
         :return: status, message
         :rtype: (int, str)
         """
-        move_cmd = ArmMoveCommand.LINEAR_POSE if linear else ArmMoveCommand.POSE
-        pose = self.__calculate_relative(frame, offset)
-        return self.move(pose, move_cmd=move_cmd)
+        warnings.warn("You should use move with a frame in the pose metadata.", DeprecationWarning)
+        pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
+        return self.move(pose)
 
     @move_command
     def move_linear_relative(self, offset, frame="world"):
         """
         .. deprecated:: 5.5.0
-           You should use :func:`move_relative` with linear=True.
+           You should use move with a frame in the pose metadata and linear=True.
         Move robot end of an offset by a linear movement in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
@@ -1782,8 +1745,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        warnings.warn("You should use move_relative with linear=True.", DeprecationWarning)
-        return self.move_relative(offset, frame=frame, linear=True)
+        warnings.warn("You should use move with a frame in the pose metadata and linear=True.", DeprecationWarning)
+        pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
+        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE)
 
     # - Useful Pose functions
 
@@ -1796,8 +1760,21 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return [point.x, point.y, point.z]
 
     @staticmethod
-    def msg_from_pose(pose: Pose, msg_type=RobotState):
-        pose.normalize()
+    def msg_from_pose(pose: Pose, msg_type=RobotState, normalize=True):
+        """
+        Convert a Pose object to a ROS message.
+
+        :param pose: the pose to convert
+        :type pose: Pose
+        :param msg_type: the type of the ROS message to create
+        :type msg_type: any ROS message which has position and rpy attributes
+        :param normalize: whether to normalize the pose before converting it or not. Default is True.
+        :type normalize: bool
+        :return: ROS message
+        :rtype: RobotState
+        """
+        if normalize:
+            pose.normalize()
         msg = msg_type()
 
         for attr in ['position', 'rpy']:
@@ -2245,17 +2222,17 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # If no new conveyor is detected, it should not crash
         if result.status in [CommandStatus.NO_CONVEYOR_LEFT, CommandStatus.NO_CONVEYOR_FOUND]:
             rospy.loginfo_throttle(1, 'ROS Wrapper - No new conveyor found')
-        else:
-            self._check_result_status(result)
-        conveyor_id = result.id
+            return ConveyorID.NONE
 
-        return self.__conveyor_id_to_conveyor_number(conveyor_id)
+        self._check_result_status(result)
+
+        return self.__conveyor_id_to_conveyor_number(result.id)
 
     def unset_conveyor(self, conveyor_id):
         """
         Removes specific conveyor
 
-        :param conveyor_id: Basically, ConveyorID.ONE or ConveyorID.TWO
+        :param conveyor_id: Basically, ConveyorID.ID_1 or ConveyorID.ID_2
         :type conveyor_id: ConveyorID
         :raises NiryoRosWrapperException:
         :return: status, message
@@ -2263,7 +2240,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from conveyor_interface.srv import SetConveyor, SetConveyorRequest
 
-        req = SetConveyorRequest(cmd=SetConveyorRequest.REMOVE, id=self.__conveyor_number_to_conveyor_id(conveyor_id))
+        real_conveyor_id = self.__conveyor_number_to_conveyor_id(conveyor_id)
+        if real_conveyor_id == ConveyorID.NONE.value:
+            raise NiryoRosWrapperException(f'Unable to retrieve the conveyor corresponding to {conveyor_id}')
+        req = SetConveyorRequest(cmd=SetConveyorRequest.REMOVE, id=real_conveyor_id)
         result = self._call_service('/niryo_robot/conveyor/ping_and_set_conveyor', SetConveyor, req)
         return self._classic_return_w_check(result)
 
@@ -2285,10 +2265,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from conveyor_interface.srv import ControlConveyor, ControlConveyorRequest
 
-        req = ControlConveyorRequest(id=self.__conveyor_number_to_conveyor_id(conveyor_id),
-                                     control_on=bool_control_on,
-                                     speed=speed,
-                                     direction=direction)
+        real_conveyor_id = self.__conveyor_number_to_conveyor_id(conveyor_id)
+        if real_conveyor_id == ConveyorID.NONE.value:
+            raise NiryoRosWrapperException(f'Unable to retrieve the conveyor corresponding to {conveyor_id}')
+        req = ControlConveyorRequest(id=real_conveyor_id, control_on=bool_control_on, speed=speed, direction=direction)
         result = self._call_service('/niryo_robot/conveyor/control_conveyor', ControlConveyor, req)
         return self._classic_return_w_check(result)
 
@@ -2296,18 +2276,36 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Gives conveyors feedback
 
-        :return: List[ID, connection_state, running, speed, direction]
-        :rtype: List(int, bool, bool, int, int)
+        :return: for each conveyor, its id, connection_state, running, speed and direction
+        :rtype: list[dict] with the following keys:
+                conveyor_id: ConveyorID, connection_state: bool, speed: int, direction: ConveyorDirection
         """
-        fb = self.__conveyors_feedback_ntv.value
-        return fb.conveyors
+        serialized_feedback = [{
+            'conveyor_id': self.__conveyor_id_to_conveyor_number(f.conveyor_id),
+            'connection_state': f.connection_state,
+            'speed': f.speed,
+            'direction': f.direction
+        } for f in self.__conveyors_feedback_ntv.value.conveyors]
+        return serialized_feedback
 
     def get_conveyors_number(self):
         fb = self.__conveyors_feedback_ntv.value
         return [self.__conveyor_id_to_conveyor_number(conveyor.conveyor_id) for conveyor in fb.conveyors]
 
     def __conveyor_number_to_conveyor_id(self, conveyor_number):
-        ids = [conveyor.conveyor_id for conveyor in self.get_conveyors_feedback()]
+        """
+        Returns the conveyor ID associated to the conveyor number (an enum member)
+        :param conveyor_number: a conveyor number
+        :type conveyor_number: ConveyorID
+        :return: the conveyor ID
+        :rtype: int
+
+        Example: ::
+
+            self.__conveyor_number_to_conveyor_id(ConveyorID.ID_1) -> 9
+
+        """
+        ids = [conveyor.conveyor_id for conveyor in self.__conveyors_feedback_ntv.value.conveyors]
         try:
             conveyor_id = dict(zip([ConveyorID.ID_1, ConveyorID.ID_2], ids))[conveyor_number]
         except KeyError:
@@ -2315,8 +2313,19 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return conveyor_id
 
     def __conveyor_id_to_conveyor_number(self, conveyor_id):
+        """
+        Returns the conveyor number (an enum member) associated to the conveyor ID
+        :param conveyor_id: a conveyor ID
+        :type conveyor_id: int
+        :return: the conveyor number
+        :rtype: ConveyorID
+
+        Example: ::
+
+                self.__conveyor_id_to_conveyor_number(9) -> ConveyorID.ID_1
+        """
         if conveyor_id not in self.__conveyor_id_to_number:
-            return ConveyorID.NONE
+            raise ValueError(f'Conveyor ID {conveyor_id} is not a valid conveyor ID')
         return self.__conveyor_id_to_number[conveyor_id]
 
     # - Vision

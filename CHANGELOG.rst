@@ -7,13 +7,29 @@ Forthcoming
 **Features**
 
 **Improvements**
-
+  * Improve /niryo_robot/conveyor/feedback reactivity when a conveyor is added or removed
+  * Added convenience function NiryoRosWrapper.init_with_node which init a ros node and returns a NiryoRosWrapper instance
+  * Deprecate NiryoRosWrapper.move_relative
+  * Added a param normalize=True to NiryoRosWrapper.msg_from_pose
+  * Add security checks to NiryoRosWrapper.unset_conveyor and NiryoRosWrapper.control_conveyor
+  * NiryoRosWrapper.get_conveyors_feedback now returns a list of dict instead of a list of ConveyorFeedback messages
+  * Added the following functions to the TCP server:
+    * GET_POSE_V2
+    * FORWARD_KINEMATICS_V2
+    * INVERSE_KINEMATICS_V2
+    * GET_TCP
+    * GET_CONVEYORS_FEEDBACK
 
 **Bugfixes**
   * Fixed wrong camera and gripper transforms in Ned3pro and Ned2's URDF for simulation
   * Fixed a bug which prevented the jog feature to work
   * Use lazy loading from database when getting the joints home position settings to prevent a bug where the robot was unable to access the database at boot time
   * Ned3pro digital inputs are now not inverted
+  * Fixed the jog features
+  * Fixed NiryoRosWrapper.__get_obj_from_args which didn't work with JointsPosition
+  * Fixed NiryoRosWrapper.forward_kinematics which returned v2 metadata despite being a v1 pose
+  * Fixed NiryoRosWrapper.inverse_kinematics which returned was converting poses to v2 before doing the inverse kinematics
+  * Fixed a bug in Pose which was allocating the same instance of PoseMetadata when using the constructor's default metadata value
 
 v5.5.2
 -----------

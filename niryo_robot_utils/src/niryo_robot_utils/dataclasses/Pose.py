@@ -15,7 +15,9 @@ class Pose(ABCSerializable):
                  roll: float,
                  pitch: float,
                  yaw: float,
-                 metadata: PoseMetadata = PoseMetadata.v2()):
+                 metadata: PoseMetadata = None):
+        if metadata is None:
+            metadata = PoseMetadata.v2()
         self.x = x
         self.y = y
         self.z = z

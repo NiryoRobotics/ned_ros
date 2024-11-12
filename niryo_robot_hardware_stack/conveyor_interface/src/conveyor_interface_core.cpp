@@ -190,7 +190,7 @@ void ConveyorInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
     _conveyors_feedback_publisher = nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10, true);
 
-    _publish_conveyors_feedback_timer = nh.createTimer(ros::Duration(_publish_feedback_duration), &ConveyorInterfaceCore::_publishConveyorsFeedback, this);
+    _publish_conveyors_feedback_timer = nh.createTimer(ros::Duration(_publish_feedback_duration), [this](const ros::TimerEvent&) { this->_publishConveyorsFeedback(); });
 }
 
 /**
@@ -472,6 +472,7 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
         default:
             break;
         }
+        _publishConveyorsFeedback();
     }
     else
     {
@@ -567,7 +568,7 @@ bool ConveyorInterfaceCore::_callbackGetHardwareId(conveyor_interface::GetHardwa
 /**
  * @brief ConveyorInterfaceCore::_publishConveyorsFeedback
  */
-void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent &)
+void ConveyorInterfaceCore::_publishConveyorsFeedback()
 {
     conveyor_interface::ConveyorFeedbackArray msg;
     conveyor_interface::ConveyorFeedback data;
