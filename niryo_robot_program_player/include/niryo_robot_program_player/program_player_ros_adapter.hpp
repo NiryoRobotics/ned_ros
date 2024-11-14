@@ -66,6 +66,7 @@ public:
   int getBaudrate() const;
   int getDisplaySpecs() const;
   double getLoopFrequency() const;
+  std::string getPortName() const;
   int getStopButtonDebounceTime() const;
   int getId() const;
   std::string getDelimiter() const;
@@ -92,6 +93,9 @@ private:
 
   const std::string _control_loop_frequency_param{ "/niryo_robot_program_player/control_loop_frequency" };
   double _control_loop_frequency{ 30 };
+
+  const std::string _port_name_param{ "/niryo_robot_program_player/port_name" };
+  std::string _port_name{ "" };
 
   const std::string _stop_button_debounce_time_param{ "/niryo_robot_program_player/stop_button_debounce_time" };
   int _stop_button_debounce_time{ 500 };
