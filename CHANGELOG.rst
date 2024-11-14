@@ -30,6 +30,7 @@ Forthcoming
   * Fixed NiryoRosWrapper.forward_kinematics which returned v2 metadata despite being a v1 pose
   * Fixed NiryoRosWrapper.inverse_kinematics which returned was converting poses to v2 before doing the inverse kinematics
   * Fixed a bug in Pose which was allocating the same instance of PoseMetadata when using the constructor's default metadata value
+  * Fixed a bug in Tool ROS wrapper which was not using the correct service type when calling tool reboot service
 
 v5.5.2
 -----------
