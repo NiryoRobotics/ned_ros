@@ -32,6 +32,7 @@ Forthcoming
   * Fixed a bug in Pose which was allocating the same instance of PoseMetadata when using the constructor's default metadata value
   * Fixed a bug where memory was allocated and not freed each time the program player's node tried to connect to an inexistant device
   * Fixed a bug in Tool ROS wrapper which was not using the correct service type when calling tool reboot service
+  * use correct message type for ros subscriber in arm_state
 
 v5.5.2
 -----------
