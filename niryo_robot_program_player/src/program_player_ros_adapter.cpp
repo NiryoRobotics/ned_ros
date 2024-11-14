@@ -61,6 +61,10 @@ void ProgramPlayerROSAdapter::initParameters(ros::NodeHandle& nh)
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %f", _control_loop_frequency_param.c_str(),
             _control_loop_frequency);
 
+  nh.getParam(_port_name_param, _port_name);
+  ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %s", _control_loop_frequency_param.c_str(),
+            _port_name.c_str());
+
   nh.getParam(_stop_button_debounce_time_param, _stop_button_debounce_time);
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %d", _stop_button_debounce_time_param.c_str(),
             _stop_button_debounce_time);
@@ -213,6 +217,11 @@ int ProgramPlayerROSAdapter::getDisplaySpecs() const
 double ProgramPlayerROSAdapter::getLoopFrequency() const
 {
   return _control_loop_frequency;
+}
+
+std::string ProgramPlayerROSAdapter::getPortName() const
+{
+  return _port_name;
 }
 
 int ProgramPlayerROSAdapter::getStopButtonDebounceTime() const

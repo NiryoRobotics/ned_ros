@@ -97,6 +97,7 @@ void ProgramPlayerDriver<reg_type>::init(const int& baudrate, const std::string&
   catch (const std::exception& e)
   {
     // std::cerr << e.what() << '\n';
+    delete _dxlPortHandler;
   }
 }
 

@@ -47,6 +47,10 @@ public:
   {
     return _baudrate;
   }
+  std::string getPortName() const
+  {
+    return _port_name;
+  }
   int getDisplaySpecs() const
   {
     return _screen_size;
@@ -113,6 +117,7 @@ private:
   std::chrono::time_point<std::chrono::system_clock> _niryo_studio_timestamp;
   int _baudrate{ 1000000 };
   int _id{ 10 };
+  std::string _port_name{ "/dev/dummy_port" };
   int32_t _screen_size{ 16 };
   std::string _program_number_delimiter{ "." };
   double _control_loop_frequency{ 30 };
@@ -230,6 +235,7 @@ protected:
                      std::make_pair("unique-name3", "program3") };
     ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
     adapter.setProgramList(program_list);
+    program_player->tick();
   }
 
   void TearDown() override
