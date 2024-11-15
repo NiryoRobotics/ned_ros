@@ -86,7 +86,7 @@ private:
         bool _callbackGetHardwareId(conveyor_interface::GetHardwareId::Request &req,
                                     conveyor_interface::GetHardwareId::Response &res);
 
-        void _publishConveyorsFeedback(const ros::TimerEvent&);
+        void _publishConveyorsFeedback();
 
         bool isCalibrationInProgress() const;
 
