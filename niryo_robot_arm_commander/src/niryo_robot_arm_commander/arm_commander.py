@@ -11,7 +11,15 @@ import numpy as np
 from .trajectories_executor import TrajectoriesExecutor
 from .jog_controller import JogController
 from .trajectory_handler import TrajectoryHandlerNode
-from .utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, angle_between_2_points
+from .utils import (
+    list_to_pose,
+    pose_to_list,
+    dist_2_poses,
+    dist_2_points,
+    poses_too_close,
+    angle_between_2_points,
+)
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, RobotState
 
@@ -131,9 +139,14 @@ class ArmCommander:
         :type : ArmMoveCommand
         :return: status, message
         """
-        tcp_roll, tcp_pitch, tcp_yaw = arm_cmd.rpy.roll, arm_cmd.rpy.pitch, arm_cmd.rpy.yaw
-        ee_roll, ee_pitch, ee_yaw = self.__transform_handler.tcp_to_ee_link_rpy_target(tcp_roll, tcp_pitch, tcp_yaw,
-                                                                                       self.__end_effector_link)
+        tcp_roll, tcp_pitch, tcp_yaw = (
+            arm_cmd.rpy.roll,
+            arm_cmd.rpy.pitch,
+            arm_cmd.rpy.yaw,
+        )
+        ee_roll, ee_pitch, ee_yaw = self.__transform_handler.tcp_to_ee_link_rpy_target(
+            tcp_roll, tcp_pitch, tcp_yaw, self.__end_effector_link
+        )
         self.__validate_params_move(ArmMoveCommand.RPY, RPY(ee_roll, ee_pitch, ee_yaw))
         self.__arm.set_rpy_target([ee_roll, ee_pitch, ee_yaw], self.__end_effector_link)
         return self.__traj_executor.compute_and_execute_plan_to_target()
@@ -210,9 +223,11 @@ class ArmCommander:
 
         # set arm pose target
         self.__arm.set_pose_target(pose_list, self.__end_effector_link)
-        return self.__traj_executor.compute_and_execute_cartesian_plan([msg_pose],
-                                                                       self.__arm_state.velocity_scaling_factor,
-                                                                       self.__arm_state.acceleration_scaling_factor)
+        return self.__traj_executor.compute_and_execute_cartesian_plan(
+            [msg_pose],
+            self.__arm_state.velocity_scaling_factor,
+            self.__arm_state.acceleration_scaling_factor,
+        )
 
     # - Linear Trajectory
     def set_linear_trajectory(self, arm_cmd):
@@ -238,9 +253,11 @@ class ArmCommander:
             return CommandStatus.SUCCESS, "Command was already satisfied"
 
         else:
-            return self.__traj_executor.compute_and_execute_cartesian_plan([ee_pose],
-                                                                           self.__arm_state.velocity_scaling_factor,
-                                                                           self.__arm_state.acceleration_scaling_factor)
+            return self.__traj_executor.compute_and_execute_cartesian_plan(
+                [ee_pose],
+                self.__arm_state.velocity_scaling_factor,
+                self.__arm_state.acceleration_scaling_factor,
+            )
 
     # - Spiral Trajectory
     def draw_spiral_trajectory(self, arm_cmd):
@@ -290,9 +307,11 @@ class ArmCommander:
                 waypoints.append(copy.deepcopy(target_pose))
                 angle += angle_step_rad
 
-        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints,
-                                                                       self.__arm_state.velocity_scaling_factor,
-                                                                       self.__arm_state.acceleration_scaling_factor)
+        return self.__traj_executor.compute_and_execute_cartesian_plan(
+            waypoints,
+            self.__arm_state.velocity_scaling_factor,
+            self.__arm_state.acceleration_scaling_factor,
+        )
 
     def draw_circle_trajectory(self, arm_cmd):
         """
@@ -307,9 +326,11 @@ class ArmCommander:
         center_point = arm_cmd.position
         dist_from_center = dist_2_points(target_pose.position, center_point)
 
-        tmp_point = Point(round(target_pose.position.x - center_point.x, 4),
-                          round(target_pose.position.y - center_point.y, 4),
-                          round(target_pose.position.z - center_point.z, 4))
+        tmp_point = Point(
+            round(target_pose.position.x - center_point.x, 4),
+            round(target_pose.position.y - center_point.y, 4),
+            round(target_pose.position.z - center_point.z, 4),
+        )
 
         angle_off = angle_between_2_points(Point(0, 1, 0), tmp_point)
 
@@ -326,6 +347,7 @@ class ArmCommander:
 
     # - Waypointed Trajectory
     def execute_waypointed_trajectory(self, arm_cmd):
+        self.__validate_params_move(ArmMoveCommand.EXECUTE_FULL_TRAJ, arm_cmd.trajectory)
         return self.__traj_executor.execute_joint_trajectory(arm_cmd.trajectory)
 
     def execute_raw_waypointed_trajectory(self, arm_cmd):
@@ -354,7 +376,11 @@ class ArmCommander:
         """
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
-            return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0", None
+            return (
+                CommandStatus.NO_PLAN_AVAILABLE,
+                "Can't generate plan from a list of length 0",
+                None,
+            )
         list_ee_poses = [
             self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link)
             for tcp_pose in list_tcp_poses
@@ -368,10 +394,12 @@ class ArmCommander:
                 plan = self.__traj_executor.compute_cartesian_plan(list_ee_poses)
                 if plan is None:
                     raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "")
-                plan = self.__traj_executor.retime_plan(plan,
-                                                        self.__arm_state.velocity_scaling_factor,
-                                                        self.__arm_state.acceleration_scaling_factor,
-                                                        optimize=False)
+                plan = self.__traj_executor.retime_plan(
+                    plan,
+                    self.__arm_state.velocity_scaling_factor,
+                    self.__arm_state.acceleration_scaling_factor,
+                    optimize=False,
+                )
 
             except ArmCommanderException as e:
                 if e.status == CommandStatus.NO_PLAN_AVAILABLE:
@@ -416,7 +444,7 @@ class ArmCommander:
             list_plans.append(copy.deepcopy(partial_plan))
 
             # Generating new start state for future iteration
-            new_state.joint_state.position = list_plans[-1].joint_trajectory.points[-1].positions
+            new_state.joint_state.position = (list_plans[-1].joint_trajectory.points[-1].positions)
             self.__arm.set_start_state(new_state)
 
         self.__arm.set_start_state_to_current_state()
@@ -489,7 +517,8 @@ class ArmCommander:
             big_plan,
             optimize=True,
             velocity_scaling_factor=self.__arm_state.velocity_scaling_factor,
-            acceleration_scaling_factor=self.__arm_state.acceleration_scaling_factor)
+            acceleration_scaling_factor=self.__arm_state.acceleration_scaling_factor,
+        )
         return final_plan
 
     # - General Purposes
@@ -497,7 +526,7 @@ class ArmCommander:
         if rospy.get_param("~display_trajectories"):
             points = []
             for joints in plan.joint_trajectory.points:
-                forward_kinematics = self.__kinematics_handler.get_forward_kinematics_v2(joints.positions)
+                forward_kinematics = (self.__kinematics_handler.get_forward_kinematics_v2(joints.positions))
                 if forward_kinematics is None:
                     forward_kinematics = RobotState()
                 points.append(forward_kinematics.position)
@@ -521,7 +550,10 @@ class ArmCommander:
             self.__parameters_validator.validate_position(args[0])
         elif command_type == ArmMoveCommand.RPY:
             self.__parameters_validator.validate_orientation(args[0])
-        elif command_type == ArmMoveCommand.EXECUTE_TRAJ:
+        elif command_type in [
+                ArmMoveCommand.EXECUTE_TRAJ,
+                ArmMoveCommand.EXECUTE_FULL_TRAJ,
+        ]:
             self.__parameters_validator.validate_trajectory(args[0])
         elif command_type == ArmMoveCommand.POSE_QUAT:
             self.__parameters_validator.validate_position(args[0])
@@ -547,18 +579,25 @@ class ArmCommander:
             response = self.__parameters_validator.check_state_validity(robot_state_target, group_name, None)
             if not response.valid:
                 if len(response.contacts) > 0:
-                    rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
-                                  response.contacts[0].contact_body_1,
-                                  response.contacts[0].contact_body_2)
+                    rospy.logwarn(
+                        "Arm commander - Joints target unreachable because of collision between %s and %s",
+                        response.contacts[0].contact_body_1,
+                        response.contacts[0].contact_body_2,
+                    )
                     raise ArmCommanderException(
                         CommandStatus.INVALID_PARAMETERS,
                         "Target joints would lead to a collision between links {} and {} ".format(
-                            response.contacts[0].contact_body_1, response.contacts[0].contact_body_2))
+                            response.contacts[0].contact_body_1,
+                            response.contacts[0].contact_body_2,
+                        ),
+                    )
                 else:  # didn't succeed to get the contacts on the real robot
                     rospy.logwarn(
-                        'Arm commander - Joints target unreachable because of collision between two parts of Ned')
-                    raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                                "Target joints would lead to a collision between two parts of Ned")
+                        "Arm commander - Joints target unreachable because of collision between two parts of Ned")
+                    raise ArmCommanderException(
+                        CommandStatus.INVALID_PARAMETERS,
+                        "Target joints would lead to a collision between two parts of Ned",
+                    )
 
         except rospy.ServiceException as e:
             rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))

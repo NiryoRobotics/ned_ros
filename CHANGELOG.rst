@@ -2,6 +2,16 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+**Features**
+
+**Improvements**
+  * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
+
+**Bugfixes**
+
+
 v5.5.3
 -----------
 **Features**
