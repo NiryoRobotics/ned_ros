@@ -10,6 +10,7 @@ Forthcoming
   * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
 
 **Bugfixes**
+  * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
 
 
 v5.5.3
