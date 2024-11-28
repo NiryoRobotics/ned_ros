@@ -79,8 +79,6 @@ class RobotNodesObserver(object):
             if pywrapper_node in alive_nodes and rosnode.rosnode_ping(pywrapper_node, 1)
         }
 
-        rospy.logwarn(f'remaining user logs: {self.__python_wrapper_nodes}')
-
         return bool(self.__python_wrapper_nodes)
 
     def check_vital_nodes(self):

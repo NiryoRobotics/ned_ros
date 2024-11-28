@@ -8,6 +8,7 @@ Forthcoming
 
 **Improvements**
   * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
+  * No wait_for in nodes constructors. Use callbacks / lazy loading instead
 
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper

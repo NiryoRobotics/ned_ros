@@ -5,7 +5,7 @@ import os
 import rospy
 from distutils.dir_util import mkpath
 
-from niryo_robot_utils import sentry_init
+from niryo_robot_utils import sentry_init, async_init
 
 from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
 from niryo_robot_reports.AlertReportHandler import AlertReportHandler
@@ -26,37 +26,51 @@ from niryo_robot_reports.srv import CheckConnection
 class ReportsNode:
 
     def __init__(self):
-        self.__wait_booting()
         rospy.logdebug("Reports Node - Entering in Init")
 
-        rospy.wait_for_service('/niryo_robot_database/settings/get', 20)
-        self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
+        async_init.PromiseServiceProxy('/niryo_robot_database/settings/get',
+                                       GetSettings,
+                                       self.__on_get_settings_available)
 
+        rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
+
+        # Set a bool to mention that this node is initialized
+        rospy.set_param('~initialized', True)
+
+        rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)
+
+        rospy.logdebug("Reports Node - Node Started")
+
+    @property
+    def __cloud_api(self):
+        if self.__lazy_loaded_cloud_api is None:
+            raise RuntimeError("Cloud API is not initialized yet")
+        return self.__lazy_loaded_cloud_api
+
+    def __on_get_settings_available(self, get_settings_proxy):
         settings = {}
         for setting in ['cloud_domain', 'serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
-            response = self.__get_setting(setting)
+            response = get_settings_proxy(setting)
             setting_value = response.value
             if response.status != CommandStatus.SUCCESS:
                 rospy.logerr(f'Unable to get setting "{setting}"')
                 setting_value = None
             settings[setting] = setting_value
 
-        self.__cloud_api = CloudAPI(**settings, https=True)
-
+        self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
         try:
             self.__cloud_api.authentification.ping()
         except MicroServiceError:
             try:
                 api_key = self.__cloud_api.authentification.authenticate()
                 self.__cloud_api.set_api_key(api_key)
-
-                rospy.wait_for_service('/niryo_robot_database/settings/set', 20)
-                set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-                set_setting('api_key', api_key, 'str')
+                async_init.PromiseServiceProxy('/niryo_robot_database/settings/set',
+                                               SetSettings,
+                                               lambda set_settings_proxy: set_settings_proxy('api_key', api_key, 'str'))
             except MicroServiceError as microservice_error:
                 rospy.logerr(str(microservice_error))
 
-        get_report_path_response = self.__get_setting('reports_path')
+        get_report_path_response = get_settings_proxy('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
             rospy.logerr('Unable to retrieve the reports directory path from the database')
         reports_path = os.path.expanduser(get_report_path_response.value)
@@ -71,32 +85,6 @@ class ReportsNode:
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
-
-        rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
-
-        # Set a bool to mention that this node is initialized
-        rospy.set_param('~initialized', True)
-
-        rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)
-
-        rospy.logdebug("Reports Node - Node Started")
-
-    @staticmethod
-    def __wait_booting():
-        from niryo_robot_status.msg import RobotStatus
-
-        for i in range(1, 20):
-            try:
-                msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 20 / i)
-            except rospy.exceptions.ROSInterruptException:
-                return
-            except rospy.exceptions.ROSException:
-                pass
-            else:
-                if msg.robot_status not in [RobotStatus.BOOTING, RobotStatus.UNKNOWN]:
-                    return
-
-            rospy.sleep(1)
 
     def __check_connection_callback(self, req):
         rospy.logdebug('service called: ' + str(req.service.to_test))
