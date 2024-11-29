@@ -86,8 +86,6 @@ public:
   bool isConnectedPrevious() const;
 
 private:
-  void scanDevices();
-
   void controlLoop();
 
   void pingProgramPlayer();
@@ -204,7 +202,10 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::initDriver()
 {
   _baudrate = _program_player_adapter.getBaudrate();
-  _program_player_driver.init(_baudrate, _port_name);
+  _port_name = _program_player_adapter.getPortName();
+
+  if (std::filesystem::exists(_port_name))
+    _program_player_driver.init(_baudrate, _port_name);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -236,7 +237,6 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::controlLoop()
         next_read_time = current_time;
     }
 
-    scanDevices();
     pingProgramPlayer();
 
     tick();
@@ -286,26 +286,6 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::display(std::stri
 
   _program_player_driver.writeLCDLine1(_id, line1);
   _program_player_driver.writeLCDLine2(_id, line2);
-}
-
-template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
-void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::scanDevices()
-{
-  // TODO(i.ambit) use serial bus info to retrive program player
-  std::string path = "/dev";
-  std::set<std::string> ports_devices;
-  for (const auto& entry : std::filesystem::directory_iterator(path))
-  {
-    if (entry.path().u8string().find(path + "/ttyACM") != entry.path().u8string().npos)
-    {
-      ports_devices.insert(entry.path().u8string());
-    }
-  }
-
-  if (ports_devices.empty())
-    _port_name = "";
-  else
-    _port_name = *ports_devices.begin();
 }
 
 // getter

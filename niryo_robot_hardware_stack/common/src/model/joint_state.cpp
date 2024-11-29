@@ -28,7 +28,6 @@ namespace common
 {
 namespace model
 {
-
 /**
  * @brief JointState::JointState
  * @param name
@@ -37,8 +36,9 @@ namespace model
  * @param bus_proto
  * @param id
  */
-JointState::JointState(std::string name, EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id)
-    : AbstractMotorState(type, component_type, bus_proto, id), _name(std::move(name))
+JointState::JointState(std::string name, EHardwareType type, EComponentType component_type, EBusProtocol bus_proto,
+                       uint8_t id)
+  : AbstractMotorState(type, component_type, bus_proto, id), _name(std::move(name))
 {
 }
 
@@ -47,49 +47,83 @@ JointState::JointState(std::string name, EHardwareType type, EComponentType comp
  * @param other
  * @return
  */
-bool JointState::operator==(const JointState &other) const { return ((this->_hw_type == other._hw_type) && (this->_id == other._id)); }
+bool JointState::operator==(const JointState& other) const
+{
+  return ((this->_hw_type == other._hw_type) && (this->_id == other._id));
+}
 
 /**
  * @brief JointState::setName
  * @param name
  */
-void JointState::setName(std::string &name) { _name = name; }
+void JointState::setName(std::string& name)
+{
+  _name = name;
+}
 
 /**
  * @brief JointState::setOffsetPosition
  * @param offset_position
  */
-void JointState::setOffsetPosition(double offset_position) { _offset_position = offset_position; }
+void JointState::setOffsetPosition(double offset_position)
+{
+  _offset_position = offset_position;
+}
 
 /**
  * @brief JointState::setHomePosition
  * @param home_position
  */
-void JointState::setHomePosition(double home_position) { _home_position = home_position; }
+void JointState::setHomePosition(double home_position)
+{
+  _home_position = home_position;
+}
+
+/**
+ * @brief JointState::setDefaultHomePosition
+ *
+ * @param default_home_position
+ */
+void JointState::setDefaultHomePosition(double default_home_position)
+{
+  _default_home_position = default_home_position;
+}
 
 /**
  * @brief JointState::setLimitPositionMax
  * @param max_position
  */
-void JointState::setLimitPositionMax(double max_position) { _limit_position_max = max_position; }
+void JointState::setLimitPositionMax(double max_position)
+{
+  _limit_position_max = max_position;
+}
 
 /**
  * @brief JointState::setLimitPositionMin
  * @param min_position
  */
-void JointState::setLimitPositionMin(double min_position) { _limit_position_min = min_position; }
+void JointState::setLimitPositionMin(double min_position)
+{
+  _limit_position_min = min_position;
+}
 
 /**
  * @brief JointState::setDirection
  * @param direction
  */
-void JointState::setDirection(int8_t direction) { _direction = direction; }
+void JointState::setDirection(int8_t direction)
+{
+  _direction = direction;
+}
 
 /**
  * @brief JointState::setTorquePercentage
  * @param torque_percentagetorque_percentage
  */
-void JointState::setTorquePercentage(uint8_t torque_percentage) { _torque_percentage = torque_percentage > 100 ? 100 : torque_percentage; }
+void JointState::setTorquePercentage(uint8_t torque_percentage)
+{
+  _torque_percentage = torque_percentage > 100 ? 100 : torque_percentage;
+}
 
 // ***********************
 //  AbstractMotor intf
@@ -100,15 +134,18 @@ void JointState::setTorquePercentage(uint8_t torque_percentage) { _torque_percen
  */
 void JointState::reset()
 {
-    AbstractMotorState::reset();
-    _name.clear();
+  AbstractMotorState::reset();
+  _name.clear();
 }
 
 /**
  * @brief common::model::JointState::isValid
  * @return
  */
-bool common::model::JointState::isValid() const { return (0 != getId() && EHardwareType::UNKNOWN != getHardwareType()); }
+bool common::model::JointState::isValid() const
+{
+  return (0 != getId() && EHardwareType::UNKNOWN != getHardwareType());
+}
 
 /**
  * @brief JointState::str
@@ -116,24 +153,24 @@ bool common::model::JointState::isValid() const { return (0 != getId() && EHardw
  */
 std::string JointState::str() const
 {
-    std::ostringstream ss;
+  std::ostringstream ss;
 
-    ss << "JointState : ";
-    ss << "name: "
-       << "\"" << _name << "\""
-       << ",\n";
-    ss << "offset position: " << _offset_position << ", ";
-    ss << "home position: " << _home_position << ", ";
-    ss << "direction : " << (_direction == 1 ? 1 : -1) << ",\n";
-    ss << "pos(" << pos << "), ";
-    ss << "cmd(" << cmd << "), ";
-    ss << "vel(" << vel << "), ";
-    ss << "eff(" << eff << ")";
-    ss << "\n---\n";
-    ss << "\n";
-    ss << AbstractMotorState::str();
+  ss << "JointState : ";
+  ss << "name: "
+     << "\"" << _name << "\""
+     << ",\n";
+  ss << "offset position: " << _offset_position << ", ";
+  ss << "home position: " << _home_position.value() << ", ";
+  ss << "direction : " << (_direction == 1 ? 1 : -1) << ",\n";
+  ss << "pos(" << pos << "), ";
+  ss << "cmd(" << cmd << "), ";
+  ss << "vel(" << vel << "), ";
+  ss << "eff(" << eff << ")";
+  ss << "\n---\n";
+  ss << "\n";
+  ss << AbstractMotorState::str();
 
-    return ss.str();
+  return ss.str();
 }
 
 }  // namespace model

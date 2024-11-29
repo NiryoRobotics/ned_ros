@@ -276,10 +276,8 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         Reboots the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
 
-        :return: success, message
-        :rtype: (bool, str)
+        :return: status, message
+        :rtype: (int, str)
         """
-        from std_srvs.srv import Trigger as StdTrigger
-        result = self._call_service('/niryo_robot/tools/reboot', StdTrigger)
-
-        return result.success, result.message
+        result = self._call_service('/niryo_robot/tools/reboot', Trigger)
+        return self._classic_return_w_check(result)

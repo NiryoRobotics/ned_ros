@@ -311,7 +311,7 @@ class CommandInterpreter:
 
     @check_nb_args(1)
     def __set_arm_max_velocity(self, max_velocity_percentage):
-        if type(max_velocity_percentage) not in [int, float] or not 0 < max_velocity_percentage <= 100:
+        if type(max_velocity_percentage) not in [int, float] or not (0 < max_velocity_percentage <= 100):
             self.__raise_exception_expected_type("float/integer [1 -100]", max_velocity_percentage)
 
         self.__niryo_robot.set_arm_max_velocity(max_velocity_percentage)
@@ -375,6 +375,10 @@ class CommandInterpreter:
         ]
         return self.__send_answer(*data_answer)
 
+    @check_nb_args(0)
+    def __get_pose_v2(self):
+        return self.__send_answer(self.__niryo_robot.get_pose_v2_as_list().to_dict())
+
     @check_nb_args(2)
     def __move(self, robot_position, linear):
         linear = self.__boolean_string_dict_converter[linear]
@@ -406,12 +410,13 @@ class CommandInterpreter:
         self.__niryo_robot.move_pose(*param)
         return self.__send_answer()
 
-    @check_nb_args(2)
-    def __shift_pose(self, axis_string, value_string):
+    @check_nb_args([2, 3])
+    def __shift_pose(self, axis_string, value_string, linear="FALSE"):
         axis = self.__check_and_get_from_dict(axis_string, self.__axis_string_dict_convertor)
         value = self.__transform_to_type(value_string, float)
+        linear = self.__boolean_string_dict_converter[linear]
 
-        self.__niryo_robot.shift_pose(axis, value)
+        self.__niryo_robot.shift_pose(axis, value, linear)
         return self.__send_answer()
 
     @check_nb_args(2)
@@ -460,6 +465,16 @@ class CommandInterpreter:
     def __inverse_kinematics(self, pose):
         pose_obj = Pose.from_dict(pose)
         return self.__send_answer(self.__niryo_robot.inverse_kinematics(pose_obj).to_dict())
+
+    @check_nb_args(1)
+    def __forward_kinematics_v2(self, joints_position):
+        joints_position_obj = JointsPosition.from_dict(joints_position)
+        return self.__send_answer(self.__niryo_robot.forward_kinematics_v2(joints_position_obj).to_dict())
+
+    @check_nb_args(1)
+    def __inverse_kinematics_v2(self, pose):
+        pose_obj = Pose.from_dict(pose)
+        return self.__send_answer(self.__niryo_robot.inverse_kinematics_v2(pose_obj).to_dict())
 
     # - Saved Pose
 
@@ -568,13 +583,13 @@ class CommandInterpreter:
     def __execute_trajectory_from_poses_and_joints(self, *param_list):
         list_poses_joints = []
         for pose_joint in param_list[0]:
-            if len(pose_joint) != 7 and len(pose_joint) != 6:
+            if not (6 <= len(pose_joint) <= 7):
                 self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose_joint))
             list_poses_joints.append(self.__map_list(pose_joint, float))
 
         list_type = []
         for type_ in param_list[1]:
-            if type_ != 'joint' and type_ != 'pose':
+            if type_ not in ['joints', 'pose']:
                 self.__raise_exception_expected_choice("'pose' or 'joint'", type_)
             list_type.append(type_)
 
@@ -775,6 +790,11 @@ class CommandInterpreter:
         self.__niryo_robot.tool_reboot()
         return self.__send_answer()
 
+    @check_nb_args(0)
+    def __get_tcp(self):
+        tcp = self.__niryo_robot.get_tcp(as_list=True)
+        return self.__send_answer(*tcp)
+
     # - Hardware
 
     @check_nb_args(2)
@@ -883,7 +903,7 @@ class CommandInterpreter:
         control_on = self.__check_and_get_from_dict(control_on_string, self.__boolean_string_dict_converter)
 
         self.__check_type(speed, int)
-        if speed < 0 or speed > 100:
+        if not (0 <= speed <= 100):
             self.__raise_exception_expected_choice("[0 => 100]", speed)
 
         direction = self.__check_and_get_from_dict(direction_string, self.__conveyor_direction_string_dict_convertor)
@@ -896,6 +916,14 @@ class CommandInterpreter:
         conveyors = self.__niryo_robot.get_conveyors_number()
         conveyors_list = [self.__conveyor_id_string_dict_convertor_inv[conveyor_id] for conveyor_id in conveyors]
         return self.__send_answer(conveyors_list)
+
+    @check_nb_args(0)
+    def __get_conveyors_feedback(self):
+        feedback = self.__niryo_robot.get_conveyors_feedback()
+        for i in range(len(feedback)):
+            feedback[i]['conveyor_id'] = self.__conveyor_id_string_dict_convertor_inv[feedback[i]['conveyor_id']]
+            feedback[i]['connection_state'] = str(feedback[i]['connection_state'])
+        return self.__send_answer(feedback)
 
     # - Vision
 
@@ -1138,7 +1166,7 @@ class CommandInterpreter:
         if len(color) != 3:
             self.__raise_exception_expected_type("Color must be a list of size 3: [r, g, b]", color)
         for index, color_elem in enumerate(color):
-            if color_elem < 0 or color_elem > 255:
+            if not (0 <= color_elem <= 255):
                 self.__raise_exception_expected_choice("[0 => 255]", color_elem)
             color[index] = self.__transform_to_type(color_elem, float)
         return color

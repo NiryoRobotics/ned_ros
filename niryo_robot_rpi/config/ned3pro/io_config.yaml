@@ -41,16 +41,16 @@ monitor_12v_pin: 23
 digital_inputs:
   - name: DI1
     pin: 0
-    reverse: True
+    reverse: False
   - name: DI2
     pin: 1
-    reverse: True
+    reverse: False
   - name: DI3
     pin: 2
-    reverse: True
+    reverse: False
   - name: DI5
     pin: 3
-    reverse: True
+    reverse: False
 
 digital_outputs:
   - name: DO1

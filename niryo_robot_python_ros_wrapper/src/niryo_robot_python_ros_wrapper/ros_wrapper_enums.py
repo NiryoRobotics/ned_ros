@@ -97,7 +97,6 @@ class ConveyorCan(Enum):
     """
     ConveyorID to control conveyors with CAN interface
     """
-
     NONE = 0
     ID_1 = 12
     ID_2 = 13
@@ -182,6 +181,7 @@ class CommandEnum(Enum):
     GET_JOINTS = 10
     GET_POSE = 11
     GET_POSE_QUAT = 12
+    GET_POSE_V2 = 13
 
     MOVE_JOINTS = 20
     MOVE_POSE = 21
@@ -198,6 +198,9 @@ class CommandEnum(Enum):
 
     MOVE = 29
     JOG = 30
+
+    FORWARD_KINEMATICS_V2 = 31
+    INVERSE_KINEMATICS_V2 = 32
 
     # Saved Pose
     GET_POSE_SAVED = 50
@@ -252,6 +255,7 @@ class CommandEnum(Enum):
     SET_TCP = 141
     RESET_TCP = 142
     TOOL_REBOOT = 145
+    GET_TCP = 146
 
     # - Hardware
     SET_PIN_MODE = 150
@@ -269,6 +273,7 @@ class CommandEnum(Enum):
     UNSET_CONVEYOR = 181
     CONTROL_CONVEYOR = 182
     GET_CONNECTED_CONVEYORS_ID = 183
+    GET_CONVEYORS_FEEDBACK = 184
 
     # - Vision
     GET_IMAGE_COMPRESSED = 200
