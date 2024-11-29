@@ -301,7 +301,7 @@ trigger_job:
   script:
     - >
       case $CI_COMMIT_BRANCH in
-        production)
+        master)
           ENVIRONMENT=production
           ;;
         staging)
