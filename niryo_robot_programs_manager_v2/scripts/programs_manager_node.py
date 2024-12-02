@@ -35,13 +35,6 @@ class ProgramManagerNode:
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
-        self.__lazy_loaded_programs_manager = None
-        async_init.PromiseServiceProxy('/niryo_robot_database/get_db_file_path',
-                                       GetString,
-                                       self.__on_get_db_file_path_available)
-
-        rospy.logdebug("Programs Manager - Managers created !")
-
         # Autorun
         self.__get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
         self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
@@ -76,6 +69,11 @@ class ProgramManagerNode:
         rospy.Service('~set_program_autorun', SetProgramAutorun, self.__callback_set_program_autorun)
         rospy.Service('~get_program_autorun_infos', GetProgramAutorunInfos, self.__callback_get_program_autorun_infos)
         rospy.Service('~execute_program_autorun', Trigger, self.__callback_execute_program_autorun)
+
+        self.__lazy_loaded_programs_manager = None
+        async_init.PromiseServiceProxy('/niryo_robot_database/get_db_file_path',
+                                       GetString,
+                                       self.__on_get_db_file_path_available)
 
         rospy.on_shutdown(self.stop_program)
 
