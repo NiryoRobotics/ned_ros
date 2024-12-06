@@ -39,6 +39,8 @@ RUN sudo apt update && sudo apt install -y \
     clang \
     clang-format \
     rsync \
+    x11-apps \
+    libx11-dev \
     bash-completion 
 
 # Source the ROS setup file

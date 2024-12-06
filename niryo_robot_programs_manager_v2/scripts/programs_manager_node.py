@@ -7,7 +7,7 @@ import rospy
 import logging
 import os
 
-from niryo_robot_utils import sentry_init
+from niryo_robot_utils import sentry_init, async_init
 
 from actionlib_msgs.msg import GoalStatus
 from niryo_robot_programs_manager_v2.ProgramsManager import ProgramsManager
@@ -31,47 +31,18 @@ from niryo_robot_programs_manager_v2.srv import SetProgramAutorun, SetProgramAut
 
 
 class ProgramManagerNode:
+
     def __init__(self):
         rospy.logdebug("Programs Manager - Entering in Init")
 
-        rospy.wait_for_service('/niryo_robot_database/get_db_file_path', 20)
-        get_db_path_service = rospy.ServiceProxy('/niryo_robot_database/get_db_file_path', GetString)
-
-        database_path = get_db_path_service().value
-        programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
-
-        self.__programs_manager = ProgramsManager(database_path, programs_base_dir)
-
-        rospy.logdebug("Programs Manager - Managers created !")
-
         # Autorun
+        self.__get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
         self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
 
-        get_setting_response = get_setting_service('autorun_id')
-        if get_setting_response.status < 0:
-            rospy.logerr('The autorun id has not been found in database')
-            self.__autorun_id = ''
-            self.__set_setting_service('autorun_id', self.__autorun_id, 'str')
-        else:
-            self.__autorun_id = get_setting_response.value
+        self.__lazy_loaded_autorun_id = None
+        self.__lazy_loaded_autorun_mode = None
 
-        self.__autorun_mode_to_str = {
-            SetProgramAutorunRequest.DISABLE: "DISABLE",
-            SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
-            SetProgramAutorunRequest.LOOP: "LOOP",
-        }
-        self.__str_to_autorun_mode = {string: mode for mode, string in self.__autorun_mode_to_str.items()}
         self.__stop_autorun_event = Event()
-
-        get_setting_response = get_setting_service('autorun_mode')
-        if get_setting_response.status < 0:
-            rospy.logerr('The autorun mode has not been found in database')
-            self.__autorun_mode = SetProgramAutorunRequest.DISABLE
-            mode_str = self.__autorun_mode_to_str[self.__autorun_mode]
-            self.__set_setting_service('autorun_mode', mode_str, 'str')
-        else:
-            self.__autorun_mode = self.__str_to_autorun_mode[get_setting_response.value]
 
         # Action Server
         self.__execute_program_action_server = actionlib.ActionServer('~execute_program',
@@ -93,12 +64,16 @@ class ProgramManagerNode:
 
         # Publisher
         self.__program_list_publisher = rospy.Publisher('~program_list', ProgramList, latch=True, queue_size=1)
-        self.__publish_program_list()
 
         # - Autorun
         rospy.Service('~set_program_autorun', SetProgramAutorun, self.__callback_set_program_autorun)
         rospy.Service('~get_program_autorun_infos', GetProgramAutorunInfos, self.__callback_get_program_autorun_infos)
         rospy.Service('~execute_program_autorun', Trigger, self.__callback_execute_program_autorun)
+
+        self.__lazy_loaded_programs_manager = None
+        async_init.PromiseServiceProxy('/niryo_robot_database/get_db_file_path',
+                                       GetString,
+                                       self.__on_get_db_file_path_available)
 
         rospy.on_shutdown(self.stop_program)
 
@@ -106,6 +81,47 @@ class ProgramManagerNode:
         rospy.set_param('~initialized', True)
 
         rospy.loginfo("Programs Manager - Started")
+
+    def __on_get_db_file_path_available(self, get_db_file_path_proxy):
+        database_path = get_db_file_path_proxy().value
+        programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
+
+        self.__lazy_loaded_programs_manager = ProgramsManager(database_path, programs_base_dir)
+        self.__publish_program_list()
+
+    @property
+    def __programs_manager(self):
+        if self.__lazy_loaded_programs_manager is None:
+            raise RuntimeError("Programs Manager is not initialized yet")
+        return self.__lazy_loaded_programs_manager
+
+    def __get_setting_from_db(self, setting_name: str, default_value: str) -> str:
+        try:
+            self.__get_setting_service.wait_for_service(2)
+        except rospy.ROSException:
+            rospy.logerr("Programs Manager - Impossible to connect to the database get setting service")
+            raise
+
+        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
+        status, value = get_setting_service(setting_name)
+        if status < 0:
+            rospy.logwarn(
+                f'The setting "{setting_name}" has not been found in database. Setting it to "{default_value}"')
+            self.__set_setting_service(setting_name, default_value, 'str')
+            return default_value
+        return value
+
+    @property
+    def __autorun_id(self) -> str:
+        if self.__lazy_loaded_autorun_id is None:
+            self.__lazy_loaded_autorun_id = self.__get_setting_from_db('autorun_id', '')
+        return self.__lazy_loaded_autorun_id
+
+    @property
+    def __autorun_mode(self) -> str:
+        if self.__lazy_loaded_autorun_mode is None:
+            self.__lazy_loaded_autorun_mode = self.__get_setting_from_db('autorun_mode', 'DISABLE')
+        return self.__lazy_loaded_autorun_mode
 
     # -- ROS CALLBACKS
     # Program
@@ -210,11 +226,16 @@ class ProgramManagerNode:
 
     # Autorun
     def __callback_set_program_autorun(self, req):
-        self.__autorun_mode = req.mode
-        mode_str = self.__autorun_mode_to_str[req.mode]
+        self.__lazy_loaded_autorun_mode = req.mode
+        autorun_mode_to_str = {
+            SetProgramAutorunRequest.DISABLE: "DISABLE",
+            SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
+            SetProgramAutorunRequest.LOOP: "LOOP",
+        }
+        mode_str = autorun_mode_to_str[req.mode]
         self.__set_setting_service('autorun_mode', mode_str, 'str')
 
-        self.__autorun_id = req.program_id
+        self.__lazy_loaded_autorun_id = req.program_id
         self.__set_setting_service('autorun_id', req.program_id, 'str')
 
         return CommandStatus.SUCCESS, 'Successfully set autorun'

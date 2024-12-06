@@ -90,9 +90,7 @@ class ArmState(object):
         rospy.Subscriber('/niryo_robot/learning_mode/state', Bool, self.__callback_sub_learning_mode)
         self.__learning_mode_service = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)
 
-        self.__hardware_status = rospy.wait_for_message('/niryo_robot_hardware_interface/hardware_status',
-                                                        HardwareStatus,
-                                                        timeout=20)
+        self.__hardware_status = None
         rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
                          HardwareStatus,
                          self.__callback_hardware_status)

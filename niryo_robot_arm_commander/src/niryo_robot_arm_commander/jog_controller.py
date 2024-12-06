@@ -374,7 +374,13 @@ class JogController:
         :rtype: bool
         """
         try:
-            rospy.wait_for_service('/niryo_robot_arm_commander/is_active')
+            rospy.wait_for_service('/niryo_robot_arm_commander/is_active', 2)
+        except rospy.ROSException as e:
+            rospy.logerr(
+                f'Jog Controller - Impossible to connect to service "/niryo_robot_arm_commander/is_active" : {e}')
+            return False
+
+        try:
             is_active_service = rospy.ServiceProxy('/niryo_robot_arm_commander/is_active', GetBool)
             response = is_active_service()
             return not response.value

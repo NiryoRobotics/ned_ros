@@ -204,27 +204,6 @@ class TrajectoryHandlerNode:
     # - Callbacks
 
     def __callback_manage_trajectory(self, req):
-        """
-        req = ManageTrajectoryRequest()
-        req.cmd = ManageTrajectoryRequest.SAVE
-        req.name = trajectory_name
-        req.trajectory = JointTrajectory()
-        req.trajectory.header = Header()
-        req.trajectory.joint_names = ["Joint 1", "Joint 2", "Joint 3", "Joint 4", "Joint 5", "Joint 6"]
-        req.trajectory = trajectory
-        req.trajectory.header.stamp = rospy.Time.now()
-        req.trajectory.points = list[TrajectoryPoint]
-        print(req)
-        rospy.wait_for_service('/niryo_robot_poses_handlers/manage_trajectory', self.__service_timeout)
-        service = rospy.ServiceProxy('/niryo_robot_poses_handlers/manage_trajectory', ManageTrajectory)
-        result = service(req)
-        print("Manage Trajectory Service Result: ", result)
-
-        :param req:
-        :type req:
-        :return:
-        :rtype:
-        """
         cmd = req.cmd
         if cmd == req.SAVE_LAST_LEARNED:
             try:

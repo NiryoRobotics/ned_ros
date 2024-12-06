@@ -44,7 +44,8 @@ class ArmParametersValidator:
         resp = GetJointLimitsResponse()
         resp.joint_limits = []
         for joint_name in self.joint_name_list:
-            limit = JointLimits(joint_name, self.joints_limits_dict[joint_name].lower,
+            limit = JointLimits(joint_name,
+                                self.joints_limits_dict[joint_name].lower,
                                 self.joints_limits_dict[joint_name].upper)
             resp.joint_limits.append(limit)
         return resp
@@ -57,18 +58,26 @@ class ArmParametersValidator:
             if joint.name in self.joint_name_list:
                 self.joints_limits.append(joint.limit)
                 self.joints_limits_dict[joint.name] = joint.limit
-                rospy.set_param("/niryo_robot/robot_command_validation/joint_limits/{}".format(joint.name),
-                                {"min": joint.limit.lower, "max": joint.limit.upper})
+                rospy.set_param("/niryo_robot/robot_command_validation/joint_limits/{}".format(joint.name), {
+                    "min": joint.limit.lower, "max": joint.limit.upper
+                })
 
         return self.joints_limits
 
     def get_joints_limits(self):
         return self.joints_limits
 
-    def validate_trajectory(self, plan):
+    def validate_trajectory(self, trajectory):
         rospy.loginfo("Checking trajectory validity")
-        for joint in plan.trajectory.joint_trajectory.points:
-            self.validate_joints(joint.positions)
+        count = 0
+        for joint in trajectory.points:
+            try:
+                self.validate_joints(joint.positions)
+            except ArmCommanderException as e:
+                raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
+                                            "Waypoint number {} has invalid parameters: {}".format(count,
+                                                                                                   e.message)) from e
+            count += 1
 
     def validate_joints(self, joint_array):
         if len(joint_array) != len(self.joints_limits):
@@ -78,9 +87,12 @@ class ArmParametersValidator:
         for joint_index, joint_cmd in enumerate(joint_array):
             if self.joints_limits[joint_index] and not self.joints_limits[joint_index].lower <= round(joint_cmd, 3) <= \
                                                        self.joints_limits[joint_index].upper:
-                raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                            "joint_{} not in range ({}, {})".format(joint_index + 1, self.joints_limits[
-                                                joint_index].lower, self.joints_limits[joint_index].upper))
+                raise ArmCommanderException(
+                    CommandStatus.INVALID_PARAMETERS,
+                    "joint_{} not in range ({}, {}), {} provided".format(joint_index + 1,
+                                                                         self.joints_limits[joint_index].lower,
+                                                                         self.joints_limits[joint_index].upper,
+                                                                         round(joint_cmd, 3)))
 
     def validate_position(self, position):
         if isinstance(position, Point):
@@ -128,11 +140,10 @@ class ArmParametersValidator:
 
     @staticmethod
     def validate_orientation_quaternion(quat):
-        norm = quat.x ** 2 + quat.y ** 2 + quat.z ** 2 + quat.w ** 2
+        norm = quat.x**2 + quat.y**2 + quat.z**2 + quat.w**2
         norm = sqrt(norm)
         if abs(norm - 1.0) > 0.001:
-            raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                        "Quaternion is not normalised.")
+            raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS, "Quaternion is not normalised.")
 
     @staticmethod
     def validate_shift_pose(shift):

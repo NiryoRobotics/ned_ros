@@ -90,7 +90,7 @@ class ShutdownManager(AbstractShutdownManager):
         Stop the robot movement
         """
         try:
-            stop_move_service = rospy.ServiceProxy('/niryo_robot_commander/stop_command', Trigger)
+            stop_move_service = rospy.ServiceProxy('/niryo_robot_arm_commander/stop_command', Trigger)
             stop_move_service()
         except (rospy.ServiceException, rospy.ROSInterruptException, rospy.ROSException):
             pass

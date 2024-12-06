@@ -2,6 +2,19 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.5.4
+-----------
+**Features**
+
+**Improvements**
+  * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
+  * No wait_for in nodes constructors. Use callbacks / lazy loading instead
+
+**Bugfixes**
+  * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
+  * Fixed program player unit tests so that they reflect the entire finite state machine
+
+
 v5.5.3
 -----------
 **Features**

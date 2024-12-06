@@ -10,7 +10,11 @@
     }
   },
   "runArgs": [
-    "--network=host"
+    "--network=host",
+    "--env=DISPLAY",
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
+    "--env=XAUTHORITY=/tmp/.Xauthority",
+    "--volume=${env:XAUTHORITY}:/tmp/.Xauthority"
   ],
   "remoteEnv": {
     "CATKIN_SHELL": "bash",

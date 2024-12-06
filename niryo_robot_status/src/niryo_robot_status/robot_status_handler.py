@@ -6,6 +6,7 @@ from .robot_nodes_observer import RobotNodesObserver
 from .robot_logs_observer import RobotLogsObserver
 
 # - Messages
+from std_msgs.msg import Empty
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import CommandStatus
@@ -35,6 +36,8 @@ class RobotStatusHandler(object):
 
         # - Publisher
         self.__robot_status_pub = rospy.Publisher('~robot_status', RobotStatus, latch=True, queue_size=10)
+        self.__robot_heartbeat_pub = rospy.Publisher('~heartbeat', Empty, queue_size=1)
+        rospy.Timer(rospy.Duration(1), lambda _: self.__robot_heartbeat_pub.publish())
 
         # - Services
         self.__advertise_shutdown_service = rospy.Service('~advertise_shutdown',
