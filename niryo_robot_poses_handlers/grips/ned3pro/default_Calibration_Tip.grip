@@ -3,9 +3,9 @@
   "transform": {
     "header_frame_id": "tool_link",
     "translation": [
-      0.026,
+      0.0545,
       0.0, 
-      0.034
+      0.0045
     ], 
     "quaternion": [
       0.0, 

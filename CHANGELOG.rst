@@ -13,7 +13,7 @@ v5.5.4
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
   * Fixed program player unit tests so that they reflect the entire finite state machine
-
+  * Fixed Ned3pro calibration tip transform
 
 v5.5.3
 -----------
