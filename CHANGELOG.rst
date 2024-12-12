@@ -14,6 +14,7 @@ forthcoming
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
   * Fixed program player unit tests so that they reflect the entire finite state machine
   * Fixed Ned3pro calibration tip transform
+  * Fixed a bug in the robot_state publisher which issued a warning when trying to divide by 0
 
 v5.5.3
 -----------
