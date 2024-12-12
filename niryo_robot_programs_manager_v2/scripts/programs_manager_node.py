@@ -41,6 +41,12 @@ class ProgramManagerNode:
 
         self.__lazy_loaded_autorun_id = None
         self.__lazy_loaded_autorun_mode = None
+        self.__autorun_mode_to_str = {
+            SetProgramAutorunRequest.DISABLE: "DISABLE",
+            SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
+            SetProgramAutorunRequest.LOOP: "LOOP",
+        }
+        self.__str_to_autorun_mode = {v: k for k, v in self.__autorun_mode_to_str.items()}
 
         self.__stop_autorun_event = Event()
 
@@ -102,14 +108,13 @@ class ProgramManagerNode:
             rospy.logerr("Programs Manager - Impossible to connect to the database get setting service")
             raise
 
-        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
-        status, value = get_setting_service(setting_name)
-        if status < 0:
+        response = self.__get_setting_service(setting_name)
+        if response.status < 0:
             rospy.logwarn(
                 f'The setting "{setting_name}" has not been found in database. Setting it to "{default_value}"')
             self.__set_setting_service(setting_name, default_value, 'str')
             return default_value
-        return value
+        return response.value
 
     @property
     def __autorun_id(self) -> str:
@@ -120,7 +125,8 @@ class ProgramManagerNode:
     @property
     def __autorun_mode(self) -> str:
         if self.__lazy_loaded_autorun_mode is None:
-            self.__lazy_loaded_autorun_mode = self.__get_setting_from_db('autorun_mode', 'DISABLE')
+            autorun_mode_str = self.__get_setting_from_db('autorun_mode', 'DISABLE')
+            self.__lazy_loaded_autorun_mode = self.__str_to_autorun_mode[autorun_mode_str]
         return self.__lazy_loaded_autorun_mode
 
     # -- ROS CALLBACKS
@@ -227,12 +233,7 @@ class ProgramManagerNode:
     # Autorun
     def __callback_set_program_autorun(self, req):
         self.__lazy_loaded_autorun_mode = req.mode
-        autorun_mode_to_str = {
-            SetProgramAutorunRequest.DISABLE: "DISABLE",
-            SetProgramAutorunRequest.ONE_SHOT: "ONE_SHOT",
-            SetProgramAutorunRequest.LOOP: "LOOP",
-        }
-        mode_str = autorun_mode_to_str[req.mode]
+        mode_str = self.__autorun_mode_to_str[req.mode]
         self.__set_setting_service('autorun_mode', mode_str, 'str')
 
         self.__lazy_loaded_autorun_id = req.program_id
