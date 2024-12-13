@@ -316,6 +316,7 @@ trigger_job:
       --form "token=$CI_JOB_TOKEN"
       --form "ref=master"
       --form variables[ENVIRONMENT]="$ENVIRONMENT"
+      --form variables[TRIGGER_COMMIT_MESSAGE]="$CI_COMMIT_MESSAGE"
       "${CI_API_V4_URL}/projects/${TARGET_REPO_ID}/trigger/pipeline"
   variables:
     TARGET_REPO_ID: 36
