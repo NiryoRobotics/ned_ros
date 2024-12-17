@@ -267,10 +267,14 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
             _conveyor_list.emplace_back(id);
     }
 
-    // Reset the calibration if we add a new joint
+    // Reset the calibration if we add a new joint and it is not a simulated one
     if (common::model::EComponentType::JOINT == state->getComponentType())
     {
-        _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
+        if (!(common::model::EHardwareType::FAKE_STEPPER_MOTOR == hardware_type
+        || common::model::EHardwareType::FAKE_DXL_MOTOR == hardware_type))
+        {
+            _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
+        }
     }
 
     setLeds(_led_state);
@@ -598,7 +602,6 @@ bool TtlManager::readHomingAbsPosition()
 {
     EHardwareType hw_type(EHardwareType::STEPPER);
     auto driver = std::dynamic_pointer_cast<ttl_driver::StepperDriver<ttl_driver::StepperReg>>(_driver_map[hw_type]);
-
     if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
     {
         // we retrieve all the associated id for the type of the current driver
@@ -1759,7 +1762,7 @@ int TtlManager::readMoving(uint8_t id, uint8_t &status)
         EHardwareType motor_type = _state_map.at(id)->getHardwareType();
 
         // Only used for xl330 and xl320 for now
-        if (_driver_map.count(motor_type) && (motor_type == EHardwareType::XL330 || motor_type == EHardwareType::XL320))
+        if (_driver_map.count(motor_type) && (motor_type == EHardwareType::XL330 || motor_type == EHardwareType::XL320|| motor_type == EHardwareType::FAKE_DXL_MOTOR))
         {
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
             if (driver)
@@ -1996,7 +1999,15 @@ void TtlManager::startCalibration()
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
     }
     else if (_ids_map.count(EHardwareType::NED3PRO_STEPPER))
+    {
         stepper_list = _ids_map.at(EHardwareType::NED3PRO_STEPPER);
+    }
+    else if (_ids_map.count(EHardwareType::FAKE_STEPPER_MOTOR))
+    {
+        _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
+        _calib_machine_state.start();
+        stepper_list = _ids_map.at(EHardwareType::FAKE_STEPPER_MOTOR);
+    }
 
     for (auto const &id : stepper_list)
     {
@@ -2142,7 +2153,6 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
             break;
         case EHardwareType::FAKE_STEPPER_MOTOR:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
-            _calibration_status = common::model::EStepperCalibrationStatus::UNINITIALIZED;
             break;
         case EHardwareType::XL430:
             _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg>>(_portHandler, _packetHandler)));

@@ -168,7 +168,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
     double tool_connection_frequency{1.0};
     nh.getParam("check_tool_connection_frequency", tool_connection_frequency);
     nh.getParam("vacuum_pump_timeout", _vacuum_pump_timeout);
-    nh.getParam("gripper_timemout", _gripper_timeout);
+    nh.getParam("gripper_timeout", _gripper_timeout);
 
 
     ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", tool_connection_frequency);
@@ -688,3 +688,4 @@ void ToolsInterfaceCore::_publishToolConnection(const ros::TimerEvent &)
     _tool_connection_publisher.publish(msg);
 }
 }  // namespace tools_interface
+
