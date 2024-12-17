@@ -2,8 +2,11 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="log_level" default="INFO" />
+    <arg name="simulation_mode" default="false"/>
     
-    <include file="$(find niryo_robot_status)/launch/robot_status_base.launch.xml" />
+    <include file="$(find niryo_robot_status)/launch/robot_status_base.launch.xml">
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+    </include>
 
     <!-- Launch node -->
     <node name="niryo_robot_status" pkg="niryo_robot_status" type="robot_status_node.py" output="screen"

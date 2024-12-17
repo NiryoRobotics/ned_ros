@@ -602,14 +602,13 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-
-                control_loop_rate.sleep();
             }
             else
             {
                 ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
                 resetHardwareControlLoopRates();
             }
+            control_loop_rate.sleep();
         }
         else
         {
@@ -1234,3 +1233,4 @@ void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent &)
 }
 
 }  // namespace ttl_driver
+

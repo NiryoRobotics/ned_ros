@@ -15,6 +15,12 @@ forthcoming
   * Fixed program player unit tests so that they reflect the entire finite state machine
   * Fixed Ned3pro calibration tip transform
   * Fixed a bug in the robot_state publisher which issued a warning when trying to divide by 0
+  * Resolved multiple bugs that were preventing the simulated robot stack from functioning properly
+    * Sentry is not initialized if the API keys are not set (typical simulation scenario)
+    * Added missing tool parameters in simulation
+    * Modbus ROS package is not started anymore in simulation mode
+    * Fixed the control loop which is not releasing its lock if the loop frequency is too fast
+    * Fake stepper motors does not require to be calibrated anymore in simulation
 
 v5.5.3
 -----------

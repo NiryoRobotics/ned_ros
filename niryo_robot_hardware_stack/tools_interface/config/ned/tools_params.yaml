@@ -2,3 +2,10 @@ tools_params:
     id_list: [11,12,13,31]
     type_list: ["xl320","xl320","xl320","xl320"]
     name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump"]
+    params_list: [
+        {velocity_profile: 130, acceleration_profile: 60, pid: {p: 400, i: 0, d: 50}},
+        {velocity_profile: 130, acceleration_profile: 60, pid: {p: 400, i: 0, d: 50}},
+        {velocity_profile: 130, acceleration_profile: 60, pid: {p: 400, i: 0, d: 50}},
+        {velocity_profile: 0, acceleration_profile: 0, pid: {p: 400, i: 0, d: 0}},
+        {velocity_profile: 80, acceleration_profile: 40, pid: {p: 400, i: 0, d: 0}}
+    ]
