@@ -627,7 +627,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def shift_linear_pose(self, axis, value):
         """
         .. deprecated:: 5.5.0
-           You should use :func:`shift_linear` with linear=True.
+           You should use :func:`shift_pose` with linear=True.
 
         Executes Shift pose action with a linear trajectory
 

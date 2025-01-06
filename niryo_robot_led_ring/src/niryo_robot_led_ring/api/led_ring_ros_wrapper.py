@@ -2,6 +2,7 @@ import rospy
 
 # - Messages
 from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
+from niryo_robot_utils import NiryoTopicValue
 from std_msgs.msg import ColorRGBA
 
 # - Services
@@ -35,10 +36,42 @@ class LedRingRosWrapper(object):
     def __init__(self, hardware_version='ned2', service_timeout=1):
         self.__service_timeout = service_timeout
         self.__hardware_version = hardware_version
+        self.__status = NiryoTopicValue('/niryo_robot_led_ring/led_ring_status', LedRingStatus)
 
     @property
     def hardware_version(self):
         return self.__hardware_version
+
+    @property
+    def is_autonomous(self):
+        """
+        Return whether the led ring is in autonomous mode or not.
+        :return: True if the led ring is in autonomous mode, False otherwise.
+        :rtype: bool
+        """
+        return self.__status.value.led_mode == 2
+
+    @property
+    def animation_mode(self):
+        """
+        Get the current animation mode of the Led Ring.
+        :return: The current animation mode. One of LedRingAnimation values.
+        :rtype: int
+        """
+        return self.__status.value.animation_mode.animation
+
+    @property
+    def color(self):
+        """
+        Get the current color of the Led Ring.
+        :return: The current color of the Led Ring in RGB format.
+        :rtype: list(int, int, int)
+        """
+        return [
+            self.__status.value.animation_color.r,
+            self.__status.value.animation_color.g,
+            self.__status.value.animation_color.b
+        ]
 
     def __check_ned_2_version(self):
         if self.__hardware_version not in ['ned2', 'ned3pro']:
@@ -72,6 +105,33 @@ class LedRingRosWrapper(object):
         result = self.__call_service('/niryo_robot_led_ring/set_led_color', SetLedColor, led_request)
         return self.__classic_return_w_check(result)
 
+    def set_user_animation(self, animation_mode, colors, period=0, iterations=0, wait_end=False):
+        """
+        Low level function to set an animation on the Led Ring. Prefer using the high level functions.
+
+        :param animation_mode: Animation mode to set. One of LedRingAnimation values.
+        :type animation_mode: int
+        :param colors: List of colors for the animation. RGB channels from 0 to 255.
+        :type colors: list[list[float] or ColorRGBA]
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
+        :type period: float
+        :param iterations: Number of consecutive animations. If 0, the animation continues endlessly.
+        :type iterations: int
+        :param wait_end: Wait for the end of the animation before exiting the function.
+        :type wait_end: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        self.__check_ned_2_version()
+        color_rgba_list = [c if isinstance(c, ColorRGBA) else ColorRGBA(*(c[:3] + [0])) for c in colors]
+        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(animation_mode),
+                                          wait_end=wait_end,
+                                          colors=color_rgba_list,
+                                          period=period,
+                                          iterations=iterations)
+        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
+        return self.__classic_return_w_check(result)
+
     #    @check_ned2_version
     def solid(self, color, wait=False):
         """
@@ -92,13 +152,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.SOLID),
-                                          colors=color_rgba,
-                                          wait_end=wait)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.SOLID, [color], wait_end=wait)
 
     #    @check_ned2_version
     def turn_off(self, wait=False):
@@ -115,10 +169,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.NONE), wait_end=wait)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.NONE, [], wait_end=wait)
 
     #    @check_ned2_version
     def flashing(self, color, period=0, iterations=0, wait=False):
@@ -149,15 +200,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.FLASHING),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.FLASHING, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def alternate(self, color_list, period=0, iterations=0, wait=False):
@@ -190,16 +233,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba_list = [c if isinstance(c, ColorRGBA) else ColorRGBA(*(c[:3] + [0])) for c in color_list]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.ALTERNATE),
-                                          wait_end=wait,
-                                          colors=color_rgba_list,
-                                          period=period,
-                                          iterations=iterations)
-        user_led_request.animation_mode.animation = LedRingAnimation.ALTERNATE
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.ALTERNATE, color_list, period, iterations, wait)
 
     #    @check_ned2_version
     def chase(self, color, period=0, iterations=0, wait=False):
@@ -227,15 +261,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.CHASE),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.CHASE, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def wipe(self, color, period=0, wait=False):
@@ -259,14 +285,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.COLOR_WIPE),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.COLOR_WIPE, [color], period, 1, wait)
 
     #    @check_ned2_version
     def rainbow(self, period=0, iterations=0, wait=False):
@@ -289,13 +308,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.RAINBOW),
-                                          wait_end=wait,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.RAINBOW, [], period, iterations, wait)
 
     #    @check_ned2_version
     def rainbow_cycle(self, period=0, iterations=0, wait=False):
@@ -318,13 +331,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.RAINBOW_CYLE),
-                                          wait_end=wait,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.RAINBOW_CYLE, [], period, iterations, wait)
 
     #    @check_ned2_version
     def rainbow_chase(self, period=0, iterations=0, wait=False):
@@ -347,13 +354,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.RAINBOW_CHASE),
-                                          wait_end=wait,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.RAINBOW_CHASE, [], period, iterations, wait)
 
     #    @check_ned2_version
     def go_up(self, color, period=0, iterations=0, wait=False):
@@ -382,15 +383,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.GO_UP),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.GO_UP, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def go_up_down(self, color, period=0, iterations=0, wait=False):
@@ -419,15 +412,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.GO_UP_AND_DOWN),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.GO_UP_AND_DOWN, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def breath(self, color, period=0, iterations=0, wait=False):
@@ -455,15 +440,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.BREATH),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.BREATH, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def snake(self, color, period=0, iterations=0, wait=False):
@@ -491,15 +468,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.SNAKE),
-                                          wait_end=wait,
-                                          colors=color_rgba,
-                                          period=period,
-                                          iterations=iterations)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.SNAKE, [color], period, iterations, wait)
 
     #    @check_ned2_version
     def custom(self, led_colors):
@@ -518,13 +487,7 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        self.__check_ned_2_version()
-        color_rgba_list = [c if isinstance(c, ColorRGBA) else ColorRGBA(*(c[:3] + [0])) for c in led_colors]
-        user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.CUSTOM),
-                                          wait_end=True,
-                                          colors=color_rgba_list)
-        result = self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, user_led_request)
-        return self.__classic_return_w_check(result)
+        return self.set_user_animation(LedRingAnimation.CUSTOM, led_colors)
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):

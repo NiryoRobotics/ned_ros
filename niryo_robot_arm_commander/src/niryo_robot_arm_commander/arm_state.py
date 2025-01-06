@@ -395,7 +395,7 @@ class ArmState(object):
         move_group_commander_name = rospy.get_param("~move_group_commander_name")
         rospy.logdebug("ArmCommander.init - move_group_commander_name: %s", move_group_commander_name)
 
-        self.__arm = moveit_commander.MoveGroupCommander(move_group_commander_name)
+        self.__arm = moveit_commander.MoveGroupCommander(move_group_commander_name, wait_for_servers=30.0)
 
         # Set pose reference frame
         self.__arm.set_pose_reference_frame(self.__reference_frame)

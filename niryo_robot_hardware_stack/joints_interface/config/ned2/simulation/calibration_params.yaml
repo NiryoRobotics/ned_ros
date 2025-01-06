@@ -1,5 +1,7 @@
 calibration_timeout: 5
-calibration_file:  "~/.niryo/simulation"
+
+calibration_file: "~/.niryo/simulation/stepper_motor_calibration_offsets.txt"  
+homing_offset_file: "~/.niryo/simulation/stepper_motor_homing_offsets.txt"
 
 calibration_params:
     stepper_1:
