@@ -144,7 +144,7 @@ class TestHauteVitesse(utils.BaseTest):
         self._robot.set_arm_max_acceleration(DEFAULT_ACCELERATION)
 
         self._robot.move(CHANGE_TOOL_POSITION)
-        self._wait_for_freemotion_button('Retirez la masse puis appuyez sur le bouton freemotion pour continuer')
+        self._wait_for_custom_button('Retirez la masse puis appuyez sur le bouton custom pour continuer')
 
 
 class TestCalibration(utils.BaseTest):

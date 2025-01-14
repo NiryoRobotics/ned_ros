@@ -27,10 +27,10 @@ class LedRingManager:
         self.__led_ring_color = None
         self.__led_ring_colors = LED_RING_COLORS.copy()
         self.__stop = Event()
-        self.__custom_button_subscriber = rospy.Subscriber(
-            '/niryo_robot_hardware_interface/end_effector_interface/custom_button_status',
+        self.__freemotion_button_subscriber = rospy.Subscriber(
+            '/niryo_robot_hardware_interface/end_effector_interface/free_drive_button_status',
             EEButtonStatus,
-            self.__custom_button_callback)
+            self.__freemotion_button_callback)
         self.__save_button_subscriber = rospy.Subscriber(
             '/niryo_robot_hardware_interface/end_effector_interface/save_pos_button_status',
             EEButtonStatus,
@@ -44,10 +44,10 @@ class LedRingManager:
     def run(self):
         while not rospy.is_shutdown() and not self.__stop.is_set():
             rospy.sleep(0.1)
-        self.__custom_button_subscriber.unregister()
+        self.__freemotion_button_subscriber.unregister()
         self.__save_button_subscriber.unregister()
 
-    def __custom_button_callback(self, msg: EEButtonStatus):
+    def __freemotion_button_callback(self, msg: EEButtonStatus):
         if msg.action == EEButtonStatus.SINGLE_PUSH_ACTION:
             self.__update_led_ring()
 

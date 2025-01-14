@@ -26,6 +26,7 @@ v5.5.4
     * LedRingManager handle the led ring during the EOP test
     * TestReport run a tests playbook, generate the report and send it to RFM
     * utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test
+  * refacto: use temp files to handle tts files
 
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
@@ -38,6 +39,7 @@ v5.5.4
     * Modbus ROS package is not started anymore in simulation mode
     * Fixed the control loop which is not releasing its lock if the loop frequency is too fast
     * Fake stepper motors does not require to be calibrated anymore in simulation
+  * fix: check if a sound file is empty before loading it
 
 v5.5.3
 -----------
