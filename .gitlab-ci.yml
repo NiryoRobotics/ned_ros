@@ -2,8 +2,9 @@ image: gitlab01.niryotech.com:5050/robot/common/development-tools/development-to
 
 variables:
   DOCUMENTATION_OUTPUT_FOLDER: "output_build"
-  GITLAB_CATKIN_PROFILE_NAME: gitlab_ci
+  GITLAB_CATKIN_PROFILE_NAME: release
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
+  ROS_DISTRO: noetic
 
 stages:
   - build
@@ -43,18 +44,40 @@ include:
   script:
     - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
-    - $DEVELOPMENT_TOOLS_PATH/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
     - cd ${NIRYO_HOME_FOLDER}
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME}
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} ${BUILD_ARGS}
     - mv ${NIRYO_HOME_FOLDER} ${CI_PROJECT_DIR}
   variables:
-    ROS_DISTRO: noetic
-    DEVELOPMENT_TOOLS_PATH: /development-tools
     GIT_SUBMODULE_STRATEGY: recursive
+    BUILD_ARGS: ""
 
+build_amd:
+  extends: .abstract_catkin_build
+  variables:
+    GITLAB_CATKIN_PROFILE_NAME: release
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build
+      - devel
+      - install
+      - src
 
 catkin_make_amd:
+  # rebuild with the pipeline cmake args
   extends: .abstract_catkin_build
+  needs:
+    - build_amd
+  before_script:
+    - mv build ${NIRYO_HOME_FOLDER}/
+    - mv install ${NIRYO_HOME_FOLDER}/
+    - mv devel ${NIRYO_HOME_FOLDER}/
+    - mv src ${NIRYO_HOME_FOLDER}/
+    - rm -rf ${CI_PROJECT_DIR}/*
+  variables:
+    GIT_STRATEGY: none #TODO: it should be empty instead of none but for some reason it's not recognized by the runners
+    BUILD_ARGS: --cmake-args -DCATKIN_ENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
   artifacts:
     expire_in: 1 week
     paths:
@@ -62,7 +85,7 @@ catkin_make_amd:
       - devel
       - install
 
-catkin_make_arm:
+build_arm:
   extends: .abstract_catkin_build
   variables:
     GITLAB_CATKIN_PROFILE_NAME: release_cross_compilation
@@ -77,7 +100,7 @@ catkin_make_arm:
 generate_tar_artifacts:
   stage: build
   needs:
-    - catkin_make_arm
+    - build_arm
   script:
     - tar --exclude 'src/.git*' -czf artifacts.tar.gz build devel install src
   artifacts:
@@ -85,6 +108,7 @@ generate_tar_artifacts:
       - artifacts.tar.gz
     expire_in: 1 week
 
+# TODO: Replace this job with the new build system
 build_doc_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/ned_ros_stack:latest_amd64
   dependencies:
@@ -101,6 +125,9 @@ build_doc_job:
     - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
   after_script:
     - mv src/sphinx_doc/${DOCUMENTATION_OUTPUT_FOLDER} ${DOCUMENTATION_OUTPUT_FOLDER}
+  rules:
+    - when: never
+
 
 .abstract_move_source_tricks_job:
   stage: test
@@ -232,6 +259,7 @@ missing_translation_job:
     BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
     TARGET_FOLDER_OVH: ~/docs_staging/dev
 
+# TODO: Replace this job when there is the new documentation build system
 upload_staging_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64
   stage: upload
@@ -243,31 +271,37 @@ upload_staging_job:
     CI_COMMIT_TAG: v0.0.1
     <<: *staging_variables
   rules:
+    - when: never
     - if: $CI_COMMIT_BRANCH
       when: manual
       allow_failure: true
   extends: .abstract_upload
 
+# TODO: Replace this job when there is the new documentation build system
 linkchecker_staging_job:
   extends: .abstract_linkchecker
   stage: environment_test
   variables:
     <<: *staging_variables
   rules:
+    - when: never
     - if: $CI_COMMIT_BRANCH
   needs:
     - upload_staging_job
 
+# TODO: Replace this job when there is the new documentation build system
 .production_job:
   variables: &production_variables
     DOMAIN_NAME: https://docs.niryo.com
     BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
     TARGET_FOLDER_OVH: ~/docs/dev
   rules: &production_rules
+    - when: never
     ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
     # If a it's a tag && protected tag
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
 
+# TODO: Replace this job when there is the new documentation build system
 upload_production_job:
   image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64
   rules: *production_rules
@@ -280,7 +314,7 @@ upload_production_job:
     <<: *production_variables
   extends: .abstract_upload
 
-
+# TODO: Replace this job when there is the new documentation build system
 linkchecker_production_job:
   rules: *production_rules
   stage: environment_test
