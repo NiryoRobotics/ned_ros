@@ -13,7 +13,7 @@ from niryo_robot_sound.srv import ManageSound
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
-from niryo_robot_sound.sound_object import Sound, SoundFormatException
+from niryo_robot_sound.sound_object import Sound, SoundFormatException, SoundFileException
 
 
 class SoundDatabase:
@@ -204,8 +204,8 @@ class SoundDatabase:
                 try:
                     self.__user_sounds[sound_name] = Sound(sound_name,
                                                            os.path.join(self.__user_sound_directory_path, sound_name))
-                except SoundFormatException:
-                    pass
+                except (SoundFormatException, SoundFileException) as e:
+                    rospy.logwarn(f"File {sound_name} doesn't appear to be an audio file: {e}")
 
     def __load_robot_sounds(self):
         self.__robot_sounds = {

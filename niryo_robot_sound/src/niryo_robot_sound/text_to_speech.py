@@ -1,7 +1,9 @@
 # Lib
+from tempfile import NamedTemporaryFile
+
 import rospy
 import os
-from gtts import gTTS
+from gtts import gTTS, gTTSError
 
 from niryo_robot_sound.srv import TextToSpeech, TextToSpeechRequest
 
@@ -21,8 +23,6 @@ class NiryoTextToSpeech(object):
             TextToSpeechRequest.PORTUGUESE: 'pt'
         }
 
-        self.__tts_name = 'last_text_to_speech.mp3'
-
         # - Services
         rospy.Service('~text_to_speech', TextToSpeech, self.__callback_text_to_speech)
 
@@ -33,13 +33,21 @@ class NiryoTextToSpeech(object):
         elif req.language not in self.__languages:
             return False, "Unknown language"
 
-        self.say(req.text, self.__languages[req.language])
+        try:
+            self.say(req.text, self.__languages[req.language])
+        except RuntimeError as e:
+            return False, str(e)
         return True, "Success"
 
     def say(self, text, language):
         tts = gTTS(text, lang=language)
-        sound_path = os.path.join(self.__sound_database.user_sound_directory_path, self.__tts_name)
-        tts.save(sound_path)
+        with NamedTemporaryFile(dir=self.__sound_database.user_sound_directory_path, suffix='.mp3') as tts_file:
+            try:
+                tts.write_to_fp(tts_file)
+                tts_file.flush()
+            except gTTSError as e:
+                raise RuntimeError(f'gTTS call failed: {e}') from e
+
+            self.__sound_database.refresh_user_sounds()
+            self.__sound_manager.play_user_sound(os.path.basename(tts_file.name))
         self.__sound_database.refresh_user_sounds()
-        self.__sound_manager.play_user_sound(self.__tts_name)
-        self.__sound_database.delete_sound(self.__tts_name)

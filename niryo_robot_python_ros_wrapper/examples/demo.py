@@ -3,22 +3,27 @@
 import rospy
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+from niryo_robot_sound.api.sound_ros_wrapper import SoundRosWrapperException
 from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 from niryo_robot_utils.dataclasses.Pose import Pose
 from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
-from niryo_robot_utils import NiryoRosWrapperException
 
 BLUE = [15, 50, 255]
 YELLOW = [255, 255, 0]
+
+
+def say(robot: NiryoRosWrapper, text):
+    try:
+        robot.sound.say(text, 1)
+    except SoundRosWrapperException:
+        rospy.logwarn('Text To Speech is not available')
+
 
 if __name__ == '__main__':
     rospy.init_node('niryo_demo_ros_wrapper')
     robot = NiryoRosWrapper()
 
-    try:
-        robot.sound.say("Programme demo", 1)
-    except NiryoRosWrapperException:
-        rospy.logwarn('Text To Speach is not available')
+    say(robot, "Programme demo")
 
     robot.request_new_calibration()
     robot.calibrate_auto()
@@ -93,15 +98,6 @@ if __name__ == '__main__':
 
     robot.move(JointsPosition(0, 0, 0, 0, 0, 0))
 
-    try:
-        robot.sound.say("Mettre le grippeur et appuyer sur CUSTOM")
-    except NiryoRosWrapperException:
-        pass
-
-    robot.led_ring.flashing(YELLOW)
-    robot.custom_button.wait_for_any_action()
-    robot.led_ring.solid(YELLOW)
-
     robot.update_tool()
     robot.enable_tcp(True)
 
@@ -141,10 +137,7 @@ if __name__ == '__main__':
 
     robot.enable_tcp(False)
 
-    try:
-        robot.sound.say("Fin de la demo", 1)
-    except NiryoRosWrapperException:
-        pass
+    say(robot, "Fin de la demo")
 
     robot.led_ring.solid(BLUE)
     robot.move_to_sleep_pose()

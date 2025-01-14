@@ -27,6 +27,8 @@ class Sound(object):
         rospy.logdebug("{} | {}".format(self.__name, self.__path))
         if not self.exists():
             raise SoundFileException("File {} doesn't exists".format(self.__path))
+        if not self.is_empty():
+            raise SoundFileException("File {} is empty".format(self.__path))
 
         self.__duration = self.__get_sound_duration()
 
@@ -53,6 +55,9 @@ class Sound(object):
 
     def exists(self):
         return os.path.exists(self.__path)
+
+    def is_empty(self):
+        return os.path.getsize(self.__path) > 0
 
     def __get_sound_duration(self):
         args = ("ffprobe", "-loglevel", "quiet", "-show_entries", "format=duration", "-i", self.__path)
