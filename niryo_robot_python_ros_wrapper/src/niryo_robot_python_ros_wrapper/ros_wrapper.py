@@ -627,7 +627,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def shift_linear_pose(self, axis, value):
         """
         .. deprecated:: 5.5.0
-           You should use :func:`shift_linear` with linear=True.
+           You should use :func:`shift_pose` with linear=True.
 
         Executes Shift pose action with a linear trajectory
 
@@ -729,7 +729,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: list of joints value
         :rtype: list[float]
         """
-        result = self._call_service('/niryo_robot_commander/stop_command', Trigger)
+        result = self._call_service('/niryo_robot_arm_commander/stop_command', Trigger)
         return self._classic_return_w_check(result)
 
     def set_jog_use_state(self, state):

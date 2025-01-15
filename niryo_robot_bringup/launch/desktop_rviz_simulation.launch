@@ -7,7 +7,7 @@
         value="$(find niryo_robot_bringup)/config/desktop_rviz_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" default="ned"/>
+    <arg name="hardware_version" default="ned2"/>
     <arg name="debug" default="false"/>
     <arg name="gui" default="true"/>
     <arg name="conf_location" default="version.txt"/>

@@ -53,6 +53,7 @@ public:
 
   void startThread();
   void tick();
+  void update(std::chrono::_V2::system_clock::time_point& next_read_time);
 
   void setState(ProgramPlayerState state);
   void play(const std::string& program);
@@ -212,37 +213,42 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::controlLoop()
 {
   double loop_frequency = _program_player_adapter.getLoopFrequency();
-  int stop_button_debounce_time = _program_player_adapter.getStopButtonDebounceTime();
 
   auto current_time = std::chrono::system_clock::now();
-  auto next_read_time = current_time;
 
   while (true)
   {
     auto control_loop_period_ms =
         std::chrono::system_clock::now() + std::chrono::milliseconds(static_cast<int>(1 / loop_frequency * 1000));
 
-    current_time = std::chrono::system_clock::now();
-    if (current_time >= next_read_time)
-    {
-      buttons_state[Button::PLAY] = getPlayStatus();
-      buttons_state[Button::STOP] = getStopStatus();
-      buttons_state[Button::UP] = getUpStatus();
-      buttons_state[Button::DOWN] = getDownStatus();
-
-      // if STOP has been pressed then don't read button inputs for X sec
-      if (buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
-        next_read_time = current_time + std::chrono::milliseconds(stop_button_debounce_time);
-      else
-        next_read_time = current_time;
-    }
-
-    pingProgramPlayer();
-
-    tick();
+    update(current_time);
 
     std::this_thread::sleep_until(control_loop_period_ms);
   }
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::update(
+    std::chrono::_V2::system_clock::time_point& next_read_time)
+{
+  auto current_time = std::chrono::system_clock::now();
+  if (current_time >= next_read_time)
+  {
+    buttons_state[Button::PLAY] = getPlayStatus();
+    buttons_state[Button::STOP] = getStopStatus();
+    buttons_state[Button::UP] = getUpStatus();
+    buttons_state[Button::DOWN] = getDownStatus();
+
+    // if STOP has been pressed then don't read button inputs for X sec
+    if (buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
+      next_read_time = current_time + std::chrono::milliseconds(_program_player_adapter.getStopButtonDebounceTime());
+    else
+      next_read_time = current_time;
+  }
+
+  pingProgramPlayer();
+
+  tick();
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>

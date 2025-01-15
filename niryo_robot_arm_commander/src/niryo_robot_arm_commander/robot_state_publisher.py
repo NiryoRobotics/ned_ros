@@ -55,6 +55,8 @@ class StatePublisher(object):
         robot_state.rpy = list_to_rpy(euler_from_quaternion(quaternion_list))
 
         dt = (t.header.stamp - self.__last_stamp).to_sec()
+        if dt == 0:
+            return self.__last_robot_state
 
         position_array = numpy.array(vector3_to_list(t.transform.translation))
         last_position_array = numpy.array(vector3_to_list(self.__last_robot_state.position))
@@ -80,9 +82,7 @@ class StatePublisher(object):
         except Exception:
             return
 
-        rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll,
-                                                     robot_state.rpy.pitch,
-                                                     robot_state.rpy.yaw)
+        rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
         robot_state.rpy = list_to_rpy(rpy_v1)
         robot_state.orientation = get_orientation_from_angles(*rpy_v1)
 

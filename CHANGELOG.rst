@@ -2,6 +2,45 @@
 Changelog for ned_ros_stack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.5.4
+-----------
+**Features**
+
+**Improvements**
+  * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
+  * No wait_for in nodes constructors. Use callbacks / lazy loading instead
+  * Expose /niryo_robot_led_ring/led_ring_status topic though the led ring ros wrapper with 3 new properties:
+    * is_autonomous
+    * animation_mode
+    * color
+  * Expose the service /niryo_robot_led_ring/set_user_animation though the led ring ros wrapper with the function set_user_animation. All the higher animation functions use this one under the hood
+  * New end of production test script
+    * Seperated from the demo program
+    * Do the same tests than the previous one but with a clearer and easily maintenable code
+    * Is unique for all the robots
+    * Delete the test script once it is successful and replace it with the demo script
+  * New demo program, which do the same actions than the previous one but in a more readable fashion
+    * the demo program is also unique for all the robots
+  * Add missing functions to JointsPosition object to make it setattr compatible
+  * Add the module end_of_production_test to the niryo_robot_utils package
+    * LedRingManager handle the led ring during the EOP test
+    * TestReport run a tests playbook, generate the report and send it to RFM
+    * utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test
+  * refacto: use temp files to handle tts files
+
+**Bugfixes**
+  * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
+  * Fixed program player unit tests so that they reflect the entire finite state machine
+  * Fixed Ned3pro calibration tip transform
+  * Fixed a bug in the robot_state publisher which issued a warning when trying to divide by 0
+  * Resolved multiple bugs that were preventing the simulated robot stack from functioning properly
+    * Sentry is not initialized if the API keys are not set (typical simulation scenario)
+    * Added missing tool parameters in simulation
+    * Modbus ROS package is not started anymore in simulation mode
+    * Fixed the control loop which is not releasing its lock if the loop frequency is too fast
+    * Fake stepper motors does not require to be calibrated anymore in simulation
+  * fix: check if a sound file is empty before loading it
+
 v5.5.3
 -----------
 **Features**

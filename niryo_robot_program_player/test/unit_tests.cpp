@@ -33,7 +33,7 @@
 #include "niryo_robot_program_player/program_player.hpp"
 #include "niryo_robot_program_player/program_player_states.hpp"
 
-using namespace ::niryo_robot_program_player; // NOLINT
+using namespace ::niryo_robot_program_player;  // NOLINT
 
 class ProgramPlayerMockAdapter
 {
@@ -93,6 +93,11 @@ public:
     return _niryo_studio_timestamp;
   }
 
+  int getStopButtonDebounceTime() const
+  {
+    return _stop_button_debounce_time;
+  }
+
   void stop()
   {
   }
@@ -117,6 +122,7 @@ private:
   std::chrono::time_point<std::chrono::system_clock> _niryo_studio_timestamp;
   int _baudrate{ 1000000 };
   int _id{ 10 };
+  int _stop_button_debounce_time{ 500 };
   std::string _port_name{ "/dev/dummy_port" };
   int32_t _screen_size{ 16 };
   std::string _program_number_delimiter{ "." };
@@ -247,363 +253,413 @@ protected:
   std::map<std::string, std::string> program_list;
 };
 
-TEST_F(ProgramPlayerTestSuite, idle_stop_idle)
+// Get robot name
+TEST_F(ProgramPlayerTestSuite, get_robot_name)
 {
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-
-  // stop button
-  driver.setStopValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::STOP);
-
-  // idle
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  ASSERT_EQ(program_player->getRobotName(), adapter.getRobotName());
 }
 
-TEST_F(ProgramPlayerTestSuite, idle_stop_fault_idle)
+TEST_F(ProgramPlayerTestSuite, no_connection_to_connection)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::NO_CONNECTION);
 
-  // stop button
-  driver.setStopValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+  // Connected
   driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::STOP);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::CONNECTION);
+}
 
-  // fault
+TEST_F(ProgramPlayerTestSuite, connection_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::CONNECTION);
+
+  // No connection
   driver.setCommunicationCode(COMM_NOT_AVAILABLE);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
 }
 
-// IDLE -> FAULT -> IDLE
-TEST_F(ProgramPlayerTestSuite, idle_fault_idle)
+TEST_F(ProgramPlayerTestSuite, connection_to_idle)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::CONNECTION);
 
-  // fault
-  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
+  // Connected
   driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-// IDLE -> UP -> IDLE
-TEST_F(ProgramPlayerTestSuite, idle_up_idle)
+TEST_F(ProgramPlayerTestSuite, idle_to_fault_with_ns_connected)
+{
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  auto timestamp = std::chrono::system_clock::now();
+  adapter.setNiryoStudioTimeStamp(timestamp);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
+
+TEST_F(ProgramPlayerTestSuite, idle_to_fault_with_no_programs)
+{
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  program_list.clear();
+  adapter.setProgramList(program_list);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
+
+TEST_F(ProgramPlayerTestSuite, idle_to_play)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::IDLE);
 
-  // up button
+  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
+}
+
+TEST_F(ProgramPlayerTestSuite, play_to_playing)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::PLAY);
+
+  driver.setPlayValue(common::model::EActionType::NO_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
+}
+
+TEST_F(ProgramPlayerTestSuite, playing_to_stop)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::PLAYING);
+
+  driver.setStopValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::STOP);
+}
+
+TEST_F(ProgramPlayerTestSuite, stop_to_stopped)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::STOP);
+
+  driver.setStopValue(common::model::EActionType::NO_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::STOPPED);
+}
+
+TEST_F(ProgramPlayerTestSuite, stopped_to_play)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::STOPPED);
+
+  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
+}
+
+TEST_F(ProgramPlayerTestSuite, stopped_to_up)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::STOPPED);
+
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::UP);
-
-  // idle
-  driver.setUpValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_up_fault_idle)
+TEST_F(ProgramPlayerTestSuite, stopped_to_down)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::STOPPED);
 
-  // up button
+  driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::DOWN);
+}
+
+TEST_F(ProgramPlayerTestSuite, idle_to_up)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::UP);
-
-  // fault
-  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_down_idle)
+TEST_F(ProgramPlayerTestSuite, up_to_idle)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::UP);
 
-  // down button
-  driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::DOWN);
-
-  // idle
   driver.setUpValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_down_fault_idle)
+TEST_F(ProgramPlayerTestSuite, idle_to_down)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::IDLE);
 
-  // down button
   driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::DOWN);
-
-  // fault
-  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_fault_idle)
+TEST_F(ProgramPlayerTestSuite, down_to_idle)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::DOWN);
 
-  // play button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
+  driver.setDownValue(common::model::EActionType::NO_ACTION);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
-
-  // fault
-  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_playing_stop_idle)
+TEST_F(ProgramPlayerTestSuite, down_to_fault)
 {
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-
-  // stop button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
-
-  // playing
-  driver.setCommunicationCode(COMM_SUCCESS);
-  driver.setPlayValue(common::model::EActionType::NO_ACTION);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
-
-  // stop button
-  driver.setStopValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::STOP);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-}
-
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_playing_fault_idle)
-{
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-
-  // play button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
-
-  // playing
-  driver.setPlayValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
-
-  // fault
-  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-}
-
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_playing_done_idle)
-{
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
   ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::DOWN);
 
-  // play button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
+  program_list.clear();
+  adapter.setProgramList(program_list);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
-
-  // playing
-  driver.setPlayValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
-
-  // done/idle
-  adapter.setProgramState(ProgramExecutionState::DONE);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_playing_error_idle)
+TEST_F(ProgramPlayerTestSuite, up_to_fault)
 {
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
   ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::UP);
 
-  // play button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
+  program_list.clear();
+  adapter.setProgramList(program_list);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
-
-  // playing
-  driver.setPlayValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
-
-  // error/idle
-  adapter.setProgramState(ProgramExecutionState::ERROR);
-  driver.setCommunicationCode(COMM_SUCCESS);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
 }
 
-TEST_F(ProgramPlayerTestSuite, transition_idle_play_playing_playing_done_idle)
+TEST_F(ProgramPlayerTestSuite, play_to_fault)
 {
-  ProgramPlayerMockDriver& driver = program_player->getDriver();
   ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::PLAY);
 
-  // play button
-  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
+  program_list.clear();
+  adapter.setProgramList(program_list);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAY);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
 
-  // playing
-  driver.setPlayValue(common::model::EActionType::NO_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
+TEST_F(ProgramPlayerTestSuite, playing_to_fault)
+{
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
+  program_player->setState(ProgramPlayerState::PLAYING);
 
-  // playing
-  adapter.setProgramState(ProgramExecutionState::PLAYING);
-  driver.setCommunicationCode(COMM_SUCCESS);
+  program_list.clear();
+  adapter.setProgramList(program_list);
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::PLAYING);
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
 
-  // done/idle
-  adapter.setProgramState(ProgramExecutionState::DONE);
-  driver.setCommunicationCode(COMM_SUCCESS);
+TEST_F(ProgramPlayerTestSuite, stop_to_fault)
+{
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
 
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+  program_player->setState(ProgramPlayerState::STOP);
+
+  program_list.clear();
+  adapter.setProgramList(program_list);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
+
+TEST_F(ProgramPlayerTestSuite, stopped_to_fault)
+{
+  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
+
+  program_player->setState(ProgramPlayerState::STOPPED);
+
+  program_list.clear();
+  adapter.setProgramList(program_list);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
+}
+
+TEST_F(ProgramPlayerTestSuite, idle_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, down_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::DOWN);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, up_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::UP);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, stop_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::STOP);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, stopped_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::STOPPED);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, playing_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::PLAYING);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, play_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::PLAY);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
+}
+
+TEST_F(ProgramPlayerTestSuite, fault_to_no_connection)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::FAULT);
+
+  driver.setCommunicationCode(COMM_NOT_AVAILABLE);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::NO_CONNECTION);
 }
 
 TEST_F(ProgramPlayerTestSuite, get_program_list)
@@ -622,32 +678,37 @@ TEST_F(ProgramPlayerTestSuite, up_button_program_selection)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
+  program_player->setState(ProgramPlayerState::IDLE);
+
   ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
 
   // up button
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getCurrentProgram(), (++program_list.begin())->first);
 
   // idle
-  program_player->tick();
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
 
   // up button twice, overflow list go to first program
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
 
   // idle
-  program_player->tick();
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
 
   // up button twice, overflow list go to first program
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
   driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
 }
 
@@ -656,71 +717,16 @@ TEST_F(ProgramPlayerTestSuite, down_button_program_selection)
 {
   ProgramPlayerMockDriver& driver = program_player->getDriver();
 
+  program_player->setState(ProgramPlayerState::IDLE);
+
   ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
 
   // down button
   driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
-  driver.setCommunicationCode(COMM_SUCCESS);
 
-  program_player->tick();
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
   ASSERT_EQ(program_player->getCurrentProgram(), (--program_list.end())->first);
-
-  // idle
-  program_player->tick();
-}
-
-// Get robot name
-TEST_F(ProgramPlayerTestSuite, get_robot_name)
-{
-  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
-
-  ASSERT_EQ(program_player->getRobotName(), adapter.getRobotName());
-}
-
-// Niryo studio connected
-TEST_F(ProgramPlayerTestSuite, test19)
-{
-  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-
-  // fault
-  auto timestamp = std::chrono::system_clock::now();
-  adapter.setNiryoStudioTimeStamp(timestamp);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  timestamp = std::chrono::system_clock::now() - std::chrono::seconds(5);
-  adapter.setNiryoStudioTimeStamp(timestamp);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-}
-
-// No program available
-TEST_F(ProgramPlayerTestSuite, test20)
-{
-  ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
-
-  // fault
-  program_list.clear();
-  adapter.setProgramList(program_list);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::FAULT);
-
-  // idle
-  program_list = { std::make_pair("unique-name1", "program1") };
-  adapter.setProgramList(program_list);
-
-  program_player->tick();
-  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
 // Run all the tests that were declared with TEST()
