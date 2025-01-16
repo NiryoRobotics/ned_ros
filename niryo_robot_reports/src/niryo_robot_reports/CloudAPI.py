@@ -42,13 +42,13 @@ class ABCMicroService(ABC):
 
 
 class ABCReportMicroService(ABCMicroService):
-    RESOURCE_URI = ''
 
     def __init__(self, base_url, header):
         super().__init__(base_url, header)
+        self._base_url += f'/{self.MICROSERVICE_URI}'
 
     def send(self, payload):
-        endpoint = f'{self._base_url}/{self.MICROSERVICE_URI}'
+        endpoint = self._base_url
         try:
             rospy.loginfo(f'url: {endpoint}, payload: {payload}')
             response = requests.post(endpoint, headers=self._headers, json=payload)

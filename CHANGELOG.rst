@@ -40,6 +40,9 @@ v5.5.4
     * Fixed the control loop which is not releasing its lock if the loop frequency is too fast
     * Fake stepper motors does not require to be calibrated anymore in simulation
   * fix: check if a sound file is empty before loading it
+  * (reports) use set_serial_number and set_rasp_id instead of set_identifier
+  * (reports): return True instead of ping returns (None)
+  * (reports): set correct endpoint for reports ping
 
 v5.5.3
 -----------
