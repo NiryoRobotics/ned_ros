@@ -88,28 +88,28 @@ class ReportsNode:
 
     def __check_connection_callback(self, req):
         rospy.logdebug('service called: ' + str(req.service.to_test))
-        if req.service.to_test == Service.TEST_REPORTS:
-            success = self.__cloud_api.test_reports.ping()
-        elif req.service.to_test == Service.DAILY_REPORTS:
-            success = self.__cloud_api.daily_reports.ping()
-        elif req.service.to_test == Service.ALERT_REPORTS:
-            success = self.__cloud_api.alert_reports.ping()
-        elif req.service.to_test == Service.AUTO_DIAGNOSIS_REPORTS:
-            success = self.__cloud_api.auto_diagnosis_reports.ping()
-        else:
+        try:
+            {
+                Service.TEST_REPORTS: self.__cloud_api.test_reports.ping,
+                Service.DAILY_REPORTS: self.__cloud_api.daily_reports.ping,
+                Service.ALERT_REPORTS: self.__cloud_api.alert_reports.ping,
+                Service.AUTO_DIAGNOSIS_REPORTS: self.__cloud_api.auto_diagnosis_reports.ping
+            }[req.service.to_test]()
+        except KeyError:
             return CommandStatus.REPORTS_SERVICE_UNREACHABLE, False
 
-        return CommandStatus.SUCCESS, success
+        return CommandStatus.SUCCESS, True
 
     def __setting_update_callback(self, req):
-        if req.name == 'serial_number':
-            self.__cloud_api.set_identifier(req.value)
-        elif req.name == 'api_key':
-            self.__cloud_api.set_api_key(req.value)
-        elif req.name == 'sharing_allowed':
-            self.__cloud_api.set_sharing_allowed(req.value == 'True')
-        elif req.name == 'rasp_id':
-            self.__cloud_api.set_identifier(req.value)
+        try:
+            {
+                'serial_number': self.__cloud_api.set_serial_number,
+                'api_key': self.__cloud_api.set_api_key,
+                'sharing_allowed': lambda v: self.__cloud_api.set_sharing_allowed(v == 'True'),
+                'rasp_id': self.__cloud_api.set_rasp_id
+            }[req.name](req.value)
+        except KeyError:
+            pass
 
 
 if __name__ == "__main__":
