@@ -29,6 +29,7 @@ def say(robot: NiryoRosWrapper, text: str):
         text = re.sub(key, value, text)
 
     if not use_sound:
+        rospy.loginfo(text)
         return
     robot.sound.say(text, 1)
 

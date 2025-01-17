@@ -3,7 +3,6 @@ import math
 import subprocess
 from io import BytesIO
 from pathlib import Path
-from typing import List, Type
 import rospy
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
@@ -97,14 +96,13 @@ class TestGrippeur(utils.BaseTest):
 
     def __call__(self, *args, **kwargs):
         neutral_pose = Pose(x=0.3, y=0, z=0.3, roll=math.pi, pitch=0.00, yaw=0.00)
-        pick_1 = Pose(x=0, y=0.2, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
-        pick_2 = Pose(x=0, y=-0.2, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
-        place_1 = Pose(x=0.15, y=0, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
-        place_2 = Pose(x=0.22, y=0, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
+        place = Pose(x=0.2, y=0, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
+        pick_1 = Pose(x=0, y=0.25, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
+        pick_2 = Pose(x=0, y=-0.25, z=0.15, roll=math.pi, pitch=-0.00, yaw=0.00)
         self._robot.move(neutral_pose)
-        self._robot.pick_and_place(pick_pose=pick_1, place_pose=place_1)
+        self._robot.pick_and_place(pick_pose=pick_1, place_pose=place)
         self._robot.move(neutral_pose)
-        self._robot.pick_and_place(pick_pose=pick_2, place_pose=place_2)
+        self._robot.pick_and_place(pick_pose=pick_2, place_pose=place)
         self._robot.move(neutral_pose)
 
 
@@ -154,7 +152,7 @@ class TestCalibration(utils.BaseTest):
 
     def __ned3pro_calibration(self):
         from joints_interface.srv import FactoryCalibration, FactoryCalibrationRequest
-        factory_calibrate_service = rospy.ServiceProxy('/niryo_self._robot/joints_interface/factory_calibrate_motors',
+        factory_calibrate_service = rospy.ServiceProxy('/niryo_robot/joints_interface/factory_calibrate_motors',
                                                        FactoryCalibration)
         request = FactoryCalibrationRequest(command=FactoryCalibrationRequest.START, ids=[2, 3, 4])
         factory_calibrate_service(request)
@@ -162,10 +160,13 @@ class TestCalibration(utils.BaseTest):
         self._wait_for_custom_button('Calibrez le robot puis appuyez sur le bouton custom pour continuer')
 
         request.command = FactoryCalibrationRequest.STOP
-        response = factory_calibrate_service(request)
-        if response.status < 0:
+        factory_calibrate_service(request)
+
+        while (hw_status := self._robot.get_hardware_status()).calibration_in_progress:
+            rospy.sleep(0.1)
+
+        if hw_status.calibration_needed:
             self._say('La calibration a échoué')
-            rospy.logerr(f'Calibration failed with error: {response.message}')
             self.__ned3pro_calibration()
 
     def __call__(self, *args, **kwargs):
@@ -188,17 +189,14 @@ class TestLongueDurée(utils.BaseTest):
     def pre_test(self):
         self._robot.move_to_sleep_pose()
 
-    def __handle_move_exception(self, e: NiryoRosWrapperException):
+    def _handle_collision(self):
         if not self._robot.collision_detected:
-            raise e from None
-
-        self.__nb_collision += 1
-        if self.__nb_collision >= 3:
-            self._robot.led_ring.flashing([255, 255, 0])
-        elif self.__nb_collision >= 5:
-            raise RuntimeError(f'More than 5 collisions. Ending the test after {self.__nb_loops} loop(s)')
+            raise RuntimeError('Another problem than a collision occurred')
 
         self._robot.clear_collision_detected()
+        self.__nb_collision += 1
+        if self.__nb_collision >= 5:
+            raise RuntimeError(f'More than 5 collisions. Ending the test after {self.__nb_loops} loop(s)')
 
     def __call__(self, *args, **kwargs):
         joints_limits = self._get_joints_limits()
@@ -241,7 +239,7 @@ class TestLongueDurée(utils.BaseTest):
                            joints_limits[4]['min'],
                            joints_limits[5]['min'],
                            joints_limits[6]['min']),
-            JointsPosition(0, 0.5, -1.25, 0, 0, 0),
+            self._robot.get_sleep_pose()
         ]
 
         start_time = rospy.Time.now()
@@ -250,12 +248,17 @@ class TestLongueDurée(utils.BaseTest):
             for waypoint in waypoints:
                 try:
                     status, message = self._robot.move(waypoint)
+                    rospy.loginfo(f'{status=}, {message=}')
                     if status < 0:
-                        raise RuntimeError(f'Error while moving to the pose {waypoint}: {message}')
+                        rospy.logwarn(f'Error while moving to the pose {waypoint}: {repr((status, message))}')
+                        raise NiryoRosWrapperException(repr((status, message)))
                 except NiryoRosWrapperException as e:
-                    self.__handle_move_exception(e)
+                    rospy.logwarn(f'Error while moving to the pose {waypoint}: {repr(e)}')
+                    self._handle_collision()
+                except Exception as e:
+                    rospy.logerr(repr(e))
 
-        rospy.loginfo(f'End of the test with {self.__nb_loops} loop and {self.__nb_collision} collision(s)')
+        rospy.loginfo(f'End of the test with {self.__nb_loops} loop(s) and {self.__nb_collision} collision(s)')
 
     def post_test(self):
         self._robot.clear_collision_detected()
@@ -288,9 +291,9 @@ class TestStatusDuRobot(utils.BaseTest):
 
         if self._robot_status.robot_status < 0:
             raise RuntimeError(
-                f'self._robot status - {self._robot_status.robot_status_str} - {self._robot_status.robot_message}')
+                f'robot status - {self._robot_status.robot_status_str} - {self._robot_status.robot_message}')
 
-        rospy.loginfo("self._robot status ok")
+        rospy.loginfo("robot status ok")
 
 
 ########
@@ -307,6 +310,7 @@ def parse_args():
                         help='Duration of the long test. format: {number}{unit}, e.g., 3h')
     parser.add_argument('--blacklist', '-b', nargs='+', help='Blacklist of tests to skip', default=[])
     parser.add_argument('--whitelist', '-w', nargs='+', help='Whitelist of tests to run', default=None)
+    parser.add_argument('--no-delete', action='store_true', help='Do not delete this file after the tests')
     return parser.parse_args()
 
 
@@ -327,9 +331,18 @@ def auto_destroy(robot: NiryoRosWrapper) -> None:
     self_file_path.unlink()
 
 
-def main(playbook: List[Type[utils.BaseTest]]):
-    rospy.init_node('end_of_production_tests', anonymous=True)
+def main():
+    cli_args = parse_args()
+    if cli_args.no_sound:
+        utils.use_sound = False
 
+    global LONG_TEST_DURATION
+    LONG_TEST_DURATION = cli_args.long_test_duration
+
+    playbook = [test for test in default_playbook if test.__name__ not in cli_args.blacklist]
+    playbook = [test for test in playbook if test.__name__ in cli_args.whitelist] if cli_args.whitelist else playbook
+
+    rospy.init_node('end_of_production_tests', anonymous=True)
     robot_instance = NiryoRosWrapper()
 
     test_report = TestReport(robot_instance)
@@ -340,7 +353,7 @@ def main(playbook: List[Type[utils.BaseTest]]):
 
     utils.say(robot_instance, 'Fin du test.')
 
-    if test_report.success:
+    if test_report.success and not cli_args.no_delete:
         utils.say(robot_instance, 'Remplacement du programme par la démo')
         auto_destroy(robot_instance)
 
@@ -362,13 +375,4 @@ default_playbook = [
 ]
 
 if __name__ == '__main__':
-    cli_args = parse_args()
-    if cli_args.no_sound:
-        utils.use_sound = False
-
-    LONG_TEST_DURATION = cli_args.long_test_duration
-
-    playbook = [test for test in default_playbook if test.__name__ not in cli_args.blacklist]
-    playbook = [test for test in playbook if test.__name__ in cli_args.whitelist] if cli_args.whitelist else playbook
-
-    main(playbook)
+    main()
