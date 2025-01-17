@@ -27,6 +27,7 @@ v5.5.4
     * TestReport run a tests playbook, generate the report and send it to RFM
     * utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test
   * refacto: use temp files to handle tts files
+  * refacto: make of sentry a soft dependency
 
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
@@ -40,6 +41,14 @@ v5.5.4
     * Fixed the control loop which is not releasing its lock if the loop frequency is too fast
     * Fake stepper motors does not require to be calibrated anymore in simulation
   * fix: check if a sound file is empty before loading it
+  * (reports) use set_serial_number and set_rasp_id instead of set_identifier
+  * (reports): return True instead of ping returns (None)
+  * (reports): set correct endpoint for reports ping
+  * fix: wrong os.getenv call in sentry_init
+  * The end effector panel still publish the buttons state while calibration is in progress
+  * Fixed a bug which caused the cloud api to not update it's S/N and rasp_id values when they are updated
+  * Fixed a bug causing the check_connection service to ping the wrong endpoints for the reports micro services
+
 
 v5.5.3
 -----------
