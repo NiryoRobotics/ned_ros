@@ -27,6 +27,7 @@ v5.5.4
     * TestReport run a tests playbook, generate the report and send it to RFM
     * utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test
   * refacto: use temp files to handle tts files
+  * refacto: make of sentry a soft dependency
 
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
@@ -43,6 +44,7 @@ v5.5.4
   * (reports) use set_serial_number and set_rasp_id instead of set_identifier
   * (reports): return True instead of ping returns (None)
   * (reports): set correct endpoint for reports ping
+  * fix: wrong os.getenv call in sentry_init
 
 v5.5.3
 -----------
