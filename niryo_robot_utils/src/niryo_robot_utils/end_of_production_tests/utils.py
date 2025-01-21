@@ -1,11 +1,8 @@
-from typing import Dict
+from typing import Dict, Generator
 import re
 import rospy
-from abc import ABC, abstractmethod
 
 from niryo_robot_python_ros_wrapper import NiryoRosWrapper
-
-from std_msgs.msg import Int32
 
 WAIT_FOR_BUTTON_TIMEOUT = 600
 use_sound = True
@@ -53,68 +50,78 @@ def parse_duration(value: str) -> rospy.Duration:
         )
 
 
-class BaseTest(ABC):
+def get_joints_limits(robot: NiryoRosWrapper) -> Dict[int, Dict[str, float]]:
+    """
+    Get the joints limits of the robot. The limits are reduced to avoid hitting the mechanical limits
+    :return: The limits with the following format: {joint_number: {'min': min_value, 'max': max_value}}
+    """
+    if robot.get_hardware_version() == 'ned2':
+        offsets = _ned2_offsets
+    else:
+        offsets = ((0, 0), ) * len(robot.get_joints())
 
-    def __init__(self, robot: NiryoRosWrapper):
-        self._robot = robot
-
-    @property
-    def name(self) -> str:
-        return ' '.join(re.findall(r'([A-Z]+[a-zéè]*|\d+)', self.__class__.__name__))
-
-    def pre_test(self):
-        """Optional method. Subclasses can override this if needed."""
-        pass
-
-    @abstractmethod
-    def __call__(self, *args, **kwargs):
-        raise NotImplementedError
-
-    def post_test(self):
-        """Optional method. Subclasses can override this if needed."""
-        pass
-
-    def _wait_for_save_button(self, msg=None):
-        if msg is None:
-            msg = 'Appuyez sur le bouton save pour continuer'
-
-        self._say(msg)
-
-        rospy.wait_for_message('/niryo_robot/blockly/save_current_point', Int32, timeout=WAIT_FOR_BUTTON_TIMEOUT)
-
-    def _wait_for_custom_button(self, msg=None):
-        if msg is None:
-            msg = 'Appuyez sur le bouton custom pour continuer'
-
-        self._say(msg)
-        self._robot.custom_button.wait_for_any_action(timeout=WAIT_FOR_BUTTON_TIMEOUT)
-
-    def _wait_for_freemotion_button(self, msg=None):
-        if msg is None:
-            msg = 'Appuyez sur le bouton freemotion pour continuer'
-
-        self._say(msg)
-        while not self._robot.get_learning_mode():
-            rospy.sleep(0.1)
-
-    def _get_joints_limits(self) -> Dict[int, Dict[str, float]]:
-        """
-        Get the joints limits of the robot. The limits are reduced to avoid hitting the mechanical limits
-        :return: The limits with the following format: {joint_number: {'min': min_value, 'max': max_value}}
-        """
-        if self._robot.get_hardware_version() == 'ned2':
-            offsets = _ned2_offsets
-        else:
-            offsets = ((0, 0), ) * len(self._robot.get_joints())
-
-        return {
-            int(joint_name[-1]): {
-                'min': joints_limits['min'] + offset_min, 'max': joints_limits['max'] - offset_max
-            }
-            for (joint_name,
-                 joints_limits), (offset_min,
-                                  offset_max) in zip(self._robot.get_axis_limits()[1]['joint_limits'].items(), offsets)
+    return {
+        int(joint_name[-1]): {
+            'min': joints_limits['min'] + offset_min, 'max': joints_limits['max'] - offset_max
         }
+        for (joint_name,
+             joints_limits), (offset_min,
+                              offset_max) in zip(robot.get_axis_limits()[1]['joint_limits'].items(), offsets)
+    }
 
-    def _say(self, txt: str):
-        say(self._robot, txt)
+
+def __iterate_with_led_ring(robot: NiryoRosWrapper, calculate_progress):
+    """
+    Generalized function to update the LED ring according to an iterator.
+    :param robot: The robot instance
+    :param calculate_progress: A function that takes the current iteration index and returns the progress value.
+           End the iteration by returning None.
+    """
+    n_leds = 30
+    color = robot.led_ring.color
+    blank = [0, 0, 0]
+    ix = 0
+
+    while True:
+        progress = calculate_progress(ix)
+        if progress is None:  # End of iteration
+            break
+
+        n_leds_to_light = int(n_leds * progress)
+        robot.led_ring.custom([color] * n_leds_to_light + [blank] * (n_leds - n_leds_to_light))
+
+        yield ix
+        ix += 1
+
+
+def led_ring_range(robot: NiryoRosWrapper, *args, **kwargs) -> Generator[int, None, None]:
+    """
+    Act like a range but light up the led ring with a color that changes from start to stop
+    :param robot: The robot instance
+    :param args: The same arguments as the built-in range function
+    :param kwargs: The same arguments as the built-in range function
+    :return: A generator that yields the current iteration index
+    """
+    n_iter = len(range(*args, **kwargs))
+
+    def calculate_progress(ix):
+        if ix < n_iter:
+            return ix / n_iter
+
+    return __iterate_with_led_ring(robot, calculate_progress)
+
+
+def led_ring_duration(robot: NiryoRosWrapper, duration: rospy.Duration):
+    """
+    Light up the LED ring gradually over the given duration.
+    :param robot: The robot instance
+    :param duration: The duration over which the LED ring will be lit up
+    :return: A generator that yields the current iteration index
+    """
+    start_time = rospy.Time.now()
+
+    def calculate_progress(_ix):
+        if (elapsed_time := rospy.Time.now() - start_time) < duration:
+            return elapsed_time.to_sec() / duration.to_sec()
+
+    return __iterate_with_led_ring(robot, calculate_progress)

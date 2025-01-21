@@ -11,6 +11,7 @@ from niryo_robot_sound.srv import TextToSpeech
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
+from std_msgs.msg import String
 
 
 class SoundRosWrapperException(Exception):
@@ -35,14 +36,17 @@ def check_ned2_version(func):
 
 
 class SoundRosWrapper(object):
+
     def __init__(self, hardware_version='ned2', service_timeout=1):
         self.__service_timeout = service_timeout
         self.__hardware_version = hardware_version
 
         self.__sounds = []
         self.__sound_duration = {}
+        self.__current_sound = ''
         if hardware_version in ['ned2', 'ned3pro']:
             rospy.Subscriber('/niryo_robot_sound/sound_database', SoundList, self.__sound_database_callback)
+            rospy.Subscriber('/niryo_robot_sound/sound', String, self.__sound_callback)
 
     @property
     def hardware_version(self):
@@ -64,9 +68,22 @@ class SoundRosWrapper(object):
         """
         return self.__sounds
 
+    @property
+    def current_sound(self):
+        """
+        Get the current sound being played
+
+        :return: current sound name
+        :rtype: Optional[str]
+        """
+        return self.__current_sound or None
+
     def __sound_database_callback(self, msg):
         self.__sound_duration = {sound.name: sound.duration for sound in msg.sounds}
         self.__sounds = list(self.__sound_duration.keys())
+
+    def __sound_callback(self, msg):
+        self.__current_sound = msg.data
 
     #    @check_ned2_version
     def play(self, sound_name, wait_end=True, start_time_sec=0, end_time_sec=0):
@@ -86,11 +103,13 @@ class SoundRosWrapper(object):
         :rtype: (int, str)
         """
         self.__check_ned_2_version()
-        result = self.__call_service('/niryo_robot_sound/play',
-                                     PlaySound, PlaySoundRequest(sound_name=sound_name,
-                                                                 start_time_sec=start_time_sec,
-                                                                 end_time_sec=end_time_sec,
-                                                                 wait_end=wait_end))
+        result = self.__call_service(
+            '/niryo_robot_sound/play',
+            PlaySound,
+            PlaySoundRequest(sound_name=sound_name,
+                             start_time_sec=start_time_sec,
+                             end_time_sec=end_time_sec,
+                             wait_end=wait_end))
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
