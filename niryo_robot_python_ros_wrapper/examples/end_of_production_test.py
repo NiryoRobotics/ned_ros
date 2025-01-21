@@ -9,6 +9,7 @@ from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from niryo_robot_utils import NiryoRosWrapperException
 from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 from niryo_robot_utils.dataclasses.Pose import Pose
+from niryo_robot_utils.end_of_production_tests.BaseTest import BaseTest
 from niryo_robot_utils.end_of_production_tests.LedRingManager import LedRingManager
 from niryo_robot_utils.end_of_production_tests.TestReport import TestReport
 from niryo_robot_utils.end_of_production_tests import utils
@@ -42,7 +43,7 @@ def get_max_velocity(robot: NiryoRosWrapper) -> int:
 ###################
 
 
-class TestConnectionRFM(utils.BaseTest):
+class TestConnectionRFM(BaseTest):
 
     def __call__(self):
         from niryo_robot_reports.srv import CheckConnection, CheckConnectionRequest
@@ -50,18 +51,18 @@ class TestConnectionRFM(utils.BaseTest):
         check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
         request = CheckConnectionRequest(service=Service(to_test=Service.TEST_REPORTS))
         response = check_connection_service(request)
-        if not response.success:
+        if not response.result:
             raise RuntimeError("Can't connect to rfm")
 
 
-class TestElbow90Degrés(utils.BaseTest):
+class TestElbow90Degrés(BaseTest):
 
     def __call__(self):
         self._robot.move(JointsPosition(0, 0, 0, 0, 0, 0))
         self._wait_for_save_button()
 
 
-class TestHautsParleurs(utils.BaseTest):
+class TestHautsParleurs(BaseTest):
 
     def __call__(self):
         from gtts import gTTS
@@ -80,18 +81,19 @@ class TestHautsParleurs(utils.BaseTest):
         self._wait_for_save_button()
 
 
-class TestLedRing(utils.BaseTest):
+class TestLedRing(BaseTest):
 
     def __call__(self, *args, **kwargs):
         led_ring_manager = LedRingManager(self._robot)
+        self._say('Appuyez sur le bouton freemotion pour changer la couleur ou sur le bouton save pour valider.')
         led_ring_manager.run()
 
 
-class TestGrippeur(utils.BaseTest):
+class TestGrippeur(BaseTest):
 
     def pre_test(self):
         self._robot.move(CHANGE_TOOL_POSITION)
-        self._wait_for_custom_button('Mettez un grippeur puis appuyez sur le bouton custom pour continuer')
+        self._wait_for_custom_button('Mettez un grippeur')
         self._robot.update_tool()
 
     def __call__(self, *args, **kwargs):
@@ -106,17 +108,17 @@ class TestGrippeur(utils.BaseTest):
         self._robot.move(neutral_pose)
 
 
-class TestHauteVitesse(utils.BaseTest):
+class TestHauteVitesse(BaseTest):
 
     def pre_test(self):
         self._robot.move(CHANGE_TOOL_POSITION)
-        self._wait_for_custom_button('Mettez la masse puis appuyez sur le bouton custom pour continuer')
+        self._wait_for_custom_button('Mettez la masse')
 
         self._robot.set_arm_max_velocity(get_max_velocity(self._robot))
         self._robot.set_arm_max_acceleration(MAX_ACCELERATION)
 
     def __call__(self, *args, **kwargs):
-        joints_limits = self._get_joints_limits()
+        joints_limits = utils.get_joints_limits(self._robot)
 
         poses = [
             JointsPosition(joints_limits[1]['min'], joints_limits[2]['min'], joints_limits[3]['max'], 0, 0, 0),
@@ -128,13 +130,16 @@ class TestHauteVitesse(utils.BaseTest):
             JointsPosition(0, 0, 0, joints_limits[4]['min'], joints_limits[5]['min'], joints_limits[6]['min']),
             JointsPosition(0, 0, 0, joints_limits[4]['max'], joints_limits[5]['max'], joints_limits[6]['max']),
         ]
-        for _ in range(10):
+        for _ in utils.led_ring_range(self._robot, 10):
             for pose in poses:
-                status, message = self._robot.move(pose)
-                if status < 0:
-                    raise RuntimeError(f'Error while moving to the pose {pose}: {message}')
-                if self._robot.collision_detected:
-                    raise RuntimeError(f'A collision has been detected while moving to the pose {pose}')
+                try:
+                    status, message = self._robot.move(pose)
+                    if self._robot.collision_detected:
+                        raise RuntimeError(f'A collision has been detected while moving to the pose {pose}')
+                    if status < 0:
+                        raise RuntimeError(f'Error while moving to the pose {pose}: {message}')
+                except NiryoRosWrapperException as e:
+                    raise RuntimeError(f'Error while moving to the pose {pose}: {repr(e)}')
 
     def post_test(self):
         self._robot.clear_collision_detected()
@@ -142,10 +147,23 @@ class TestHauteVitesse(utils.BaseTest):
         self._robot.set_arm_max_acceleration(DEFAULT_ACCELERATION)
 
         self._robot.move(CHANGE_TOOL_POSITION)
-        self._wait_for_custom_button('Retirez la masse puis appuyez sur le bouton custom pour continuer')
+        self._wait_for_custom_button('Retirez la masse')
 
 
-class TestCalibration(utils.BaseTest):
+class TestCalibration(BaseTest):
+
+    def __wait_end_of_calibration_sound(self):
+        if self._robot.get_hardware_status().calibration_in_progress:
+            return
+
+        sound_started = sound_stopped = False
+        while not rospy.is_shutdown() and not sound_stopped:
+            current_sound = self._robot.sound.current_sound
+            if current_sound == 'calibration.wav':
+                sound_started = True
+            elif current_sound is None and sound_started:
+                sound_stopped = True
+            rospy.sleep(0.1)
 
     def __ned2_calibration(self):
         self._robot.calibrate_auto()
@@ -156,8 +174,11 @@ class TestCalibration(utils.BaseTest):
                                                        FactoryCalibration)
         request = FactoryCalibrationRequest(command=FactoryCalibrationRequest.START, ids=[2, 3, 4])
         factory_calibrate_service(request)
+        # As there is no way to skip the calibration animation, we have to wait the end of it,
+        # otherwise the 'say' calls could be overlapped by the calibration sound
+        self.__wait_end_of_calibration_sound()
 
-        self._wait_for_custom_button('Calibrez le robot puis appuyez sur le bouton custom pour continuer')
+        self._wait_for_custom_button("Faites tourner chaque axe d'une butée à une autre")
 
         request.command = FactoryCalibrationRequest.STOP
         factory_calibrate_service(request)
@@ -168,6 +189,11 @@ class TestCalibration(utils.BaseTest):
         if hw_status.calibration_needed:
             self._say('La calibration a échoué')
             self.__ned3pro_calibration()
+        else:
+            # This is a workaround for the issue which cause the ned3pro to fail to move after the calibration
+            self._robot.set_learning_mode(False)
+            self._robot.set_learning_mode(True)
+            self._robot.set_learning_mode(False)
 
     def __call__(self, *args, **kwargs):
         hardware_version = self._robot.get_hardware_version()
@@ -179,7 +205,7 @@ class TestCalibration(utils.BaseTest):
             raise RuntimeError(f'Unknown hardware version: {hardware_version}')
 
 
-class TestLongueDurée(utils.BaseTest):
+class TestLongueDurée(BaseTest):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -199,7 +225,7 @@ class TestLongueDurée(utils.BaseTest):
             raise RuntimeError(f'More than 5 collisions. Ending the test after {self.__nb_loops} loop(s)')
 
     def __call__(self, *args, **kwargs):
-        joints_limits = self._get_joints_limits()
+        joints_limits = utils.get_joints_limits(self._robot)
         waypoints = [
             JointsPosition(
                 joints_limits[1]['min'],
@@ -242,21 +268,17 @@ class TestLongueDurée(utils.BaseTest):
             self._robot.get_sleep_pose()
         ]
 
-        start_time = rospy.Time.now()
-        while not rospy.is_shutdown() and rospy.Time.now() - start_time < LONG_TEST_DURATION:
-            self.__nb_loops += 1
+        for ix in utils.led_ring_duration(self._robot, LONG_TEST_DURATION):
+            self.__nb_loops = ix
             for waypoint in waypoints:
                 try:
                     status, message = self._robot.move(waypoint)
-                    rospy.loginfo(f'{status=}, {message=}')
                     if status < 0:
                         rospy.logwarn(f'Error while moving to the pose {waypoint}: {repr((status, message))}')
                         raise NiryoRosWrapperException(repr((status, message)))
                 except NiryoRosWrapperException as e:
                     rospy.logwarn(f'Error while moving to the pose {waypoint}: {repr(e)}')
                     self._handle_collision()
-                except Exception as e:
-                    rospy.logerr(repr(e))
 
         rospy.loginfo(f'End of the test with {self.__nb_loops} loop(s) and {self.__nb_collision} collision(s)')
 
@@ -265,7 +287,7 @@ class TestLongueDurée(utils.BaseTest):
         self._robot.move_to_sleep_pose()
 
 
-class TestStatusDuRobot(utils.BaseTest):
+class TestStatusDuRobot(BaseTest):
 
     def __call__(self, *args, **kwargs):
         try:
@@ -353,9 +375,17 @@ def main():
 
     utils.say(robot_instance, 'Fin du test.')
 
-    if test_report.success and not cli_args.no_delete:
-        utils.say(robot_instance, 'Remplacement du programme par la démo')
-        auto_destroy(robot_instance)
+    if test_report.success:
+        robot_instance.move_to_sleep_pose()
+
+        if not cli_args.no_delete:
+            utils.say(robot_instance, 'Remplacement du programme par la démo')
+            auto_destroy(robot_instance)
+
+    else:
+        j_limits = utils.get_joints_limits(robot_instance)
+        play_dead_position = JointsPosition(0, j_limits[2]['max'], j_limits[3]['max'], 0, 0, 0)
+        robot_instance.move(play_dead_position)
 
 
 #############
