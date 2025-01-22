@@ -9,7 +9,8 @@ from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 
 from std_msgs.msg import String
 
-from .utils import BaseTest, say
+from .BaseTest import BaseTest
+from .utils import say
 
 
 class TestReport(object):
