@@ -1,10 +1,11 @@
+from queue import Queue, Empty
+from threading import Thread
 from typing import Dict, Generator
 import re
 import rospy
 
 from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 
-WAIT_FOR_BUTTON_TIMEOUT = 600
 use_sound = True
 
 # Dictionary which replace some words by their phonetic equivalent to improve the TTS pronunciation
@@ -82,16 +83,42 @@ def __iterate_with_led_ring(robot: NiryoRosWrapper, calculate_progress):
     blank = [0, 0, 0]
     ix = 0
 
-    while True:
+    def update_led_ring(queue: Queue):
+        """
+        Update the led ring according to the latest element pushed in the queue.
+        Run until None is pushed in the queue.
+        :param queue: The queue containing the number of leds to light up
+        :return:
+        """
+        n_leds_to_light = None
+        while True:
+            try:
+                n_leds_to_light = queue.get(timeout=1)
+            except Empty:
+                pass
+
+            if n_leds_to_light is None:
+                break
+
+            if robot.led_ring.is_autonomous:
+                robot.led_ring.custom([color] * n_leds_to_light + [blank] * (n_leds - n_leds_to_light))
+
+    leds_queue = Queue()
+    led_ring_thread = Thread(target=update_led_ring, args=(leds_queue, ), daemon=True)
+    led_ring_thread.start()
+
+    while not rospy.is_shutdown():
         progress = calculate_progress(ix)
         if progress is None:  # End of iteration
             break
 
-        n_leds_to_light = int(n_leds * progress)
-        robot.led_ring.custom([color] * n_leds_to_light + [blank] * (n_leds - n_leds_to_light))
+        leds_queue.put(int(n_leds * progress))
 
         yield ix
         ix += 1
+
+    leds_queue.put(None)
+    led_ring_thread.join()
 
 
 def led_ring_range(robot: NiryoRosWrapper, *args, **kwargs) -> Generator[int, None, None]:
