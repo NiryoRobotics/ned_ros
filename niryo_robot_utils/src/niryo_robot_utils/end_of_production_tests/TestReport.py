@@ -24,7 +24,8 @@ class TestReport(object):
 
     @property
     def json(self):
-        return json.dumps(self.__report, indent=4)
+        whole_report = {'success': self.success, 'details': self.__report}
+        return json.dumps(whole_report, indent=4)
 
     @property
     def success(self) -> bool:
@@ -32,7 +33,7 @@ class TestReport(object):
         Check if all the tests were successful
         :return:
         """
-        return all([test['success'] for test in self.__report])
+        return all([test['status'] == 1 for test in self.__report])
 
     @contextmanager
     def __capture_logs(self):
@@ -75,7 +76,7 @@ class TestReport(object):
                 self.__robot.clear_collision_detected()
 
             logs = log_buffer.getvalue()
-        self.__report.append({'name': test_inst.name, 'success': success, 'report': logs})
+        self.__report.append({'name': test_inst.name, 'status': int(success), 'report': logs})
 
     def run_playbook(self, playbook: List[Type[BaseTest]]):
         """
@@ -86,4 +87,12 @@ class TestReport(object):
 
     def send(self):
         new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=1)
+
+        # Wait for the publisher initialization
+        start_time = rospy.Time.now()
+        while not rospy.is_shutdown() and new_report_publisher.get_num_connections() == 0:
+            if (rospy.Time.now() - start_time).to_sec() > 1:
+                raise TimeoutError("Timeout while waiting for the publisher to initialize")
+            rospy.sleep(0.1)
+
         new_report_publisher.publish(self.json)
