@@ -333,23 +333,10 @@ trigger_job:
   image: curlimages/curl
   stage: .post
   script:
-    - >
-      case $CI_COMMIT_BRANCH in
-        master)
-          ENVIRONMENT=production
-          ;;
-        staging)
-          ENVIRONMENT=staging
-          ;;
-        *)
-          ENVIRONMENT=develop
-          ;;
-      esac
-    - >
-      curl --fail --show-error 
+    - curl --fail --show-error 
       --form "token=$CI_JOB_TOKEN"
       --form "ref=master"
-      --form variables[ENVIRONMENT]="$ENVIRONMENT"
+      --form variables[INCOMING_BRANCH]="$CI_COMMIT_BRANCH"
       --form variables[TRIGGER_COMMIT_MESSAGE]="$CI_COMMIT_MESSAGE"
       "${CI_API_V4_URL}/projects/${TARGET_REPO_ID}/trigger/pipeline"
   variables:
@@ -357,5 +344,4 @@ trigger_job:
   only:
     refs:
       - develop
-      - staging
       - master
