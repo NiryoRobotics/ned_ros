@@ -6,7 +6,7 @@ from niryo_robot_utils import NiryoTopicValue
 from std_msgs.msg import ColorRGBA
 
 # - Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest, GetLedsColor
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -104,6 +104,22 @@ class LedRingRosWrapper(object):
         led_request = SetLedColorRequest(led_id=led_id, color=color_rgba)
         result = self.__call_service('/niryo_robot_led_ring/set_led_color', SetLedColor, led_request)
         return self.__classic_return_w_check(result)
+
+    def get_led_colors(self):
+        """
+        Get the color of all the LEDs of the Led Ring.
+
+        Example: ::
+            colors = led_ring.get_led_colors()
+            print(colors[0])  # [15, 50, 255]
+
+        :return: List of colors for each LED. RGB channels from 0 to 255.
+        :rtype: list[list[int]]
+        """
+        self.__check_ned_2_version()
+        result = self.__call_service('/niryo_robot_led_ring/get_led_colors', GetLedsColor)
+        self.__check_result_status(result)
+        return [[c.r, c.g, c.b] for c in result.led_ring_colors]
 
     def set_user_animation(self, animation_mode, colors, period=0, iterations=0, wait_end=False):
         """

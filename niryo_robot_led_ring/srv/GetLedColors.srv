@@ -1,0 +1,4 @@
+---
+std_msgs/ColorRGBA[] led_ring_colors
+int32 status
+string message

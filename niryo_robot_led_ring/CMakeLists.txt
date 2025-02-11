@@ -22,6 +22,7 @@ add_service_files(
   FILES
     LedUser.srv
     SetLedColor.srv
+    GetLedColors.srv
 )
 
 # enable python module support

@@ -6,7 +6,7 @@ import rosnode
 import rospy
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation
 # Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, GetLedColors, GetLedColorsResponse
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_rpi.msg import HotspotButtonStatus
@@ -15,7 +15,7 @@ from niryo_robot_user_interface.msg import ConnectionState
 from niryo_robot_status.msg import RobotStatus
 from std_msgs.msg import Int32
 
-from niryo_robot_led_ring.led_ring_animations import LedRingAnimations
+from niryo_robot_led_ring.led_ring_animations import LedRingAnimations, get_rgba_color_from_list
 from niryo_robot_led_ring.led_ring_enums import *
 
 
@@ -80,6 +80,7 @@ class LedRingCommander(object):
         # - Services
         self.__set_ring_led_user = rospy.Service('~set_user_animation', LedUser, self.__callback_set_led_ring_user)
         self.__set_led_color_service = rospy.Service('~set_led_color', SetLedColor, self.__callback_set_led_color)
+        rospy.Service('~get_led_colors', GetLedColors, self.__callback_get_led_colors)
 
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
@@ -208,6 +209,12 @@ class LedRingCommander(object):
 
         return CommandStatus.SUCCESS, "Successfully set led {} at color {}".format(
             req.led_id, [req.color.r, req.color.g, req.color.b])
+
+    def __callback_get_led_colors(self, _):
+        led_ring_colors = map(get_rgba_color_from_list, self.led_ring_anim.get_state_list_from_pixel_strip())
+        return GetLedColorsResponse(status=CommandStatus.SUCCESS,
+                                    message='Successfully retrieved the leds colors',
+                                    led_ring_colors=list(led_ring_colors))
 
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
