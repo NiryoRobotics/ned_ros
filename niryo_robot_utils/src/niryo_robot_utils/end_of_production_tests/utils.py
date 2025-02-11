@@ -1,9 +1,11 @@
+import math
+import re
 from queue import Queue, Empty
 from threading import Thread
 from typing import Dict, Generator
-import re
-import rospy
 
+import rospy
+from niryo_robot_led_ring.msg import LedRingAnimation
 from niryo_robot_python_ros_wrapper import NiryoRosWrapper
 
 use_sound = True
@@ -79,8 +81,12 @@ def __iterate_with_led_ring(robot: NiryoRosWrapper, calculate_progress):
            End the iteration by returning None.
     """
     n_leds = 30
-    color = robot.led_ring.color
     blank = [0, 0, 0]
+    if robot.led_ring.animation_mode == LedRingAnimation.CUSTOM:
+        colors = [color for color in robot.led_ring.get_led_colors() if color != blank]
+        color = colors[0] if colors else [255, 255, 255]
+    else:
+        color = robot.led_ring.color
     ix = 0
 
     def update_led_ring(queue: Queue):
@@ -112,7 +118,7 @@ def __iterate_with_led_ring(robot: NiryoRosWrapper, calculate_progress):
         if progress is None:  # End of iteration
             break
 
-        leds_queue.put(int(n_leds * progress))
+        leds_queue.put(math.ceil(n_leds * progress))
 
         yield ix
         ix += 1
@@ -133,7 +139,7 @@ def led_ring_range(robot: NiryoRosWrapper, *args, **kwargs) -> Generator[int, No
 
     def calculate_progress(ix):
         if ix < n_iter:
-            return ix / n_iter
+            return (ix + 1) / n_iter
 
     return __iterate_with_led_ring(robot, calculate_progress)
 
