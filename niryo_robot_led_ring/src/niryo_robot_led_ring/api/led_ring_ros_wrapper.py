@@ -6,7 +6,7 @@ from niryo_robot_utils import NiryoTopicValue
 from std_msgs.msg import ColorRGBA
 
 # - Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest, GetLedsColor
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest, GetLedColors
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -117,7 +117,7 @@ class LedRingRosWrapper(object):
         :rtype: list[list[int]]
         """
         self.__check_ned_2_version()
-        result = self.__call_service('/niryo_robot_led_ring/get_led_colors', GetLedsColor)
+        result = self.__call_service('/niryo_robot_led_ring/get_led_colors', GetLedColors)
         self.__check_result_status(result)
         return [[c.r, c.g, c.b] for c in result.led_ring_colors]
 
