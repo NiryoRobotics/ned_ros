@@ -18,26 +18,6 @@ stages:
 include:
   ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
   - template: Code-Quality.gitlab-ci.yml
-  # Build documentation
-  - project: 'pipelines/gitlab-ci-jobs'
-    ref: master
-    file: 'documentation/build_documentation/build_documentation_config.yml'
-  # Check for missing translations or fuzzy
-  - project: 'pipelines/gitlab-ci-jobs'
-    ref: master
-    file: 'documentation/missing_translations/missing_translations_config.yml'
-  # Upload documentation to niryo.com ftp
-  - project: 'pipelines/gitlab-ci-jobs'
-    ref: master
-    file: 'documentation/upload_to_ftp/upload_to_ftp_config.yml'
-  # Check for broken links in website
-  - project: 'pipelines/gitlab-ci-jobs'
-    ref: master
-    file: 'documentation/link_checker/link_checker_config.yml'
-  # Create Gitlab release (tag + release)
-  - project: 'pipelines/gitlab-ci-jobs'
-    ref: master
-    file: 'various/release_gitlab/release_gitlab_config.yml'
 
 .abstract_catkin_build:
   stage: build
@@ -107,27 +87,6 @@ generate_tar_artifacts:
     paths:
       - artifacts.tar.gz
     expire_in: 1 week
-
-# TODO: Replace this job with the new build system
-build_doc_job:
-  image: gitlab01.niryotech.com:5050/documentations/build_docs/ned_ros_stack:latest_amd64
-  dependencies:
-    - catkin_make_amd
-  stage: documentation
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [ .abstract_move_source_tricks_job, script ]
-    - cd src/sphinx_doc
-    - git submodule update --init
-    # Build documentation without todo printing in final document
-    - scripts/build_docs.sh -D todo_include_todos=0 -o ${DOCUMENTATION_OUTPUT_FOLDER}
-    - scripts/generate_pdf.sh -o ${DOCUMENTATION_OUTPUT_FOLDER}/generated_pdfs
-    - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
-  after_script:
-    - mv src/sphinx_doc/${DOCUMENTATION_OUTPUT_FOLDER} ${DOCUMENTATION_OUTPUT_FOLDER}
-  rules:
-    - when: never
-
 
 .abstract_move_source_tricks_job:
   stage: test
@@ -243,91 +202,6 @@ code_quality_html:
     paths: [ gl-code-quality-report.html ]
   tags:
     - dind
-
-missing_translation_job:
-  image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64
-  stage: test
-  variables:
-    LOCALE_FOLDER_PATH: ./sphinx_doc/locale
-  rules:
-    - if: $CI_COMMIT_BRANCH
-    - if: $CI_COMMIT_TAG
-
-.staging_job:
-  variables: &staging_variables
-    DOMAIN_NAME: https://staging.docs.niryo.com
-    BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
-    TARGET_FOLDER_OVH: ~/docs_staging/dev
-
-# TODO: Replace this job when there is the new documentation build system
-upload_staging_job:
-  image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64
-  stage: upload
-  environment:
-    name: staging
-    deployment_tier: staging
-    action: start
-  variables:
-    CI_COMMIT_TAG: v0.0.1
-    <<: *staging_variables
-  rules:
-    - when: never
-    - if: $CI_COMMIT_BRANCH
-      when: manual
-      allow_failure: true
-  extends: .abstract_upload
-
-# TODO: Replace this job when there is the new documentation build system
-linkchecker_staging_job:
-  extends: .abstract_linkchecker
-  stage: environment_test
-  variables:
-    <<: *staging_variables
-  rules:
-    - when: never
-    - if: $CI_COMMIT_BRANCH
-  needs:
-    - upload_staging_job
-
-# TODO: Replace this job when there is the new documentation build system
-.production_job:
-  variables: &production_variables
-    DOMAIN_NAME: https://docs.niryo.com
-    BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
-    TARGET_FOLDER_OVH: ~/docs/dev
-  rules: &production_rules
-    - when: never
-    ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
-    # If a it's a tag && protected tag
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
-
-# TODO: Replace this job when there is the new documentation build system
-upload_production_job:
-  image: gitlab01.niryotech.com:5050/documentations/build_docs/base:latest_amd64
-  rules: *production_rules
-  stage: upload
-  environment:
-    name: production
-    deployment_tier: production
-    action: start
-  variables:
-    <<: *production_variables
-  extends: .abstract_upload
-
-# TODO: Replace this job when there is the new documentation build system
-linkchecker_production_job:
-  rules: *production_rules
-  stage: environment_test
-  variables:
-    <<: *production_variables
-  needs:
-    - upload_production_job
-  extends: .abstract_linkchecker
-
-release_gitlab_job:
-  rules: *production_rules
-  stage: release_gitlab
-
 
 trigger_job:
   image: curlimages/curl

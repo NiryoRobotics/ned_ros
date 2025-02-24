@@ -108,7 +108,7 @@ class ConveyorSpeedEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> int:
         feedback = self._safe_conveyor_feedback()
-        return feedback.speed
+        return feedback['speed']
 
     def set(self, value: int) -> None:
         self._safe_control_conveyor(speed=value, bool_control_on=True)

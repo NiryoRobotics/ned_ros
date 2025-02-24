@@ -364,8 +364,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Uses /joint_states topic to get joints status
 
-        :return: list of joints value
-        :rtype: list[float]
+        :return: A JointsPosition object containing the joints values
+        :rtype: JointsPosition
         """
         return JointsPosition(*self.__joints_ntv.value.position)
 
@@ -2283,6 +2283,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         serialized_feedback = [{
             'conveyor_id': self.__conveyor_id_to_conveyor_number(f.conveyor_id),
             'connection_state': f.connection_state,
+            'running': f.running,
             'speed': f.speed,
             'direction': f.direction
         } for f in self.__conveyors_feedback_ntv.value.conveyors]

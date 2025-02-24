@@ -1,15 +1,13 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List
+from typing import List, TypedDict
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 import rospy
 
-from conveyor_interface.msg import ConveyorFeedback
-
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
-from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ConveyorID, ConveyorDirection
 
 from ..CommonStore import CommonStore
 from ..util import (SupportedType,
@@ -185,6 +183,14 @@ class ABCRegisterEntry(ABCRegisterEntries, ABC):
         super().__init__(ros_wrapper, 0)
 
 
+class ConveyorFeedback(TypedDict):
+    conveyor_id: ConveyorID
+    connection_state: bool
+    running: bool
+    speed: int
+    direction: int
+
+
 class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
     """
     Abstract base class for defining conveyor-related register entries.
@@ -225,7 +231,7 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         except IndexError:
             return ConveyorID.NONE
 
-    def _safe_conveyor_feedback(self):
+    def _safe_conveyor_feedback(self) -> ConveyorFeedback:
         """
         Safely retrieves conveyor feedback information.
 
@@ -236,7 +242,13 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
         try:
             return feedback[self._index]
         except (IndexError, KeyError):
-            return ConveyorFeedback()
+            return {
+                'conveyor_id': ConveyorID.NONE,
+                'connection_state': False,
+                'running': False,
+                'speed': 0,
+                'direction': ConveyorDirection.NONE,
+            }
 
     def _safe_control_conveyor(self, bool_control_on=None, speed=None, direction=None):
         """
@@ -252,11 +264,11 @@ class ABCConveyorRegisterEntries(ABCRegisterEntries, ABC):
 
         feedback = self._ros_wrapper.get_conveyors_feedback()[self._index]
         if bool_control_on is None:
-            bool_control_on = feedback.running
+            bool_control_on = feedback['running']
         if speed is None:
-            speed = feedback.speed
+            speed = feedback['speed']
         if direction is None:
-            direction = feedback.direction
+            direction = feedback['direction']
 
         self._ros_wrapper.control_conveyor(conveyors_id[self._index], bool_control_on, speed, direction)
 

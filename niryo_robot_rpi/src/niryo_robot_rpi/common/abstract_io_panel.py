@@ -121,7 +121,7 @@ class AbstractIOPanel(object):
                                          "{} is not a digital IO, but a analog IO".format(req.name))
         else:
             return self._create_response(CommandStatus.DIGITAL_IO_PANEL_ERROR,
-                                         "No GPIO found with this pin number (" + str(req.pin) + ")")
+                                         "No GPIO found with this pin number (" + str(req.name) + ")")
 
         return {'status': CommandStatus.SUCCESS, 'message': 'OK', 'value': value}
 

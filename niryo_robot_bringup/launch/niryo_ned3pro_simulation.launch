@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments definition -->
+    <arg name="log_level" default="INFO"/>
+    <arg name="ttl_enabled" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="conf_location" default="version.txt"/>
+    <arg name="simu_gripper" default="true"/>
+    <arg name="simu_conveyor" default="true"/>
+    <arg name="vision_enabled" default="true"/>
+    <arg name="gazebo" default="false"/>
+    <arg name="no_summary" default="false"/>
+    <arg name="database" default="false"/>
+    <arg name="hardware_version" default="ned3pro"/>
+
+
+    <group if="$(arg no_summary)">
+        <node pkg="niryo_robot_bringup" type="timed_launch.sh"
+              args="0 niryo_robot_bringup niryo_robot_sound_and_light.launch.xml
+                  hardware_version:='ned3pro'
+                  simulation_mode:=true"
+              name="sound_and_light_launch" output="screen"/>
+
+        <node pkg="niryo_robot_bringup" type="timed_launch.sh"
+              args="0 niryo_robot_bringup niryo_robot.launch
+                  hardware_version:='ned3pro'
+                  simulation_mode:=true
+                  simu_gripper:=$(arg simu_gripper)
+                  simu_conveyor:=$(arg simu_conveyor)
+                  gazebo:=$(arg gazebo)
+                  vision_enabled:=$(arg vision_enabled)
+                  log_level:=$(arg log_level)
+                  ttl_enabled:=$(arg ttl_enabled)
+                  can_enabled:=false
+                  database:=$(arg database)
+                  debug:=$(arg debug)"
+              name="robot_launch" output="screen"/>
+    </group>
+
+    <group unless="$(arg no_summary)">
+        <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
+            <arg name="hardware_version" value="ned3pro"/>
+            <arg name="simulation_mode" value="true"/>
+            <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+            <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
+            <arg name="log_level" value="$(arg log_level)"/>
+            <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
+            <arg name="can_enabled" value="false"/>
+            <arg name="debug" value="$(arg debug)"/>
+            <arg name="vision_enabled" value="$(arg vision_enabled)"/>
+            <arg name="gazebo" value="$(arg gazebo)"/>
+            <arg name="database" default="$(arg database)"/>
+        </include>
+
+        <include file="$(find niryo_robot_bringup)/launch/niryo_robot_sound_and_light.launch.xml">
+            <arg name="hardware_version" value="ned3pro"/>
+            <arg name="simulation_mode" value="true"/>
+        </include>
+    </group>
+
+</launch>
