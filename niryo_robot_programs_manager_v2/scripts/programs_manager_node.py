@@ -152,6 +152,7 @@ class ProgramManagerNode:
                                                req.description,
                                                req.python_code,
                                                req.blockly_code)
+        self.__publish_program_list()
         return CommandStatus.SUCCESS, 'Program successfully updated'
 
     def __callback_get_program(self, req):
