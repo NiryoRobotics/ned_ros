@@ -42,6 +42,8 @@ RUN sudo apt update && sudo apt install -y \
     x11-apps \
     libx11-dev \
     bash-completion 
+    bash-completion \
+    python3-pip
 
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc

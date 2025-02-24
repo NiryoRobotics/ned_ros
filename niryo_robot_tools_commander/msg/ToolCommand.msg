@@ -13,7 +13,7 @@ int8 DEACTIVATE_DIGITAL_IO = 22
 
 uint8 cmd_type
 
-# Gripper1= 11, Gripper2=12, Gripper3=13, VaccuumPump=31, Electromagnet=30
+# Gripper1= 11, Gripper2=12, Gripper3=13, VacuumPump=31, VacuumPumpV2=32, Electromagnet=30
 int8 tool_id
 
 # if gripper Ned1/One

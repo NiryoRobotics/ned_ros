@@ -117,7 +117,7 @@ class ConveyorIDEntries(ABCConveyorRegisterEntries):
     data_type = int
 
     def get(self) -> int:
-        return self._safe_conveyor_feedback().conveyor_id
+        return self._safe_conveyor_feedback()['conveyor_id'].value
 
 
 @slave_context.input_register

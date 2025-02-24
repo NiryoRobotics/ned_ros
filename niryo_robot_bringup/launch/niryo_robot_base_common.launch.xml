@@ -29,7 +29,6 @@
     <group ns="niryo_robot">
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
         <param name="simulation_mode" value="$(arg simulation_mode)"/>
-        <param name="reboot_when_auto_change_version" type="bool" value="true"/>
 
         <group ns="info">
             <param name="robot_type" type="string" value="niryo_$(arg hardware_version)"/>

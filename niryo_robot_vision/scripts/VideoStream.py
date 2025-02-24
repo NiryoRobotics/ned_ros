@@ -228,9 +228,6 @@ class WebcamStream(VideoStream):
     def __setup_stream_settings(self):
         # Set compression format
         self.__video_stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-        # Set Buffer size
-        # -- Not available in opencv 3.4 -- #
-        # self.__video_stream.set(cv2.CAP_PROP_BUFFERSIZE, rospy.get_param("~buffer_size"))
 
         # Set image size
         w, h = rospy.get_param("~frame_size")

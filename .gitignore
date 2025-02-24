@@ -37,4 +37,6 @@ generated_pdfs/
 .gitlab_resources/.catkin_tools/profiles/*/devel_collisions.txt
 .gitlab_resources/.catkin_tools/profiles/*/build.yaml
 
-sphinx_doc/tr.log
+# Sphinx documentation build directory
+docs/.build/
+docs/rosdoc_extension/.build

@@ -9,15 +9,11 @@
     <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(arg simulation_mode)"/>
     <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(arg simulation_mode)"/>
 
-    <arg name="programs_dir" value="$(arg saved_files_dir)/niryo_robot_programs" />
-
-    <include file="$(find niryo_robot_programs_manager_v2)/launch/programs_manager_base.launch.xml" />
-
     <node name="niryo_robot_programs_manager_v2" pkg="niryo_robot_programs_manager_v2" type="programs_manager_node.py"
           output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
 
-        <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
+        <param name="programs_dir" type="string" value="$(arg saved_files_dir)/niryo_robot_programs"/>
     </node>
     
 </launch>

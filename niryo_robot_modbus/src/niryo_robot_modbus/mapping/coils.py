@@ -91,7 +91,7 @@ class TCPEnabledEntry(ABCRegisterEntry):
 class ConveyorAttachedEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> bool:
-        return self._safe_conveyor_feedback().conveyor_id != 0
+        return self._safe_conveyor_feedback()['conveyor_id'] != ConveyorID.NONE
 
     def set(self, value: bool) -> None:
         if value and self._conveyor_number == ConveyorID.NONE:
@@ -104,7 +104,7 @@ class ConveyorAttachedEntries(ABCConveyorRegisterEntries):
 class ConveyorRunningEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> bool:
-        return self._safe_conveyor_feedback().running
+        return self._safe_conveyor_feedback()['running']
 
     def set(self, value: bool) -> None:
         self._safe_control_conveyor(bool_control_on=value)
@@ -115,7 +115,7 @@ class ConveyorDirectionEntries(ABCConveyorRegisterEntries):
 
     def get(self) -> bool:
         feedback = self._safe_conveyor_feedback()
-        direction = feedback.direction == ConveyorDirection.FORWARD
+        direction = feedback['direction'] == ConveyorDirection.FORWARD
         return direction
 
     def set(self, value: bool) -> None:

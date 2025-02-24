@@ -112,7 +112,7 @@ class ConveyorTTL(Enum):
 
 
 class ConveyorDirection:
-
+    NONE = 0
     FORWARD = 1
     BACKWARD = -1
 

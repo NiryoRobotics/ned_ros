@@ -1,10 +1,13 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for ned_ros_stack
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+Ned ROS stack Changelog
+^^^^^^^^^^^^^^^^^^^^^^^
 
 v5.5.4
------------
+------
+
 **Features**
+  * feat: add ned3pro simulation launchfile
+  * feat: add updated ROS wrapper examples
 
 **Improvements**
   * Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits
@@ -28,6 +31,12 @@ v5.5.4
     * utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test
   * refacto: use temp files to handle tts files
   * refacto: make of sentry a soft dependency
+  * style: cleanup CHANGELOG
+  * refactor: remove old documentation
+  * refactor: remove empty config file
+  * refactor: remove several unused parameters
+  * docs: correct get_joints() docstring
+  * ci: delete all doc related jobs
 
 **Bugfixes**
   * Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper
@@ -48,10 +57,15 @@ v5.5.4
   * The end effector panel still publish the buttons state while calibration is in progress
   * Fixed a bug which caused the cloud api to not update it's S/N and rasp_id values when they are updated
   * Fixed a bug causing the check_connection service to ping the wrong endpoints for the reports micro services
-
+  * fix: add missing tool_id comment for vacuum pump v2
+  * fix: use the correct field to qualify a Pin in the GetDigitalIORequest
+  * fix: add missing led.yaml file for ned3pro simulation
+  * fix: remove install instruction for non-existing config directory in niryo_robot_programs_manager_v2
+  * Fixed the conveyors modbus registers crashing
 
 v5.5.3
------------
+------
+
 **Features**
 
 **Improvements**
@@ -83,7 +97,8 @@ v5.5.3
   * use correct message type for ros subscriber in arm_state
 
 v5.5.2
------------
+------
+
 **Features**
 
 **Improvements**
@@ -94,7 +109,8 @@ v5.5.2
   * fix: DXL' PIDs adjustments
 
 v5.5.1
------------
+------
+
 **Features**
 
 **Improvements**
@@ -115,7 +131,8 @@ v5.5.1
 
 
 v5.5.0
------------
+------
+
 **Features**
   * Add sentry for python nodes
   * Add Ned3 demo/production program
@@ -144,7 +161,8 @@ v5.5.0
 
 
 v5.4.0
------------
+------
+
 **Features**
   * Implemented NED3 hardware changes into niryo_robot_rpi package
   * Add Ned3 Calibration support
@@ -204,7 +222,8 @@ v5.4.0
 
 
 v5.3.3
------------
+------
+
 **Features**
 
 **Improvements**
@@ -214,7 +233,8 @@ v5.3.3
 
 
 v5.3.2
------------
+------
+
 **Features**
 
 **Improvements**
@@ -223,7 +243,8 @@ v5.3.2
   * Stopping a program now send SIGTERM instead of SIGKILL in order to let the program handle its exit
 
 v5.3.1
------------
+------
+
 **Features**
 
 **Improvements**
@@ -234,7 +255,8 @@ v5.3.1
   * Fixed a bug which prevented the tool commander action server to accept new goals once a goal with a future date was published
 
 v5.3.0
------------
+------
+
 **Features**
 
 **Improvements**
@@ -249,7 +271,8 @@ v5.3.0
   * fixed a bug which caused an executed program's process to not totally stop
 
 v5.2.2
-___________
+------
+
 **Features**
 
 **Improvements**
@@ -260,7 +283,8 @@ ___________
   * Fixed the service /niryo_robot/kinematics/forward which sometimes crashed because of transform extrapolation
 
 v5.2.1
-___________
+------
+
 **Features**
 
 **Improvements**
@@ -269,7 +293,8 @@ ___________
   * the service set_program_autorun wasn't taking the mode into account when passing "DISABLE"
 
 v5.2.0
-___________
+------
+
 **Features**
  * Added a foxglove bridge server
  * new messages: BasicObject and BasicObjectList
@@ -295,38 +320,38 @@ ___________
  * remove ros_wrapper_2
 
  * modified service type:
-   * /niryo_robot/tools/reboot
-     * std_srvs/Trigger -> niryo_robot_msgs/Trigger
-   * /niryo_robot_vision/debug_markers
-     * Added "status" and "message" to service response
-   * /niryo_robot_vision/debug_colors
-     * Added "status" and "message" to service response
-   * /niryo_robot_vision/visualization
-     * Added "message" to service response
+   * /niryo_robot/tools/reboot: std_srvs/Trigger -> niryo_robot_msgs/Trigger
+   * /niryo_robot_vision/debug_markers: Added "status" and "message" to service response
+   * /niryo_robot_vision/debug_colors: Added "status" and "message" to service response
+   * /niryo_robot_vision/visualization: Added "message" to service response
 
 **Bugfixes**
   * Removed double assignment of the const REBOOT_MOTOR in RobotStatus.msg
 
 v5.1.3
-___________
+------
+
 **Features**
 
 **Improvements**
  * Added a field "saved_at" in the service /niryo_robot_programs_manager/get_program response
+
 **Bugfixes**
 
 
 v5.1.2
-___________
+------
+
 **Features**
 
 **Improvements**
  * The daily reports can now send metrics about the robot. Currently, the total lifetime of the robot is sent
+
 **Bugfixes**
 
 
 v5.1.1
-___________
+------
 
 **Features**
 
@@ -346,19 +371,20 @@ ___________
 
 
 v5.1.0
-___________
+------
 
 **Features**
 
 * The topic ``/niryo_robot_tools_commander/tcp`` now return the tcp position either if it is enabled or not
 * Every part of a dynamic frame can now be edited using the service ``/niryo_robot_poses_handlers/manage_dynamic_frame``
 * Manage a file in ``~/.ros/logs`` which store the date corresponding to the ros run ids
+
 **Improvements**
 
 **Bugfixes**
 
 v5.0.1
-___________
+------
 
 **Features**
 **Improvements**
@@ -366,8 +392,8 @@ ___________
 **Bugfixes**
 * Fixed a bug preventing the downloaded update to be applied successfully
 
-Forthcoming
------------
+v4.0.0 (2021-12-16)
+-------------------
 
 **Requirements**
 sudo apt-get install sqlite3
@@ -391,7 +417,7 @@ End effector driver fw 1.0.7
 * Contributors: AdminIT, Clément Cocquempot, Corentin Ducatez, Minh Thuc, Mottier Justin, Thuc PHAM, Valentin Pitre, f.dupuis
 
 ned2_v0.6 (2021-12-02)
-----------------
+----------------------
 **Requirements**
 
 * steppers driver with fw 1.0.16
@@ -440,7 +466,7 @@ Tests done (will be updated)
 Non tested (will be updated)
 
 ned2_v0.5 (2021-11-25)
-----------------
+----------------------
 **Bug corrections**
 
 * less jerky mouvments
@@ -470,7 +496,7 @@ ned2_v0.5 (2021-11-25)
 *  Ned, one simu
 
 ned2_v0.4 (2021-11-17)
-----------------
+----------------------
 **Features**
 
 * Calibration reworked, more stable, slower
@@ -491,7 +517,7 @@ ned2_v0.4 (2021-11-17)
 * Ned and one incompatible
 
 ned2_v0.3 (2021-11-08)
------------------
+----------------------
 **Bug Corrections**
 
 * correction in joints_limit.yaml
@@ -500,7 +526,7 @@ ned2_v0.3 (2021-11-08)
 * read firmware version only at init
 
 ned2_v0.2 (2021-11-04)
-------------------
+----------------------
 
 **Bug corrections**
 
@@ -532,7 +558,7 @@ ned2_v0.2 (2021-11-04)
 * Contributors: Ducatez Corentin, corentin ducatez
 
 ned2_v0.1 (2021-09-21)
-------------------
+----------------------
 * Stable version usable for Ned 2 testing
 * Be carefull, usable only with niryo studio tag ned2_v0.1
 
