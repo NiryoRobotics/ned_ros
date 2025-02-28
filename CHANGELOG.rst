@@ -2,6 +2,12 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.5.5
+------
+
+fix: Fixed the conveyors modbus registers crashing
+fix: publish on program_list topic when service update_program is called
+
 v5.5.4
 ------
 
@@ -61,8 +67,7 @@ v5.5.4
   * fix: use the correct field to qualify a Pin in the GetDigitalIORequest
   * fix: add missing led.yaml file for ned3pro simulation
   * fix: remove install instruction for non-existing config directory in niryo_robot_programs_manager_v2
-  * Fixed the conveyors modbus registers crashing
-  * fix: publish on program_list topic when service update_program is called
+
 
 v5.5.3
 ------
