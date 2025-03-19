@@ -670,7 +670,7 @@ TEST_F(ProgramPlayerTestSuite, get_program_list)
 // Get current program
 TEST_F(ProgramPlayerTestSuite, get_current_program)
 {
-  ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *program_list.begin());
 }
 
 // Up button Program selection
@@ -680,14 +680,14 @@ TEST_F(ProgramPlayerTestSuite, up_button_program_selection)
 
   program_player->setState(ProgramPlayerState::IDLE);
 
-  ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *program_list.begin());
 
   // up button
   driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
 
   auto current_time = std::chrono::system_clock::now();
   program_player->update(current_time);
-  ASSERT_EQ(program_player->getCurrentProgram(), (++program_list.begin())->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *(++program_list.begin()));
 
   // idle
   current_time = std::chrono::system_clock::now();
@@ -709,7 +709,7 @@ TEST_F(ProgramPlayerTestSuite, up_button_program_selection)
 
   current_time = std::chrono::system_clock::now();
   program_player->update(current_time);
-  ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *program_list.begin());
 }
 
 // Down button Program selection
@@ -719,14 +719,14 @@ TEST_F(ProgramPlayerTestSuite, down_button_program_selection)
 
   program_player->setState(ProgramPlayerState::IDLE);
 
-  ASSERT_EQ(program_player->getCurrentProgram(), program_list.begin()->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *program_list.begin());
 
   // down button
   driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
 
   auto current_time = std::chrono::system_clock::now();
   program_player->update(current_time);
-  ASSERT_EQ(program_player->getCurrentProgram(), (--program_list.end())->first);
+  ASSERT_EQ(program_player->getCurrentProgram(), *(--program_list.end()));
 }
 
 // Run all the tests that were declared with TEST()

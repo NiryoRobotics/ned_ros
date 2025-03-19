@@ -29,6 +29,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>  // NOLINT
 #include <set>
 #include <unordered_map>
+#include <utility>
 
 // niryo
 #include "niryo_robot_program_player/program_player_enums.hpp"
@@ -67,7 +68,7 @@ public:
   common::model::EActionType getDownStatus();
 
   std::string getRobotName();
-  std::string getCurrentProgram();
+  std::pair<const std::string, std::string> getCurrentProgram();
   std::map<std::string, std::string> const& getProgramList() const;
   ProgramExecutionState getProgramState() const;
   ProgramPlayerState getProgramPlayerState() const;
@@ -78,7 +79,7 @@ public:
   ProgramPlayerAdapter& getAdapter();
 
   // setter
-  void setCurrentProgram(const std::string& program);
+  void setCurrentProgram(const std::pair<const std::string, std::string>& program);
   void setDisplayMessage(const std::string& line1, const std::string& line2);
   void hasError(const Error& error_type, bool value);
 
@@ -107,7 +108,7 @@ private:
   StateType* _current_state;
 
   // programs manager
-  std::string _current_program{ "" };
+  std::pair<std::string, std::string> _current_program{ "", "" };
 
   // display
   // TODO(i.ambit) add display effect
@@ -188,9 +189,9 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::setState(ProgramP
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
-void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::play(const std::string& program)
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::play(const std::string& program_id)
 {
-  _program_player_adapter.play(program);
+  _program_player_adapter.play(program_id);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -358,21 +359,21 @@ std::string ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getRobotNa
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
-std::string ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getCurrentProgram()
+std::pair<const std::string, std::string> ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getCurrentProgram()
 {
   // Initialize _current_program value when list of programs is retrived
   auto program_list = _program_player_adapter.getProgramList();
 
-  if (_current_program.empty() && !program_list.empty())
-    _current_program = program_list.begin()->first;
+  if (_current_program.first.empty() && !program_list.empty())
+    _current_program = *program_list.begin();
 
-  // current program has been deleted then show the first one in the list
-  else if (program_list.find(_current_program) == program_list.end() && !program_list.empty())
-    _current_program = "Program deleted";
+  // current program has been deleted
+  else if (program_list.find(_current_program.first) == program_list.end() && !program_list.empty())
+    _current_program.second = "Program deleted";
 
   // no program available reset current program
   else if (program_list.empty())
-    _current_program.clear();
+    _current_program = std::make_pair("", "");
 
   return _current_program;
 }
@@ -423,12 +424,13 @@ ProgramPlayerAdapter& ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::
 
 // setter
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
-void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::setCurrentProgram(const std::string& program)
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::setCurrentProgram(const std::pair<const std::string, std::string>& program)
 {
   auto program_list = _program_player_adapter.getProgramList();
-  if (program_list.find(program) != program_list.cend())
+  auto program_list_iterator = program_list.find(program.first);
+  if (program_list_iterator != program_list.cend())
   {
-    _current_program = program;
+    _current_program = *program_list_iterator;
   }
 }
 

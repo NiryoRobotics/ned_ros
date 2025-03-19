@@ -130,7 +130,7 @@ void ProgramPlayerROSAdapter::startActions(ros::NodeHandle& nh)
 //      HANDLERS
 // *********************
 
-bool ProgramPlayerROSAdapter::play(const std::string& program)
+bool ProgramPlayerROSAdapter::play(const std::string& program_id)
 {
   ROS_DEBUG("ProgramPlayerROSAdapter::playHandler");
 
@@ -142,7 +142,7 @@ bool ProgramPlayerROSAdapter::play(const std::string& program)
   }
 
   niryo_robot_programs_manager_v2::ExecuteProgramGoal goal;
-  goal.program_id = program;
+  goal.program_id = program_id;
   _start_program_action_client->sendGoal(goal);
 
   _program_state = ProgramExecutionState::PLAYING;

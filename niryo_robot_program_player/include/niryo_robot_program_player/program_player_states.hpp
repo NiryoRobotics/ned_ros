@@ -172,7 +172,7 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void IdleState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  program_player->setDisplayMessage(program_player->getRobotName(), program_player->getCurrentProgram());
+  program_player->setDisplayMessage(program_player->getRobotName(), program_player->getCurrentProgram().second);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -336,7 +336,7 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  std::string line2 = "STOP:" + program_player->getCurrentProgram();
+  std::string line2 = "STOP:" + program_player->getCurrentProgram().second;
   program_player->setDisplayMessage(program_player->getRobotName(), line2);
 }
 
@@ -365,7 +365,7 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void PlayState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  program_player->play(program_player->getCurrentProgram());
+  program_player->play(program_player->getCurrentProgram().first);
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -403,7 +403,7 @@ template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void PlayingState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
     ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>* program_player)
 {
-  std::string line2 = "PLAY:" + program_player->getCurrentProgram();
+  std::string line2 = "PLAY:" + program_player->getCurrentProgram().second;
   program_player->setDisplayMessage(program_player->getRobotName(), line2);
 }
 
@@ -440,15 +440,15 @@ void UpState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
   }
 
   auto current_program = program_player->getCurrentProgram();
-  auto program_list_iterator = program_list.find(current_program);
+  auto program_list_iterator = program_list.find(current_program.first);
 
   if (program_list_iterator == program_list.cend() || program_list_iterator == --program_list.cend())
   {
-    program_player->setCurrentProgram((program_list.begin())->first);
+    program_player->setCurrentProgram(*program_list.begin());
   }
   else
   {
-    program_player->setCurrentProgram((++program_list_iterator)->first);
+    program_player->setCurrentProgram(*(++program_list_iterator));
   }
 }
 
@@ -482,12 +482,12 @@ void DownState<ProgramPlayerAdapter, ProgramPlayerDriver>::execute(
   if (!program_list.empty())
   {
     auto current_program = program_player->getCurrentProgram();
-    auto program_list_iterator = program_list.find(current_program);
+    auto program_list_iterator = program_list.find(current_program.first);
 
     if (program_list_iterator == program_list.cend() || program_list_iterator == program_list.cbegin())
-      program_player->setCurrentProgram((--program_list.end())->first);
+      program_player->setCurrentProgram(*(--program_list.end()));
     else
-      program_player->setCurrentProgram((--program_list_iterator)->first);
+      program_player->setCurrentProgram(*(--program_list_iterator));
   }
 }
 

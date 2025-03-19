@@ -2,6 +2,11 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+-----------
+
+feat: Display program names with the program player
+
 v5.5.5
 ------
 

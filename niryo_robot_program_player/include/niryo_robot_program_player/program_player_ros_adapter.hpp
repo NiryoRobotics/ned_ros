@@ -73,7 +73,7 @@ public:
   // program player device specs
 
   // handler functions
-  bool play(const std::string& program);
+  bool play(const std::string& program_id);
   bool stop();
 
 private:
