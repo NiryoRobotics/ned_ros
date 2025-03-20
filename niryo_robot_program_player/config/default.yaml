@@ -1,4 +1,5 @@
 control_loop_frequency: 3 # Hz
 stop_button_debounce_time: 500 # ms
+time_before_button_locking: 3 # Seconds 
 niryo_studio_timeout: 4 # Seconds
 port_name: "/dev/program_player"

@@ -83,6 +83,11 @@ public:
     return std::chrono::seconds(3);
   }
 
+  std::chrono::seconds getTimeBeforeButtonLocking() const
+  {
+    return std::chrono::seconds(_time_before_button_locking);
+  }
+
   void setNiryoStudioTimeStamp(const std::chrono::time_point<std::chrono::system_clock>& time_stamp)
   {
     _niryo_studio_timestamp = time_stamp;
@@ -127,6 +132,7 @@ private:
   int32_t _screen_size{ 16 };
   std::string _program_number_delimiter{ "." };
   double _control_loop_frequency{ 30 };
+  int _time_before_button_locking{ 0 };
 };
 
 class ProgramPlayerMockDriver
@@ -151,6 +157,10 @@ public:
   void setDownValue(const common::model::EActionType& value)
   {
     _down = value;
+  }
+  void setCustomValue(const common::model::EActionType& value)
+  {
+    _custom = value;
   }
   void setCommunicationCode(const int& code)
   {
@@ -179,6 +189,11 @@ public:
   int readStateButtonDown(uint8_t id, common::model::EActionType& action)
   {
     action = _down;
+    return _code;
+  }
+  int readStateButtonCustom(uint8_t id, common::model::EActionType& action)
+  {
+    action = _custom;
     return _code;
   }
 
@@ -210,6 +225,7 @@ private:
   common::model::EActionType _stop{ common::model::EActionType::NO_ACTION };
   common::model::EActionType _up{ common::model::EActionType::NO_ACTION };
   common::model::EActionType _down{ common::model::EActionType::NO_ACTION };
+  common::model::EActionType _custom{ common::model::EActionType::NO_ACTION };
   int _code{ COMM_SUCCESS };
   std::string _display_text_line1;
   std::string _display_text_line2;
@@ -234,12 +250,14 @@ protected:
     driver.setStopValue(common::model::EActionType::NO_ACTION);
     driver.setUpValue(common::model::EActionType::NO_ACTION);
     driver.setDownValue(common::model::EActionType::NO_ACTION);
+    driver.setCustomValue(common::model::EActionType::NO_ACTION);
 
     driver.setCommunicationCode(COMM_SUCCESS);
 
     program_list = { std::make_pair("unique-name1", "program1"), std::make_pair("unique-name2", "program2"),
                      std::make_pair("unique-name3", "program3") };
     ProgramPlayerMockAdapter& adapter = program_player->getAdapter();
+    program_player->setLockButtons(false);
     adapter.setProgramList(program_list);
     program_player->tick();
   }
@@ -727,6 +745,81 @@ TEST_F(ProgramPlayerTestSuite, down_button_program_selection)
   auto current_time = std::chrono::system_clock::now();
   program_player->update(current_time);
   ASSERT_EQ(program_player->getCurrentProgram(), *(--program_list.end()));
+}
+
+// Test trigger mechanism to lock buttons
+TEST_F(ProgramPlayerTestSuite, trigger_lock_buttons)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  // lock buttons
+  driver.setUpValue(common::model::EActionType::HANDLE_HELD_ACTION);
+  driver.setCustomValue(common::model::EActionType::HANDLE_HELD_ACTION);
+
+  // The lock timer needs to be trigger once and then we can evaluate the elapsed time, therefore 2 updates
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_TRUE(program_player->isButtonsLocked());
+}
+
+// Test trigger mechanism to unlock buttons
+TEST_F(ProgramPlayerTestSuite, trigger_unlock_buttons)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  program_player->setLockButtons(true);
+
+  // unlock buttons
+  driver.setDownValue(common::model::EActionType::HANDLE_HELD_ACTION);
+  driver.setCustomValue(common::model::EActionType::HANDLE_HELD_ACTION);
+
+  // The lock timer needs to be trigger once and then we can evaluate the elapsed time, therefore 2 updates
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_FALSE(program_player->isButtonsLocked());
+}
+
+// Test buttons unusable when locked
+TEST_F(ProgramPlayerTestSuite, buttons_locked)
+{
+  ProgramPlayerMockDriver& driver = program_player->getDriver();
+
+  program_player->setState(ProgramPlayerState::IDLE);
+
+  program_player->setLockButtons(true);
+
+  // Test with Play button
+  driver.setPlayValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  auto current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+
+  driver.setStopValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+
+  driver.setUpValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
+
+  driver.setDownValue(common::model::EActionType::SINGLE_PUSH_ACTION);
+
+  current_time = std::chrono::system_clock::now();
+  program_player->update(current_time);
+  ASSERT_EQ(program_player->getProgramPlayerState(), ProgramPlayerState::IDLE);
 }
 
 // Run all the tests that were declared with TEST()

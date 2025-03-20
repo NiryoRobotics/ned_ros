@@ -65,6 +65,11 @@ void ProgramPlayerROSAdapter::initParameters(ros::NodeHandle& nh)
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %s", _control_loop_frequency_param.c_str(),
             _port_name.c_str());
 
+  nh.getParam(_time_before_button_locking_param, _time_before_button_locking);
+  ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %d", _time_before_button_locking_param.c_str(),
+            _time_before_button_locking);
+  _time_before_button_locking_chrono = std::chrono::seconds(_time_before_button_locking);
+
   nh.getParam(_stop_button_debounce_time_param, _stop_button_debounce_time);
   ROS_DEBUG("ProgramPlayerROSAdapter::initParameters - param: %s, value: %d", _stop_button_debounce_time_param.c_str(),
             _stop_button_debounce_time);
@@ -191,6 +196,11 @@ std::chrono::time_point<std::chrono::system_clock> ProgramPlayerROSAdapter::getN
 std::chrono::seconds ProgramPlayerROSAdapter::getNiryoStudioTimeOut() const
 {
   return _niryo_studio_timeout_chrono;
+}
+
+std::chrono::seconds ProgramPlayerROSAdapter::getTimeBeforeButtonLocking() const
+{
+  return _time_before_button_locking_chrono;
 }
 
 std::string ProgramPlayerROSAdapter::getRobotName()

@@ -66,6 +66,7 @@ public:
   common::model::EActionType getStopStatus();
   common::model::EActionType getUpStatus();
   common::model::EActionType getDownStatus();
+  common::model::EActionType getCustomStatus();
 
   std::string getRobotName();
   std::pair<const std::string, std::string> getCurrentProgram();
@@ -73,6 +74,7 @@ public:
   ProgramExecutionState getProgramState() const;
   ProgramPlayerState getProgramPlayerState() const;
   std::chrono::duration<double> getNSTimeoutParam() const;
+  std::chrono::duration<double> getTimeBeforeButtonLocking() const;
   std::chrono::time_point<std::chrono::steady_clock> getNSTimestamp() const;
 
   ProgramPlayerDriver& getDriver();
@@ -81,11 +83,13 @@ public:
   // setter
   void setCurrentProgram(const std::pair<const std::string, std::string>& program);
   void setDisplayMessage(const std::string& line1, const std::string& line2);
+  void setLockButtons(bool value) { _buttons_locked = value; }
   void hasError(const Error& error_type, bool value);
 
   // check
   bool hasError(const Error& error_type) const;
   bool isConnectedPrevious() const;
+  bool isButtonsLocked() const { return _buttons_locked; }
 
 private:
   void controlLoop();
@@ -93,6 +97,8 @@ private:
   void pingProgramPlayer();
   void checkConnectedClients();
   void checkProgramList();
+  void checkButtonLockState();
+  void clearButtonsState();
 
   void display(std::string& line1, std::string& line2);
 
@@ -121,6 +127,11 @@ private:
   std::thread _thread;
   bool _is_connected = false;
   bool _is_connected_previous = _is_connected;
+
+  // Buttons locking
+  bool _buttons_locked = false;
+  std::chrono::time_point<std::chrono::steady_clock> _lock_press_start;
+  std::chrono::time_point<std::chrono::steady_clock> _unlock_press_start;
 
   // States
   std::unordered_map<ProgramPlayerState, std::unique_ptr<StateType>> _states;
@@ -239,6 +250,16 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::update(
     buttons_state[Button::STOP] = getStopStatus();
     buttons_state[Button::UP] = getUpStatus();
     buttons_state[Button::DOWN] = getDownStatus();
+    buttons_state[Button::CUSTOM] = getCustomStatus();
+
+    checkButtonLockState();
+
+    if (isButtonsLocked())
+    {
+      // We clear the button states so that they can't be interpreted
+      // as active when the program player state is being ticked
+      clearButtonsState();
+    }
 
     // if STOP has been pressed then don't read button inputs for X sec
     if (buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
@@ -250,6 +271,46 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::update(
   pingProgramPlayer();
 
   tick();
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::clearButtonsState()
+{
+  for (auto& button : buttons_state)
+  {
+    button.second = common::model::EActionType::NO_ACTION;
+  }
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::checkButtonLockState() {
+  auto now = std::chrono::steady_clock::now();
+
+  // lock
+  if (buttons_state[Button::UP] == common::model::EActionType::HANDLE_HELD_ACTION &&
+      buttons_state[Button::CUSTOM] == common::model::EActionType::HANDLE_HELD_ACTION) {
+    if (_lock_press_start.time_since_epoch().count() == 0) {
+      _lock_press_start = now;
+    } else if (std::chrono::duration_cast<std::chrono::seconds>(now - _lock_press_start).count()
+          >= getTimeBeforeButtonLocking().count()) {
+      setLockButtons(true);
+    }
+  } else {
+    _lock_press_start = std::chrono::time_point<std::chrono::steady_clock>();
+  }
+
+  // unlock
+  if (buttons_state[Button::DOWN] == common::model::EActionType::HANDLE_HELD_ACTION &&
+      buttons_state[Button::CUSTOM] == common::model::EActionType::HANDLE_HELD_ACTION) {
+    if (_unlock_press_start.time_since_epoch().count() == 0) {
+      _unlock_press_start = now;
+    } else if (std::chrono::duration_cast<std::chrono::seconds>(now - _unlock_press_start).count()
+          >= getTimeBeforeButtonLocking().count()) {
+      setLockButtons(false);
+    }
+  } else {
+    _unlock_press_start = std::chrono::time_point<std::chrono::steady_clock>();
+  }
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
@@ -287,6 +348,12 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::display(std::stri
   // TODO(i.ambit) fix effects
   _screen_size = _program_player_adapter.getDisplaySpecs();
   _program_delimiter = _program_player_adapter.getDelimiter();
+
+  if (isButtonsLocked())
+  {
+    auto locked_msg = "[LOCKED]";
+    _line2 = locked_msg + _line2;
+  }
 
   line1.resize(_screen_size, ' ');
   line2.resize(_screen_size, ' ');
@@ -353,6 +420,20 @@ common::model::EActionType ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriv
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+common::model::EActionType ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getCustomStatus()
+{
+  common::model::EActionType action;
+  if (_program_player_driver.readStateButtonCustom(_id, action) != COMM_SUCCESS)
+  {
+    hasError(Error::NO_CONNECTION, true);
+    return common::model::EActionType::NO_ACTION;
+  }
+
+  hasError(Error::NO_CONNECTION, false);
+  return action;
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 std::string ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getRobotName()
 {
   return _program_player_adapter.getRobotName();
@@ -408,6 +489,12 @@ std::chrono::time_point<std::chrono::steady_clock>
 ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getNSTimestamp() const
 {
   return _program_player_adapter.getNiryoStudioTimeStamp();
+}
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+std::chrono::duration<double> ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::getTimeBeforeButtonLocking() const
+{
+  return _program_player_adapter.getTimeBeforeButtonLocking();
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
