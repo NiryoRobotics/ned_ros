@@ -6,6 +6,7 @@ forthcoming
 -----------
 
 feat: Display program names with the program player
+feat: Add program player lock/unlock buttons mechanism by pressing up + custom/down + custom during 3 seconds
 
 v5.5.5
 ------

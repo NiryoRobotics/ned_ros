@@ -60,6 +60,7 @@ public:
   std::map<std::string, std::string> const& getProgramList() const;
   std::chrono::time_point<std::chrono::system_clock> getNiryoStudioTimeStamp();
   std::chrono::seconds getNiryoStudioTimeOut() const;
+  std::chrono::seconds getTimeBeforeButtonLocking() const;
 
   // TODO(i.ambit) create struc to encapsulate device specs
   // program player device specs
@@ -96,6 +97,9 @@ private:
 
   const std::string _port_name_param{ "/niryo_robot_program_player/port_name" };
   std::string _port_name{ "" };
+
+  const std::string _time_before_button_locking_param{ "/niryo_robot_program_player/time_before_button_locking" };
+  int _time_before_button_locking{ 3 };
 
   const std::string _stop_button_debounce_time_param{ "/niryo_robot_program_player/stop_button_debounce_time" };
   int _stop_button_debounce_time{ 500 };
@@ -147,6 +151,9 @@ private:
 
   // button box comm
   std::string _robot_name{ "NO NAME" };
+
+  // buttons locking
+  std::chrono::seconds _time_before_button_locking_chrono;
 
   // programs manager
   std::map<std::string, std::string> _program_list;

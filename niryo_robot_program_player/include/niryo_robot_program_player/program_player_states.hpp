@@ -155,13 +155,13 @@ void IdleState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     // program is launched it does nothing
   }
 
-  else if (program_player->buttons_state[Button::PLAY] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::PLAY] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::PLAY);
 
-  else if (program_player->buttons_state[Button::UP] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::UP] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::UP);
 
-  else if (program_player->buttons_state[Button::DOWN] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::DOWN] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::DOWN);
 
   else
@@ -319,13 +319,13 @@ void StoppedState<ProgramPlayerAdapter, ProgramPlayerDriver>::tick(
     // program is launched it does nothing
   }
 
-  else if (program_player->buttons_state[Button::PLAY] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::PLAY] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::PLAY);
 
-  else if (program_player->buttons_state[Button::UP] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::UP] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::UP);
 
-  else if (program_player->buttons_state[Button::DOWN] != common::model::EActionType::NO_ACTION)
+  else if (program_player->buttons_state[Button::DOWN] == common::model::EActionType::SINGLE_PUSH_ACTION)
     program_player->setState(ProgramPlayerState::DOWN);
 
   else
