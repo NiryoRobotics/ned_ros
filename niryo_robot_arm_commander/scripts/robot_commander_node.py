@@ -25,6 +25,7 @@ from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Bool
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 from moveit_msgs.msg import RobotTrajectory
+from sensor_msgs.msg import JointState
 
 # Services
 from niryo_robot_msgs.srv import Trigger, GetBool
@@ -119,6 +120,16 @@ class RobotCommanderNode:
         # - Publisher
         self.__is_active_publisher = rospy.Publisher('~is_active', Bool, queue_size=5)
         rospy.Timer(rospy.Duration(active_publish_rate_sec), self.__publish_is_active)
+
+        # Wait for joint_states to be published
+        while not rospy.is_shutdown():
+            try:
+                rospy.wait_for_message('/joint_states', JointState, timeout=5.0)
+                break
+            except rospy.ROSException:
+                rospy.logwarn_once(
+                    "Arm Commander - Topic /joint_states not available yet. Retrying..."
+                )
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
