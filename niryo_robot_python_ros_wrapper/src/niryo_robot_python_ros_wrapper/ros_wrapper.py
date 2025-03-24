@@ -202,11 +202,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return CommandStatus.SUCCESS, self.__node_name
 
     @classmethod
-    def wait_for_node_initialization(cls, node_name, timeout=30, sleep_time=0.1):
+    def wait_for_node_initialization(cls, node_name, timeout=0, sleep_time=0.1):
         param_name = f'/{node_name}/initialized'
         t_start = rospy.Time.now()
         while not rospy.has_param(param_name):
-            if (rospy.Time.now() - t_start).to_sec() > timeout:
+            rospy.loginfo_once(f'Niryo ROS Wrapper - Waiting for {node_name} initialization')
+            if ((timeout > 0) and (rospy.Time.now() - t_start).to_sec() > timeout):
                 raise NiryoRosWrapperException(f'Timeout exceeded while waiting for node {node_name} initialization')
             rospy.sleep(sleep_time)
 
@@ -215,6 +216,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         nodes_to_check = [
             'niryo_robot_poses_handlers',
             'niryo_robot_arm_commander',
+            'niryo_robot_rpi',
+            'niryo_robot_tools_commander'
         ]
         for node in nodes_to_check:
             cls.wait_for_node_initialization(node, sleep_time=1 if simulation_mode else 0.1)

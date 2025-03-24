@@ -101,8 +101,8 @@ class CustomModbusSlaveContext(ModbusBaseSlaveContext):
         Must be called before starting the server
         Build the register according to each entry's specs by attributing an address to each one of them
         """
+        NiryoRosWrapper.wait_for_nodes_initialization()
         ros_wrapper = NiryoRosWrapper()
-        ros_wrapper.wait_for_node_initialization('niryo_robot_rpi')
 
         for register_type, entries in self.__registered_entries.items():
             register_offset = 0
