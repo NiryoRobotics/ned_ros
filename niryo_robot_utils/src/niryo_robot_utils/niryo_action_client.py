@@ -45,7 +45,7 @@ class NiryoActionClient(object):
             self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
         return self.__action_server
 
-    def execute(self, goal):
+    def execute(self, goal, wait_for_result=True):
         if not isinstance(goal, self.__action_goal_type):
             raise NiryoRosWrapperException('Wrong goal type: expected {} but got {}'.format(
                 type(goal), type(self.__action_goal_type)))
@@ -57,6 +57,10 @@ class NiryoActionClient(object):
         if not self.__action_server.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
             rospy.logwarn("ROS Wrapper - Failed to connect to {} action server".format(self.__action_name))
             return CommandStatus.SUCCESS, ""
+
+        if not wait_for_result:
+            self.__action_server.send_goal(goal)
+            return CommandStatus.SUCCESS, "Goal sent successfully"
 
         # Send goal and check response
         goal_state, response = self.__send_goal_and_wait_for_completed(goal)

@@ -229,7 +229,7 @@ def calibrate(client, force=False):
     write_coils(client, 116, True, read_check_delay=0)
 
 
-def move_j(client, target):
+def move_j(client, target, check=True):
     calibrate(client)
     # set move target
     write_holding_registers(client, 50, target, float)
@@ -242,8 +242,9 @@ def move_j(client, target):
 
     # move
     write_coils(client, 113, True, read_check_delay=0)
-    current = read_input_registers(client, 50, float, 12)
-    assert wait_for_equality(are_equals, current, target, abs_tol=0.1)
+    if check:
+        current = read_input_registers(client, 50, float, 12)
+        assert wait_for_equality(are_equals, current, target, abs_tol=0.1)
 
 
 def move_p(client, target, linear=False):
@@ -328,3 +329,14 @@ def test_misc(client):
     read_discrete_inputs(client, 51)
     # last command result
     read_input_registers(client, 120, int)
+
+
+def test_blocking_moves(client):
+    moves_are_blocking = read_coils(client, 118)
+    # assert moves_are_blocking is True
+
+    write_coils(client, 118, False)
+    t_0 = time.time()
+    move_j(client, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], check=False)
+    t_1 = time.time()
+    assert t_1 - t_0 < 1, f'Blocking move took more than 1s: {t_1 - t_0}'

@@ -10,6 +10,7 @@ class CommonStore:
     move_type = MoveType.MOVE_JOINT
     joint_target = []
     pose_target = []
+    move_is_blocking = True
 
     # gripper
     gripper_open_speed = 500

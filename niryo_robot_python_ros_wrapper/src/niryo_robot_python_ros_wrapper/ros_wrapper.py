@@ -3,6 +3,7 @@
 import functools
 import warnings
 from typing import Union, List, overload
+from threading import Thread
 
 from niryo_robot_poses_handlers.msg import NiryoPose
 
@@ -217,7 +218,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             'niryo_robot_poses_handlers',
             'niryo_robot_arm_commander',
             'niryo_robot_rpi',
-            'niryo_robot_tools_commander'
+            'niryo_robot_tools_commander',
         ]
         for node in nodes_to_check:
             cls.wait_for_node_initialization(node, sleep_time=1 if simulation_mode else 0.1)
@@ -434,15 +435,15 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return self.pose_from_msg(p)
 
     @overload
-    def move(self, robot_position: Pose, move_cmd: int = ArmMoveCommand.POSE):
+    def move(self, robot_position: Pose, move_cmd: int = ArmMoveCommand.POSE, blocking=True):
         ...
 
     @overload
-    def move(self, robot_position: JointsPosition, move_cmd: int = ArmMoveCommand.JOINTS):
+    def move(self, robot_position: JointsPosition, move_cmd: int = ArmMoveCommand.JOINTS, blocking=True):
         ...
 
     @move_command
-    def move(self, robot_position, move_cmd: int = None):
+    def move(self, robot_position, move_cmd: int = None, blocking=True):
         """
         Moves the robot end effector to the given goal position. The goal position can be either a joint position or a
         pose
@@ -451,6 +452,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type robot_position: Union[Pose, JointsPosition]
         :param move_cmd: Command used to move the robot. If not provided, the command will be the basic move (either
         joint or pose depending on the robot_position type)
+        :param blocking: Whether the function should wait for the end of the movement
+        :type blocking: bool
         :type move_cmd: int
         :return: status, message
         :rtype: (int, str)
@@ -481,10 +484,31 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                 move_goal.tcp_version = ArmMoveCommand.DH_CONVENTION
 
         goal = RobotMoveGoal(cmd=move_goal)
-        return self.__robot_action_nac.execute(goal)
+        return self.__robot_action_nac.execute(goal, wait_for_result=blocking)
 
     @move_command
-    def move_joints(self, j1, j2, j3, j4, j5, j6):
+    def __move_sequence(self, sequence, blocking=True, **kwargs):
+        """
+        Executes a sequence of actions in a blocking or non-blocking way
+        :param sequence: a function that contains the sequence of actions to execute
+        :type sequence: Callable[..., (int, str)]
+        :param kwargs: any keyword argument taken by the move function (except blocking)
+        :return: the return value of sequence if blocking, else None
+        """
+
+        def sequence_wrapper():
+            try:
+                sequence(**kwargs)
+            except NiryoRosWrapperException as e:
+                rospy.logerr(f'An error occurred while running sequence: {e}')
+
+        if blocking:
+            return sequence(**kwargs)
+        else:
+            Thread(target=sequence_wrapper).start()
+
+    @move_command
+    def move_joints(self, j1, j2, j3, j4, j5, j6, **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use :func:`move` with a `JointsPosition` object.
@@ -503,24 +527,28 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type j5: float
         :param j6:
         :type j6: float
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a JointsPosition object.", DeprecationWarning)
-        return self.move(JointsPosition(j1, j2, j3, j4, j5, j6))
+        return self.move(JointsPosition(j1, j2, j3, j4, j5, j6), **kwargs)
 
     @move_command
-    def move_to_sleep_pose(self):
+    def move_to_sleep_pose(self, **kwargs):
         """
         Moves the robot to a predefined home position
 
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         result = self._call_service('/niryo_robot_joints_interface/get_home_position', GetFloatList)
         self._classic_return_w_check(result)
         joints_position = JointsPosition(*result.values)
-        return self.move(joints_position)
+        return self.move(joints_position, **kwargs)
 
     def get_sleep_pose(self) -> JointsPosition:
         """
@@ -564,7 +592,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return self._classic_return_w_check(result)
 
     @move_command
-    def move_pose(self, x, y, z, roll, pitch, yaw, frame=''):
+    def move_pose(self, x, y, z, roll, pitch, yaw, frame='', **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use :func:`move` with a `Pose` object.
@@ -586,25 +614,40 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type yaw: float
         :param frame:
         :type frame: str
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a Pose object.", DeprecationWarning)
-        return self.move(Pose(x, y, z, roll, pitch, yaw, PoseMetadata.v1(frame=frame)))
+        return self.move(Pose(x, y, z, roll, pitch, yaw, PoseMetadata.v1(frame=frame)), **kwargs)
 
-    def move_circle(self, x, y, z):
-        return self.move(Pose(x, y, z, 0, 0, 0), ArmMoveCommand.DRAW_CIRCLE)
+    def move_circle(self, x, y, z, **kwargs):
+        """
+        :param x:
+        :type x: float
+        :param y:
+        :type y: float
+        :param z:
+        :type z: float
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
+        :return:
+        """
+        return self.move(Pose(x, y, z, 0, 0, 0), ArmMoveCommand.DRAW_CIRCLE, **kwargs)
 
-    def move_pose_saved(self, pose_name):
+    def move_pose_saved(self, pose_name, **kwargs):
         """
         Moves robot end effector pose to a pose saved
 
         :param pose_name:
         :type pose_name: str
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
-        return self.move(self.get_pose_saved(pose_name))
+        return self.move(self.get_pose_saved(pose_name), **kwargs)
 
     @move_command
     def shift_pose(self, axis, value, linear=False):
@@ -645,7 +688,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return self.shift_pose(axis, value, linear=True)
 
     @move_command
-    def move_linear_pose(self, x, y, z, roll, pitch, yaw, frame=''):
+    def move_linear_pose(self, x, y, z, roll, pitch, yaw, frame='', **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use :func:`move` with a `Pose` object and `move_cmd=ArmMoveCommand.LINEAR_POSE`
@@ -667,13 +710,15 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type yaw: float
         :param frame:
         :type frame: str
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a Pose object and move_cmd=ArmMoveCommand.LINEAR_POSE",
                       DeprecationWarning)
         pose = Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1(frame=frame))
-        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE)
+        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE, **kwargs)
 
     @move_command
     def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
@@ -1054,29 +1099,45 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         high_pick_pose.z += z_offset
         return high_pick_pose
 
-    def pick(self, robot_position: RobotPosition):
-        self.release_with_tool()
+    def pick(self, robot_position: RobotPosition, **kwargs):
+        """
+        Picks an object at a given position.
+        :param robot_position: The position of the object to pick
+        :type robot_position: RobotPosition
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
+        :return:
+        """
 
         high_pick_pose = self.__get_high_pose(robot_position)
 
-        self.move(high_pick_pose)
-        self.move(robot_position)
+        def move_sequence(**kwargs_):
+            self.release_with_tool()
+            self.execute_trajectory([high_pick_pose, robot_position])
+            self.grasp_with_tool()
+            return self.move(high_pick_pose, **kwargs_)
 
-        self.grasp_with_tool()
+        return self.__move_sequence(move_sequence, **kwargs)
 
-        return self.move(high_pick_pose)
-
-    def place(self, robot_position: RobotPosition):
+    def place(self, robot_position: RobotPosition, **kwargs):
+        """
+        Places an object at a given position.
+        :param robot_position: The position of the object to place
+        :type robot_position: RobotPosition
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
+        :return: status, message
+        """
         high_pick_pose = self.__get_high_pose(robot_position)
 
-        self.move(high_pick_pose)
-        self.move(robot_position)
+        def move_sequence(**kwargs_):
+            self.execute_trajectory([high_pick_pose, robot_position])
+            self.release_with_tool()
+            self.move(high_pick_pose, **kwargs_)
 
-        self.release_with_tool()
+        return self.__move_sequence(move_sequence, **kwargs)
 
-        return self.move(high_pick_pose)
-
-    def pick_from_pose(self, x, y, z, roll, pitch, yaw):
+    def pick_from_pose(self, x, y, z, roll, pitch, yaw, **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use :func:`pick` with a `Pose` or `JointsPosition` object instead
@@ -1100,20 +1161,26 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type pitch: float
         :param yaw:
         :type yaw: float
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
        """
         warnings.warn("You should use pick with a Pose or JointsPosition object instead", DeprecationWarning)
-        self.release_with_tool()
 
-        self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
-        self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+        def move_sequence(**kwargs_):
+            self.release_with_tool()
 
-        self.grasp_with_tool()
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
 
-        return self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+            self.grasp_with_tool()
 
-    def place_from_pose(self, x, y, z, roll, pitch, yaw):
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+
+        return self.__move_sequence(move_sequence, **kwargs)
+
+    def place_from_pose(self, x, y, z, roll, pitch, yaw, **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use :func:`place` with a `Pose` or `JointsPosition` object instead
@@ -1137,37 +1204,44 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type pitch: float
         :param yaw:
         :type yaw: float
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use place with a Pose or JointsPosition object instead", DeprecationWarning)
 
-        self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
-        self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+        def move_sequence(**kwargs_):
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
 
-        self.release_with_tool()
+            self.release_with_tool()
 
-        return self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()))
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+
+        return self.__move_sequence(move_sequence, **kwargs)
 
     @overload
-    def pick_and_place(self, pick_pose: list, place_pose: list, dist_smoothing=0.0):
+    def pick_and_place(self, pick_pose: list, place_pose: list, dist_smoothing=0.0, **kwargs):
         ...
 
     @overload
-    def pick_and_place(self, pick_pose: RobotPosition, place_pose: RobotPosition, dist_smoothing=0.0):
+    def pick_and_place(self, pick_pose: RobotPosition, place_pose: RobotPosition, dist_smoothing=0.0, **kwargs):
         ...
 
-    def pick_and_place(self, pick_pose, place_pose, dist_smoothing=0.0):
+    def pick_and_place(self, pick_pose, place_pose, dist_smoothing=0.0, **kwargs):
         """
         Executes a pick and place. If an error happens during the movement, error will be raised
         -> Args param is for development purposes
 
-        :param pick_pose:
-        :type pick_pose: list[float]
-        :param place_pose:
-        :type place_pose: list[float]
+        :param pick_pose: The position of the object to pick
+        :type pick_pose: list[float] | RobotPosition
+        :param place_pose: The position of the object to place
+        :type place_pose: list[float] | RobotPosition
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
@@ -1176,19 +1250,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         if isinstance(place_pose, list):
             place_pose = Pose(*place_pose, metadata=PoseMetadata.v1())
 
-        self.release_with_tool()
-
         pick_pose_high = self.__get_high_pose(pick_pose)
         place_pose_high = self.__get_high_pose(place_pose)
 
-        self.execute_trajectory([pick_pose_high, pick_pose], dist_smoothing=dist_smoothing)
-        self.grasp_with_tool()
+        def move_sequence(**kwargs_):
+            self.release_with_tool()
+            self.execute_trajectory([pick_pose_high, pick_pose], dist_smoothing=dist_smoothing)
+            self.grasp_with_tool()
+            self.execute_trajectory([pick_pose_high, place_pose_high, place_pose], dist_smoothing=dist_smoothing)
+            self.release_with_tool()
+            self.move(place_pose_high, **kwargs_)
 
-        self.execute_trajectory([pick_pose_high, place_pose_high, place_pose], dist_smoothing=dist_smoothing)
-
-        self.release_with_tool()
-
-        return self.move(place_pose_high)
+        return self.__move_sequence(move_sequence, **kwargs)
 
     # - Trajectories
 
@@ -1717,7 +1790,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return Pose(point.x, point.y, point.z, euler[0], euler[1], euler[2])
 
     @move_command
-    def move_relative(self, offset, frame="world"):
+    def move_relative(self, offset, frame="world", **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use move with a frame in the pose metadata.
@@ -1727,15 +1800,17 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type offset: list[float]
         :param frame: name of local frame
         :type frame: str
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a frame in the pose metadata.", DeprecationWarning)
         pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
-        return self.move(pose)
+        return self.move(pose, **kwargs)
 
     @move_command
-    def move_linear_relative(self, offset, frame="world"):
+    def move_linear_relative(self, offset, frame="world", **kwargs):
         """
         .. deprecated:: 5.5.0
            You should use move with a frame in the pose metadata and linear=True.
@@ -1745,12 +1820,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type offset: list[float]
         :param frame: name of local frame
         :type frame: str
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: status, message
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a frame in the pose metadata and linear=True.", DeprecationWarning)
         pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
-        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE)
+        return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE, **kwargs)
 
     # - Useful Pose functions
 
@@ -2537,7 +2614,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             observation_pose_list = Pose(*observation_pose_list, metadata=PoseMetadata.v1())
         return self.vision_pick(workspace_name, height_offset, shape, color, obs_pose=observation_pose_list)
 
-    def vision_pick(self, workspace_name, height_offset, shape, color, obs_pose: RobotPosition = None):
+    def vision_pick(self, workspace_name, height_offset, shape, color, obs_pose: RobotPosition = None, **kwargs):
         """
         Picks the specified object from the workspace. This function has multiple phases:
 
@@ -2559,34 +2636,40 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type color: ObjectColor
         :param obs_pose: The observation pose
         :type obs_pose: RobotPosition
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: object_found, object_shape, object_color
         :rtype: (bool, ObjectShape, ObjectColor)
         """
-        if obs_pose is not None:
-            self.move(obs_pose)
 
-        object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
-        if not object_found:
-            return False, "", ""
+        def move_sequence(**kwargs_):
+            if obs_pose is not None:
+                self.move(obs_pose, **kwargs_)
 
-        pick_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
-        approach_pose = self.get_target_pose_from_rel(workspace_name,
-                                                      height_offset + 0.05,
+            object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
+            if not object_found:
+                return False, "", ""
+
+            pick_pose = self.get_target_pose_from_rel(workspace_name,
+                                                      height_offset,
                                                       rel_pose.x,
                                                       rel_pose.y,
                                                       rel_pose.yaw)
+            approach_pose = self.get_target_pose_from_rel(workspace_name,
+                                                          height_offset + 0.05,
+                                                          rel_pose.x,
+                                                          rel_pose.y,
+                                                          rel_pose.yaw)
 
-        self.release_with_tool()
+            self.release_with_tool()
+            self.execute_trajectory([self.pose_from_msg(x) for x in (approach_pose, pick_pose)])
+            self.grasp_with_tool()
+            self.move(self.pose_from_msg(approach_pose), **kwargs_)
+            return True, obj_shape, obj_color
 
-        self.move(self.pose_from_msg(approach_pose))
-        self.move(self.pose_from_msg(pick_pose))
+        return self.__move_sequence(move_sequence, **kwargs)
 
-        self.grasp_with_tool()
-
-        self.move(self.pose_from_msg(approach_pose))
-        return True, obj_shape, obj_color
-
-    def move_to_object(self, workspace, height_offset, shape, color):
+    def move_to_object(self, workspace, height_offset, shape, color, **kwargs):
         """
         Same as `get_target_pose_from_cam` but directly moves to this position
 
@@ -2598,6 +2681,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type shape: ObjectShape
         :param color: color of the target
         :type color: ObjectColor
+        :param kwargs: any keyword argument taken by the move function
+        :type kwargs: dict
         :return: object_found, object_shape, object_color
         :rtype: (bool, ObjectShape, ObjectColor)
         """
@@ -2605,7 +2690,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             workspace, height_offset, shape, color)
         if not obj_found:
             return False, "", ""
-        self.move(self.pose_from_msg(obj_pose))
+        self.move(self.pose_from_msg(obj_pose), **kwargs)
         return True, obj_shape, obj_color
 
     def detect_object(self, workspace_name, shape, color):
