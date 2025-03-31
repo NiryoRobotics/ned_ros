@@ -11,7 +11,7 @@ from PIL import Image as PILImage
 
 from threading import Lock, Thread
 
-from fonctions_camera import generate_msg_from_image
+from niryo_robot_vision.fonctions_camera import generate_msg_from_image
 
 # Messages
 from niryo_robot_msgs.msg import CommandStatus
@@ -196,9 +196,6 @@ class WebcamStream(VideoStream):
         self.__frame_undistort = None
 
         self.__lock_image = Lock()
-
-        # Stop Stream handling
-        self.__count_grab_failed = 0
 
     # -- PUBLIC
 

@@ -11,7 +11,7 @@
         <arg name="simulation_mode" value="$(arg simulation_mode)" />
     </include>
 
-    <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
+    <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="vision_node.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="hardware_version" value="$(arg hardware_version)" />
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)" />

@@ -1,36 +1,10 @@
 import math
 import numpy as np
 
-from .enums import *
-from .markers_detection import extract_img_markers, draw_markers
+import cv2
 
-__all__ = [
-    "improve_mask",
-    "threshold_red",
-    "threshold_blue",
-    "threshold_green",
-    "threshold_hsv",
-    "morphological_transformations",
-    "get_contour_barycenter",
-    "get_contour_angle",
-    "biggest_contour_finder",
-    "biggest_contours_finder",
-    "draw_contours",
-    "extract_img_workspace",
-    "relative_pos_from_pixels",
-    "show_and_check_close",
-    "show_img",
-    "show_and_wait_close",
-    "compress_image",
-    "uncompress_image",
-    "add_annotation_to_image",
-    "undistort_image",
-    "resize_img",
-    "concat_imgs",
-    "extract_img_from_ros_msg",
-    "debug_threshold_color",
-    "debug_markers",
-]
+from .enums import MorphoType, KernelType, ColorHSV, font_scale_normal, thickness_small, font, WHITE, ORANGE
+from .markers_detection import extract_img_markers, draw_markers
 
 
 # Image Processing
@@ -57,13 +31,12 @@ def threshold_red(img_hsv):
     Threshold hsv image of red component
     :param img_hsv: hsv image to be threshold
     :type img_hsv: numpy.array
-    :param red_img: threshold img
     :rtype: numpy.array
     """
-    RED_L = [0, 85, 120], [35, 255, 255]
-    RED_H = [150, 100, 80], [180, 255, 255]
-    red_low_img = cv2.inRange(img_hsv, tuple(RED_L[0]), tuple(RED_L[1]))
-    red_high_img = cv2.inRange(img_hsv, tuple(RED_H[0]), tuple(RED_H[1]))
+    threshold_low = [0, 85, 120], [35, 255, 255]
+    threshold_high = [150, 100, 80], [180, 255, 255]
+    red_low_img = cv2.inRange(img_hsv, tuple(threshold_low[0]), tuple(threshold_low[1]))
+    red_high_img = cv2.inRange(img_hsv, tuple(threshold_high[0]), tuple(threshold_high[1]))
     red_img = cv2.bitwise_or(red_low_img, red_high_img)
     red_img = improve_mask(red_img)
     return red_img
@@ -74,11 +47,10 @@ def threshold_green(img_hsv):
     Threshold hsv image of green component
     :param img_hsv: hsv image to be threshold
     :type img_hsv: numpy.array
-    :param green_img: threshold img
     :rtype: numpy.array
     """
-    GREEN = [60, 30, 60], [95, 255, 255]
-    green_img = cv2.inRange(img_hsv, tuple(GREEN[0]), tuple(GREEN[1]))
+    threshold = [60, 30, 60], [95, 255, 255]
+    green_img = cv2.inRange(img_hsv, tuple(threshold[0]), tuple(threshold[1]))
     green_img = improve_mask(green_img)
     return green_img
 
@@ -88,11 +60,10 @@ def threshold_blue(img_hsv):
     Threshold hsv image of blue component
     :param img_hsv: hsv image to be threshold
     :type img_hsv: numpy.array
-    :param blue_img: threshold img
     :rtype: numpy.array
     """
-    BLUE = [100, 50, 100], [125, 255, 255]
-    blue_img = cv2.inRange(img_hsv, tuple(BLUE[0]), tuple(BLUE[1]))
+    threshold = [100, 50, 100], [125, 255, 255]
+    blue_img = cv2.inRange(img_hsv, tuple(threshold[0]), tuple(threshold[1]))
     blue_img = improve_mask(blue_img)
     return blue_img
 
@@ -105,6 +76,8 @@ def threshold_hsv(img, color_hsv):
 
     :param img: image BGR if rgb_space = False
     :type img: numpy.array
+    :param color_hsv: HSV color space
+    :type color_hsv: ColorHSV
     :return: threshold image
     :rtype: numpy.array
     """
@@ -144,7 +117,7 @@ def morphological_transformations(im_thresh,
     :param morpho_type: CLOSE/OPEN/ERODE/DILATE => See on OpenCV/Google if you do not know these words
     :type morpho_type: MorphoType
     :param kernel_shape: tuple corresponding to the size of the kernel
-    :type kernel_shape: tuple[float]
+    :type kernel_shape: tuple[int]
     :param kernel_type: RECT/ELLIPSE/CROSS => see on OpenCV
     :type kernel_type: KernelType
     :return: image after processing
@@ -208,14 +181,6 @@ def get_contour_angle(contour):
     return math.radians(angle)
 
 
-def biggest_contour_finder(img):
-    res = biggest_contours_finder(img, nb_contours_max=1)
-    if not res:
-        return res
-    else:
-        return res[0]
-
-
 def biggest_contours_finder(img, nb_contours_max=3):
     """
     Function to find the biggest contour in an binary image
@@ -253,25 +218,6 @@ def biggest_contours_finder(img, nb_contours_max=3):
     return biggest_contours
 
 
-def draw_contours(img, contours):
-    """
-    Draw a list of contour on an image and return the drawing image
-
-    :param img: Image
-    :type img: numpy.array
-    :param contours: contours list
-    :type contours: list[OpenCV Contour]
-    :return: Image with drawing
-    :rtype: numpy.array
-    """
-    if len(img.shape) == 2:
-        img_bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    else:
-        img_bgr = img.copy()
-    cv2.drawContours(img_bgr, contours, -1, (255, 0, 0), 3)
-    return img_bgr
-
-
 def extract_img_workspace(img, workspace_ratio=1.0):
     """
     Extract working area from an image thanks to 4 Niryo's markers
@@ -284,77 +230,6 @@ def extract_img_workspace(img, workspace_ratio=1.0):
     :rtype: numpy.array
     """
     return extract_img_markers(img, workspace_ratio)
-
-
-def relative_pos_from_pixels(img, x_pixels, y_pixels):
-    """
-    Transform a pixels position to a relative position
-
-    :param img: Image where the object is detected
-    :type img: numpy.array
-    :param x_pixels: coordinate X
-    :type x_pixels: int
-    :param y_pixels: coordinate Y
-    :type y_pixels: int
-    :return: X relative, Y relative
-    :rtype: float, float
-    """
-    return float(x_pixels) / img.shape[1], float(y_pixels) / img.shape[0]
-
-
-# - SHOW FUNCTIONS
-keys_leave = [27, ord('q')]
-
-
-def show_and_check_close(window_name, img):
-    """
-    Display an image and check whether the user want to close
-
-    :param window_name: window's name
-    :type window_name: str
-    :param img: Image
-    :type img: numpy.array
-    :return: boolean indicating if the user wanted to leave
-    :rtype: bool
-    """
-    cv2.imshow(window_name, img)
-    return cv2.waitKey(1) in keys_leave
-
-
-def show_img(window_name, img, wait_ms=1):
-    """
-    Display an image during a certain time
-
-    :param window_name: window's name
-    :type window_name: str
-    :param img: Image
-    :type img: numpy.array
-    :param wait_ms: Wait time in milliseconds
-    :type wait_ms: int
-    :return: value of the key pressed during the display
-    :rtype: int
-    """
-    if type(wait_ms) == float:
-        wait_ms = int(wait_ms)
-    if wait_ms < 1:
-        wait_ms = 1
-    cv2.imshow(window_name, img)
-    return cv2.waitKey(wait_ms)
-
-
-def show_and_wait_close(window_name, img):
-    """
-    Display an image and wait that the user close it
-
-    :param window_name: window's name
-    :type window_name: str
-    :param img: Image
-    :type img: numpy.array
-    :return: None
-    :rtype: None
-    """
-    cv2.imshow(window_name, img)
-    cv2.waitKey(0)
 
 
 # -- IMAGE EDITING
@@ -374,20 +249,7 @@ def compress_image(img, quality=90):
     if not result:
         return False, None
 
-    return True, np.array(encimg).tostring()
-
-
-def uncompress_image(compressed_image):
-    """
-    Take a compressed img and return an OpenCV image
-
-    :param compressed_image: compressed image
-    :type compressed_image: str
-    :return: OpenCV image
-    :rtype: numpy.array
-    """
-    np_arr = np.fromstring(compressed_image, np.uint8)
-    return cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    return True, np.array(encimg).tobytes()
 
 
 def add_annotation_to_image(img, text, write_on_top=True):
@@ -421,97 +283,6 @@ def add_annotation_to_image(img, text, write_on_top=True):
         cv2.rectangle(img, (int(text_width * 1.1), h_im - int(text_true_height * 1.35)), (0, h_im), WHITE, cv2.FILLED)
         cv2.putText(img, text, (int(text_width * 0.05), h_im - baseline), font, font_scale_used, ORANGE, thickness_used)
     return img
-
-
-def undistort_image(img, mtx, dist):
-    """
-    Use camera intrinsics to undistort raw image
-
-    :param img: Raw Image
-    :type img: numpy.array
-    :param mtx: Camera Intrinsics matrix
-    :type mtx: list[list[float]]
-    :param dist: Distortion Coefficient
-    :type dist: list[list[float]]
-    :return: Undistorted image
-    :rtype: numpy.array
-    """
-    return cv2.undistort(src=img, cameraMatrix=mtx, distCoeffs=dist)
-
-
-def resize_img(img, width=None, height=None, inter=cv2.INTER_AREA):
-    """
-    Resize an image. The user should precise only width or height if he wants to keep image's ratio
-
-    :param img: OpenCV Image
-    :type img: numpy.array
-    :param width: Target Width
-    :type width: int
-    :param height: Target Height
-    :type height: int
-    :param inter: OpenCV interpolation flag
-    :type inter: long
-    :return: resized image
-    :rtype: numpy.array
-    """
-    if width is None and height is None:
-        return img
-
-    height_init, width_init = img.shape[:2]
-
-    if width is None:
-        ratio = height / float(height_init)
-        dim = (int(width_init * ratio), height)
-
-    elif height is None:
-        ratio = width / float(width_init)
-        dim = (width, int(height_init * ratio))
-    else:
-        dim = (width, height)
-
-    resized = cv2.resize(img, dim, interpolation=inter)
-
-    return resized
-
-
-def concat_imgs(tuple_imgs, axis=1):
-    """
-    Concat multiple images along 1 axis
-
-    :param tuple_imgs: tuple of images
-    :type tuple_imgs: tuple[numpy.array]
-    :param axis: 0 means vertically and 1 means horizontally
-    :type axis: int
-    :return: Concat image
-    :rtype: numpy.array
-    """
-    new_list_imgs = []
-    for image in tuple_imgs:
-        if len(image.shape) == 2:
-            image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-        new_list_imgs.append(image)
-
-    concat_im = np.concatenate(tuple(new_list_imgs), axis=axis)
-    return concat_im
-
-
-# ROS
-
-
-def extract_img_from_ros_msg(ros_msg):
-    """
-    Take a ROS CompressedImage message and return the image uncompressed
-
-    :param ros_msg: a ROS CompressedImage
-    :type ros_msg: :sensor_msgs:`CompressedImage`
-    :return: image uncompressed
-    :rtype: numpy.array
-    """
-    data_image = ros_msg.data
-    if not data_image:
-        return None
-    image = uncompress_image(data_image)
-    return image
 
 
 # DEBUG

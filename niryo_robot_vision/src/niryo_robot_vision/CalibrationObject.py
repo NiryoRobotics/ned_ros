@@ -17,18 +17,21 @@ class CalibrationObject:
         self.__cy = self.__mtx[1][2]
 
     @classmethod
-    def set_from_values(cls, mtx, dist):
+    def set_from_raw(cls, raw_mtx, raw_dist):
+        mtx = np.reshape(raw_mtx, (3, 3))
+        dist = np.expand_dims(raw_dist, axis=0)
         return cls(mtx, dist)
 
     @classmethod
-    def set_from_yaml(cls, yaml_file):
-        mtx = np.reshape(yaml_file["mtx"], (3, 3))
-        dist = np.expand_dims(yaml_file["dist"], axis=0)
+    def set_from_dict(cls, d: dict):
+
+        mtx = np.reshape(d["mtx"], (3, 3))
+        dist = np.expand_dims(d["dist"], axis=0)
         return cls(mtx, dist)
 
     @classmethod
     def set_empty(cls):
-        mtx = np.zeros((3, 3), dtype=np.float)
+        mtx = np.zeros((3, 3), dtype=float)
         dist = []
         return cls(mtx, dist)
 
@@ -37,32 +40,8 @@ class CalibrationObject:
         big_string += "dist\n" + str(self.__dist) + "\n"
         return big_string
 
-    def get_center_position(self):
-        return tuple([self.__cx, self.__cy])
-
-    def get_center_position_int(self):
-        return tuple([int(round(self.__cx)), int(round(self.__cy))])
-
-    def get_intrinsic_parameters(self):
-        return {
-            "fx": self.__fx,
-            "fy": self.__fy,
-            "cx": self.__cx,
-            "cy": self.__cy,
-        }
-
-    def get_cam_mtx_and_dist_coefs(self):
-        return self.__mtx, self.__dist
-
     def undistort_image(self, img):
-        return cv2.undistort(src=img, cameraMatrix=self.__mtx,
-                             distCoeffs=self.__dist, newCameraMatrix=None)
-
-    def meters_to_pixels(self, length, width, z_offset):
-        u = (length / z_offset) * self.__fx
-        v = (width / z_offset) * self.__fy
-
-        return tuple([u, v])
+        return cv2.undistort(src=img, cameraMatrix=self.__mtx, distCoeffs=self.__dist, newCameraMatrix=None)
 
     def get_camera_info(self):
         """

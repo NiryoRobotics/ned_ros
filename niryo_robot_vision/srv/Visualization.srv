@@ -1,5 +1,0 @@
-string workspace
-bool clearing
----
-int32 status
-string message
