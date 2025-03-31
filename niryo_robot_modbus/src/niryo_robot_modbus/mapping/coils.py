@@ -1,8 +1,12 @@
 from __future__ import annotations
 from typing import List
 
+from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinState, ConveyorDirection, ConveyorID, PinID
+from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
+from niryo_robot_utils.dataclasses.Pose import Pose
+from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
 
 from tools_interface.msg import Tool
 
@@ -132,14 +136,19 @@ class RobotMovingEntry(ABCRegisterEntry):
 
     def set(self, value: bool) -> None:
         if value:
-            if CommonStore.move_type == MoveType.MOVE_LINEAR:
-                self._ros_wrapper.move_linear_pose(*CommonStore.pose_target)
-            elif CommonStore.move_type == MoveType.MOVE_POSE:
-                self._ros_wrapper.move_pose(*CommonStore.pose_target)
+            if CommonStore.move_type in [MoveType.MOVE_LINEAR, MoveType.MOVE_POSE]:
+                robot_position = Pose(*CommonStore.pose_target, metadata=PoseMetadata.v1())
+                if CommonStore.move_type == MoveType.MOVE_LINEAR:
+                    move_cmd = ArmMoveCommand.LINEAR_POSE
+                else:
+                    move_cmd = ArmMoveCommand.POSE
             elif CommonStore.move_type == MoveType.MOVE_JOINT:
-                self._ros_wrapper.move_joints(*CommonStore.joint_target)
+                robot_position = JointsPosition(*CommonStore.joint_target)
+                move_cmd = ArmMoveCommand.JOINTS
             else:
                 raise ValueError(f"Unknown move type: {CommonStore.move_type}")
+
+            self._ros_wrapper.move(robot_position, move_cmd=move_cmd, blocking=CommonStore.move_is_blocking)
         else:
             self._ros_wrapper.stop_move()
 
@@ -185,6 +194,16 @@ class CollisionDetectedEntry(ABCRegisterEntry):
     def set(self, value: bool):
         if value is False:
             self._ros_wrapper.clear_collision_detected()
+
+
+@slave_context.coil
+class BlockingMovesEntry(ABCRegisterEntry):
+
+    def get(self) -> bool:
+        return CommonStore.move_is_blocking
+
+    def set(self, value: bool):
+        CommonStore.move_is_blocking = value
 
 
 @slave_context.coil
