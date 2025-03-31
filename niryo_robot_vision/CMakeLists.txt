@@ -21,7 +21,6 @@ add_service_files(
   ObjDetection.srv
   SetImageParameter.srv
   TakePicture.srv
-  Visualization.srv
 )
 
 # enable python module support
@@ -82,9 +81,7 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/camera_publisher_and_services.py
-    scripts/fonctions_camera.py
-    scripts/ObjectDetector.py
+    scripts/vision_node.py
     scripts/VideoStream.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

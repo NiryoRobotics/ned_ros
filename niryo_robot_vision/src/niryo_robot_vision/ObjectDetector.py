@@ -3,18 +3,26 @@
 import rospy
 
 import numpy as np
+import cv2
 
 # Messages
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_msgs.msg import ObjectPose
 
-from niryo_robot_vision.image_functions import *
-from niryo_robot_vision.visualization_functions import get_pose
-from niryo_robot_vision.enums import *
-from niryo_robot_vision.math_functions import euclidean_dist_2_pts
+from .image_functions import (threshold_hsv,
+                              morphological_transformations,
+                              biggest_contours_finder,
+                              get_contour_barycenter,
+                              get_contour_angle,
+                              add_annotation_to_image,
+                              extract_img_workspace)
+from .enums import MorphoType, ObjectType, PURPLE, BLUE, RED, ORANGE
+from .math_functions import euclidean_dist_2_pts
+from .visualization_functions import get_pose
 
 
 class ObjectDetector:
+
     def __init__(self, obj_type, obj_color, workspace_ratio=1.0, ret_image_bool=False):
         self._img = None
         self._im_thresh = None
@@ -37,7 +45,7 @@ class ObjectDetector:
         # Setting the new image
         self._img = img
         # Adjusting drawing values to fit the image size. These values are totally empirical
-        h, w = img.shape[:2]
+        _, w = img.shape[:2]
         self._draw_marker_size = 9 if w > 499 else 4
         self._draw_marker_thickness = 5 if w > 499 else 3
 
@@ -80,7 +88,7 @@ class ObjectDetector:
             return status, msg_res_pos, "", "", img
 
         # Generating threshold image with HSV
-        im_thresh = self.image_preprocess_with_hsv(im_work, use_s_prime=False)
+        im_thresh = self.image_preprocess_with_hsv(im_work)
 
         # Extracting biggest blob from image. This will correspond to the object
         cx, cy, angle, obj_type, obj_color, im_draw = self.extract_biggest_blob(im_thresh)
@@ -98,7 +106,6 @@ class ObjectDetector:
             status = CommandStatus.SUCCESS
 
         if self.should_ret_image() and status == CommandStatus.SUCCESS:
-            # im_draw = cv2.resize(im_draw, dsize=(450, 450))
             list_pos = [msg_res_pos.x, msg_res_pos.y, msg_res_pos.z]
             im_draw = get_annotated_image_rel_pos(im_draw, list_pos, angle)
 
@@ -119,7 +126,7 @@ class ObjectDetector:
             return status, None, None, None, None, None, None
 
         # Generating threshold image with HSV
-        im_thresh = self.image_preprocess_with_hsv(im_work, use_s_prime=False)
+        im_thresh = self.image_preprocess_with_hsv(im_work)
 
         # Extracting all blob from image. This will correspond to all objects
         cx_list, cy_list, list_size, angle_list, color_list, object_type_list = self.extract_all_blob(im_thresh,
@@ -140,11 +147,10 @@ class ObjectDetector:
 
         return status, cx_rel_list, cy_rel_list, list_size, angle_list, color_list, object_type_list
 
-    def image_preprocess_with_hsv(self, im_work, use_s_prime=False):
+    def image_preprocess_with_hsv(self, im_work):
         """
 
         :param im_work:
-        :param use_s_prime: Bool -> True if you want to use S channel as S' = S x V else classic
         :return:
         """
         self.actualize_img(im_work)
@@ -230,10 +236,17 @@ class ObjectDetector:
             cv2.drawContours(im_ret, [best_cnt], 0, PURPLE, thickness_contours)
             cv2.arrowedLine(im_ret, p_init, (cx, cy), BLUE, thickness=self._draw_text_thickness)
 
-            cv2.drawMarker(im_ret, p_init, markerType=cv2.MARKER_DIAMOND,
-                           markerSize=self._draw_marker_size, thickness=self._draw_marker_thickness, color=RED)
-            cv2.drawMarker(im_ret, (cx, cy), markerType=cv2.MARKER_TILTED_CROSS,
-                           markerSize=self._draw_marker_size, thickness=self._draw_marker_thickness, color=ORANGE)
+            cv2.drawMarker(im_ret,
+                           p_init,
+                           markerType=cv2.MARKER_DIAMOND,
+                           markerSize=self._draw_marker_size,
+                           thickness=self._draw_marker_thickness,
+                           color=RED)
+            cv2.drawMarker(im_ret, (cx, cy),
+                           markerType=cv2.MARKER_TILTED_CROSS,
+                           markerSize=self._draw_marker_size,
+                           thickness=self._draw_marker_thickness,
+                           color=ORANGE)
 
         return cx, cy, angle, obj_type.name, obj_color, im_ret
 
@@ -256,7 +269,6 @@ class ObjectDetector:
         best_cnts = biggest_contours_finder(im_thresh, 20)
         if best_cnts is None:
             return None, None, None, None, None, None
-        obj_type = ObjectType.ANY
         angle = 0
 
         for best_cnt in best_cnts:
@@ -325,6 +337,5 @@ def get_annotated_image_rel_pos(img, list_pos, angle, write_on_top=True):
     # print(x,y,z,angle)
     if x is None or x == "None":
         return img
-    text = "x:{:.1f}% y:{:.1f}% Roll {:.1f}".format(100 * x, 100 * y,
-                                                    angle)
+    text = "x:{:.1f}% y:{:.1f}% Roll {:.1f}".format(100 * x, 100 * y, angle)
     return add_annotation_to_image(img, text, write_on_top=write_on_top)

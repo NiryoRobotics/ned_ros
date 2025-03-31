@@ -11,5 +11,6 @@
     <group ns="niryo_robot_vision" >
         <!-- Settings will give more FPS if the user is using simulation-->
         <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
+        <rosparam file="$(find niryo_robot_vision)/config/cam_intrinsics.yaml" ns="cam_intrinsics" />
     </group>
 </launch>
