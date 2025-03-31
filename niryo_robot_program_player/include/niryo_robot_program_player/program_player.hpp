@@ -287,7 +287,7 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::checkButtonLockSt
   auto now = std::chrono::steady_clock::now();
 
   // lock
-  if (buttons_state[Button::UP] == common::model::EActionType::HANDLE_HELD_ACTION &&
+  if (buttons_state[Button::DOWN] == common::model::EActionType::HANDLE_HELD_ACTION &&
       buttons_state[Button::CUSTOM] == common::model::EActionType::HANDLE_HELD_ACTION) {
     if (_lock_press_start.time_since_epoch().count() == 0) {
       _lock_press_start = now;
@@ -300,7 +300,7 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::checkButtonLockSt
   }
 
   // unlock
-  if (buttons_state[Button::DOWN] == common::model::EActionType::HANDLE_HELD_ACTION &&
+  if (buttons_state[Button::UP] == common::model::EActionType::HANDLE_HELD_ACTION &&
       buttons_state[Button::CUSTOM] == common::model::EActionType::HANDLE_HELD_ACTION) {
     if (_unlock_press_start.time_since_epoch().count() == 0) {
       _unlock_press_start = now;

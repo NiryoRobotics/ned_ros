@@ -755,7 +755,7 @@ TEST_F(ProgramPlayerTestSuite, trigger_lock_buttons)
   program_player->setState(ProgramPlayerState::IDLE);
 
   // lock buttons
-  driver.setUpValue(common::model::EActionType::HANDLE_HELD_ACTION);
+  driver.setDownValue(common::model::EActionType::HANDLE_HELD_ACTION);
   driver.setCustomValue(common::model::EActionType::HANDLE_HELD_ACTION);
 
   // The lock timer needs to be trigger once and then we can evaluate the elapsed time, therefore 2 updates
@@ -776,7 +776,7 @@ TEST_F(ProgramPlayerTestSuite, trigger_unlock_buttons)
   program_player->setLockButtons(true);
 
   // unlock buttons
-  driver.setDownValue(common::model::EActionType::HANDLE_HELD_ACTION);
+  driver.setUpValue(common::model::EActionType::HANDLE_HELD_ACTION);
   driver.setCustomValue(common::model::EActionType::HANDLE_HELD_ACTION);
 
   // The lock timer needs to be trigger once and then we can evaluate the elapsed time, therefore 2 updates
