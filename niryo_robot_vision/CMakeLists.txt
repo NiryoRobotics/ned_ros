@@ -20,7 +20,6 @@ add_service_files(
   DebugMarkers.srv
   ObjDetection.srv
   SetImageParameter.srv
-  TakePicture.srv
 )
 
 # enable python module support
@@ -82,7 +81,6 @@ endif()
 
 catkin_install_python(PROGRAMS 
     scripts/vision_node.py
-    scripts/VideoStream.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation

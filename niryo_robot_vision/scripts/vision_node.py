@@ -1,185 +1,178 @@
 #!/usr/bin/env python
-
-import logging
-import os
-import time
-
 import cv2
-import rospy
+import numpy as np
+from niryo_robot_msgs.msg import CommandStatus, ObjectPose
 
+import rospy
 from niryo_robot_utils import sentry_init
 
 # Services
-from niryo_robot_vision.srv import DebugColorDetection, DebugMarkers, ObjDetection, TakePicture
-from sensor_msgs.msg import CameraInfo, CompressedImage
+from niryo_robot_msgs.srv import SetBool, SetBoolRequest
 
-# Messages
-from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_msgs.msg import ObjectPose
+from niryo_robot_vision.implem.built_in_camera import CameraConfig
+from niryo_robot_vision.srv import (DebugColorDetection,
+                                    DebugColorDetectionRequest,
+                                    DebugMarkers,
+                                    DebugMarkersRequest,
+                                    ObjDetection,
+                                    ObjDetectionRequest,
+                                    ObjDetectionResponse,
+                                    SetImageParameter,
+                                    SetImageParameterRequest)
 
-from niryo_robot_vision.CalibrationObject import CalibrationObject
-from niryo_robot_vision.enums import ColorHSV
-from niryo_robot_vision.fonctions_camera import generate_msg_from_image
-from niryo_robot_vision.image_functions import debug_threshold_color, debug_markers
-from niryo_robot_vision.ObjectDetector import ObjectDetector
-from niryo_robot_vision.visualization_functions import ObjectType
+from sensor_msgs.msg import CompressedImage
+from std_msgs.msg import Bool
+from niryo_robot_vision.msg import ImageParameters
 
-from VideoStream import WebcamStream, GazeboStream
+from niryo_robot_vision.business.enums import ObjectShape, ObjectColor
+from niryo_robot_vision.implem.abstract_stream import AbstractStream
+from niryo_robot_vision.implem import built_in_camera, client_stream
+from niryo_robot_vision.business import image_processing
 
 
 class VisionNode:
-    """
-    Object which will contains all ROS Publishers & Services relate to image processing
-    """
 
     def __init__(self):
-        rospy.logdebug("Vision Node - Entering in Init")
-        # -- ROS
-        self.__simulation_mode = rospy.get_param("~simulation_mode")
-        self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
 
-        rospy.logdebug("VisionNode.init - debug_compression_quality: {}".format(self.__debug_compression_quality))
+        self.__camera_port = rospy.get_param('~camera_port')
+        self.__stream_compression_quality = rospy.get_param('~stream_compression_quality')
 
-        # PUBLISHERS
-        self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream', CompressedImage, queue_size=1)
+        camera_intrinsics = rospy.get_param('~cam_intrinsics')
 
-        # OBJECT DETECTION
+        self.__webcam_stream = built_in_camera.Stream(
+            camera_index=self.__camera_port,
+            config=CameraConfig(mtx=np.array(camera_intrinsics['mtx']),
+                                dist=np.array(camera_intrinsics['dist']),
+                                flip=rospy.get_param('~flip_img'),
+                                width_img=camera_intrinsics['width_img'],
+                                height_img=camera_intrinsics['height_img'],
+                                acquisition_rate=rospy.get_param('~frame_rate')),
+            publish_frame_cb=self.__publish_compressed_stream,
+        )
+        if self.__webcam_stream.is_available:
+            self.__webcam_stream.start()
+        # self.__client_stream = client_stream.Stream()
+
+        # Publishers
+        self.__compressed_stream_publisher = rospy.Publisher('~compressed_video_stream', CompressedImage, queue_size=1)
+        self.__stream_active_publisher = rospy.Publisher('~video_stream_is_active', Bool, queue_size=2)
+        self.__stream_parameters_publisher = rospy.Publisher('~video_stream_parameters',
+                                                             ImageParameters,
+                                                             queue_size=2,
+                                                             latch=True)
+
+        # Object detection
         rospy.Service('~obj_detection_rel', ObjDetection, self.__callback_get_obj_relative_pose)
 
-        # CALIBRATION
-        if not self.__simulation_mode:
-            self.__calibration_object = self.__generate_calib_object_from_setup()
-        else:
-            self.__calibration_object = self.__generate_calib_object_from_gazebo_topic()
-
-        self.__camera_intrinsics_publisher = rospy.Publisher('~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
-        self.publish_camera_intrinsics()
-        rospy.logdebug("Vision Node - Camera Intrinsics published !")
-
         # Debug features
-        rospy.Service('~take_picture', TakePicture, self.__callback_take_picture)
         rospy.Service('~debug_markers', DebugMarkers, self.__callback_debug_markers)
         rospy.Service('~debug_colors', DebugColorDetection, self.__callback_debug_color)
 
-        # -- VIDEO STREAM
-        rospy.logdebug("Vision Node - Creating Video Stream object")
-        cls_ = GazeboStream if self.__simulation_mode else WebcamStream
-        self.__video_stream = cls_(self.__calibration_object,
-                                   self.__publisher_compressed_stream,
-                                   rospy.get_param("~flip_img"))
-        rospy.logdebug("Vision Node - Video Stream Created")
+        # Stream parameters
+        rospy.Service('~start_stop_video_streaming', SetBool, self.__callback_start_stop)
+        rospy.Service('~set_saturation', SetImageParameter, self.__callback_set_saturation)
+        rospy.Service('~set_brightness', SetImageParameter, self.__callback_set_brightness)
+        rospy.Service('~set_contrast', SetImageParameter, self.__callback_set_contrast)
 
-        self.__video_stream.start()
+        rospy.Timer(rospy.Duration(1.0 / rospy.get_param('~is_active_rate')), self.__publish_is_active)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
-        rospy.loginfo("Vision Node - Initialized")
+        rospy.loginfo('Vision Node - Initialized')
 
-    @staticmethod
-    def __generate_calib_object_from_setup():
-        calibration_object_name = rospy.get_param("~obj_calib_name")
-        rospy.logdebug("VisionNode.init - obj_calib_name: {}".format(calibration_object_name))
-
-        calibration_object_params = rospy.get_param(f'~{calibration_object_name}', None)
-        if calibration_object_params is None:
-            rospy.logwarn("Vision Node - No calibration object found in parameter server")
-            return CalibrationObject.set_empty()
-
-        return CalibrationObject.set_from_dict(calibration_object_params)
-
-    @staticmethod
-    def __generate_calib_object_from_gazebo_topic():
-        camera_info_message = rospy.wait_for_message("/gazebo_camera/camera_info", CameraInfo)
-        return CalibrationObject.set_from_raw(camera_info_message.K, camera_info_message.D)
-
-    def publish_camera_intrinsics(self):
-        mtx, dist = self.__calibration_object.get_camera_info()
-
-        msg_camera_info = CameraInfo()
-        msg_camera_info.K = list(mtx.flatten())
-        msg_camera_info.D = list(dist.flatten())
-        return self.__camera_intrinsics_publisher.publish(msg_camera_info)
+    @property
+    def __stream(self) -> AbstractStream:
+        return self.__webcam_stream
+        if self.__client_stream.is_active:
+            return self.__client_stream
+        else:
+            return self.__webcam_stream
 
     # - CALLBACK
-    def __callback_get_obj_relative_pose(self, req):
-        # Reading last image
-        img = self.__video_stream.read_undistorted()
-        if img is None:
-            rospy.logwarn("Vision Node - Try to get object relative pose while stream is not running !")
-            return CommandStatus.VIDEO_STREAM_NOT_RUNNING, ObjectPose(), "", "", CompressedImage()
+    def __callback_get_obj_relative_pose(self, req: ObjDetectionRequest):
+        try:
+            found_object = image_processing.detect_object(self.__stream.image,
+                                                          ObjectColor[req.obj_color],
+                                                          ObjectShape[req.obj_type],
+                                                          req.workspace_ratio)
+        except image_processing.MarkersNotFoundError:
+            return CommandStatus.MARKERS_NOT_FOUND, None, None, None, None
+        except image_processing.NoShapeFoundError:
+            return CommandStatus.OBJECT_NOT_FOUND, None, None, None, None
 
-        # Extracting parameters from request
-        obj_type = ObjectType[req.obj_type]
-        obj_color = ColorHSV[req.obj_color]
-        workspace_ratio = req.workspace_ratio
-        self.__object_detector = ObjectDetector(
-            obj_type=obj_type,
-            obj_color=obj_color,
-            workspace_ratio=workspace_ratio,
-            ret_image_bool=req.ret_image,
+        return ObjDetectionResponse(
+            status=CommandStatus.SUCCESS,
+            obj_pose=ObjectPose(x=found_object.x, y=found_object.y, yaw=found_object.yaw),
+            obj_type=found_object.shape.name,
+            obj_color=found_object.color.name,
         )
 
-        # Launching pipeline
-        status, msg_res_pos, obj_type, obj_color, im_draw = self.__object_detector.extract_object_with_hsv(img)
-        if self.__object_detector.should_ret_image():
-            _, msg_img = generate_msg_from_image(im_draw, compression_quality=self.__debug_compression_quality)
+    def __callback_debug_markers(self, _: DebugMarkersRequest):
+        ...
+        # return CommandStatus.SUCCESS, 'Successfully got debug markers', markers_detected, msg_img
+
+    def __callback_debug_color(self, req: DebugColorDetectionRequest):
+        ...
+        # return CommandStatus.SUCCESS, 'Successfully got debug colors', msg_img
+
+    def __callback_start_stop(self, req: SetBoolRequest):
+        '''
+        Callback to start or stop the video stream.
+        :param req: The request containing the desired state
+        :type req: SetBoolRequest
+        :return: The response indicating success or failure
+        :rtype: SetBoolResponse
+        '''
+        if req.value is True:
+            try:
+                self.__stream.start()
+            except RuntimeError as e:
+                rospy.logerr(f'Failed to start stream: {e}')
+                return False, f'Failed to start stream: {e}'
+            self.__stream_active_publisher.publish(Bool(data=True))
+            return True, 'Video stream started'
         else:
-            msg_img = CompressedImage()
-        return status, msg_res_pos, obj_type, obj_color, msg_img
+            self.__stream.stop()
+            self.__stream_active_publisher.publish(Bool(data=False))
+            return True, 'Video stream stopped'
 
-    def __callback_take_picture(self, req):
-        path = os.path.expanduser(req.path)
-        if not os.path.isdir(path):
-            os.makedirs(path)
-        time_string = time.strftime("%Y%m%d-%H%M%S")
+    def __callback_set_saturation(self, req: SetImageParameterRequest):
+        ...
 
-        img_full_path = "{}.jpg".format(os.path.join(path, time_string))
-        im = self.__video_stream.read_raw_img()
-        res_bool = cv2.imwrite(img_full_path, im)
+    def __callback_set_brightness(self, req: SetImageParameterRequest):
+        ...
 
-        if res_bool:
-            rospy.logdebug("Vision Node - Picture taken & saved")
-        else:
-            rospy.logwarn("Vision Node - Cannot save picture")
+    def __callback_set_contrast(self, req: SetImageParameterRequest):
+        ...
 
-        return res_bool
+    def __publish_is_active(self, _: rospy.timer.TimerEvent):
+        '''
+        Publish the is_active parameter.
+        :param _: The timer event
+        :type _: rospy.timer.TimerEvent
+        '''
+        self.__stream_active_publisher.publish(Bool(data=self.__stream.is_active))
 
-    def __callback_debug_markers(self, _):
-        img = self.__video_stream.read_undistorted()
-        if img is None:
-            message = 'Try to get debug markers while stream is not running !'
-            rospy.logwarn_throttle(2.0, f'Vision Node - {message}')
-            return CommandStatus.VIDEO_STREAM_NOT_RUNNING, message, False, CompressedImage()
+    def __publish_compressed_stream(self, frame: np.ndarray):
+        '''
+        Publish the compressed image stream.
+        :param frame: The frame to publish
+        :type frame: numpy.ndarray
+        '''
+        _, encoded_img = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), self.__stream_compression_quality])
 
-        markers_detected, img_res = debug_markers(img)
-        _, msg_img = generate_msg_from_image(img_res, compression_quality=self.__debug_compression_quality)
-
-        return CommandStatus.SUCCESS, 'Successfully got debug markers', markers_detected, msg_img
-
-    def __callback_debug_color(self, req):
-        img = self.__video_stream.read_undistorted()
-        if img is None:
-            message = 'Try to get debug colors while stream is not running !'
-            rospy.logwarn_throttle(2.0, f'Vision Node - {message}')
-            return CommandStatus.VIDEO_STREAM_NOT_RUNNING, message, CompressedImage()
-        color = ColorHSV[req.color]
-        img_res = debug_threshold_color(img, color)
-        _, msg_img = generate_msg_from_image(img_res, compression_quality=self.__debug_compression_quality)
-
-        return CommandStatus.SUCCESS, 'Successfully got debug colors', msg_img
+        msg = CompressedImage()
+        msg.header.stamp = rospy.Time.now()
+        msg.format = 'jpg'
+        msg.data = encoded_img.tobytes()
+        self.__compressed_stream_publisher.publish(msg)
 
 
 if __name__ == '__main__':
     sentry_init()
 
-    # we need to layun
     rospy.init_node('niryo_robot_vision', anonymous=False, log_level=rospy.INFO)
-
-    # change logger level according to node parameter
-    log_level = rospy.get_param("~log_level")
-    logger = logging.getLogger("rosout")
-    logger.setLevel(log_level)
 
     try:
         vision_node = VisionNode()

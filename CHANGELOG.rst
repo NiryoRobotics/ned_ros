@@ -10,6 +10,7 @@ feat: Add program player lock/unlock buttons mechanism by pressing up + custom/d
 fix: Wait for joint_states and rpi node before building modbus registers
 feat: Async ros wrapper move functions
 fix: sendCustomCommand instant return success if motor is fake
+refactor: improved image processing performances in the vision package
 
 v5.5.5
 ------
