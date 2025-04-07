@@ -2,6 +2,8 @@ from abc import ABC
 
 import numpy as np
 
+from ..business.image_processing import post_process
+
 
 class AbstractStream(ABC):
     """
@@ -10,6 +12,10 @@ class AbstractStream(ABC):
 
     def __init__(self):
         super().__init__()
+        self._frame = None
+        self.brightness = 1.0
+        self.contrast = 1.0
+        self.saturation = 1.0
 
     def start(self):
         """
@@ -43,3 +49,9 @@ class AbstractStream(ABC):
         Check if the stream is available.
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    def _post_process(self):
+        """
+        Post-process the image.
+        """
+        post_process(self._frame, self.brightness, self.contrast, self.saturation, dst=self._frame)

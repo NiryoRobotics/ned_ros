@@ -10,12 +10,14 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+  ActiveDebugTopics.msg
   ImageParameters.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
+  ActivateDebugTopics.srv
   DebugColorDetection.srv
   DebugMarkers.srv
   ObjDetection.srv

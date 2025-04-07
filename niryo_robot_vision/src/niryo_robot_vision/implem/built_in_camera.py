@@ -1,4 +1,3 @@
-import os
 import time
 from dataclasses import dataclass
 from threading import Thread, Event
@@ -49,7 +48,7 @@ class Stream(AbstractStream):
         self.__config = config
         self.__publish_frame = publish_frame_cb
 
-        self.__frame = np.zeros((int(config.height_img), int(config.width_img), 3), dtype=np.uint8)
+        self._frame = np.zeros((int(config.height_img), int(config.width_img), 3), dtype=np.uint8)
         self.__acquisition_thread = None
         self.__stop_acquisition = Event()
         self.__rate = Rate(config.acquisition_rate)
@@ -92,7 +91,8 @@ class Stream(AbstractStream):
         if self.__config.flip:
             cv2.flip(frame, -1, dst=frame)
 
-        cv2.undistort(src=frame, cameraMatrix=self.__config.mtx, distCoeffs=self.__config.dist, dst=self.__frame)
+        cv2.undistort(src=frame, cameraMatrix=self.__config.mtx, distCoeffs=self.__config.dist, dst=self._frame)
+        self._post_process()
 
     def __loop(self):
         video_stream = cv2.VideoCapture(self.__camera_index)
@@ -115,7 +115,7 @@ class Stream(AbstractStream):
 
                 self.__process_frame(frame)
                 try:
-                    self.__publish_frame(self.__frame)
+                    self.__publish_frame(self._frame)
                 except Exception as e:
                     rospy.logerr(f'Failed to publish frame: {e}')
                 self.__rate.sleep()
@@ -131,7 +131,7 @@ class Stream(AbstractStream):
 
     @property
     def image(self) -> np.ndarray:
-        return self.__frame
+        return self._frame
 
     @property
     def is_active(self) -> bool:

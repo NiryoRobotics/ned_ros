@@ -3,6 +3,8 @@ import cv2
 
 IM_EXTRACT_SMALL_SIDE_PIXELS = 200
 
+# TODO: refactor this module to optimize performances in images processing
+
 
 def extract_img_markers(img, workspace_ratio):
     """
