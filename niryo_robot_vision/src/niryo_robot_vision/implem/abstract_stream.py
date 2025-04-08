@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Callable
 
 import numpy as np
 
@@ -10,12 +11,13 @@ class AbstractStream(ABC):
     Abstract class for a stream.
     """
 
-    def __init__(self):
+    def __init__(self, publish_frame_cb: Callable[[np.ndarray], None]):
         super().__init__()
         self._frame = None
         self.brightness = 1.0
         self.contrast = 1.0
         self.saturation = 1.0
+        self._publish_frame = publish_frame_cb
 
     def start(self):
         """

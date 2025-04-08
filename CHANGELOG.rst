@@ -10,7 +10,17 @@ feat: Add program player lock/unlock buttons mechanism by pressing up + custom/d
 fix: Wait for joint_states and rpi node before building modbus registers
 feat: Async ros wrapper move functions
 fix: sendCustomCommand instant return success if motor is fake
-refactor: improved image processing performances in the vision package
+refactor(vision): improved image processing pipeline speed
+feat(vision): add debug topics which can be activated by calling the service /niryo_robot_vision/debug/activate:
+  * /niryo_robot_vision/debug/active_topics: list of active debug topics
+  * /niryo_robot_vision/debug/red_channel: red channel image
+  * /niryo_robot_vision/debug/green_channel: green channel image
+  * /niryo_robot_vision/debug/blue_channel: blue channel image
+  * /niryo_robot_vision/debug/any_channel: RGB channels image
+  * /niryo_robot_vision/debug/markers: workspaces markers image
+feat(vision): increased video stream frame rate (from 5 to 15 fps)
+chore(vision): cleanup of dead code
+feat(vision): the vision node can now get the video stream from any external client. Use the service /niryo_robot_vision/set_source to set the source to `client` then publish the stream on `/niryo_robot_vision/client_stream`
 
 v5.5.5
 ------

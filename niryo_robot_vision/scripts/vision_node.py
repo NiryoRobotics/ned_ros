@@ -53,10 +53,17 @@ class VisionNode:
                                                 acquisition_rate=frame_rate),
             publish_frame_cb=self.__publish_compressed_stream,
         )
-        if self.__webcam_stream.is_available:
-            self.__webcam_stream.start()
+        self.__client_stream = client_stream.Stream(
+            rospy.get_param('~client_stream_topic'),
+            publish_frame_cb=self.__publish_compressed_stream,
+        )
 
-        self.__client_stream = client_stream.Stream()
+        if self.__webcam_stream.is_available:
+            self.__source = 'webcam'
+            self.__webcam_stream.start()
+        else:
+            self.__source = 'client'
+            self.__client_stream.start()
 
         # == Ros interface == #
 
@@ -129,10 +136,10 @@ class VisionNode:
         Return the selected stream.
         :return:
         """
-        if self.__client_stream.is_active:
-            return self.__client_stream
-        else:
-            return self.__webcam_stream
+        return {
+            'webcam': self.__webcam_stream,
+            'client': self.__client_stream,
+        }[self.__source]
 
     # - CALLBACK
     def __callback_get_obj_relative_pose(self, req: ObjDetectionRequest):
@@ -200,28 +207,29 @@ class VisionNode:
         if req.value is True:
             try:
                 self.__stream.start()
-            except RuntimeError as e:
-                rospy.logerr(f'Failed to start stream: {e}')
-                return False, f'Failed to start stream: {e}'
+            except RuntimeError:
+                return True, 'Stream already started'
             self.__stream_active_publisher.publish(Bool(data=True))
             return True, 'Video stream started'
         else:
-            self.__stream.stop()
+            try:
+                self.__stream.stop()
+            except RuntimeError:
+                return True, 'Stream already stopped'
             self.__stream_active_publisher.publish(Bool(data=False))
             return True, 'Video stream stopped'
 
     def __callback_set_source(self, req: SetStringRequest):
+        if req.value not in ['webcam', 'client']:
+            return CommandStatus.FAILURE, 'Invalid source. Possible values are [webcam, client]'
+
         try:
             self.__stream.stop()
         except RuntimeError:
             pass
 
-        if req.value == 'webcam':
-            self.__webcam_stream.start()
-        elif req.value == 'client':
-            self.__client_stream.start()
-        else:
-            return CommandStatus.FAILURE, 'Invalid source. Possible values are [webcam, client]'
+        self.__source = req.value
+        self.__stream.start()
 
         return CommandStatus.SUCCESS, f'Source set successfully set to {req.value}'
 

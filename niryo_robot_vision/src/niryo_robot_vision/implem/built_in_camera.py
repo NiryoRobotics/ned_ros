@@ -43,10 +43,9 @@ class Stream(AbstractStream):
         :param config: Camera configuration
         :param publish_frame_cb: Callback function to publish the frame
         """
-        super().__init__()
+        super().__init__(publish_frame_cb)
         self.__camera_index = camera_index
         self.__config = config
-        self.__publish_frame = publish_frame_cb
 
         self._frame = np.zeros((int(config.height_img), int(config.width_img), 3), dtype=np.uint8)
         self.__acquisition_thread = None
@@ -115,7 +114,7 @@ class Stream(AbstractStream):
 
                 self.__process_frame(frame)
                 try:
-                    self.__publish_frame(self._frame)
+                    self._publish_frame(self._frame)
                 except Exception as e:
                     rospy.logerr(f'Failed to publish frame: {e}')
                 self.__rate.sleep()
