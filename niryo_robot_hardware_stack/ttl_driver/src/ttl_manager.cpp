@@ -1543,6 +1543,10 @@ int TtlManager::sendCustomCommand(uint8_t id, int reg_address, int value, int by
     {
         EHardwareType motor_type = _state_map.at(id)->getHardwareType();
 
+        if (motor_type == EHardwareType::STEPPER || motor_type == EHardwareType::FAKE_STEPPER_MOTOR) {
+            return niryo_robot_msgs::CommandStatus::SUCCESS;
+        }
+
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
             int32_t value_conv = value;
