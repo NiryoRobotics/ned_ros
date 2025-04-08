@@ -1,11 +1,12 @@
 import numpy as np
 import cv2
-from niryo_robot_vision.math_functions import euclidean_dist_2_pts
 
 IM_EXTRACT_SMALL_SIDE_PIXELS = 200
 
+# TODO: refactor this module to optimize performances in images processing
 
-def extract_img_markers(img, workspace_ratio=1.0):
+
+def extract_img_markers(img, workspace_ratio):
     """
     Extract working area from an image thanks to 4 Niryo's markers
     :param img: OpenCV image which contain 4 Niryo's markers
@@ -292,7 +293,10 @@ def find_markers_from_img_thresh(img_thresh,
             center_potential = potential_marker2.get_center()
             if center_potential[0] - center_marker[0] > max_dist_between_centers:
                 break
-            dist = euclidean_dist_2_pts(center_marker, center_potential)
+
+            dist = np.sqrt((float(center_marker[0]) - float(center_potential[0]))**2 +
+                           (float(center_marker[1]) - float(center_potential[1]))**2)
+
             if dist <= max_dist_between_centers:
                 marker1.add_circle(potential_marker2)
                 center_marker = marker1.get_center()

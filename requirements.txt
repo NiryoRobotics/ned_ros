@@ -15,4 +15,3 @@ sentry-sdk~=2.11.0
 numpy~=2.2.1
 PyYAML~=6.0.2
 opencv-python~=4.11.0.86
-Pillow~=10.4.0

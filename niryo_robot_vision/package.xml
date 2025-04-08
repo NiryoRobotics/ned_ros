@@ -6,9 +6,9 @@
   <name>niryo_robot_vision</name>
   <version>5.0.0</version>
   <description>Niryo vision package</description>
-  <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
+  <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
   <license>GPLv3</license>
-  <author email="r.lux@niryo.com">Remi Lux</author>
+  <author email="j.mottier@niryo.com">Justin Mottier</author>
   
   <buildtool_depend>catkin</buildtool_depend>
 
