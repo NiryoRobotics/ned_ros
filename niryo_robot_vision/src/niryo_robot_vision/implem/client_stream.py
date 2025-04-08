@@ -22,6 +22,8 @@ class Stream(AbstractStream):
         self.__subscriber = rospy.Subscriber(self.__topic, CompressedImage, self.__image_callback, queue_size=1)
 
     def stop(self):
+        if self.__subscriber is None:
+            return
         self.__subscriber.unregister()
         self.__subscriber = None
 
