@@ -21,6 +21,7 @@ feat(vision): add debug topics which can be activated by calling the service /ni
 feat(vision): increased video stream frame rate (from 5 to 15 fps)
 chore(vision): cleanup of dead code
 feat(vision): the vision node can now get the video stream from any external client. Use the service /niryo_robot_vision/set_source to set the source to `client` then publish the stream on `/niryo_robot_vision/client_stream`
+fix(conveyor_interface): instanciate a fake stepper if in simulation mode 
 
 v5.5.5
 ------

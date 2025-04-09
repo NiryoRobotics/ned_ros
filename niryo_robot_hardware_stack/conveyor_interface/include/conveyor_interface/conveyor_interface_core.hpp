@@ -135,6 +135,7 @@ private:
         static constexpr int CAN_DEFAULT_ID{6};
 
         double _publish_feedback_duration{0.0};
+        bool _use_simu_conveyor{false};
 };
 
 } // ConveyorInterface
