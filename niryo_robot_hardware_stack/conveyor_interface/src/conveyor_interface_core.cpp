@@ -167,6 +167,8 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle &nh)
     assert(feedback_frequency);
     _publish_feedback_duration = 1.0 / feedback_frequency;
 
+    nh.getParam("simu_conveyor", _use_simu_conveyor);
+
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - publish feedback frequency : %f", feedback_frequency);
 }
 
@@ -222,7 +224,8 @@ conveyor_interface::SetConveyor::Response ConveyorInterfaceCore::addConveyor()
             // take first
             uint8_t conveyor_id = *bus.pool_id_list.begin();
 
-            auto conveyor_state = std::make_shared<ConveyorState>(EHardwareType::NED3PRO_STEPPER, protocol, bus.default_id, bus.default_id, CONVEYOR_V3_HWID);
+            EHardwareType hw_type = _use_simu_conveyor ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::NED3PRO_STEPPER;
+            auto conveyor_state = std::make_shared<ConveyorState>(hw_type, protocol, bus.default_id, bus.default_id, CONVEYOR_V3_HWID);
 
             // we want to check the model number for this conveyor
             // if it fails, we will recover with the old stepper hardware without checking the model number
