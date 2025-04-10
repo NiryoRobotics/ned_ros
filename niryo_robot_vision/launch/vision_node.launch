@@ -21,6 +21,6 @@
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)" />
 
         <param name="client_stream_topic" value="~client_stream" unless="$(arg gazebo)" />
-        <param name="client_stream_topic" value="/camera/image_raw/compressed" if="$(arg gazebo)" />
+        <param name="client_stream_topic" value="/gazebo_camera/image_raw/compressed" if="$(arg gazebo)" />
     </node>
 </launch>
