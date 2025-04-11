@@ -181,7 +181,6 @@ class CommandEnum(Enum):
     GET_JOINTS = 10
     GET_POSE = 11
     GET_POSE_QUAT = 12
-    GET_POSE_V2 = 13
 
     MOVE_JOINTS = 20
     MOVE_POSE = 21
@@ -198,9 +197,6 @@ class CommandEnum(Enum):
 
     MOVE = 29
     JOG = 30
-
-    FORWARD_KINEMATICS_V2 = 31
-    INVERSE_KINEMATICS_V2 = 32
 
     # Saved Pose
     GET_POSE_SAVED = 50

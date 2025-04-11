@@ -95,7 +95,7 @@ class ArmState(object):
                          HardwareStatus,
                          self.__callback_hardware_status)
 
-        rospy.Subscriber('/niryo_robot/robot_state_v2', RobotState, self.__callback_sub_robot_state)
+        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__callback_sub_robot_state)
         self.__robot_state = None
 
         # Init move group

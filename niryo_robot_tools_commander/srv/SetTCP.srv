@@ -4,10 +4,6 @@ geometry_msgs/Point position
 #If both are filled, the quaternion will be chosen by default
 niryo_robot_msgs/RPY rpy
 geometry_msgs/Quaternion orientation
-
-int32 LEGACY = 1
-int32 DH_CONVENTION = 2
-int32 tcp_version
 ---
 int32 status
 string message

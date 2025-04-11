@@ -16,7 +16,6 @@ from niryo_robot_poses_handlers.grip_manager import GripManager
 from niryo_robot_poses_handlers.pose_manager import PoseManager, PoseObj
 from niryo_robot_poses_handlers.workspace_manager import WorkspaceManager
 from niryo_robot_poses_handlers.dynamic_frame_manager import DynamicFrameManager
-from niryo_robot_poses_handlers.transform_functions import convert_dh_convention_to_legacy_rpy
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -42,7 +41,6 @@ from niryo_robot_poses_handlers.srv import GetPose, ManagePose
 from niryo_robot_poses_handlers.srv import ManageDynamicFrame
 
 from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
-from niryo_robot_utils.dataclasses.enums import TcpVersion
 from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 from niryo_robot_utils.dataclasses.Pose import Pose
 
@@ -77,7 +75,6 @@ class PoseHandlerNode:
         grip_dir = rospy.get_param("~grip_dir")
         self.__grip_manager = GripManager(grip_dir, self.__tool_id_gripname_dict.values())
         rospy.Service('~get_target_pose', GetTargetPose, self.__callback_target_pose)
-        rospy.Service('~get_target_pose_v2', GetTargetPose, self.__callback_target_pose_v2)
 
         # Transform Handlers
         self.__transform_handler = PosesTransformHandler(self.__grip_manager, self)
@@ -115,8 +112,6 @@ class PoseHandlerNode:
 
         # Relative pose
         self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=1)
-        self.__relative_pose_v2_publisher = rospy.Publisher('~relative_pose_v2', PoseStamped, queue_size=1)
-        rospy.Subscriber('/niryo_robot/robot_state_v2', RobotState, self.__robot_state_callback, queue_size=1)
         self.__current_pose = [0] * 6
 
         self.__relative_transform = None
@@ -242,16 +237,6 @@ class PoseHandlerNode:
     def __callback_target_pose(self, req):
         try:
             pose = self.get_target_pose(req.workspace, req.height_offset, req.x_rel, req.y_rel, req.yaw_rel)
-            pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw = convert_dh_convention_to_legacy_rpy(pose.rpy.roll,
-                                                                                              pose.rpy.pitch,
-                                                                                              pose.rpy.yaw)
-            return CommandStatus.SUCCESS, "Success", pose
-        except Exception as e:
-            return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
-
-    def __callback_target_pose_v2(self, req):
-        try:
-            pose = self.get_target_pose(req.workspace, req.height_offset, req.x_rel, req.y_rel, req.yaw_rel)
             return CommandStatus.SUCCESS, "Success", pose
         except Exception as e:
             return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
@@ -286,16 +271,7 @@ class PoseHandlerNode:
         pose = req.pose
         if cmd == req.SAVE:
             try:
-                tcp_version = 'LEGACY'
-                if pose.tcp_version in ['LEGACY', 'DH_CONVENTION']:
-                    tcp_version = pose.tcp_version
-                elif pose.tcp_version == '':
-                    tcp_version = 'LEGACY'
-                else:
-                    return CommandStatus.POSES_HANDLER_CREATION_FAILED, 'tcp_version is not correct'
-
                 pose_version = pose.pose_version
-
                 pose_obj = PoseObj(name=pose.name,
                                    description=pose.description,
                                    joints=JointsPosition(*pose.joints),
@@ -305,7 +281,7 @@ class PoseHandlerNode:
                                              pose.rpy.roll,
                                              pose.rpy.pitch,
                                              pose.rpy.yaw,
-                                             metadata=PoseMetadata(pose_version, TcpVersion[tcp_version])))
+                                             metadata=PoseMetadata(pose_version)))
                 self.__pos_manager.create(pose_obj)
                 self.__publish_pose_list()
                 return CommandStatus.SUCCESS, "Created Position '{}'".format(pose.name)
@@ -433,12 +409,8 @@ class PoseHandlerNode:
         if self.__relative_transform is None:
             return
 
-        transform_pose_v2 = self.transform_pose(self.__relative_transform, self.__current_pose)
-        self.__relative_pose_v2_publisher.publish(transform_pose_v2)
-
-        current_pose_v1 = self.__current_pose[:3] + list(convert_dh_convention_to_legacy_rpy(*self.__current_pose[3:]))
-        transform_pose_v1 = self.transform_pose(self.__relative_transform, current_pose_v1)
-        self.__relative_pose_publisher.publish(transform_pose_v1)
+        transform_pose = self.transform_pose(self.__relative_transform, self.__current_pose)
+        self.__relative_pose_publisher.publish(transform_pose)
 
     # -- REGULAR CLASS FUNCTIONS
     # Workspace
@@ -598,11 +570,6 @@ class PoseHandlerNode:
         except Exception:
             # pose_version doesn't exist assume it has legacy format
             pose.pose_version = 0
-        try:
-            pose.tcp_version = pose_obj.pose.metadata.tcp_version.name
-        except Exception:
-            # tcp_version doesn't exist assume it has legacy format
-            pose.tcp_version = 'LEGACY'
         return pose
 
     def remove_pose(self, name):

@@ -1,8 +1,8 @@
 from typing import Generator, Dict, List, Tuple
-from niryo_robot_poses_handlers.transform_functions import convert_legacy_rpy_to_dh_convention, quaternion_from_euler
+from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
 from .ABCSerializable import ABCSerializable
-from .enums import TcpVersion, LengthUnit
+from .enums import LengthUnit
 from .PoseMetadata import PoseMetadata
 
 
@@ -60,15 +60,6 @@ class Pose(ABCSerializable):
     def quaternion(self) -> Tuple[float, float, float, float]:
         return quaternion_from_euler(self.roll, self.pitch, self.yaw)
 
-    def convert_to_dh_convention(self) -> None:
-        if self.metadata.tcp_version == TcpVersion.DH_CONVENTION:
-            return
-        roll, pitch, yaw = convert_legacy_rpy_to_dh_convention(self.roll, self.pitch, self.yaw)
-        self.roll = roll
-        self.pitch = pitch
-        self.yaw = yaw
-        self.metadata.tcp_version = TcpVersion.DH_CONVENTION
-
     def convert_to_meters(self) -> None:
         if self.metadata.length_unit == LengthUnit.METERS:
             return
@@ -79,5 +70,4 @@ class Pose(ABCSerializable):
 
     def normalize(self) -> None:
         self.convert_to_meters()
-        self.convert_to_dh_convention()
         self.metadata.version = 2

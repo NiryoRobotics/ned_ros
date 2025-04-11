@@ -375,10 +375,6 @@ class CommandInterpreter:
         ]
         return self.__send_answer(*data_answer)
 
-    @check_nb_args(0)
-    def __get_pose_v2(self):
-        return self.__send_answer(self.__niryo_robot.get_pose_v2_as_list().to_dict())
-
     @check_nb_args(2)
     def __move(self, robot_position, linear):
         linear = self.__boolean_string_dict_converter[linear]
@@ -465,16 +461,6 @@ class CommandInterpreter:
     def __inverse_kinematics(self, pose):
         pose_obj = Pose.from_dict(pose)
         return self.__send_answer(self.__niryo_robot.inverse_kinematics(pose_obj).to_dict())
-
-    @check_nb_args(1)
-    def __forward_kinematics_v2(self, joints_position):
-        joints_position_obj = JointsPosition.from_dict(joints_position)
-        return self.__send_answer(self.__niryo_robot.forward_kinematics_v2(joints_position_obj).to_dict())
-
-    @check_nb_args(1)
-    def __inverse_kinematics_v2(self, pose):
-        pose_obj = Pose.from_dict(pose)
-        return self.__send_answer(self.__niryo_robot.inverse_kinematics_v2(pose_obj).to_dict())
 
     # - Saved Pose
 
