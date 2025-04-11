@@ -55,27 +55,29 @@ class TrajectoriesExecutor:
         self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
         self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
         self.__cartesian_path_eef_steps = rospy.get_param("~eef_step")
-        self.__cartesian_path_jump_threshold = rospy.get_param("~jump_threshold")
 
         # - Subscribers
         joint_controller_base_name = rospy.get_param("~joint_controller_name")
         rospy.Subscriber('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
-                         FollowJointTrajectoryActionGoal, self.__callback_new_goal)
+                         FollowJointTrajectoryActionGoal,
+                         self.__callback_new_goal)
 
         rospy.Subscriber('{}/follow_joint_trajectory/result'.format(joint_controller_base_name),
-                         FollowJointTrajectoryActionResult, self.__callback_goal_result)
+                         FollowJointTrajectoryActionResult,
+                         self.__callback_goal_result)
 
         # collision detected by End Effector could be a real or fake collision.
         # In a movement, if a collision detected, that will be a real collision, without a movement, it will be fake
-        rospy.Subscriber('/niryo_robot/hardware_interface/collision_detected',
-                         Bool, self.__callback_collision_detected)
+        rospy.Subscriber('/niryo_robot/hardware_interface/collision_detected', Bool, self.__callback_collision_detected)
 
         # - Publishers
         self.__traj_goal_pub = rospy.Publisher('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
-                                               FollowJointTrajectoryActionGoal, queue_size=1)
+                                               FollowJointTrajectoryActionGoal,
+                                               queue_size=1)
 
         self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
-                                                            JointTrajectory, queue_size=10)
+                                                            JointTrajectory,
+                                                            queue_size=10)
 
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
@@ -144,8 +146,7 @@ class TrajectoriesExecutor:
 
             plan = self.__get_computed_plan()
             if not plan:
-                raise ArmCommanderException(
-                    CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
+                raise ArmCommanderException(CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
             if self.__hardware_version == 'ned':
                 self.__reset_controller()
@@ -200,8 +201,10 @@ class TrajectoriesExecutor:
                                         "The goal cannot be reached with a linear trajectory")
 
         # Apply robot speeds
-        plan = self.retime_plan(plan, velocity_scaling_factor=velocity_factor,
-                                acceleration_scaling_factor=acceleration_factor, optimize=False)
+        plan = self.retime_plan(plan,
+                                velocity_scaling_factor=velocity_factor,
+                                acceleration_scaling_factor=acceleration_factor,
+                                optimize=False)
         if plan is None:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
                                         "The goal cannot be reached with a linear trajectory")
@@ -226,8 +229,7 @@ class TrajectoriesExecutor:
         fraction = 0.0
         for _ in range(compute_max_tries if compute_max_tries else self.__compute_plan_max_tries):  # some tries
             trajectory_plan, fraction = \
-                self.__arm.compute_cartesian_path(list_poses, eef_step=self.__cartesian_path_eef_steps,
-                                                  jump_threshold=self.__cartesian_path_jump_threshold)
+                self.__arm.compute_cartesian_path(list_poses, eef_step=self.__cartesian_path_eef_steps)
 
             # Check the fraction value : if 1.0, the trajectory can be linear;
             # else, the trajectory followed won't be linear.
@@ -345,7 +347,8 @@ class TrajectoriesExecutor:
             else:
                 algorithm = "iterative_time_parameterization"
 
-            plan_out = self.__arm.retime_trajectory(start_state, plan,
+            plan_out = self.__arm.retime_trajectory(start_state,
+                                                    plan,
                                                     velocity_scaling_factor=velocity_scaling_factor,
                                                     acceleration_scaling_factor=acceleration_scaling_factor,
                                                     algorithm=algorithm)
@@ -369,8 +372,7 @@ class TrajectoriesExecutor:
         if plan and plan.joint_trajectory.points:
             return plan.joint_trajectory.points[-1].time_from_start.to_sec()
         else:
-            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
-                                        "No current plan found")
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "No current plan found")
 
     def link_plans(self, *plans):
         # Link plans
