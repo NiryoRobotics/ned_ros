@@ -41,6 +41,7 @@ find_package(catkin REQUIRED
       niryo_robot_database
       dynamixel_sdk
       common
+      end_effector_interface
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -88,6 +89,7 @@ catkin_package(
         niryo_robot_database
         dynamixel_sdk
         common
+        end_effector_interface
 )
 
 ###########

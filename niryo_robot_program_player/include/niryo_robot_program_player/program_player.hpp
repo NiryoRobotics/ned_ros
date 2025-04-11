@@ -58,6 +58,7 @@ public:
 
   void setState(ProgramPlayerState state);
   void play(const std::string& program);
+  void sendCustomButtonStatus(const common::model::EActionType& action);
   void stop();
   void initDriver();
 
@@ -206,6 +207,13 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::play(const std::s
 }
 
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
+void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::sendCustomButtonStatus(const common::model::EActionType& action)
+{
+  _program_player_adapter.sendCustomButtonStatus(action);
+}
+
+
+template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::stop()
 {
   _program_player_adapter.stop();
@@ -260,6 +268,8 @@ void ProgramPlayer<ProgramPlayerAdapter, ProgramPlayerDriver>::update(
       // as active when the program player state is being ticked
       clearButtonsState();
     }
+
+    sendCustomButtonStatus(buttons_state[Button::CUSTOM]);
 
     // if STOP has been pressed then don't read button inputs for X sec
     if (buttons_state[Button::STOP] != common::model::EActionType::NO_ACTION)
