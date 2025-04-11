@@ -21,6 +21,7 @@
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>actionlib</build_depend>
   <build_depend>niryo_robot_database</build_depend>
+  <build_depend>end_effector_interface</build_depend>
   <build_depend>dynamixel_sdk</build_depend>
   <build_depend>common</build_depend>
 
@@ -32,7 +33,7 @@
   <build_export_depend>dynamixel_sdk</build_export_depend>
   <build_export_depend>common</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
-
+  <build_export_depend>end_effector_interface</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
@@ -42,6 +43,7 @@
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>actionlib</exec_depend>
   <exec_depend>niryo_robot_database</exec_depend>
+  <exec_depend>end_effector_interface</exec_depend>
   <exec_depend>dynamixel_sdk</exec_depend>  
   <exec_depend>common</exec_depend>
   

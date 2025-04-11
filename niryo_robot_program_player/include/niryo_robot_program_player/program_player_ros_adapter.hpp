@@ -45,6 +45,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_program_player/DisplayMessage.h"
 #include "niryo_robot_program_player/LedsStates.h"
 
+#include "common/model/action_type_enum.hpp"
+
 namespace niryo_robot_program_player
 {
 
@@ -75,6 +77,7 @@ public:
 
   // handler functions
   bool play(const std::string& program_id);
+  void sendCustomButtonStatus(const common::model::EActionType& action);
   bool stop();
 
 private:
@@ -120,6 +123,9 @@ private:
   std::string _program_number_delimiter{ "." };
 
   // ROS PUBLISHERS
+
+  const std::string _custom_button_status_name{ "/niryo_robot_hardware_interface/end_effector_interface/custom_button_status" };
+  ros::Publisher _custom_button_status_publisher;
 
   // ROS SUBSCRIBERS
 

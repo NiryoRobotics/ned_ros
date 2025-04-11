@@ -35,6 +35,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_programs_manager_v2/ProgramList.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "niryo_robot_database/GetSettings.h"
+#include "end_effector_interface/EEButtonStatus.h"
 
 #include "common/model/action_type_enum.hpp"
 
@@ -96,6 +97,9 @@ void ProgramPlayerROSAdapter::initParameters(ros::NodeHandle& nh)
 void ProgramPlayerROSAdapter::startPublishers(ros::NodeHandle& nh)
 {
   ROS_DEBUG("ProgramPlayerROSAdapter::startPublishers");
+
+  _custom_button_status_publisher =
+      nh.advertise<end_effector_interface::EEButtonStatus>(_custom_button_status_name, 1, true);
 }
 
 void ProgramPlayerROSAdapter::startSubscribers(ros::NodeHandle& nh)
@@ -175,6 +179,15 @@ bool ProgramPlayerROSAdapter::stop()
   }
 
   return true;
+}
+
+void ProgramPlayerROSAdapter::sendCustomButtonStatus(const common::model::EActionType& action)
+{
+  ROS_DEBUG("ProgramPlayerROSAdapter::sendCustomButtonStatus");
+
+  auto custom_button_status = end_effector_interface::EEButtonStatus();
+  custom_button_status.action = static_cast<uint8_t>(action);
+  _custom_button_status_publisher.publish(custom_button_status);
 }
 
 // getter

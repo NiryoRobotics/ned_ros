@@ -107,6 +107,10 @@ public:
   {
   }
 
+  void sendCustomButtonStatus(const common::model::EActionType& action)
+  {
+  }
+
   void play(const std::string& program)
   {
   }

@@ -116,6 +116,7 @@ public:
   ProgramPlayerState getState() override;
 };
 
+
 // UP STATE
 template <typename ProgramPlayerAdapter, typename ProgramPlayerDriver>
 class UpState : public IProgramPlayerState<ProgramPlayerAdapter, ProgramPlayerDriver>
