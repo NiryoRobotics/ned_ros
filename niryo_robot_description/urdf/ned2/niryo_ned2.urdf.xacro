@@ -261,7 +261,7 @@
     <joint name="hand_tool_joint" type="fixed">
         <parent link="hand_link"/>
         <child link="tool_link"/>
-        <origin xyz="0 0 ${distance_hand_tool}" rpy="0 0 0"/>
+        <origin xyz="0 0 ${distance_hand_tool}" rpy="${PI} -${PI/2} 0"/>
     </joint>
 
     <!--

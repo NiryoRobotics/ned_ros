@@ -33,7 +33,6 @@ class ToolTransformHandler:
 
         # Publisher
         self.__tcp_publisher = rospy.Publisher('~tcp', TCP, queue_size=10, latch=True)
-        self.__tcp_v2_publisher = rospy.Publisher('~tcp_v2', TCP, queue_size=10, latch=True)
         rospy.Timer(rospy.Duration.from_sec(0.5), self.__send_tcp_transform)
 
         # Services
@@ -54,11 +53,6 @@ class ToolTransformHandler:
         t.transform.translation.x = req.position.x
         t.transform.translation.y = req.position.y
         t.transform.translation.z = req.position.z
-
-        if req.tcp_version != req.DH_CONVENTION:
-            t.transform.translation.x = req.position.z
-            t.transform.translation.y = -req.position.y
-            t.transform.translation.z = req.position.x
 
         self.set_tcp(t)
         return CommandStatus.SUCCESS, "Success"
@@ -106,17 +100,7 @@ class ToolTransformHandler:
         msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw = euler_from_quaternion(
             [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w])
 
-        self.__tcp_v2_publisher.publish(msg)
-
-        msg_v1 = TCP()
-        msg_v1.enabled = self.__enable_tcp
-        msg_v1.position.x = self.__tcp_transform.transform.translation.z
-        msg_v1.position.y = -self.__tcp_transform.transform.translation.y
-        msg_v1.position.z = self.__tcp_transform.transform.translation.x
-        msg_v1.rpy = msg.rpy
-        msg_v1.orientation = msg.orientation
-
-        self.__tcp_publisher.publish(msg_v1)
+        self.__tcp_publisher.publish(msg)
 
     def __send_tcp_transform(self, _):
         t = self.__tcp_transform if self.__enable_tcp else self.empty_transform()

@@ -9,7 +9,6 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import numpy as np
 
 from niryo_robot_msgs.msg import RobotState
-from niryo_robot_poses_handlers.transform_functions import convert_dh_convention_to_legacy_rpy
 
 from .utils import quaternion_to_list, vector3_to_list, list_to_vector3, get_orientation_from_angles, list_to_rpy
 
@@ -30,7 +29,6 @@ class StatePublisher(object):
 
         # State publisher
         self.__robot_state_publisher = rospy.Publisher('/niryo_robot/robot_state', RobotState, queue_size=5)
-        self.__robot_state_v2_publisher = rospy.Publisher('/niryo_robot/robot_state_v2', RobotState, queue_size=5)
 
         # Get params from rosparams
         rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
@@ -76,15 +74,9 @@ class StatePublisher(object):
 
     def __publish_states(self, _):
         robot_state = self.__get_robot_state()
-
-        try:
-            self.__robot_state_v2_publisher.publish(robot_state)
-        except Exception:
-            return
-
-        rpy_v1 = convert_dh_convention_to_legacy_rpy(robot_state.rpy.roll, robot_state.rpy.pitch, robot_state.rpy.yaw)
-        robot_state.rpy = list_to_rpy(rpy_v1)
-        robot_state.orientation = get_orientation_from_angles(*rpy_v1)
+        robot_state.orientation = get_orientation_from_angles(robot_state.rpy.roll,
+                                                              robot_state.rpy.pitch,
+                                                              robot_state.rpy.yaw)
 
         try:
             self.__robot_state_publisher.publish(robot_state)

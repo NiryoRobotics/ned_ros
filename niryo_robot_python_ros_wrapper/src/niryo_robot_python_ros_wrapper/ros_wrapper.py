@@ -21,10 +21,9 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from conveyor_interface.msg import ConveyorFeedbackArray
 # Messages
 from geometry_msgs.msg import Pose as RosPose, Point, Quaternion
-from niryo_robot_utils.dataclasses.enums import TcpVersion
 
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
-from tf.transformations import euler_from_quaternion, quaternion_from_euler, quaternion_multiply
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from tools_interface.msg import Tool
 
 # Command Status
@@ -106,7 +105,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState, timeout=100)
-        self.__pose_v2_ntv = NiryoTopicValue('/niryo_robot/robot_state_v2', RobotState, timeout=100)
 
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
@@ -384,55 +382,26 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_pose(self):
         """
-        .. deprecated:: 5.5.0
-           You should use :func:`get_pose_v2`.
-
         Return the legacy pose of the robot (i.e the legacy TCP orientation)
         Uses /niryo_robot/robot_state topic to get pose status
 
         :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
         :rtype: RobotState
         """
-        warnings.warn("You should use get_pose_v2.", DeprecationWarning)
         return self.__pose_ntv.value
 
     def get_pose_as_list(self):
         """
-        .. deprecated:: 5.5.0
-           You should use :func:`get_pose_v2_as_list`.
-
         Return the legacy pose of the robot (i.e the legacy TCP orientation) as a list
         Uses /niryo_robot/robot_state topic to get pose status
 
         :return: list corresponding to [x, y, z, roll, pitch, yaw]
         :rtype: list[float]
         """
-        warnings.warn("You should use get_pose_v2_as_list.", DeprecationWarning)
         p_msg = self.get_pose()
         pose = self.pose_from_msg(p_msg)
         pose.metadata = PoseMetadata.v1()
         return pose
-
-    def get_pose_v2(self):
-        """
-        Return the pose of the robot (i.e the legacy TCP orientation)
-        Uses /niryo_robot/robot_state_v2 topic to get pose status
-
-        :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
-        :rtype: RobotState
-        """
-        return self.__pose_v2_ntv.value
-
-    def get_pose_v2_as_list(self):
-        """
-        Return the pose of the robot (i.e the legacy TCP orientation) as a list
-        Uses /niryo_robot/robot_state_v2 topic to get pose status
-
-        :return: list corresponding to [x, y, z, roll, pitch, yaw]
-        :rtype: list[float]
-        """
-        p = self.get_pose_v2()
-        return self.pose_from_msg(p)
 
     @overload
     def move(self, robot_position: Pose, move_cmd: int = ArmMoveCommand.POSE, blocking=True):
@@ -478,10 +447,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             move_goal.rpy.roll = robot_position.roll
             move_goal.rpy.pitch = robot_position.pitch
             move_goal.rpy.yaw = robot_position.yaw
-            if robot_position.metadata.tcp_version == TcpVersion.LEGACY:
-                move_goal.tcp_version = ArmMoveCommand.LEGACY
-            else:
-                move_goal.tcp_version = ArmMoveCommand.DH_CONVENTION
 
         goal = RobotMoveGoal(cmd=move_goal)
         return self.__robot_action_nac.execute(goal, wait_for_result=blocking)
@@ -888,10 +853,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def forward_kinematics(self, *args, **kwargs) -> Pose:
         """
-
-        .. deprecated:: 5.5.0
-           You should use :func:`forward_kinematics_v2`.
-
         Computes the forward kinematics given joint positions.
         The end effector pose is given for an end effector frame following the right hand rule and with the x axis
         pointing forward.
@@ -909,34 +870,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_arm_commander.srv import GetFK
 
-        warnings.warn("You should use forward_kinematics_v2 instead", DeprecationWarning)
-
         joints_position = self.__get_obj_from_args(JointsPosition, 'joints_position', args, kwargs)
         joints = list(joints_position)
         result = self._call_service('/niryo_robot/kinematics/forward', GetFK, joints)
         pose = self.pose_from_msg(result.pose)
-        pose.metadata.tcp_version = TcpVersion.LEGACY
         return pose
-
-    def forward_kinematics_v2(self, joints_position: JointsPosition) -> Pose:
-        """
-        Computes the forward kinematics given joint positions.
-        The end effector pose is given for an end effector frame following the right hand rule and with the z axis
-        pointing forward.
-
-        This function is overloaded to accept multiple forms of input:
-
-        :param joints_position: the joints position to be used for the forward kinematics computation
-        :type joints_position: JointsPosition
-
-        :returns: The pose of the end effector in the robot's workspace.
-        :rtype: Pose
-        """
-        from niryo_robot_arm_commander.srv import GetFK
-
-        joints = list(joints_position)
-        result = self._call_service('/niryo_robot/kinematics/forward_v2', GetFK, joints)
-        return self.pose_from_msg(result.pose)
 
     @overload
     def inverse_kinematics(self, x: float, y: float, z: float, roll: float, pitch: float, yaw: float) -> JointsPosition:
@@ -948,10 +886,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def inverse_kinematics(self, *args, **kwargs) -> JointsPosition:
         """
-
-        .. deprecated:: 5.6.0
-           You should use :func:`inverse_kinematics_v2`.
-
         Computes the inverse kinematics given a pose.
 
         This function is overloaded to accept multiple forms of input:
@@ -966,8 +900,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: JointsPosition
         """
         from niryo_robot_arm_commander.srv import GetIK
-
-        warnings.warn("You should use inverse_kinematics_v2 instead", DeprecationWarning)
 
         pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
         pose.metadata = PoseMetadata.v1()
@@ -1050,7 +982,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         req.pose = self.msg_from_pose(pose, NiryoPose)
         req.pose.name = name
         req.pose.pose_version = pose.metadata.version
-        req.pose.tcp_version = pose.metadata.tcp_version.name
 
         result = self._call_service('/niryo_robot_poses_handlers/manage_pose', ManagePose, req)
         return self._classic_return_w_check(result)
@@ -1873,7 +1804,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def pose_from_msg(msg) -> Pose:
         pose = Pose(msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw)
         if isinstance(msg, NiryoPose):
-            pose.metadata = PoseMetadata(version=msg.pose_version, tcp_version=TcpVersion[msg.tcp_version])
+            pose.metadata = PoseMetadata(version=msg.pose_version)
         return pose
 
     # -- Tools
