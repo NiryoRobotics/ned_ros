@@ -909,29 +909,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         return JointsPosition(*result.joints)
 
-    def inverse_kinematics_v2(self, pose: Pose) -> JointsPosition:
-        """
-        Computes the inverse kinematics given a pose.
-
-        This function is overloaded to accept multiple forms of input:
-
-        :param pose: Variable-length positional arguments. This can be either individual pose components
-                     (x, y, z, roll, pitch, yaw) or a single Pose object.
-        :type args: tuple
-        :param kwargs: Arbitrary keyword arguments.
-        :type kwargs: dict
-
-        :returns: The joint position of the robot.
-        :rtype: JointsPosition
-        """
-        from niryo_robot_arm_commander.srv import GetIK
-
-        pose.normalize()
-        result = self._call_service('/niryo_robot/kinematics/inverse_v2', GetIK, self.msg_from_pose(pose))
-        self._check_result_status(result)
-
-        return JointsPosition(*result.joints)
-
     # - Saved Pose
 
     def get_pose_saved(self, pose_name: str) -> Pose:
@@ -1207,7 +1184,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         list_poses = []
         for pose in robot_positions:
             if isinstance(pose, JointsPosition):
-                pose = self.forward_kinematics_v2(pose)
+                pose = self.forward_kinematics(pose)
             pose.normalize()
 
             point = Point(x=pose.x, y=pose.y, z=pose.z)
@@ -2462,7 +2439,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         from niryo_robot_poses_handlers.srv import GetTargetPose
 
-        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose_v2',
+        result = self._call_service('/niryo_robot_poses_handlers/get_target_pose',
                                     GetTargetPose,
                                     workspace_name,
                                     height_offset,
