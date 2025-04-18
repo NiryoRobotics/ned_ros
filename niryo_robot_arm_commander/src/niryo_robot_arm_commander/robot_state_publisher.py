@@ -74,6 +74,8 @@ class StatePublisher(object):
 
     def __publish_states(self, _):
         robot_state = self.__get_robot_state()
+        if robot_state is None:
+            return
         robot_state.orientation = get_orientation_from_angles(robot_state.rpy.roll,
                                                               robot_state.rpy.pitch,
                                                               robot_state.rpy.yaw)

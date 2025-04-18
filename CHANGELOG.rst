@@ -25,6 +25,7 @@ feat(vision): the vision node can now get the video stream from any external cli
 fix(conveyor_interface): instanciate a fake stepper if in simulation mode 
 refactor: remove TCPv2 from the software as it brings more problems than it solves
 chore(gripper): increase position range (open/close) for gripper1
+fix(robot state publisher): skip the publish if robot state is None
 
 v5.5.5
 ------
