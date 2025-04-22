@@ -400,7 +400,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         p_msg = self.get_pose()
         pose = self.pose_from_msg(p_msg)
-        pose.metadata = PoseMetadata.v1()
         return pose
 
     @overload
@@ -585,7 +584,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a Pose object.", DeprecationWarning)
-        return self.move(Pose(x, y, z, roll, pitch, yaw, PoseMetadata.v1(frame=frame)), **kwargs)
+        return self.move(Pose(x, y, z, roll, pitch, yaw, PoseMetadata(frame=frame)), **kwargs)
 
     def move_circle(self, x, y, z, **kwargs):
         """
@@ -682,7 +681,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         warnings.warn("You should use move with a Pose object and move_cmd=ArmMoveCommand.LINEAR_POSE",
                       DeprecationWarning)
-        pose = Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1(frame=frame))
+        pose = Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata(frame=frame))
         return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE, **kwargs)
 
     @move_command
@@ -785,7 +784,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         warnings.warn("You should use jog_shift with a Pose object.", DeprecationWarning)
-        return self.jog_shift(Pose(*shift_values, metadata=PoseMetadata.v1()))
+        return self.jog_shift(Pose(*shift_values))
 
     def jog_shift(self, shift_values: RobotPosition):
         """
@@ -902,7 +901,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_arm_commander.srv import GetIK
 
         pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
-        pose.metadata = PoseMetadata.v1()
 
         result = self._call_service('/niryo_robot/kinematics/inverse', GetIK, self.msg_from_pose(pose, normalize=False))
         self._check_result_status(result)
@@ -951,7 +949,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         pose = self.__get_obj_from_args(Pose, 'pose', args, kwargs)
 
         if len(args) + len(kwargs) > 2:
-            pose.metadata = PoseMetadata.v1(pose.metadata.frame)
+            pose.metadata = PoseMetadata(frame=pose.metadata.frame)
         pose.normalize()
 
         req = ManagePoseRequest()
@@ -1079,12 +1077,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         def move_sequence(**kwargs_):
             self.release_with_tool()
 
-            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
-            self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw), **kwargs_)
+            self.move(Pose(x, y, z, roll, pitch, yaw), **kwargs_)
 
             self.grasp_with_tool()
 
-            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw), **kwargs_)
 
         return self.__move_sequence(move_sequence, **kwargs)
 
@@ -1120,12 +1118,12 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         warnings.warn("You should use place with a Pose or JointsPosition object instead", DeprecationWarning)
 
         def move_sequence(**kwargs_):
-            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
-            self.move(Pose(x, y, z, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw), **kwargs_)
+            self.move(Pose(x, y, z, roll, pitch, yaw), **kwargs_)
 
             self.release_with_tool()
 
-            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw, metadata=PoseMetadata.v1()), **kwargs_)
+            self.move(Pose(x, y, z + 0.05, roll, pitch, yaw), **kwargs_)
 
         return self.__move_sequence(move_sequence, **kwargs)
 
@@ -1154,9 +1152,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         if isinstance(pick_pose, list):
-            pick_pose = Pose(*pick_pose, metadata=PoseMetadata.v1())
+            pick_pose = Pose(*pick_pose)
         if isinstance(place_pose, list):
-            place_pose = Pose(*place_pose, metadata=PoseMetadata.v1())
+            place_pose = Pose(*place_pose)
 
         pick_pose_high = self.__get_high_pose(pick_pose)
         place_pose_high = self.__get_high_pose(place_pose)
@@ -1205,7 +1203,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             if pose_type == 'pose':
                 if len(raw_pose) == 7:  # quaternion
                     raw_pose = raw_pose[:3] + list(euler_from_quaternion(raw_pose[3:]))
-                robot_position.append(Pose(*raw_pose, metadata=PoseMetadata.v1()))
+                robot_position.append(Pose(*raw_pose))
             elif pose_type == 'joints':
                 robot_position.append(JointsPosition(*raw_pose))
             else:
@@ -1495,7 +1493,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         for ix, pose in enumerate(list_robot_poses):
             if isinstance(pose, list):
-                list_robot_poses[ix] = Pose(*pose, metadata=PoseMetadata.v1())
+                list_robot_poses[ix] = Pose(*pose)
             list_robot_poses[ix].normalize()
 
         req = ManageDynamicFrameRequest()
@@ -1714,7 +1712,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a frame in the pose metadata.", DeprecationWarning)
-        pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
+        pose = Pose(*offset, metadata=PoseMetadata(frame=frame))
         return self.move(pose, **kwargs)
 
     @move_command
@@ -1734,7 +1732,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :rtype: (int, str)
         """
         warnings.warn("You should use move with a frame in the pose metadata and linear=True.", DeprecationWarning)
-        pose = Pose(*offset, metadata=PoseMetadata.v1(frame=frame))
+        pose = Pose(*offset, metadata=PoseMetadata(frame=frame))
         return self.move(pose, move_cmd=ArmMoveCommand.LINEAR_POSE, **kwargs)
 
     # - Useful Pose functions
@@ -1779,10 +1777,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     @staticmethod
     def pose_from_msg(msg) -> Pose:
-        pose = Pose(msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw)
-        if isinstance(msg, NiryoPose):
-            pose.metadata = PoseMetadata(version=msg.pose_version)
-        return pose
+        return Pose(msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw)
 
     # -- Tools
 
@@ -2519,7 +2514,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         warnings.warn("You should use vision_pick by setting obs_pose with a Pose object.", DeprecationWarning)
         if isinstance(observation_pose_list, list):
-            observation_pose_list = Pose(*observation_pose_list, metadata=PoseMetadata.v1())
+            observation_pose_list = Pose(*observation_pose_list)
         return self.vision_pick(workspace_name, height_offset, shape, color, obs_pose=observation_pose_list)
 
     def vision_pick(self, workspace_name, height_offset, shape, color, obs_pose: RobotPosition = None, **kwargs):
@@ -2664,7 +2659,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         from niryo_robot_poses_handlers.srv import ManageWorkspace, ManageWorkspaceRequest
 
         if len(list_poses_raw) > 0 and isinstance(list_poses_raw[0], list):
-            list_poses_raw = [Pose(*pose, metadata=PoseMetadata.v1()) for pose in list_poses_raw]
+            list_poses_raw = [Pose(*pose) for pose in list_poses_raw]
 
         for pose in list_poses_raw:
             pose.normalize()
