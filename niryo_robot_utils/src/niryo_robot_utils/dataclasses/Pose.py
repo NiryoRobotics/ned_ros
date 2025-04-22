@@ -17,7 +17,7 @@ class Pose(ABCSerializable):
                  yaw: float,
                  metadata: PoseMetadata = None):
         if metadata is None:
-            metadata = PoseMetadata.v2()
+            metadata = PoseMetadata()
         self.x = x
         self.y = y
         self.z = z
