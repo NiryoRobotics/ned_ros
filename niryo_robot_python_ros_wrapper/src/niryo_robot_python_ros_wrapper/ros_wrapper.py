@@ -1698,9 +1698,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     @move_command
     def move_relative(self, offset, frame="world", **kwargs):
         """
-        .. deprecated:: 5.5.0
-           You should use move with a frame in the pose metadata.
-        Move robot end of an offset in a frame
+        Move the end effector of the robot by an offset in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw
         :type offset: list[float]
@@ -1711,9 +1709,14 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
-        warnings.warn("You should use move with a frame in the pose metadata.", DeprecationWarning)
-        pose = Pose(*offset, metadata=PoseMetadata(frame=frame))
-        return self.move(pose, **kwargs)
+        if len(offset) != 6:
+            raise NiryoRosWrapperException("Offset must be a list of 6 elements")
+
+        local_pose = self.pose_from_msg(self.__transform_pose(self.get_pose(), 'world', frame))
+        for ix, o in enumerate(offset):
+            local_pose[ix] += o
+
+        return self.move(local_pose, **kwargs)
 
     @move_command
     def move_linear_relative(self, offset, frame="world", **kwargs):
@@ -1775,9 +1778,33 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         msg.rpy.yaw = pose.yaw
         return msg
 
-    @staticmethod
-    def pose_from_msg(msg) -> Pose:
-        return Pose(msg.position.x, msg.position.y, msg.position.z, msg.rpy.roll, msg.rpy.pitch, msg.rpy.yaw)
+    def pose_from_msg(self, msg) -> Pose:
+        if hasattr(msg, 'pose'):
+            p_msg = msg.pose
+        else:
+            p_msg = msg
+
+        pose = Pose(0, 0, 0, 0, 0, 0)
+
+        if not hasattr(p_msg, 'position'):
+            raise TypeError(f'{type(p_msg)} does not have a position attribute')
+
+        pose.x = p_msg.position.x
+        pose.y = p_msg.position.y
+        pose.z = p_msg.position.z
+
+        if not hasattr(p_msg, 'rpy') and not hasattr(p_msg, 'orientation'):
+            raise TypeError(f'{type(p_msg)} does not have a rpy nor an orientation attribute')
+        elif not hasattr(p_msg, 'rpy'):
+            pose.roll, pose.pitch, pose.yaw = euler_from_quaternion(self.quaternion_to_list(p_msg.orientation))
+        else:
+            pose.roll = p_msg.rpy.roll
+            pose.pitch = p_msg.rpy.pitch
+            pose.yaw = p_msg.rpy.yaw
+
+        if hasattr(msg, 'header') and hasattr(msg.header, 'frame_id'):
+            pose.metadata.frame = msg.header.frame_id
+        return pose
 
     # -- Tools
 

@@ -1,4 +1,4 @@
-from typing import Generator, Dict, List, Tuple
+from typing import Generator, Dict, List, Tuple, Union
 from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
 from .ABCSerializable import ABCSerializable
@@ -7,6 +7,7 @@ from .PoseMetadata import PoseMetadata
 
 
 class Pose(ABCSerializable):
+    __ATTRIBUTES = ('x', 'y', 'z', 'roll', 'pitch', 'yaw')
 
     def __init__(self,
                  x: float,
@@ -27,35 +28,40 @@ class Pose(ABCSerializable):
         self.metadata = metadata
 
     def __iter__(self) -> Generator[float, None, None]:
-        for attr in self.to_list():
-            yield attr
+        for attr in self.__ATTRIBUTES:
+            yield getattr(self, attr)
 
-    def __getitem__(self, value: int) -> float:
-        return self.to_list()[value]
+    def __get_attr_name(self, key: Union[int, str]):
+        if key in self.__ATTRIBUTES:
+            return key
+        elif isinstance(key, int) and 0 <= key < len(self.__ATTRIBUTES):
+            return self.__ATTRIBUTES[key]
+        elif isinstance(key, int):
+            raise IndexError(f"Index out of range: {key}. Expected between 0 and {len(self.__ATTRIBUTES) - 1}.")
+        else:
+            raise KeyError(f"Invalid key: {key}. Expected int or str.")
+
+    def __getitem__(self, value: Union[int, str]) -> float:
+        return getattr(self, self.__get_attr_name(value))
+
+    def __setitem__(self, key: Union[int, str], value: float) -> None:
+        setattr(self, self.__get_attr_name(key), value)
 
     def __len__(self) -> int:
-        return 6
+        return len(self.__ATTRIBUTES)
 
     def to_dict(self) -> Dict:
-        return {
-            'x': self.x,
-            'y': self.y,
-            'z': self.z,
-            'roll': self.roll,
-            'pitch': self.pitch,
-            'yaw': self.yaw,
-            'metadata': self.metadata.to_dict()
-        }
+        return {**{attr: getattr(self, attr) for attr in self.__ATTRIBUTES}, 'metadata': self.metadata.to_dict()}
 
     @classmethod
     def from_dict(cls, d: Dict) -> 'Pose':
-        args = [d['x'], d['y'], d['z'], d['roll'], d['pitch'], d['yaw']]
+        args = [d[arg] for arg in cls.__ATTRIBUTES]
         if 'metadata' in d:
             args.append(PoseMetadata.from_dict(d['metadata']))
         return cls(*args)
 
     def to_list(self) -> List[float]:
-        return [self.x, self.y, self.z, self.roll, self.pitch, self.yaw]
+        return [getattr(self, attr) for attr in self.__ATTRIBUTES]
 
     def quaternion(self) -> Tuple[float, float, float, float]:
         return quaternion_from_euler(self.roll, self.pitch, self.yaw)
