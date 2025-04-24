@@ -23,7 +23,7 @@ class PoseMetadata(ABCSerializable):
         self.length_unit = length_unit
 
     def to_dict(self):
-        return {'version': self.version, 'frame': self.frame, 'length_unit': self.length_unit.name}
+        return {'version': self.version, 'frame': self.frame, 'length_unit': self.length_unit.name, 'tcp_version': 1}
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> 'PoseMetadata':
