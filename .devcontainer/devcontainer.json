@@ -1,46 +1,26 @@
 {
-  "name": "noetic desktop-full",
-  "remoteUser": "rosdev",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      "USERNAME": "rosdev",
-      "GID": "1000",
-      "UID": "1000"
-    }
-  },
+  "name": "development container",
+  "image": "gitlab01.niryotech.com:5050/robot/common/development-tools/development-tools:latest",
+  "workspaceFolder": "/root/catkin_ws",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/root/catkin_ws/src,type=bind",
+  "postCreateCommand": "bash -c 'source /root/catkin_ws_venv/bin/activate && /development-tools/scripts/install_in_venv.sh /root/catkin_ws/src /root/catkin_ws/install'",
   "runArgs": [
     "--network=host",
     "--env=DISPLAY",
-    "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
     "--env=XAUTHORITY=/tmp/.Xauthority",
-    "--volume=${env:XAUTHORITY}:/tmp/.Xauthority"
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
+    "--volume=${env:XAUTHORITY}:/tmp/.Xauthority",
+    "--volume=/var/run/dbus:/var/run/dbus",
+    "--volume=/var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket"
   ],
-  "remoteEnv": {
-    "CATKIN_SHELL": "bash",
-    "ROS_VERSION": "1",
-    "PKG_CONFIG_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/pkgconfig",
-    "ROS_PYTHON_VERSION": "3",
-    "ROS_PACKAGE_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/share",
-    "ROS_ETC_DIR": "/opt/ros/${containerEnv:ROS_DISTRO}/etc/ros",
-    "CMAKE_PREFIX_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}",
-    "PYTHONPATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib/python3/dist-packages",
-    "ROS_MASTER_URI": "http://localhost:11311",
-    "LD_LIBRARY_PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/lib",
-    "PATH": "/opt/ros/${containerEnv:ROS_DISTRO}/bin:${containerEnv:PATH}",
-    "ROS_ROOT": "/opt/ros/${containerEnv:ROS_DISTRO}/share/ros",
-  },
-  "workspaceFolder": "/home/rosdev/catkin_ws",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/rosdev/catkin_ws/src,type=bind",
-  "mounts": [
-    "source=${localEnv:HOME}/.bash_history,target=/home/rosdev/.bash_history,type=bind",
-    "source=${localEnv:HOME}/.bashrc,target=/home/rosdev/.bashrc,type=bind",
-    "source=${localEnv:HOME}/.inputrc,target=/home/rosdev/.inputrc,type=bind",
-    "source=${localEnv:HOME}/.bash_aliases,target=/home/rosdev/.bash_aliases,type=bind",
-    "source=${localEnv:DEV_TOOLS_PATH},target=/home/rosdev/development-tools,type=bind"
-  ],
-  "postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y",
+  "userEnvProbe": "loginShell",
   "customizations": {
+    "jetbrains": {
+      "plugins": [
+        "org.sonarlint.idea",
+      ],
+      "backend": "PyCharm",
+    },
     "vscode": {
       "extensions": [
         "ms-python.python",
@@ -51,7 +31,7 @@
         "redhat.vscode-xml",
         "tamasfe.even-better-toml",
         "timonwong.shellcheck",
-        "yzhang.markdown-all-in-one",
+        "yzhang.markdown-all-in-one"
       ],
       "settings": {
         "files.associations": {
@@ -59,7 +39,8 @@
           "*.srdf": "xml",
           "*.urdf": "xml",
           "*.xacro": "xml"
-        }
+        },
+        "python.defaultInterpreterPath": "/root/catkin_ws_venv/bin/python",
       }
     }
   }
