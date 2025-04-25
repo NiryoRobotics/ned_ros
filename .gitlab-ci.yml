@@ -3,7 +3,7 @@ image: gitlab01.niryotech.com:5050/robot/common/development-tools/development-to
 variables:
   DOCUMENTATION_OUTPUT_FOLDER: "output_build"
   GITLAB_CATKIN_PROFILE_NAME: release
-  NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
+  NIRYO_HOME_FOLDER: /root/catkin_ws
   ROS_DISTRO: noetic
 
 stages:
@@ -170,7 +170,7 @@ roslint_job:
     - !reference [ .abstract_move_source_tricks_job, script ]
     - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
     # Check code linting
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -j1
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -- -j1 niryo_robot_*
 
 catkin_lint_job:
   stage: test
