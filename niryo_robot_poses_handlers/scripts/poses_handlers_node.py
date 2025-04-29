@@ -113,6 +113,7 @@ class PoseHandlerNode:
         # Relative pose
         self.__relative_pose_publisher = rospy.Publisher('~relative_pose', PoseStamped, queue_size=1)
         self.__current_pose = [0] * 6
+        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__robot_state_callback, queue_size=1)
 
         self.__relative_transform = None
         rospy.Service('~set_relative_transform_frame', SetString, self.__callback_set_relative_transform_frame)
