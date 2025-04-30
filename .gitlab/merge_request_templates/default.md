@@ -3,20 +3,15 @@
 ### Summary
 <!-- Brief description of changes -->
 
+### Impacted Scope
+<!-- List of all the features, services and scopes which could be impacted by these changes -->
+
 ### Changelog
-
-#### ✨ Features
-<!-- Detailed description of new features -->
-
-#### 🛠️ Improvements
-<!-- Detailed description of improvements -->
-
-#### 🪲 Bugfixes
-<!-- Detailed description of bug fixes: what was the problem and how it has been resolved -->
+<!-- List of new features, improvements and Bugfixes -->
+%{all_commits}
 
 ### Checklist
 <!-- Make sure to tick all the applicable checkboxes -->
 - [ ] I've thoroughly tested my code
-- [ ] I've updated the version number in [VERSION](../../VERSION)
 - [ ] I've completed the [changelog](../../CHANGELOG.rst)
-- [ ] Documentation has been written/updated (if applicable)
+- [ ] Documentation has been written/updated
