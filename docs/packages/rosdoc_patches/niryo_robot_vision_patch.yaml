@@ -1,0 +1,40 @@
+topics:
+  publishers:
+    - name: /niryo_robot_vision/video_stream_parameters
+      type: niryo_robot_vision/ImageParameters
+      description: Publish the brightness, contrast and saturation settings of the video stream
+    - name: /niryo_robot_vision/video_stream_is_active
+      type: std_msgs/Bool
+      description: Whether the video stream is active or not
+    - name: /niryo_robot_vision/visualization_marker
+      type: visualization_msgs/MarkerArray
+      description: Publish visual markers for Rviz
+    - name: /niryo_robot_vision/camera_intrinsics
+      type: sensor_msgs/CameraInfo
+      description: Publish camera's intrinsic parameters
+
+services:
+  - name: /niryo_robot_vision/debug_colors
+    type: niryo_robot_vision/DebugColorDetection
+    description: Get a masked image showing only detected pixels of the given color
+  - name: /niryo_robot_vision/debug_markers
+    type: niryo_robot_vision/DebugMarkers
+    description: Get an image highlighting detected markers
+  - name: /niryo_robot_vision/set_brightness
+    type: niryo_robot_vision/SetImageParameter
+    description: Set the brightness of the video stream
+  - name: /niryo_robot_vision/set_contrast
+    type: niryo_robot_vision/SetImageParameter
+    description: Set the contrast of the video stream
+  - name: /niryo_robot_vision/set_saturation
+    type: niryo_robot_vision/SetImageParameter
+    description: Set the saturation of the video stream
+  - name: /niryo_robot_vision/start_stop_video_streaming
+    type: niryo_robot_msgs/SetBool
+    description: Start or stop the video stream
+  - name: /niryo_robot_vision/take_picture
+    type: niryo_robot_vision/TakePicture
+    description: Take a picture and save it to the corresponding path
+  - name: /niryo_robot_vision/visualization
+    type: niryo_robot_vision/Visualization
+    description: Add visuals markers of objects detected by the robot's camera to Rviz

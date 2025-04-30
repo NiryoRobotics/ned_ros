@@ -1,33 +1,33 @@
-image: gitlab01.niryotech.com:5050/robot/common/development-tools/development-tools:latest
+image: ${CI_REGISTRY}/robot/common/development-tools/development-tools:latest
 
 variables:
-  DOCUMENTATION_OUTPUT_FOLDER: "output_build"
   GITLAB_CATKIN_PROFILE_NAME: release
-  NIRYO_HOME_FOLDER: /root/catkin_ws
+  CATKIN_WS: /root/catkin_ws
   ROS_DISTRO: noetic
+
 
 stages:
   - build
   - documentation
   - build_tests
   - test
-  - upload
-  - environment_test
-  - release_gitlab
+  - release
+
 
 include:
   ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
   - template: Code-Quality.gitlab-ci.yml
 
+
 .abstract_catkin_build:
   stage: build
   script:
-    - mv ${CI_PROJECT_DIR} ${NIRYO_HOME_FOLDER}/src
+    - mv ${CI_PROJECT_DIR} ${CATKIN_WS}/src
     - source /opt/ros/${ROS_DISTRO}/setup.bash
-    - cd ${NIRYO_HOME_FOLDER}
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - cd ${CATKIN_WS}
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
     - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} ${BUILD_ARGS}
-    - mv ${NIRYO_HOME_FOLDER} ${CI_PROJECT_DIR}
+    - mv ${CATKIN_WS} ${CI_PROJECT_DIR}
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_ARGS: ""
@@ -50,10 +50,10 @@ catkin_make_amd:
   needs:
     - build_amd
   before_script:
-    - mv build ${NIRYO_HOME_FOLDER}/
-    - mv install ${NIRYO_HOME_FOLDER}/
-    - mv devel ${NIRYO_HOME_FOLDER}/
-    - mv src ${NIRYO_HOME_FOLDER}/
+    - mv build ${CATKIN_WS}/
+    - mv install ${CATKIN_WS}/
+    - mv devel ${CATKIN_WS}/
+    - mv src ${CATKIN_WS}/
     - rm -rf ${CI_PROJECT_DIR}/*
   variables:
     GIT_STRATEGY: none #TODO: it should be empty instead of none but for some reason it's not recognized by the runners
@@ -95,8 +95,8 @@ generate_tar_artifacts:
   script:
     # Quick fix for changing "ROS folder "
     - previous_path=`pwd`
-    - mkdir -p ${NIRYO_HOME_FOLDER}
-    - cd ${NIRYO_HOME_FOLDER}
+    - mkdir -p ${CATKIN_WS}
+    - cd ${CATKIN_WS}
     - mkdir src
     - shopt -s dotglob
     - mv ${CI_PROJECT_DIR}/* src
@@ -108,7 +108,46 @@ generate_tar_artifacts:
     - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
-    - mv ${NIRYO_HOME_FOLDER}/* .
+    - mv ${CATKIN_WS}/* .
+
+build_ned2_docs:
+  stage: documentation
+  before_script:
+    - source /root/setup.bash
+    - source /root/catkin_ws_venv/bin/activate
+    - mv install $CATKIN_WS/
+    - source ${CATKIN_WS}_venv/bin/activate
+    - pip install --upgrade -r docs/requirements.txt
+  script:
+    - source /root/setup.bash
+    - source /root/catkin_ws_venv/bin/activate
+    - /entrypoint.sh > /dev/null 2>&1 &
+    - sleep 5 # Wait for the stack to be fully initialized TODO(thomas): find a better way to do it
+    - cd docs
+    - make clean
+    - which rosdoc_lite
+    - sphinx-build . .build/html
+  variables:
+    HARDWARE_VERSION: ned2
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/docs/.build
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+pages:
+  stage: documentation
+  needs:
+    - build_ned2_docs
+  script:
+    - rm -rf public
+    - mv ${CI_PROJECT_DIR}/docs/.build/html public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 catkin_compile_tests:
   stage: build_tests
@@ -117,11 +156,11 @@ catkin_compile_tests:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
     - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args tests
   # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
   after_script:
-    - mv ${NIRYO_HOME_FOLDER}/* .
+    - mv ${CATKIN_WS}/* .
   artifacts:
     expire_in: 1 week
     paths:
@@ -150,14 +189,14 @@ test_job:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
     - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
     # Launch all tests (python / C++)
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
     - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
   after_script:
-    - mv ${NIRYO_HOME_FOLDER}/* .
+    - mv ${CATKIN_WS}/* .
   allow_failure: true
   when: manual
 
@@ -168,7 +207,7 @@ roslint_job:
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${NIRYO_HOME_FOLDER}
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
     # Check code linting
     - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -- -j1 niryo_robot_*
 
@@ -202,6 +241,38 @@ code_quality_html:
     paths: [ gl-code-quality-report.html ]
   tags:
     - dind
+
+mirror_github:
+  stage: release
+  only:
+    - tags
+  needs:
+    - build_ned2_docs
+  before_script:
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - echo "$GIT_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+  script:
+    - git clone --mirror "$CI_REPOSITORY_URL" bare_mirror
+    - cd bare_mirror
+    - git push $GH_REPOSITORY_URL master
+    - git push --tags $GH_REPOSITORY_URL
+
+    - git config --global user.email "cicd@niryo.com"
+    - git config --global user.name "Niryo's CI/CD"
+    - git init ../mirror
+    - cd ../mirror
+    - git remote add origin $GH_REPOSITORY_URL
+    - git checkout --orphan pages
+    - rsync -az ../docs/.build/html/ ./
+    - touch .nojekyll
+    - git add .
+    - git commit -m "Publish docs for $CI_COMMIT_TAG"
+    - git push --force --set-upstream origin pages
+  variables:
+    GIT_STRATEGY: none
+    GH_REPOSITORY_URL: git@github.com:NiryoRobotics/ned_ros.git
 
 trigger_job:
   image: curlimages/curl

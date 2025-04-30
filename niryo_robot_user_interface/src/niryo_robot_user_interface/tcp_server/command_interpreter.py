@@ -6,13 +6,13 @@ from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import (ShiftPose,
                                                               PinMode,
                                                               PinState,
-                                                              ToolID,
                                                               ConveyorID,
                                                               ConveyorDirection,
                                                               CommandEnum,
                                                               ConveyorTTL,
                                                               ConveyorCan)
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+from niryo_robot_tools_commander.api.tools_ros_wrapper_enums import ToolID
 from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
 from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 from niryo_robot_utils.dataclasses.Pose import Pose

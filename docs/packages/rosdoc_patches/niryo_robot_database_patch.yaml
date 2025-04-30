@@ -1,0 +1,33 @@
+topics:
+  publishers:
+    - name: /niryo_robot_database/setting_update
+      type: niryo_robot_database/SettingMsg
+      description: Publish the new setting when it has been changed in the database
+
+services:
+  - name: /niryo_robot_database/get_db_file_path
+    type: niryo_robot_msgs/GetString
+    description: Get the path to hte database file
+  - name: /niryo_robot_database/settings/set
+    type: niryo_robot_database/SetSettings
+    description: Set a setting form the database
+  - name: /niryo_robot_database/settings/get
+    type: niryo_robot_database/GetSettings
+    description: Get a setting from the database
+
+parameters:
+  - name: /niryo_robot_database/database_path
+    default_value: "~/niryo_robot_saved_files/.config"
+    simulation_value: "N/A"
+    unit: "string"
+    description: "Path to the database file"
+  - name: /niryo_robot_database/hardware_version
+    default_value: "ned"
+    simulation_value: "N/A"
+    unit: "string"
+    description: "Hardware version of the robot"
+  - name: /niryo_robot_database/initialized
+    default_value: "false"
+    simulation_value: "N/A"
+    unit: "bool"
+    description: "Whether the database node has been initialized or not"
