@@ -1,0 +1,987 @@
+topics:
+  /joint_states: "Position, velocity and effort of all the joints"
+  /ping_pyniryo: "Check whether a pyniryo2 client is running or not"
+
+  /niryo_studio_connection: "Niryo studio connection heartbeat"
+
+  /niryo_robot/blockly/save_current_point: "Save current robot pose in blockly block when user is in Blockly page in Niyro Studio"
+  /niryo_robot/blockly/save_trajectory: "Whether a recorded trajectory can be saved to blockly"
+  /niryo_robot/collision_detected: "Whether a collision is detected or not"
+  /niryo_robot/jog_interface/is_enabled: "Whether the jog interface is enabled or not"
+  /niryo_robot/learning_mode/state: "Whether the robot is in freemotion mode or not"
+  /niryo_robot/jog_interface/errors: "Publish jog error message when using the jog interface"
+  /niryo_robot/max_acceleration_scaling_factor: "Publish the maximum acceleration percentage scaling factor"
+  /niryo_robot/max_velocity_scaling_factor: "Publish the maximum velocity percentage scaling factor"
+  /niryo_robot/robot_state: "Publish the robot state (TCP pose and TCP speed)"
+  /niryo_robot/hardware_interface/collision_detected: "Whether a collision is detected or not"
+  /niryo_robot/hotspot_button_state: "Publish the state of the hotspot button"
+  /niryo_robot/end_effector_interface/collision_detected: "Whether a collision is detected or not"
+  /niryo_robot/conveyor/feedback: "Publish the conveyor feedback"
+
+  /niryo_robot_arm_commander/robot_action/goal: "Command the arm through an action server"
+  /niryo_robot_arm_commander/is_active: "Indicate whether a command is currently running or not"
+  /niryo_robot_arm_commander/learning_trajectory: "Indicates whether a robot is currently learning a trajectory or not"
+  /niryo_robot_arm_commander/trajectory_list: "List of saved trajectories name & description"
+  /niryo_robot_arm_commander/send_jog_command_ik: "Send a jog command to the robot using a pose (Inverse Kinematics)"
+  /niryo_robot_arm_commander/send_jog_joints_command: "Send a jog command to the robot using joints values (Forward Kinematics)"
+
+  /niryo_robot_follow_joint_trajectory_controller/command: "Command the arm through the FollowJointTrajectory controller via its command topic"
+  /niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/goal: "Command the arm through the FollowJointTrajectory controller via its action server"
+
+  /niryo_robot_poses_handlers/dynamic_frame_list: "List of saved dynamic frames"
+  /niryo_robot_poses_handlers/pose_list: "List of saved relative poses"
+  /niryo_robot_poses_handlers/relative_pose: "TCP pose relative to the frame set with /niryo_robot_poses_handlers/set_relative_transform_frame"
+  /niryo_robot_poses_handlers/workspace_list: "List of saved workspaces name & description"
+
+  /niryo_robot_programs_manager_v2/program_list: "List of saved programs name, description, storage path & code"
+  /niryo_robot_programs_manager_v2/execute_program/goal: "Executes a saved program or a given python code"
+
+  /niryo_robot/rpi/is_button_pressed: "Publish the button state (true if pressed)"
+  /niryo_robot_rpi/analog_io_state: "Publish the analog I/O states, returning pin, name, mode & state"
+  /niryo_robot_rpi/digital_io_state: "Publish the digital I/O states, returning pin, name, mode & state"
+  /niryo_robot_rpi/pause_state: Publish the current execution state launched when button is pressed"
+
+  /niryo_robot_hardware_interface/end_effector_interface/custom_button_status: "Publish Custom Button's state"
+  /niryo_robot_hardware_interface/end_effector_interface/free_drive_button_status: "Publish Free Motion Button's state"
+  /niryo_robot_hardware_interface/end_effector_interface/io_state: "States of the IOs on the end effector panel"
+  /niryo_robot_hardware_interface/end_effector_interface/save_pos_button_status: "Publish Save Button's state"
+
+  
+  /niryo_robot_hardware_interface/hardware_status: "Status of robot's hardware devices (joints, tools, end effector panel, calibration, etc...)"
+  /niryo_robot_hardware_interface/software_version: "Publish the firmware version of hardware devices the robot"
+
+  /niryo_robot_hardware_interface/ttl_driver/calibration_status: "Publish the calibration status of the stepper motors"
+
+  /niryo_robot_hardware/tools/motor: "Publish informations about the tool's motor (ID, motor type, position, state)"
+
+  /niryo_robot_sound/sound: "Publish the sound being played"
+  /niryo_robot_sound/sound_database: "Publish the list of available sounds and their durations on the robot"
+  /niryo_robot_sound/volume: "Publish the volume of the robot"
+
+  /niryo_robot_status/robot_status: "Publish the robot, log, overheating and joints out of bounds status"
+
+  /niryo_robot_user_interface/is_client_connected: "Check whether a pyniryo client is connected or not"
+  /niryo_robot_user_interface/niryo_studio_connection: "Notify that Niryo Studio is connected to the robot"
+
+  /niryo_robot_tools_commander/current_id: "Publish the current detected tool ID"
+  /niryo_robot_tools_commander/tcp: "Publish the TCP (Tool Center Point) state (enabled/disabled) and transformation between the tool_link and the TCP."
+  /niryo_robot_tools_commander/action_server/goal: "Command the end-effector throught an action server"
+
+  /niryo_robot_vision/compressed_video_stream: "Publish camera video stream as compressed images"
+  /niryo_robot_vision/video_stream_parameters: "Publish the brightness, contrast and saturation settings of the video stream"
+
+  /niryo_robot_led_ring/led_ring_status: "Publish the status of the LED ring"
+  /visualization_marker_array: "Publish Led ring visual markers for Rviz"
+
+services:
+  /niryo_robot/kinematics/forward: "Get TCP pose from joint values"
+  /niryo_robot/kinematics/inverse: "Get joints configuration from TCP pose"
+  /niryo_robot/jog_interface/jog_shift_commander: "Send a jog command to shift robot's joints or TCP"
+  /niryo_robot/ttl_driver/set_dxl_leds: "Set the LEDs of the Dynamixel motors"
+  /niryo_robot/ttl_driver/send_custom_value: "Send a custom value to a given device ID on the TTL bus"
+  /niryo_robot/ttl_driver/read_custom_value: "Read a custom value from a given device ID on the TTL bus"
+  /niryo_robot/ttl_driver/read_pid_value: "Read the PID values of the Dynamixel motors"
+  /niryo_robot/ttl_driver/write_pid_value: "Write the PID values to the Dynamixel motors"
+  /niryo_robot/ttl_driver/read_velocity_profile: "Read the velocity profile of the Dynamixel motors"
+  /niryo_robot/ttl_driver/write_velocity_profile: "Write the velocity profile to the Dynamixel motors"
+  /niryo_robot/tools/ping_and_set_dxl_tool: "Ping the given device ID on the bus and set the corresponding tool if found"
+  /niryo_robot/tools/open_gripper: "Open the gripper"
+  /niryo_robot/tools/close_gripper: "Close the gripper"
+  /niryo_robot/tools/pull_air_vacuum_pump: "Pull air from the vacuum pump"
+  /niryo_robot/tools/push_air_vacuum_pump: "Push air to the vacuum pump"
+  /niryo_robot/tools/reboot: "Reboot the tool's motor"
+  /niryo_robot/joints_interface/calibrate_motors: "Calibrate the motors"
+  /niryo_robot/joints_interface/request_new_calibration: "Request a new calibration (Ned2 only)"
+  /niryo_robot/learning_mode/activate: "Activate the learning mode"
+  /niryo_robot/joints_interface/steppers_reset_controller: "Reset the steppers controller"
+  /niryo_robot/joints_interface/factory_calibrate_motors: "Factory calibrate the motors (Ned3pro only)"
+  /niryo_robot/conveyor/ping_and_set_conveyor: "Ping for a conveyor ID on the bus and set the conveyor if found"
+  /niryo_robot/conveyor/control_conveyor: "Control the conveyor"
+  /niryo_robot/conveyor/get_hardware_id: "Get the ID of the conveyor on the TTL bus"
+  /niryo_robot/jog_interface/enable: "Enable/disable the jog interface"
+
+  /niryo_robot_arm_commander/is_active: "Indicate whether a command is currently running or not"
+  /niryo_robot_arm_commander/stop_command: "Stop the current command"
+  /niryo_robot_arm_commander/set_max_velocity_scaling_factor: "Set the percentage of maximum speed (0% - 200%)"
+  /niryo_robot_arm_commander/set_acceleration_factor: "Set the acceleration factor percentage (0% - 200%)"
+  /niryo_robot_arm_commander/get_trajectory: "Get a given saved trajectory"
+  /niryo_robot_arm_commander/get_trajectory_list: "Get the list of saved trajectory name & description"
+  /niryo_robot_arm_commander/compute_waypointed_trajectory: "Compute a trajectory from a list of waypoints"
+  /niryo_robot_arm_commander/get_joints_limits: "Get the robot's joints limits"
+  /niryo_robot_arm_commander/manage_trajectory: "Save/Edit/Delete/Execute a trajectory"
+
+  /niryo_robot_poses_handlers/get_dynamic_frame: "Get a given saved dynamic frame"
+  /niryo_robot_poses_handlers/get_dynamic_frame_list: "Get the list of saved dynamic frames"
+  /niryo_robot_poses_handlers/get_pose: "Get a given saved pose"
+  /niryo_robot_poses_handlers/get_pose_list: "Get the list of saved poses name & description"
+  /niryo_robot_poses_handlers/get_target_pose: "Get the robot pose that can be used to grab an object which is positioned relative to the given workspace"
+  /niryo_robot_poses_handlers/get_transform_pose: "Get transform the between 2 known frames"
+  /niryo_robot_poses_handlers/get_workspace_list: "Get the list of saved workspaces name & description"
+  /niryo_robot_poses_handlers/get_workspace_matrix_poses: "Get the 4 corners of a given workspace in Point/Quaternion formatrelative to the robot frame"
+  /niryo_robot_poses_handlers/get_workspace_points: "Get the 4 corners of a given workspace in Point formatrelative to the robot frame"
+  /niryo_robot_poses_handlers/get_workspace_poses: "Get the 4 corners of a given workspace in Pose format relative to the robot frame"
+  /niryo_robot_poses_handlers/get_workspace_ratio: "Get workspace's ratio"
+  /niryo_robot_poses_handlers/manage_dynamic_frame: "Save/Edit/Delete a dynamic frame"
+  /niryo_robot_poses_handlers/manage_pose: "Save/Delete a Pose"
+  /niryo_robot_poses_handlers/manage_workspace: "Save/Delete a workspace"
+  /niryo_robot_poses_handlers/set_relative_transform_frame: "Set the relative transform frame"
+
+  /niryo_robot_programs_manager_v2/create_program: "Create and save a new program"
+  /niryo_robot_programs_manager_v2/delete_program: "Delete a saved program"
+  /niryo_robot_programs_manager_v2/execute_program_autorun: "Executes autorun program"
+  /niryo_robot_programs_manager_v2/get_program: "Get a saved program"
+  /niryo_robot_programs_manager_v2/get_program_autorun_infos: "Get autorun settings"
+  /niryo_robot_programs_manager_v2/get_program_list: "Get the list of saved programs name, description, storage path & code"
+  /niryo_robot_programs_manager_v2/set_program_autorun: "Set autorun settings"
+  /niryo_robot_programs_manager_v2/stop_execution: "Stop the current running program"
+  /niryo_robot_programs_manager_v2/update_program: "Update a saved program"
+
+  /niryo_robot_rpi/get_analog_io: "Get given analog IO state"
+  /niryo_robot_rpi/get_digital_io: "Get given digital IO state"
+  /niryo_robot_rpi/set_analog_io: "Set an analog IO to the given value"
+  /niryo_robot_rpi/set_digital_io: "Set a digital IO to the given value"
+  /niryo_robot_rpi/set_digital_io_mode: "Set a digital IO to the given mode (OUPUT or INPUT)"
+  /niryo_robot_rpi/shutdown_rpi: "Shutdown the Raspberry Pi"
+  /niryo_robot_rpi/estop_status: "Whether the robot is in emergency stop mode or not (`Ned3pro` only)"
+
+  /niryo_robot_sound/manage: "Add or delete a sound in the database"
+  /niryo_robot_sound/play: "Play a sound from the robot database"
+  /niryo_robot_sound/set_volume: "Set the volume percentage between 0 and 100%"
+  /niryo_robot_sound/stop: "Stop the sound being played"
+  /niryo_robot_sound/text_to_speech: "Say a sentence using GTTS"
+
+  /niryo_robot_status/advertise_shutdown: "Notify of a shutdown request"
+
+  /niryo_robot_tools_commander/enable_tcp: "
+                                            Enable or disable the TCP (Tool Center Point) functionality.
+                                            When we activate it, the end-effector transform will be the last one saved since the robot started.
+                                            By default it will be the one of the equipped tool.
+                                           "
+  /niryo_robot_tools_commander/equip_electromagnet: "Equip the electromagnet with the motor ID given as parameter"
+  /niryo_robot_tools_commander/reset_tcp: "Reset the TCP (Tool Center Point) transform. By default it will be the one of the equipped tool."
+  /niryo_robot_tools_commander/set_tcp: "Activate the TCP (Tool Center Point) functionality and defines a new TCP transformation."
+  /niryo_robot_tools_commander/update_tool: "Ping/scan the TTL bus for a dxl motor flashed with an ID corresponding to a Niryo tool and equip it (if found)"
+
+  /niryo_robot_led_ring/set_led_color: "Set the color of the LED ring"
+  /niryo_robot_led_ring/set_user_animation: "Set the user animation of the LED ring"
+
+  /niryo_robot_hardware_interface/reboot_motors: "Reboot the motors"
+
+  /niryo_robot_joints_interface/get_home_position: "Get the home position of the robot"
+  /niryo_robot_joints_interface/reset_home_position: "Reset the home position of the robot to its factory value"
+  /niryo_robot_joints_interface/set_home_position: "Set the home position of the robot"
+
+parameters:
+  /niryo_robot/hardware_version: 
+    text: "Hardware version of the robot"
+    unit: "string"
+  /niryo_robot/info/ros_version: 
+    text: "ROS distribution used by the robot"
+    unit: "string"
+  /niryo_robot/python_ros_wrapper/action_connection_timeout: 
+    text: "Timeout for the action server connection by the python ROS wrapper"
+    unit: "seconds"
+  /niryo_robot/python_ros_wrapper/action_execute_timeout: 
+    text: "Timeout for the action server execution by the python ROS wrapper"
+    unit: "seconds"
+  /niryo_robot/python_ros_wrapper/action_preempt_timeout: 
+    text: "Timeout for the action server preemption by the python ROS wrapper"
+    unit: "seconds"
+  /niryo_robot/python_ros_wrapper/service_timeout: 
+    text: "Timeout for the service call by the python ROS wrapper"
+    unit: "seconds"
+  /niryo_robot/robot_command_validation/joint_limits/joint_1/max: 
+    text: "Maximum value for joint 1 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_1/min: 
+    text: "Minimum value for joint 1 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_2/max: 
+    text: "Maximum value for joint 2 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_2/min: 
+    text: "Minimum value for joint 2 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_3/max: 
+    text: "Maximum value for joint 3 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_3/min: 
+    text: "Minimum value for joint 3 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_4/max: 
+    text: "Maximum value for joint 4 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_4/min: 
+    text: "Minimum value for joint 4 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_5/max: 
+    text: "Maximum value for joint 5 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_5/min: 
+    text: "Minimum value for joint 5 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_6/max: 
+    text: "Maximum value for joint 6 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/joint_limits/joint_6/min: 
+    text: "Minimum value for joint 6 when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/position_limits/x/max: 
+    text: "Maximum value for TCP x position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/position_limits/x/min: 
+    text: "Minimum value for TCP x position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/position_limits/y/max: 
+    text: "Maximum value for TCP y position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/position_limits/y/min: 
+    text: "Minimum value for TCP y position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/position_limits/z/max: 
+    text: "Maximum value for TCP z position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/position_limits/z/min: 
+    text: "Minimum value for TCP z position when validating move commands"
+    unit: "meters"
+  /niryo_robot/robot_command_validation/rpy_limits/pitch/max: 
+    text: "Maximum value for TCP pitch when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/rpy_limits/pitch/min: 
+    text: "Minimum value for TCP pitch when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/rpy_limits/roll/max: 
+    text: "Maximum value for TCP roll when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/rpy_limits/roll/min: 
+    text: "Minimum value for TCP roll when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/rpy_limits/yaw/max: 
+    text: "Maximum value for TCP yaw when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_command_validation/rpy_limits/yaw/min: 
+    text: "Minimum value for TCP yaw when validating move commands"
+    unit: "radians"
+  /niryo_robot/robot_state/rate_publish_state: 
+    text: "Rate at which the robot state is published"
+    unit: "Hz"
+  /niryo_robot/simulation_mode: 
+    text: "Whether the robot is in simulation mode or not"
+    unit: "bool"
+
+  /niryo_robot_arm_commander/reference_frame: 
+    text: "Reference frame used by MoveIt!"
+    unit: "string"
+  /niryo_robot_arm_commander/move_group_commander_name: 
+    text: "Name of the group that MoveIt is controlling"
+    unit: "string"
+  /niryo_robot_arm_commander/jog_timer_rate_sec: 
+    text: "Publish rate for jog controller"
+    unit: "seconds"
+  /niryo_robot_arm_commander/active_publish_rate_sec: 
+    text: "Publish rate for the topic which checks if a goal is currently active or not"
+    unit: "seconds"
+  /niryo_robot_arm_commander/allow_replanning: 
+    text: "Whether replanning is allowed or not (MoveIt! parameter)"
+    unit: "bool"
+  /niryo_robot_arm_commander/command_still_active_max_tries: 
+    text: "Maximum number of tries to check if a command is still active before aborting the new command"
+    unit: "int"
+  /niryo_robot_arm_commander/compute_plan_max_tries: 
+    text: "Maximum number of tries to compute a plan before aborting the command"
+    unit: "int"
+  /niryo_robot_arm_commander/display_trajectories: 
+    text: "Whether the trajectories should be displayed in Rviz or not"
+    unit: "bool"
+  /niryo_robot_arm_commander/eef_step: 
+    text: "Step between generated waypoints for the end effector trajectory"
+    unit: "meters"
+  /niryo_robot_arm_commander/error_tolerance_joint: 
+    text: "Error tolerance for joints when using the jog controller"
+    unit: "radians"
+  /niryo_robot_arm_commander/goal_joint_tolerance: 
+    text: "Goal joint tolerance for the MoveIt! motion planner"
+    unit: "radians"
+  /niryo_robot_arm_commander/goal_position_tolerance: 
+    text: "Goal position tolerance for the MoveIt! motion planner"
+    unit: "meters"
+  /niryo_robot_arm_commander/goal_orientation_tolerance: 
+    text: "Goal orientation tolerance for the MoveIt! motion planner"
+    unit: "radians"
+  /niryo_robot_arm_commander/hardware_version: 
+    text: "Hardware version of the robot"
+    unit: "string"
+  /niryo_robot_arm_commander/initialized: 
+    text: "Whether the arm commander is initialized or not"
+    unit: "bool"
+  /niryo_robot_arm_commander/jog_limits/joints: 
+    text: "Joints limits applied to clamp the jog command"
+    unit: "radians"
+  /niryo_robot_arm_commander/jog_limits/rotation: 
+    text: "Rotation limits applied to clamp the jog command"
+    unit: "radians"
+  /niryo_robot_arm_commander/jog_limits/translation: 
+    text: "Translation limits applied to clamp the jog command"
+    unit: "meters"
+  /niryo_robot_arm_commander/joint_controller_name: 
+    text: "Name of the joint trajectory controller"
+    unit: "string"
+  /niryo_robot_arm_commander/joint_names: 
+    text: "Names of the joints of the robot"
+    unit: "string"
+  /niryo_robot_arm_commander/jump_threshold: 
+    text: "Jump threshold for the MoveIt! motion planner"
+    unit: "radians"
+  /niryo_robot_arm_commander/time_without_jog_TCP_limit: 
+    text: "Time without jog command before disabling the jog controller"
+    unit: "seconds"
+  /niryo_robot_arm_commander/trajectory_frequency:
+    text: "Waypoint acquisition frequency while recording a trajectory"
+    unit: "Hz"
+
+  /niryo_robot_poses_handlers/workspace_dir: 
+    text: "Path to the Workspace storage folder"
+    unit: "string"
+  /niryo_robot_poses_handlers/grip_dir:
+    text: "Path to the Grip storage folder"
+    unit: "string"
+  /niryo_robot_poses_handlers/poses_dir:
+    text: "Path to the Poses storage folder"
+    unit: "string"
+  /niryo_robot_poses_handlers/trajectories_dir:
+    text: "Path to the trajectories storage folder"
+    unit: "string"
+  /niryo_robot_poses_handlers/dynamic_frame_dir:
+    text: "Path to the dynamic frames storage folder"
+    unit: "string"
+
+  /niryo_robot_programs_manager_v2/programs_dir:
+    text: "Path to the Programs storage folder"
+    unit: "string"
+
+  /niryo_robot_sound/default_volume: 
+    text: "Default volume on the real robot"
+    unit: "percentage"
+  /niryo_robot_sound/default_volume_simulation:
+    text: "Default volume in simulation"
+    unit: "percentage"
+  /niryo_robot_sound/min_volume:
+    text: "Minimum volume of the robot"
+    unit: "percentage"
+  /niryo_robot_sound/max_volume:
+    text: "Maximum volume of the robot"
+    unit: "percentage"
+  /niryo_robot_sound/volume_file_path:
+    text: "Path to the file where the volume of the real robot set by the user is stored"
+    unit: "string"
+  /niryo_robot_sound/volume_file_path_simulation:
+    text: "Path to the file where the volume of the simulated robot set by the user is stored"
+    unit: "string"
+  /niryo_robot_sound/path_user_sound: 
+    text: "Path to the folder where user defined sounds are stored"
+    unit: "string"
+  /niryo_robot_sound/path_user_sound_simulation:
+    text: "Path to the folder where user defined sounds are stored in simulation"
+    unit: "string"
+
+  /niryo_robot_tools_commander/command_list/activate_digital_io:
+    text: "ID of the command to activate the digital IO of the electromagnet"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/deactivate_digital_io:
+    text: "ID of the command to deactivate the digital IO of the electromagnet"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/close_gripper:
+    text: "ID of the command to close the gripper"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/open_gripper:
+    text: "ID of the command to open the gripper"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/pull_air_vacuum_pump:
+    text: "ID of the command to pull air from the vacuum pump"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/push_air_vacuum_pump:
+    text: "ID of the command to push air to the vacuum pump"
+    unit: "int"
+  /niryo_robot_tools_commander/command_list/setup_digital_io:
+    text: "ID of the command to setup the digital IO of the electromagnet"
+    unit: "int"
+  /niryo_robot_tools_commander/gazebo:
+    text: "Whether the tool should be simulated in gazebo or not"
+    unit: "bool"
+  /niryo_robot_tools_commander/hardware_version:
+    text: "Hardware version of the robot"
+    unit: "string"
+  /niryo_robot_tools_commander/initialized:
+    text: "Whether the tool commander is initialized or not"
+    unit: "bool"
+  /niryo_robot_tools_commander/move_group_tool_commander_name:
+    text: "Name of the group that MoveIt is controlling for the tool"
+    unit: "string"
+  /niryo_robot_tools_commander/namespace_topics:
+    text: "Namespace of the tools commander topics"
+    unit: "string"
+  /niryo_robot_tools_commander/reference_frame:
+    text: "Reference frame used by MoveIt! for the tool"
+    unit: "string"
+  /niryo_robot_tools_commander/simu_gripper:
+    text: "Whether the tool should be simulated or not"
+    unit: "bool"
+  /niryo_robot_tools_commander/tool_list:
+    text: "List of Niryo tools available for the robot with their configurations"
+    unit: "string"
+
+  /niryo_robot_user_interface/initialized:
+    text: "Whether the TCP server is initialized or not"
+    unit: "bool"
+  /niryo_robot_user_interface/ip_address:
+    text: "IP address of the TCP server (default to localhost)"
+    unit: "string"
+  /niryo_robot_user_interface/tcp_port:
+    text: "Port of the TCP server"
+    unit: "int"
+  
+  /niryo_robot_vision/camera_port:
+    text: "Port of the camera"
+    unit: "int"
+  /niryo_robot_vision/debug_compression_quality:
+    text: "Quality of the debug image compression"
+    unit: "percentage"
+  /niryo_robot_vision/display:
+    text: "Whether the video stream should be displayed on the computer or not"
+    unit: "bool"
+  /niryo_robot_vision/flip_img:
+    text: "Whether the image should be flipped or not"
+    unit: "bool"
+  /niryo_robot_vision/frame_rate:
+    text: "Frame rate of the video stream"
+    unit: "Hz"
+  /niryo_robot_vision/frame_size:
+    text: "Resolution of the video stream"
+    unit: "pixels"
+  /niryo_robot_vision/is_active_rate:
+    text: "Rate at which the video stream is checked to be active"
+    unit: "seconds"
+  /niryo_robot_vision/max_restart_time:
+    text: "Maximum time before stopping to restart the video stream"
+    unit: "seconds"
+  /niryo_robot_vision/obj_calib_name:
+    text: "Calibration yaml file name"
+    unit: "string"
+  /niryo_robot_vision/simulation_mode:
+    text: "Whether the vision node is in simulation mode or not"
+    unit: "bool"
+  /niryo_robot_vision/stream_compression_quality:
+    text: "Quality of the video stream compression"
+    unit: "percentage"
+  /niryo_robot_vision/subsampling:
+    text: "Subsampling factor of the video stream"
+    unit: "int"
+  /niryo_robot_vision/undistort_stream:
+    text: "Whether the video stream should be undistorted or not"
+    unit: "bool"
+  /niryo_robot_vision/hardware_version:
+    text: "Hardware version of the robot"
+    unit: "string"
+  
+  /niryo_robot_led_ring/default_alternate_period:
+    text: "Default period of the alternate animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_breath_period:
+    text: "Default period of the breath animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_chase_period:
+    text: "Default period of the chase animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_colorwipe_period:
+    text: "Default period of the colorwipe animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_flashing_period:
+    text: "Default period of the flashing animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_goup_period:
+    text: "Default period of the go up animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_goupanddown_period:
+    text: "Default period of the go up and down animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_rainbow_period:
+    text: "Default period of the rainbow animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_rainbowchase_period:
+    text: "Default period of the rainbow chase animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_rainbowcycle_period:
+    text: "Default period of the rainbow cycle animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/default_snake_period:
+    text: "Default period of the snake animation"
+    unit: "seconds"
+  /niryo_robot_led_ring/enable_led_ring_bcm_pin:
+    text: "BCM pin number on the Raspberry Pi used for the LED ring"
+    unit: "int"
+  /niryo_robot_led_ring/led_brightness:
+    text: "Brightness of the LED ring (0 - 255)"
+    unit: "int"
+  /niryo_robot_led_ring/led_channel:
+    text: "Channel of the LED ring"
+    unit: "int"
+  /niryo_robot_led_ring/led_count:
+    text: "Number of LEDs in the ring"
+    unit: "int"
+  /niryo_robot_led_ring/led_dma:
+    text: "Direct Access Memory channel used for generating signal"
+    unit: "int"
+  /niryo_robot_led_ring/led_freq_hs:
+    text: "Frequency of the LED signal"
+    unit: "Hz"
+  /niryo_robot_led_ring/led_invert:
+    text: "True to invert the signal (when using NPN transistor level shift)"
+    unit: "bool"
+  /niryo_robot_led_ring/led_offset:
+    text: "Offset of the LED signal"
+    unit: "int"
+  /niryo_robot_led_ring/led_pin:
+    text: "Pin number on the Raspberry Pi used for the LED ring"
+    unit: "int"
+  /niryo_robot_led_ring/led_ring_markers_publish_rate:
+    text: "Rate at which the LED ring markers are published"
+    unit: "Hz"
+  /niryo_robot_led_ring/simulation_led_ring_markers_publish_rate:
+    text: "Rate at which the LED ring markers are published in simulation"
+    unit: "Hz"
+  /niryo_robot_led_ring/simulation_mode:
+    text: "Whether the LED ring node is in simulation mode or not"
+    unit: "bool"
+  /niryo_robot_led_ring/use_mesh:
+    text: "Whether the LED ring should be displayed as a mesh in Rviz or not"
+    unit: "bool"
+  /niryo_robot_led_ring/simulation_led_mesh_path:
+    text: "Path to the mesh file of the LED ring in simulation"
+    unit: "string"
+
+  /niryo_robot_hardware_interface/conveyor/publish_frequency:
+    text: "Frequency at which the conveyor feedback is published"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/conveyor/ttl/default_id:
+    text: "Default ID of the conveyor on the TTL bus before setup"
+    unit: "int"
+  /niryo_robot_hardware_interface/conveyor/ttl/direction:
+    text: "Direction of the conveyor (forward/backward)"
+    unit: "string"
+  /niryo_robot_hardware_interface/conveyor/ttl/pool_id_list:
+    text: "List of available IDs on the TTL bus dedicated to conveyors"
+    unit: "string"
+  /niryo_robot_hardware_interface/conveyor/type:
+    text: "Motor type of the conveyor"
+    unit: "string"
+  /niryo_robot_hardware_interface/cpu_interface/read_rpi_diagnostics_frequency:
+    text: "Frequency at which the Raspberry Pi diagnostics are read"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/cpu_interface/simulation_mode:
+    text: "Whether the CPU interface is in simulation mode or not"
+    unit: "bool"
+  /niryo_robot_hardware_interface/cpu_interface/temperature_shutdown_threshold:
+    text: "CPU Temperature threshold at which the robot should shutdown"
+    unit: "°C"
+  /niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold:
+    text: "CPU Temperature threshold at which the robot should warn the user"
+    unit: "°C"
+  /niryo_robot_hardware_interface/end_effector_interface/button_0/type:
+    text: "Type of the button 0 on the end effector panel"
+    unit: "string"
+  /niryo_robot_hardware_interface/end_effector_interface/button_1/type:
+    text: "Type of the button 1 on the end effector panel"
+    unit: "string"
+  /niryo_robot_hardware_interface/end_effector_interface/button_2/type:
+    text: "Type of the button 2 on the end effector panel"
+    unit: "string"
+  /niryo_robot_hardware_interface/end_effector_interface/check_end_effector_status_frequency:
+    text: "Frequency at which the end effector status is checked"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/end_effector_interface/collision_threshold:
+    text: "Collision threshold of the end effector"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/end_effector_interface/end_effector_id:
+    text: "ID of the end effector in the TTL bus"
+    unit: "int"
+  /niryo_robot_hardware_interface/end_effector_interface/hardware_type:
+    text: "Type of the end effector"
+    unit: "string"
+  /niryo_robot_hardware_interface/hardware_version:
+    text: "Hardware version of the robot"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/calibration_file:
+    text: "Path to the calibration file"
+    unit: "string"
+
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/FF1_gain:
+    text: "FF1 gain of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/FF2_gain:
+    text: "FF2 gain of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/acceleration_profile:
+    text: "Acceleration profile of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/direction:
+    text: "Direction of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/limit_position_max:
+    text: "Maximum position limit of the axe 4 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/limit_position_min:
+    text: "Minimum position limit of the axe 4 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/offset_position:
+    text: "Offset position of the axe 4 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/position_D_gain:
+    text: "D gain of the position PID of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/position_I_gain:
+    text: "I gain of the position PID of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/position_P_gain:
+    text: "P gain of the position PID of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/velocity_I_gain:
+    text: "I gain of the velocity PID of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/velocity_P_gain:
+    text: "P gain of the velocity PID of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_1/velocity_profile:
+    text: "Velocity profile of the axe 4 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/FF1_gain:
+    text: "FF1 gain of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/FF2_gain:
+    text: "FF2 gain of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/acceleration_profile:
+    text: "Acceleration profile of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/direction:
+    text: "Direction of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/limit_position_max:
+    text: "Maximum position limit of the axe 5 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/limit_position_min:
+    text: "Minimum position limit of the axe 5 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/offset_position:
+    text: "Offset position of the axe 5 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/position_D_gain:
+    text: "D gain of the position PID of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/position_I_gain:
+    text: "I gain of the position PID of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/position_P_gain:
+    text: "P gain of the position PID of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/velocity_I_gain:
+    text: "I gain of the velocity PID of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/velocity_P_gain:
+    text: "P gain of the velocity PID of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_2/velocity_profile:
+    text: "Velocity profile of the axe 5 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/FF1_gain:
+    text: "FF1 gain of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/FF2_gain:
+    text: "FF2 gain of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/acceleration_profile:
+    text: "Acceleration profile of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/direction:
+    text: "Direction of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/limit_position_max:
+    text: "Maximum position limit of the axe 6 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/limit_position_min:
+    text: "Minimum position limit of the axe 6 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/offset_position:
+    text: "Offset position of the axe 6 Dynamixel motor"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/position_D_gain:
+    text: "D gain of the position PID of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/position_I_gain:
+    text: "I gain of the position PID of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/position_P_gain:
+    text: "P gain of the position PID of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/velocity_I_gain:
+    text: "I gain of the velocity PID of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/velocity_P_gain:
+    text: "P gain of the velocity PID of the axe 6 Dynamixel motor"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_3/velocity_profile:
+    text: "Velocity profile of the axe 6 Dynamixel motor"
+    unit: "N/A"
+
+  /niryo_robot_hardware_interface/joints_interface/joint_1/id:
+    text: "ID of the joint 1 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_1/name:
+    text: "Name of the joint 1 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_1/type:
+    text: "Type of the joint 1 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_2/id:
+    text: "ID of the joint 2 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_2/name:
+    text: "Name of the joint 2 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_2/type:
+    text: "Type of the joint 2 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_3/id:
+    text: "ID of the joint 3 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_3/name:
+    text: "Name of the joint 3 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_3/type:
+    text: "Type of the joint 3 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_4/id:
+    text: "ID of the joint 4 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_4/name:
+    text: "Name of the joint 4 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_4/type:
+    text: "Type of the joint 4 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_5/id:
+    text: "ID of the joint 5 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_5/name:
+    text: "Name of the joint 5 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_5/type:
+    text: "Type of the joint 5 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_6/id:
+    text: "ID of the joint 6 motor"
+    unit: "int"
+  /niryo_robot_hardware_interface/joints_interface/joint_6/name:
+    text: "Name of the joint 6 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_6/type:
+    text: "Type of the joint 6 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_1/bus:
+    text: "Field bus used by the joint 1 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_2/bus:
+    text: "Field bus used by the joint 2 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_3/bus:
+    text: "Field bus used by the joint 3 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_4/bus:
+    text: "Field bus used by the joint 4 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_5/bus:
+    text: "Field bus used by the joint 5 motor"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/joint_6/bus:
+    text: "Field bus used by the joint 6 motor"
+    unit: "string"
+
+  /niryo_robot_hardware_interface/joints_interface/ros_control_loop_frequency:
+    text: "Frequency of the ROS control loop"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/joints_interface/simulation_mode:
+    text: "Whether the joints interface is in simulation mode or not"
+    unit: "bool"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/a_1:
+    text: "First acceleration of the velocity profile for the stepper 1"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/a_max:
+    text: "Maximum acceleration of the velocity profile for the stepper 1"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/d_1:
+    text: "First deceleration of the velocity profile for the stepper 1"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/d_max:
+    text: "Maximum deceleration of the velocity profile for the stepper 1"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/direction:
+    text: "Direction of the stepper 1"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/limit_position_max:
+    text: "Maximum position limit of the stepper 1"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/limit_position_min:
+    text: "Minimum position limit of the stepper 1"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/motor_ratio:
+    text: "Motor ratio of the stepper 1"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/offset_position:
+    text: "Offset position of the stepper 1"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/v_1:
+    text: "First velocity of the velocity profile for the stepper 1"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/v_max:
+    text: "Maximum velocity of the velocity profile for the stepper 1"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/v_start:
+    text: "Starting velocity of the velocity profile for the stepper 1"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_1/v_stop:
+    text: "Stopping velocity of the velocity profile for the stepper 1"
+    unit: "rad/s"
+
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/a_1:
+    text: "First acceleration of the velocity profile for the stepper 2"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/a_max:
+    text: "Maximum acceleration of the velocity profile for the stepper 2"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/d_1:
+    text: "First deceleration of the velocity profile for the stepper 2"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/d_max:
+    text: "Maximum deceleration of the velocity profile for the stepper 2"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/direction:
+    text: "Direction of the stepper 2"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/limit_position_max:
+    text: "Maximum position limit of the stepper 2"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/limit_position_min:
+    text: "Minimum position limit of the stepper 2"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/motor_ratio:
+    text: "Motor ratio of the stepper 2"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/offset_position:
+    text: "Offset position of the stepper 2"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/v_1:
+    text: "First velocity of the velocity profile for the stepper 2"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/v_max:
+    text: "Maximum velocity of the velocity profile for the stepper 2"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/v_start:
+    text: "Starting velocity of the velocity profile for the stepper 2"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_2/v_stop:
+    text: "Stopping velocity of the velocity profile for the stepper 2"
+    unit: "rad/s"
+
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/a_1:
+    text: "First acceleration of the velocity profile for the stepper 3"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/a_max:
+    text: "Maximum acceleration of the velocity profile for the stepper 3"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/d_1:
+    text: "First deceleration of the velocity profile for the stepper 3"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/d_max:
+    text: "Maximum deceleration of the velocity profile for the stepper 3"
+    unit: "rad/s²"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/direction:
+    text: "Direction of the stepper 3"
+    unit: "string"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/limit_position_max:
+    text: "Maximum position limit of the stepper 3"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/limit_position_min:
+    text: "Minimum position limit of the stepper 3"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/motor_ratio:
+    text: "Motor ratio of the stepper 3"
+    unit: "N/A"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/offset_position:
+    text: "Offset position of the stepper 3"
+    unit: "Radians"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/v_1:
+    text: "First velocity of the velocity profile for the stepper 3"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/v_max:
+    text: "Maximum velocity of the velocity profile for the stepper 3"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/v_start:
+    text: "Starting velocity of the velocity profile for the stepper 3"
+    unit: "rad/s"
+  /niryo_robot_hardware_interface/joints_interface/steppers/stepper_3/v_stop:
+    text: "Stopping velocity of the velocity profile for the stepper 3"
+    unit: "rad/s"
+
+  /niryo_robot_hardware_interface/publish_hw_status_frequency:
+    text: "Frequency at which the hardware status is published"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/publish_software_version_frequency:
+    text: "Frequency at which the software version is published"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/tools_interface/check_tool_connection_frequency:
+    text: "Frequency at which the tool connection is checked"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/tools_interface/gripper_timeout:
+    text: "Maximum waiting time before considering that the gripper cannot move anymore (due to contact with an object for example)"
+    unit: "seconds"
+  /niryo_robot_hardware_interface/tools_interface/tools_params/id_list:
+    text: "List of tools IDs on the TTL bus"
+    unit: "string"
+  /niryo_robot_hardware_interface/tools_interface/tools_params/name_list:
+    text: "List of tools names on the TTL bus"
+    unit: "string"
+  /niryo_robot_hardware_interface/tools_interface/tools_params/params_list:
+    text: "List of tools parameters on the TTL bus"
+    unit: "string"
+  /niryo_robot_hardware_interface/tools_interface/tools_params/type_list:
+    text: "List of tools motor types on the TTL bus"
+    unit: "string"
+  /niryo_robot_hardware_interface/tools_interface/vacuum_pump_timeout:
+    text: "Maximum waiting time before considering that the vacuum pump motor cannot move anymore (due to contact with an object for example)"
+    unit: "seconds"
+  /niryo_robot_hardware_interface/ttl_driver/bus_params/baudrate:
+    text: "Baudrate of the TTL bus"
+    unit: "bps"
+  /niryo_robot_hardware_interface/ttl_driver/hardware_version:
+    text: "Hardware version of the robot"
+    unit: "string"
+  /niryo_robot_hardware_interface/ttl_driver/simulation_mode:
+    text: "Whether the TTL driver is in simulation mode or not"
+    unit: "bool"
+  /niryo_robot_hardware_interface/ttl_driver/ttl_hardware_control_loop_frequency:
+    text: "Frequency of the TTL hardware control loop"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/ttl_driver/ttl_hardware_read_data_frequency:
+    text: "Frequency at which the TTL hardware data is read"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/ttl_driver/ttl_hardware_read_end_effector_frequency:
+    text: "Frequency at which the TTL hardware end effector data is read"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/ttl_driver/ttl_hardware_read_status_frequency:
+    text: "Frequency at which the TTL hardware status is read"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/ttl_driver/ttl_hardware_write_frequency:
+    text: "Frequency at which the TTL hardware data is written"
+    unit: "Hz"
+  /niryo_robot_hardware_interface/ttl_enabled:
+    text: "Whether the TTL bus is enabled or not"
+    unit: "bool"

@@ -1,0 +1,128 @@
+{% if topics.publishers or topics.subscribers %}
+ROS Topics
+==========
+
+{% if topics.publishers %}
+Publishers
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Topic Name
+     - Type
+     - Description
+   {% for pub in topics.publishers %}
+   * - {{ pub.name }}
+     - {{ add_link_to_type_documentation(pub.type) }}
+     - {{ pub.description }}
+   {% endfor %}
+
+{% endif %}
+
+{% if topics.subscribers %}
+Subscribers
+-----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Topic Name
+     - Type
+     - Description
+   {% for sub in topics.subscribers %}
+   * - {{ sub.name }}
+     - {{ add_link_to_type_documentation(sub.type) }}
+     - {{ sub.description }}
+   {% endfor %}
+
+{% endif %}
+{% endif %}
+
+{% if services %}
+ROS Services
+============
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Service Name
+     - Type
+     - Description
+   {% for service in services %}
+   * - {{ service.name }}
+     - {{ add_link_to_type_documentation(service.type, 'srv') }}
+     - {{ service.description }}
+   {% endfor %}
+
+{% endif %}
+
+{% if parameters %}
+ROS Parameters
+==============
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Parameter Name
+     - Default value
+     - Simulation value
+     - Unit
+     - Description
+   {% for parameter in parameters %}
+   * - {{ parameter.name }}
+     - {{ parameter.default_value }}
+     - {{ parameter.simulation_value if parameter.simulation_value else "N/A" }}
+     - {{ parameter.unit }}
+     - {{ parameter.description }}
+   {% endfor %}
+
+{% endif %}
+
+{% if action %}
+ROS Action
+==========
+Namespace: **{{ action.namespace }}**
+
+{% if action.publishers %}
+Publishers
+----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Topic Name
+     - Type
+     - Description
+   {% for pub in action.publishers %}
+   * - {{ pub.name }}
+     - {{ add_link_to_type_documentation(pub.type) }}
+     - {{ pub.description }}
+   {% endfor %}
+
+{% endif %}
+
+{% if action.subscribers %}
+Subscribers
+-----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Topic Name
+     - Type
+     - Description
+   {% for sub in action.subscribers %}
+   * - {{ sub.name }}
+     - {{ add_link_to_type_documentation(sub.type) }}
+     - {{ sub.description }}
+   {% endfor %}
+
+{% endif %}
+{% endif %}

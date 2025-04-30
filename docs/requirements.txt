@@ -1,0 +1,9 @@
+Sphinx
+sphinx_rtd_theme
+sphinx-copybutton
+sphinx-autobuild
+sphinx-multiversion
+jinja2
+PyYAML
+rospkg
+numpy

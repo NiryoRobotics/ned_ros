@@ -419,10 +419,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param robot_position: Position of the goal position
         :type robot_position: Union[Pose, JointsPosition]
         :param move_cmd: Command used to move the robot. If not provided, the command will be the basic move (either
-        joint or pose depending on the robot_position type)
+            joint or pose depending on the robot_position type)
+        :type move_cmd: int
         :param blocking: Whether the function should wait for the end of the movement
         :type blocking: bool
-        :type move_cmd: int
         :return: status, message
         :rtype: (int, str)
         """
@@ -1723,6 +1723,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         .. deprecated:: 5.5.0
            You should use move with a frame in the pose metadata and linear=True.
+
         Move robot end of an offset by a linear movement in a frame
 
         :param offset: list which contains offset of x, y, z, roll, pitch, yaw

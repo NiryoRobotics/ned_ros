@@ -11,22 +11,6 @@ class ShiftPose:
     ROT_YAW = 5
 
 
-class ToolID:
-    """
-    Tools IDs (need to match tools ids in niryo_robot_tools_commander package)
-    """
-
-    NONE = 0
-    # CALIBRATION_TIP = 1
-    GRIPPER_1 = 11
-    GRIPPER_2 = 12
-    GRIPPER_3 = 13
-    GRIPPER_4 = 14
-    ELECTROMAGNET_1 = 30
-    VACUUM_PUMP_1 = 31
-    VACUUM_PUMP_2 = 32
-
-
 class PinMode:
     """
     Pin Mode is either OUTPUT or INPUT

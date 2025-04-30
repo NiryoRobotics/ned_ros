@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from niryo_robot_python_ros_wrapper import NiryoRosWrapper, ToolID, PinID
+from niryo_robot_python_ros_wrapper import NiryoRosWrapper, PinID
+from niryo_robot_tools_commander.api.tools_ros_wrapper_enums import ToolID
 
 # Instantiate the ROS wrapper and initialize the ROS node
 robot = NiryoRosWrapper.init_with_node()

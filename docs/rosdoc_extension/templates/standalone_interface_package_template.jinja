@@ -1,0 +1,33 @@
+{% if messages %}
+ROS messages
+============
+
+.. list-table:: ROS Messages
+    :header-rows: 1
+    :widths: auto
+
+    * - Name
+      - Definition
+    {% for msg in messages %}
+    * - {{ add_link_to_type_documentation(msg.type) }}
+      - .. literalinclude:: {{ msg.full_path }}
+            :language: python
+    {% endfor %}
+{% endif %}
+
+{% if services %}
+ROS services
+============
+
+.. list-table:: ROS services
+    :header-rows: 1
+    :widths: auto
+
+    * - Name
+      - Definition
+    {% for srv in services %}
+    * - {{ add_link_to_type_documentation(srv.type, 'srv') }}
+      - .. literalinclude:: {{ srv.full_path }}
+            :language: python
+    {% endfor %}
+{% endif %}
