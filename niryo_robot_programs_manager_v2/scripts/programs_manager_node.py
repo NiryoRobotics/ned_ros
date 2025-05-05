@@ -39,6 +39,9 @@ class ProgramManagerNode:
         self.__get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
         self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
 
+        database_path = os.path.expanduser(rospy.get_param('/niryo_robot_database/database_path'))
+        programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
+
         self.__lazy_loaded_autorun_id = None
         self.__lazy_loaded_autorun_mode = None
         self.__autorun_mode_to_str = {
@@ -49,6 +52,8 @@ class ProgramManagerNode:
         self.__str_to_autorun_mode = {v: k for k, v in self.__autorun_mode_to_str.items()}
 
         self.__stop_autorun_event = Event()
+
+        self.__programs_manager = ProgramsManager(database_path, programs_base_dir)
 
         # Action Server
         self.__execute_program_action_server = actionlib.ActionServer('~execute_program',
@@ -76,30 +81,14 @@ class ProgramManagerNode:
         rospy.Service('~get_program_autorun_infos', GetProgramAutorunInfos, self.__callback_get_program_autorun_infos)
         rospy.Service('~execute_program_autorun', Trigger, self.__callback_execute_program_autorun)
 
-        self.__lazy_loaded_programs_manager = None
-        async_init.PromiseServiceProxy('/niryo_robot_database/get_db_file_path',
-                                       GetString,
-                                       self.__on_get_db_file_path_available)
-
         rospy.on_shutdown(self.stop_program)
+
+        self.__publish_program_list()
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.loginfo("Programs Manager - Started")
-
-    def __on_get_db_file_path_available(self, get_db_file_path_proxy):
-        database_path = get_db_file_path_proxy().value
-        programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
-
-        self.__lazy_loaded_programs_manager = ProgramsManager(database_path, programs_base_dir)
-        self.__publish_program_list()
-
-    @property
-    def __programs_manager(self):
-        if self.__lazy_loaded_programs_manager is None:
-            raise RuntimeError("Programs Manager is not initialized yet")
-        return self.__lazy_loaded_programs_manager
 
     def __get_setting_from_db(self, setting_name: str, default_value: str) -> str:
         try:
