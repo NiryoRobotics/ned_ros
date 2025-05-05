@@ -45,15 +45,12 @@ def find_shape(mask: np.ndarray, shape: ObjectShape) -> Optional[Tuple[float, fl
         except ValueError:
             return None
 
-        if not (found_shape == shape or shape == ObjectShape.ANY):
-            continue
-
         (x, y), _size, angle = cv2.minAreaRect(contour)
-        angle = np.radians(angle)
 
-        # Adjust the angle to prevent the robot to grasp the object with a 90° angle
-        if found_shape == ObjectShape.SQUARE:
-            angle -= np.pi / 2
+        if found_shape == ObjectShape.CIRCLE:
+            angle = 0
+
+        angle = np.radians(angle)
 
         return x, y, angle, found_shape
 
