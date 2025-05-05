@@ -28,6 +28,7 @@ refactor: remove TCPv2 from the software as it brings more problems than it solv
 chore(gripper): increase position range (open/close) for gripper1
 fix(robot state publisher): skip the publish if robot state is None
 fix(ros_wrapper): fix move_relative method
+fix(programs_manager): don't wait for database node in programs manager anymore
 
 v5.5.5
 ------

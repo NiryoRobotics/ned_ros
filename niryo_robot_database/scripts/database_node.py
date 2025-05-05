@@ -28,9 +28,7 @@ class DatabaseNode:
     def __init__(self):
         rospy.logdebug("Database Node - Entering in Init")
 
-        sqlite_db_file_path = os.path.join(rospy.get_param('~database_path'),
-                                           rospy.get_param('~hardware_version') + ".db")
-        self.db_path = os.path.expanduser(sqlite_db_file_path)
+        self.db_path = os.path.expanduser(rospy.get_param('~database_path'))
 
         if not os.path.isfile(self.db_path):
             raise RuntimeError('Database Node - Unable to open the database.')
@@ -49,7 +47,6 @@ class DatabaseNode:
             GetAllByType,
             self.__callback_get_all_by_type,
         )
-        rospy.Service('~get_db_file_path', GetString, lambda _: self.db_path)
 
         self.__version = Version(sqlite_dao)
 
