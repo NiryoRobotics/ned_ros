@@ -24,6 +24,7 @@ class FakeNiryoButton:
                                                         queue_size=1)
 
         self.__button_state_publisher.publish(False)
+        rospy.set_param('~initialized', True)
 
 
 class NiryoFakeRpi(object):
