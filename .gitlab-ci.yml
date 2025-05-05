@@ -112,6 +112,8 @@ generate_tar_artifacts:
 
 build_ned2_docs:
   stage: documentation
+  dependencies:
+    - catkin_make_amd
   before_script:
     - source /root/setup.bash
     - source /root/catkin_ws_venv/bin/activate
@@ -121,11 +123,10 @@ build_ned2_docs:
   script:
     - source /root/setup.bash
     - source /root/catkin_ws_venv/bin/activate
-    - /entrypoint.sh > /dev/null 2>&1 &
-    - sleep 5 # Wait for the stack to be fully initialized TODO(thomas): find a better way to do it
+    - /entrypoint.sh &
     - cd docs
     - make clean
-    - which rosdoc_lite
+    - python3 wait_for_stack_ready.py
     - sphinx-build . .build/html
   variables:
     HARDWARE_VERSION: ned2
@@ -133,8 +134,8 @@ build_ned2_docs:
     paths:
       - ${CI_PROJECT_DIR}/docs/.build
     expire_in: 1 hour
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == "master"
 
 pages:
   stage: documentation
@@ -146,8 +147,8 @@ pages:
   artifacts:
     paths:
       - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == "master"
 
 catkin_compile_tests:
   stage: build_tests
@@ -246,7 +247,7 @@ mirror_github:
   stage: release
   only:
     - tags
-  needs:
+  dependencies:
     - build_ned2_docs
   before_script:
     - mkdir -p ~/.ssh
