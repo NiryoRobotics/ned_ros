@@ -9,7 +9,7 @@
     "--env=DISPLAY",
     "--env=XAUTHORITY=/tmp/.Xauthority",
     "--volume=/tmp/.X11-unix:/tmp/.X11-unix",
-    "--volume=${env:XAUTHORITY}:/tmp/.Xauthority",
+//    "--volume=${env:XAUTHORITY}:/tmp/.Xauthority", # Disabled because $XAUTHORITY changes after each login, causing the container to fail to start
     "--volume=/var/run/dbus:/var/run/dbus",
     "--volume=/var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket"
   ],
