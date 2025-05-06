@@ -40,7 +40,7 @@ class JointsPosition(ABCSerializable):
     def __eq__(self, other) -> bool:
         return self.__joints == other.__joints
 
-    def to_list(self) -> List[int]:
+    def to_list(self) -> List[float]:
         return list(self.__joints)
 
     def to_dict(self) -> Dict[str, Any]:

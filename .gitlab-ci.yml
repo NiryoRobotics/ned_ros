@@ -134,8 +134,8 @@ build_ned2_docs:
     paths:
       - ${CI_PROJECT_DIR}/docs/.build
     expire_in: 1 hour
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH == "master"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 pages:
   stage: documentation
@@ -147,8 +147,8 @@ pages:
   artifacts:
     paths:
       - public
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH == "master"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 catkin_compile_tests:
   stage: build_tests
@@ -245,8 +245,6 @@ code_quality_html:
 
 mirror_github:
   stage: release
-  only:
-    - tags
   dependencies:
     - build_ned2_docs
   before_script:
@@ -273,7 +271,8 @@ mirror_github:
     - git push --force --set-upstream origin pages
   variables:
     GIT_STRATEGY: none
-    GH_REPOSITORY_URL: git@github.com:NiryoRobotics/ned_ros.git
+  rules:
+    - if: $CI_COMMIT_TAG
 
 trigger_job:
   image: curlimages/curl

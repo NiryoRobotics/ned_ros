@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import List
 import subprocess
 import abc
@@ -116,11 +117,12 @@ class AbstractRosdocDirective(SphinxDirective, abc.ABC):
         if package in ROS_INTERFACE_PACKAGES:
             return f"`{interface_type} <https://docs.ros.org/en/{self.env.config.ros_distro}/api/{package}/html/{interface_category}/{interface_name}.html>`_"
         else:
+            outdir = Path(self.env.app.outdir)
+            built_doc_dir = outdir.joinpath(self.env.doc2path(self.env.docname, base=False)).parent
             for folder in ["msg", "srv", "action"]:
-                relative_file_path = f"rosdoc_lite/{package}/html/{folder}/{interface_name}.html"
-                abs_file_path = os.path.join(self.env.app.outdir, relative_file_path)
-                if os.path.exists(abs_file_path):
-                    return f"`{interface_type} <{os.path.join('/',relative_file_path)}>`_"
+                rosdoc_path = outdir.joinpath(f"rosdoc_lite/{package}/html/{folder}/{interface_name}.html")
+                if rosdoc_path.exists():
+                    return f"`{interface_type} <{os.path.relpath(rosdoc_path, built_doc_dir)}>`_"
         return interface_type
 
     def render_template(self, data: dict, template_dir: str, template_file: str, helper_functions: dict = None) -> str:
