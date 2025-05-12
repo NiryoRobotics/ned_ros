@@ -9,7 +9,7 @@
         <include file="$(find niryo_robot_led_ring)/launch/led_ring_commander_base.launch.xml" />
 
         <node unless="$(arg simulation_mode)" pkg="niryo_robot_led_ring" type="led_ring_node.py"
-              name="niryo_robot_led_ring" output="screen" launch-prefix="sudo">
+              name="niryo_robot_led_ring" output="screen" launch-prefix="sudo LD_LIBRARY_PATH=$(env LD_LIBRARY_PATH)">
             <param name="simulation_mode" type="bool" value="$(arg simulation_mode)" />
             <param name="log_level" value="$(arg log_level)" />
         </node>
