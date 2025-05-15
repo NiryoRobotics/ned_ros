@@ -29,6 +29,7 @@ fix(ros_wrapper): fix move_relative method
 fix(programs_manager): don't wait for database node in programs manager anymore
 chore(vision): cleanup of dead code
 chore(gripper): increase position range (open/close) for gripper1
+fix: gripper and conveyor are not simulated by default anymore
 
 v5.5.5
 ------
