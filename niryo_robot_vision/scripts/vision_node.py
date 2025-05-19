@@ -19,7 +19,7 @@ from niryo_robot_vision.srv import (ActivateDebugTopics,
                                     ActivateDebugTopicsRequest)
 
 # Messages
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CompressedImage, CameraInfo
 from std_msgs.msg import Bool
 from niryo_robot_msgs.msg import CommandStatus, ObjectPose
 from niryo_robot_vision.msg import ActiveDebugTopics, ImageParameters
@@ -43,14 +43,15 @@ class VisionNode:
         camera_intrinsics = rospy.get_param('~cam_intrinsics')
         frame_rate = rospy.get_param('~frame_rate')
 
+        camera_config = built_in_camera.CameraConfig(mtx=np.array(camera_intrinsics['mtx']),
+                                                     dist=np.array(camera_intrinsics['dist']),
+                                                     flip=rospy.get_param('~flip_img'),
+                                                     width_img=camera_intrinsics['width_img'],
+                                                     height_img=camera_intrinsics['height_img'],
+                                                     acquisition_rate=frame_rate)
         self.__webcam_stream = built_in_camera.Stream(
             camera_index=self.__camera_port,
-            config=built_in_camera.CameraConfig(mtx=np.array(camera_intrinsics['mtx']),
-                                                dist=np.array(camera_intrinsics['dist']),
-                                                flip=rospy.get_param('~flip_img'),
-                                                width_img=camera_intrinsics['width_img'],
-                                                height_img=camera_intrinsics['height_img'],
-                                                acquisition_rate=frame_rate),
+            config=camera_config,
             publish_frame_cb=self.__publish_compressed_stream,
         )
         self.__client_stream = client_stream.Stream(
@@ -64,6 +65,13 @@ class VisionNode:
         else:
             self.__source = 'client'
             self.__client_stream.start()
+
+        self.__camera_intrinsics_publisher = rospy.Publisher('~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
+        self.__camera_intrinsics_publisher.publish(
+            CameraInfo(
+                K=camera_config.mtx.flatten().tolist(),
+                D=camera_config.dist.flatten().tolist(),
+            ))
 
         # == Ros interface == #
 

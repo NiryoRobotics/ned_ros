@@ -2,6 +2,11 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+v5.6.1
+-----------
+
+fix(vision_node): (SN-900) add back camera_intrinsics topic
+
 v5.6.0
 -----------
 
