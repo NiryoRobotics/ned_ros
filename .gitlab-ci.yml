@@ -256,7 +256,7 @@ mirror_github:
     # Mirror master and tags to GitHub
     - git clone --mirror "$CI_REPOSITORY_URL" bare_mirror
     - cd bare_mirror
-    - git push $GH_REPOSITORY_URL master
+    - git push --force $GH_REPOSITORY_URL master
     - git push --force --tags $GH_REPOSITORY_URL
 
     # Push docs to GitHub pages on branch pages
