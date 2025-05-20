@@ -253,11 +253,13 @@ mirror_github:
     - echo "$GIT_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   script:
+    # Mirror master and tags to GitHub
     - git clone --mirror "$CI_REPOSITORY_URL" bare_mirror
     - cd bare_mirror
     - git push $GH_REPOSITORY_URL master
-    - git push --tags $GH_REPOSITORY_URL
+    - git push --force --tags $GH_REPOSITORY_URL
 
+    # Push docs to GitHub pages on branch pages
     - git config --global user.email "$GITLAB_USER_EMAIL"
     - git config --global user.name "$GITLAB_USER_LOGIN"
     - git init ../mirror
