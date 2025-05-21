@@ -1,0 +1,41 @@
+actions: []
+authors: "Andreas Voigt, R\xE9mi Lux <r.lux@niryo.com>"
+brief: ''
+bugtracker: ''
+depends:
+- geometry_msgs
+- tf
+- moveit_msgs
+- python3-catkin-lint
+- niryo_robot_tools_commander
+- message_generation
+- roslint
+- niryo_robot_msgs
+- message_runtime
+- python-numpy
+- rostest
+- catkin
+- niryo_robot_arm_commander
+description: "- Handles the conversion of workspace-relative poses to robot poses\n\
+  \      - Handles Poses\n      - Handles Trajectories"
+license: GPLv3
+maintainers: "R\xE9mi Lux <r.lux@niryo.com>, Valentin Pitre <v.pitre@niryo.com>"
+msgs:
+- Workspace
+- DynamicFrame
+- NiryoPose
+package_type: package
+repo_url: ''
+srvs:
+- GetWorkspacePoints
+- GetTargetPose
+- ManagePose
+- GetDynamicFrame
+- ManageDynamicFrame
+- GetWorkspaceRatio
+- GetWorkspaceMatrixPoses
+- GetWorkspaceRobotPoses
+- GetTransformPose
+- GetPose
+- ManageWorkspace
+url: ''

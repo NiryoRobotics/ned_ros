@@ -1,0 +1,7 @@
+<map id="src.niryo_robot_rpi.panel_v1.rpi_io_objects.DigitalPin" name="src.niryo_robot_rpi.panel_v1.rpi_io_objects.DigitalPin">
+<area shape="rect" id="node1" title=" " alt="" coords="384,39,591,80"/>
+<area shape="rect" id="node4" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1rpi__io__objects_1_1Fan.html" title=" " alt="" coords="639,5,821,47"/>
+<area shape="rect" id="node5" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1rpi__io__objects_1_1Led.html" title=" " alt="" coords="639,71,821,112"/>
+<area shape="rect" id="node2" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1io__objects_1_1NiryoIO.html" title=" " alt="" coords="116,39,336,80"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,46,68,73"/>
+</map>

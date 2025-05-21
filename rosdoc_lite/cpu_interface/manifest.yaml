@@ -1,0 +1,19 @@
+actions: []
+authors: Etienne Rey-Coquais, Edouard Renard
+brief: ''
+bugtracker: ''
+depends:
+- common
+- catkin
+- python3-catkin-lint
+- roscpp
+- roslint
+- code_coverage
+description: Provides an interface for CPU monitoring
+license: GPLv3
+maintainers: Etienne Rey-Coquais <e.rey-coquais@niryo.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

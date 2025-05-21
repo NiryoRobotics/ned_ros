@@ -1,0 +1,6 @@
+<map id="src.niryo_robot_rpi.panel_v1.io_panel.IOPanel" name="src.niryo_robot_rpi.panel_v1.io_panel.IOPanel">
+<area shape="rect" id="node1" title=" " alt="" coords="45,259,227,300"/>
+<area shape="rect" id="node2" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1abstract__io__panel_1_1AbstractDigitalIOPanel.html" title=" " alt="" coords="5,169,267,211"/>
+<area shape="rect" id="node3" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1abstract__io__panel_1_1AbstractIOPanel.html" title=" " alt="" coords="5,80,267,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="105,5,167,32"/>
+</map>

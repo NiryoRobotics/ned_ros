@@ -1,0 +1,52 @@
+actions:
+- RobotMove
+authors: "R\xE9mi Lux <r.lux@niryo.com>"
+brief: ''
+bugtracker: ''
+depends:
+- moveit
+- trajectory_msgs
+- niryo_robot_hardware_interface
+- python-numpy
+- geometry_msgs
+- sensor_msgs
+- control_msgs
+- actionlib
+- message_runtime
+- message_generation
+- niryo_moveit_config_standalone
+- ros_controllers
+- niryo_robot_tools_commander
+- tf2_web_republisher
+- python3-catkin-lint
+- niryo_moveit_config_w_gripper1
+- std_msgs
+- catkin
+- rosbridge_server
+- roslint
+- moveit_msgs
+- actionlib_msgs
+- niryo_robot_msgs
+description: "Interface between user and Moveit! to easily control Ned (arm + tools).\
+  \ Validates params, checks if\n      previous trajectory has not finished, ..."
+license: GPLv3
+maintainers: "R\xE9mi Lux <r.lux@niryo.com>, Valentin Pitre <v.pitre@niryo.com>"
+msgs:
+- JointLimits
+- PausePlanExecution
+- JointTrajectoryPoint
+- ShiftPose
+- JointTrajectory
+- CommandJog
+- ArmMoveCommand
+package_type: package
+repo_url: ''
+srvs:
+- JogShift
+- GetTrajectory
+- ComputeTrajectory
+- GetIK
+- ManageTrajectory
+- GetFK
+- GetJointLimits
+url: ''

@@ -1,0 +1,32 @@
+actions: []
+authors: Justin Mottier <j.mottier@niryo.com>
+brief: ''
+bugtracker: ''
+depends:
+- message_generation
+- rosbridge_server
+- python-yaml
+- niryo_robot_msgs
+- python3-catkin-lint
+- python3-opencv
+- roslint
+- catkin
+- python-numpy
+- python-imaging
+- message_runtime
+- sensor_msgs
+description: Niryo vision package
+license: GPLv3
+maintainers: Justin Mottier <j.mottier@niryo.com>
+msgs:
+- ImageParameters
+- ActiveDebugTopics
+package_type: package
+repo_url: ''
+srvs:
+- ActivateDebugTopics
+- DebugMarkers
+- ObjDetection
+- DebugColorDetection
+- SetImageParameter
+url: ''

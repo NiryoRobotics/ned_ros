@@ -1,0 +1,5 @@
+<map id="src.niryo_robot_rpi.panel_v1.top_button.TopButton" name="src.niryo_robot_rpi.panel_v1.top_button.TopButton">
+<area shape="rect" id="node1" title=" " alt="" coords="42,169,230,211"/>
+<area shape="rect" id="node2" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1abstract__top__button_1_1AbstractTopButton.html" title=" " alt="" coords="5,80,267,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="105,5,167,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="ttl_driver::FakeTtlData::AbstractFakeRegister" name="ttl_driver::FakeTtlData::AbstractFakeRegister">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,172,112"/>
+<area shape="rect" id="node2" href="$structttl__driver_1_1FakeTtlData_1_1FakeDxlRegister.html" title=" " alt="" coords="220,5,387,47"/>
+<area shape="rect" id="node3" href="$structttl__driver_1_1FakeTtlData_1_1FakeEndEffector.html" title=" " alt="" coords="220,71,387,112"/>
+<area shape="rect" id="node4" href="$structttl__driver_1_1FakeTtlData_1_1FakeStepperRegister.html" title=" " alt="" coords="220,136,387,177"/>
+</map>
