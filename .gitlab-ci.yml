@@ -31,51 +31,24 @@ include:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_ARGS: ""
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build
+      - devel
+      - install
+      - src
 
 build_amd:
   extends: .abstract_catkin_build
   variables:
     GITLAB_CATKIN_PROFILE_NAME: release
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - build
-      - devel
-      - install
-      - src
-
-catkin_make_amd:
-  # rebuild with the pipeline cmake args
-  extends: .abstract_catkin_build
-  needs:
-    - build_amd
-  before_script:
-    - mv build ${CATKIN_WS}/
-    - mv install ${CATKIN_WS}/
-    - mv devel ${CATKIN_WS}/
-    - mv src ${CATKIN_WS}/
-    - rm -rf ${CI_PROJECT_DIR}/*
-  variables:
-    GIT_STRATEGY: none #TODO: it should be empty instead of none but for some reason it's not recognized by the runners
     BUILD_ARGS: --cmake-args -DCATKIN_ENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - build
-      - devel
-      - install
 
 build_arm:
   extends: .abstract_catkin_build
   variables:
     GITLAB_CATKIN_PROFILE_NAME: release_cross_compilation
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - build
-      - devel
-      - install
-      - src
 
 generate_tar_artifacts:
   stage: build
@@ -88,32 +61,10 @@ generate_tar_artifacts:
       - artifacts.tar.gz
     expire_in: 1 week
 
-.abstract_move_source_tricks_job:
-  stage: test
-  dependencies:
-    - catkin_make_amd
-  script:
-    # Quick fix for changing "ROS folder "
-    - previous_path=`pwd`
-    - mkdir -p ${CATKIN_WS}
-    - cd ${CATKIN_WS}
-    - mkdir src
-    - shopt -s dotglob
-    - mv ${CI_PROJECT_DIR}/* src
-    - mv src/install .
-    - mv src/build .
-    - mv src/devel .
-    - ls -al .
-    ################# Quickfix end ###############
-    - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
-  # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
-  after_script:
-    - mv ${CATKIN_WS}/* .
-
 build_ned2_docs:
   stage: documentation
   dependencies:
-    - catkin_make_amd
+    - build_amd
   before_script:
     - source /root/setup.bash
     - source /root/catkin_ws_venv/bin/activate
@@ -151,31 +102,24 @@ pages:
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
 
-catkin_compile_tests:
-  stage: build_tests
-  dependencies:
-    - catkin_make_amd
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args tests
-  # Important to restore to proper artifacts folder (pwd gets resetted between script/after_script)
-  after_script:
-    - mv ${CATKIN_WS}/* .
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - devel
-      - build
-      - install
-  retry:
-    max: 1
-
 test_job:
   stage: test
   dependencies:
-    - catkin_compile_tests
+    - build_amd
+  before_script:
+    - mkdir -p ${CATKIN_WS}
+    - mv -t ${CATKIN_WS} src install build devel
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
+  script:
+    - cd ${CATKIN_WS}
+    - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1 --make-args tests
+    # Launch all tests (python / C++)
+    # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
+    # (sometimes a part of file was duplicated and unreadable by scripts then)
+    - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
+  after_script:
+    - mv ${CATKIN_WS}/build $CI_PROJECT_DIR/
   artifacts:
     expire_in: 1 week
     when: always
@@ -188,61 +132,23 @@ test_job:
         - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
         - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
         - build/${GITLAB_CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
-    # Launch all tests (python / C++)
-    # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
-    # (sometimes a part of file was duplicated and unreadable by scripts then)
-    - catkin run_tests --profile ${GITLAB_CATKIN_PROFILE_NAME} -j1
-  after_script:
-    - mv ${CATKIN_WS}/* .
   allow_failure: true
   when: manual
 
-roslint_job:
+lint:
   stage: test
   dependencies:
-    - catkin_make_amd
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [ .abstract_move_source_tricks_job, script ]
-    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
-    # Check code linting
-    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -- -j1 niryo_robot_*
-
-catkin_lint_job:
-  stage: test
-  dependencies:
-    - catkin_make_amd
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [ .abstract_move_source_tricks_job, script ]
-    # Check code linting
-    - catkin_lint -W2 --rosdistro noetic --ignore missing_directory --ignore unknown_package --explain src --skip-pkg foxglove_bridge
-
-
-code_quality:
-  artifacts:
-    expire_in: 1 week
-    paths: [ gl-code-quality-report.json ]
-  # Authenticate with account to not be limited by docker hub pull rate limit
+    - build_amd
   before_script:
-    - docker login -u ${DOCKER_HUB_DOCKER_ID} -p ${DOCKER_HUB_PASSWORD}
-  tags:
-    - dind
-
-code_quality_html:
-  extends: code_quality
-  variables:
-    REPORT_FORMAT: html
-  artifacts:
-    expire_in: 1 week
-    paths: [ gl-code-quality-report.html ]
-  tags:
-    - dind
+    - mkdir -p ${CATKIN_WS}
+    - mv -t ${CATKIN_WS} src install build devel
+    - /development-tools/setEnv${ROS_DISTRO^}.sh -p ${CATKIN_WS}
+  script:
+    # Check code linting
+    - cd ${CATKIN_WS}
+    - source install/${GITLAB_CATKIN_PROFILE_NAME}/setup.bash
+    - catkin build --profile ${GITLAB_CATKIN_PROFILE_NAME} --make-args roslint -- -j1 niryo_robot_*
+    - catkin_lint -W2 --rosdistro noetic --ignore missing_directory --ignore unknown_package --explain src --skip-pkg foxglove_bridge
 
 mirror_github:
   stage: release
