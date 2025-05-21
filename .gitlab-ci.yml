@@ -270,7 +270,7 @@ mirror_github:
     - rsync -az ${CI_PROJECT_DIR}/docs/.build/html/ ./
     - touch .nojekyll
     - git add .
-    - git commit -m "Publish docs for $CI_COMMIT_TAG"
+    - git commit --quiet -m "Publish docs for $CI_COMMIT_TAG"
     - git push --force --set-upstream origin pages
   variables:
     GIT_STRATEGY: none
