@@ -5,42 +5,42 @@ Ned ROS stack Changelog
 v5.6.1
 -----------
 
-fix(vision_node): (SN-900) add back camera_intrinsics topic
+* fix(vision_node): (SN-900) add back camera_intrinsics topic
 
 v5.6.0
 -----------
 
-feat: add new hosted documentation
-feat: Display program names with the program player
-feat: Add program player lock/unlock buttons mechanism by pressing up + custom/down + custom during 3 seconds
-feat: Implement program player custom button
-feat(vision): add debug topics which can be activated by calling the service /niryo_robot_vision/debug/activate:
-* /niryo_robot_vision/debug/active_topics: list of active debug topics
-* /niryo_robot_vision/debug/red_channel: red channel image
-* /niryo_robot_vision/debug/green_channel: green channel image
-* /niryo_robot_vision/debug/blue_channel: blue channel image
-* /niryo_robot_vision/debug/any_channel: RGB channels image
-* /niryo_robot_vision/debug/markers: workspaces markers image
-feat: Async ros wrapper move functions
-feat(vision): increased video stream frame rate (from 5 to 15 fps)
-feat(vision): the vision node can now get the video stream from any external client. Use the service /niryo_robot_vision/set_source to set the source to `client` then publish the stream on `/niryo_robot_vision/client_stream`
-refactor(vision): improved image processing pipeline speed
-refactor: remove TCPv2 from the software as it brings more problems than it solves
-fix: Wait for joint_states and rpi node before building modbus registers
-fix: sendCustomCommand instant return success if motor is fake
-fix(conveyor_interface): instanciate a fake stepper if in simulation mode
-fix(robot state publisher): skip the publish if robot state is None
-fix(ros_wrapper): fix move_relative method
-fix(programs_manager): don't wait for database node in programs manager anymore
-chore(vision): cleanup of dead code
-chore(gripper): increase position range (open/close) for gripper1
-fix: gripper and conveyor are not simulated by default anymore
+* feat: add new hosted documentation
+* feat: Display program names with the program player
+* feat: Add program player lock/unlock buttons mechanism by pressing up + custom/down + custom during 3 seconds
+* feat: Implement program player custom button
+* feat(vision): add debug topics which can be activated by calling the service /niryo_robot_vision/debug/activate:
+  * /niryo_robot_vision/debug/active_topics: list of active debug topics
+  * /niryo_robot_vision/debug/red_channel: red channel image
+  * /niryo_robot_vision/debug/green_channel: green channel image
+  * /niryo_robot_vision/debug/blue_channel: blue channel image
+  * /niryo_robot_vision/debug/any_channel: RGB channels image
+  * /niryo_robot_vision/debug/markers: workspaces markers image
+* feat: Async ros wrapper move functions
+* feat(vision): increased video stream frame rate (from 5 to 15 fps)
+* feat(vision): the vision node can now get the video stream from any external client. Use the service /niryo_robot_vision/set_source to set the source to `client` then publish the stream on `/niryo_robot_vision/client_stream`
+* refactor(vision): improved image processing pipeline speed
+* refactor: remove TCPv2 from the software as it brings more problems than it solves
+* fix: Wait for joint_states and rpi node before building modbus registers
+* fix: sendCustomCommand instant return success if motor is fake
+* fix(conveyor_interface): instanciate a fake stepper if in simulation mode
+* fix(robot state publisher): skip the publish if robot state is None
+* fix(ros_wrapper): fix move_relative method
+* fix(programs_manager): don't wait for database node in programs manager anymore
+* chore(vision): cleanup of dead code
+* chore(gripper): increase position range (open/close) for gripper1
+* fix: gripper and conveyor are not simulated by default anymore
 
 v5.5.5
 ------
 
-fix: Fixed the conveyors modbus registers crashing
-fix: publish on program_list topic when service update_program is called
+* fix: Fixed the conveyors modbus registers crashing
+* fix: publish on program_list topic when service update_program is called
 
 v5.5.4
 ------
