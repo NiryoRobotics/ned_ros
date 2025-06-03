@@ -53,7 +53,10 @@ class Stream(AbstractStream):
         self.__rate = Rate(config.acquisition_rate)
 
     def __del__(self):
-        self.stop()
+        try:
+            self.stop()
+        except RuntimeError:
+            pass
 
     @property
     def is_available(self) -> bool:

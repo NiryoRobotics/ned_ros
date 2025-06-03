@@ -59,12 +59,9 @@ class VisionNode:
             publish_frame_cb=self.__publish_compressed_stream,
         )
 
+        self.__source = 'webcam'
         if self.__webcam_stream.is_available:
-            self.__source = 'webcam'
             self.__webcam_stream.start()
-        else:
-            self.__source = 'client'
-            self.__client_stream.start()
 
         self.__camera_intrinsics_publisher = rospy.Publisher('~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
         self.__camera_intrinsics_publisher.publish(
@@ -213,6 +210,9 @@ class VisionNode:
         :return: The response indicating success or failure
         """
         if req.value is True:
+            if not self.__stream.is_available:
+                return CommandStatus.FAILURE, 'Stream is not available.'
+
             try:
                 self.__stream.start()
             except RuntimeError:
