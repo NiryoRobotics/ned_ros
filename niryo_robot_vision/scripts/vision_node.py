@@ -210,6 +210,9 @@ class VisionNode:
         :return: The response indicating success or failure
         """
         if req.value is True:
+            if not self.__stream.is_available:
+                return CommandStatus.FAILURE, 'Stream is not available.'
+
             try:
                 self.__stream.start()
             except RuntimeError:
