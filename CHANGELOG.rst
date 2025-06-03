@@ -2,6 +2,11 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+-----------
+
+* fix(niryo_robot_vision): stream handling improvements
+
 v5.6.1
 -----------
 
