@@ -4,7 +4,7 @@ Ned ROS stack Changelog
 
 forthcoming
 -----------
-
+* fix(doc): use the link to the public github page in the README
 * fix(niryo_robot_vision): stream handling improvements
 
 v5.6.1
