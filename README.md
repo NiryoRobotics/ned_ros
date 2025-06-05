@@ -15,4 +15,4 @@ You can [download Niryo Studio](https://niryo.com/niryostudio/) (Linux, Windows 
 
 ## Documentation link
 
-You can find the whole generated documentation of this project at [Niryo Documentation](https://www.docs.niryo.com/dev/ros/)
+You can find the whole generated documentation of this project at [Niryo Documentation](https://niryorobotics.github.io/ned_ros/)
