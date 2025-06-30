@@ -13,7 +13,8 @@ class AbstractStream(ABC):
 
     def __init__(self, publish_frame_cb: Callable[[np.ndarray], None]):
         super().__init__()
-        self._frame = None
+        self._frame = None  # Unstable, change during the processing pipeline.
+        self._image = None  # Stable. Always contain a processed image.
         self.brightness = 1.0
         self.contrast = 1.0
         self.saturation = 1.0
@@ -31,12 +32,17 @@ class AbstractStream(ABC):
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
-    @property
-    def image(self) -> np.ndarray:
+    def get_image(self, copy=False):
         """
-        Get the latest image from the stream.
+        Get the current image from the stream.
+
+        :param copy: If True, return a copy of the image. If False, return the original image.
+        :return: The current image.
         """
-        raise NotImplementedError("Subclasses should implement this method.")
+        if self.image is None:
+            return None
+
+        return self.image.copy() if copy else self.image
 
     @property
     def is_active(self) -> bool:
@@ -57,3 +63,4 @@ class AbstractStream(ABC):
         Post-process the image.
         """
         post_process(self._frame, self.brightness, self.contrast, self.saturation, dst=self._frame)
+        self.image = self._frame.copy()

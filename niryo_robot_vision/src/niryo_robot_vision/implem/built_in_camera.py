@@ -19,6 +19,16 @@ class CameraConfig:
     height_img: float
     flip: bool = False
 
+    def to_ros_camera_info(self):
+        """Converts the camera configuration to a ROS message."""
+        from sensor_msgs.msg import CameraInfo
+        msg = CameraInfo()
+        msg.width = int(self.width_img)
+        msg.height = int(self.height_img)
+        msg.K = self.mtx.flatten().tolist()
+        msg.D = self.dist.flatten().tolist()
+        return msg
+
 
 class Rate:
 
@@ -130,10 +140,6 @@ class Stream(AbstractStream):
 
                 time.sleep(1)
                 video_stream.open(self.__camera_index)
-
-    @property
-    def image(self) -> np.ndarray:
-        return self._frame
 
     @property
     def is_active(self) -> bool:

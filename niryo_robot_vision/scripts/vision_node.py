@@ -64,11 +64,7 @@ class VisionNode:
             self.__webcam_stream.start()
 
         self.__camera_intrinsics_publisher = rospy.Publisher('~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
-        self.__camera_intrinsics_publisher.publish(
-            CameraInfo(
-                K=camera_config.mtx.flatten().tolist(),
-                D=camera_config.dist.flatten().tolist(),
-            ))
+        self.__camera_intrinsics_publisher.publish(camera_config.to_ros_camera_info())
 
         # == Ros interface == #
 
@@ -326,7 +322,7 @@ class VisionNode:
         :return: The CompressedImage message
         """
         return self.__generate_msg_from_frame(
-            colors.filter_channel(self.__stream.image, color),
+            colors.filter_channel(self.__stream.get_image(), color),
             compression_quality=self.__debug_compression_quality,
         )
 
@@ -335,7 +331,7 @@ class VisionNode:
         Get the image with the markers drawn on it and return it as a CompressedImage message.
         :return: A tuple containing a boolean indicating if the markers were found and the CompressedImage message
         """
-        found, frame = markers.draw_markers(self.__stream.image)
+        found, frame = markers.draw_markers(self.__stream.get_image())
         return found, self.__generate_msg_from_frame(
             frame,
             compression_quality=self.__debug_compression_quality,

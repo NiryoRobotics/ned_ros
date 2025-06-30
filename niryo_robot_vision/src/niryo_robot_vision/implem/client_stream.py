@@ -33,10 +33,6 @@ class Stream(AbstractStream):
         self._publish_frame(self._frame)
 
     @property
-    def image(self) -> np.ndarray:
-        return self._frame
-
-    @property
     def is_active(self) -> bool:
         """
         We assume that if there is a publisher on the topic, then the stream is active.
