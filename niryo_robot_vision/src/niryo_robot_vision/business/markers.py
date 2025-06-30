@@ -83,28 +83,27 @@ def draw_markers(img, workspace_ratio=1.0):
     list_good_candidates = find_markers_from_img_thresh(img_thresh)
     if not list_good_candidates:
         return False, img
-    im_draw = img.copy()
     for marker in list_good_candidates:
         cx, cy = marker.get_center()
         radius = marker.get_radius()
-        cv2.circle(im_draw, (cx, cy), radius, (0, 0, 255), 2)
+        cv2.circle(img, (cx, cy), radius, (0, 0, 255), 2)
     if len(list_good_candidates) > 6:
-        return False, im_draw
+        return False, img
 
     if len(list_good_candidates) == 4:
         list_good_candidates = sort_markers_detection(list_good_candidates)
     else:
         list_good_candidates = complicated_sort_markers(list_good_candidates, workspace_ratio=workspace_ratio)
         if list_good_candidates is None:
-            return False, im_draw
+            return False, img
 
     for i, marker in enumerate(list_good_candidates[:4]):
         cx, cy = marker.get_center()
         radius = marker.get_radius()
-        cv2.circle(im_draw, (cx, cy), radius, (0, 200, 0), 2)
-        cv2.putText(im_draw, "{}".format(i + 1), (cx + 5, cy - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 0), 3)
-        cv2.putText(im_draw, "{}".format(i + 1), (cx + 5, cy - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 200, 0), 2)
-    return True, im_draw
+        cv2.circle(img, (cx, cy), radius, (0, 200, 0), 2)
+        cv2.putText(img, "{}".format(i + 1), (cx + 5, cy - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 0), 3)
+        cv2.putText(img, "{}".format(i + 1), (cx + 5, cy - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 200, 0), 2)
+    return True, img
 
 
 class PotentialMarker:
