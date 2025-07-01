@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # Lib
-import functools
 import warnings
 from typing import Union, List, overload
 from threading import Thread

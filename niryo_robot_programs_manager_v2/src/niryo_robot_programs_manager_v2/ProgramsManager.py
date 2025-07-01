@@ -1,4 +1,5 @@
 import os
+from queue import Queue
 from threading import Thread, Event
 from typing import TypedDict, List, Callable
 from uuid import uuid4
@@ -132,8 +133,8 @@ class ProgramsManager:
     # - Program executions
 
     @property
-    def execution_output(self) -> str:
-        return self.__python_runner.output
+    def output_queue(self) -> Queue:
+        return self.__python_runner.output_queue
 
     @property
     def execution_is_running(self) -> bool:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import queue
 from threading import Thread, Event
 
 import actionlib
@@ -7,7 +8,7 @@ import rospy
 import logging
 import os
 
-from niryo_robot_utils import sentry_init, async_init
+from niryo_robot_utils import sentry_init
 
 from actionlib_msgs.msg import GoalStatus
 from niryo_robot_programs_manager_v2.ProgramsManager import ProgramsManager
@@ -182,12 +183,16 @@ class ProgramManagerNode:
                 self.__programs_manager.execute_from_id(goal.program_id)
 
             # handle the feedback
-            feedback = ExecuteProgramFeedback(output=self.__programs_manager.execution_output)
-            while self.__programs_manager.execution_is_running:
-                if len(self.__programs_manager.execution_output) > len(feedback.output):
-                    feedback.output = self.__programs_manager.execution_output
+            feedback = ExecuteProgramFeedback()
+            while True:
+                try:
+                    output = self.__programs_manager.output_queue.get(block=True)
+                    if output is None:
+                        break
+                    feedback.output += output
                     goal_handle.publish_feedback(feedback)
-                rospy.sleep(0.1)
+                except queue.Empty:
+                    rospy.sleep(0.1)
 
             # set the final goal status
             if goal_handle.get_goal_status().status == GoalStatus.ACTIVE:
