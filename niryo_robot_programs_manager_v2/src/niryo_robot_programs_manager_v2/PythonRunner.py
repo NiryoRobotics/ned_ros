@@ -1,4 +1,5 @@
 import subprocess
+from queue import Queue
 from threading import Lock, Event
 from typing import Optional
 
@@ -17,24 +18,25 @@ class PythonRunner:
     It captures the program's standard output and provides methods to check the
     execution status and retrieve the program output.
     """
+
     def __init__(self) -> None:
         """
         Initialize the ProgramRunner.
 
         """
-        self.__output: str = ''
+        self.__output_queue: Queue = Queue()
         self.__process: Optional[subprocess.Popen] = None
         self.__execution_lock: Lock = Lock()
 
     @property
-    def output(self) -> str:
+    def output_queue(self) -> Queue:
         """
         Get the standard output of the executed program.
 
         :return: The standard output of the program.
         :rtype: str
         """
-        return self.__output
+        return self.__output_queue
 
     @property
     def is_running(self) -> bool:
@@ -71,7 +73,7 @@ class PythonRunner:
         with self.__execution_lock:
             if execution_started_event is not None:
                 execution_started_event.set()
-            self.__output = ''
+            self.__output_queue = Queue()
             try:
                 self.__process = subprocess.Popen(['python3', '-u', program_path],
                                                   stdout=subprocess.PIPE,
@@ -82,7 +84,8 @@ class PythonRunner:
                     # Break the loop if the process ended and all the stdout has been read
                     if self.__process.poll() is not None and output == '':
                         break
-                    self.__output += output
+                    self.__output_queue.put(output)
+                self.__output_queue.put(None)
             except Exception as e:
                 rospy.logerr(str(e))
                 raise ExecutionException(str(e))
