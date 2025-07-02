@@ -44,7 +44,7 @@ def detect_object(image: np.ndarray, color: ObjectColor, shape: ObjectShape,
 
     # If we asked for any color, determine the color of the found object
     if color == ObjectColor.ANY:
-        color = most_present_color(image, x, y)
+        color = most_present_color(im_work, x, y)
 
     found_object = Object(shape=shape, color=color, x=x, y=y, yaw=yaw)
     found_object.x = found_object.x / im_work.shape[1]
@@ -89,6 +89,6 @@ def post_process(image: np.ndarray,
         # Adjust saturation
         cv2.cvtColor(dst, cv2.COLOR_BGR2HSV, dst=dst)
         dst[..., 1] = cv2.multiply(dst[..., 1], saturation_factor)
-        return cv2.cvtColor(dst, cv2.COLOR_HSV2BGR, dst=dst)
+        cv2.cvtColor(dst, cv2.COLOR_HSV2BGR, dst=dst)
 
     return dst

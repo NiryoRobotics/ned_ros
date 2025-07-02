@@ -39,10 +39,10 @@ class AbstractStream(ABC):
         :param copy: If True, return a copy of the image. If False, return the original image.
         :return: The current image.
         """
-        if self.image is None:
+        if self._image is None:
             return None
 
-        return self.image.copy() if copy else self.image
+        return self._image.copy() if copy else self._image
 
     @property
     def is_active(self) -> bool:
@@ -63,4 +63,4 @@ class AbstractStream(ABC):
         Post-process the image.
         """
         post_process(self._frame, self.brightness, self.contrast, self.saturation, dst=self._frame)
-        self.image = self._frame.copy()
+        self._image = self._frame.copy()

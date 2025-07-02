@@ -150,7 +150,7 @@ class VisionNode:
         :return: The response containing the object relative x, y and yaw and its shape and color
         """
         try:
-            found_object = image_processing.detect_object(self.__stream.image,
+            found_object = image_processing.detect_object(self.__stream.get_image(),
                                                           ObjectColor[req.obj_color],
                                                           ObjectShape[req.obj_type],
                                                           req.workspace_ratio)
