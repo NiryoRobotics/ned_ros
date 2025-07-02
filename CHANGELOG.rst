@@ -4,10 +4,14 @@ Ned ROS stack Changelog
 
 forthcoming
 -----------
+
 * fix(doc): use the link to the public github page in the README
 * fix(niryo_robot_vision): stream handling improvements
 * fix(niryo_robot_vision): fix concurrency issues between the post-processing pipeline and the external image accessors
 * fix(niryo_robot_programs_manager_v2): ensure the output is fully consumed before quitting
+* fix(niryo_robot_vision): use correct image to find the object's main color when looking for any color
+* fix(niryo_robot_vision): apply the blur before converting to HSV
+* fix(niryo_robot_vision): blue thresholds fine-tuning to reduce noise
 
 v5.6.1
 -----------

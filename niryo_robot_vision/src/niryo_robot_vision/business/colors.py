@@ -20,8 +20,8 @@ def hsv_threshold(img: np.ndarray, color_threshold: ColorThreshold, dst: Optiona
     if dst is None:
         dst = np.zeros_like(img, dtype=np.uint8)
 
-    cv2.cvtColor(img, cv2.COLOR_BGR2HSV, dst)
-    cv2.GaussianBlur(dst, (5, 5), 0, dst=dst)
+    cv2.GaussianBlur(img, (5, 5), 0, dst=dst)
+    cv2.cvtColor(dst, cv2.COLOR_BGR2HSV, dst)
 
     mask = np.zeros_like(dst, shape=(*dst.shape[0:2], 1), dtype=np.uint8)
     for low_thresh, high_thresh in color_threshold.value:
