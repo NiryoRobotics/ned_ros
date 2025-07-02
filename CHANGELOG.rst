@@ -12,6 +12,7 @@ forthcoming
 * fix(niryo_robot_vision): use correct image to find the object's main color when looking for any color
 * fix(niryo_robot_vision): apply the blur before converting to HSV
 * fix(niryo_robot_vision): blue thresholds fine-tuning to reduce noise
+* fix(niryo_robot_vision): check if the found shape matches the requirements before returning
 
 v5.6.1
 -----------

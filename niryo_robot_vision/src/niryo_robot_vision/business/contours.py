@@ -45,6 +45,9 @@ def find_shape(mask: np.ndarray, shape: ObjectShape) -> Optional[Tuple[float, fl
         except ValueError:
             return None
 
+        if found_shape != shape and shape != ObjectShape.ANY:
+            continue
+
         (x, y), _size, angle = cv2.minAreaRect(contour)
 
         if found_shape == ObjectShape.CIRCLE:
