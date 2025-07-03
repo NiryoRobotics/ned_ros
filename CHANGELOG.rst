@@ -15,6 +15,7 @@ forthcoming
 * fix(niryo_robot_vision): check if the found shape matches the requirements before returning
 * fix(niryo_robot_vision): increase nb_contours_max from 3 to 10 to avoid missing circles when there is more than 3 squares on the workspace
 * fix(joints_interface): rename home_position to default_home_position for simulation config
+
 v5.6.1
 -----------
 
