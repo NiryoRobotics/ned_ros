@@ -13,6 +13,7 @@ forthcoming
 * fix(niryo_robot_vision): apply the blur before converting to HSV
 * fix(niryo_robot_vision): blue thresholds fine-tuning to reduce noise
 * fix(niryo_robot_vision): check if the found shape matches the requirements before returning
+* fix(niryo_robot_vision): increase nb_contours_max from 3 to 10 to avoid missing circles when there is more than 3 squares on the workspace
 
 v5.6.1
 -----------

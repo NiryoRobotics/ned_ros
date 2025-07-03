@@ -6,13 +6,15 @@ import numpy as np
 from .enums import ObjectShape
 
 
-def find_biggest_contours(img, nb_contours_max=3, min_area=400):
+def find_biggest_contours(img, nb_contours_max=10, min_area=400):
     """
     Function to find the biggest contour in an image
 
     :param img: the image to process
     :type img: numpy.array
-    :param nb_contours_max: maximal number of contours which will be returned
+    :param nb_contours_max: maximal number of contours which will be returned. Note that since the contours are sorted
+    by area, the squares will always be the first ones. Thus, if the number of squares is greater than nb_contours_max,
+    no circles will be returned.
     :type nb_contours_max: int
     :param min_area: minimal area of the contours to be considered
     :type min_area: int
