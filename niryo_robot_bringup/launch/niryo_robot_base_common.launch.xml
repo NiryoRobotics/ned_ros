@@ -21,8 +21,8 @@
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
         <arg name="port" value="9090"/>
         <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
-        <arg name="websocket_ping_interval" value="5" />
-        <arg name="websocket_ping_timeout" value="20" />
+        <arg name="websocket_ping_interval" value="3" />
+        <arg name="websocket_ping_timeout" value="10" />
     </include>
 
     <node name="foxglove_spawner" pkg="niryo_robot_bringup" type="foxglove_spawner.py"/>
