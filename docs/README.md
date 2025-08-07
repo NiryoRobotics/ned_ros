@@ -51,7 +51,7 @@ This documentation tool can only runs on the Ned ROS stack running **ROS Noetic*
 
    1. Pull the Ned ROS Noetic stack simulation docker image (Change the image with the one you want to use) and mount your local documentation repository in the ROS workspace of the container
    ``` bash
-   sudo docker run --net=host -v .:/root/catkin_ws/src/docs/ gitlab.tools.niryo.com:5050/robot/common/rpi-images/simulation_develop 
+   sudo docker run --net=host -v .:/root/catkin_ws/src/docs/ gitlab.tools.niryo.com:5050/robot/ned/rpi-images/simulation_develop 
    ```
 
    2. If not already started, run you ROS simulation stack docker container and go to your documentation directory

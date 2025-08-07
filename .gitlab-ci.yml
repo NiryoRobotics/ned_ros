@@ -1,4 +1,4 @@
-image: ${CI_REGISTRY}/robot/common/development-tools/development-tools:latest
+image: ${CI_REGISTRY}/robot/ned/development-tools/development-tools:latest
 
 variables:
   GITLAB_CATKIN_PROFILE_NAME: release
