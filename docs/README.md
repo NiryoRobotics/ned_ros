@@ -45,13 +45,13 @@ This documentation tool can only runs on the Ned ROS stack running **ROS Noetic*
 
 2. Clone this repository
    ``` bash
-   git clone ssh://git@gitlab01.niryotech.com:2224/documentations/ned-ros-stack-documentation.git
+   git clone ssh://git@gitlab.tools.niryo.com:2224/documentations/ned-ros-stack-documentation.git
    ```
 3. Get and start the ROS simulation stack docker container
 
    1. Pull the Ned ROS Noetic stack simulation docker image (Change the image with the one you want to use) and mount your local documentation repository in the ROS workspace of the container
    ``` bash
-   sudo docker run --net=host -v .:/root/catkin_ws/src/docs/ gitlab01.niryotech.com:5050/robot/common/rpi-images/simulation_develop 
+   sudo docker run --net=host -v .:/root/catkin_ws/src/docs/ gitlab.tools.niryo.com:5050/robot/common/rpi-images/simulation_develop 
    ```
 
    2. If not already started, run you ROS simulation stack docker container and go to your documentation directory
