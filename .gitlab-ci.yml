@@ -14,11 +14,6 @@ stages:
   - release
 
 
-include:
-  ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
-  - template: Code-Quality.gitlab-ci.yml
-
-
 .abstract_catkin_build:
   stage: build
   tags:
@@ -209,7 +204,7 @@ trigger_job:
       --form variables[TRIGGER_COMMIT_MESSAGE]="$CI_COMMIT_MESSAGE"
       "${CI_API_V4_URL}/projects/${TARGET_REPO_ID}/trigger/pipeline"
   variables:
-    TARGET_REPO_ID: 36
+    TARGET_REPO_ID: 88
   only:
     refs:
       - develop
