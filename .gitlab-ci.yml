@@ -211,9 +211,7 @@ trigger_job:
       "${CI_API_V4_URL}/projects/${TARGET_REPO_ID}/trigger/pipeline"
   variables:
     TARGET_REPO_ID: 88
-  only:
-    refs:
-      - develop
-      - master
-    when:
-      - '"$[[ inputs.no_trigger ]]" == "false"'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master"
+    - if: '"$[[ inputs.no_trigger ]]" == true'
+      when: never
