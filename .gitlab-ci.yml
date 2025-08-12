@@ -213,5 +213,5 @@ trigger_job:
     TARGET_REPO_ID: 88
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-    - if: '"$[[ inputs.no_trigger ]]" == true'
+    - if: '"$[[ inputs.no_trigger ]]" == "true"'
       when: never
