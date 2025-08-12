@@ -1,3 +1,9 @@
+spec:
+  inputs:
+    no_trigger:
+      type: boolean
+      default: false
+---
 image: ${CI_REGISTRY}/robot/ned/development-tools/development-tools:latest
 
 variables:
@@ -209,3 +215,5 @@ trigger_job:
     refs:
       - develop
       - master
+    when:
+      - '"$[[ inputs.no_trigger ]]" == "false"'
