@@ -2,7 +2,7 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-forthcoming
+v5.6.2
 -----------
 
 * fix(doc): use the link to the public github page in the README
