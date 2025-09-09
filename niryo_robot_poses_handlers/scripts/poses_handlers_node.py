@@ -135,12 +135,6 @@ class PoseHandlerNode:
                                                           queue_size=10)
         self.__publish_workspace_list()
 
-        if rospy.has_param('~gazebo_workspaces'):
-            for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
-                if ws_name not in self.get_available_workspaces()[0]:
-                    rospy.loginfo("Poses Handler - Adding the {} workspace...".format(ws_name))
-                    self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
-
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 

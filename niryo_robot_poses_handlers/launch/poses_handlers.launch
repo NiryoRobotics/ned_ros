@@ -9,10 +9,6 @@
     <arg name="saved_files_dir" value="$(env HOME)/.niryo/simulation" if="$(arg simulation_mode)"/>
     <arg name="saved_files_dir" value="$(env HOME)/niryo_robot_saved_files" unless="$(arg simulation_mode)"/>
 
-    <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers_base.launch.xml"> 
-        <arg name="simulation_mode" value="$(arg simulation_mode)" />
-    </include>
-
     <node name="niryo_robot_poses_handlers" pkg="niryo_robot_poses_handlers" type="poses_handlers_node.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="grip_dir" type="string" value="$(find niryo_robot_poses_handlers)/grips/$(arg hardware_version)/"/>
