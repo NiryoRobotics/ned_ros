@@ -1,6 +1,6 @@
 {
   "name": "development container",
-  "image": "gitlab.tools.niryo.com:5050/robot/ned/development-tools/development-tools:latest",
+  "image": "registry.gitlab.tools.niryo.com/robot/ned/development-tools/development-tools:latest",
   "workspaceFolder": "/root/catkin_ws",
   "workspaceMount": "source=${localWorkspaceFolder},target=/root/catkin_ws/src,type=bind",
   "postCreateCommand": "bash -c 'source /root/catkin_ws_venv/bin/activate && /development-tools/scripts/install_in_venv.sh /root/catkin_ws/src /root/catkin_ws/install &&  git config --global --add safe.directory /root/catkin_ws/src'",
