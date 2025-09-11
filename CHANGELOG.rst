@@ -6,6 +6,7 @@ forthcoming
 -----------
 
 * chore: (SN-999) delete gazebo workspaces
+* fix: end effector's DI was always True in simulation mode
 
 v5.6.2
 -----------

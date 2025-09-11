@@ -59,6 +59,7 @@ public:
     virtual int readCollisionStatus(uint8_t id, bool& status) = 0;
 
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
+    virtual int writeDigitalInput(uint8_t id, bool in) = 0;
     virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
     virtual int writeCollisionThresh(uint8_t id, int thresh) = 0;

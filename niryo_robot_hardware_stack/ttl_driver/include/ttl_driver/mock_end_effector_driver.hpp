@@ -87,6 +87,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
+        int writeDigitalInput(uint8_t id, bool in) override;
         int writeDigitalOutput(uint8_t id, bool out) override;
 
     private:
