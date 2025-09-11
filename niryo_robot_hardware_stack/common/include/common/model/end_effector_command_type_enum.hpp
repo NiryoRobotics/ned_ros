@@ -38,6 +38,7 @@ enum class EEndEffectorCommandType { CMD_TYPE_DIGITAL_OUTPUT = 4,
                                      CMD_TYPE_PING=5,
                                      CMD_TYPE_SET_COLLISION_THRESH = 6,
                                      CMD_TYPE_SET_COLLISION_THRESH_ALGO_2 = 7,
+                                     CMD_TYPE_DIGITAL_INPUT = 8,
                                      CMD_TYPE_UNKNOWN=100
                                    };
 

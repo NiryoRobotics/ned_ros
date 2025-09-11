@@ -17,24 +17,24 @@
 
 
 import rospy
+from niryo_robot_utils import async_init
 
-from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO, NiryoIOException
-
+from niryo_robot_msgs.srv import SetBool
 from end_effector_interface.srv import SetEEDigitalOut
+
+from .io_objects import NiryoIO
 
 
 class DigitalOutput(NiryoIO):
     def __init__(self, name):
         super(DigitalOutput, self).__init__(lock=None, pin=0, name=name)
 
-        try:
-            rospy.wait_for_service("/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state", 20)
-        except rospy.ROSException:
-            pass
-        self.__set_ee_io_state_service = rospy.ServiceProxy(
-            "/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state", SetEEDigitalOut)
+        self.__set_ee_io_state_service = async_init.PromiseServiceProxy(
+            "/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state",
+            SetEEDigitalOut,
+        )
 
-        self.value = False
+        self._value = False
 
     @property
     def value(self):
@@ -47,7 +47,11 @@ class DigitalOutput(NiryoIO):
             self.__set_ee_io_state_service(bool(value))
             self._value = bool(value)
         except rospy.service.ServiceException as e:
-            rospy.logwarn("End Effector Digital Output :: Failed to set its state\n{}".format(str(e)))
+            rospy.logwarn(
+                "End Effector Digital Output :: Failed to set its state\n{}".format(
+                    str(e)
+                )
+            )
 
     def force_value(self, value):
         assert isinstance(value, (bool, int, float))
@@ -58,7 +62,12 @@ class DigitalInput(NiryoIO):
     def __init__(self, name):
         super(DigitalInput, self).__init__(lock=None, pin=0, name=name)
 
-        self.value = False
+        self.__set_ee_di_state_service = async_init.PromiseServiceProxy(
+            "/niryo_robot_hardware_interface/end_effector_interface/set_ee_di_state",
+            SetBool,
+        )
+
+        self._value = False
 
     @property
     def value(self):
@@ -66,4 +75,13 @@ class DigitalInput(NiryoIO):
 
     @value.setter
     def value(self, value):
-        self._value = bool(value)
+        assert isinstance(value, (bool, int, float))
+        try:
+            self.__set_ee_di_state_service(bool(value))
+            self._value = bool(value)
+        except rospy.service.ServiceException as e:
+            rospy.logwarn(
+                "End Effector Digital Input :: Failed to set its state\n{}".format(
+                    str(e)
+                )
+            )

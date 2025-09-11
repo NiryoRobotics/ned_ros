@@ -428,7 +428,22 @@ int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool &in)
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    in = _fake_data->end_effector.digitalInput;
+    in = _fake_data->end_effector.digital_input;
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockEndEffectorDriver::writeDigitalInput stores the digital input value in the fake data
+ * @param id the device ID
+ * @param in the input value to write
+ * @return the result of the operation as a status code
+ */
+int MockEndEffectorDriver::writeDigitalInput(uint8_t id, bool in)
+{
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
+    _fake_data->end_effector.digital_input = in;
     return COMM_SUCCESS;
 }
 
@@ -443,7 +458,7 @@ int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, bool out)
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    _fake_data->end_effector.DigitalOutput = out;
+    _fake_data->end_effector.digital_output = out;
     return COMM_SUCCESS;
 }
 

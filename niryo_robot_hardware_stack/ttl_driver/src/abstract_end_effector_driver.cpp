@@ -148,6 +148,9 @@ int AbstractEndEffectorDriver::writeSingleCmd(const std::unique_ptr<common::mode
         case common::model::EEndEffectorCommandType::CMD_TYPE_SET_COLLISION_THRESH_ALGO_2:
             writeCollisionThreshAlgo2(cmd->getId(), cmd->getParam());
             break;
+        case common::model::EEndEffectorCommandType::CMD_TYPE_DIGITAL_INPUT:
+            writeDigitalInput(cmd->getId(), cmd->getParam());
+            break;
         default:
             std::cout << "Command not implemented" << std::endl;
         }

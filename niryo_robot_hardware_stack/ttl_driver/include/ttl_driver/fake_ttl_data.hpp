@@ -88,8 +88,8 @@ class FakeTtlData
             uint32_t y_value{1};
             uint32_t z_value{1};
             
-            bool digitalInput = true;
-            bool DigitalOutput = true;
+            bool digital_input = false;
+            bool digital_output = false;
         };
 
         // dxl by id

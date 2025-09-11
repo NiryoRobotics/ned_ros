@@ -81,6 +81,7 @@ namespace ttl_driver
         int readCollisionStatus(uint8_t id, bool &status) override;
 
         int readDigitalInput(uint8_t id, bool &in) override;
+        int writeDigitalInput(uint8_t id, bool in) override;
         int writeDigitalOutput(uint8_t id, bool out) override;
 
         int writeCollisionThresh(uint8_t id, int thresh) override;
@@ -441,6 +442,18 @@ namespace ttl_driver
         int res = read<typename reg_type::TYPE_DIGITAL_IN>(reg_type::ADDR_DIGITAL_INPUT, id, value);
         in = (value > 0) ? true : false;
         return res;
+    }
+
+    /**
+     * @brief Ned3ProEndEffectorDriver<reg_type>::writeDigitalInput not implemented for real end effectors
+     * @param id the device ID
+     * @param in the input value to write
+     * @return the result of the operation as a status code
+     */
+    template <typename reg_type>
+    int Ned3ProEndEffectorDriver<reg_type>::writeDigitalInput(uint8_t id, bool in)
+    {
+        return COMM_TX_ERROR;
     }
 
     /**

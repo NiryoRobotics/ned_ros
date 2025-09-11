@@ -166,6 +166,8 @@ services:
   /niryo_robot_led_ring/set_user_animation: "Set the user animation of the LED ring"
 
   /niryo_robot_hardware_interface/reboot_motors: "Reboot the motors"
+  /niryo_robot_hardware_interface/end_effector_interface/set_ee_di_state: "Set the state of the end effector digital input (simulation only)"
+  /niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state: "Set the state of the end effector digital output"
 
   /niryo_robot_joints_interface/get_home_position: "Get the home position of the robot"
   /niryo_robot_joints_interface/reset_home_position: "Reset the home position of the robot to its factory value"

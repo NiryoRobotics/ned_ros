@@ -157,7 +157,8 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle &nh)
  */
 void EndEffectorInterfaceCore::startServices(ros::NodeHandle &nh)
 {
-    _digital_in_server = nh.advertiseService("set_ee_io_state", &EndEffectorInterfaceCore::_callbackSetIOState, this);
+    _digital_out_server = nh.advertiseService("set_ee_io_state", &EndEffectorInterfaceCore::_callbackSetIOState, this);
+    _digital_in_server = nh.advertiseService("set_ee_di_state", &EndEffectorInterfaceCore::_callbackSetDIState, this);
 }
 
 /**
@@ -301,4 +302,26 @@ bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEE
     return res.state;
 }
 
+/**
+ * @brief EndEffectorInterfaceCore::_callbackSetDIState
+ * @param req
+ * @param res
+ * @return
+ */
+bool EndEffectorInterfaceCore::_callbackSetDIState(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res)
+{
+    res.status = niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
+    res.message = "Not implemented";
+
+    if (_end_effector_state && _end_effector_state->isValid())
+    {
+        _ttl_interface->addSingleCommandToQueue(
+            std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_INPUT, _end_effector_state->getId(), std::initializer_list<uint32_t>{req.value}));
+        _end_effector_state->setDigitalIn(req.value);
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "Success";
+    }
+
+    return res.status == niryo_robot_msgs::CommandStatus::SUCCESS;
+}
 }  // namespace end_effector_interface

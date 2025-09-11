@@ -35,6 +35,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "end_effector_interface/EEButtonStatus.h"
 #include "end_effector_interface/EEIOState.h"
 #include "end_effector_interface/SetEEDigitalOut.h"
+#include "niryo_robot_msgs/SetBool.h"
 
 namespace end_effector_interface
 {
@@ -77,6 +78,8 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
 
         bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
                                  end_effector_interface::SetEEDigitalOut::Response &res);
+        bool _callbackSetDIState(niryo_robot_msgs::SetBool::Request &req,
+                                 niryo_robot_msgs::SetBool::Response &res);
 
     private:
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
@@ -90,6 +93,7 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         ros::Timer _states_publisher_timer;
         ros::Duration _states_publisher_duration{1.0};
 
+        ros::ServiceServer _digital_out_server;
         ros::ServiceServer _digital_in_server;
 
         std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
