@@ -7,6 +7,7 @@ forthcoming
 
 * chore: (SN-999) delete gazebo workspaces
 * fix: end effector's DI was always True in simulation mode
+* fix: reports node listen to the correct setting update topic
 
 v5.6.2
 -----------

@@ -37,7 +37,7 @@ class ReportsNode:
         # Set a bool to mention that this node is initialized
         rospy.set_param('~initialized', True)
 
-        rospy.Subscriber('/niryo_robot_reports/setting_update', Setting, self.__setting_update_callback)
+        rospy.Subscriber('/niryo_robot_database/setting_update', Setting, self.__setting_update_callback)
 
         rospy.logdebug("Reports Node - Node Started")
 
