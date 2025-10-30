@@ -68,7 +68,6 @@ class LedRingCommander(object):
         rospy.sleep(1)
         self._publish_led_ring_status()  # publish the status at the beginning
 
-        rospy.on_shutdown(self.shutdown)
         self.display_user_mode()  # Turn on the leds with the right animation
 
         # Define this object as an observer of led_ring_anim, so when an observable
@@ -94,7 +93,7 @@ class LedRingCommander(object):
         rospy.Subscriber('/niryo_robot/hotspot_button_state', HotspotButtonStatus, self.__callback_hotspot_button_state)
 
         self.__check_shutdown_timer = rospy.Timer(rospy.Duration(2), self.shutdown_check)
-
+        rospy.on_shutdown(self.shutdown)
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self, color=None):
