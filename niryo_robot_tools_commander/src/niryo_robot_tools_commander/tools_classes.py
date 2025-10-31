@@ -21,6 +21,7 @@ class ToolValidationException(Exception):
 # Base class for any tool
 #
 class Tool(object):
+
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
         self._functions_dict = {}
         self._id = tool_id
@@ -82,6 +83,7 @@ class Tool(object):
 
 
 class NoTool(Tool):
+
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
         super(NoTool, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
 
@@ -98,7 +100,14 @@ class NoTool(Tool):
 
 
 class Gripper(Tool):
-    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs,
+
+    def __init__(self,
+                 tool_id,
+                 tool_name,
+                 tool_transformation,
+                 tools_state,
+                 ros_command_interface,
+                 specs,
                  hardware_version):
         super(Gripper, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
         self.hardware_version = hardware_version
@@ -125,13 +134,11 @@ class Gripper(Tool):
 
     def validate_command(self, cmd):
         if not self.open_speed_limits["min"] <= cmd.speed < self.open_speed_limits["max"]:
-            raise ToolValidationException(
-                "Gripper open speed must be in ( {}, {})".format(self.open_speed_limits["min"],
-                                                                 self.open_speed_limits["max"]))
+            raise ToolValidationException("Gripper open speed must be in ( {}, {})".format(
+                self.open_speed_limits["min"], self.open_speed_limits["max"]))
         elif not self.close_speed_limits["min"] <= cmd.speed < self.close_speed_limits["max"]:
-            raise ToolValidationException(
-                "Gripper close speed must be in ( {}, {})".format(self.close_speed_limits["min"],
-                                                                  self.close_speed_limits["max"]))
+            raise ToolValidationException("Gripper close speed must be in ( {}, {})".format(
+                self.close_speed_limits["min"], self.close_speed_limits["max"]))
 
     def is_connected(self):
         state, id_ = self.ros_command_interface.ping_dxl_tool()
@@ -158,8 +165,11 @@ class Gripper(Tool):
         max_torque = int(self.remap(cmd.max_torque_percentage, 0, 100, 0, self.torque_limits["max"]))
         hold_torque = int(self.remap(cmd.hold_torque_percentage, 0, 100, 0, self.torque_limits["max"]))
 
-        state = self.ros_command_interface.open_gripper(
-            self._id, self.open_position, cmd.speed, hold_torque, max_torque)
+        state = self.ros_command_interface.open_gripper(self._id,
+                                                        self.open_position,
+                                                        cmd.speed,
+                                                        hold_torque,
+                                                        max_torque)
         return self.return_gripper_status(state)
 
     def close_gripper(self, cmd):
@@ -167,12 +177,20 @@ class Gripper(Tool):
         max_torque = int(self.remap(cmd.max_torque_percentage, 0, 100, 0, self.torque_limits["min"]))
         hold_torque = int(self.remap(cmd.hold_torque_percentage, 0, 100, 0, self.torque_limits["min"]))
 
-        state = self.ros_command_interface.close_gripper(
-            self._id, self.close_position, cmd.speed, hold_torque, max_torque)
+        state = self.ros_command_interface.close_gripper(self._id,
+                                                         self.close_position,
+                                                         cmd.speed,
+                                                         hold_torque,
+                                                         max_torque)
         return self.return_gripper_status(state)
 
-    def update_params(self, open_position, open_hold_torque, open_max_torque, close_position,
-                      close_hold_torque, close_max_torque):
+    def update_params(self,
+                      open_position,
+                      open_hold_torque,
+                      open_max_torque,
+                      close_position,
+                      close_hold_torque,
+                      close_max_torque):
         self.open_position = open_position
         self.open_hold_torque = open_hold_torque
         self.open_max_torque = open_max_torque
@@ -182,6 +200,7 @@ class Gripper(Tool):
 
 
 class Electromagnet(Tool):
+
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
         super(Electromagnet, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
         self._functions_dict = {
@@ -227,6 +246,7 @@ class Electromagnet(Tool):
 
 
 class VacuumPump(Tool):
+
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
         super(VacuumPump, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
         self.__pull_air_position = specs["pull_air_position"]
@@ -276,22 +296,28 @@ class VacuumPump(Tool):
             return False, "Error : Unknown vacuum pump return" + str(state)
 
     def pull_air_vacuum_pump(self, _):
-        state = self.ros_command_interface.pull_air_vacuum_pump(self._id, self.__pull_air_velocity,
+        state = self.ros_command_interface.pull_air_vacuum_pump(self._id,
+                                                                self.__pull_air_velocity,
                                                                 self.__pull_air_position,
                                                                 self.__pull_air_max_torque,
                                                                 self.__pull_air_hold_torque)
         return self.return_vaccump_pump_state(state)
 
     def push_air_vacuum_pump(self, _):
-        state = self.ros_command_interface.push_air_vacuum_pump(self._id, self.__push_air_velocity,
+        state = self.ros_command_interface.push_air_vacuum_pump(self._id,
+                                                                self.__push_air_velocity,
                                                                 self.__push_air_position,
                                                                 self.__push_air_max_torque)
         return self.return_vaccump_pump_state(state)
 
-    def update_params(
-            self, pull_air_velocity, pull_air_position,
-            pull_air_max_torque, pull_air_hold_torque,
-            push_air_velocity, push_air_position, push_air_max_torque):
+    def update_params(self,
+                      pull_air_velocity,
+                      pull_air_position,
+                      pull_air_max_torque,
+                      pull_air_hold_torque,
+                      push_air_velocity,
+                      push_air_position,
+                      push_air_max_torque):
         self.__pull_air_velocity = pull_air_velocity
         self.__pull_air_position = pull_air_position
         self.__pull_air_max_torque = pull_air_max_torque
