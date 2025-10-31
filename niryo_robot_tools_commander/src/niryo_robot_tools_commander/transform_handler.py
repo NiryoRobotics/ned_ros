@@ -29,7 +29,7 @@ class ToolTransformHandler:
 
         self.__tool_transform = self.empty_transform()
         self.__tcp_transform = self.empty_transform()
-        self.__enable_tcp = False
+        self.__enable_tcp = True
 
         # Publisher
         self.__tcp_publisher = rospy.Publisher('~tcp', TCP, queue_size=10, latch=True)
@@ -73,6 +73,7 @@ class ToolTransformHandler:
         :param grip:
 
         """
+        self.__enable_tcp = True
         self.__tool_transform = tool_transform
         return self.set_tcp(copy.deepcopy(self.__tool_transform))
 
