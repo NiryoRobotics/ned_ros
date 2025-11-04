@@ -83,7 +83,7 @@ class SoundExecution:
             # os.system('ffplay -nodisp -autoexit -volume {} -ss {} {}'.format(volume, start_sec, self.__path))
 
             try:
-                self.__process = subprocess.Popen(args, stdout=subprocess.PIPE)
+                self.__process = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except OSError:
                 self.result = CommandStatus.FAILURE
                 self.message = 'Please install ffmpeg with "sudo apt install ffmpeg" to use the sound interface.'
