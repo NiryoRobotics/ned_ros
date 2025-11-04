@@ -11,6 +11,7 @@
 import os
 import sys
 import shutil
+from datetime import date
 
 sys.path.insert(0, os.path.abspath("./rosdoc_extension"))
 sys.path.insert(0, os.path.abspath('./rosdoc_extension/src'))
@@ -18,7 +19,7 @@ sys.path.insert(0, os.path.abspath('./rosdoc_extension/src'))
 # -- Project information -----------------------------------------------------
 
 project = 'Ned ROS Stack'
-copyright = '2025, Niryo'
+copyright = f'{date.today().year}, Niryo'
 author = 'Niryo'
 
 # -- General configuration ---------------------------------------------------
