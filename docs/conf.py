@@ -17,9 +17,9 @@ sys.path.insert(0, os.path.abspath('./rosdoc_extension/src'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'Ned ROS Stack'
-copyright = u'2025, Niryo'
-author = u'Niryo'
+project = 'Ned ROS Stack'
+copyright = '2025, Niryo'
+author = 'Niryo'
 
 # -- General configuration ---------------------------------------------------
 
