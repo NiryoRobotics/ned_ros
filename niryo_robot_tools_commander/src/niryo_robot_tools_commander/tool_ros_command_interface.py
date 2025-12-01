@@ -34,12 +34,12 @@ class ToolRosCommandInterface:
 
     # Gripper
 
-    def control_gripper(self, gripper_id, open_position, open_speed, open_hold_torque, open_max_torque):
+    def control_gripper(self, gripper_id, position, speed, hold_torque, max_torque):
         resp = self.__service_control_gripper(id=gripper_id,
-                                    position=open_position,
-                                    speed=open_speed,
-                                    hold_torque=open_hold_torque,
-                                    max_torque=open_max_torque)
+                                    position=position,
+                                    speed=speed,
+                                    hold_torque=hold_torque,
+                                    max_torque=max_torque)
         return resp.state
 
     # Vacuum

@@ -128,49 +128,13 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_gripper(ToolCommand.CLOSE_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def control_gripper(self, position, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
-        """
-        Control the gripper with a position
 
-        :param position: Position of the gripper in steps
-        :type position: int
-        :param speed: Default -> 500
-        :type speed: int
-        :param max_torque_percentage: Default -> 100
-        :type max_torque_percentage: int
-        :param hold_torque_percentage: Default -> 20
-        :type hold_torque_percentage: int
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__deal_with_gripper(ToolCommand.CONTROL_GRIPPER, speed, max_torque_percentage, hold_torque_percentage, position)
-
-    def get_gripper_limits(self, tool_id=None):
-        """
-        Get the gripper position limits, in steps.
-
-        :param tool_id: Tool ID. If None, use the current tool id.
-        :type tool_id: ToolID
-        :return: gripper position limits (close, open)
-        :rtype: (int, int)
-        """
-        specs = rospy.get_param('/niryo_robot_tools_commander/tool_list')
-
-        gripper_specs = {s['id'] : s['specs'] for s in specs if s['type'] == 'gripper'}
-
-        tool_id = tool_id or self.get_current_tool_id()
-        try:
-            return gripper_specs[tool_id]['close_position'], gripper_specs[tool_id]['open_position']
-        except KeyError:
-            raise NiryoRosWrapperException(f'No gripper found for id {tool_id}')
-
-    def __deal_with_gripper(self, command_int, speed, max_torque_percentage, hold_torque_percentage, position=0):
+    def __deal_with_gripper(self, command_int, speed, max_torque_percentage, hold_torque_percentage):
         goal = ToolGoal()
         goal.cmd.tool_id = self.get_current_tool_id()
         goal.cmd.cmd_type = command_int
         goal.cmd.max_torque_percentage = max_torque_percentage
         goal.cmd.hold_torque_percentage = hold_torque_percentage
-        goal.cmd.position = position
         goal.cmd.speed = speed
         return self.__tool_action_nac.execute(goal)
 

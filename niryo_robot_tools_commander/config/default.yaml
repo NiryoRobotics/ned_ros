@@ -4,7 +4,7 @@ command_list:
   # Gripper
   open_gripper: 1
   close_gripper: 2
-  control_gripper: 3
+
   # Vacuump pump
   pull_air_vacuum_pump: 10
   push_air_vacuum_pump: 11

@@ -20,7 +20,6 @@ tool_list:
     available_commands:
       - open_gripper
       - close_gripper
-      - control_gripper
     specs:
       open_position: 2300
       open_hold_torque: 200
@@ -42,7 +41,6 @@ tool_list:
     available_commands:
       - open_gripper
       - close_gripper
-      - control_gripper
     specs:
       open_position: 2380
       open_hold_torque: 300
@@ -64,7 +62,6 @@ tool_list:
     available_commands:
       - open_gripper
       - close_gripper
-      - control_gripper
     specs:
       open_position: 2840
       open_hold_torque: 200
