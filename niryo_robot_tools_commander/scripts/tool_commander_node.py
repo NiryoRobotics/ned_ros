@@ -42,6 +42,7 @@ class ToolsState:
 
         self.GRIPPER_OPEN = state_dict["gripper_open"]
         self.GRIPPER_CLOSE = state_dict["gripper_close"]
+        self.GRIPPER_OK = state_dict["gripper_ok"]
 
         self.VACUUM_PUMP_PULLED = state_dict["vacuum_pump_pulled"]
         self.VACUUM_PUMP_PUSHED = state_dict["vacuum_pump_pushed"]
@@ -78,6 +79,8 @@ class ToolCommander:
         self.__available_tools, self.__dict_commands_string_to_id, self.__dict_tool_str_to_id = self.create_tools()
 
         self.__dict_id_commands_to_string = {string: id_ for id_, string in self.__dict_commands_string_to_id.items()}
+        rospy.loginfo(f'{self.__dict_commands_string_to_id=}')
+        rospy.loginfo(f'{self.__dict_id_commands_to_string=}')
 
         # if gripper simulated, setup variables to control it through moveit
         if self.__is_use_gazebo and self.__is_gripper_simulated:

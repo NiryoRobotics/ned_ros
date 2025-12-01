@@ -1896,6 +1896,34 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__tools.close_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
+    def control_gripper(self, position, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
+        """
+        Control the gripper with a position
+
+        :param position: Position of the gripper in steps
+        :type position: int
+        :param speed: Default -> 500
+        :type speed: int
+        :param max_torque_percentage: Default -> 100
+        :type max_torque_percentage: int
+        :param hold_torque_percentage: Default -> 20
+        :type hold_torque_percentage: int
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__tools.control_gripper(position, speed, max_torque_percentage, hold_torque_percentage)
+
+    def get_gripper_limits(self, tool_id=None):
+        """
+        Get the gripper position limits, in steps.
+
+        :param tool_id: Tool ID. If None, use the current tool id.
+        :type tool_id: ToolID
+        :return: gripper position limits (close, open)
+        :rtype: (int, int)
+        """
+        return self.__tools.get_gripper_limits(tool_id)
+
     # - Vacuum
     def pull_air_vacuum_pump(self):
         """

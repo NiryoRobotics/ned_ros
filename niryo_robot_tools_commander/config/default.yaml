@@ -4,6 +4,7 @@ command_list:
   # Gripper
   open_gripper: 1
   close_gripper: 2
+  control_gripper: 3
   # Vacuump pump
   pull_air_vacuum_pump: 10
   push_air_vacuum_pump: 11
@@ -20,6 +21,7 @@ state_dict:
 
   gripper_open: 0x10
   gripper_close: 0x11
+  gripper_ok: 0x12
 
   vacuum_pump_pulled: 0x20
   vacuum_pump_pushed: 0x21

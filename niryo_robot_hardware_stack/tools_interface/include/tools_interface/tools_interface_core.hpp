@@ -96,6 +96,7 @@ namespace tools_interface
 
         bool _callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
         bool _callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+        bool _callbackControlGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
         bool _callbackToolReboot(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res);
 
@@ -125,6 +126,7 @@ namespace tools_interface
         ros::ServiceServer _ping_and_set_dxl_tool_server;
         ros::ServiceServer _open_gripper_server;
         ros::ServiceServer _close_gripper_server;
+        ros::ServiceServer _control_gripper_server;
         ros::ServiceServer _tool_reboot_server;
         ros::ServiceServer _pull_air_vacuum_pump_server;
         ros::ServiceServer _push_air_vacuum_pump_server;

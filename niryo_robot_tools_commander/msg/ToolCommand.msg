@@ -1,6 +1,7 @@
 # Gripper
 int8 OPEN_GRIPPER = 1
 int8 CLOSE_GRIPPER = 2
+int8 CONTROL_GRIPPER = 3
 
 # Vacuump pump
 int8 PULL_AIR_VACUUM_PUMP = 10
@@ -22,6 +23,7 @@ uint16 speed
 # if gripper Ned2
 uint8 max_torque_percentage
 uint8 hold_torque_percentage
+uint32 position
 
 # if vacuum pump or electromagnet grove
 bool activate
