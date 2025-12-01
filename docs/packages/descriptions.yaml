@@ -87,6 +87,7 @@ services:
   /niryo_robot/tools/ping_and_set_dxl_tool: "Ping the given device ID on the bus and set the corresponding tool if found"
   /niryo_robot/tools/open_gripper: "Open the gripper"
   /niryo_robot/tools/close_gripper: "Close the gripper"
+  /niryo_robot/tools/control_gripper: "Control the gripper manually"
   /niryo_robot/tools/pull_air_vacuum_pump: "Pull air from the vacuum pump"
   /niryo_robot/tools/push_air_vacuum_pump: "Push air to the vacuum pump"
   /niryo_robot/tools/reboot: "Reboot the tool's motor"
