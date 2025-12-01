@@ -412,6 +412,12 @@ bool ToolsInterfaceCore::_callbackToolReboot(niryo_robot_msgs::Trigger::Request 
     return true;
 }
 
+/**
+ * @brief ToolsInterfaceCore::_callbackControlGripper
+ * @param req
+ * @param res
+ * @return
+ */
 bool ToolsInterfaceCore::_callbackControlGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
