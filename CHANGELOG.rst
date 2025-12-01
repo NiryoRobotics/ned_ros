@@ -2,7 +2,7 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-forthcoming
+5.6.3
 -----------
 
 * chore: (SN-999) delete gazebo workspaces
