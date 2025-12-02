@@ -1873,9 +1873,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Ned2 only. Percentage of torque to apply while moving (in %)
+        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage:  Ned2 only. Percentage of torque to apply in holding position (in %)
+        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
@@ -1888,9 +1888,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Ned2 only. Percentage of torque to apply while moving (in %)
+        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage:  Ned2 only. Percentage of torque to apply in holding position (in %)
+        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
@@ -1905,10 +1905,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type position: int
         :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque: Ned2 only. Maximum torque to apply while moving gripper (in mA).
+        :param max_torque: Ned2/3Pro only. Maximum torque to apply while moving gripper (in mA).
         A negative value will apply the force in the opposite direction.
         :type max_torque: int
-        :param hold_torque: Ned2 only. Torque to apply once the gripper has stopped moving (in mA).
+        :param hold_torque: Ned2/3Pro only. Torque to apply once the gripper has stopped moving (in mA).
         A negative value will apply the force in the opposite direction.
         :type hold_torque: int
         """
