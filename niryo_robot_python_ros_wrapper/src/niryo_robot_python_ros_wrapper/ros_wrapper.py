@@ -1903,6 +1903,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         :param position: Position of the gripper (in motor steps).
         :type position: int
+        :param speed: Moving speed (unit is 0.111 rpm)
+        :type speed: int
         :param max_torque: Maximum torque to apply while moving gripper (in mA).
         A negative value will apply the force in the opposite direction.
         :type max_torque: int
@@ -1915,7 +1917,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                                     ToolCommand,
                                     self.get_current_tool_id(),
                                     position,
-                                    0,
+                                    speed,
                                     max_torque,
                                     hold_torque)
 
