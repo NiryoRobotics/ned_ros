@@ -737,8 +737,9 @@ class CommandInterpreter:
         return self.__send_answer()
 
     @check_nb_args(0)
-    def get_current_tool_position(self):
-        return self.__send_answer(self.__niryo_robot.get_current_tool_position())
+    def __get_current_tool_position(self):
+        position = self.__niryo_robot.get_current_tool_position()
+        return self.__send_answer(position)
 
     # - Vacuum
     @check_nb_args(0)
