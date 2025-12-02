@@ -1897,18 +1897,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__tools.close_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
-    def control_gripper(self, speed, position, max_torque, hold_torque):
+    def control_gripper(self, position, speed, max_torque, hold_torque):
         """
         Low level function to control the gripper.
 
         :param position: Position of the gripper (in motor steps).
         :type position: int
-        :param speed: Moving speed (unit is 0.111 rpm)
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque: Maximum torque to apply while moving gripper (in mA).
+        :param max_torque: Ned2 only. Maximum torque to apply while moving gripper (in mA).
         A negative value will apply the force in the opposite direction.
         :type max_torque: int
-        :param hold_torque: Torque to apply once the gripper has stopped moving (in mA).
+        :param hold_torque: Ned2 only. Torque to apply once the gripper has stopped moving (in mA).
         A negative value will apply the force in the opposite direction.
         :type hold_torque: int
         """

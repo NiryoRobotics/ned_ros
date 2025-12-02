@@ -727,13 +727,13 @@ class CommandInterpreter:
         return self.__send_answer()
 
     @check_nb_args(4)
-    def __control_gripper(self, speed, position, max_torque, hold_torque):
-        self.__check_type(speed, int)
+    def __control_gripper(self, position, speed, max_torque, hold_torque):
         self.__check_type(position, int)
+        self.__check_type(speed, int)
         self.__check_type(max_torque, int)
         self.__check_type(hold_torque, int)
 
-        self.__niryo_robot.control_gripper(speed, position, max_torque, hold_torque)
+        self.__niryo_robot.control_gripper(position, speed, max_torque, hold_torque)
         return self.__send_answer()
 
     @check_nb_args(0)
