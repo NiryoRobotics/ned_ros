@@ -4,7 +4,11 @@ spec:
       type: boolean
       default: false
 ---
-image: ${CI_REGISTRY}/robot/ned/development-tools/development-tools:latest
+
+default:
+  image: ${CI_REGISTRY}/robot/ned/development-tools/development-tools:latest
+  tags:
+    - aaeonniryoserver
 
 variables:
   GITLAB_CATKIN_PROFILE_NAME: release
