@@ -164,25 +164,30 @@ class Gripper(Tool):
         else:
             raise ValueError(f'Unknown gripper state: {state}')
 
-
     def open_gripper(self, cmd):
         # Remap percentage to real torque value
-        return self.__control_gripper(self.open_position, cmd.speed, cmd.hold_torque_percentage, cmd.max_torque_percentage, self.torque_limits["max"])
+        return self.__control_gripper(
+            self.open_position,
+            cmd.speed,
+            cmd.hold_torque_percentage,
+            cmd.max_torque_percentage,
+            self.torque_limits["max"],
+        )
 
     def close_gripper(self, cmd):
         # Remap percentage to real torque value
-        return self.__control_gripper(self.close_position, cmd.speed, cmd.hold_torque_percentage, cmd.max_torque_percentage, self.torque_limits["min"])
+        return self.__control_gripper(self.close_position,
+                                      cmd.speed,
+                                      cmd.hold_torque_percentage,
+                                      cmd.max_torque_percentage,
+                                      self.torque_limits["min"])
 
     def __control_gripper(self, position, speed, hold_torque_percentage, max_torque_percentage, torque_limit):
         # Remap percentage to real torque value
         hold_torque = int(torque_limit * (hold_torque_percentage / 100))
         max_torque = int(torque_limit * (max_torque_percentage / 100))
 
-        state = self.ros_command_interface.control_gripper(self._id,
-                                                           position,
-                                                           speed,
-                                                           hold_torque,
-                                                           max_torque)
+        state = self.ros_command_interface.control_gripper(self._id, position, speed, hold_torque, max_torque)
         return self.return_gripper_status(state)
 
     def update_params(self,
