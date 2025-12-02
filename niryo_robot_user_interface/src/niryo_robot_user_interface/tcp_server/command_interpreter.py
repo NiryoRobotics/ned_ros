@@ -736,6 +736,12 @@ class CommandInterpreter:
         self.__niryo_robot.control_gripper(position, speed, max_torque, hold_torque)
         return self.__send_answer()
 
+    @check_nb_args(1)
+    def __get_gripper_specs(self, tool_id):
+        tool_id = self.__tools_string_dict_convertor[tool_id]
+        specs = self.__niryo_robot.get_gripper_specs(tool_id)
+        return self.__send_answer(specs)
+
     @check_nb_args(0)
     def __get_current_tool_position(self):
         position = self.__niryo_robot.get_current_tool_position()
