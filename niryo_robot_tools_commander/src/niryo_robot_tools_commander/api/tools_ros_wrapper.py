@@ -128,7 +128,6 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_gripper(ToolCommand.CLOSE_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-
     def __deal_with_gripper(self, command_int, speed, max_torque_percentage, hold_torque_percentage):
         goal = ToolGoal()
         goal.cmd.tool_id = self.get_current_tool_id()

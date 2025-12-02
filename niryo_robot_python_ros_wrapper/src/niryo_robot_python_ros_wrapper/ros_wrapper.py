@@ -1911,7 +1911,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :type hold_torque: int
         """
         from tools_interface.srv import ToolCommand
-        result = self._call_service('/niryo_robot/tools/control_gripper', ToolCommand, self.get_current_tool_id(), position, 0, max_torque, hold_torque)
+        result = self._call_service('/niryo_robot/tools/control_gripper',
+                                    ToolCommand,
+                                    self.get_current_tool_id(),
+                                    position,
+                                    0,
+                                    max_torque,
+                                    hold_torque)
 
         if result.state != self.__control_gripper_states['gripper_ok']:
             try:
@@ -1919,7 +1925,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             except KeyError:
                 raise NiryoRosWrapperException(f'Unknown state {result.state} for control_gripper service')
             raise NiryoRosWrapperException(f'Invalid state "{code}" ({result.state})')
-
 
     def get_tool_position(self):
         """
@@ -1945,7 +1950,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         except StopIteration:
             raise NiryoRosWrapperException(f'No gripper found for id {tool_id}')
 
-        return (gripper_specs['close_position'], gripper_specs['open_position']), (gripper_specs['torque_limit']['min'], gripper_specs['torque_limit']['max'])
+        return (gripper_specs['close_position'], gripper_specs['open_position']), (gripper_specs['torque_limit']['min'],
+                                                                                   gripper_specs['torque_limit']['max'])
 
     # - Vacuum
     def pull_air_vacuum_pump(self):
