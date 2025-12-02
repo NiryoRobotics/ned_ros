@@ -147,10 +147,6 @@ class Gripper(Tool):
     def return_gripper_status(self, state):
         if state == self._tools_state.GRIPPER_OK:
             return True, "Successfully controlled gripper"
-        elif state == self._tools_state.GRIPPER_OPEN:
-            return True, "Successfully opened gripper"
-        elif state == self._tools_state.GRIPPER_CLOSE:
-            return True, "Successfully closed gripper"
         elif state == self._tools_state.PING_OK:
             return True, "Gripper is connected"
         elif state == self._tools_state.PING_ERROR:

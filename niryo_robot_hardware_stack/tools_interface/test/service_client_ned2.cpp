@@ -189,7 +189,7 @@ TEST_F(ToolTestControlSuite, openTool)
     EXPECT_TRUE(exists);
     client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OPEN;
+    int res = common::model::ToolState::GRIPPER_STATE_OK;
     EXPECT_EQ(srv.response.state, res);
 }
 
@@ -215,7 +215,7 @@ TEST_F(ToolTestControlSuite, openToolWrongId)
     EXPECT_TRUE(exists);
     client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OPEN;
+    int res = common::model::ToolState::GRIPPER_STATE_OK;
     EXPECT_NE(srv.response.state, res);
 }
 
@@ -251,7 +251,7 @@ TEST_F(ToolTestControlSuite, CloseTool)
 
     client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_CLOSE;
+    int res = common::model::ToolState::GRIPPER_STATE_OK;
     EXPECT_EQ(srv.response.state, res);
 }
 
@@ -277,7 +277,7 @@ TEST_F(ToolTestControlSuite, closeToolWrongId)
     EXPECT_TRUE(exists);
     client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_CLOSE;
+    int res = common::model::ToolState::GRIPPER_STATE_OK;
     EXPECT_NE(srv.response.state, res);
 }
 

@@ -40,8 +40,6 @@ class ToolsState:
         self.WRONG_ID = state_dict["wrong_id"]
         self.TIMEOUT = state_dict["timeout"]
 
-        self.GRIPPER_OPEN = state_dict["gripper_open"]
-        self.GRIPPER_CLOSE = state_dict["gripper_close"]
         self.GRIPPER_OK = state_dict["gripper_ok"]
 
         self.VACUUM_PUMP_PULLED = state_dict["vacuum_pump_pulled"]
