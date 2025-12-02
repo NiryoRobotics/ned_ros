@@ -1928,7 +1928,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
                 raise NiryoRosWrapperException(f'Unknown state {result.state} for control_gripper service')
             raise NiryoRosWrapperException(f'Invalid state "{code}" ({result.state})')
 
-    def get_tool_position(self):
+    def get_current_tool_position(self):
         """
         Get the tool current position
         :return: the tool position, in steps.

@@ -726,6 +726,20 @@ class CommandInterpreter:
         self.__niryo_robot.close_gripper(speed, max_troque_percentage, hold_torque_percentage)
         return self.__send_answer()
 
+    @check_nb_args(4)
+    def __control_gripper(self, speed, position, max_torque, hold_torque):
+        self.__check_type(speed, int)
+        self.__check_type(position, int)
+        self.__check_type(max_torque, int)
+        self.__check_type(hold_torque, int)
+
+        self.__niryo_robot.control_gripper(speed, position, max_torque, hold_torque)
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def get_current_tool_position(self):
+        return self.__send_answer(self.__niryo_robot.get_current_tool_position())
+
     # - Vacuum
     @check_nb_args(0)
     def __pull_air_vacuum_pump(self):
