@@ -1,0 +1,20 @@
+actions: []
+authors: Valentin Pitre <v.pitre@niryo.com>
+brief: ''
+bugtracker: ''
+depends:
+- message_runtime
+- niryo_robot_msgs
+- catkin
+- message_generation
+- std_msgs
+- rospy
+description: Handle robot status
+license: GPLv3
+maintainers: Valentin Pitre <v.pitre@niryo.com>
+msgs:
+- RobotStatus
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

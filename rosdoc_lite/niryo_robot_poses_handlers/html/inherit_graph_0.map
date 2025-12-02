@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,177,68,203"/>
+<area shape="rect" id="node2" href="$classniryo__robot__poses__handlers_1_1dynamic__frame__manager_1_1DynamicFrame.html" title=" " alt="" coords="123,71,387,112"/>
+<area shape="rect" id="node3" href="$classniryo__robot__poses__handlers_1_1file__manager_1_1FileManager.html" title=" " alt="" coords="141,136,369,177"/>
+<area shape="rect" id="node9" href="$classniryo__robot__poses__handlers_1_1grip__manager_1_1Grip.html" title=" " alt="" coords="139,201,372,243"/>
+<area shape="rect" id="node10" href="$classniryo__robot__poses__handlers_1_1workspace__manager_1_1Workspace.html" title=" " alt="" coords="116,267,395,308"/>
+<area shape="rect" id="node4" href="$classniryo__robot__poses__handlers_1_1dynamic__frame__manager_1_1DynamicFrameManager.html" title=" " alt="" coords="443,5,735,47"/>
+<area shape="rect" id="node5" href="$classniryo__robot__poses__handlers_1_1file__manager_1_1PickleFileManager.html" title=" " alt="" coords="475,71,703,112"/>
+<area shape="rect" id="node6" href="$classniryo__robot__poses__handlers_1_1grip__manager_1_1GripManager.html" title=" " alt="" coords="472,136,705,177"/>
+<area shape="rect" id="node7" href="$classniryo__robot__poses__handlers_1_1pose__manager_1_1PoseManager.html" title=" " alt="" coords="469,201,708,243"/>
+<area shape="rect" id="node8" href="$classniryo__robot__poses__handlers_1_1workspace__manager_1_1WorkspaceManager.html" title=" " alt="" coords="449,267,728,308"/>
+</map>

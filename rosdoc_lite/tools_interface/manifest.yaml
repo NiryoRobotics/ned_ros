@@ -1,0 +1,27 @@
+actions: []
+authors: Etienne Rey-Coquais, Edouard Renard
+brief: ''
+bugtracker: ''
+depends:
+- roslint
+- message_generation
+- std_msgs
+- message_runtime
+- common
+- ttl_driver
+- catkin
+- code_coverage
+- roscpp
+- python3-catkin-lint
+- rostest
+description: Provides an interface to manage the tools of the robot
+license: GPLv3
+maintainers: Etienne Rey-Coquais <e.rey-coquais@niryo.com>
+msgs:
+- Tool
+package_type: package
+repo_url: ''
+srvs:
+- PingDxlTool
+- ToolCommand
+url: ''

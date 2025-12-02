@@ -1,0 +1,971 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Niryo robot vision &mdash; Ned ROS Stack  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=32aebf7b" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Niryo robot led ring" href="niryo_robot_led_ring.html" />
+    <link rel="prev" title="Niryo robot user interface" href="niryo_robot_user_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Ned ROS Stack
+              <img src="../../_static/logo_niryo-nobg.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/overview.html">ROS Stack overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/use_your_robot.html">Use your Niryo Robot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/use_your_robot.html#connecting-to-the-robot">Connecting to the Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/use_your_robot.html#robot-setup">Robot setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#system-setup">System setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#home-setup">Home setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#services-and-daemons">Services and daemons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/use_your_robot.html#starting-the-robot-manually-for-advanced-users-only">Starting the robot manually (for advanced users only)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#stopping-the-service">Stopping the service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#starting-the-robot">Starting the robot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/use_your_robot.html#changing-the-log-level">Changing the log level</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/simulation.html">Use Niryo robot via simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/simulation.html#simulation-environment-installation">Simulation environment installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/simulation.html#simulation-usage">Simulation usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/simulation.html#without-physics-no-visualization">Without physics - No visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/simulation.html#without-physics-rviz-visualization">Without physics - RViz Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#control-with-trackbar">Control with trackbar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#control-with-ros">Control with ROS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#rviz-visualization-options">RViz Visualization options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/simulation.html#with-physics-gazebo-simulation">With physics - Gazebo Simulation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#launch-gazebo-simulation">Launch Gazebo simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../introduction/simulation.html#gazebo-simulation-options">Gazebo Simulation options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/quick_start.html">Quick start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/quick_start.html#connect-to-your-robot">Connect to your robot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#hotspot">Hotspot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#connected-mode">Connected mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#direct-ethernet">Direct ethernet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#ethernet-through-network">Ethernet through network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/quick_start.html#robot-programming">Robot programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/quick_start.html#tips">Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#program-your-first-move-in-30-seconds">Program your first move in 30 seconds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#joints-poses-what-s-the-difference">Joints &amp; Poses, what’s the difference?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#use-a-tool">Use a tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#standard-linear-waypointed-moves-what-s-the-difference">Standard, linear, waypointed moves, what’s the difference?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../introduction/quick_start.html#start-pause-cancel-a-program-execution">Start, Pause, Cancel a program execution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html">Ubuntu 20.04 installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html#install-ros">Install ROS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html#set-up-your-workspace">Set up your workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html#install-dependencies">Install dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/install_for_ubuntu_20.html#build-the-packages">Build the packages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/deploy_with_docker.html">Deploy with docker</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../common_interfaces.html">Common interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../common_interfaces.html#the-niryo-robot-msgs-package">The Niryo robot msgs package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#ros-messages">ROS messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#ros-services">ROS services</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../common_interfaces.html#the-niryo-robot-namespace">The <code class="docutils literal notranslate"><span class="pre">/niryo_robot</span></code> namespace</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#ros-topics">ROS Topics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../common_interfaces.html#publishers">Publishers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../common_interfaces.html#subscribers">Subscribers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#id15">ROS Services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common_interfaces.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../high_level.html">High Level Packages</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_bringup.html">Niryo robot bringup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_bringup.html#on-raspberrypi">On RaspberryPI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_bringup.html#ned2">Ned2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_bringup.html#ned3pro">Ned3pro</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_bringup.html#on-desktop-simulation">On Desktop (Simulation)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_bringup.html#gazebo-simulation">Gazebo simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_bringup.html#rviz-simulation">Rviz simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_bringup.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_arm_commander.html">Niryo robot arm commander</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_arm_commander.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_arm_commander.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_arm_commander.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_arm_commander.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_arm_commander.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_arm_commander.html#id16">The ArmMoveCommand message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_description.html">Niryo robot description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_gazebo.html">Niryo robot gazebo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_gazebo.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_gazebo.html#create-your-own-world">Create your own world</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://docs.niryo.com/api/modbus/">Niryo robot modbus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_poses_handlers.html">Niryo robot poses handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#workspaces">Workspaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#grips">Grips</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#the-vision-pick-loop">The vision pick loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#dynamic-frames">Dynamic frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#poses-trajectories">Poses &amp; trajectories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_poses_handlers.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_poses_handlers.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_poses_handlers.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_poses_handlers.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_poses_handlers.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_programs_manager.html">Niryo robot programs manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_programs_manager.html#programs-manager-node">Programs manager node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_programs_manager.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_programs_manager_v2.html">Niryo robot programs manager v2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#autorun-program">Autorun program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_programs_manager_v2.html#the-executeprogram-action">The ExecuteProgram action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_rpi.html">Niryo robot rpi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_rpi.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_rpi.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_rpi.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_rpi.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_rpi.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_sound.html">Niryo robot sound</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_sound.html#sounds">Sounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_sound.html#sound-api-functions">Sound API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#sound-ros-wrapper">Sound ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_sound.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_sound.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_status.html">Niryo robot status</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_status.html#robot-status">Robot status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_status.html#robot-status-api-functions">Robot status API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#robot-status-ros-wrapper">Robot status ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_status.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_status.html#the-robotstatus-message">The RobotStatus message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_tools_commander.html">Niryo robot tools commander</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_tools_commander.html#tool-ids">Tool IDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_tools_commander.html#tools-commander-api-functions">Tools commander API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#tools-commander-ros-wrapper">Tools commander ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_tools_commander.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_tools_commander.html#the-toolcommand-message">The ToolCommand message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_user_interface.html">Niryo robot user interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_user_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_user_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_user_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_user_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_user_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Niryo robot vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_led_ring.html">Niryo robot led ring</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_led_ring.html#id1">Robot status mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_led_ring.html#id2">User mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_led_ring.html#led-ring-api-functions">Led ring API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#led-ring-ros-wrapper">Led ring ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_led_ring.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_led_ring.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="niryo_robot_database.html">Niryo robot database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_database.html#database-api-functions">Database API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#database-ros-wrapper">Database ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="niryo_robot_database.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="niryo_robot_database.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../low_level.html">Low Level Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html">Niryo Robot Hardware Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#hardware-status">Hardware status</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#message-definition">Message definition</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/niryo_robot_hardware_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/joints_interface.html">Joints Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/joints_interface.html#joints-interface-node">Joints interface node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/joints_interface.html#joints-motors-configuration">Joints motors configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/joints_interface.html#the-stepper-motors-profiles">The stepper motors profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/joints_interface.html#the-dynamixel-motors-parameters">The dynamixel motors parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/joints_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/joints_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/joints_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/joints_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/tools_interface.html">Tools Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/tools_interface.html#tools-interface-node-only-for-development-and-debugging">Tools interface node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/tools_interface.html#tools-interface-core">Tools Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/tools_interface.html#tools-motors-configuration">Tools motors configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/tools_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/tools_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/tools_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/tools_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/tools_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/end_effector_interface.html">End Effector Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/end_effector_interface.html#end-effector-interface-node-only-for-development-and-debugging">End Effector Interface node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/end_effector_interface.html#end-effector-interface-core">End Effector Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/end_effector_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/end_effector_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/end_effector_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/end_effector_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/end_effector_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/conveyor_interface.html">Conveyor Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/conveyor_interface.html#conveyor-interface-node-only-development-and-debugging">Conveyor Interface node (Only development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/conveyor_interface.html#conveyor-interface-core">Conveyor Interface core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/conveyor_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/conveyor_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/conveyor_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/conveyor_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/conveyor_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/cpu_interface.html">CPU Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/cpu_interface.html#cpu-interface-node-only-for-development-and-debugging">CPU Interface Node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/cpu_interface.html#cpu-interface-core">CPU Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/cpu_interface.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/cpu_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/cpu_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/cpu_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/ttl_driver.html">TTL Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/ttl_driver.html#ttl-driver-node-only-for-development-and-debugging">TTL Driver Node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/ttl_driver.html#ttl-interface-core">TTL Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/ttl_driver.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_driver.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_driver.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_driver.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_driver.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/ttl_debug_tools.html">TTL Debug Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/ttl_debug_tools.html#ttl-debug-tool-binary">TTL debug tool binary</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_debug_tools.html#parameters-ttl-debug-tools">Parameters - TTL debug tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/ttl_debug_tools.html#scripts">Scripts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_debug_tools.html#niryo-robot-send-dxl-custom-value">Niryo robot - Send DXL custom value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/ttl_debug_tools.html#niryo-robot-read-dxl-custom-value">Niryo robot - Read DXL custom value</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../low_level/common.html">Common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/common.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/common.html#states">States</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/common.html#enums">Enums</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../low_level/common.html#commands">Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../low_level/common.html#util">Util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../third_parties.html">Third Parties</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../third_parties/dynamixel_sdk.html">Dynamixel SDK package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../third_parties/ros_control.html">ROS control package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../third_parties/moveit.html">MoveIt! package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../third_parties/foxglove_bridge.html">Foxglove bridge package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ros_wrapper.html">Control with Python ROS Wrapper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html">Python ROS Wrapper API documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_python_ros_wrapper.ros_wrapper">Main class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper"><code class="docutils literal notranslate"><span class="pre">NiryoRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper.move_command"><code class="docutils literal notranslate"><span class="pre">move_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.AutorunMode"><code class="docutils literal notranslate"><span class="pre">AutorunMode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ButtonAction"><code class="docutils literal notranslate"><span class="pre">ButtonAction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum"><code class="docutils literal notranslate"><span class="pre">CommandEnum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorCan"><code class="docutils literal notranslate"><span class="pre">ConveyorCan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorDirection"><code class="docutils literal notranslate"><span class="pre">ConveyorDirection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorID"><code class="docutils literal notranslate"><span class="pre">ConveyorID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorTTL"><code class="docutils literal notranslate"><span class="pre">ConveyorTTL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ObjectColor"><code class="docutils literal notranslate"><span class="pre">ObjectColor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ObjectShape"><code class="docutils literal notranslate"><span class="pre">ObjectShape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID"><code class="docutils literal notranslate"><span class="pre">PinID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinMode"><code class="docutils literal notranslate"><span class="pre">PinMode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinState"><code class="docutils literal notranslate"><span class="pre">PinState</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ProgramLanguage"><code class="docutils literal notranslate"><span class="pre">ProgramLanguage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ShiftPose"><code class="docutils literal notranslate"><span class="pre">ShiftPose</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_utils.dataclasses.JointsPosition">Data Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_utils.dataclasses.JointsPosition.JointsPosition"><code class="docutils literal notranslate"><span class="pre">JointsPosition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_utils.dataclasses.Pose.Pose"><code class="docutils literal notranslate"><span class="pre">Pose</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper"><code class="docutils literal notranslate"><span class="pre">ToolsRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_tools_commander.api.tools_ros_wrapper_enums.ToolID"><code class="docutils literal notranslate"><span class="pre">ToolID</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#database">Database</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_database.api.database_ros_wrapper.DatabaseRosWrapper"><code class="docutils literal notranslate"><span class="pre">DatabaseRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_database.api.database_ros_wrapper.DatabaseRosWrapperException"><code class="docutils literal notranslate"><span class="pre">DatabaseRosWrapperException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#sound">Sound</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper"><code class="docutils literal notranslate"><span class="pre">SoundRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapperException"><code class="docutils literal notranslate"><span class="pre">SoundRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#led-ring">Led Ring</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper"><code class="docutils literal notranslate"><span class="pre">LedRingRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapperException"><code class="docutils literal notranslate"><span class="pre">LedRingRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#robot-status">Robot Status</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_status.api.robot_status_ros_wrapper.RobotStatusRosWrapper"><code class="docutils literal notranslate"><span class="pre">RobotStatusRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_status.api.robot_status_ros_wrapper.RobotStatusRosWrapperException"><code class="docutils literal notranslate"><span class="pre">RobotStatusRosWrapperException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_python_ros_wrapper.custom_button_ros_wrapper">Custom Button</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper"><code class="docutils literal notranslate"><span class="pre">CustomButtonRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapperException"><code class="docutils literal notranslate"><span class="pre">CustomButtonRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/before_running.html">Before running your programs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/before_running.html#the-variable-pythonpath">The variable PYTHONPATH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/before_running.html#required-piece-of-code">Required piece of code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_basics.html">Examples: Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_basics.html#your-first-move-joint">Your first move joint</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/examples_basics.html#code-details-first-movej">Code details - First MoveJ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_basics.html#your-first-pick-and-place">Your first pick and place</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/examples_basics.html#code-details-first-pick-and-place">Code details - first pick and place</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_motions.html">Examples: Motions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_motions.html#joints">Joints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_motions.html#poses">Poses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_tool_action.html">Examples: Tool action</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_tool_action.html#tool-control">Tool control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/examples_tool_action.html#setup-tool">Setup tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/examples_tool_action.html#grasp">Grasp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../python_ros_wrapper/examples_tool_action.html#release">Release</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_conveyor.html">Examples: Conveyor Belt</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_conveyor.html#simple-conveyor-belt-control">Simple Conveyor Belt control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_conveyor.html#advanced-conveyor-belt-control">Advanced Conveyor Belt control</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_vision.html">Examples: Vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_vision.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_vision.html#simple-vision-pick">Simple Vision pick</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../python_ros_wrapper/examples_frames.html">Examples: Dynamic frames</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../python_ros_wrapper/examples_frames.html#simple-dynamic-frame-control">Simple dynamic frame control</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">To go further...</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../to_go_further/tcp_server.html">Use Ned robot’s TCP server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../to_go_further/tcp_server.html#connection">Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../to_go_further/tcp_server.html#communication">Communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../to_go_further/tcp_server.html#packet-convention">Packet convention</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../to_go_further/tcp_server.html#general-format">General format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../to_go_further/tcp_server.html#request">Request</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../to_go_further/tcp_server.html#format-request">Format - Request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../to_go_further/tcp_server.html#examples-request">Examples - Request</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../to_go_further/tcp_server.html#answer">Answer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../to_go_further/tcp_server.html#format-answer">Format - Answer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../to_go_further/tcp_server.html#examples-answer">Examples - Answer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../to_go_further/tcp_server.html#commands-enum-for-tcp-server">Commands enum for TCP server</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/api/pyniryo/">Pyniryo</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/api/modbus/">Modbus</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/niryostudio/">Niryo studio</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog_link.html">Ned ROS stack Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id1">5.6.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-6-2">v5.6.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-6-1">v5.6.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-6-0">v5.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-5">v5.5.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-4">v5.5.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-3">v5.5.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-2">v5.5.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-1">v5.5.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-5-0">v5.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-4-0">v5.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-3-3">v5.3.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-3-2">v5.3.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-3-1">v5.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-3-0">v5.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-2-2">v5.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-2-1">v5.2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-2-0">v5.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-1-3">v5.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-1-2">v5.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-1-1">v5.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-1-0">v5.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v5-0-1">v5.0.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#v4-0-0-2021-12-16">v4.0.0 (2021-12-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-6-2021-12-02">ned2_v0.6 (2021-12-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-5-2021-11-25">ned2_v0.5 (2021-11-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-4-2021-11-17">ned2_v0.4 (2021-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-3-2021-11-08">ned2_v0.3 (2021-11-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-2-2021-11-04">ned2_v0.2 (2021-11-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id2">3.2.0 (2021-09-23)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#ned2-v0-1-2021-09-21">ned2_v0.1 (2021-09-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id3">3.1.2 (2021-08-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id4">3.1.1 (2021-06-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id5">3.1.0 (2021-05-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog_link.html#id6">3.0.0 (2021-01-25)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Ned ROS Stack</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../high_level.html">High Level Packages</a></li>
+      <li class="breadcrumb-item active">Niryo robot vision</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/packages/high_level/niryo_robot_vision.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <blockquote>
+<div></div></blockquote>
+<section id="niryo-robot-vision">
+<h1>Niryo robot vision<a class="headerlink" href="#niryo-robot-vision" title="Permalink to this heading"></a></h1>
+<p>This package is the one dealing with all vision related stuff.</p>
+<p>It is made of several services to deal with video streaming, object detection…
+It also works in simulation with gazebo.</p>
+<p>It belongs to the ROS namespace: <code class="docutils literal notranslate"><span class="pre">/niryo_robot_vision</span></code>.</p>
+<section id="package-documentation">
+<h2>Package Documentation<a class="headerlink" href="#package-documentation" title="Permalink to this heading"></a></h2>
+<section id="ros-topics">
+<h3>ROS Topics<a class="headerlink" href="#ros-topics" title="Permalink to this heading"></a></h3>
+<section id="publishers">
+<h4>Publishers<a class="headerlink" href="#publishers" title="Permalink to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Topic Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>/niryo_robot_vision/camera_intrinsics</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CameraInfo.html">sensor_msgs/CameraInfo</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/compressed_video_stream</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>Publish camera video stream as compressed images</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug/active_topics</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/msg/ActiveDebugTopics.html">niryo_robot_vision/ActiveDebugTopics</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/debug/any_channel</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug/blue_channel</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/debug/green_channel</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug/markers</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/debug/red_channel</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CompressedImage.html">sensor_msgs/CompressedImage</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/video_stream_is_active</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/std_msgs/html/msg/Bool.html">std_msgs/Bool</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/video_stream_parameters</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/msg/ImageParameters.html">niryo_robot_vision/ImageParameters</a></p></td>
+<td><p>Publish the brightness, contrast and saturation settings of the video stream</p></td>
+</tr>
+<tr class="row-even"><td><p>/rosout</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/rosgraph_msgs/html/msg/Log.html">rosgraph_msgs/Log</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/video_stream_parameters</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/msg/ImageParameters.html">niryo_robot_vision/ImageParameters</a></p></td>
+<td><p>Publish the brightness, contrast and saturation settings of the video stream</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/video_stream_is_active</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/std_msgs/html/msg/Bool.html">std_msgs/Bool</a></p></td>
+<td><p>Whether the video stream is active or not</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/visualization_marker</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/visualization_msgs/html/msg/MarkerArray.html">visualization_msgs/MarkerArray</a></p></td>
+<td><p>Publish visual markers for Rviz</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/camera_intrinsics</p></td>
+<td><p><a class="reference external" href="https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/CameraInfo.html">sensor_msgs/CameraInfo</a></p></td>
+<td><p>Publish camera’s intrinsic parameters</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ros-services">
+<h3>ROS Services<a class="headerlink" href="#ros-services" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Service Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug/activate</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/ActivateDebugTopics.html">niryo_robot_vision/ActivateDebugTopics</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/debug_colors</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/DebugColorDetection.html">niryo_robot_vision/DebugColorDetection</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug_markers</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/DebugMarkers.html">niryo_robot_vision/DebugMarkers</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/get_loggers</p></td>
+<td><p>roscpp/GetLoggers</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/obj_detection_rel</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/ObjDetection.html">niryo_robot_vision/ObjDetection</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/set_brightness</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/set_contrast</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/set_logger_level</p></td>
+<td><p>roscpp/SetLoggerLevel</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/set_saturation</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/set_source</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_msgs/html/srv/SetString.html">niryo_robot_msgs/SetString</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/start_stop_video_streaming</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_msgs/html/srv/SetBool.html">niryo_robot_msgs/SetBool</a></p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/debug_colors</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/DebugColorDetection.html">niryo_robot_vision/DebugColorDetection</a></p></td>
+<td><p>Get a masked image showing only detected pixels of the given color</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug_markers</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/DebugMarkers.html">niryo_robot_vision/DebugMarkers</a></p></td>
+<td><p>Get an image highlighting detected markers</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/set_brightness</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>Set the brightness of the video stream</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/set_contrast</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>Set the contrast of the video stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/set_saturation</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_vision/html/srv/SetImageParameter.html">niryo_robot_vision/SetImageParameter</a></p></td>
+<td><p>Set the saturation of the video stream</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/start_stop_video_streaming</p></td>
+<td><p><a class="reference external" href="../../rosdoc_lite/niryo_robot_msgs/html/srv/SetBool.html">niryo_robot_msgs/SetBool</a></p></td>
+<td><p>Start or stop the video stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/take_picture</p></td>
+<td><p>niryo_robot_vision/TakePicture</p></td>
+<td><p>Take a picture and save it to the corresponding path</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/visualization</p></td>
+<td><p>niryo_robot_vision/Visualization</p></td>
+<td><p>Add visuals markers of objects detected by the robot’s camera to Rviz</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ros-parameters">
+<h3>ROS Parameters<a class="headerlink" href="#ros-parameters" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter Name</p></th>
+<th class="head"><p>Default value</p></th>
+<th class="head"><p>Simulation value</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>/niryo_robot_vision/cam_intrinsics/dist</p></td>
+<td><p>[[-0.4146402, 0.2407384, 0.0, 0.0, -0.1040042]]</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/cam_intrinsics/height_img</p></td>
+<td><p>480</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/cam_intrinsics/mtx</p></td>
+<td><p>[[508.069, 0.0, 332.821], [0.0, 506.445, 242.984], [0.0, 0.0, 1.0]]</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/cam_intrinsics/width_img</p></td>
+<td><p>640</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/camera_port</p></td>
+<td><p>-1</p></td>
+<td><p>N/A</p></td>
+<td><p>int</p></td>
+<td><p>Port of the camera</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/client_stream_topic</p></td>
+<td><p>~client_stream</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/debug_compression_quality</p></td>
+<td><p>70</p></td>
+<td><p>N/A</p></td>
+<td><p>percentage</p></td>
+<td><p>Quality of the debug image compression</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/flip_img</p></td>
+<td><p>True</p></td>
+<td><p>N/A</p></td>
+<td><p>bool</p></td>
+<td><p>Whether the image should be flipped or not</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/frame_rate</p></td>
+<td><p>15</p></td>
+<td><p>N/A</p></td>
+<td><p>Hz</p></td>
+<td><p>Frame rate of the video stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/hardware_version</p></td>
+<td><p>ned2</p></td>
+<td><p>N/A</p></td>
+<td><p>string</p></td>
+<td><p>Hardware version of the robot</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/initialized</p></td>
+<td><p>True</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/is_active_rate</p></td>
+<td><p>2.0</p></td>
+<td><p>N/A</p></td>
+<td><p>seconds</p></td>
+<td><p>Rate at which the video stream is checked to be active</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/log_level</p></td>
+<td><p>INFO</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>/niryo_robot_vision/simulation_mode</p></td>
+<td><p>True</p></td>
+<td><p>N/A</p></td>
+<td><p>bool</p></td>
+<td><p>Whether the vision node is in simulation mode or not</p></td>
+</tr>
+<tr class="row-even"><td><p>/niryo_robot_vision/stream_compression_quality</p></td>
+<td><p>55</p></td>
+<td><p>N/A</p></td>
+<td><p>percentage</p></td>
+<td><p>Quality of the video stream compression</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ros-action">
+<h3>ROS Action<a class="headerlink" href="#ros-action" title="Permalink to this heading"></a></h3>
+<p>Namespace: <strong>None</strong></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="niryo_robot_user_interface.html" class="btn btn-neutral float-left" title="Niryo robot user interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="niryo_robot_led_ring.html" class="btn btn-neutral float-right" title="Niryo robot led ring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Niryo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

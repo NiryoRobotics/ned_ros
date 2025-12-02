@@ -1,0 +1,25 @@
+actions: []
+authors: Remi Lux <r.lux@niryo.com>
+brief: ''
+bugtracker: ''
+depends:
+- actionlib
+- sensor_msgs
+- python3-catkin-lint
+- roslint
+- catkin
+- message_runtime
+- std_msgs
+- niryo_robot_msgs
+- niryo_robot_arm_commander
+- message_generation
+- actionlib_msgs
+description: Handles high level commands from user
+license: GPLv3
+maintainers: Remi Lux <r.lux@niryo.com>, Corentin Ducatez <c.ducatez@niryo.com>
+msgs:
+- ConnectionState
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

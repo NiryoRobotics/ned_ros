@@ -1,0 +1,36 @@
+actions: []
+authors: Etienne Rey-Coquais, Edouard Renard
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- message_runtime
+- niryo_moveit_config_standalone
+- roslint
+- roscpp
+- python3-catkin-lint
+- controller_manager
+- niryo_robot_status
+- tools_interface
+- xacro
+- conveyor_interface
+- end_effector_interface
+- niryo_robot_description
+- code_coverage
+- rostest
+- robot_state_publisher
+- niryo_moveit_config_w_gripper1
+- message_generation
+- actionlib_msgs
+- niryo_robot_msgs
+- joints_interface
+- cpu_interface
+- common
+description: The hardware_interface package
+license: GPLv3
+maintainers: Etienne Rey-Coquais <e.rey-coquais@niryo.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

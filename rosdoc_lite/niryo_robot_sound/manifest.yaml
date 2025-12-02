@@ -1,0 +1,26 @@
+actions: []
+authors: Nicolas Guy <n.guy@niryo.com>
+brief: ''
+bugtracker: ''
+depends:
+- message_generation
+- message_runtime
+- python-numpy
+- std_msgs
+- catkin
+- niryo_robot_status
+- roslint
+- niryo_robot_msgs
+description: Linking Ned 2 to his sound card in order to deal with sounds and musics
+license: GPLv3
+maintainers: Valentin Pitre <v.pitre@niryo.com>
+msgs:
+- SoundList
+- SoundObject
+package_type: package
+repo_url: ''
+srvs:
+- ManageSound
+- PlaySound
+- TextToSpeech
+url: ''

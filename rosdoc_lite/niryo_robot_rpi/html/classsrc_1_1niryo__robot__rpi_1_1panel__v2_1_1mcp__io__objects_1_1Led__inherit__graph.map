@@ -1,0 +1,6 @@
+<map id="src.niryo_robot_rpi.panel_v2.mcp_io_objects.Led" name="src.niryo_robot_rpi.panel_v2.mcp_io_objects.Led">
+<area shape="rect" id="node1" title=" " alt="" coords="35,259,217,300"/>
+<area shape="rect" id="node2" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1DigitalOutput.html" title=" " alt="" coords="5,169,247,211"/>
+<area shape="rect" id="node3" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1io__objects_1_1NiryoIO.html" title=" " alt="" coords="16,80,236,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="95,5,157,32"/>
+</map>

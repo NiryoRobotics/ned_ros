@@ -1,0 +1,28 @@
+actions: []
+authors: "Cl\xE9ment Cocquempot"
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- niryo_robot_msgs
+- roscpp
+- code_coverage
+- ttl_driver
+- std_msgs
+- python3-catkin-lint
+- message_generation
+- roslint
+- message_runtime
+- rostest
+- common
+description: Provides an interface to manage the end effector of the robot
+license: GPLv3
+maintainers: "Cl\xE9ment Cocquempot <c.cocquempot@niryo.com>"
+msgs:
+- EEButtonStatus
+- EEIOState
+package_type: package
+repo_url: ''
+srvs:
+- SetEEDigitalOut
+url: ''

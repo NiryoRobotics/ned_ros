@@ -1,0 +1,1388 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ned ROS stack Changelog &mdash; Ned ROS Stack  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=32aebf7b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Use Ned robot’s TCP server" href="to_go_further/tcp_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Ned ROS Stack
+              <img src="_static/logo_niryo-nobg.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction/overview.html">ROS Stack overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/use_your_robot.html">Use your Niryo Robot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/use_your_robot.html#connecting-to-the-robot">Connecting to the Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/use_your_robot.html#robot-setup">Robot setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#system-setup">System setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#home-setup">Home setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#services-and-daemons">Services and daemons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/use_your_robot.html#starting-the-robot-manually-for-advanced-users-only">Starting the robot manually (for advanced users only)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#stopping-the-service">Stopping the service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#starting-the-robot">Starting the robot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/use_your_robot.html#changing-the-log-level">Changing the log level</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/simulation.html">Use Niryo robot via simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/simulation.html#simulation-environment-installation">Simulation environment installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/simulation.html#simulation-usage">Simulation usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction/simulation.html#without-physics-no-visualization">Without physics - No visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/simulation.html#without-physics-rviz-visualization">Without physics - RViz Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#control-with-trackbar">Control with trackbar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#control-with-ros">Control with ROS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#rviz-visualization-options">RViz Visualization options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/simulation.html#with-physics-gazebo-simulation">With physics - Gazebo Simulation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#launch-gazebo-simulation">Launch Gazebo simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction/simulation.html#gazebo-simulation-options">Gazebo Simulation options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/quick_start.html">Quick start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/quick_start.html#connect-to-your-robot">Connect to your robot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#hotspot">Hotspot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#connected-mode">Connected mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#direct-ethernet">Direct ethernet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#ethernet-through-network">Ethernet through network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/quick_start.html#robot-programming">Robot programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/quick_start.html#tips">Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#program-your-first-move-in-30-seconds">Program your first move in 30 seconds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#joints-poses-what-s-the-difference">Joints &amp; Poses, what’s the difference?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#use-a-tool">Use a tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#standard-linear-waypointed-moves-what-s-the-difference">Standard, linear, waypointed moves, what’s the difference?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction/quick_start.html#start-pause-cancel-a-program-execution">Start, Pause, Cancel a program execution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/install_for_ubuntu_20.html">Ubuntu 20.04 installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/install_for_ubuntu_20.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/install_for_ubuntu_20.html#install-ros">Install ROS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/install_for_ubuntu_20.html#set-up-your-workspace">Set up your workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/install_for_ubuntu_20.html#install-dependencies">Install dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/install_for_ubuntu_20.html#build-the-packages">Build the packages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation/deploy_with_docker.html">Deploy with docker</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Packages</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="packages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="packages/common_interfaces.html">Common interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packages/common_interfaces.html#the-niryo-robot-msgs-package">The Niryo robot msgs package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#ros-messages">ROS messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#ros-services">ROS services</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/common_interfaces.html#the-niryo-robot-namespace">The <code class="docutils literal notranslate"><span class="pre">/niryo_robot</span></code> namespace</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#ros-topics">ROS Topics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/common_interfaces.html#publishers">Publishers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/common_interfaces.html#subscribers">Subscribers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#id15">ROS Services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/common_interfaces.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packages/high_level.html">High Level Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html">Niryo robot bringup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#on-raspberrypi">On RaspberryPI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#ned2">Ned2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#ned3pro">Ned3pro</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#on-desktop-simulation">On Desktop (Simulation)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#gazebo-simulation">Gazebo simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#rviz-simulation">Rviz simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_bringup.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html">Niryo robot arm commander</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_arm_commander.html#id16">The ArmMoveCommand message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_description.html">Niryo robot description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_gazebo.html">Niryo robot gazebo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_gazebo.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_gazebo.html#create-your-own-world">Create your own world</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://docs.niryo.com/api/modbus/">Niryo robot modbus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html">Niryo robot poses handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#workspaces">Workspaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#grips">Grips</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#the-vision-pick-loop">The vision pick loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#dynamic-frames">Dynamic frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#poses-trajectories">Poses &amp; trajectories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_poses_handlers.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html">Niryo robot programs manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#programs-manager-node">Programs manager node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html">Niryo robot programs manager v2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#autorun-program">Autorun program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_programs_manager_v2.html#the-executeprogram-action">The ExecuteProgram action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html">Niryo robot rpi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_rpi.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html">Niryo robot sound</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#sounds">Sounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#sound-api-functions">Sound API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#sound-ros-wrapper">Sound ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_sound.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_status.html">Niryo robot status</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#robot-status">Robot status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#robot-status-api-functions">Robot status API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#robot-status-ros-wrapper">Robot status ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_status.html#the-robotstatus-message">The RobotStatus message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html">Niryo robot tools commander</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#tool-ids">Tool IDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#tools-commander-api-functions">Tools commander API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#tools-commander-ros-wrapper">Tools commander ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#ros-action">ROS Action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_tools_commander.html#the-toolcommand-message">The ToolCommand message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html">Niryo robot user interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_user_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html">Niryo robot vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_vision.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html">Niryo robot led ring</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#id1">Robot status mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#id2">User mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#led-ring-api-functions">Led ring API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#led-ring-ros-wrapper">Led ring ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_led_ring.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/high_level/niryo_robot_database.html">Niryo robot database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#database-api-functions">Database API functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#database-ros-wrapper">Database ROS wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#api-list">API list</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/high_level/niryo_robot_database.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packages/low_level.html">Low Level Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html">Niryo Robot Hardware Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#hardware-status">Hardware status</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#message-definition">Message definition</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/niryo_robot_hardware_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/joints_interface.html">Joints Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/joints_interface.html#joints-interface-node">Joints interface node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/joints_interface.html#joints-motors-configuration">Joints motors configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/joints_interface.html#the-stepper-motors-profiles">The stepper motors profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/joints_interface.html#the-dynamixel-motors-parameters">The dynamixel motors parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/joints_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/joints_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/joints_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/joints_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/tools_interface.html">Tools Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/tools_interface.html#tools-interface-node-only-for-development-and-debugging">Tools interface node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/tools_interface.html#tools-interface-core">Tools Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/tools_interface.html#tools-motors-configuration">Tools motors configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/tools_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/tools_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/tools_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/tools_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/tools_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/end_effector_interface.html">End Effector Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/end_effector_interface.html#end-effector-interface-node-only-for-development-and-debugging">End Effector Interface node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/end_effector_interface.html#end-effector-interface-core">End Effector Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/end_effector_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/end_effector_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/end_effector_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/end_effector_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/end_effector_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/conveyor_interface.html">Conveyor Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/conveyor_interface.html#conveyor-interface-node-only-development-and-debugging">Conveyor Interface node (Only development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/conveyor_interface.html#conveyor-interface-core">Conveyor Interface core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/conveyor_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/conveyor_interface.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/conveyor_interface.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/conveyor_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/conveyor_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/cpu_interface.html">CPU Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/cpu_interface.html#cpu-interface-node-only-for-development-and-debugging">CPU Interface Node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/cpu_interface.html#cpu-interface-core">CPU Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/cpu_interface.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/cpu_interface.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/cpu_interface.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/cpu_interface.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/ttl_driver.html">TTL Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/ttl_driver.html#ttl-driver-node-only-for-development-and-debugging">TTL Driver Node (Only for development and debugging)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/ttl_driver.html#ttl-interface-core">TTL Interface Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/ttl_driver.html#package-documentation">Package Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_driver.html#ros-topics">ROS Topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_driver.html#ros-services">ROS Services</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_driver.html#ros-parameters">ROS Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_driver.html#ros-action">ROS Action</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html">TTL Debug Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html#ttl-debug-tool-binary">TTL debug tool binary</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html#parameters-ttl-debug-tools">Parameters - TTL debug tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html#scripts">Scripts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html#niryo-robot-send-dxl-custom-value">Niryo robot - Send DXL custom value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/ttl_debug_tools.html#niryo-robot-read-dxl-custom-value">Niryo robot - Read DXL custom value</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/low_level/common.html">Common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/common.html#model">Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/common.html#states">States</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/common.html#enums">Enums</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/low_level/common.html#commands">Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/low_level/common.html#util">Util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packages/third_parties.html">Third Parties</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packages/third_parties/dynamixel_sdk.html">Dynamixel SDK package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages/third_parties/ros_control.html">ROS control package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages/third_parties/moveit.html">MoveIt! package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages/third_parties/foxglove_bridge.html">Foxglove bridge package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packages/ros_wrapper.html">Control with Python ROS Wrapper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html">Python ROS Wrapper API documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_python_ros_wrapper.ros_wrapper">Main class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper"><code class="docutils literal notranslate"><span class="pre">NiryoRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper.move_command"><code class="docutils literal notranslate"><span class="pre">move_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.AutorunMode"><code class="docutils literal notranslate"><span class="pre">AutorunMode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ButtonAction"><code class="docutils literal notranslate"><span class="pre">ButtonAction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum"><code class="docutils literal notranslate"><span class="pre">CommandEnum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorCan"><code class="docutils literal notranslate"><span class="pre">ConveyorCan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorDirection"><code class="docutils literal notranslate"><span class="pre">ConveyorDirection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorID"><code class="docutils literal notranslate"><span class="pre">ConveyorID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ConveyorTTL"><code class="docutils literal notranslate"><span class="pre">ConveyorTTL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ObjectColor"><code class="docutils literal notranslate"><span class="pre">ObjectColor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ObjectShape"><code class="docutils literal notranslate"><span class="pre">ObjectShape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID"><code class="docutils literal notranslate"><span class="pre">PinID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinMode"><code class="docutils literal notranslate"><span class="pre">PinMode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinState"><code class="docutils literal notranslate"><span class="pre">PinState</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ProgramLanguage"><code class="docutils literal notranslate"><span class="pre">ProgramLanguage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.ros_wrapper_enums.ShiftPose"><code class="docutils literal notranslate"><span class="pre">ShiftPose</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_utils.dataclasses.JointsPosition">Data Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_utils.dataclasses.JointsPosition.JointsPosition"><code class="docutils literal notranslate"><span class="pre">JointsPosition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_utils.dataclasses.Pose.Pose"><code class="docutils literal notranslate"><span class="pre">Pose</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper"><code class="docutils literal notranslate"><span class="pre">ToolsRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_tools_commander.api.tools_ros_wrapper_enums.ToolID"><code class="docutils literal notranslate"><span class="pre">ToolID</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#database">Database</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_database.api.database_ros_wrapper.DatabaseRosWrapper"><code class="docutils literal notranslate"><span class="pre">DatabaseRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_database.api.database_ros_wrapper.DatabaseRosWrapperException"><code class="docutils literal notranslate"><span class="pre">DatabaseRosWrapperException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#sound">Sound</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapper"><code class="docutils literal notranslate"><span class="pre">SoundRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.SoundRosWrapperException"><code class="docutils literal notranslate"><span class="pre">SoundRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_sound.api.sound_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#led-ring">Led Ring</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapper"><code class="docutils literal notranslate"><span class="pre">LedRingRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.LedRingRosWrapperException"><code class="docutils literal notranslate"><span class="pre">LedRingRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_led_ring.api.led_ring_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#robot-status">Robot Status</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_status.api.robot_status_ros_wrapper.RobotStatusRosWrapper"><code class="docutils literal notranslate"><span class="pre">RobotStatusRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_status.api.robot_status_ros_wrapper.RobotStatusRosWrapperException"><code class="docutils literal notranslate"><span class="pre">RobotStatusRosWrapperException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#module-niryo_robot_python_ros_wrapper.custom_button_ros_wrapper">Custom Button</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapper"><code class="docutils literal notranslate"><span class="pre">CustomButtonRosWrapper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.CustomButtonRosWrapperException"><code class="docutils literal notranslate"><span class="pre">CustomButtonRosWrapperException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/ros_wrapper_api.html#niryo_robot_python_ros_wrapper.custom_button_ros_wrapper.check_ned2_version"><code class="docutils literal notranslate"><span class="pre">check_ned2_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/before_running.html">Before running your programs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/before_running.html#the-variable-pythonpath">The variable PYTHONPATH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/before_running.html#required-piece-of-code">Required piece of code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_basics.html">Examples: Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_basics.html#your-first-move-joint">Your first move joint</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/examples_basics.html#code-details-first-movej">Code details - First MoveJ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_basics.html#your-first-pick-and-place">Your first pick and place</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/examples_basics.html#code-details-first-pick-and-place">Code details - first pick and place</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_motions.html">Examples: Motions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_motions.html#joints">Joints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_motions.html#poses">Poses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_tool_action.html">Examples: Tool action</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_tool_action.html#tool-control">Tool control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/examples_tool_action.html#setup-tool">Setup tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/examples_tool_action.html#grasp">Grasp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="packages/python_ros_wrapper/examples_tool_action.html#release">Release</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_conveyor.html">Examples: Conveyor Belt</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_conveyor.html#simple-conveyor-belt-control">Simple Conveyor Belt control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_conveyor.html#advanced-conveyor-belt-control">Advanced Conveyor Belt control</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_vision.html">Examples: Vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_vision.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_vision.html#simple-vision-pick">Simple Vision pick</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packages/python_ros_wrapper/examples_frames.html">Examples: Dynamic frames</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packages/python_ros_wrapper/examples_frames.html#simple-dynamic-frame-control">Simple dynamic frame control</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">To go further...</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="to_go_further/tcp_server.html">Use Ned robot’s TCP server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="to_go_further/tcp_server.html#connection">Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="to_go_further/tcp_server.html#communication">Communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="to_go_further/tcp_server.html#packet-convention">Packet convention</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="to_go_further/tcp_server.html#general-format">General format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="to_go_further/tcp_server.html#request">Request</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="to_go_further/tcp_server.html#format-request">Format - Request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="to_go_further/tcp_server.html#examples-request">Examples - Request</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="to_go_further/tcp_server.html#answer">Answer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="to_go_further/tcp_server.html#format-answer">Format - Answer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="to_go_further/tcp_server.html#examples-answer">Examples - Answer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="to_go_further/tcp_server.html#commands-enum-for-tcp-server">Commands enum for TCP server</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/api/pyniryo/">Pyniryo</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/api/modbus/">Modbus</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.niryo.com/niryostudio/">Niryo studio</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ned ROS stack Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">5.6.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-6-2">v5.6.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-6-1">v5.6.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-6-0">v5.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-5">v5.5.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-4">v5.5.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-3">v5.5.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-2">v5.5.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-1">v5.5.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-5-0">v5.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-4-0">v5.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-3-3">v5.3.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-3-2">v5.3.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-3-1">v5.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-3-0">v5.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-2-2">v5.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-2-1">v5.2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-2-0">v5.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-1-3">v5.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-1-2">v5.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-1-1">v5.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-1-0">v5.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v5-0-1">v5.0.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v4-0-0-2021-12-16">v4.0.0 (2021-12-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-6-2021-12-02">ned2_v0.6 (2021-12-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-5-2021-11-25">ned2_v0.5 (2021-11-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-4-2021-11-17">ned2_v0.4 (2021-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-3-2021-11-08">ned2_v0.3 (2021-11-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-2-2021-11-04">ned2_v0.2 (2021-11-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.2.0 (2021-09-23)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ned2-v0-1-2021-09-21">ned2_v0.1 (2021-09-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.1.2 (2021-08-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.1.1 (2021-06-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.1.0 (2021-05-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.0.0 (2021-01-25)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Ned ROS Stack</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ned ROS stack Changelog</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/changelog_link.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <blockquote>
+<div></div></blockquote>
+<section id="ned-ros-stack-changelog">
+<h1>Ned ROS stack Changelog<a class="headerlink" href="#ned-ros-stack-changelog" title="Permalink to this heading"></a></h1>
+<section id="id1">
+<h2>5.6.3<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>chore: (SN-999) delete gazebo workspaces</p></li>
+<li><p>fix: end effector’s DI was always True in simulation mode</p></li>
+<li><p>fix: reports node listen to the correct setting update topic</p></li>
+<li><p>feat: enable the TCP when a new tool is scanned</p></li>
+</ul>
+</section>
+<section id="v5-6-2">
+<h2>v5.6.2<a class="headerlink" href="#v5-6-2" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>fix(doc): use the link to the public github page in the README</p></li>
+<li><p>fix(niryo_robot_vision): stream handling improvements</p></li>
+<li><p>fix(niryo_robot_vision): fix concurrency issues between the post-processing pipeline and the external image accessors</p></li>
+<li><p>fix(niryo_robot_programs_manager_v2): ensure the output is fully consumed before quitting</p></li>
+<li><p>fix(niryo_robot_vision): use correct image to find the object’s main color when looking for any color</p></li>
+<li><p>fix(niryo_robot_vision): apply the blur before converting to HSV</p></li>
+<li><p>fix(niryo_robot_vision): blue thresholds fine-tuning to reduce noise</p></li>
+<li><p>fix(niryo_robot_vision): check if the found shape matches the requirements before returning</p></li>
+<li><p>fix(niryo_robot_vision): increase nb_contours_max from 3 to 10 to avoid missing circles when there is more than 3 squares on the workspace</p></li>
+<li><p>fix(joints_interface): rename home_position to default_home_position for simulation config</p></li>
+</ul>
+</section>
+<section id="v5-6-1">
+<h2>v5.6.1<a class="headerlink" href="#v5-6-1" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>fix(vision_node): (SN-900) add back camera_intrinsics topic</p></li>
+</ul>
+</section>
+<section id="v5-6-0">
+<h2>v5.6.0<a class="headerlink" href="#v5-6-0" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>feat: add new hosted documentation</p></li>
+<li><p>feat: Display program names with the program player</p></li>
+<li><p>feat: Add program player lock/unlock buttons mechanism by pressing up + custom/down + custom during 3 seconds</p></li>
+<li><p>feat: Implement program player custom button</p></li>
+<li><p>feat(vision): add debug topics which can be activated by calling the service /niryo_robot_vision/debug/activate:</p>
+<ul>
+<li><p>/niryo_robot_vision/debug/active_topics: list of active debug topics</p></li>
+<li><p>/niryo_robot_vision/debug/red_channel: red channel image</p></li>
+<li><p>/niryo_robot_vision/debug/green_channel: green channel image</p></li>
+<li><p>/niryo_robot_vision/debug/blue_channel: blue channel image</p></li>
+<li><p>/niryo_robot_vision/debug/any_channel: RGB channels image</p></li>
+<li><p>/niryo_robot_vision/debug/markers: workspaces markers image</p></li>
+</ul>
+</li>
+<li><p>feat: Async ros wrapper move functions</p></li>
+<li><p>feat(vision): increased video stream frame rate (from 5 to 15 fps)</p></li>
+<li><p>feat(vision): the vision node can now get the video stream from any external client. Use the service /niryo_robot_vision/set_source to set the source to <span class="incremental">client</span> then publish the stream on <span class="incremental">/niryo_robot_vision/client_stream</span></p></li>
+<li><p>refactor(vision): improved image processing pipeline speed</p></li>
+<li><p>refactor: remove TCPv2 from the software as it brings more problems than it solves</p></li>
+<li><p>fix: Wait for joint_states and rpi node before building modbus registers</p></li>
+<li><p>fix: sendCustomCommand instant return success if motor is fake</p></li>
+<li><p>fix(conveyor_interface): instanciate a fake stepper if in simulation mode</p></li>
+<li><p>fix(robot state publisher): skip the publish if robot state is None</p></li>
+<li><p>fix(ros_wrapper): fix move_relative method</p></li>
+<li><p>fix(programs_manager): don’t wait for database node in programs manager anymore</p></li>
+<li><p>chore(vision): cleanup of dead code</p></li>
+<li><p>chore(gripper): increase position range (open/close) for gripper1</p></li>
+<li><p>fix: gripper and conveyor are not simulated by default anymore</p></li>
+</ul>
+</section>
+<section id="v5-5-5">
+<h2>v5.5.5<a class="headerlink" href="#v5-5-5" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>fix: Fixed the conveyors modbus registers crashing</p></li>
+<li><p>fix: publish on program_list topic when service update_program is called</p></li>
+</ul>
+</section>
+<section id="v5-5-4">
+<h2>v5.5.4<a class="headerlink" href="#v5-5-4" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>feat: add ned3pro simulation launchfile</p></li>
+<li><p>feat: add updated ROS wrapper examples</p></li>
+</ul>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Check saved trajectory validity before executing it and output an error message if a waypoint exceeds the soft limits</p></li>
+<li><p>No wait_for in nodes constructors. Use callbacks / lazy loading instead</p></li>
+<li><p>Expose /niryo_robot_led_ring/led_ring_status topic though the led ring ros wrapper with 3 new properties:</p>
+<ul>
+<li><p>is_autonomous</p></li>
+<li><p>animation_mode</p></li>
+<li><p>color</p></li>
+</ul>
+</li>
+<li><p>Expose the service /niryo_robot_led_ring/set_user_animation though the led ring ros wrapper with the function set_user_animation. All the higher animation functions use this one under the hood</p></li>
+<li><p>New end of production test script</p>
+<ul>
+<li><p>Seperated from the demo program</p></li>
+<li><p>Do the same tests than the previous one but with a clearer and easily maintenable code</p></li>
+<li><p>Is unique for all the robots</p></li>
+<li><p>Delete the test script once it is successful and replace it with the demo script</p></li>
+</ul>
+</li>
+<li><p>New demo program, which do the same actions than the previous one but in a more readable fashion</p>
+<ul>
+<li><p>the demo program is also unique for all the robots</p></li>
+</ul>
+</li>
+<li><p>Add missing functions to JointsPosition object to make it setattr compatible</p></li>
+<li><p>Add the module end_of_production_test to the niryo_robot_utils package</p>
+<ul>
+<li><p>LedRingManager handle the led ring during the EOP test</p></li>
+<li><p>TestReport run a tests playbook, generate the report and send it to RFM</p></li>
+<li><p>utils contains some utility functions and the BaseTest class which is the base class for all the tests run during the EOP test</p></li>
+</ul>
+</li>
+<li><p>refacto: use temp files to handle tts files</p></li>
+<li><p>refacto: make of sentry a soft dependency</p></li>
+<li><p>style: cleanup CHANGELOG</p></li>
+<li><p>refactor: remove old documentation</p></li>
+<li><p>refactor: remove empty config file</p></li>
+<li><p>refactor: remove several unused parameters</p></li>
+<li><p>docs: correct get_joints() docstring</p></li>
+<li><p>ci: delete all doc related jobs</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Fixed a typo in arm commander stop command service clients which prevented the service from being called during robot shutdown and when using the ROS wrapper</p></li>
+<li><p>Fixed program player unit tests so that they reflect the entire finite state machine</p></li>
+<li><p>Fixed Ned3pro calibration tip transform</p></li>
+<li><p>Fixed a bug in the robot_state publisher which issued a warning when trying to divide by 0</p></li>
+<li><p>Resolved multiple bugs that were preventing the simulated robot stack from functioning properly</p>
+<ul>
+<li><p>Sentry is not initialized if the API keys are not set (typical simulation scenario)</p></li>
+<li><p>Added missing tool parameters in simulation</p></li>
+<li><p>Modbus ROS package is not started anymore in simulation mode</p></li>
+<li><p>Fixed the control loop which is not releasing its lock if the loop frequency is too fast</p></li>
+<li><p>Fake stepper motors does not require to be calibrated anymore in simulation</p></li>
+</ul>
+</li>
+<li><p>fix: check if a sound file is empty before loading it</p></li>
+<li><p>(reports) use set_serial_number and set_rasp_id instead of set_identifier</p></li>
+<li><p>(reports): return True instead of ping returns (None)</p></li>
+<li><p>(reports): set correct endpoint for reports ping</p></li>
+<li><p>fix: wrong os.getenv call in sentry_init</p></li>
+<li><p>The end effector panel still publish the buttons state while calibration is in progress</p></li>
+<li><p>Fixed a bug which caused the cloud api to not update it’s S/N and rasp_id values when they are updated</p></li>
+<li><p>Fixed a bug causing the check_connection service to ping the wrong endpoints for the reports micro services</p></li>
+<li><p>fix: add missing tool_id comment for vacuum pump v2</p></li>
+<li><p>fix: use the correct field to qualify a Pin in the GetDigitalIORequest</p></li>
+<li><p>fix: add missing led.yaml file for ned3pro simulation</p></li>
+<li><p>fix: remove install instruction for non-existing config directory in niryo_robot_programs_manager_v2</p></li>
+</ul>
+</section>
+<section id="v5-5-3">
+<h2>v5.5.3<a class="headerlink" href="#v5-5-3" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Improve /niryo_robot/conveyor/feedback reactivity when a conveyor is added or removed</p></li>
+<li><p>Added convenience function NiryoRosWrapper.init_with_node which init a ros node and returns a NiryoRosWrapper instance</p></li>
+<li><p>Deprecate NiryoRosWrapper.move_relative</p></li>
+<li><p>Added a param normalize=True to NiryoRosWrapper.msg_from_pose</p></li>
+<li><p>Add security checks to NiryoRosWrapper.unset_conveyor and NiryoRosWrapper.control_conveyor</p></li>
+<li><p>NiryoRosWrapper.get_conveyors_feedback now returns a list of dict instead of a list of ConveyorFeedback messages</p></li>
+<li><p>Added the following functions to the TCP server:</p>
+<ul>
+<li><p>GET_POSE_V2</p></li>
+<li><p>FORWARD_KINEMATICS_V2</p></li>
+<li><p>INVERSE_KINEMATICS_V2</p></li>
+<li><p>GET_TCP</p></li>
+<li><p>GET_CONVEYORS_FEEDBACK</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Fixed wrong camera and gripper transforms in Ned3pro and Ned2’s URDF for simulation</p></li>
+<li><p>Fixed a bug which prevented the jog feature to work</p></li>
+<li><p>Use lazy loading from database when getting the joints home position settings to prevent a bug where the robot was unable to access the database at boot time</p></li>
+<li><p>Ned3pro digital inputs are now not inverted</p></li>
+<li><p>Fixed the jog features</p></li>
+<li><p>Fixed NiryoRosWrapper.__get_obj_from_args which didn’t work with JointsPosition</p></li>
+<li><p>Fixed NiryoRosWrapper.forward_kinematics which returned v2 metadata despite being a v1 pose</p></li>
+<li><p>Fixed NiryoRosWrapper.inverse_kinematics which returned was converting poses to v2 before doing the inverse kinematics</p></li>
+<li><p>Fixed a bug in Pose which was allocating the same instance of PoseMetadata when using the constructor’s default metadata value</p></li>
+<li><p>Fixed a bug where memory was allocated and not freed each time the program player’s node tried to connect to an inexistant device</p></li>
+<li><p>Fixed a bug in Tool ROS wrapper which was not using the correct service type when calling tool reboot service</p></li>
+<li><p>use correct message type for ros subscriber in arm_state</p></li>
+</ul>
+</section>
+<section id="v5-5-2">
+<h2>v5.5.2<a class="headerlink" href="#v5-5-2" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>perf: add send_buffer_limit rosarg in foxglove spawner</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>fix: use forward_kinematics_v2 in __ros_poses_from_robot_positions</p></li>
+<li><p>fix: DXL’ PIDs adjustments</p></li>
+</ul>
+</section>
+<section id="v5-5-1">
+<h2>v5.5.1<a class="headerlink" href="#v5-5-1" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Increase error threshold for joints out of bounds detection in order to match hardware limits</p></li>
+<li><p>Added topic ‘/niryo_robot/max_acceleration_scaling_factor’ to check current acceleration percentage</p></li>
+<li><p>Refacto of the wifi button handling: the names reflects its real job, which is managing solely the hotspot</p></li>
+<li><p>Disabled torque of steppers not being calibrated during factory calibration</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Fixed a bug while setting acceleration from the ‘/niryo_robot_arm_commander/set_acceleration_factor’ service which always set it to 40%</p></li>
+<li><p>Fixed the conveyors direction which was inverted in the modbus server</p></li>
+<li><p>Fixed PoseMetada.from_dict which wasn’t passing the ‘frame’ argument when using a PoseMetadata.v1</p></li>
+<li><p>Fixed collision thresholds settings which was not correctly calling the setting of the 2nd threshold and with the wrong datatype</p></li>
+<li><p>Fixed a bug in __hotspot_state_callback which still processed the API response even if the request failed</p></li>
+<li><p>Fixed tools transforms for Ned3 pro</p></li>
+<li><p>Fix a missing offset in the URDF for Ned3 pro</p></li>
+<li><p>Fixed a goal tolerance too low for the joint 1</p></li>
+</ul>
+</section>
+<section id="v5-5-0">
+<h2>v5.5.0<a class="headerlink" href="#v5-5-0" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Add sentry for python nodes</p></li>
+<li><p>Add Ned3 demo/production program</p></li>
+</ul>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Add program player single point of control safety,</p>
+<ul>
+<li><p>Program player is running a program and it’s disconnected program stops</p></li>
+<li><p>Program running without program player and one is connected program stops</p></li>
+</ul>
+</li>
+<li><p>Add PID and vel/acc profiles configurations for the grippers and configure them on initialization</p></li>
+<li><p>Display stop message for player one when a program is stopped</p></li>
+<li><p>Rename ned3 to ned3pro</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Add retrocompability get pose</p></li>
+<li><p>Add retrocompability get list of trajectories</p></li>
+<li><p>Add missing inverse_kinematics_v2() function in ROS wrapper and tag forward_kinematics() and inverse_kinematics() as deprecated</p></li>
+<li><p>Velocity and acceleration motor profiles are scaled when scaling the robot velocity and synced with moveit scaling</p></li>
+<li><p>Add save pose compatibility with legacy poses</p></li>
+<li><p>Ill-formatted trajectories, poses, workspaces and dynamic frames won’t make the stack crash</p></li>
+<li><p>Add TCP server support for vacuum pump v2</p></li>
+<li><p>Remove a collision checking in niryo_robot_arm_commander which was a duplicate of ROS control’s joint trajectory controller</p></li>
+<li><p>Created get_target_pose_v2 service in order to keep get_target_pose original behaviors</p></li>
+<li><p>Created a foxglove spawner to start the bridge once the robot has finished booting. This prevents some errors that occurs with the clients</p></li>
+<li><p>Remove move spiral demo Ned3</p></li>
+<li><p>Reset home position service called uninitialized default_home_position vector, now it’s well initialized</p></li>
+</ul>
+</section>
+<section id="v5-4-0">
+<h2>v5.4.0<a class="headerlink" href="#v5-4-0" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Implemented NED3 hardware changes into niryo_robot_rpi package</p></li>
+<li><p>Add Ned3 Calibration support</p></li>
+<li><p>Add support for Conveyor with ned3 stepper</p></li>
+<li><p>Add support for vacuum pump v2</p></li>
+<li><p>Add velocity and acceleration profile for vacuum pump v2</p></li>
+<li><p>Change the robot’s URDF in order to follow the Denavit-Hartenberg convention.</p></li>
+<li><p>New Pose and JointsPosition</p></li>
+<li><p>The <span class="incremental">/niryo_robot_arm_commander/robot_action</span> action server can handle old and new TCP versions using <code class="docutils literal notranslate"><span class="pre">tcp_version</span></code> in <code class="docutils literal notranslate"><span class="pre">ArmMoveCommand.msg</span></code></p></li>
+<li><p>Edit niryo_robot_poses_handlers’ grip files according to the new TCP orientation</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">pose_version</span></code> and <code class="docutils literal notranslate"><span class="pre">tcp_version</span></code> to <code class="docutils literal notranslate"><span class="pre">NiryoPose.msg</span></code></p></li>
+<li><p>New generic classes designed to be the universal classes to represent the data:</p>
+<ul>
+<li><p>JointsPosition</p></li>
+<li><p>JointsPositionMetadata</p></li>
+<li><p>Pose</p></li>
+<li><p>PoseMetadata</p></li>
+</ul>
+</li>
+<li><p>New niryo_robot_poses_handlers/transform_functions functions: <code class="docutils literal notranslate"><span class="pre">convert_legacy_rpy_to_dh_convention()</span></code> and <code class="docutils literal notranslate"><span class="pre">convert_dh_convention_to_legacy_rpy()</span></code></p></li>
+<li><p>New ros_wrapper.NiryoRosWrapper functions which can’t take either Pose or JointsPosition objects:</p>
+<ul>
+<li><p>move replace move_joints, move_pose and move_linear_pose.</p></li>
+<li><p>jog_shift, replace jog_joints_shift and jog_pose_shift.</p></li>
+<li><p>pick, replace pick_from_pose.</p></li>
+<li><p>place, replace place_from_pose.</p></li>
+<li><p>execute_trajectory, replace execute_trajectory_from_poses and execute_trajectory_from_poses_and_joints.</p></li>
+<li><p>compute_trajectory, replace compute_trajectory_from_poses and compute_trajectory_from_poses_and_joints.</p></li>
+</ul>
+</li>
+<li><p>New TCP server commands: GET_COLLISION_DETECTED, CLEAR_COLLISION_DETECTED, HANDSHAKE, MOVE, JOG, PICK, PLACE, EXECUTE_TRAJECTORY</p></li>
+<li><p>New tools translation transforms according to the new TCP orientation</p></li>
+<li><p>Add Hardware ID to the conveyors, only for v2 and v3</p></li>
+<li><p>The new robot pose is published on /niryo_robot/robot_state_v2 in order to keep compatibility with older NiryoStudios</p></li>
+<li><p>The new robot relative pose is published on /niryo_robot_poses_handlers/relative_pose_v2 in order to keep compatibility with older NiryoStudios</p></li>
+<li><p>Add a service to get conveyor hardware ID to be able to differentiate them (conveyor v2 and v3), service name: <span class="incremental">/niryo_robot/conveyor/get_hardware_id</span></p></li>
+<li><p>Add services to get forward and inverse kinematics using the new TCP convention (Z axis pointing forward)</p></li>
+<li><p>Add a ROS wrapper function to get the forward kinematics using the new TCP convention (Z axis pointing forward)</p></li>
+<li><p>Add a ROS topic <span class="incremental">/niryo_robot_tools_commander/tcp_v2</span> which publishes the transform from hand_link to the TCP following the new TCP convention</p></li>
+<li><p>Change robot’s pose limits for Ned3 to match its reachability</p></li>
+</ul>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Use the I/O panel version instead of the robot hardware version to differentiate the implementations</p></li>
+<li><p>Created a set of classes gpio_expander_adapters. Theses classes are adapters in order to handle GPIOs the same way MCP IOs are handled</p></li>
+<li><p>Update of the DACx0501 driver</p></li>
+<li><p>NiryoRosWrapper.vision_pick now can take an optional observation pose <code class="docutils literal notranslate"><span class="pre">obs_pose</span></code></p></li>
+<li><p>Add speed limit pourcentage for the conveyor</p></li>
+<li><p>When a tool stops moving, a position-holding command is sent instead of resending the command with the max position, drastically reducing temperature rise</p></li>
+<li><p>Update dynamixels PID (Axis 4 to 6)</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Stopping a program now send SIGTERM and then SIGKILL after 3 seconds if the program didn’t exit gracefully</p></li>
+<li><p>Grasp and release actions now use a feedback to check if they finished their motion instead of stopping after a fixed time</p></li>
+<li><p>Debounce emergency stop resume to avoid to resume on small 12v spikes</p></li>
+<li><p>Renaming a dynamic frame also rename its name in the transform</p></li>
+<li><p>NiryoRosWrapper.get_workspace_list no longer return an error</p></li>
+<li><p>TCP server <code class="docutils literal notranslate"><span class="pre">__send_answer_with_payload</span></code> encode the payload only if it’s not already encoded</p></li>
+<li><p>Fix intermitent delay in the control loop caused by a ROS spinOnce call in the control loop</p></li>
+</ul>
+</section>
+<section id="v5-3-3">
+<h2>v5.3.3<a class="headerlink" href="#v5-3-3" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Increase threshold for end effector collision detection</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+</section>
+<section id="v5-3-2">
+<h2>v5.3.2<a class="headerlink" href="#v5-3-2" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Stopping a program now send SIGTERM instead of SIGKILL in order to let the program handle its exit</p></li>
+</ul>
+</section>
+<section id="v5-3-1">
+<h2>v5.3.1<a class="headerlink" href="#v5-3-1" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Fixed a bug which didn’t handled when a goal was timed out in NiryoActionClient</p></li>
+<li><p>Fixed a bug which could lead to the tool commander’s action server to always be locked in active mode</p></li>
+<li><p>Fixed a bug which prevented the tool commander action server to accept new goals once a goal with a future date was published</p></li>
+</ul>
+</section>
+<section id="v5-3-0">
+<h2>v5.3.0<a class="headerlink" href="#v5-3-0" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Brand new modbus server</p></li>
+<li><p>New ros_wrapper functions: get_current_tool_state, get_tcp, get_digital_io_mode, get_available_disk_size, get_ros_logs_size, control_video_stream</p></li>
+<li><p>New system_api_client endpoint: get_system_version_current</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>in ros_wrapper, __conveyor_id_to_conveyor_number no longer rely on the currently attached conveyors</p></li>
+<li><p>fixed some incorrect ros_wrapper’s docstring</p></li>
+<li><p>fixed a bug which prevented to do vision picks with a TCP transformation enabled</p></li>
+<li><p>fixed a bug which caused an executed program’s process to not totally stop</p></li>
+</ul>
+</section>
+<section id="v5-2-2">
+<h2>v5.2.2<a class="headerlink" href="#v5-2-2" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>The service /niryo_robot/kinematics/forward now returns status and message in its response</p></li>
+<li><p>The service /niryo_robot/kinematics/inverse now returns status and message in its response</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Fixed the service /niryo_robot/kinematics/forward which sometimes crashed because of transform extrapolation</p></li>
+</ul>
+</section>
+<section id="v5-2-1">
+<h2>v5.2.1<a class="headerlink" href="#v5-2-1" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>the service set_program_autorun wasn’t taking the mode into account when passing “DISABLE”</p></li>
+</ul>
+</section>
+<section id="v5-2-0">
+<h2>v5.2.0<a class="headerlink" href="#v5-2-0" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Added a foxglove bridge server</p></li>
+<li><p>new messages: BasicObject and BasicObjectList</p></li>
+<li><p>New topics:</p>
+<ul>
+<li><p>/niryo_robot_arm_commander/trajectory_list (BasicObjectArray)</p></li>
+<li><p>/niryo_robot_poses_handler/pose_list (BasicObjectArray)</p></li>
+<li><p>/niryo_robot_poses_handler/dynamic_frame_list (BasicObjectArray)</p></li>
+</ul>
+</li>
+<li><p>New topic: /niryo_robot_poses_handlers/relative_pose</p>
+<ul>
+<li><p>This topic publish the TCP pose relative to a dynamic frame</p></li>
+</ul>
+</li>
+<li><p>New service: /niryo_robot_poses_handlers/set_relative_transform_frame</p>
+<ul>
+<li><p>Use this service to set the dynamic frame which should be used for the relative pose</p></li>
+</ul>
+</li>
+<li><p>New service: /niryo_robot_database/get_db_file_path</p>
+<ul>
+<li><p>Use this service to retrieve the database file path</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Refacto of the programs manager</p>
+<ul>
+<li><p>It now uses programs ids to handle the programs</p></li>
+<li><p>A program is now defined as a python program which can have a blockly program attached</p></li>
+<li><p>An action server is used to execute a program rather than a service</p></li>
+<li><p>The autorun and the programs properties are stored in the database</p></li>
+<li><p>Named programs_manager_v2 in order to keep the old programs manager for NS1</p></li>
+</ul>
+</li>
+<li><p>The service GetNameDescription takes an array of BasicObject (for future compatibility)</p></li>
+<li><p>remove ros_wrapper_2</p></li>
+<li><p>modified service type:</p>
+<ul>
+<li><p>/niryo_robot/tools/reboot: std_srvs/Trigger -&gt; niryo_robot_msgs/Trigger</p></li>
+<li><p>/niryo_robot_vision/debug_markers: Added “status” and “message” to service response</p></li>
+<li><p>/niryo_robot_vision/debug_colors: Added “status” and “message” to service response</p></li>
+<li><p>/niryo_robot_vision/visualization: Added “message” to service response</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Removed double assignment of the const REBOOT_MOTOR in RobotStatus.msg</p></li>
+</ul>
+</section>
+<section id="v5-1-3">
+<h2>v5.1.3<a class="headerlink" href="#v5-1-3" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Added a field “saved_at” in the service /niryo_robot_programs_manager/get_program response</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+</section>
+<section id="v5-1-2">
+<h2>v5.1.2<a class="headerlink" href="#v5-1-2" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>The daily reports can now send metrics about the robot. Currently, the total lifetime of the robot is sent</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+</section>
+<section id="v5-1-1">
+<h2>v5.1.1<a class="headerlink" href="#v5-1-1" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<ul class="simple">
+<li><p>Revamped WiFi button functionalities: Brief press (&lt; 2s) toggles hotspot; Extended press (&gt; 2s) enables/disables WiFi client; Long press (&gt; 7s) restores network settings. To abort, press for over 10 seconds.</p></li>
+<li><p>WiFi button press triggers LED ring indication for forthcoming action.</p></li>
+<li><p>The database node use the system software HTTP API to get and set the settings in the database. This is to ensure there is only one access point to the database.</p></li>
+<li><p>Reduced the grippers open / close torque to slow down the motor’s heating</p></li>
+</ul>
+<p><strong>Bugfixes</strong></p>
+<ul class="simple">
+<li><p>Resolved an issue where the hotspot failed to initiate concurrently with the WiFi client.</p></li>
+<li><p>Fixed a bug that consistently disregarded the “purge ros logs on startup” command.</p></li>
+<li><p>Fixed a problem that sometimes stopped the camera from recognizing colored shapes.</p></li>
+<li><p>Fixed an issue that permitted editing of dynamic frames belonging to workspaces.</p></li>
+<li><p>Rectified dynamic frame editing by implementing quaternion normalization.</p></li>
+<li><p>Fixed a bug that caused the vision picks to catch objects by their corners.</p></li>
+</ul>
+</section>
+<section id="v5-1-0">
+<h2>v5.1.0<a class="headerlink" href="#v5-1-0" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>The topic <code class="docutils literal notranslate"><span class="pre">/niryo_robot_tools_commander/tcp</span></code> now return the tcp position either if it is enabled or not</p></li>
+<li><p>Every part of a dynamic frame can now be edited using the service <code class="docutils literal notranslate"><span class="pre">/niryo_robot_poses_handlers/manage_dynamic_frame</span></code></p></li>
+<li><p>Manage a file in <code class="docutils literal notranslate"><span class="pre">~/.ros/logs</span></code> which store the date corresponding to the ros run ids</p></li>
+</ul>
+<p><strong>Improvements</strong></p>
+<p><strong>Bugfixes</strong></p>
+</section>
+<section id="v5-0-1">
+<h2>v5.0.1<a class="headerlink" href="#v5-0-1" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<p><strong>Improvements</strong></p>
+<p><strong>Bugfixes</strong>
+* Fixed a bug preventing the downloaded update to be applied successfully</p>
+</section>
+<section id="v4-0-0-2021-12-16">
+<h2>v4.0.0 (2021-12-16)<a class="headerlink" href="#v4-0-0-2021-12-16" title="Permalink to this heading"></a></h2>
+<p><strong>Requirements</strong></p>
+<p>sudo apt-get install sqlite3
+End effector driver fw 1.0.7</p>
+<p><strong>Bug corrections</strong></p>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>add VERSION file at root</p></li>
+<li><p>add CHANGELOG.rst in every package (using catkin_generate_changelog tool)</p></li>
+<li><p>add this changelog</p></li>
+<li><p>fix calibration for Ned and One</p></li>
+<li><p>add documentation strucutre (sphinx doc)</p></li>
+<li><p>update PID values for DXL (ned2)</p></li>
+<li><p>update joints_interface and ttl_driver read and write frequencies</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>Contributors: AdminIT, Clément Cocquempot, Corentin Ducatez, Minh Thuc, Mottier Justin, Thuc PHAM, Valentin Pitre, f.dupuis</p></li>
+</ul>
+</section>
+<section id="ned2-v0-6-2021-12-02">
+<h2>ned2_v0.6 (2021-12-02)<a class="headerlink" href="#ned2-v0-6-2021-12-02" title="Permalink to this heading"></a></h2>
+<p><strong>Requirements</strong></p>
+<ul class="simple">
+<li><p>steppers driver with fw 1.0.16</p></li>
+<li><p>gtts (pip install gTTS)</p></li>
+</ul>
+<p><strong>Bug corrections</strong></p>
+<ul class="simple">
+<li><p>slower movements</p></li>
+<li><p>wrong conveyor feedback</p></li>
+<li><p>drivers optimised (using more precise velocity for steppers profiles)</p></li>
+<li><p>error connection better handled (resolve pb of read blocked for end effector mainly)</p></li>
+<li><p>new urdf for ned2</p></li>
+<li><p>missing firmware version sometimes corrected</p></li>
+<li><p>wrong conversion for axis 6 for Ned</p></li>
+<li><p>end effector input</p></li>
+<li><p>warn end effector at startup</p></li>
+<li><p>rework of bringup to simplify it</p></li>
+</ul>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Compatibility Ned and One</p></li>
+<li><p>Calibration ok</p></li>
+<li><p>Retrieve firmware</p></li>
+<li><p>last PID in place</p></li>
+<li><p>last velocity profiles for steppers</p></li>
+<li><p>voltage and temperature for all hw</p></li>
+<li><p>documentation structure set up for the stack</p></li>
+<li><p>option simu_gripper and simu_conveyor added for simulation</p></li>
+<li><p>remove service GetFrequencies and SetFrequencies</p></li>
+<li><p>script prod</p></li>
+<li><p>script videoshoot</p></li>
+<li><p>urdf + collada + stl ned2</p></li>
+<li><p>circular trajectories</p></li>
+<li><p>spirals trajectories</p></li>
+<li><p>Save and Replay waypointed trajectories</p></li>
+<li><p>Google Text to speech</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>You need to update your steppers drivers to version 1.16</p></li>
+<li><p>control mode bug if the stack is launch with a tool connected</p></li>
+<li><p>no blinking of the led ring when there is a motor error or an error message in topic hardware_status (to avoid blinking for nothing)</p></li>
+<li><p>manual calibration not working</p></li>
+</ul>
+<p>Tests done (will be updated)
+Non tested (will be updated)</p>
+</section>
+<section id="ned2-v0-5-2021-11-25">
+<h2>ned2_v0.5 (2021-11-25)<a class="headerlink" href="#ned2-v0-5-2021-11-25" title="Permalink to this heading"></a></h2>
+<p><strong>Bug corrections</strong></p>
+<ul class="simple">
+<li><p>less jerky mouvments</p></li>
+<li><p>stabilised reboot</p></li>
+<li><p>security on moveit</p></li>
+<li><p>pb out of bond corrected</p></li>
+</ul>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Compatibility Ned and One</p></li>
+<li><p>last PID in place</p></li>
+<li><p>last velocity and acceleration profiles</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>connection loss from time to time, linked to bus pb (corrected in new cards, stand by for now)</p></li>
+</ul>
+<p><strong>Tests done</strong></p>
+<ul class="simple">
+<li><p>compilation</p></li>
+<li><p>calibration Ned2</p></li>
+</ul>
+<p><strong>Non tested (will be updated)</strong></p>
+<ul class="simple">
+<li><p>all accessories, grippers and conveyors</p></li>
+<li><p>blockly</p></li>
+<li><p>Ned, one simu</p></li>
+</ul>
+</section>
+<section id="ned2-v0-4-2021-11-17">
+<h2>ned2_v0.4 (2021-11-17)<a class="headerlink" href="#ned2-v0-4-2021-11-17" title="Permalink to this heading"></a></h2>
+<p><strong>Features</strong></p>
+<ul class="simple">
+<li><p>Calibration reworked, more stable, slower</p></li>
+<li><p>Initializations rework</p></li>
+<li><p>Queues protection</p></li>
+<li><p>Sync read fail corrected on End Effector</p></li>
+<li><p>Error messages enhanced</p></li>
+<li><p>Version, Temperature and voltage addition on Tools and Conveyors</p></li>
+<li><p>Calibration status kept if motors are not shutdown</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>Not tested with conveyor</p></li>
+<li><p>Control mode fail on gripper</p></li>
+<li><p>Reboot fail (unexpected movements during reboot)</p></li>
+<li><p>Joints limits to update</p></li>
+<li><p>Broken simulation</p></li>
+<li><p>Ned and one incompatible</p></li>
+</ul>
+</section>
+<section id="ned2-v0-3-2021-11-08">
+<h2>ned2_v0.3 (2021-11-08)<a class="headerlink" href="#ned2-v0-3-2021-11-08" title="Permalink to this heading"></a></h2>
+<p><strong>Bug Corrections</strong></p>
+<ul class="simple">
+<li><p>correction in joints_limit.yaml</p></li>
+<li><p>remove end effector read status when robot moving (check if collision is still read…)</p></li>
+<li><p>smoother movement</p></li>
+<li><p>read firmware version only at init</p></li>
+</ul>
+</section>
+<section id="ned2-v0-2-2021-11-04">
+<h2>ned2_v0.2 (2021-11-04)<a class="headerlink" href="#ned2-v0-2-2021-11-04" title="Permalink to this heading"></a></h2>
+<p><strong>Bug corrections</strong></p>
+<ul class="simple">
+<li><p>smoother movements</p></li>
+<li><p>conveyor fixes (to be tested)</p></li>
+<li><p>last additions from valentin</p></li>
+<li><p>cross compilation rpi4 pk</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>Carefull : ned and one compatibility broken</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>3.2.0 (2021-09-23)<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Merge branch ‘develop’ into ‘master’
+v3.2.0
+See merge request <a class="reference external" href="https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/113">niryo/niryo-one-s/ned_ros_stack!113</a></p></li>
+<li><p>Release September: v3.2.0</p></li>
+<li><p>Merge branch ‘release_language_versions’ into ‘develop’
+Release language versions
+See merge request <a class="reference external" href="https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/62">niryo/niryo-one-s/ned_ros_stack!62</a></p></li>
+<li><p>Release language versions</p></li>
+<li><p>Merge branch ‘Bug_fix_gripper3’ into ‘develop’
+Bug fix gripper3
+See merge request <a class="reference external" href="https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/26">niryo/niryo-one-s/ned_ros_stack!26</a></p></li>
+<li><p>v3.1.1: Bug fix gripper3</p></li>
+<li><p>Change versions in package.xml to 3.1.0</p></li>
+<li><p>Contributors: Ducatez Corentin, corentin ducatez</p></li>
+</ul>
+</section>
+<section id="ned2-v0-1-2021-09-21">
+<h2>ned2_v0.1 (2021-09-21)<a class="headerlink" href="#ned2-v0-1-2021-09-21" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Stable version usable for Ned 2 testing</p></li>
+<li><p>Be carefull, usable only with niryo studio tag ned2_v0.1</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>3.1.2 (2021-08-13)<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Merge develop branch, see MR `!63 &lt;<a class="reference external" href="https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/63">https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/63</a>&gt;`_: languages + versions for documentation + gitlab cicd</p></li>
+<li><p>Contributors: Corentin Ducatez</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>3.1.1 (2021-06-21)<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>v3.1.1: Fix grip offset for gripper3 (vision pick)</p></li>
+<li><p>Merge branch ‘develop’ into ‘master’
+Release v3.1.0
+See merge request <a class="reference external" href="https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/9">niryo/niryo-one-s/ned_ros_stack!9</a></p></li>
+<li><p>Release v3.1.0</p></li>
+<li><p>Contributors: Corentin Ducatez, Ducatez Corentin</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>3.1.0 (2021-05-06)<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Change versions in package.xml to 3.1.0</p></li>
+<li><p>Contributors: corentin ducatez</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>3.0.0 (2021-01-25)<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="to_go_further/tcp_server.html" class="btn btn-neutral float-left" title="Use Ned robot’s TCP server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Niryo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<map id="src.niryo_robot_rpi.common.io_objects.NiryoIO" name="src.niryo_robot_rpi.common.io_objects.NiryoIO">
+<area shape="rect" id="node1" title=" " alt="" coords="116,331,336,372"/>
+<area shape="rect" id="node3" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1end__effector__io_1_1DigitalInput.html" title=" " alt="" coords="389,5,621,47"/>
+<area shape="rect" id="node4" href="$classsrc_1_1niryo__robot__rpi_1_1common_1_1end__effector__io_1_1DigitalOutput.html" title=" " alt="" coords="389,71,621,112"/>
+<area shape="rect" id="node5" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1fake__panel_1_1fake__io__objects_1_1FakeDigitalIO.html" title=" " alt="" coords="414,137,597,193"/>
+<area shape="rect" id="node6" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1rpi__io__objects_1_1DigitalPin.html" title=" " alt="" coords="402,217,609,259"/>
+<area shape="rect" id="node9" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1fake__panel_1_1fake__io__objects_1_1FakeAnalogIO.html" title=" " alt="" coords="414,283,597,339"/>
+<area shape="rect" id="node10" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1fake__panel_1_1fake__io__objects_1_1FakeDigitalIO.html" title=" " alt="" coords="414,363,597,419"/>
+<area shape="rect" id="node11" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1AnalogInput.html" title=" " alt="" coords="389,444,621,485"/>
+<area shape="rect" id="node12" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1AnalogOutput.html" title=" " alt="" coords="384,509,627,551"/>
+<area shape="rect" id="node13" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1DigitalInput.html" title=" " alt="" coords="390,575,621,616"/>
+<area shape="rect" id="node15" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1DigitalOutput.html" title=" " alt="" coords="385,640,626,681"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,338,68,365"/>
+<area shape="rect" id="node7" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1rpi__io__objects_1_1Fan.html" title=" " alt="" coords="682,185,865,227"/>
+<area shape="rect" id="node8" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v1_1_1rpi__io__objects_1_1Led.html" title=" " alt="" coords="682,251,865,292"/>
+<area shape="rect" id="node14" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1Button.html" title=" " alt="" coords="675,575,872,616"/>
+<area shape="rect" id="node16" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1Fan.html" title=" " alt="" coords="682,640,865,681"/>
+<area shape="rect" id="node17" href="$classsrc_1_1niryo__robot__rpi_1_1panel__v2_1_1mcp__io__objects_1_1Led.html" title=" " alt="" coords="682,705,865,747"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,100,85,127"/>
+<area shape="rect" id="node2" href="$classniryo__robot__poses__handlers_1_1test__pure__python__poses__handlers_1_1TestPoseMethods.html" title=" " alt="" coords="153,5,432,61"/>
+<area shape="rect" id="node3" href="$classniryo__robot__poses__handlers_1_1test__pure__python__poses__handlers_1_1TestWorkspaceMethods.html" title=" " alt="" coords="133,85,452,141"/>
+<area shape="rect" id="node4" href="$classtest_1_1test__poses__handlers_1_1TestPoseHandlerAbstract.html" title=" " alt="" coords="199,166,387,207"/>
+<area shape="rect" id="node5" href="$classtest_1_1test__poses__handlers_1_1TestServicePose.html" title=" " alt="" coords="500,133,688,174"/>
+<area shape="rect" id="node6" href="$classtest_1_1test__poses__handlers_1_1TestServiceWorkspace.html" title=" " alt="" coords="500,198,688,239"/>
+</map>
