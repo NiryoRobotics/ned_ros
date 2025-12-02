@@ -4,6 +4,7 @@ from typing import List
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import PinState, ConveyorDirection, ConveyorID, PinID
+from niryo_robot_utils import NiryoRosWrapperException
 from niryo_robot_utils.dataclasses.JointsPosition import JointsPosition
 from niryo_robot_utils.dataclasses.Pose import Pose
 from niryo_robot_utils.dataclasses.PoseMetadata import PoseMetadata
@@ -54,9 +55,21 @@ class ToolEquippedEntry(ABCRegisterEntry):
 @slave_context.coil
 class ToolActuationEntry(ABCRegisterEntry):
 
+    def __init__(self, ros_wrapper: NiryoRosWrapper):
+        super().__init__(ros_wrapper)
+        self._is_open = False
+        try:
+            specs = ros_wrapper.get_gripper_specs()
+        except NiryoRosWrapperException:
+            return
+        close_position = specs[0][0]
+        open_position = specs[0][1]
+        current_position = ros_wrapper.get_current_tool_position()
+        # Naive way to determine if the gripper is open or closed
+        self._is_open = abs(current_position - open_position) < abs(current_position - close_position)
+
     def get(self) -> bool:
-        current_tool_state = self._ros_wrapper.get_current_tool_state()
-        return current_tool_state in [Tool.GRIPPER_STATE_CLOSE, Tool.VACUUM_PUMP_STATE_PULLED]
+        return self._is_open
 
     def set(self, value: bool) -> None:
         tool_id = self._ros_wrapper.get_current_tool_id()
@@ -67,18 +80,22 @@ class ToolActuationEntry(ABCRegisterEntry):
         action_is_grasp = value
         tool_is_gripper = tool_id in [ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4]
 
-        if action_is_grasp and tool_is_gripper:
-            self._ros_wrapper.close_gripper(CommonStore.gripper_close_speed,
-                                            CommonStore.gripper_close_max_torque,
-                                            CommonStore.gripper_close_hold_torque)
-        elif action_is_grasp and not tool_is_gripper:
-            self._ros_wrapper.grasp_with_tool(PinID.DO4)
-        elif tool_is_gripper:
-            self._ros_wrapper.open_gripper(CommonStore.gripper_open_speed,
-                                           CommonStore.gripper_open_max_torque,
-                                           CommonStore.gripper_open_hold_torque)
+        if action_is_grasp:
+            if tool_is_gripper:
+                self._ros_wrapper.close_gripper(CommonStore.gripper_close_speed,
+                                                CommonStore.gripper_close_max_torque,
+                                                CommonStore.gripper_close_hold_torque)
+            else:
+                self._ros_wrapper.grasp_with_tool(PinID.DO4)
+            self._is_open = False
         else:
-            self._ros_wrapper.release_with_tool(PinID.DO4)
+            if tool_is_gripper:
+                self._ros_wrapper.open_gripper(CommonStore.gripper_open_speed,
+                                               CommonStore.gripper_open_max_torque,
+                                               CommonStore.gripper_open_hold_torque)
+            else:
+                self._ros_wrapper.release_with_tool(PinID.DO4)
+            self._is_open = True
 
 
 @slave_context.coil

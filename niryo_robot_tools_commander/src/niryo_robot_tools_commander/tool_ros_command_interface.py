@@ -18,8 +18,7 @@ class ToolRosCommandInterface:
         self._digital_outputs = rospy.get_param("/niryo_robot_rpi/digital_outputs")
 
         namespace = rospy.get_param("~namespace_topics")
-        self.__service_open_gripper = rospy.ServiceProxy(namespace + 'open_gripper', ToolCommand)
-        self.__service_close_gripper = rospy.ServiceProxy(namespace + 'close_gripper', ToolCommand)
+        self.__service_control_gripper = rospy.ServiceProxy(namespace + 'control_gripper', ToolCommand)
 
         self.__service_pull_air_vacuum_pump = rospy.ServiceProxy(namespace + 'pull_air_vacuum_pump', ToolCommand)
         self.__service_push_air_vacuum_pump = rospy.ServiceProxy(namespace + 'push_air_vacuum_pump', ToolCommand)
@@ -35,36 +34,13 @@ class ToolRosCommandInterface:
 
     # Gripper
 
-    def open_gripper(self, gripper_id, open_position, open_speed, open_hold_torque, open_max_torque):
-        self.__service_open_gripper(id=gripper_id,
-                                    position=open_position,
-                                    speed=open_speed,
-                                    hold_torque=open_hold_torque,
-                                    max_torque=open_max_torque)
-        return True
-        # try:
-        #     resp = self.__service_open_gripper(id=gripper_id, position=open_position, speed=open_speed,
-        #                                        hold_torque=open_hold_torque, max_torque=open_max_torque)
-        #     return resp.state
-        # except rospy.ServiceException:
-        #     rospy.logerr("ROS Tool Interface - Failed to Open Gripper")
-        #     return self.__state_ros_communication_problem
-
-    def close_gripper(self, gripper_id, close_position, close_speed, close_hold_torque, close_max_torque):
-        resp = self.__service_close_gripper(id=gripper_id,
-                                            position=close_position,
-                                            speed=close_speed,
-                                            hold_torque=close_hold_torque,
-                                            max_torque=close_max_torque)
-        return True
-        # try:
-        #     resp = self.__service_close_gripper(id=gripper_id, position=close_position,
-        #                                         speed=close_speed, hold_torque=close_hold_torque,
-        #                                         max_torque=close_max_torque)
-        #     return resp.state
-        # except rospy.ServiceException:
-        #     rospy.logerr("ROS Tool Interface - Failed to Close Gripper")
-        #     return self.__state_ros_communication_problem
+    def control_gripper(self, gripper_id, position, speed, hold_torque, max_torque):
+        resp = self.__service_control_gripper(id=gripper_id,
+                                              position=position,
+                                              speed=speed,
+                                              hold_torque=hold_torque,
+                                              max_torque=max_torque)
+        return resp.state
 
     # Vacuum
     def pull_air_vacuum_pump(self,

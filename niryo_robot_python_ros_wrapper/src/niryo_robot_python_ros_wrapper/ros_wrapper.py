@@ -80,6 +80,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
+        self.__control_gripper_states = rospy.get_param('/niryo_robot_tools_commander/state_dict')
 
         if self.__hardware_version in ['ned', 'ned2', 'ned3pro']:
             self.__node_name = rospy.get_name()
@@ -1868,13 +1869,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
         """
-        Opens gripper with a speed 'speed'
+        Open the gripper.
 
-        :param speed: Default -> 500
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Default -> 100
+        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage: Default -> 20
+        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
@@ -1883,18 +1884,76 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
         """
-        Closes gripper with a speed 'speed'
+        Close the gripper
 
-        :param speed: Default -> 500
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Default -> 100
+        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage: Default -> 20
+        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
         """
         return self.__tools.close_gripper(speed, max_torque_percentage, hold_torque_percentage)
+
+    def control_gripper(self, position, speed, max_torque, hold_torque):
+        """
+        Low level function to control the gripper.
+
+        :param position: Position of the gripper (in motor steps).
+        :type position: int
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
+        :type speed: int
+        :param max_torque: Ned2/3Pro only. Maximum torque to apply while moving gripper (in mA).
+        A negative value will apply the force in the opposite direction.
+        :type max_torque: int
+        :param hold_torque: Ned2/3Pro only. Torque to apply once the gripper has stopped moving (in mA).
+        A negative value will apply the force in the opposite direction.
+        :type hold_torque: int
+        """
+        from tools_interface.srv import ToolCommand
+        result = self._call_service('/niryo_robot/tools/control_gripper',
+                                    ToolCommand,
+                                    self.get_current_tool_id(),
+                                    position,
+                                    speed,
+                                    max_torque,
+                                    hold_torque)
+
+        if result.state != self.__control_gripper_states['gripper_ok']:
+            try:
+                code = {v: k for k, v in self.__control_gripper_states.items()}[result.state]
+            except KeyError:
+                raise NiryoRosWrapperException(f'Unknown state {result.state} for control_gripper service')
+            raise NiryoRosWrapperException(f'Invalid state "{code}" ({result.state})')
+
+    def get_current_tool_position(self):
+        """
+        Get the tool current position
+        :return: the tool position, in steps.
+        :rtype: int
+        """
+        return self.__tool_motor_state_ntv.value.position
+
+    def get_gripper_specs(self, tool_id=None):
+        """
+        Get the gripper position and torque limits. Positions are in steps, and torque limits are in mA.
+
+        :param tool_id: Tool ID. If None, use the current tool id.
+        :type tool_id: ToolID
+        :return: gripper position limits (close, open), gripper torque limits (close, open)
+        :rtype: ((int, int), (int, int))
+        """
+        specs = rospy.get_param('/niryo_robot_tools_commander/tool_list')
+        tool_id = tool_id or self.get_current_tool_id()
+        try:
+            gripper_specs = next(s['specs'] for s in specs if s['type'] == 'gripper' and s['id'] == tool_id)
+        except StopIteration:
+            raise NiryoRosWrapperException(f'No gripper found for id {tool_id}')
+
+        return (gripper_specs['close_position'], gripper_specs['open_position']), (gripper_specs['torque_limit']['min'],
+                                                                                   gripper_specs['torque_limit']['max'])
 
     # - Vacuum
     def pull_air_vacuum_pump(self):

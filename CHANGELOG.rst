@@ -2,6 +2,18 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+-----------
+
+* refacto(tools_interface): new service control_gripper. open_gripper and close_gripper are now aliases to this service.
+* refacto(tools_commander): new action server command: CONTROL_GRIPPER
+* feat(ros_wrapper): new methods:
+
+  * control_gripper, which allow to control the gripper with a position (in steps)
+  * get_gripper_limits, which returns the default close and open positions for the gripper
+
+*
+
 5.6.3
 -----------
 

@@ -61,8 +61,7 @@ class ToolState : public DxlMotorState
         static constexpr int TOOL_STATE_WRONG_ID      = 0x03;
         static constexpr int TOOL_STATE_TIMEOUT       = 0x04;
 
-        static constexpr int GRIPPER_STATE_OPEN       = 0x10;
-        static constexpr int GRIPPER_STATE_CLOSE      = 0x11;
+        static constexpr int GRIPPER_STATE_OK         = 0x12;
 
         static constexpr int VACUUM_PUMP_STATE_PULLED = 0x20;
         static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;

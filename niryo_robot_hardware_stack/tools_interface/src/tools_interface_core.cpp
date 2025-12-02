@@ -262,9 +262,11 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
 {
     _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool", &ToolsInterfaceCore::_callbackPingAndSetTool, this);
 
-    _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper", &ToolsInterfaceCore::_callbackOpenGripper, this);
+    _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper", &ToolsInterfaceCore::_callbackControlGripper, this);
 
-    _close_gripper_server = nh.advertiseService("/niryo_robot/tools/close_gripper", &ToolsInterfaceCore::_callbackCloseGripper, this);
+    _close_gripper_server = nh.advertiseService("/niryo_robot/tools/close_gripper", &ToolsInterfaceCore::_callbackControlGripper, this);
+
+    _control_gripper_server = nh.advertiseService("/niryo_robot/tools/control_gripper", &ToolsInterfaceCore::_callbackControlGripper, this);
 
     _pull_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump", &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
 
@@ -411,12 +413,12 @@ bool ToolsInterfaceCore::_callbackToolReboot(niryo_robot_msgs::Trigger::Request 
 }
 
 /**
- * @brief ToolsInterfaceCore::_callbackOpenGripper
+ * @brief ToolsInterfaceCore::_callbackControlGripper
  * @param req
  * @param res
  * @return
  */
-bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res)
+bool ToolsInterfaceCore::_callbackControlGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
@@ -430,40 +432,9 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::ToolCommand::Requ
         // set hold torque
         _toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
 
-        _toolState->setState(ToolState::GRIPPER_STATE_OPEN);
+        _toolState->setState(ToolState::GRIPPER_STATE_OK);
 
-        ROS_DEBUG("ToolsInterfaceCore::_callbackOpenGripper : Opened !");
-        res.state = _toolState->getState();
-    }
-
-    return true;
-}
-
-/**
- * @brief ToolsInterfaceCore::_callbackCloseGripper
- * @param req
- * @param res
- * @return
- */
-bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res)
-{
-    lock_guard<mutex> lck(_tool_mutex);
-    res.state = ToolState::TOOL_STATE_WRONG_ID;
-
-    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
-    {
-        uint32_t position_command = (req.position < 50) ? 0 : req.position - 50;
-
-        _toolCommand(position_command, req.max_torque, req.speed);
-
-        _waitForToolStop(req.id, _gripper_timeout);
-
-        // set hold torque
-        _toolCommand(_toolState->getPosition(), req.hold_torque, req.speed);
-
-        _toolState->setState(ToolState::GRIPPER_STATE_CLOSE);
-        ROS_DEBUG("Closed !");
-
+        ROS_DEBUG("ToolsInterfaceCore::_callbackControlGripper : OK !");
         res.state = _toolState->getState();
     }
 

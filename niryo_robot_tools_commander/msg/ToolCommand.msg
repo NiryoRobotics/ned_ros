@@ -2,7 +2,7 @@
 int8 OPEN_GRIPPER = 1
 int8 CLOSE_GRIPPER = 2
 
-# Vacuump pump
+# Vacuum pump
 int8 PULL_AIR_VACUUM_PUMP = 10
 int8 PUSH_AIR_VACUUM_PUMP = 11
 

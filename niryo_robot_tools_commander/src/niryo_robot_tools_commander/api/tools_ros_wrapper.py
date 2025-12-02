@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Lib
-
+import rospy
 from niryo_robot_utils import NiryoRosWrapperException, NiryoActionClient, NiryoTopicValue, AbstractNiryoRosWrapper
 
 # Command Status
@@ -100,7 +100,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
         """
-        Opens gripper with a speed 'speed'
+        Open the gripper
 
         :param speed: Default -> 500
         :type speed: int
@@ -115,7 +115,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
 
     def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
         """
-        Closes gripper with a speed 'speed'
+        Close the gripper
 
         :param speed: Default -> 500
         :type speed: int
@@ -128,16 +128,13 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_gripper(ToolCommand.CLOSE_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def __deal_with_gripper(self, command_int, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
+    def __deal_with_gripper(self, command_int, speed, max_torque_percentage, hold_torque_percentage):
         goal = ToolGoal()
         goal.cmd.tool_id = self.get_current_tool_id()
         goal.cmd.cmd_type = command_int
         goal.cmd.max_torque_percentage = max_torque_percentage
         goal.cmd.hold_torque_percentage = hold_torque_percentage
-        if command_int == ToolCommand.OPEN_GRIPPER:
-            goal.cmd.speed = speed
-        else:
-            goal.cmd.speed = speed
+        goal.cmd.speed = speed
         return self.__tool_action_nac.execute(goal)
 
     # - Vacuum
