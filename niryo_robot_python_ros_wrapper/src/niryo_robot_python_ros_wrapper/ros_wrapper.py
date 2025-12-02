@@ -1869,13 +1869,13 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
         """
-        Open the gripper
+        Open the gripper.
 
-        :param speed: Default -> 500
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Default -> 100
+        :param max_torque_percentage: Ned2 only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage: Default -> 20
+        :param hold_torque_percentage:  Ned2 only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
@@ -1886,18 +1886,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         Close the gripper
 
-        :param speed: Default -> 500
+        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
-        :param max_torque_percentage: Default -> 100
+        :param max_torque_percentage: Ned2 only. Percentage of torque to apply while moving (in %)
         :type max_torque_percentage: int
-        :param hold_torque_percentage: Default -> 20
+        :param hold_torque_percentage:  Ned2 only. Percentage of torque to apply in holding position (in %)
         :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
         """
         return self.__tools.close_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
-    def control_gripper(self, position, max_torque, hold_torque):
+    def control_gripper(self, speed, position, max_torque, hold_torque):
         """
         Low level function to control the gripper.
 
