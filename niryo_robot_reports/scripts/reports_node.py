@@ -49,13 +49,17 @@ class ReportsNode:
 
     def __on_get_settings_available(self, get_settings_proxy):
         settings = {}
-        for setting in ['cloud_domain', 'serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
+        for setting in ['serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
             response = get_settings_proxy(setting)
             setting_value = response.value
             if response.status != CommandStatus.SUCCESS:
                 rospy.logerr(f'Unable to get setting "{setting}"')
                 setting_value = None
             settings[setting] = setting_value
+
+            settings['cloud_domain'] = os.getenv('CLOUD_DOMAIN')
+            if settings['cloud_domain'] is None:
+                raise EnvironmentError('CLOUD_DOMAIN is not set')
 
         self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
         try:
