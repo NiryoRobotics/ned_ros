@@ -98,7 +98,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
             return self.deactivate_electromagnet(pin_id)
 
     # - Gripper
-    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
+    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
         Open the gripper
 
@@ -113,7 +113,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_gripper(ToolCommand.OPEN_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
+    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
         Close the gripper
 

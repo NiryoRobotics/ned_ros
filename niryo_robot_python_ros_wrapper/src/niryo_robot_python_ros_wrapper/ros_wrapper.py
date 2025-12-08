@@ -1867,7 +1867,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         return self.__tools.release_with_tool(pin_id)
 
     # - Gripper
-    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
+    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
         Open the gripper.
 
@@ -1882,7 +1882,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__tools.open_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
-    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
+    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
         Close the gripper
 
