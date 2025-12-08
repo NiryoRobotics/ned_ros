@@ -1836,35 +1836,41 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__tools.update_tool()
 
-    def grasp_with_tool(self, pin_id=""):
+    def grasp_with_tool(self, *args, **kwargs):
         """
-        Grasps with the tool linked to tool_id
+        Grasps with the tool linked to tool_id.
         This action corresponds to
         - Close gripper for Grippers
         - Pull Air for Vacuum pump
         - Activate for Electromagnet
 
-        :param pin_id: [Only required for electromagnet] Pin ID of the electromagnet
-        :type pin_id: PinID
+        :param args: Positional arguments to pass to the underlying functions.
+        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+        :type args: Any
+        :param kwargs: Keyword arguments to pass to the underlying functions
+        :type kwargs: Any
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__tools.grasp_with_tool(pin_id)
+        return self.__tools.grasp_with_tool(*args, **kwargs)
 
-    def release_with_tool(self, pin_id=""):
+    def release_with_tool(self, *args, **kwargs):
         """
-        Releases with the tool associated to tool_id
+        Releases with the tool associated to tool_id.
         This action corresponds to
         - Open gripper for Grippers
         - Push Air for Vacuum pump
         - Deactivate for Electromagnet
 
-        :param pin_id: [Only required for electromagnet] Pin ID of the electromagnet
-        :type pin_id: PinID
+        :param args: Positional arguments to pass to the underlying functions.
+        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+        :type args: Any
+        :param kwargs: Keyword arguments to pass to the underlying functions
+        :type kwargs: Any
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__tools.release_with_tool(pin_id)
+        return self.__tools.release_with_tool(*args, **kwargs)
 
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):

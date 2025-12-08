@@ -53,7 +53,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_tools_commander/update_tool', Trigger)
         return self._classic_return_w_check(result)
 
-    def grasp_with_tool(self, pin_id=""):
+    def grasp_with_tool(self, *args, **kwargs):
         """
         Grasps with the tool linked to tool_id.
         This action corresponds to
@@ -61,21 +61,24 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         - Pull Air for Vacuum pump
         - Activate for Electromagnet
 
-        :param pin_id: [Only required for electromagnet] Pin ID of the electromagnet
-        :type pin_id: PinID
+        :param args: Positional arguments to pass to the underlying functions.
+        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+        :type args: Any
+        :param kwargs: Keyword arguments to pass to the underlying functions
+        :type kwargs: Any
         :return: status, message
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
-            return self.close_gripper()
+            return self.close_gripper(*args, **kwargs)
         elif tool_id in (ToolID.VACUUM_PUMP_1, ToolID.VACUUM_PUMP_2):
-            return self.pull_air_vacuum_pump()
+            return self.pull_air_vacuum_pump(*args, **kwargs)
         elif tool_id == ToolID.ELECTROMAGNET_1:
-            return self.activate_electromagnet(pin_id)
+            return self.activate_electromagnet(*args, **kwargs)
 
-    def release_with_tool(self, pin_id=""):
+    def release_with_tool(self, *args, **kwargs):
         """
         Releases with the tool associated to tool_id.
         This action corresponds to
@@ -83,22 +86,26 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         - Push Air for Vacuum pump
         - Deactivate for Electromagnet
 
-        :param pin_id: [Only required for electromagnet] Pin ID of the electromagnet
-        :type pin_id: PinID
+        :param args: Positional arguments to pass to the underlying functions.
+        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+        :type args: Any
+        :param kwargs: Keyword arguments to pass to the underlying functions
+        :type kwargs: Any
         :return: status, message
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
 
+
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
-            return self.open_gripper()
+            return self.open_gripper(*args, **kwargs)
         elif tool_id in (ToolID.VACUUM_PUMP_1, ToolID.VACUUM_PUMP_2):
-            return self.push_air_vacuum_pump()
+            return self.push_air_vacuum_pump(*args, **kwargs)
         elif tool_id == ToolID.ELECTROMAGNET_1:
-            return self.deactivate_electromagnet(pin_id)
+            return self.deactivate_electromagnet(*args, **kwargs)
 
     # - Gripper
-    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
+    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100, **_kwargs):
         """
         Open the gripper
 
@@ -113,7 +120,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_gripper(ToolCommand.OPEN_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
+    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100, **_kwargs):
         """
         Close the gripper
 
@@ -138,7 +145,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         return self.__tool_action_nac.execute(goal)
 
     # - Vacuum
-    def pull_air_vacuum_pump(self):
+    def pull_air_vacuum_pump(self, **_kwargs):
         """
         Pulls air
 
@@ -147,7 +154,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_vacuum_pump(ToolCommand.PULL_AIR_VACUUM_PUMP)
 
-    def push_air_vacuum_pump(self):
+    def push_air_vacuum_pump(self, **_kwargs):
         """
         Pulls air
 
@@ -180,7 +187,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
 
         return self.__deal_with_electromagnet(pin_id, ToolCommand.SETUP_DIGITAL_IO)
 
-    def activate_electromagnet(self, pin_id):
+    def activate_electromagnet(self, pin_id, **_kwargs):
         """
         Activates electromagnet associated to electromagnet_id on pin_id
 
@@ -191,7 +198,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_electromagnet(pin_id, ToolCommand.ACTIVATE_DIGITAL_IO)
 
-    def deactivate_electromagnet(self, pin_id):
+    def deactivate_electromagnet(self, pin_id, **_kwargs):
         """
         Deactivates electromagnet associated to electromagnet_id on pin_id
 
