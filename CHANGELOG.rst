@@ -12,7 +12,9 @@ forthcoming
   * control_gripper, which allow to control the gripper with a position (in steps)
   * get_gripper_limits, which returns the default close and open positions for the gripper
 
-*
+* refacto: do not rely on the user database to fetch static config.
+* feat(ros_wrapper): (release|grasp)_with_tool now take arbitrary arguments that will be passed to the underlying tool functions.
+* chore(ros_wrapper): default torque for (open|close)_gripper is now 100%
 
 5.6.3
 -----------
