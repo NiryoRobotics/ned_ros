@@ -1845,7 +1845,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         - Activate for Electromagnet
 
         :param args: Positional arguments to pass to the underlying functions.
-        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+                Please note that *arg is present for retro-compatibility purpose but is not recommended.
         :type args: Any
         :param kwargs: Keyword arguments to pass to the underlying functions
         :type kwargs: Any
@@ -1863,7 +1863,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         - Deactivate for Electromagnet
 
         :param args: Positional arguments to pass to the underlying functions.
-        Please note that *arg is present for retro-compatibility purpose but is not recommended.
+                Please note that *arg is present for retro-compatibility purpose but is not recommended.
         :type args: Any
         :param kwargs: Keyword arguments to pass to the underlying functions
         :type kwargs: Any
