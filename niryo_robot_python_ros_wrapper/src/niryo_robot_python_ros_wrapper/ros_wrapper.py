@@ -1009,6 +1009,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def pick(self, robot_position: RobotPosition, **kwargs):
         """
         Picks an object at a given position.
+
         :param robot_position: The position of the object to pick
         :type robot_position: RobotPosition
         :param kwargs: any keyword argument taken by the move function
@@ -1029,6 +1030,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def place(self, robot_position: RobotPosition, **kwargs):
         """
         Places an object at a given position.
+
         :param robot_position: The position of the object to place
         :type robot_position: RobotPosition
         :param kwargs: any keyword argument taken by the move function
@@ -1216,6 +1218,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def compute_trajectory(self, robot_positions: List[RobotPosition], dist_smoothing=0.0):
         """
         Generate a trajectory from a list of poses and joints.
+
         :param robot_positions: a list of poses and / or joints
         :type robot_positions: list[RobotPosition]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
@@ -1243,6 +1246,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
            You should use :func:`compute_trajectory` with `JointsPosition` and `Pose` objects.
 
         Generate a trajectory from a list of poses and joints.
+
         :param list_pose_joints: a list of poses and / or joints
         :type list_pose_joints: list[list[float]]
         :param list_type: a list indicating if the corresponding element is a pose or joints
@@ -1263,6 +1267,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
            You should use :func:`compute_trajectory` with `Pose` objects.
 
         Generate a trajectory from a list of robot positions.
+
         :param list_poses_raw: a list of poses
         :type list_poses_raw: list[list[float]]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
@@ -1812,10 +1817,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def get_current_tool_id(self):
         """
-        Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
-
-        :return: Tool Id
-        :rtype: Union[ToolID, int]
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.get_current_tool_id`
         """
         return self.__tools.get_current_tool_id()
 
@@ -1829,77 +1831,32 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def update_tool(self):
         """
-        Calls service niryo_robot_tools_commander/update_tool to update tool
-
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.update_tool`
         """
         return self.__tools.update_tool()
 
     def grasp_with_tool(self, *args, **kwargs):
         """
-        Grasps with the tool linked to tool_id.
-        This action corresponds to
-        - Close gripper for Grippers
-        - Pull Air for Vacuum pump
-        - Activate for Electromagnet
-
-        :param args: Positional arguments to pass to the underlying functions.
-                Please note that *arg is present for retro-compatibility purpose but is not recommended.
-        :type args: Any
-        :param kwargs: Keyword arguments to pass to the underlying functions
-        :type kwargs: Any
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.grasp_with_tool`
         """
         return self.__tools.grasp_with_tool(*args, **kwargs)
 
     def release_with_tool(self, *args, **kwargs):
         """
-        Releases with the tool associated to tool_id.
-        This action corresponds to
-        - Open gripper for Grippers
-        - Push Air for Vacuum pump
-        - Deactivate for Electromagnet
-
-        :param args: Positional arguments to pass to the underlying functions.
-                Please note that *arg is present for retro-compatibility purpose but is not recommended.
-        :type args: Any
-        :param kwargs: Keyword arguments to pass to the underlying functions
-        :type kwargs: Any
-        :return: status, message
-        :rtype: (int, str)
+        See :func:niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.release_with_tool``
         """
         return self.__tools.release_with_tool(*args, **kwargs)
 
     # - Gripper
     def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
-        Open the gripper.
-
-        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
-        :type speed: int
-        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
-        :type max_torque_percentage: int
-        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
-        :type hold_torque_percentage: int
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.open_gripper`
         """
         return self.__tools.open_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
     def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         """
-        Close the gripper
-
-        :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
-        :type speed: int
-        :param max_torque_percentage: Ned2/3Pro only. Percentage of torque to apply while moving (in %)
-        :type max_torque_percentage: int
-        :param hold_torque_percentage:  Ned2/3Pro only. Percentage of torque to apply in holding position (in %)
-        :type hold_torque_percentage: int
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.close_gripper`
         """
         return self.__tools.close_gripper(speed, max_torque_percentage, hold_torque_percentage)
 
@@ -1912,10 +1869,10 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :param speed: Ned/One only. Moving speed (unit is 0.111 rpm)
         :type speed: int
         :param max_torque: Ned2/3Pro only. Maximum torque to apply while moving gripper (in mA).
-        A negative value will apply the force in the opposite direction.
+                A negative value will apply the force in the opposite direction.
         :type max_torque: int
         :param hold_torque: Ned2/3Pro only. Torque to apply once the gripper has stopped moving (in mA).
-        A negative value will apply the force in the opposite direction.
+                A negative value will apply the force in the opposite direction.
         :type hold_torque: int
         """
         from tools_interface.srv import ToolCommand
@@ -1964,122 +1921,63 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     # - Vacuum
     def pull_air_vacuum_pump(self):
         """
-        Pulls air
-
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.pull_air_vacuum_pump`
         """
         return self.__tools.pull_air_vacuum_pump()
 
     def push_air_vacuum_pump(self):
         """
-        Pulls air
-
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.push_air_vacuum_pump`
         """
         return self.__tools.push_air_vacuum_pump()
 
     # - Electromagnet
     def setup_electromagnet(self, pin_id):
         """
-        Setups electromagnet on pin
-
-        :param pin_id: Pin ID
-        :type pin_id:  PinID
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.setup_electromagnet`
         """
         return self.__tools.setup_electromagnet(pin_id)
 
     def activate_electromagnet(self, pin_id):
         """
-        Activates electromagnet associated to electromagnet_id on pin_id
-
-        :param pin_id: Pin ID
-        :type pin_id:  PinID
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.activate_electromagnet`
         """
         return self.__tools.activate_electromagnet(pin_id)
 
     def deactivate_electromagnet(self, pin_id):
         """
-        Deactivates electromagnet associated to electromagnet_id on pin_id
-
-        :param pin_id: Pin ID
-        :type pin_id:  PinID
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.deactivate_electromagnet`
         """
         return self.__tools.deactivate_electromagnet(pin_id)
 
     # - TCP
     def enable_tcp(self, enable=True):
         """
-        Enables or disables the TCP function (Tool Center Point).
-        If activation is requested, the last recorded TCP value will be applied.
-        The default value depends on the gripper equipped.
-        If deactivation is requested, the TCP will be coincident with the tool_link
-
-        :param enable: True to enable, False otherwise.
-        :type enable: bool
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.enable_tcp`
         """
         return self.__tools.enable_tcp(enable)
 
     def get_tcp(self, as_list=False):
         """
-        Returns the TCP state
-        :param as_list: True to return the tcp position as a list of float
-        :type as_list: bool
-        :return: the tcp (enabled, position and orientation)
-        :rtype: Tool msg object
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.get_tcp`
         """
-        tcp = self.__tools.get_tcp()
-        if as_list:
-            return [tcp.position.x, tcp.position.y, tcp.position.z, tcp.rpy.roll, tcp.rpy.pitch, tcp.rpy.yaw]
-        return tcp
+        return self.__tools.get_tcp(as_list=as_list)
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """
-        Activates the TCP function (Tool Center Point)
-        and defines the transformation between the tool_link frame and the TCP frame
-
-        :param x:
-        :type x: float
-        :param y:
-        :type y: float
-        :param z:
-        :type z: float
-        :param roll:
-        :type roll: float
-        :param pitch:
-        :type pitch: float
-        :param yaw:
-        :type yaw: float
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.set_tcp`
         """
         return self.__tools.set_tcp(x, y, z, roll, pitch, yaw)
 
     def reset_tcp(self):
         """
-        Resets the TCP (Tool Center Point) transformation.
-        The TCP will be reset according to the tool equipped
-
-        :return: status, message
-        :rtype: (int, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.reset_tcp`
         """
         return self.__tools.reset_tcp()
 
     def tool_reboot(self):
         """
-        Reboots the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
-
-        :return: success, message
-        :rtype: (bool, str)
+        See :meth:`niryo_robot_tools_commander.api.tools_ros_wrapper.ToolsRosWrapper.tool_reboot`
         """
         return self.__tools.tool_reboot()
 
@@ -2410,6 +2308,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def control_video_stream(self, stream_on):
         """
         Control if the video stream should be activated or not
+
         :param stream_on: if True, activate the video stream. Deactivate it otherwise
         :return: None
         """

@@ -62,7 +62,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         - Activate for Electromagnet
 
         :param args: Positional arguments to pass to the underlying functions.
-                Please note that *arg is present for retro-compatibility purpose but is not recommended.
+                Please note that \*arg is present for retro-compatibility purpose but is not recommended.
         :type args: Any
         :param kwargs: Keyword arguments to pass to the underlying functions
         :type kwargs: Any
@@ -87,7 +87,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         - Deactivate for Electromagnet
 
         :param args: Positional arguments to pass to the underlying functions.
-                Please note that *arg is present for retro-compatibility purpose but is not recommended.
+                Please note that \*arg is present for retro-compatibility purpose but is not recommended.
         :type args: Any
         :param kwargs: Keyword arguments to pass to the underlying functions
         :type kwargs: Any
@@ -231,13 +231,19 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot_tools_commander/enable_tcp', SetBool, enable)
         return self._classic_return_w_check(result)
 
-    def get_tcp(self):
+    def get_tcp(self, as_list=False):
         """
         Returns the TCP state
+
+        :param as_list: True to return the tcp position as a list of float
+        :type as_list: bool
         :return: the tcp (enabled, position and orientation)
-        :rtype: Tool msg object
+        :rtype: Tool msg object if as_list is False, else a list representing the transform
         """
-        return self.__tcp_ntv.value
+        tcp = self.__tcp_ntv.value
+        if as_list:
+            return [tcp.position.x, tcp.position.y, tcp.position.z, tcp.rpy.roll, tcp.rpy.pitch, tcp.rpy.yaw]
+        return tcp
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
         """
