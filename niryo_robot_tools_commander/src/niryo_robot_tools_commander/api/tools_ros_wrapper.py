@@ -96,7 +96,6 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         tool_id = self.get_current_tool_id()
 
-
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper(*args, **kwargs)
         elif tool_id in (ToolID.VACUUM_PUMP_1, ToolID.VACUUM_PUMP_2):
