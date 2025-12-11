@@ -2,19 +2,30 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-forthcoming
+v5.7.0
 -----------
 
-* refacto(tools_interface): new service control_gripper. open_gripper and close_gripper are now aliases to this service.
-* refacto(tools_commander): new action server command: CONTROL_GRIPPER
-* feat(ros_wrapper): new methods:
+**Features**
 
-  * control_gripper, which allow to control the gripper with a position (in steps)
-  * get_gripper_limits, which returns the default close and open positions for the gripper
+* New service control_gripper in tools_interface allowing position-based control of grippers. open_gripper and close_gripper are now aliases to this service.
+* New ROS wrapper methods:
 
-* refacto: do not rely on the user database to fetch static config.
-* feat(ros_wrapper): (release|grasp)_with_tool now take arbitrary arguments that will be passed to the underlying tool functions.
-* chore(ros_wrapper): default torque for (open|close)_gripper is now 100%
+  * control_gripper: Control the gripper with a specific position (in steps) and speed
+  * get_gripper_specs: Returns the default close and open positions for the gripper, as well as the min and max torque.
+  * get_current_tool_position: Get the current tool position in steps
+
+* New TCP server commands: CONTROL_GRIPPER, GET_CURRENT_TOOL_POSITION, GET_GRIPPER_SPECS
+
+**Improvements**
+
+* grasp_with_tool and release_with_tool now accept arbitrary arguments and keyword arguments that will be passed to the underlying tool functions
+* Default hold_torque_percentage for open_gripper and close_gripper operations changed to 100%
+* Refactored cloud domain configuration to use environment variables (CLOUD_DOMAIN) instead of fetching from user database
+* Removed all references to deprecated GRIPPER_OPEN and GRIPPER_CLOSE states in favor of GRIPPER_OK
+* Improved Modbus tool actuation logic with better state tracking using current position comparison
+* Enhanced gripper ROS wrapper documentation
+* Various documentation fixes and improvements
+* Dynamic copyright year in documentation
 
 5.6.3
 -----------
