@@ -20,9 +20,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <memory>
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
+#include "common/model/i_model_number_validator.hpp"
 
 namespace ttl_driver
 {
+    /**
+     * @brief Register definitions for Ned/Ned2 Stepper motor
+     */
     struct StepperReg
     {
         static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
@@ -30,6 +34,12 @@ namespace ttl_driver
         static constexpr float PROTOCOL_VERSION = 2.0;
         static constexpr int MODEL_NUMBER = 2000;
         static constexpr int VOLTAGE_CONVERSION = 1000;
+        
+
+        static std::unique_ptr<common::model::IModelNumberValidator> createModelNumberValidator()
+        {
+            return std::make_unique<common::model::ExactModelNumberValidator>(MODEL_NUMBER);
+        }
 
         // EEPROM
         static constexpr uint16_t ADDR_MODEL_NUMBER = 0;

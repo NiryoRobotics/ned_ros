@@ -19,16 +19,39 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <memory>
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/i_model_number_validator.hpp"
 
 namespace ttl_driver
 {
+    /**
+     * @brief Register definitions for Ned3Pro Stepper motor family
+     * 
+     * This hardware family currently has two model number variants:
+     * - 2100: Standard Ned3Pro stepper for robot joints (original bootloader)
+     * - 2104: Ned3Pro stepper for conveyors (different gear ratio, specific firmware)
+     * 
+     * Both variants share the same register layout and communication protocol,
+     * differing only in internal firmware behavior and gear ratios.
+     * The bootloader is factory-set and determines the model number permanently,
+     * meaning motors with old bootloaders (2100) cannot migrate to new model numbers (2104).
+     */
     struct Ned3ProStepperReg
     {
         static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
 
         static constexpr float PROTOCOL_VERSION = 2.0;
-        static constexpr int MODEL_NUMBER = 2100;
+        
+        static constexpr int MODEL_NUMBER = 2100;           // Primary/standard model number (joints)
+        static constexpr int MODEL_NUMBER_CONVEYOR = 2104;  // Conveyor variant (different gear ratio)
+        
         static constexpr int VOLTAGE_CONVERSION = 1000;
+        
+        static std::unique_ptr<common::model::IModelNumberValidator> createModelNumberValidator()
+        {
+            return std::make_unique<common::model::SetModelNumberValidator>(
+                std::initializer_list<uint16_t>{MODEL_NUMBER, MODEL_NUMBER_CONVEYOR}
+            );
+        }
 
         // EEPROM
 
