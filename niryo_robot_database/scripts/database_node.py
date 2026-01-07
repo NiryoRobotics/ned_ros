@@ -11,8 +11,8 @@ from niryo_robot_utils import sentry_init
 from niryo_robot_system_api_client import system_api_client
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
-from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
-from niryo_robot_database.Version import Version, UnknownVersionException
+from niryo_robot_database.FilePath import FilePath
+from niryo_robot_database.Version import Version
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
@@ -33,11 +33,9 @@ class DatabaseNode:
         if not os.path.isfile(self.db_path):
             raise RuntimeError('Database Node - Unable to open the database.')
 
-        sqlite_dao = SQLiteDAO(self.db_path)
+        # sqlite dependent
 
-        rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
-        rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
-        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
+        sqlite_dao = SQLiteDAO(self.db_path)
 
         self.__file_paths = FilePath(sqlite_dao)
         rospy.Service('~file_paths/add', AddFilePath, self.__callback_add_file_path)
@@ -55,6 +53,15 @@ class DatabaseNode:
                          self.__sw_callback,
                          queue_size=1)
 
+        # system api dependent
+
+        while not system_api_client.root().success:
+            rospy.logwarn_throttle(2, 'Waiting for system api server')
+            rospy.sleep(0.2)
+
+        rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
+        rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
+        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class SystemApiEndpoint(Enum):
+    ROOT = '/'
     SET_ROBOT_NAME = '/setRobotName'
     HOTSPOT_STATE = '/hotspotState'
     WIFI_STATE = '/wifiState'
