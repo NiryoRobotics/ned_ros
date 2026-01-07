@@ -55,7 +55,10 @@ class PsutilWrapper(GenericWrapper):
 
     @staticmethod
     def get_cpu_temperature():
-        return list(psutil.sensors_temperatures().values())[0][0].current
+        try:
+            return list(psutil.sensors_temperatures().values())[0][0].current
+        except IndexError:
+            return 0
 
     @staticmethod
     def get_ram_usage():
