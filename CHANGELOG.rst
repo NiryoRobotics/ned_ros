@@ -2,21 +2,13 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-v5.8.0
+v5.7.0
 -----------
 
 **Features**
 
 * New conveyor model support (model number 2104 aka conveyor v4) with new gear ratio.
 * Added model number validator to register classes to choose different validation rules based on hardware model.
-
-v5.7.0
------------
-
-**Features**
-
-**Features**
-
 * New service control_gripper in tools_interface allowing position-based control of grippers. open_gripper and close_gripper are now aliases to this service.
 * New ROS wrapper methods:
 
