@@ -166,8 +166,12 @@ namespace ttl_driver
 
     /**
      * @brief Ned3ProStepperDriver<reg_type>::checkModelNumber
-     * @param id
-     * @return
+     * 
+     * Validates that the motor's model number is compatible with this driver's hardware family.
+     * 
+     * @param id Motor ID to check
+     * @return COMM_SUCCESS if model number is valid, PING_WRONG_MODEL_NUMBER if invalid,
+     *         or communication error code if ping fails
      */
     template <typename reg_type>
     int Ned3ProStepperDriver<reg_type>::checkModelNumber(uint8_t id)
@@ -177,8 +181,14 @@ namespace ttl_driver
 
         if (ping_result == COMM_SUCCESS)
         {
-            if (model_number && model_number != reg_type::MODEL_NUMBER)
+            // Use the validator from register definition to check compatibility
+            auto validator = reg_type::createModelNumberValidator();
+            if (!validator->isValid(model_number))
             {
+                ROS_WARN("Ned3ProStepperDriver: Model number %u not valid for %s (expected %s)",
+                         model_number,
+                         common::model::HardwareTypeEnum(reg_type::motor_type).toString().c_str(),
+                         validator->describe().c_str());
                 return PING_WRONG_MODEL_NUMBER;
             }
         }
