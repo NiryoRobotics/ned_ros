@@ -13,6 +13,7 @@ def __request(method, endpoint, params=None, body_params=None):
 
     return SystemApiResponse.from_requests(requests_response)
 
+
 def root():
     return __request('GET', SystemApiEndpoint.ROOT)
 
