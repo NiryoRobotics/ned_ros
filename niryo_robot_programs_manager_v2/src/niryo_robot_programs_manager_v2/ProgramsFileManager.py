@@ -38,8 +38,7 @@ class ProgramsFileManager(object):
         :type extension: str
         """
         self.__programs_dir: Path = Path(programs_dir).expanduser()
-        if not self.__programs_dir.is_dir():
-            self.__programs_dir.mkdir()
+        self.__programs_dir.mkdir(parents=True, exist_ok=True)
 
         self.__extension: str = extension
 
