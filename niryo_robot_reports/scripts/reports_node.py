@@ -57,9 +57,9 @@ class ReportsNode:
                 setting_value = None
             settings[setting] = setting_value
 
-            settings['cloud_domain'] = os.getenv('CLOUD_DOMAIN')
-            if settings['cloud_domain'] is None:
-                raise EnvironmentError('CLOUD_DOMAIN is not set')
+        settings['cloud_domain'] = os.getenv('NED_ROS_CLOUD_DOMAIN')
+        if settings['cloud_domain'] is None:
+            raise EnvironmentError('NED_ROS_CLOUD_DOMAIN is not set')
 
         self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
         try:
