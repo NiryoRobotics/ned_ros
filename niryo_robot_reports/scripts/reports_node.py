@@ -59,21 +59,11 @@ class ReportsNode:
             raise EnvironmentError('NED_ROS_CLOUD_DOMAIN is not set')
 
         self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
-        try:
-            self.__cloud_api.authentification.ping()
-        except MicroServiceError:
-            try:
-                api_key = self.__cloud_api.authentification.authenticate()
-                self.__cloud_api.set_api_key(api_key)
-                async_init.PromiseServiceProxy('/niryo_robot_database/settings/set',
-                                               SetSettings,
-                                               lambda set_settings_proxy: set_settings_proxy('api_key', api_key, 'str'))
-            except MicroServiceError as microservice_error:
-                rospy.logerr(str(microservice_error))
 
         get_report_path_response = get_settings_proxy('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
             rospy.logerr('Unable to retrieve the reports directory path from the database')
+
         reports_path = os.path.expanduser(get_report_path_response.value)
         if not os.path.isdir(reports_path):
             mkpath(reports_path)
