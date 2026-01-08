@@ -22,12 +22,19 @@ v5.7.0
 
 * grasp_with_tool and release_with_tool now accept arbitrary arguments and keyword arguments that will be passed to the underlying tool functions
 * Default hold_torque_percentage for open_gripper and close_gripper operations changed to 100%
-* Refactored cloud domain configuration to use environment variables (CLOUD_DOMAIN) instead of fetching from user database
+* Refactored cloud domain configuration to use environment variables (NED_ROS_CLOUD_DOMAIN) instead of fetching from user database
 * Removed all references to deprecated GRIPPER_OPEN and GRIPPER_CLOSE states in favor of GRIPPER_OK
 * Improved Modbus tool actuation logic with better state tracking using current position comparison
 * Enhanced gripper ROS wrapper documentation
 * Various documentation fixes and improvements
 * Dynamic copyright year in documentation
+* Improved database node reliability by waiting for system API server before initializing settings services
+
+**Bugfixes**
+
+* Fixed CPU temperature reading to return 0 when temperature cannot be retrieved instead of crashing
+* Fixed reports node initialization timing - initialized parameter is now set only after full initialization is complete
+* Removed API key retrieval responsibility from reports node for better separation of concerns
 
 5.6.3
 -----------
