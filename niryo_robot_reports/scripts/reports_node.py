@@ -34,9 +34,6 @@ class ReportsNode:
 
         rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
 
-        # Set a bool to mention that this node is initialized
-        rospy.set_param('~initialized', True)
-
         rospy.Subscriber('/niryo_robot_database/setting_update', Setting, self.__setting_update_callback)
 
         rospy.logdebug("Reports Node - Node Started")
@@ -89,6 +86,9 @@ class ReportsNode:
         TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
         AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
+
+        # Set a bool to mention that this node is initialized
+        rospy.set_param('~initialized', True)
 
     def __check_connection_callback(self, req):
         rospy.logdebug('service called: ' + str(req.service.to_test))
