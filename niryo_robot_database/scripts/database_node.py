@@ -20,7 +20,15 @@ from niryo_robot_database.msg import FilePath as FilePathMsg, Setting as Setting
 
 # srv
 from niryo_robot_database.srv import SetSettings, GetSettings, AddFilePath, GetAllByType, RmFilePath
-from niryo_robot_msgs.srv import GetString
+
+
+def _wait_for_api():
+    deadline = rospy.Time.now() + rospy.Duration.from_sec(5)
+    while not rospy.is_shutdown() and rospy.Time.now() < deadline:
+        if system_api_client.root().success:
+            return
+        rospy.sleep(0.2)
+    raise TimeoutError('Database Node - Timed out')
 
 
 class DatabaseNode:
@@ -55,10 +63,6 @@ class DatabaseNode:
 
         # system api dependent
 
-        while not system_api_client.root().success:
-            rospy.logwarn_throttle(2, 'Waiting for system api server')
-            rospy.sleep(0.2)
-
         rospy.Service('~settings/set', SetSettings, self.__callback_set_settings)
         rospy.Service('~settings/get', GetSettings, self.__callback_get_settings)
         self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
@@ -68,6 +72,10 @@ class DatabaseNode:
         rospy.logdebug("Database Node - Node Started")
 
     def __callback_set_settings(self, req):
+        try:
+            _wait_for_api()
+        except TimeoutError as e:
+            return CommandStatus.DATABASE_SERVICE_NOT_READY, str(e)
         response = system_api_client.set_setting(req.name, req.value)
         if not response.success:
             return CommandStatus.DATABASE_DB_ERROR, response.detail
@@ -76,6 +84,10 @@ class DatabaseNode:
         return CommandStatus.SUCCESS, 'Settings successfully set'
 
     def __callback_get_settings(self, req):
+        try:
+            _wait_for_api()
+        except TimeoutError as e:
+            return CommandStatus.DATABASE_SERVICE_NOT_READY, str(e)
         response = system_api_client.get_setting(req.name)
         if not response.success:
             return CommandStatus.DATABASE_DB_ERROR, response.detail, ''
