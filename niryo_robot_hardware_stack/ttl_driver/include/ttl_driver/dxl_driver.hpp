@@ -51,7 +51,7 @@ namespace ttl_driver
         std::string interpretErrorState(uint32_t hw_state) const override;
 
     public:
-        int checkModelNumber(uint8_t id) override;
+        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         int readTemperature(uint8_t id, uint8_t &temperature) override;
@@ -201,9 +201,8 @@ namespace ttl_driver
      * @return
      */
     template <typename reg_type>
-    int DxlDriver<reg_type>::checkModelNumber(uint8_t id)
+    int DxlDriver<reg_type>::checkModelNumber(uint8_t id, uint16_t& model_number)
     {
-        uint16_t model_number = 0;
         int ping_result = getModelNumber(id, model_number);
 
         if (ping_result == COMM_SUCCESS)

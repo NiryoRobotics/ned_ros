@@ -226,12 +226,20 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     }
     auto driver = driver_it->second;
 
+    uint16_t model_number = 0;
     // check if the driver is valid for this hardware
-    if (state->getStrictModelNumber() && driver->checkModelNumber(id) != COMM_SUCCESS)
+    if (state->getStrictModelNumber() && driver->checkModelNumber(id, model_number) != COMM_SUCCESS)
     {
         ROS_WARN("TtlManager::addHardwareComponent - Model number check failed for hardware id %d", id);
         return niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
     }
+    else if (driver->getModelNumber(id, model_number) != COMM_SUCCESS)
+    {
+        ROS_WARN("TtlManager::addHardwareComponent - Unable to retrieve model number for hardware id %d", id);
+        return niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED;
+    }
+
+    state->setModelNumber(model_number);
 
     // update firmware version
     std::string version;

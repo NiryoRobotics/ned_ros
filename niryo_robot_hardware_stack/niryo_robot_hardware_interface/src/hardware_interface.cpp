@@ -564,6 +564,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
 {
     std::vector<std::string> motor_names;
     std::vector<std::string> firmware_versions;
+    std::vector<uint16_t> model_numbers;
 
     if (_joints_interface)
     {
@@ -572,6 +573,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
         {
             motor_names.emplace_back(jState->getName());
             firmware_versions.emplace_back(jState->getFirmwareVersion());
+            model_numbers.emplace_back(jState->getModelNumber());
         }
     }
 
@@ -582,6 +584,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
         {
             motor_names.emplace_back("End Effector");
             firmware_versions.emplace_back(ee_state->getFirmwareVersion());
+            model_numbers.emplace_back(ee_state->getModelNumber());
         }
     }
 
@@ -592,6 +595,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
         {
             motor_names.emplace_back("Tool");
             firmware_versions.emplace_back(tool_state->getFirmwareVersion());
+            model_numbers.emplace_back(tool_state->getModelNumber());
         }
     }
 
@@ -604,6 +608,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
             {
                 motor_names.emplace_back("Conveyor");
                 firmware_versions.emplace_back(cState->getFirmwareVersion());
+                model_numbers.emplace_back(cState->getModelNumber());
             }
         }
     }
@@ -611,6 +616,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent &)
     niryo_robot_msgs::SoftwareVersion msg;
     msg.motor_names = motor_names;
     msg.stepper_firmware_versions = firmware_versions;
+    msg.model_numbers = model_numbers;
     msg.rpi_image_version = _rpi_image_version;
     msg.ros_niryo_robot_version = _ros_niryo_robot_version;
     msg.robot_version = _hardware_version;

@@ -77,9 +77,8 @@ int MockEndEffectorDriver::getModelNumber(uint8_t id, uint16_t &model_number)
  * @param id
  * @return
  */
-int MockEndEffectorDriver::checkModelNumber(uint8_t id)
+int MockEndEffectorDriver::checkModelNumber(uint8_t id, uint16_t& model_number)
 {
-    uint16_t model_number = 0;
     int ping_result = getModelNumber(id, model_number);
 
     if (ping_result == COMM_SUCCESS)

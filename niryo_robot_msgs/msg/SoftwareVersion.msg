@@ -4,3 +4,4 @@ string robot_version
 
 string[] motor_names
 string[] stepper_firmware_versions
+uint16[] model_numbers

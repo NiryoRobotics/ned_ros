@@ -63,7 +63,7 @@ namespace ttl_driver
         int writeShutdownConfiguration(uint8_t id, uint8_t configuration) override;
 
         // eeprom read
-        int checkModelNumber(uint8_t id) override;
+        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
         int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;

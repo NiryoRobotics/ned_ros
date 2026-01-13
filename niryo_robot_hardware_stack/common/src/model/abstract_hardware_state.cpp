@@ -143,6 +143,15 @@ void AbstractHardwareState::setConnectionStatus(bool connected)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg) { _hw_error_message = std::move(hw_error_msg); }
 
+/**
+ * @brief AbstractHardwareState::setModelNumber
+ * @param model_number
+ */
+void AbstractHardwareState::setModelNumber(uint16_t model_number)
+{
+    _model_number = model_number;
+}
+
 void AbstractHardwareState::setStrictModelNumber(bool strict_model_number)
 {
     _strict_model_number = strict_model_number;

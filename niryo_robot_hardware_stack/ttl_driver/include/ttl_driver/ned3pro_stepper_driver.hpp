@@ -47,7 +47,7 @@ namespace ttl_driver
         // AbstractTtlDriver interface
         std::string str() const override;
 
-        int checkModelNumber(uint8_t id) override;
+        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         int readTemperature(uint8_t id, uint8_t &temperature) override;
@@ -174,9 +174,8 @@ namespace ttl_driver
      *         or communication error code if ping fails
      */
     template <typename reg_type>
-    int Ned3ProStepperDriver<reg_type>::checkModelNumber(uint8_t id)
+    int Ned3ProStepperDriver<reg_type>::checkModelNumber(uint8_t id, uint16_t& model_number)
     {
-        uint16_t model_number = 0;
         int ping_result = getModelNumber(id, model_number);
 
         if (ping_result == COMM_SUCCESS)

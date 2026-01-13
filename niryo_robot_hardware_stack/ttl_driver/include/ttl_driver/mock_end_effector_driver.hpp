@@ -50,7 +50,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         // have access to reg_type). So it seems like a duplicate of StepperDriver
         std::string str() const override;
 
-        int checkModelNumber(uint8_t id) override;
+        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
         
         int readTemperature(uint8_t id, uint8_t &temperature) override;

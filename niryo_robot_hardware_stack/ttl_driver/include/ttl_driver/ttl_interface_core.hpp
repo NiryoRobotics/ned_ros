@@ -45,6 +45,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ReadPIDValue.h"
 #include "ttl_driver/WriteVelocityProfile.h"
 #include "ttl_driver/ReadVelocityProfile.h"
+#include "niryo_robot_msgs/Trigger.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
