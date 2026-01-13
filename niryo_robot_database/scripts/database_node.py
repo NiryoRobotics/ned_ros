@@ -11,8 +11,8 @@ from niryo_robot_utils import sentry_init
 from niryo_robot_system_api_client import system_api_client
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
-from niryo_robot_database.FilePath import FilePath
-from niryo_robot_database.Version import Version
+from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
+from niryo_robot_database.Version import Version, UnknownVersionException
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
@@ -41,8 +41,6 @@ class DatabaseNode:
         if not os.path.isfile(self.db_path):
             raise RuntimeError('Database Node - Unable to open the database.')
 
-        # sqlite dependent
-
         sqlite_dao = SQLiteDAO(self.db_path)
 
         self.__file_paths = FilePath(sqlite_dao)
@@ -56,10 +54,10 @@ class DatabaseNode:
 
         self.__version = Version(sqlite_dao)
 
-        rospy.Subscriber('/niryo_robot_hardware_interface/software_version',
-                         SoftwareVersion,
-                         self.__sw_callback,
-                         queue_size=1)
+        self.__sw_version_subscriber = rospy.Subscriber('/niryo_robot_hardware_interface/software_version',
+                                                        SoftwareVersion,
+                                                        self.__sw_callback,
+                                                        queue_size=1)
 
         # system api dependent
 
@@ -121,16 +119,23 @@ class DatabaseNode:
         return CommandStatus.SUCCESS, 'Successfully deleted'
 
     def __sw_callback(self, msg):
+
         motors_names = ['motor_1', 'motor_2', 'motor_3', 'motor_4', 'motor_5', 'motor_6', 'end_effector']
-        for motor_name, motor_version in zip(motors_names, msg.stepper_firmware_versions):
+        for (motor_name, motor_version, model_number) in zip(motors_names,
+                                                             msg.stepper_firmware_versions,
+                                                             msg.model_numbers):
             self.__version.set(motor_name, motor_version)
-        time.sleep(5)
+            self.__version.set(motor_name + "_mn", str(model_number))
+
+        self.__sw_version_subscriber.unregister()
 
 
 if __name__ == "__main__":
     sentry_init()
 
-    rospy.init_node('niryo_robot_database', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node('niryo_robot_database',
+                    anonymous=False,
+                    log_level=rospy.INFO)
     try:
         node = DatabaseNode()
         rospy.spin()

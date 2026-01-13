@@ -58,10 +58,12 @@ public:
     double getVoltage() const;
     uint32_t getHardwareError() const;
     std::string getHardwareErrorMessage() const;
+    uint16_t getModelNumber() const;
     bool getStrictModelNumber() const;
 
     // setters
     void setFirmwareVersion(const std::string &firmware_version);
+    void setModelNumber(uint16_t model_number);
     void setTemperature(uint8_t temp);
     void setVoltage(double volt);
     void setRawVoltage(double raw_volt);
@@ -87,6 +89,7 @@ protected:
     // read variables
     std::string _firmware_version{};
 
+    uint16_t _model_number{0};
     uint8_t _temperature{0};
     double _voltage{0.0};
     uint32_t _hw_error{0};
@@ -199,6 +202,12 @@ inline
 bool AbstractHardwareState::getStrictModelNumber() const
 {
     return _strict_model_number;
+}
+
+inline
+uint16_t AbstractHardwareState::getModelNumber() const
+{
+    return _model_number;
 }
 
 

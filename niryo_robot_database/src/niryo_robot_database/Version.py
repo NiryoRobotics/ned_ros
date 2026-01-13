@@ -1,3 +1,6 @@
+import uuid
+
+
 class UnknownVersionException(Exception):
     pass
 
@@ -19,11 +22,31 @@ class Version:
         query = 'SELECT id, name, version, version_name, update_date FROM version WHERE name=:name'
         result = self.__dao.execute(query, {'name': name}).fetchone()
         if result is None:
-            raise UnknownVersionException(f'"{name}" is not a valid version name')
+            raise UnknownVersionException(
+                f'"{name}" is not a valid version name')
 
         return result['version']
 
     def set(self, name, version, version_name=''):
-        query = ('UPDATE version '
-                 'SET version=:version, version_name=:version_name, update_date=CURRENT_TIMESTAMP WHERE name=:name')
-        self.__dao.execute(query, {'version': version, 'version_name': version_name, 'name': name})
+
+        params = {
+            'version': version,
+            'version_name': version_name,
+            'name': name,
+        }
+
+        exists, id = self.exists(name)
+
+        if exists:
+            query = (
+                'UPDATE version '
+                'SET version=:version, version_name=:version_name, update_date=CURRENT_TIMESTAMP WHERE name=:name'
+            )
+        else:
+            query = (
+                'INSERT INTO version (id, name, version, version_name, update_date)'
+                'VALUES (:id, :name, :version, :version_name, CURRENT_TIMESTAMP)'
+            )
+            params['id'] = str(uuid.uuid4())
+
+        self.__dao.execute(query, params)

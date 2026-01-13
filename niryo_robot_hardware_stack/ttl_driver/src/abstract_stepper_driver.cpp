@@ -157,8 +157,8 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t> &id
 std::string AbstractStepperDriver::interpretFirmwareVersion(uint32_t fw_version) const
 {
     auto v_major = static_cast<uint8_t>(fw_version >> 24);
-    auto v_minor = static_cast<uint16_t>(fw_version >> 8);
-    auto v_patch = static_cast<uint8_t>(fw_version >> 0);
+    auto v_minor = static_cast<uint8_t>((fw_version >> 16) & 0xFF);
+    auto v_patch = static_cast<uint16_t>(fw_version & 0xFFFF);
 
     std::ostringstream ss;
     ss << std::to_string(v_major) << "." << std::to_string(v_minor) << "." << std::to_string(v_patch);

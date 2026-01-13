@@ -64,7 +64,7 @@ public:
     // eeprom write
 
     // eeprom read
-    virtual int checkModelNumber(uint8_t id) = 0;
+    virtual int checkModelNumber(uint8_t id, uint16_t& model_number) = 0;
     virtual int readFirmwareVersion(uint8_t id, std::string& version) = 0;
 
     // ram read
