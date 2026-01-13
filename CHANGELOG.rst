@@ -5,9 +5,14 @@ Ned ROS stack Changelog
 v5.7.2
 ___________
 
-**Improvements**
+**Features**
 
-*
+* Add model number tracking in software version for better hardware identification
+
+**Bugfixes**
+
+* Fixed database settings services initialization timing to ensure services exist before API is ready
+* Fixed parsing errors when fetching software version from the steppers drivers
 
 
 v5.7.1
