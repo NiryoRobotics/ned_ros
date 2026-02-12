@@ -40,6 +40,8 @@
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/tool_state.hpp"
+#include "std_msgs/Bool.h"
+#include "niryo_robot_msgs/SetInt.h"
 
 #include "dynamixel_sdk/packet_handler.h"
 #include "ttl_driver/end_effector_reg.hpp"
@@ -135,12 +137,49 @@ bool TtlManager::init(ros::NodeHandle &nh)
   }
   else
   {
+    _change_tool = nh.advertiseService("/niryo_robot/tools/change", &TtlManager::_callbackChangeTool, this);
     readFakeConfig(use_simu_gripper, use_simu_conveyor);
     _default_ttl_driver = std::make_shared<MockStepperDriver>(_fake_data);
   }
 
   _calibration_status_publisher = nh.advertise<ttl_driver::CalibrationStatus>("calibration_status", 1, true);
 
+  return true;
+}
+
+/**
+ * @brief TtlManager::_callbackChangeTool
+ * @return
+ */
+bool TtlManager::_callbackChangeTool(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
+{
+  if (req.value == 11 || req.value == 12 || req.value == 13 || req.value == 31 || req.value == 32)
+  {
+    if (old_gripper == 0)
+    {
+      std::vector<int> _temp;
+      _nh.getParam("fake_params/tool/id", _temp);
+      old_gripper = _temp[0];
+    }
+    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR));
+    int ret = 0;
+    if (driver)
+    {
+      ret = driver->changeId(old_gripper, req.value);
+    }
+
+    res.status = 1;
+    res.message = "Tool changed !!";
+    ROS_INFO("Texte : %d, Texte : %d", old_gripper, ret);
+    old_gripper = req.value;
+  }
+  else
+  {
+    res.status = 0;
+    res.message = "Tool not changed !!";
+  }
+
+  // return response even request failed
   return true;
 }
 

@@ -174,6 +174,7 @@ public:
 private:
   // IBusManager Interface
   int setupCommunication() override;
+  bool _callbackChangeTool(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
   void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
   // Config params using in fake driver
@@ -224,6 +225,10 @@ private:
   // for hardware control
   bool _is_connection_ok{ false };
   std::string _debug_error_message;
+
+  // for simulation
+  ros::ServiceServer _change_tool;
+  int old_gripper;
 
   uint32_t _hw_fail_counter_read{ 0 };
   uint32_t _end_effector_fail_counter_read{ 0 };
