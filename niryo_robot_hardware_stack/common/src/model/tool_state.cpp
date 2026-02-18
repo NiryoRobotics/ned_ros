@@ -32,22 +32,29 @@ namespace model
  * @param type
  * @param id
  */
-ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) : DxlMotorState(type, EComponentType::TOOL, id), _tool_name(std::move(name))
+ToolState::ToolState(std::string name, EHardwareType type, uint8_t id)
+  : DxlMotorState(type, EComponentType::TOOL, id), _tool_name(std::move(name))
 {
-    _led_state = 2;  // green if valid
+  _led_state = 2;  // green if valid
 }
 
 /**
  * @brief ToolState::setName
  * @param name
  */
-void ToolState::setName(std::string name) { _tool_name = std::move(name); }
+void ToolState::setName(std::string name)
+{
+  _tool_name = std::move(name);
+}
 
 /**
  * @brief ToolState::setLedState
  * @param led_state
  */
-void ToolState::setLedState(int led_state) { _led_state = led_state; }
+void ToolState::setLedState(int led_state)
+{
+  _led_state = led_state;
+}
 
 // ***********************
 //  DxlMotorState intf
@@ -58,9 +65,9 @@ void ToolState::setLedState(int led_state) { _led_state = led_state; }
  */
 void ToolState::reset()
 {
-    DxlMotorState::reset();
-    _tool_name = "No Tool";
-    _state = TOOL_STATE_PING_ERROR;
+  DxlMotorState::reset();
+  _tool_name = "No Tool";
+  _state = TOOL_STATE_PING_ERROR;
 }
 
 /**
@@ -69,18 +76,18 @@ void ToolState::reset()
  */
 std::string ToolState::str() const
 {
-    std::ostringstream ss;
+  std::ostringstream ss;
 
-    ss << "ToolState : ";
-    ss << "name: "
-       << "\"" << _tool_name << "\""
-       << ", ";
-    ss << "connected: " << (_connected ? "true" : "false") << ", ";
-    ss << "\n---\n";
-    ss << "\n";
-    ss << DxlMotorState::str();
+  ss << "ToolState : ";
+  ss << "name: "
+     << "\"" << _tool_name << "\""
+     << ", ";
+  ss << "connected: " << (_connected ? "true" : "false") << ", ";
+  ss << "\n---\n";
+  ss << "\n";
+  ss << DxlMotorState::str();
 
-    return ss.str();
+  return ss.str();
 }
 
 }  // namespace model

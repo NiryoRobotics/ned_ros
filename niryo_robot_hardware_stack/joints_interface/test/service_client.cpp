@@ -28,80 +28,80 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, deactivateLearningMode)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
+  auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
-    bool exists(client.waitForExistence(ros::Duration(5)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(5)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::SetBool srv;
-    srv.request.value = false;
-    client.call(srv);
+  niryo_robot_msgs::SetBool srv;
+  srv.request.value = false;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, activateLearningMode)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
+  auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
-    bool exists(client.waitForExistence(ros::Duration(10)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(10)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::SetBool srv;
-    srv.request.value = true;
-    client.call(srv);
+  niryo_robot_msgs::SetBool srv;
+  srv.request.value = true;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, resetControllerServer)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
+  auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
-    client.call(srv);
+  niryo_robot_msgs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, requestNewCalibration)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/request_new_calibration");
+  auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/request_new_calibration");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
-    client.call(srv);
+  niryo_robot_msgs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, calibrateMotor)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
+  auto client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::SetInt srv;
-    srv.request.value = 1;  // AUTO_CALIBRATION;
-    client.call(srv);
+  niryo_robot_msgs::SetInt srv;
+  srv.request.value = 1;  // AUTO_CALIBRATION;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "joints_interface_service_client");
+  ros::init(argc, argv, "joints_interface_service_client");
 
-    nh = std::make_unique<ros::NodeHandle>();
+  nh = std::make_unique<ros::NodeHandle>();
 
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    ros::Duration(10.0).sleep();
-    return RUN_ALL_TESTS();
+  ros::Duration(10.0).sleep();
+  return RUN_ALL_TESTS();
 }

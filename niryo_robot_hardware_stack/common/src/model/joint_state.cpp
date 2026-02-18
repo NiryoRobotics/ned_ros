@@ -47,7 +47,7 @@ JointState::JointState(std::string name, EHardwareType type, EComponentType comp
  * @param other
  * @return
  */
-bool JointState::operator==(const JointState& other) const
+bool JointState::operator==(const JointState &other) const
 {
   return ((this->_hw_type == other._hw_type) && (this->_id == other._id));
 }
@@ -56,7 +56,7 @@ bool JointState::operator==(const JointState& other) const
  * @brief JointState::setName
  * @param name
  */
-void JointState::setName(std::string& name)
+void JointState::setName(std::string &name)
 {
   _name = name;
 }

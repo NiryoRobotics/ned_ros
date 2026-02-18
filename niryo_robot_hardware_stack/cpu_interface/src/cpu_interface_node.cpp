@@ -32,32 +32,32 @@
  */
 void readTemperature(const std::shared_ptr<cpu_interface::CpuInterfaceCore> &cpu)
 {
-    ros::Rate read_rpi_diagnostics_rate = ros::Rate(1);
+  ros::Rate read_rpi_diagnostics_rate = ros::Rate(1);
 
-    while (ros::ok())
-    {
-        int temperature = cpu->getCpuTemperature();
-        ROS_INFO("cpu temperature = %d", temperature);
-        read_rpi_diagnostics_rate.sleep();
-    }
+  while (ros::ok())
+  {
+    int temperature = cpu->getCpuTemperature();
+    ROS_INFO("cpu temperature = %d", temperature);
+    read_rpi_diagnostics_rate.sleep();
+  }
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "cpu_interface_node");
+  ros::init(argc, argv, "cpu_interface_node");
 
-    ROS_DEBUG("Launching cpu_interface_node");
+  ROS_DEBUG("Launching cpu_interface_node");
 
-    ros::AsyncSpinner spinner(4);
-    spinner.start();
+  ros::AsyncSpinner spinner(4);
+  spinner.start();
 
-    ros::NodeHandle nh("~");
+  ros::NodeHandle nh("~");
 
-    auto cpu = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
+  auto cpu = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
 
-    std::thread readTempThread(readTemperature, cpu);
-    readTempThread.join();
-    ros::waitForShutdown();
+  std::thread readTempThread(readTemperature, cpu);
+  readTempThread.join();
+  ros::waitForShutdown();
 
-    ROS_INFO("shutdown node");
+  ROS_INFO("shutdown node");
 }

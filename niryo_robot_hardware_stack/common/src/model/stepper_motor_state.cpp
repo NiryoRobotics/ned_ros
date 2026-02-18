@@ -41,8 +41,9 @@ namespace model
  * @param bus_proto
  * @param id
  */
-StepperMotorState::StepperMotorState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id)
-    : StepperMotorState("unknown", type, component_type, bus_proto, id)
+StepperMotorState::StepperMotorState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto,
+                                     uint8_t id)
+  : StepperMotorState("unknown", type, component_type, bus_proto, id)
 {
 }
 
@@ -54,10 +55,11 @@ StepperMotorState::StepperMotorState(EHardwareType type, EComponentType componen
  * @param bus_proto
  * @param id
  */
-StepperMotorState::StepperMotorState(std::string name, EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id)
-    : JointState(std::move(name), type, component_type, bus_proto, id)
+StepperMotorState::StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
+                                     EBusProtocol bus_proto, uint8_t id)
+  : JointState(std::move(name), type, component_type, bus_proto, id)
 {
-    updateMultiplierRatio();
+  updateMultiplierRatio();
 }
 
 // *********************
@@ -69,19 +71,22 @@ StepperMotorState::StepperMotorState(std::string name, EHardwareType type, EComp
  */
 void StepperMotorState::reset()
 {
-    JointState::reset();
-    _last_time_read = 0.0;
-    _hw_fail_counter = 0.0;
-    _firmware_version.clear();
-    _calibration_value = 0;
-    _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
+  JointState::reset();
+  _last_time_read = 0.0;
+  _hw_fail_counter = 0.0;
+  _firmware_version.clear();
+  _calibration_value = 0;
+  _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
 }
 
 /**
  * @brief StepperMotorState::isValid
  * @return
  */
-bool StepperMotorState::isValid() const { return (0 != _id) && (0.0 != _pos_multiplier_ratio); }
+bool StepperMotorState::isValid() const
+{
+  return (0 != _id) && (0.0 != _pos_multiplier_ratio);
+}
 
 /**
  * @brief StepperMotorState::str
@@ -89,32 +94,32 @@ bool StepperMotorState::isValid() const { return (0 != _id) && (0.0 != _pos_mult
  */
 std::string StepperMotorState::str() const
 {
-    std::ostringstream ss;
+  std::ostringstream ss;
 
-    ss << "StepperMotorState :\n";
-    ss << "firmware version: "
-       << "\"" << _firmware_version << "\"";
-    ss << ", last time read: " << _last_time_read << ", hw fail counter: " << _hw_fail_counter << "\n"
-       << "max effort: " << _max_effort << ", "
-       << "gear ratio: " << _gear_ratio << ", "
-       << "micro steps: " << _micro_steps << ", "
-       << "motor_ratio: " << _motor_ratio << ", "
-       << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
-       << "vel multiplier ratio: " << _vel_multiplier_ratio << "\n";
+  ss << "StepperMotorState :\n";
+  ss << "firmware version: "
+     << "\"" << _firmware_version << "\"";
+  ss << ", last time read: " << _last_time_read << ", hw fail counter: " << _hw_fail_counter << "\n"
+     << "max effort: " << _max_effort << ", "
+     << "gear ratio: " << _gear_ratio << ", "
+     << "micro steps: " << _micro_steps << ", "
+     << "motor_ratio: " << _motor_ratio << ", "
+     << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
+     << "vel multiplier ratio: " << _vel_multiplier_ratio << "\n";
 
-    ss << "velocity profile : ";
-    for (auto const &d : getVelocityProfile().to_list())
-        ss << d << ",";
-    ss << "\n";
+  ss << "velocity profile : ";
+  for (auto const &d : getVelocityProfile().to_list())
+    ss << d << ",";
+  ss << "\n";
 
-    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_status).toString() << ", "
-       << "calibration value: " << _calibration_value;
+  ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_status).toString() << ", "
+     << "calibration value: " << _calibration_value;
 
-    ss << "\n---\n";
-    ss << "\n";
-    ss << JointState::str();
+  ss << "\n---\n";
+  ss << "\n";
+  ss << JointState::str();
 
-    return ss.str();
+  return ss.str();
 }
 
 /**
@@ -124,14 +129,14 @@ std::string StepperMotorState::str() const
  */
 int StepperMotorState::to_motor_pos(double rad_pos)
 {
-    if (rad_pos > _limit_position_max)
-        rad_pos = _limit_position_max;
-    else if (rad_pos < _limit_position_min)
-        rad_pos = _limit_position_min;
+  if (rad_pos > _limit_position_max)
+    rad_pos = _limit_position_max;
+  else if (rad_pos < _limit_position_min)
+    rad_pos = _limit_position_min;
 
-    int result = static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
+  int result = static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 
-    return result;
+  return result;
 }
 
 /**
@@ -141,9 +146,9 @@ int StepperMotorState::to_motor_pos(double rad_pos)
  */
 double StepperMotorState::to_rad_pos(int motor_pos)
 {
-    assert(0.0 != _pos_multiplier_ratio);
+  assert(0.0 != _pos_multiplier_ratio);
 
-    return _offset_position + static_cast<double>(motor_pos * _direction / _pos_multiplier_ratio);
+  return _offset_position + static_cast<double>(motor_pos * _direction / _pos_multiplier_ratio);
 }
 
 /**
@@ -153,8 +158,8 @@ double StepperMotorState::to_rad_pos(int motor_pos)
  */
 int StepperMotorState::to_motor_vel(double rad_vel)
 {
-    assert(0.0 != _vel_multiplier_ratio);
-    return static_cast<int>(std::round(rad_vel / _vel_multiplier_ratio));
+  assert(0.0 != _vel_multiplier_ratio);
+  return static_cast<int>(std::round(rad_vel / _vel_multiplier_ratio));
 }
 
 /**
@@ -162,7 +167,10 @@ int StepperMotorState::to_motor_vel(double rad_vel)
  * @param motor_vel
  * @return
  */
-double StepperMotorState::to_rad_vel(int motor_vel) { return motor_vel * _vel_multiplier_ratio; }
+double StepperMotorState::to_rad_vel(int motor_vel)
+{
+  return motor_vel * _vel_multiplier_ratio;
+}
 
 // ****************
 //  Setters
@@ -172,45 +180,64 @@ double StepperMotorState::to_rad_vel(int motor_vel) { return motor_vel * _vel_mu
  * @brief StepperMotorState::setGearRatio
  * @param gear_ratio
  */
-void StepperMotorState::setGearRatio(double gear_ratio) { _gear_ratio = gear_ratio; }
+void StepperMotorState::setGearRatio(double gear_ratio)
+{
+  _gear_ratio = gear_ratio;
+}
 /**
  * @brief StepperMotorState::updateLastTimeRead
  */
-void StepperMotorState::updateLastTimeRead() { _last_time_read = ros::Time::now().toSec(); }
+void StepperMotorState::updateLastTimeRead()
+{
+  _last_time_read = ros::Time::now().toSec();
+}
 
 /**
  * @brief StepperMotorState::setHwFailCounter
  * @param fail_counter
  */
-void StepperMotorState::setHwFailCounter(double fail_counter) { _hw_fail_counter = fail_counter; }
+void StepperMotorState::setHwFailCounter(double fail_counter)
+{
+  _hw_fail_counter = fail_counter;
+}
 
 /**
  * @brief StepperMotorState::setMaxEffort
  * @param max_effort
  */
-void StepperMotorState::setMaxEffort(double max_effort) { _max_effort = max_effort; }
+void StepperMotorState::setMaxEffort(double max_effort)
+{
+  _max_effort = max_effort;
+}
 
 /**
  * @brief StepperMotorState::setMotorRatio
  * @param motor_ratio
  */
-void StepperMotorState::setMotorRatio(double motor_ratio) { _motor_ratio = motor_ratio; }
+void StepperMotorState::setMotorRatio(double motor_ratio)
+{
+  _motor_ratio = motor_ratio;
+}
 
 /**
  * @brief StepperMotorState::setHomingAbsPosition
  * @param homing_abs_position
  */
-void StepperMotorState::setHomingAbsPosition(int32_t homing_abs_position) { _homing_abs_position = homing_abs_position; }
+void StepperMotorState::setHomingAbsPosition(int32_t homing_abs_position)
+{
+  _homing_abs_position = homing_abs_position;
+}
 
 /**
  * @brief StepperMotorState::setCalibration
  * @param calibration_state
  * @param calibration_value
  */
-void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state, const int32_t &calibration_value)
+void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state,
+                                       const int32_t &calibration_value)
 {
-    _calibration_status = calibration_state;
-    _calibration_value = calibration_value;
+  _calibration_status = calibration_state;
+  _calibration_value = calibration_value;
 }
 
 /**
@@ -219,8 +246,8 @@ void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibrat
  */
 void StepperMotorState::setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data)
 {
-    _calibration_status = std::get<0>(data);
-    _calibration_value = std::get<1>(data);
+  _calibration_status = std::get<0>(data);
+  _calibration_value = std::get<1>(data);
 }
 
 /**
@@ -229,16 +256,19 @@ void StepperMotorState::setCalibration(const std::tuple<EStepperCalibrationStatu
  */
 void StepperMotorState::setMicroSteps(double micro_steps)
 {
-    _micro_steps = micro_steps;
+  _micro_steps = micro_steps;
 
-    updateMultiplierRatio();
+  updateMultiplierRatio();
 }
 
 /**
  * @brief StepperMotorState::setVelocityProfile
  * @param profile
  */
-void StepperMotorState::setVelocityProfile(const VelocityProfile &profile) { _profile = profile; }
+void StepperMotorState::setVelocityProfile(const VelocityProfile &profile)
+{
+  _profile = profile;
+}
 
 //**************
 //    Private
@@ -249,20 +279,20 @@ void StepperMotorState::setVelocityProfile(const VelocityProfile &profile) { _pr
  */
 void StepperMotorState::updateMultiplierRatio()
 {
-    double total_angle = 2 * M_PI;
+  double total_angle = 2 * M_PI;
 
-    assert(0.0 != total_angle);
+  assert(0.0 != total_angle);
 
-    if (common::model::EBusProtocol::CAN == _bus_proto)
-    {
-        _pos_multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio / total_angle;
-        _vel_multiplier_ratio = 1.0;
-    }
-    else
-    {
-        _pos_multiplier_ratio = 360 / (_motor_ratio * total_angle);
-        _vel_multiplier_ratio = 0.01;
-    }
+  if (common::model::EBusProtocol::CAN == _bus_proto)
+  {
+    _pos_multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio / total_angle;
+    _vel_multiplier_ratio = 1.0;
+  }
+  else
+  {
+    _pos_multiplier_ratio = 360 / (_motor_ratio * total_angle);
+    _vel_multiplier_ratio = 0.01;
+  }
 }
 
 }  // namespace model

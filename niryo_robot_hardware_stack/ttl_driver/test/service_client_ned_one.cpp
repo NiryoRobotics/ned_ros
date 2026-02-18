@@ -33,150 +33,150 @@ static bool simulation_mode;
 
 TEST(TESTSuite, SetLeds)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/ttl_driver/set_dxl_leds");
+  auto client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/ttl_driver/set_dxl_leds");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::SetInt srv;
-    srv.request.value = 2;
-    client.call(srv);
+  niryo_robot_msgs::SetInt srv;
+  srv.request.value = 2;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, WriteCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::WriteCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
+  auto client = nh->serviceClient<ttl_driver::WriteCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::WriteCustomValue srv;
+  ttl_driver::WriteCustomValue srv;
 
-    srv.request.id = 2;
-    srv.request.reg_address = 64;  // Torque enable for xl430
-    srv.request.value = 1;
-    srv.request.byte_number = 1;
+  srv.request.id = 2;
+  srv.request.reg_address = 64;  // Torque enable for xl430
+  srv.request.value = 1;
+  srv.request.byte_number = 1;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, WriteCustomValueWrongParam)
 {
-    auto client = nh->serviceClient<ttl_driver::WriteCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
+  auto client = nh->serviceClient<ttl_driver::WriteCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::WriteCustomValue srv;
+  ttl_driver::WriteCustomValue srv;
 
-    srv.request.id = 50;
-    srv.request.reg_address = 64;  // Torque enable for xl430
-    srv.request.value = 1;
-    srv.request.byte_number = 1;
+  srv.request.id = 50;
+  srv.request.reg_address = 64;  // Torque enable for xl430
+  srv.request.value = 1;
+  srv.request.byte_number = 1;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE);
 }
 
 TEST(TESTSuite, ReadCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_value");
+  auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::ReadCustomValue srv;
-    srv.request.id = 2;
-    srv.request.reg_address = 64;
-    srv.request.byte_number = 1;
+  ttl_driver::ReadCustomValue srv;
+  srv.request.id = 2;
+  srv.request.reg_address = 64;
+  srv.request.byte_number = 1;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
-    if (!simulation_mode)
-    {
-        EXPECT_EQ(srv.response.value, 1);
-    }
+  if (!simulation_mode)
+  {
+    EXPECT_EQ(srv.response.value, 1);
+  }
 }
 
 TEST(TESTSuite, WritePIDValue)
 {
-    auto client = nh->serviceClient<ttl_driver::WritePIDValue>("/niryo_robot/ttl_driver/write_pid_value");
+  auto client = nh->serviceClient<ttl_driver::WritePIDValue>("/niryo_robot/ttl_driver/write_pid_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::WritePIDValue srv;
+  ttl_driver::WritePIDValue srv;
 
-    srv.request.id = 2;
-    srv.request.pos_p_gain = 3264;
-    srv.request.pos_i_gain = 0;
-    srv.request.pos_d_gain = 9520;
-    srv.request.vel_p_gain = 0;
-    srv.request.vel_i_gain = 0;
-    srv.request.ff1_gain = 0;
-    srv.request.ff2_gain = 400;
-    srv.request.vel_profile = 100;
-    srv.request.acc_profile = 200;
+  srv.request.id = 2;
+  srv.request.pos_p_gain = 3264;
+  srv.request.pos_i_gain = 0;
+  srv.request.pos_d_gain = 9520;
+  srv.request.vel_p_gain = 0;
+  srv.request.vel_i_gain = 0;
+  srv.request.ff1_gain = 0;
+  srv.request.ff2_gain = 400;
+  srv.request.vel_profile = 100;
+  srv.request.acc_profile = 200;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
-    ros::Duration(1.0).sleep();
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  ros::Duration(1.0).sleep();
 }
 
 TEST(TESTSuite, ReadPIDValue)
 {
-    auto client = nh->serviceClient<ttl_driver::ReadPIDValue>("/niryo_robot/ttl_driver/read_pid_value");
+  auto client = nh->serviceClient<ttl_driver::ReadPIDValue>("/niryo_robot/ttl_driver/read_pid_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::ReadPIDValue srv;
-    srv.request.id = 2;
+  ttl_driver::ReadPIDValue srv;
+  srv.request.id = 2;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
-    EXPECT_EQ(srv.response.pos_p_gain, 3264);
-    EXPECT_EQ(srv.response.pos_i_gain, 0);
-    EXPECT_EQ(srv.response.pos_d_gain, 9520);
-    EXPECT_EQ(srv.response.vel_p_gain, 0);
-    EXPECT_EQ(srv.response.vel_i_gain, 0);
-    EXPECT_EQ(srv.response.ff1_gain, 0);
-    EXPECT_EQ(srv.response.ff2_gain, 400);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.pos_p_gain, 3264);
+  EXPECT_EQ(srv.response.pos_i_gain, 0);
+  EXPECT_EQ(srv.response.pos_d_gain, 9520);
+  EXPECT_EQ(srv.response.vel_p_gain, 0);
+  EXPECT_EQ(srv.response.vel_i_gain, 0);
+  EXPECT_EQ(srv.response.ff1_gain, 0);
+  EXPECT_EQ(srv.response.ff2_gain, 400);
 }
 
 TEST(TESTSuite, ReadPIDValueWrongParam)
 {
-    auto client = nh->serviceClient<ttl_driver::ReadPIDValue>("/niryo_robot/ttl_driver/read_pid_value");
+  auto client = nh->serviceClient<ttl_driver::ReadPIDValue>("/niryo_robot/ttl_driver/read_pid_value");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    ttl_driver::ReadPIDValue srv;
+  ttl_driver::ReadPIDValue srv;
 
-    srv.request.id = 20;
+  srv.request.id = 20;
 
-    client.call(srv);
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::FAILURE);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::FAILURE);
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "ttl_driver_service_client");
+  ros::init(argc, argv, "ttl_driver_service_client");
 
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    nh = std::make_unique<ros::NodeHandle>("~");
-    nh->getParam("simulation_mode", simulation_mode);
+  nh = std::make_unique<ros::NodeHandle>("~");
+  nh->getParam("simulation_mode", simulation_mode);
 
-    return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }

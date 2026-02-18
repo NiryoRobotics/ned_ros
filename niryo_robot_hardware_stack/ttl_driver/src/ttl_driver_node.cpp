@@ -33,7 +33,7 @@ using ::std::string;
 using ::std::to_string;
 
 // Method add joints
-void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>& ttl_interface)
+void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore> &ttl_interface)
 {
   size_t nb_joints = 0;
 
@@ -220,7 +220,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
   }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   ros::init(argc, argv, "ttl_driver_node");
 

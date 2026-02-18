@@ -16,7 +16,7 @@ BinPackParameters: true
 ColumnLimit: 120
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 DerivePointerBinding: false
-PointerBindsToType: true
+PointerBindsToType: false
 ExperimentalAutoDetectBinPacking: false
 IndentCaseLabels: true
 MaxEmptyLinesToKeep: 1

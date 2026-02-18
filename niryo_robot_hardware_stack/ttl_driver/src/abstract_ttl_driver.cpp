@@ -35,8 +35,9 @@ namespace ttl_driver
  * @param portHandler
  * @param packetHandler
  */
-AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler)
-    : _dxlPortHandler(std::move(portHandler)), _dxlPacketHandler(std::move(packetHandler))
+AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                                     std::shared_ptr<dynamixel::PacketHandler> packetHandler)
+  : _dxlPortHandler(std::move(portHandler)), _dxlPacketHandler(std::move(packetHandler))
 {
 }
 
@@ -47,11 +48,11 @@ AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> por
  */
 int AbstractTtlDriver::ping(uint8_t id)
 {
-    uint8_t dxl_error = 0;
+  uint8_t dxl_error = 0;
 
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &dxl_error);
+  int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &dxl_error);
 
-    return result;
+  return result;
 }
 
 /**
@@ -62,11 +63,11 @@ int AbstractTtlDriver::ping(uint8_t id)
  */
 int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t &model_number)
 {
-    uint8_t dxl_error = 0;
+  uint8_t dxl_error = 0;
 
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &model_number, &dxl_error);
+  int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &model_number, &dxl_error);
 
-    return result;
+  return result;
 }
 
 /**
@@ -74,7 +75,10 @@ int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t &model_number)
  * @param id_list
  * @return
  */
-int AbstractTtlDriver::scan(vector<uint8_t> &id_list) { return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list); }
+int AbstractTtlDriver::scan(vector<uint8_t> &id_list)
+{
+  return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list);
+}
 
 /**
  * @brief AbstractTtlDriver::reboot
@@ -83,12 +87,12 @@ int AbstractTtlDriver::scan(vector<uint8_t> &id_list) { return _dxlPacketHandler
  */
 int AbstractTtlDriver::reboot(uint8_t id)
 {
-    int result = -1;
-    uint8_t dxl_error = 0;
+  int result = -1;
+  uint8_t dxl_error = 0;
 
-    result = _dxlPacketHandler->reboot(_dxlPortHandler.get(), id, &dxl_error);
+  result = _dxlPacketHandler->reboot(_dxlPortHandler.get(), id, &dxl_error);
 
-    return result;
+  return result;
 }
 
 /**
@@ -97,13 +101,13 @@ int AbstractTtlDriver::reboot(uint8_t id)
  */
 std::string AbstractTtlDriver::str() const
 {
-    ostringstream ss;
+  ostringstream ss;
 
-    ss << "TTL Driver : "
-       << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << ","
-       << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok");
+  ss << "TTL Driver : "
+     << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << ","
+     << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok");
 
-    return ss.str();
+  return ss.str();
 }
 
 /*
@@ -120,39 +124,36 @@ std::string AbstractTtlDriver::str() const
  */
 int AbstractTtlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t &data)
 {
-    // clean output data first
-    data = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
+  // clean output data first
+  data = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
 
-    switch (data_len)
-    {
-    case DXL_LEN_ONE_BYTE:
-    {
-        uint8_t read_data;
-        dxl_comm_result = read<uint8_t>(address, id, read_data);
-        data = read_data;
+  switch (data_len)
+  {
+    case DXL_LEN_ONE_BYTE: {
+      uint8_t read_data;
+      dxl_comm_result = read<uint8_t>(address, id, read_data);
+      data = read_data;
     }
     break;
-    case DXL_LEN_TWO_BYTES:
-    {
-        uint16_t read_data;
-        dxl_comm_result = read<uint16_t>(address, id, read_data);
-        data = read_data;
+    case DXL_LEN_TWO_BYTES: {
+      uint16_t read_data;
+      dxl_comm_result = read<uint16_t>(address, id, read_data);
+      data = read_data;
     }
     break;
-    case DXL_LEN_FOUR_BYTES:
-    {
-        uint32_t read_data;
-        dxl_comm_result = read<uint32_t>(address, id, read_data);
-        data = read_data;
+    case DXL_LEN_FOUR_BYTES: {
+      uint32_t read_data;
+      dxl_comm_result = read<uint32_t>(address, id, read_data);
+      data = read_data;
     }
     break;
     default:
-        printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
-        break;
-    }
+      printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+      break;
+  }
 
-    return dxl_comm_result;
+  return dxl_comm_result;
 }
 
 /**
@@ -165,31 +166,32 @@ int AbstractTtlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id
  */
 int AbstractTtlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
 {
-    int dxl_comm_result = COMM_TX_FAIL;
-    uint8_t error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
+  uint8_t error = 0;
 
-    switch (data_len)
-    {
+  switch (data_len)
+  {
     case DXL_LEN_ONE_BYTE:
-        dxl_comm_result = write<uint8_t>(address, id, static_cast<uint8_t>(data));
-        break;
+      dxl_comm_result = write<uint8_t>(address, id, static_cast<uint8_t>(data));
+      break;
     case DXL_LEN_TWO_BYTES:
-        dxl_comm_result = write<uint16_t>(address, id, static_cast<uint16_t>(data));
-        break;
+      dxl_comm_result = write<uint16_t>(address, id, static_cast<uint16_t>(data));
+      break;
     case DXL_LEN_FOUR_BYTES:
-        dxl_comm_result = write<uint32_t>(address, id, data);
-        break;
+      dxl_comm_result = write<uint32_t>(address, id, data);
+      break;
     default:
-        printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
-        break;
-    }
+      printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
+      break;
+  }
 
-    if (error != 0)
-    {
-        printf("AbstractTtlDriver::write ERROR: device return error: id=%d, addr=%d, len=%d, err=0x%02x\n", id, address, data_len, error);
-    }
+  if (error != 0)
+  {
+    printf("AbstractTtlDriver::write ERROR: device return error: id=%d, addr=%d, len=%d, err=0x%02x\n", id, address,
+           data_len, error);
+  }
 
-    return dxl_comm_result;
+  return dxl_comm_result;
 }
 
 }  // namespace ttl_driver

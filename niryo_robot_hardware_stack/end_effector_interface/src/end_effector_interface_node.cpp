@@ -29,23 +29,23 @@
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "end_effector_interface_node");
+  ros::init(argc, argv, "end_effector_interface_node");
 
-    ROS_DEBUG("Launching end_effector_interface_node");
+  ROS_DEBUG("Launching end_effector_interface_node");
 
-    ros::AsyncSpinner spinner(4);
-    spinner.start();
+  ros::AsyncSpinner spinner(4);
+  spinner.start();
 
-    ros::NodeHandle nh_ttl("ttl_driver");
-    ros::NodeHandle nh("end_effector_interface");
+  ros::NodeHandle nh_ttl("ttl_driver");
+  ros::NodeHandle nh("end_effector_interface");
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
-    ros::Duration(1).sleep();
+  auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
+  ros::Duration(1).sleep();
 
-    auto tool = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_driver);
-    ros::Duration(1).sleep();
+  auto tool = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_driver);
+  ros::Duration(1).sleep();
 
-    ros::waitForShutdown();
+  ros::waitForShutdown();
 
-    ROS_INFO("Tools Interface - Shutdown node");
+  ROS_INFO("Tools Interface - Shutdown node");
 }

@@ -37,32 +37,33 @@
 // Declare a test
 TEST(TtlDebugToolsTestSuite, testInit)
 {
-    int baudrate = 1000000;
-    std::string serial_port = DEFAULT_PORT;
+  int baudrate = 1000000;
+  std::string serial_port = DEFAULT_PORT;
 
-    if (serial_port.empty())
-    {
-        std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
-        ASSERT_TRUE(true);
-    }
-    else
-    {
-        std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << std::endl;
+  if (serial_port.empty())
+  {
+    std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
+    ASSERT_TRUE(true);
+  }
+  else
+  {
+    std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << std::endl;
 
-        // Setup TTL communication
-        std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
-        std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+    // Setup TTL communication
+    std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+    std::shared_ptr<dynamixel::PacketHandler> packetHandler(
+        dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-        ttl_debug_tools::TtlTools ttlTools(portHandler, packetHandler);
+    ttl_debug_tools::TtlTools ttlTools(portHandler, packetHandler);
 
-        ASSERT_NE(-1, ttlTools.setupBus(baudrate));
-    }
+    ASSERT_NE(-1, ttlTools.setupBus(baudrate));
+  }
 }
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }

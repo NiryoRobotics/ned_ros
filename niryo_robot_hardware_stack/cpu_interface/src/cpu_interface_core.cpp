@@ -29,12 +29,12 @@ namespace cpu_interface
  */
 CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle &nh)
 {
-    ROS_DEBUG("CpuInterfaceCore::ctor - ctor");
+  ROS_DEBUG("CpuInterfaceCore::ctor - ctor");
 
-    init(nh);
-    startReadingData();
+  init(nh);
+  startReadingData();
 
-    ROS_INFO("CpuInterfaceCore::ctor - Started");
+  ROS_INFO("CpuInterfaceCore::ctor - Started");
 }
 
 /**
@@ -42,8 +42,8 @@ CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle &nh)
  */
 CpuInterfaceCore::~CpuInterfaceCore()
 {
-    if (_read_hardware_data_thread.joinable())
-        _read_hardware_data_thread.join();
+  if (_read_hardware_data_thread.joinable())
+    _read_hardware_data_thread.join();
 }
 
 /**
@@ -52,19 +52,19 @@ CpuInterfaceCore::~CpuInterfaceCore()
  */
 bool CpuInterfaceCore::init(ros::NodeHandle &nh)
 {
-    ROS_DEBUG("CpuInterfaceCore::init - Init parameters...");
-    initParameters(nh);
+  ROS_DEBUG("CpuInterfaceCore::init - Init parameters...");
+  initParameters(nh);
 
-    ROS_DEBUG("CpuInterfaceCore::init - Starting services...");
-    startServices(nh);
+  ROS_DEBUG("CpuInterfaceCore::init - Starting services...");
+  startServices(nh);
 
-    ROS_DEBUG("CpuInterfaceCore::init - Starting publishers...");
-    startPublishers(nh);
+  ROS_DEBUG("CpuInterfaceCore::init - Starting publishers...");
+  startPublishers(nh);
 
-    ROS_DEBUG("CpuInterfaceCore::init - Starting subscribers...");
-    startSubscribers(nh);
+  ROS_DEBUG("CpuInterfaceCore::init - Starting subscribers...");
+  startSubscribers(nh);
 
-    return true;
+  return true;
 }
 
 /**
@@ -73,94 +73,106 @@ bool CpuInterfaceCore::init(ros::NodeHandle &nh)
  */
 void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
-    nh.getParam("read_rpi_diagnostics_frequency", _read_cpu_frequency);
-    nh.getParam("temperature_warn_threshold", _temperature_warn_threshold);
-    nh.getParam("temperature_shutdown_threshold", _temperature_shutdown_threshold);
-    nh.getParam("simulation_mode", _simulation_mode);
+  nh.getParam("read_rpi_diagnostics_frequency", _read_cpu_frequency);
+  nh.getParam("temperature_warn_threshold", _temperature_warn_threshold);
+  nh.getParam("temperature_shutdown_threshold", _temperature_shutdown_threshold);
+  nh.getParam("simulation_mode", _simulation_mode);
 
-    ROS_DEBUG("CPU Interface::initParameters - Read temperature frequency %f", _read_cpu_frequency);
-    ROS_DEBUG("CPU Interface::initParameters - Temperature warn threshold %d", _temperature_warn_threshold);
-    ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);
-    ROS_DEBUG("CPU Interface::initParameters - Simulation mode : %s", _simulation_mode ? "True" : "False");
+  ROS_DEBUG("CPU Interface::initParameters - Read temperature frequency %f", _read_cpu_frequency);
+  ROS_DEBUG("CPU Interface::initParameters - Temperature warn threshold %d", _temperature_warn_threshold);
+  ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);
+  ROS_DEBUG("CPU Interface::initParameters - Simulation mode : %s", _simulation_mode ? "True" : "False");
 }
 
 /**
  * @brief CpuInterfaceCore::startServices
  */
-void CpuInterfaceCore::startServices(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startServices - no services to start"); }
+void CpuInterfaceCore::startServices(ros::NodeHandle & /*nh*/)
+{
+  ROS_DEBUG("CpuInterfaceCore::startServices - no services to start");
+}
 
 /**
  * @brief CpuInterfaceCore::startPublishers
  */
-void CpuInterfaceCore::startPublishers(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start"); }
+void CpuInterfaceCore::startPublishers(ros::NodeHandle & /*nh*/)
+{
+  ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start");
+}
 
 /**
  * @brief CpuInterfaceCore::startSubscribers
  */
-void CpuInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/) { ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start"); }
+void CpuInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/)
+{
+  ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start");
+}
 
 /**
  * @brief CpuInterfaceCore::_readCpuTemperature
  */
 void CpuInterfaceCore::_readCpuTemperature()
 {
-    std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::fstream::in);
-    if (cpu_temp_file.good())
+  std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::fstream::in);
+  if (cpu_temp_file.good())
+  {
+    int read_temp = 0;
+    cpu_temp_file >> read_temp;
+    if (read_temp > 0)
     {
-        int read_temp = 0;
-        cpu_temp_file >> read_temp;
-        if (read_temp > 0)
-        {
-            _cpu_temperature = read_temp / 1000;
-        }
-
-        cpu_temp_file.close();
+      _cpu_temperature = read_temp / 1000;
     }
+
+    cpu_temp_file.close();
+  }
 }
 
 /**
  * @brief CpuInterfaceCore::startReadingData
  */
-void CpuInterfaceCore::startReadingData() { _read_hardware_data_thread = std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this); }
+void CpuInterfaceCore::startReadingData()
+{
+  _read_hardware_data_thread = std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this);
+}
 
 /**
  * @brief CpuInterfaceCore::_readHardwareDataLoop
  */
 void CpuInterfaceCore::_readHardwareDataLoop()
 {
-    ros::Rate read_rpi_diagnostics_rate = ros::Rate(_read_cpu_frequency);
+  ros::Rate read_rpi_diagnostics_rate = ros::Rate(_read_cpu_frequency);
 
-    while (ros::ok())
+  while (ros::ok())
+  {
+    _readCpuTemperature();
+
+    if (!_simulation_mode)
     {
-        _readCpuTemperature();
-
-        if (!_simulation_mode)
-        {
-            // check if Rpi is too hot
-            if (_cpu_temperature > _temperature_warn_threshold)
-            {
-                ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Rpi temperature is really high !");
-            }
-            if (_cpu_temperature > _temperature_shutdown_threshold)
-            {
-                ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Rpi is too hot, shutdown to avoid any damage");
-                int ret = std::system("sudo shutdown now");
-                ROS_INFO("CpuInterfaceCore::_readHardwareDataLoop - Shutdown now: %d", ret);
-            }
-        }
-        else
-        {
-            if (_cpu_temperature > _temperature_warn_threshold)
-            {
-                ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Computer temperature is really high !");
-            }
-            if (_cpu_temperature > _temperature_shutdown_threshold)
-            {
-                ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Computer is too hot");
-            }
-        }
-
-        read_rpi_diagnostics_rate.sleep();
+      // check if Rpi is too hot
+      if (_cpu_temperature > _temperature_warn_threshold)
+      {
+        ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Rpi temperature is really high !");
+      }
+      if (_cpu_temperature > _temperature_shutdown_threshold)
+      {
+        ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Rpi is too hot, shutdown to avoid any damage");
+        int ret = std::system("sudo shutdown now");
+        ROS_INFO("CpuInterfaceCore::_readHardwareDataLoop - Shutdown now: %d", ret);
+      }
     }
+    else
+    {
+      if (_cpu_temperature > _temperature_warn_threshold)
+      {
+        ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Computer temperature is really high !");
+      }
+      if (_cpu_temperature > _temperature_shutdown_threshold)
+      {
+        ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Computer is too hot");
+      }
+    }
+
+    read_rpi_diagnostics_rate.sleep();
+  }
 }
 }  // namespace cpu_interface

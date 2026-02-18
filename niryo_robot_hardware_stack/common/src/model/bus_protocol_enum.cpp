@@ -30,13 +30,17 @@ namespace model
  * @brief BusProtocolEnum::BusProtocolEnum
  * @param e
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e) : AbstractEnum<BusProtocolEnum, EBusProtocol>(e) {}
+BusProtocolEnum::BusProtocolEnum(EBusProtocol e) : AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
+{
+}
 
 /**
  * @brief BusProtocolEnum::BusProtocolEnum
  * @param str
  */
-BusProtocolEnum::BusProtocolEnum(const char *const str) : AbstractEnum<BusProtocolEnum, EBusProtocol>(str) {}
+BusProtocolEnum::BusProtocolEnum(const char *const str) : AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
+{
+}
 
 /**
  * @brief BusProtocolEnum::initialize
@@ -44,13 +48,13 @@ BusProtocolEnum::BusProtocolEnum(const char *const str) : AbstractEnum<BusProtoc
  */
 std::map<EBusProtocol, std::string> BusProtocolEnum::initialize()
 {
-    std::map<EBusProtocol, std::string> m;
+  std::map<EBusProtocol, std::string> m;
 
-    m[EBusProtocol::TTL] = "ttl";
-    m[EBusProtocol::CAN] = "can";
-    m[EBusProtocol::UNKNOWN] = "unknown";
+  m[EBusProtocol::TTL] = "ttl";
+  m[EBusProtocol::CAN] = "can";
+  m[EBusProtocol::UNKNOWN] = "unknown";
 
-    return m;
+  return m;
 }
 
 }  // namespace model

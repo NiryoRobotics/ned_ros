@@ -30,13 +30,17 @@ namespace model
  * @brief HardwareTypeEnum::HardwareTypeEnum
  * @param e
  */
-HardwareTypeEnum::HardwareTypeEnum(EHardwareType e) : AbstractEnum<HardwareTypeEnum, EHardwareType>(e) {}
+HardwareTypeEnum::HardwareTypeEnum(EHardwareType e) : AbstractEnum<HardwareTypeEnum, EHardwareType>(e)
+{
+}
 
 /**
  * @brief HardwareTypeEnum::HardwareTypeEnum
  * @param str
  */
-HardwareTypeEnum::HardwareTypeEnum(const char *const str) : AbstractEnum<HardwareTypeEnum, EHardwareType>(str) {}
+HardwareTypeEnum::HardwareTypeEnum(const char *const str) : AbstractEnum<HardwareTypeEnum, EHardwareType>(str)
+{
+}
 
 /**
  * @brief HardwareTypeEnum::initialize
@@ -44,24 +48,24 @@ HardwareTypeEnum::HardwareTypeEnum(const char *const str) : AbstractEnum<Hardwar
  */
 std::map<EHardwareType, std::string> HardwareTypeEnum::initialize()
 {
-    std::map<EHardwareType, std::string> m;
+  std::map<EHardwareType, std::string> m;
 
-    m[EHardwareType::STEPPER] = "stepper";
-    m[EHardwareType::NED3PRO_STEPPER] = "ned3pro_stepper";
-    m[EHardwareType::XL430] = "xl430";
-    m[EHardwareType::XL320] = "xl320";
-    m[EHardwareType::XL330] = "xl330";
-    m[EHardwareType::XC430] = "xc430";
-    m[EHardwareType::XM430] = "xm430";
-    m[EHardwareType::XH430] = "xh430";
-    m[EHardwareType::FAKE_DXL_MOTOR] = "fakeDxl";
-    m[EHardwareType::FAKE_STEPPER_MOTOR] = "fakeStepper";
-    m[EHardwareType::END_EFFECTOR] = "end_effector";
-    m[EHardwareType::NED3PRO_END_EFFECTOR] = "ned3pro_end_effector";
-    m[EHardwareType::FAKE_END_EFFECTOR] = "fake_end_effector";
-    m[EHardwareType::UNKNOWN] = "unknown";
+  m[EHardwareType::STEPPER] = "stepper";
+  m[EHardwareType::NED3PRO_STEPPER] = "ned3pro_stepper";
+  m[EHardwareType::XL430] = "xl430";
+  m[EHardwareType::XL320] = "xl320";
+  m[EHardwareType::XL330] = "xl330";
+  m[EHardwareType::XC430] = "xc430";
+  m[EHardwareType::XM430] = "xm430";
+  m[EHardwareType::XH430] = "xh430";
+  m[EHardwareType::FAKE_DXL_MOTOR] = "fakeDxl";
+  m[EHardwareType::FAKE_STEPPER_MOTOR] = "fakeStepper";
+  m[EHardwareType::END_EFFECTOR] = "end_effector";
+  m[EHardwareType::NED3PRO_END_EFFECTOR] = "ned3pro_end_effector";
+  m[EHardwareType::FAKE_END_EFFECTOR] = "fake_end_effector";
+  m[EHardwareType::UNKNOWN] = "unknown";
 
-    return m;
+  return m;
 }
 
 }  // namespace model

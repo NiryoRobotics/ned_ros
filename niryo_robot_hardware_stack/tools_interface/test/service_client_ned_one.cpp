@@ -40,11 +40,11 @@ static std::unique_ptr<ros::NodeHandle> nh_g;
  */
 TEST(ToolTestConfigSuite, correctPath)
 {
-    ros::NodeHandle nh("");
-    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/id_list"));
-    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/type_list"));
-    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/name_list"));
-    ASSERT_TRUE(nh.hasParam("tools_interface/check_tool_connection_frequency"));
+  ros::NodeHandle nh("");
+  ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/id_list"));
+  ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/type_list"));
+  ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/name_list"));
+  ASSERT_TRUE(nh.hasParam("tools_interface/check_tool_connection_frequency"));
 }
 
 /**
@@ -53,17 +53,17 @@ TEST(ToolTestConfigSuite, correctPath)
  */
 TEST(ToolTestConfigSuite, correctSize)
 {
-    ros::NodeHandle nh("");
-    std::vector<int> idList;
-    std::vector<std::string> typeList;
-    std::vector<std::string> nameList;
+  ros::NodeHandle nh("");
+  std::vector<int> idList;
+  std::vector<std::string> typeList;
+  std::vector<std::string> nameList;
 
-    nh.getParam("tools_interface/tools_params/id_list", idList);
-    nh.getParam("tools_interface/tools_params/type_list", typeList);
-    nh.getParam("tools_interface/tools_params/name_list", nameList);
+  nh.getParam("tools_interface/tools_params/id_list", idList);
+  nh.getParam("tools_interface/tools_params/type_list", typeList);
+  nh.getParam("tools_interface/tools_params/name_list", nameList);
 
-    ASSERT_TRUE(idList.size() == typeList.size());
-    ASSERT_TRUE(idList.size() == nameList.size());
+  ASSERT_TRUE(idList.size() == typeList.size());
+  ASSERT_TRUE(idList.size() == nameList.size());
 }
 
 /**
@@ -71,23 +71,23 @@ TEST(ToolTestConfigSuite, correctSize)
  */
 TEST(ToolTestConfigSuite, compabilityConfig)
 {
-    // config in tool interface
-    ros::NodeHandle nh("");
-    std::vector<int> idList;
-    nh.getParam("tools_interface/tools_params/id_list", idList);
+  // config in tool interface
+  ros::NodeHandle nh("");
+  std::vector<int> idList;
+  nh.getParam("tools_interface/tools_params/id_list", idList);
 
-    tools_interface::ToolCommand srv;
-    XmlRpc::XmlRpcValue filters;
+  tools_interface::ToolCommand srv;
+  XmlRpc::XmlRpcValue filters;
 
-    nh_g->getParam("tool_list", filters);
+  nh_g->getParam("tool_list", filters);
 
-    for (int i = 0; i < filters.size(); i++)
-    {
-        int id = static_cast<int>(filters[i]["id"]);
-        if (id == 0)
-            continue;
-        EXPECT_TRUE(std::find(idList.begin(), idList.end(), id) != idList.end());
-    }
+  for (int i = 0; i < filters.size(); i++)
+  {
+    int id = static_cast<int>(filters[i]["id"]);
+    if (id == 0)
+      continue;
+    EXPECT_TRUE(std::find(idList.begin(), idList.end(), id) != idList.end());
+  }
 }
 
 /**
@@ -95,52 +95,55 @@ TEST(ToolTestConfigSuite, compabilityConfig)
  */
 TEST(ToolTestSetTool, addTool)
 {
-    ros::NodeHandle nh("");
-    std::vector<int> idList;
-    nh.getParam("tools_interface/tools_params/id_list", idList);
+  ros::NodeHandle nh("");
+  std::vector<int> idList;
+  nh.getParam("tools_interface/tools_params/id_list", idList);
 
-    auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+  auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
-    bool exists(client.waitForExistence(ros::Duration(5)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(5)));
+  EXPECT_TRUE(exists);
 
-    tools_interface::PingDxlTool srv;
-    client.call(srv);
+  tools_interface::PingDxlTool srv;
+  client.call(srv);
 
-    // surprisingly we must first create a variable to have it work
-    int res = common::model::ToolState::TOOL_STATE_PING_OK;
-    EXPECT_EQ(srv.response.state, res);
+  // surprisingly we must first create a variable to have it work
+  int res = common::model::ToolState::TOOL_STATE_PING_OK;
+  EXPECT_EQ(srv.response.state, res);
 
-    // check id after added, -1 if failed or no tool connected
-    EXPECT_TRUE(std::find(idList.begin(), idList.end(), srv.response.tool.id) != idList.end());
+  // check id after added, -1 if failed or no tool connected
+  EXPECT_TRUE(std::find(idList.begin(), idList.end(), srv.response.tool.id) != idList.end());
 
-    // check motor type of tool, if unknow type and state is TOOL_STATE_PING_OK, that means no tool connected physically
-    EXPECT_NE(static_cast<int>(srv.response.tool.motor_type), static_cast<int>(common::model::EHardwareType::UNKNOWN));
+  // check motor type of tool, if unknow type and state is TOOL_STATE_PING_OK, that means no tool connected physically
+  EXPECT_NE(static_cast<int>(srv.response.tool.motor_type), static_cast<int>(common::model::EHardwareType::UNKNOWN));
 }
 
 class ToolTestControlSuite : public ::testing::Test
 {
-  protected:
-    static void SetUpTestCase() { pingTool(); }
+protected:
+  static void SetUpTestCase()
+  {
+    pingTool();
+  }
 
-    static void pingTool()
-    {
-        auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+  static void pingTool()
+  {
+    auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
-        bool exists(client.waitForExistence(ros::Duration(1)));
-        EXPECT_TRUE(exists);
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
 
-        tools_interface::PingDxlTool srv_ping;
-        client.call(srv_ping);
+    tools_interface::PingDxlTool srv_ping;
+    client.call(srv_ping);
 
-        // Continue only if set tool successfully
-        int res = common::model::ToolState::TOOL_STATE_PING_OK;
-        ASSERT_EQ(srv_ping.response.state, res);
+    // Continue only if set tool successfully
+    int res = common::model::ToolState::TOOL_STATE_PING_OK;
+    ASSERT_EQ(srv_ping.response.state, res);
 
-        id = srv_ping.response.tool.id;
-    }
+    id = srv_ping.response.tool.id;
+  }
 
-    static int id;
+  static int id;
 };
 
 int ToolTestControlSuite::id;
@@ -150,235 +153,235 @@ int ToolTestControlSuite::id;
  */
 TEST_F(ToolTestControlSuite, checkToolScannedId)
 {
-    ros::NodeHandle nh("");
-    std::vector<int> id_list;
-    nh.getParam("tools_interface/tools_params/id_list", id_list);
+  ros::NodeHandle nh("");
+  std::vector<int> id_list;
+  nh.getParam("tools_interface/tools_params/id_list", id_list);
 
-    EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end());
+  EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end());
 }
 
 // open tool correct ID
 TEST_F(ToolTestControlSuite, openTool)
 {
-    // only test tool if tool can be added and type gripper
-    ASSERT_NE(id, -1);
-    if (id != 11 && id != 12 && id != 13)
-        return;
+  // only test tool if tool can be added and type gripper
+  ASSERT_NE(id, -1);
+  if (id != 11 && id != 12 && id != 13)
+    return;
 
-    tools_interface::ToolCommand srv;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
+  XmlRpc::XmlRpcValue filters;
 
-    nh_g->getParam("tool_list", filters);
+  nh_g->getParam("tool_list", filters);
 
-    for (int i = 0; i < filters.size(); i++)
+  for (int i = 0; i < filters.size(); i++)
+  {
+    if (static_cast<int>(filters[i]["id"]) == id)
     {
-        if (static_cast<int>(filters[i]["id"]) == id)
-        {
-            srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
-            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
-            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
-        }
+      srv.request.id = static_cast<uint8_t>(id);
+      srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
+      srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
+      srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
+      srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
     }
+  }
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-    client.call(srv);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
+  client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OK;
-    EXPECT_EQ(srv.response.state, res);
+  int res = common::model::ToolState::GRIPPER_STATE_OK;
+  EXPECT_EQ(srv.response.state, res);
 }
 
 // open tool with wrong parameter
 TEST_F(ToolTestControlSuite, openToolWrongId)
 {
-    tools_interface::ToolCommand srv;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
+  XmlRpc::XmlRpcValue filters;
 
-    nh_g->getParam("tool_list", filters);
+  nh_g->getParam("tool_list", filters);
 
-    // wrong id
-    srv.request.id = static_cast<uint8_t>(20);
-    srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_position"]));
-    srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_speed"]));
-    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_hold_torque"]));
-    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
+  // wrong id
+  srv.request.id = static_cast<uint8_t>(20);
+  srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_position"]));
+  srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_speed"]));
+  srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_hold_torque"]));
+  srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-    client.call(srv);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
+  client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OK;
-    EXPECT_NE(srv.response.state, res);
+  int res = common::model::ToolState::GRIPPER_STATE_OK;
+  EXPECT_NE(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, CloseTool)
 {
-    // only test tool if tool can be added and type gripper
-    ASSERT_NE(id, -1);
-    if (id != 11 && id != 12 && id != 13)
-        return;
+  // only test tool if tool can be added and type gripper
+  ASSERT_NE(id, -1);
+  if (id != 11 && id != 12 && id != 13)
+    return;
 
-    tools_interface::ToolCommand srv;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
-    nh_g->getParam("tool_list", filters);
+  XmlRpc::XmlRpcValue filters;
+  nh_g->getParam("tool_list", filters);
 
-    for (int i = 0; i < filters.size(); i++)
+  for (int i = 0; i < filters.size(); i++)
+  {
+    if (static_cast<int>(filters[i]["id"]) == id)
     {
-        if (static_cast<int>(filters[i]["id"]) == id)
-        {
-            srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
-            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
-            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
-            break;
-        }
+      srv.request.id = static_cast<uint8_t>(id);
+      srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
+      srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
+      srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
+      srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
+      break;
     }
+  }
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    client.call(srv);
+  client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OK;
-    EXPECT_EQ(srv.response.state, res);
+  int res = common::model::ToolState::GRIPPER_STATE_OK;
+  EXPECT_EQ(srv.response.state, res);
 }
 
 // close tool with wrong parameter
 TEST_F(ToolTestControlSuite, closeToolWrongId)
 {
-    tools_interface::ToolCommand srv;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
+  XmlRpc::XmlRpcValue filters;
 
-    nh_g->getParam("tool_list", filters);
+  nh_g->getParam("tool_list", filters);
 
-    // wrong id
-    srv.request.id = static_cast<uint8_t>(20);
-    srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_position"]));
-    srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_speed"]));
-    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_hold_torque"]));
-    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
+  // wrong id
+  srv.request.id = static_cast<uint8_t>(20);
+  srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_position"]));
+  srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_speed"]));
+  srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_hold_torque"]));
+  srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-    client.call(srv);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
+  client.call(srv);
 
-    int res = common::model::ToolState::GRIPPER_STATE_OK;
-    EXPECT_NE(srv.response.state, res);
+  int res = common::model::ToolState::GRIPPER_STATE_OK;
+  EXPECT_NE(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, PullAirVacuumPump)
 {
-    if (id != 31)
-        return;
-    tools_interface::ToolCommand srv;
+  if (id != 31)
+    return;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
-    nh_g->getParam("tool_list", filters);
+  XmlRpc::XmlRpcValue filters;
+  nh_g->getParam("tool_list", filters);
 
-    for (int i = 0; i < filters.size(); i++)
+  for (int i = 0; i < filters.size(); i++)
+  {
+    if (static_cast<int>(filters[i]["id"]) == id)
     {
-        if (static_cast<int>(filters[i]["id"]) == id)
-        {
-            srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
-            srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
-            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
-            srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
-            break;
-        }
+      srv.request.id = static_cast<uint8_t>(id);
+      srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
+      srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
+      srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
+      srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
+      break;
     }
+  }
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/pull_air_vacuum_pump");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/pull_air_vacuum_pump");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    client.call(srv);
+  client.call(srv);
 
-    int res = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
-    EXPECT_EQ(srv.response.state, res);
+  int res = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
+  EXPECT_EQ(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, PushAirVacuumPump)
 {
-    if (id != 31)
-        return;
-    tools_interface::ToolCommand srv;
+  if (id != 31)
+    return;
+  tools_interface::ToolCommand srv;
 
-    XmlRpc::XmlRpcValue filters;
-    nh_g->getParam("tool_list", filters);
+  XmlRpc::XmlRpcValue filters;
+  nh_g->getParam("tool_list", filters);
 
-    for (int i = 0; i < filters.size(); i++)
+  for (int i = 0; i < filters.size(); i++)
+  {
+    if (static_cast<int>(filters[i]["id"]) == id)
     {
-        if (static_cast<int>(filters[i]["id"]) == id)
-        {
-            srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
-            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
-            break;
-        }
+      srv.request.id = static_cast<uint8_t>(id);
+      srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
+      srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
+      srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
+      break;
     }
+  }
 
-    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/push_air_vacuum_pump");
+  auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/push_air_vacuum_pump");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    client.call(srv);
+  client.call(srv);
 
-    int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
-    EXPECT_EQ(srv.response.state, res);
+  int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
+  EXPECT_EQ(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, ToolReboot)
 {
-    ASSERT_NE(id, -1);
+  ASSERT_NE(id, -1);
 
-    auto client = nh_g->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
+  auto client = nh_g->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    std_srvs::Trigger srv;
-    client.call(srv);
+  std_srvs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.success, true);
-    EXPECT_EQ(srv.response.message, "Tool reboot succeeded");
+  EXPECT_EQ(srv.response.success, true);
+  EXPECT_EQ(srv.response.message, "Tool reboot succeeded");
 }
 
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    ros::init(argc, argv, "tools_interface_service_client");
+  ros::init(argc, argv, "tools_interface_service_client");
 
-    nh_g = std::make_unique<ros::NodeHandle>("~");
+  nh_g = std::make_unique<ros::NodeHandle>("~");
 
-    bool manual_tests{false};
-    ros::NodeHandle nh_private("~");
-    nh_private.getParam("manual_tests", manual_tests);
-    ROS_DEBUG("manual_tests: %s", manual_tests ? "True" : "False");
+  bool manual_tests{ false };
+  ros::NodeHandle nh_private("~");
+  nh_private.getParam("manual_tests", manual_tests);
+  ROS_DEBUG("manual_tests: %s", manual_tests ? "True" : "False");
 
-    // remove manual tests if automatic mode
-    if (!manual_tests)
-        testing::GTEST_FLAG(filter) = "-ToolTestControlSuiteManual.*";
+  // remove manual tests if automatic mode
+  if (!manual_tests)
+    testing::GTEST_FLAG(filter) = "-ToolTestControlSuiteManual.*";
 
-    ros::Duration(5.0).sleep();
-    return RUN_ALL_TESTS();
+  ros::Duration(5.0).sleep();
+  return RUN_ALL_TESTS();
 }

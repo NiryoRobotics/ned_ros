@@ -35,7 +35,9 @@ namespace can_driver
  * @brief AbstractCanDriver::AbstractCanDriver
  * @param mcp_can
  */
-AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) : _mcp_can(std::move(mcp_can)) {}
+AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) : _mcp_can(std::move(mcp_can))
+{
+}
 
 /**
  * @brief StepperDriver::ping
@@ -44,30 +46,30 @@ AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_c
  */
 int AbstractCanDriver::ping(uint8_t id)
 {
-    int res = CAN_FAIL;
+  int res = CAN_FAIL;
 
-    double time_begin_scan = ros::Time::now().toSec();
+  double time_begin_scan = ros::Time::now().toSec();
 
-    while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
+  while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
+  {
+    ros::Duration(0.001).sleep();  // check at 1000 Hz
+    if (canReadData())
     {
-        ros::Duration(0.001).sleep();  // check at 1000 Hz
-        if (canReadData())
-        {
-            INT32U rxId;
-            uint8_t len;
-            std::array<uint8_t, 8> rxBuf{};
-            read(&rxId, &len, rxBuf);
-            uint8_t motor_id = rxId & 0x0F;
+      INT32U rxId;
+      uint8_t len;
+      std::array<uint8_t, 8> rxBuf{};
+      read(&rxId, &len, rxBuf);
+      uint8_t motor_id = rxId & 0x0F;
 
-            if (motor_id == id)
-            {
-                res = CAN_OK;
-                break;
-            }
-        }
+      if (motor_id == id)
+      {
+        res = CAN_OK;
+        break;
+      }
     }
+  }
 
-    return res;
+  return res;
 }
 
 /**
@@ -78,37 +80,37 @@ int AbstractCanDriver::ping(uint8_t id)
  */
 int AbstractCanDriver::scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list)
 {
-    int result = CAN_FAIL;
+  int result = CAN_FAIL;
 
-    id_list.clear();
+  id_list.clear();
 
-    double time_begin_scan = ros::Time::now().toSec();
-    double timeout = 0.5;
+  double time_begin_scan = ros::Time::now().toSec();
+  double timeout = 0.5;
 
-    while ((!motors_unfound.empty()) && (ros::Time::now().toSec() - time_begin_scan < timeout))
+  while ((!motors_unfound.empty()) && (ros::Time::now().toSec() - time_begin_scan < timeout))
+  {
+    ros::Duration(0.001).sleep();  // check at 1000 Hz
+    if (canReadData())
     {
-        ros::Duration(0.001).sleep();  // check at 1000 Hz
-        if (canReadData())
-        {
-            INT32U rxId;
-            uint8_t len;
-            std::array<uint8_t, 8> rxBuf{};
-            read(&rxId, &len, rxBuf);
-            uint8_t motor_id = rxId & 0x0F;
+      INT32U rxId;
+      uint8_t len;
+      std::array<uint8_t, 8> rxBuf{};
+      read(&rxId, &len, rxBuf);
+      uint8_t motor_id = rxId & 0x0F;
 
-            if (motors_unfound.count(motor_id))
-            {
-                motors_unfound.erase(motor_id);
-                id_list.emplace_back(motor_id);
-            }
-        }
+      if (motors_unfound.count(motor_id))
+      {
+        motors_unfound.erase(motor_id);
+        id_list.emplace_back(motor_id);
+      }
     }
+  }
 
-    // if found everything
-    if (motors_unfound.empty())
-        result = CAN_OK;
+  // if found everything
+  if (motors_unfound.empty())
+    result = CAN_OK;
 
-    return result;
+  return result;
 }
 
 /**
@@ -117,12 +119,12 @@ int AbstractCanDriver::scan(std::set<uint8_t> &motors_unfound, std::vector<uint8
  */
 std::string AbstractCanDriver::str() const
 {
-    ostringstream ss;
+  ostringstream ss;
 
-    ss << "CAN Driver : "
-       << "packet handler " << (_mcp_can ? "OK" : "Not Ok");
+  ss << "CAN Driver : "
+     << "packet handler " << (_mcp_can ? "OK" : "Not Ok");
 
-    return ss.str();
+  return ss.str();
 }
 
 /*
@@ -137,25 +139,26 @@ std::string AbstractCanDriver::str() const
  * @param error_message
  * @return
  */
-uint8_t AbstractCanDriver::readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf, std::string &error_message)
+uint8_t AbstractCanDriver::readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf,
+                                    std::string &error_message)
 {
-    uint8_t res = CAN_FAIL;
+  uint8_t res = CAN_FAIL;
 
-    error_message.clear();
-    INT32U rxId;
-    uint8_t len{};
-    read(&rxId, &len, rxBuf);
-    id = rxId & 0x0F;
-    control_byte = rxBuf[0];
-    if (MESSAGE_LENGTH == len)
-    {
-        res = CAN_OK;
-    }
-    else
-    {
-        error_message = "invalid frame size (" + std::to_string(len) + " bytes received)";
-    }
-    return res;
+  error_message.clear();
+  INT32U rxId;
+  uint8_t len{};
+  read(&rxId, &len, rxBuf);
+  id = rxId & 0x0F;
+  control_byte = rxBuf[0];
+  if (MESSAGE_LENGTH == len)
+  {
+    res = CAN_OK;
+  }
+  else
+  {
+    error_message = "invalid frame size (" + std::to_string(len) + " bytes received)";
+  }
+  return res;
 }
 
 /**
@@ -167,16 +170,16 @@ uint8_t AbstractCanDriver::readData(uint8_t &id, int &control_byte, std::array<u
  */
 uint8_t AbstractCanDriver::read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf)
 {
-    uint8_t status = CAN_FAIL;
+  uint8_t status = CAN_FAIL;
 
-    for (auto i = 0; i < 10 && CAN_OK != status; ++i)
-    {
-        status = _mcp_can->readMsgBuf(id, len, buf.data());
-        if (CAN_OK != status)
-            ROS_WARN_THROTTLE(1.0, "StepperDriver::read - Reading Stepper message on CAN Bus failed");
-    }
+  for (auto i = 0; i < 10 && CAN_OK != status; ++i)
+  {
+    status = _mcp_can->readMsgBuf(id, len, buf.data());
+    if (CAN_OK != status)
+      ROS_WARN_THROTTLE(1.0, "StepperDriver::read - Reading Stepper message on CAN Bus failed");
+  }
 
-    return status;
+  return status;
 }
 
 /**
@@ -189,15 +192,15 @@ uint8_t AbstractCanDriver::read(INT32U *id, uint8_t *len, std::array<uint8_t, MA
  */
 uint8_t AbstractCanDriver::write(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf)
 {
-    uint8_t status = CAN_FAIL;
+  uint8_t status = CAN_FAIL;
 
-    for (auto i = 0; i < 10 && CAN_OK != status; ++i)
-    {
-        status = _mcp_can->sendMsgBuf(id, ext, len, buf);
-        ROS_WARN_COND(CAN_OK != status, "StepperDriver::write - Sending Stepper message on CAN Bus failed");
-    }
+  for (auto i = 0; i < 10 && CAN_OK != status; ++i)
+  {
+    status = _mcp_can->sendMsgBuf(id, ext, len, buf);
+    ROS_WARN_COND(CAN_OK != status, "StepperDriver::write - Sending Stepper message on CAN Bus failed");
+  }
 
-    return status;
+  return status;
 }
 
 }  // namespace can_driver

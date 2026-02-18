@@ -66,7 +66,7 @@ namespace joints_interface
  * @param ttl_interface
  * @param can_interface
  */
-JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh, ros::NodeHandle& robot_hwnh,
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh,
                                                std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface)
   : _ttl_interface(std::move(ttl_interface)), _can_interface(std::move(can_interface))
@@ -95,7 +95,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh, ros::Nod
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and
  * instanciatRing correct state (dxl or stepper)
  */
-bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle& robot_hwnh)
+bool JointHardwareInterface::init(ros::NodeHandle & /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
   bool torque_status{ false };
 
@@ -302,7 +302,7 @@ void JointHardwareInterface::updateJointsHomePosition()
     if (_get_settings_client.waitForExistence(ros::Duration(5.0)))
     {
       std::vector<float> tmp_custom_home_positions;
-      for (auto& jState : _joint_state_list)
+      for (auto &jState : _joint_state_list)
       {
         auto get_request = niryo_robot_database::GetSettings();
         auto setting_name = "custom_home_position_" + jState->getName();
@@ -319,7 +319,7 @@ void JointHardwareInterface::updateJointsHomePosition()
       if (tmp_custom_home_positions.size() == _joint_state_list.size())
       {
         int counter = 0;
-        for (auto& jState : _joint_state_list)
+        for (auto &jState : _joint_state_list)
         {
           jState->setHomePosition(tmp_custom_home_positions[counter]);
           counter++;
@@ -331,8 +331,8 @@ void JointHardwareInterface::updateJointsHomePosition()
   }
 }
 
-bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request&,
-                                                     niryo_robot_msgs::GetFloatList::Response& res)
+bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request &,
+                                                     niryo_robot_msgs::GetFloatList::Response &res)
 {
   ROS_DEBUG("JointHardwareInterface::callbackGetHomePosition - Get home position requested");
 
@@ -341,7 +341,7 @@ bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatL
 
   updateJointsHomePosition();
 
-  for (auto& jState : _joint_state_list)
+  for (auto &jState : _joint_state_list)
   {
     res.values.push_back(jState->getHomePosition());
   }
@@ -349,8 +349,8 @@ bool JointHardwareInterface::callbackGetHomePosition(niryo_robot_msgs::GetFloatL
   return true;
 }
 
-bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request& req,
-                                                     niryo_robot_msgs::SetFloatList::Response& res)
+bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request &req,
+                                                     niryo_robot_msgs::SetFloatList::Response &res)
 {
   ROS_DEBUG("JointHardwareInterface::callbackSetHomePosition - Set new home position requested");
 
@@ -384,7 +384,7 @@ bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatL
 
   int counter = 0;
   std::vector<float> tmp_custom_home_positions;
-  for (auto& jState : _joint_state_list)
+  for (auto &jState : _joint_state_list)
   {
     set_service.request.name = "custom_home_position_" + jState->getName();
     set_service.request.type = "float";
@@ -420,8 +420,8 @@ bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatL
   return true;
 }
 
-bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger::Request&,
-                                                       niryo_robot_msgs::Trigger::Response& res)
+bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger::Request &,
+                                                       niryo_robot_msgs::Trigger::Response &res)
 {
   ROS_DEBUG("JointHardwareInterface::callbackResetHomePosition - Reset home position requested");
 
@@ -429,7 +429,7 @@ bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger
 
   for (size_t i = 0; i < _joint_state_list.size(); ++i)
   {
-    auto& jState = _joint_state_list[i];
+    auto &jState = _joint_state_list[i];
     set_service.request.name = "custom_home_position_" + jState->getName();
     set_service.request.type = "float";
     set_service.request.value = "";
@@ -452,9 +452,9 @@ bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initStepperState(ros::NodeHandle& robot_hwnh,
-                                              const std::shared_ptr<StepperMotorState>& stepperState,
-                                              const std::string& currentNamespace) const
+bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
+                                              const std::shared_ptr<StepperMotorState> &stepperState,
+                                              const std::string &currentNamespace) const
 {
   bool res = false;
   if (stepperState)
@@ -557,8 +557,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle& robot_hwnh,
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initDxlState(ros::NodeHandle& robot_hwnh, const std::shared_ptr<DxlMotorState>& dxlState,
-                                          const std::string& currentNamespace) const
+bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh, const std::shared_ptr<DxlMotorState> &dxlState,
+                                          const std::string &currentNamespace) const
 {
   bool res = false;
   if (dxlState)
@@ -628,9 +628,9 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle& robot_hwnh, const std
  * @brief JointHardwareInterface::read
  * Reads the current state of the robot and update pos and vel of
  */
-void JointHardwareInterface::read(const ros::Time& /*time*/, const ros::Duration& /*period*/)
+void JointHardwareInterface::read(const ros::Time & /*time*/, const ros::Duration & /*period*/)
 {
-  for (auto& jState : _joint_state_list)
+  for (auto &jState : _joint_state_list)
   {
     if (jState && jState->isValid())
     {
@@ -648,12 +648,12 @@ void JointHardwareInterface::read(const ros::Time& /*time*/, const ros::Duration
  * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint
  * handle
  */
-void JointHardwareInterface::write(const ros::Time& /*time*/, const ros::Duration& /*period*/)
+void JointHardwareInterface::write(const ros::Time & /*time*/, const ros::Duration & /*period*/)
 {
   std::vector<std::pair<uint8_t, int32_t>> can_cmd;
   std::vector<std::pair<uint8_t, uint32_t>> ttl_cmd;
 
-  for (auto const& jState : _joint_state_list)
+  for (auto const &jState : _joint_state_list)
   {
     if (jState && jState->isValid())
     {
@@ -677,7 +677,7 @@ void JointHardwareInterface::write(const ros::Time& /*time*/, const ros::Duratio
 void JointHardwareInterface::setCommandToCurrentPosition()
 {
   ROS_DEBUG("Joints Hardware Interface - Set command to current position called");
-  for (auto const& jState : _joint_state_list)
+  for (auto const &jState : _joint_state_list)
   {
     if (jState)
       _joint_position_interface.getHandle(jState->getName()).setCommand(jState->pos);
@@ -713,7 +713,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
   _ttl_interface->waitSingleQueueFree();
 
   bool res = true;
-  for (auto const& jState : _joint_state_list)
+  for (auto const &jState : _joint_state_list)
   {
     if (jState->getBusProtocol() == EBusProtocol::TTL)
     {
@@ -750,7 +750,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
  * @param torque_on
  * initializes all joints
  */
-int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::JointState>& motor_state, bool torque_on)
+int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::JointState> &motor_state, bool torque_on)
 {
   ROS_DEBUG("TtlInterfaceCore::initHardware");
 
@@ -836,7 +836,7 @@ int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::Jo
  * @param result_message
  * @return
  */
-int JointHardwareInterface::calibrateJoints(int mode, string& result_message)
+int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
 {
   result_message.clear();
   int calib_res = niryo_robot_msgs::CommandStatus::ABORTED;
@@ -880,7 +880,7 @@ int JointHardwareInterface::calibrateJoints(int mode, string& result_message)
  * @return
  */
 int JointHardwareInterface::factoryCalibrateJoints(FactoryCalibration::Request::_command_type command,
-                                                   FactoryCalibration::Request::_ids_type ids, string& result_message)
+                                                   FactoryCalibration::Request::_ids_type ids, string &result_message)
 {
   if (FactoryCalibration::Request::START == command)
   {
@@ -925,7 +925,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
   DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
   StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
-  for (auto const& jState : _joint_state_list)
+  for (auto const &jState : _joint_state_list)
   {
     if (jState)
     {
@@ -967,7 +967,7 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
 {
   ROS_DEBUG("JointHardwareInterface::synchronizeMotors");
 
-  for (auto const& jState : _joint_state_list)
+  for (auto const &jState : _joint_state_list)
   {
     if (jState && jState->isValid() && jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
     {

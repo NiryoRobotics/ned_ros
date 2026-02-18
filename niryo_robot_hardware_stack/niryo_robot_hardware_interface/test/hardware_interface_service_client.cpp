@@ -28,53 +28,53 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, launchMotorReport)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/launch_motors_report");
+  auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/launch_motors_report");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
-    client.call(srv);
+  niryo_robot_msgs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, stopMotorReport)
 {
-    // we need to launch a motor report before stopping it...
-    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/stop_motors_report");
+  // we need to launch a motor report before stopping it...
+  auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/stop_motors_report");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
-    client.call(srv);
+  niryo_robot_msgs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 TEST(TESTSuite, rebootMotors)
 {
-    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/reboot_motors");
+  auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/reboot_motors");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
+  bool exists(client.waitForExistence(ros::Duration(1)));
+  EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
-    client.call(srv);
+  niryo_robot_msgs::Trigger srv;
+  client.call(srv);
 
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+  EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "hardware_interface_service_client");
+  ros::init(argc, argv, "hardware_interface_service_client");
 
-    nh = std::make_unique<ros::NodeHandle>();
+  nh = std::make_unique<ros::NodeHandle>();
 
-    ros::Duration(5.0).sleep();
+  ros::Duration(5.0).sleep();
 
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }

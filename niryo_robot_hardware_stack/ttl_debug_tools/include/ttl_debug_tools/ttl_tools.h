@@ -35,24 +35,25 @@ namespace ttl_debug_tools
  */
 class TtlTools
 {
-  public:
-    TtlTools();
-    TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+public:
+  TtlTools();
+  TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
+           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-    int setupBus(int baudrate);
-    void broadcastPing();
-    void ping(int id);
-    int setRegister(uint8_t id, uint16_t reg_address, uint32_t value, uint8_t byte_number);
-    int getRegister(uint8_t id, uint16_t reg_address, uint32_t &value, uint8_t byte_number);
+  int setupBus(int baudrate);
+  void broadcastPing();
+  void ping(int id);
+  int setRegister(uint8_t id, uint16_t reg_address, uint32_t value, uint8_t byte_number);
+  int getRegister(uint8_t id, uint16_t reg_address, uint32_t &value, uint8_t byte_number);
 
-    int setRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> values, uint8_t byte_number);
-    int getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> &values, uint8_t byte_number);
+  int setRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> values, uint8_t byte_number);
+  int getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> &values, uint8_t byte_number);
 
-    void closePort();
+  void closePort();
 
-  protected:
-    std::shared_ptr<dynamixel::PortHandler> _portHandler;
-    std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
+protected:
+  std::shared_ptr<dynamixel::PortHandler> _portHandler;
+  std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 };
 
 }  // namespace ttl_debug_tools

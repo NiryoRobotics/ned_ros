@@ -29,7 +29,6 @@ namespace common
 namespace model
 {
 
-
 /**
  * @brief ConveyorState::ConveyorState
  * @param type
@@ -37,8 +36,9 @@ namespace model
  * @param id
  * @param default_id
  */
-ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id, std::string hardware_id)
-    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id), _default_id(default_id), _hardware_id(hardware_id)
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id,
+                             std::string hardware_id)
+  : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id), _default_id(default_id), _hardware_id(hardware_id)
 {
 }
 
@@ -46,16 +46,19 @@ ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t
  * @brief ConveyorState::updateId
  * @param id
  */
-void ConveyorState::updateId(uint8_t id) { _id = id; }
+void ConveyorState::updateId(uint8_t id)
+{
+  _id = id;
+}
 
 /**
  * @brief ConveyorState::updateData : for conveniency
  */
 void ConveyorState::updateData(const std::tuple<bool, uint8_t, int8_t> &data)
 {
-    setState(std::get<0>(data));
-    setSpeed(std::get<1>(data));
-    setGoalDirection(std::get<2>(data));
+  setState(std::get<0>(data));
+  setSpeed(std::get<1>(data));
+  setGoalDirection(std::get<2>(data));
 }
 
 /**
@@ -63,37 +66,49 @@ void ConveyorState::updateData(const std::tuple<bool, uint8_t, int8_t> &data)
  */
 void ConveyorState::reset()
 {
-    StepperMotorState::reset();
-    _direction = 0;
-    _speed = 0;
-    _state = false;
-    _goal_direction = -1;
+  StepperMotorState::reset();
+  _direction = 0;
+  _speed = 0;
+  _state = false;
+  _goal_direction = -1;
 }
 
 /**
  * @brief ConveyorState::setState
  * @param state
  */
-void ConveyorState::setState(bool state) { _state = state; }
+void ConveyorState::setState(bool state)
+{
+  _state = state;
+}
 
 /**
  * @brief ConveyorState::setSpeed
  * @param speed
  */
-void ConveyorState::setSpeed(int16_t speed) { _speed = speed; }
+void ConveyorState::setSpeed(int16_t speed)
+{
+  _speed = speed;
+}
 
 /**
  * @brief ConveyorState::setGoalDirection
  * @param direction
  */
-void ConveyorState::setGoalDirection(int8_t direction) { _goal_direction = direction; }
+void ConveyorState::setGoalDirection(int8_t direction)
+{
+  _goal_direction = direction;
+}
 
 /**
  * @brief ConveyorState::operator ==
  * @param other
  * @return
  */
-bool ConveyorState::operator==(const ConveyorState &other) { return (this->_id == other._id); }
+bool ConveyorState::operator==(const ConveyorState &other)
+{
+  return (this->_id == other._id);
+}
 
 /**
  * @brief ConveyorState::str
@@ -101,17 +116,18 @@ bool ConveyorState::operator==(const ConveyorState &other) { return (this->_id =
  */
 std::string ConveyorState::str() const
 {
-    std::ostringstream ss;
+  std::ostringstream ss;
 
-    ss << "ConveyorState : ";
+  ss << "ConveyorState : ";
 
-    ss << "state: " << (_state ? "true" : "false") << ", speed: " << _speed << ", direction: " << static_cast<int>(_goal_direction);
+  ss << "state: " << (_state ? "true" : "false") << ", speed: " << _speed
+     << ", direction: " << static_cast<int>(_goal_direction);
 
-    ss << "\n---\n";
-    ss << "\n";
-    ss << StepperMotorState::str();
+  ss << "\n---\n";
+  ss << "\n";
+  ss << StepperMotorState::str();
 
-    return ss.str();
+  return ss.str();
 }
 
 }  // namespace model

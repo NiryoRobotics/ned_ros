@@ -28,26 +28,27 @@
 // Declare a test
 TEST(CanDebugToolsTestSuite, testInit)
 {
-    int spi_channel = 0;
-    int spi_baudrate = 1000000;
-    int gpio_can_interrupt = 25;
+  int spi_channel = 0;
+  int spi_baudrate = 1000000;
+  int gpio_can_interrupt = 25;
 
-    std::cout << "Using channel: " << spi_channel << ", "
-              << "Using baudrate: " << spi_baudrate << ", "
-              << "Using gpio: " << gpio_can_interrupt << "\n";
+  std::cout << "Using channel: " << spi_channel << ", "
+            << "Using baudrate: " << spi_baudrate << ", "
+            << "Using gpio: " << gpio_can_interrupt << "\n";
 
-    // Setup TTL communication
-    auto mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
+  // Setup TTL communication
+  auto mcp_can =
+      std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
 
-    can_debug_tools::CanTools canTools(mcp_can);
+  can_debug_tools::CanTools canTools(mcp_can);
 
-    ASSERT_NE(-1, canTools.setupCommunication());
+  ASSERT_NE(-1, canTools.setupCommunication());
 }
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }

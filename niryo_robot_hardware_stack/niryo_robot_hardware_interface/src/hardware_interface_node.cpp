@@ -25,17 +25,17 @@
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "hardware_interface_node");
+  ros::init(argc, argv, "hardware_interface_node");
 
-    ROS_DEBUG("Launching hardware_interface_node");
+  ROS_DEBUG("Launching hardware_interface_node");
 
-    ros::AsyncSpinner spinner(4);
-    spinner.start();
+  ros::AsyncSpinner spinner(4);
+  spinner.start();
 
-    ros::NodeHandle nh("~");
+  ros::NodeHandle nh("~");
 
-    niryo_robot_hardware_interface::HardwareInterface nd(nh);
-    ros::waitForShutdown();
+  niryo_robot_hardware_interface::HardwareInterface nd(nh);
+  ros::waitForShutdown();
 
-    ROS_INFO("Hardware Interface - Shutdown node");
+  ROS_INFO("Hardware Interface - Shutdown node");
 }

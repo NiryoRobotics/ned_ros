@@ -32,22 +32,25 @@
 
 class EndEffectorTestSuite : public ::testing::Test
 {
-  protected:
-    static void SetUpTestCase()
-    {
-        ros::NodeHandle nh_ttl("ttl_driver");
-        ros::NodeHandle nh("end_effector_interface");
-        ros::Duration(10.0).sleep();
+protected:
+  static void SetUpTestCase()
+  {
+    ros::NodeHandle nh_ttl("ttl_driver");
+    ros::NodeHandle nh("end_effector_interface");
+    ros::Duration(10.0).sleep();
 
-        ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
+    ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
 
-        ee_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_interface);
-    }
+    ee_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_interface);
+  }
 
-    static void TearDownTestCase() { ros::shutdown(); }
+  static void TearDownTestCase()
+  {
+    ros::shutdown();
+  }
 
-    static std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface;
-    static std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> ee_interface;
+  static std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface;
+  static std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> ee_interface;
 };
 
 std::shared_ptr<ttl_driver::TtlInterfaceCore> EndEffectorTestSuite::ttl_interface;
@@ -55,48 +58,51 @@ std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> EndEffectorTes
 
 TEST_F(EndEffectorTestSuite, config)
 {
-    ros::NodeHandle nh("end_effector_interface");
-    int id{-1};
-    std::string hw_type;
+  ros::NodeHandle nh("end_effector_interface");
+  int id{ -1 };
+  std::string hw_type;
 
-    nh.getParam("end_effector_id", id);
-    nh.getParam("hardware_type", hw_type);
+  nh.getParam("end_effector_id", id);
+  nh.getParam("hardware_type", hw_type);
 
-    ASSERT_EQ(id, 0);
-    EXPECT_EQ(hw_type, "end_effector");
+  ASSERT_EQ(id, 0);
+  EXPECT_EQ(hw_type, "end_effector");
 
-    ASSERT_TRUE(nh.hasParam("button_2/type"));
-    ASSERT_TRUE(nh.hasParam("button_1/type"));
-    ASSERT_TRUE(nh.hasParam("button_0/type"));
+  ASSERT_TRUE(nh.hasParam("button_2/type"));
+  ASSERT_TRUE(nh.hasParam("button_1/type"));
+  ASSERT_TRUE(nh.hasParam("button_0/type"));
 }
 
 // Test service set Digital IO
-TEST_F(EndEffectorTestSuite, rebootHW) { ASSERT_EQ(ee_interface->rebootHardware(), true); }
+TEST_F(EndEffectorTestSuite, rebootHW)
+{
+  ASSERT_EQ(ee_interface->rebootHardware(), true);
+}
 
 TEST_F(EndEffectorTestSuite, getEndEffectorState)
 {
-    auto ee_state = ee_interface->getEndEffectorState();
-    ASSERT_NE(ee_state, nullptr);
-    ASSERT_EQ(ee_state->getId(), 0);
-    ASSERT_EQ(ee_state->getHardwareType(), common::model::EHardwareType::END_EFFECTOR);
+  auto ee_state = ee_interface->getEndEffectorState();
+  ASSERT_NE(ee_state, nullptr);
+  ASSERT_EQ(ee_state->getId(), 0);
+  ASSERT_EQ(ee_state->getHardwareType(), common::model::EHardwareType::END_EFFECTOR);
 }
 
 TEST_F(EndEffectorTestSuite, getButtonState)
 {
-    auto ee_state = ee_interface->getEndEffectorState();
-    ASSERT_NE(ee_state, nullptr);
+  auto ee_state = ee_interface->getEndEffectorState();
+  ASSERT_NE(ee_state, nullptr);
 
-    auto buttons = ee_state->getButtonsStatus();
-    ASSERT_TRUE(buttons.at(0)->type != common::model::EButtonType::UNKNOWN);
-    ASSERT_TRUE(buttons.at(1)->type != common::model::EButtonType::UNKNOWN);
-    ASSERT_TRUE(buttons.at(2)->type != common::model::EButtonType::UNKNOWN);
+  auto buttons = ee_state->getButtonsStatus();
+  ASSERT_TRUE(buttons.at(0)->type != common::model::EButtonType::UNKNOWN);
+  ASSERT_TRUE(buttons.at(1)->type != common::model::EButtonType::UNKNOWN);
+  ASSERT_TRUE(buttons.at(2)->type != common::model::EButtonType::UNKNOWN);
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "end_effector_interface_unit_tests");
+  ros::init(argc, argv, "end_effector_interface_unit_tests");
 
-    testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
 
-    return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }

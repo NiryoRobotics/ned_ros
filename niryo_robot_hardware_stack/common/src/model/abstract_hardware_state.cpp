@@ -38,8 +38,9 @@ namespace model
  * @param bus_proto
  * @param id
  */
-AbstractHardwareState::AbstractHardwareState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id)
-    : _hw_type(type), _component_type(component_type), _bus_proto(bus_proto), _id(id)
+AbstractHardwareState::AbstractHardwareState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto,
+                                             uint8_t id)
+  : _hw_type(type), _component_type(component_type), _bus_proto(bus_proto), _id(id)
 {
 }
 
@@ -48,11 +49,11 @@ AbstractHardwareState::AbstractHardwareState(EHardwareType type, EComponentType 
  */
 void AbstractHardwareState::reset()
 {
-    _id = 0;
-    _temperature = 0;
-    _voltage = 0.0;
-    _hw_error = 0;
-    _hw_error_message.clear();
+  _id = 0;
+  _temperature = 0;
+  _voltage = 0.0;
+  _hw_error = 0;
+  _hw_error_message.clear();
 }
 
 /**
@@ -60,7 +61,10 @@ void AbstractHardwareState::reset()
  * @param other
  * @return
  */
-bool AbstractHardwareState::operator==(const AbstractHardwareState &other) { return (this->_id == other._id); }
+bool AbstractHardwareState::operator==(const AbstractHardwareState &other)
+{
+  return (this->_id == other._id);
+}
 
 /**
  * @brief AbstractHardwareState::str
@@ -68,36 +72,42 @@ bool AbstractHardwareState::operator==(const AbstractHardwareState &other) { ret
  */
 string AbstractHardwareState::str() const
 {
-    ostringstream ss;
+  ostringstream ss;
 
-    ss << "AbstractHardwareState :\n"
-       << "id: " << static_cast<int>(_id) << "\n";
+  ss << "AbstractHardwareState :\n"
+     << "id: " << static_cast<int>(_id) << "\n";
 
-    ss << "Hardware Type " << HardwareTypeEnum(_hw_type).toString() << "\n"
-       << "Component Type " << ComponentTypeEnum(_component_type).toString() << "\n"
-       << "Bus Protocol " << BusProtocolEnum(_bus_proto).toString() << "\n";
+  ss << "Hardware Type " << HardwareTypeEnum(_hw_type).toString() << "\n"
+     << "Component Type " << ComponentTypeEnum(_component_type).toString() << "\n"
+     << "Bus Protocol " << BusProtocolEnum(_bus_proto).toString() << "\n";
 
-    ss << "temperature " << static_cast<int>(_temperature) << "\n"
-       << "voltage " << _voltage << "\n"
-       << "hw_error " << _hw_error << "\n"
-       << "hw_error_message \"" << _hw_error_message << "\"";
-    ss << "\n---\n";
-    ss << "\n";
+  ss << "temperature " << static_cast<int>(_temperature) << "\n"
+     << "voltage " << _voltage << "\n"
+     << "hw_error " << _hw_error << "\n"
+     << "hw_error_message \"" << _hw_error_message << "\"";
+  ss << "\n---\n";
+  ss << "\n";
 
-    return ss.str();
+  return ss.str();
 }
 
 /**
  * @brief StepperMotorState::setFirmwareVersion
  * @param firmware_version
  */
-void AbstractHardwareState::setFirmwareVersion(const std::string &firmware_version) { _firmware_version = firmware_version; }
+void AbstractHardwareState::setFirmwareVersion(const std::string &firmware_version)
+{
+  _firmware_version = firmware_version;
+}
 
 /**
  * @brief AbstractHardwareState::setTemperature
  * @param temp
  */
-void AbstractHardwareState::setTemperature(uint8_t temp) { _temperature = temp; }
+void AbstractHardwareState::setTemperature(uint8_t temp)
+{
+  _temperature = temp;
+}
 
 /**
  * @brief AbstractHardwareState::setRawVoltage
@@ -106,24 +116,31 @@ void AbstractHardwareState::setTemperature(uint8_t temp) { _temperature = temp; 
  */
 void AbstractHardwareState::setRawVoltage(double raw_volt)
 {
-    if (EHardwareType::STEPPER == _hw_type || EHardwareType::FAKE_STEPPER_MOTOR == _hw_type || EHardwareType::END_EFFECTOR == _hw_type ||
-        EHardwareType::FAKE_END_EFFECTOR == _hw_type || EHardwareType::NED3PRO_STEPPER == _hw_type || EHardwareType:: NED3PRO_END_EFFECTOR == _hw_type)
-        _voltage = raw_volt / 1000;
-    else
-        _voltage = raw_volt / 10;
+  if (EHardwareType::STEPPER == _hw_type || EHardwareType::FAKE_STEPPER_MOTOR == _hw_type ||
+      EHardwareType::END_EFFECTOR == _hw_type || EHardwareType::FAKE_END_EFFECTOR == _hw_type ||
+      EHardwareType::NED3PRO_STEPPER == _hw_type || EHardwareType::NED3PRO_END_EFFECTOR == _hw_type)
+    _voltage = raw_volt / 1000;
+  else
+    _voltage = raw_volt / 10;
 }
 
 /**
  * @brief AbstractHardwareState::setVoltage
  * @param volt
  */
-void AbstractHardwareState::setVoltage(double volt) { _voltage = volt; }
+void AbstractHardwareState::setVoltage(double volt)
+{
+  _voltage = volt;
+}
 
 /**
  * @brief AbstractHardwareState::setHardwareError
  * @param hw_error
  */
-void AbstractHardwareState::setHardwareError(uint32_t hw_error) { _hw_error = hw_error; }
+void AbstractHardwareState::setHardwareError(uint32_t hw_error)
+{
+  _hw_error = hw_error;
+}
 
 /**
  * @brief AbstractHardwareState::setConnectionStatus
@@ -131,17 +148,20 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error) { _hw_error = hw
  */
 void AbstractHardwareState::setConnectionStatus(bool connected)
 {
-    if (connected)
-        _hw_error |= (1UL << 7);
-    else
-        _hw_error &= ~(1UL << 7);
+  if (connected)
+    _hw_error |= (1UL << 7);
+  else
+    _hw_error &= ~(1UL << 7);
 }
 
 /**
  * @brief AbstractHardwareState::setHardwareError
  * @param hw_error_msg
  */
-void AbstractHardwareState::setHardwareError(std::string hw_error_msg) { _hw_error_message = std::move(hw_error_msg); }
+void AbstractHardwareState::setHardwareError(std::string hw_error_msg)
+{
+  _hw_error_message = std::move(hw_error_msg);
+}
 
 /**
  * @brief AbstractHardwareState::setModelNumber
@@ -149,12 +169,12 @@ void AbstractHardwareState::setHardwareError(std::string hw_error_msg) { _hw_err
  */
 void AbstractHardwareState::setModelNumber(uint16_t model_number)
 {
-    _model_number = model_number;
+  _model_number = model_number;
 }
 
 void AbstractHardwareState::setStrictModelNumber(bool strict_model_number)
 {
-    _strict_model_number = strict_model_number;
+  _strict_model_number = strict_model_number;
 }
 
 }  // namespace model
