@@ -173,29 +173,31 @@ int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, u
  */
 int MockDxlDriver::changeId(uint8_t id, uint8_t new_id)
 {
-  int result = COMM_TX_FAIL;
-  if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end() &&
-      std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
+  if (id == new_id)
   {
-    _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id), _id_list.end());
-    _fake_data->full_id_list.erase(std::remove(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id),
-                                   _fake_data->full_id_list.end());
-    _id_list.emplace_back(new_id);
-    _fake_data->full_id_list.emplace_back(new_id);
-
-    result = COMM_SUCCESS;
+    return COMM_SUCCESS;
+  }
+  if (id != 0)
+  {
+    const auto it = _fake_data->dxl_registers.find(id);
+    if (it != _fake_data->dxl_registers.end())
+    {
+      if (new_id != 0)
+      {
+        std::swap(_fake_data->dxl_registers[new_id], it->second);
+      }
+      _fake_data->dxl_registers.erase(it);
+    }
+    else
+    {
+      return COMM_TX_FAIL;
+    }
   }
 
-  const auto it = _fake_data->dxl_registers.find(id);
-  if (it != _fake_data->dxl_registers.end())
-  {
-    std::swap(_fake_data->dxl_registers[new_id], it->second);
-    result = COMM_SUCCESS;
-  }
-  else
-    result = COMM_TX_FAIL;
+  _fake_data->updateFullIdList();
+  scan(_id_list);
 
-  return result;
+  return COMM_SUCCESS;
 }
 
 /**

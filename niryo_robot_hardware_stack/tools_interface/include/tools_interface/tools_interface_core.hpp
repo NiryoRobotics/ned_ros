@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/util/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
+#include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/Trigger.h"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "tools_interface/PingDxlTool.h"
@@ -105,6 +106,8 @@ private:
   bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req,
                                   tools_interface::ToolCommand::Response &res);
 
+  bool _callbackChangeTool(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+
   void _toolCommand(uint32_t position, int torque, uint32_t velocity);
   void _publishToolConnection(const ros::TimerEvent &);
 
@@ -132,6 +135,7 @@ private:
   ros::ServiceServer _tool_reboot_server;
   ros::ServiceServer _pull_air_vacuum_pump_server;
   ros::ServiceServer _push_air_vacuum_pump_server;
+  ros::ServiceServer _change_tool_server;
 
   std::shared_ptr<common::model::ToolState> _toolState;
   std::map<uint8_t, ToolConfig> _available_tools_map;

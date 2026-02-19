@@ -275,6 +275,9 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
 
   _tool_reboot_server =
       nh.advertiseService("/niryo_robot/tools/reboot", &ToolsInterfaceCore::_callbackToolReboot, this);
+
+  _change_tool_server =
+      nh.advertiseService("/niryo_robot/tools/change", &ToolsInterfaceCore::_callbackChangeTool, this);
 }
 
 /**
@@ -308,6 +311,21 @@ bool ToolsInterfaceCore::isInitialized()
 }
 
 /**
+ * @brief ToolsInterfaceCore::_callbackChangeTool
+ * @param res
+ * @return
+ */
+bool ToolsInterfaceCore::_callbackChangeTool(niryo_robot_msgs::SetInt::Request &req,
+                                             niryo_robot_msgs::SetInt::Response &res)
+{
+  bool test = _ttl_interface->changeTool(req.value, res.message, res.status);
+  tools_interface::PingDxlTool::Response response;
+  tools_interface::PingDxlTool::Request request;
+
+  return test && _callbackPingAndSetTool(request, response);
+}
+
+/**
  * @brief ToolsInterfaceCore::_callbackPingAndSetDxlTool
  * @param res
  * @return
@@ -336,7 +354,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
 
   // Search new tool
   std::vector<uint8_t> motor_list = _ttl_interface->scanTools();
-
   for (auto const &m_id : motor_list)
   {
     if (_available_tools_map.count(m_id))
