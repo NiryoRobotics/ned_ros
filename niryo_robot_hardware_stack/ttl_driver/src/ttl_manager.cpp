@@ -153,81 +153,50 @@ bool TtlManager::init(ros::NodeHandle &nh)
  */
 bool TtlManager::changeTool(int value, string &message, int &status)
 {
-  auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR));
-  if (driver)
+  std::lock_guard<std::mutex> lck(_sync_mutex);
+  auto it_driver = _driver_map.find(EHardwareType::FAKE_DXL_MOTOR);
+  if (it_driver == _driver_map.end())
   {
-    if (value != 0)
+    status = niryo_robot_msgs::CommandStatus::TOOL_FAILURE;
+    message = "Tool change failed : Real robot mode";
+    return true;
+  }
+
+  auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it_driver->second);
+  if (!driver)
+  {
+    status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+    message = "Tool change failed : Driver not found";
+    return true;
+  }
+
+  if (value != 0)
+  {
+    auto it = std::find(_available_tools.begin(), _available_tools.end(), value);
+
+    if (it == _available_tools.end())
     {
-      auto it1 = std::find(_available_tools.begin(), _available_tools.end(), value);
-      if (it1 != _available_tools.end())
-      {
-        if (old_gripper == 0)
-        {
-          std::string current_ns = "fake_params/tool/";
-          std::vector<int> hw_ids{ value };
-          std::vector<int> hw_positions;
-          _nh.getParam(current_ns + "position", hw_positions);
-          assert(hw_ids.size() == hw_positions.size());
-
-          std::vector<int> hw_velocities;
-          _nh.getParam(current_ns + "velocity", hw_velocities);
-          assert(hw_ids.size() == hw_velocities.size());
-
-          std::vector<int> hw_temperatures;
-          _nh.getParam(current_ns + "temperature", hw_temperatures);
-          assert(hw_positions.size() == hw_temperatures.size());
-
-          std::vector<double> hw_voltages;
-          _nh.getParam(current_ns + "voltage", hw_voltages);
-          assert(hw_temperatures.size() == hw_voltages.size());
-
-          std::vector<int> hw_min_positions;
-          _nh.getParam(current_ns + "min_position", hw_min_positions);
-          assert(hw_voltages.size() == hw_min_positions.size());
-
-          std::vector<int> hw_max_positions;
-          _nh.getParam(current_ns + "max_position", hw_max_positions);
-          assert(hw_min_positions.size() == hw_max_positions.size());
-
-          std::vector<int> hw_model_numbers;
-          _nh.getParam(current_ns + "model_number", hw_model_numbers);
-          assert(hw_max_positions.size() == hw_model_numbers.size());
-
-          std::vector<std::string> hw_firmwares;
-          _nh.getParam(current_ns + "firmware", hw_firmwares);
-          assert(hw_firmwares.size() == hw_firmwares.size());
-
-          for (size_t i = 0; i < hw_ids.size(); i++)
-          {
-            FakeTtlData::FakeDxlRegister tmp;
-            tmp.id = static_cast<uint8_t>(hw_ids.at(i));
-            tmp.position = static_cast<uint32_t>(hw_positions.at(i));
-            tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
-            tmp.temperature = static_cast<uint8_t>(hw_temperatures.at(i));
-            tmp.voltage = hw_voltages.at(i);
-            tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
-            tmp.firmware = hw_firmwares.at(i);
-            _fake_data->dxl_registers.insert(std::make_pair(tmp.id, tmp));
-          }
-        }
-      }
-      else
-      {
-        status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
-        message = "Tool not changed !!";
-        return false;
-      }
+      status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+      message = "Tool change failed: Tool ID is invalid";
+      return true;
     }
-    driver->changeId(old_gripper, value);
-    status = niryo_robot_msgs::CommandStatus::TOOL_CHANGED;
-    message = "Tool changed !!";
-    old_gripper = value;
+
+    if (_current_tool_id == 0)
+    {
+      retrieveFakeMotorData("fake_params/tool/", _fake_data->dxl_registers, { value });
+    }
+  }
+
+  if (driver->changeId(_current_tool_id, value) == COMM_SUCCESS)
+  {
+    _current_tool_id = value;
+    status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    message = "Tool change succeeded";
   }
   else
   {
-    status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
-    message = "Tool not changed !!";
-    return false;
+    status = niryo_robot_msgs::CommandStatus::TOOL_NOT_CONNECTED;
+    message = "Tool change failed: Communication error";
   }
 
   // return response even request failed
@@ -2389,12 +2358,6 @@ void TtlManager::readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor)
       _fake_data->end_effector.voltage = static_cast<double>(voltage_list.at(0));
 
       _fake_data->end_effector.firmware = firmware_list.at(0);
-    }
-
-    if (use_simu_gripper && _nh.hasParam("fake_params/tool/"))
-    {
-      std::string current_ns = "fake_params/tool/";
-      retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
     }
 
     if (use_simu_conveyor && _nh.hasParam("fake_params/conveyors/"))

@@ -28,7 +28,7 @@ fake_params:
         voltage: [5000]
         firmware: ["0.0.1"]
     tool:
-        id: [11]
+        id: []
         position: [370]
         velocity: [0]
         temperature: [56]
@@ -48,3 +48,5 @@ fake_params:
         max_position: [4096]
         model_number: [2]
         firmware: ["0.0.1"]
+    available_tools:
+        id: [11, 12, 13, 31, 32]

@@ -180,7 +180,8 @@ private:
   // Config params using in fake driver
   void readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor);
   template <typename Reg>
-  void retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params);
+  void retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params,
+                             std::vector<int> hw_ids = {});
 
   // check if hardware is a motor or not
   // this helps get only one driver to use for all motors to get/set on the same address
@@ -227,7 +228,7 @@ private:
   std::string _debug_error_message;
 
   // for simulation
-  uint32_t old_gripper{ 0 };
+  uint32_t _current_tool_id{ 0 };
 
   uint32_t _hw_fail_counter_read{ 0 };
   uint32_t _end_effector_fail_counter_read{ 0 };
@@ -395,57 +396,56 @@ inline bool TtlManager::hasEndEffector() const
  * @param fake_params
  */
 template <typename Reg>
-void TtlManager::retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params)
+void TtlManager::retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params,
+                                       std::vector<int> hw_ids)
 {
-  std::vector<int> hw_ids;
-  _nh.getParam(current_ns + "id", hw_ids);
-
-  if (hw_ids.size() != 0)
+  if (hw_ids.size() == 0)
   {
-    std::vector<int> hw_positions;
-    _nh.getParam(current_ns + "position", hw_positions);
-    assert(hw_ids.size() == hw_positions.size());
+    _nh.getParam(current_ns + "id", hw_ids);
+  }
+  std::vector<int> hw_positions;
+  _nh.getParam(current_ns + "position", hw_positions);
+  assert(hw_ids.size() == hw_positions.size());
 
-    std::vector<int> hw_velocities;
-    _nh.getParam(current_ns + "velocity", hw_velocities);
-    assert(hw_ids.size() == hw_velocities.size());
+  std::vector<int> hw_velocities;
+  _nh.getParam(current_ns + "velocity", hw_velocities);
+  assert(hw_ids.size() == hw_velocities.size());
 
-    std::vector<int> hw_temperatures;
-    _nh.getParam(current_ns + "temperature", hw_temperatures);
-    assert(hw_positions.size() == hw_temperatures.size());
+  std::vector<int> hw_temperatures;
+  _nh.getParam(current_ns + "temperature", hw_temperatures);
+  assert(hw_positions.size() == hw_temperatures.size());
 
-    std::vector<double> hw_voltages;
-    _nh.getParam(current_ns + "voltage", hw_voltages);
-    assert(hw_temperatures.size() == hw_voltages.size());
+  std::vector<double> hw_voltages;
+  _nh.getParam(current_ns + "voltage", hw_voltages);
+  assert(hw_temperatures.size() == hw_voltages.size());
 
-    std::vector<int> hw_min_positions;
-    _nh.getParam(current_ns + "min_position", hw_min_positions);
-    assert(hw_voltages.size() == hw_min_positions.size());
+  std::vector<int> hw_min_positions;
+  _nh.getParam(current_ns + "min_position", hw_min_positions);
+  assert(hw_voltages.size() == hw_min_positions.size());
 
-    std::vector<int> hw_max_positions;
-    _nh.getParam(current_ns + "max_position", hw_max_positions);
-    assert(hw_min_positions.size() == hw_max_positions.size());
+  std::vector<int> hw_max_positions;
+  _nh.getParam(current_ns + "max_position", hw_max_positions);
+  assert(hw_min_positions.size() == hw_max_positions.size());
 
-    std::vector<int> hw_model_numbers;
-    _nh.getParam(current_ns + "model_number", hw_model_numbers);
-    assert(hw_max_positions.size() == hw_model_numbers.size());
+  std::vector<int> hw_model_numbers;
+  _nh.getParam(current_ns + "model_number", hw_model_numbers);
+  assert(hw_max_positions.size() == hw_model_numbers.size());
 
-    std::vector<std::string> hw_firmwares;
-    _nh.getParam(current_ns + "firmware", hw_firmwares);
-    assert(hw_firmwares.size() == hw_firmwares.size());
+  std::vector<std::string> hw_firmwares;
+  _nh.getParam(current_ns + "firmware", hw_firmwares);
+  assert(hw_firmwares.size() == hw_firmwares.size());
 
-    for (size_t i = 0; i < hw_ids.size(); i++)
-    {
-      Reg tmp;
-      tmp.id = static_cast<uint8_t>(hw_ids.at(i));
-      tmp.position = static_cast<uint32_t>(hw_positions.at(i));
-      tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
-      tmp.temperature = static_cast<uint8_t>(hw_temperatures.at(i));
-      tmp.voltage = hw_voltages.at(i);
-      tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
-      tmp.firmware = hw_firmwares.at(i);
-      fake_params.insert(std::make_pair(tmp.id, tmp));
-    }
+  for (size_t i = 0; i < hw_ids.size(); i++)
+  {
+    Reg tmp;
+    tmp.id = static_cast<uint8_t>(hw_ids.at(i));
+    tmp.position = static_cast<uint32_t>(hw_positions.at(i));
+    tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
+    tmp.temperature = static_cast<uint8_t>(hw_temperatures.at(i));
+    tmp.voltage = hw_voltages.at(i);
+    tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
+    tmp.firmware = hw_firmwares.at(i);
+    fake_params.insert(std::make_pair(tmp.id, tmp));
   }
 }
 

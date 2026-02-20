@@ -186,7 +186,8 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
   nh.getParam("tools_params/name_list", nameList);
   nh.getParam("tools_params/temperature_limit", _temperature_limit);
   nh.getParam("tools_params/shutdown_configuration", _shutdown_configuration);
-
+  nh.getParam("simulation_mode", _simulation_mode);
+  nh.getParam("simu_gripper", _use_simu_gripper);
   if (nh.getParam("tools_params/params_list", params_list))
   {
     for (int i = 0; i < params_list.size(); ++i)
@@ -275,9 +276,11 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
 
   _tool_reboot_server =
       nh.advertiseService("/niryo_robot/tools/reboot", &ToolsInterfaceCore::_callbackToolReboot, this);
-
-  _change_tool_server =
-      nh.advertiseService("/niryo_robot/tools/change", &ToolsInterfaceCore::_callbackChangeTool, this);
+  if (_simulation_mode && _use_simu_gripper)
+  {
+    _change_tool_server =
+        nh.advertiseService("/niryo_robot/tools/change", &ToolsInterfaceCore::_callbackChangeTool, this);
+  }
 }
 
 /**
@@ -318,11 +321,14 @@ bool ToolsInterfaceCore::isInitialized()
 bool ToolsInterfaceCore::_callbackChangeTool(niryo_robot_msgs::SetInt::Request &req,
                                              niryo_robot_msgs::SetInt::Response &res)
 {
-  bool test = _ttl_interface->changeTool(req.value, res.message, res.status);
+  std::unique_lock<mutex> lck(_tool_mutex);
+  _ttl_interface->changeTool(req.value, res.message, res.status);
   tools_interface::PingDxlTool::Response response;
   tools_interface::PingDxlTool::Request request;
+  lck.unlock();
+  _callbackPingAndSetTool(request, response);
 
-  return test && _callbackPingAndSetTool(request, response);
+  return true;
 }
 
 /**

@@ -118,6 +118,8 @@ private:
   int _shutdown_configuration{ 53 };
   int _vacuum_pump_timeout{ 3 };
   int _gripper_timeout{ 3 };
+  bool _simulation_mode{ false };
+  bool _use_simu_gripper{ false };
 
   std::mutex _tool_mutex;
 
