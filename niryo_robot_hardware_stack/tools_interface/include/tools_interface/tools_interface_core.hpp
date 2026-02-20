@@ -44,108 +44,108 @@ using ::common::model::EHardwareType;
 
 namespace tools_interface
 {
-    /**
-     * @brief The ToolsInterfaceCore class
-     */
-    class ToolsInterfaceCore : public common::util::IInterfaceCore
-    {
-    public:
-        ToolsInterfaceCore(ros::NodeHandle &nh,
-                           std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        ~ToolsInterfaceCore() override = default;
+/**
+ * @brief The ToolsInterfaceCore class
+ */
+class ToolsInterfaceCore : public common::util::IInterfaceCore
+{
+public:
+  ToolsInterfaceCore(ros::NodeHandle &nh, std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
+  ~ToolsInterfaceCore() override = default;
 
-        // non copyable class
-        ToolsInterfaceCore(const ToolsInterfaceCore &) = delete;
-        ToolsInterfaceCore(ToolsInterfaceCore &&) = delete;
+  // non copyable class
+  ToolsInterfaceCore(const ToolsInterfaceCore &) = delete;
+  ToolsInterfaceCore(ToolsInterfaceCore &&) = delete;
 
-        ToolsInterfaceCore &operator=(ToolsInterfaceCore &&) = delete;
-        ToolsInterfaceCore &operator=(const ToolsInterfaceCore &) = delete;
+  ToolsInterfaceCore &operator=(ToolsInterfaceCore &&) = delete;
+  ToolsInterfaceCore &operator=(const ToolsInterfaceCore &) = delete;
 
-        bool init(ros::NodeHandle &nh) override;
+  bool init(ros::NodeHandle &nh) override;
 
-        bool rebootHardware(bool torque_on = true);
+  bool rebootHardware(bool torque_on = true);
 
-        bool isInitialized();
+  bool isInitialized();
 
-        // getters
-        std::shared_ptr<common::model::ToolState> getToolState() const;
+  // getters
+  std::shared_ptr<common::model::ToolState> getToolState() const;
 
-    private:
-        struct ToolParams
-        {
-            int velocity_profile{0};
-            int acceleration_profile{0};
-            std::map<std::string, uint32_t> pid{{"p", 0}, {"i", 0}, {"d", 0}};
-        };
+private:
+  struct ToolParams
+  {
+    int velocity_profile{ 0 };
+    int acceleration_profile{ 0 };
+    std::map<std::string, uint32_t> pid{ { "p", 0 }, { "i", 0 }, { "d", 0 } };
+  };
 
-        struct ToolConfig
-        {
-            std::string name;
-            common::model::EHardwareType type;
-            ToolParams params;
-        };
+  struct ToolConfig
+  {
+    std::string name;
+    common::model::EHardwareType type;
+    ToolParams params;
+  };
 
-        void initParameters(ros::NodeHandle &nh) override;
-        void startServices(ros::NodeHandle &nh) override;
-        void startPublishers(ros::NodeHandle &nh) override;
-        void startSubscribers(ros::NodeHandle &nh) override;
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-        int initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration, const ToolConfig &tool_config);
+  int initHardware(bool torque_on, uint8_t temperature_limit, uint8_t shutdown_configuration,
+                   const ToolConfig &tool_config);
 
-        bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
+  bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
-        bool _callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
-        bool _callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
-        bool _callbackControlGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+  bool _callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+  bool _callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+  bool _callbackControlGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
-        bool _callbackToolReboot(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackToolReboot(niryo_robot_msgs::Trigger::Request &, niryo_robot_msgs::Trigger::Response &res);
 
-        bool _callbackPullAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
-        bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+  bool _callbackPullAirVacuumPump(tools_interface::ToolCommand::Request &req,
+                                  tools_interface::ToolCommand::Response &res);
+  bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req,
+                                  tools_interface::ToolCommand::Response &res);
 
-        void _toolCommand(uint32_t position, int torque, uint32_t velocity);
-        void _publishToolConnection(const ros::TimerEvent &);
+  void _toolCommand(uint32_t position, int torque, uint32_t velocity);
+  void _publishToolConnection(const ros::TimerEvent &);
 
-        void _waitForToolStop(int id, int timeout);
+  void _waitForToolStop(int id, int timeout);
 
-    private:
-        int _temperature_limit{60};
-        int _shutdown_configuration{53};
-        int _vacuum_pump_timeout{3};
-        int _gripper_timeout{3};
+private:
+  int _temperature_limit{ 60 };
+  int _shutdown_configuration{ 53 };
+  int _vacuum_pump_timeout{ 3 };
+  int _gripper_timeout{ 3 };
 
-        std::mutex _tool_mutex;
+  std::mutex _tool_mutex;
 
-        ros::Publisher _tool_connection_publisher;
-        ros::Timer _tool_connection_publisher_timer;
-        ros::Duration _tool_connection_publisher_duration{1.0};
-        uint8_t _tool_ping_failed_cnt{0};
+  ros::Publisher _tool_connection_publisher;
+  ros::Timer _tool_connection_publisher_timer;
+  ros::Duration _tool_connection_publisher_duration{ 1.0 };
+  uint8_t _tool_ping_failed_cnt{ 0 };
 
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+  std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
-        ros::ServiceServer _ping_and_set_dxl_tool_server;
-        ros::ServiceServer _open_gripper_server;
-        ros::ServiceServer _close_gripper_server;
-        ros::ServiceServer _control_gripper_server;
-        ros::ServiceServer _tool_reboot_server;
-        ros::ServiceServer _pull_air_vacuum_pump_server;
-        ros::ServiceServer _push_air_vacuum_pump_server;
+  ros::ServiceServer _ping_and_set_dxl_tool_server;
+  ros::ServiceServer _open_gripper_server;
+  ros::ServiceServer _close_gripper_server;
+  ros::ServiceServer _control_gripper_server;
+  ros::ServiceServer _tool_reboot_server;
+  ros::ServiceServer _pull_air_vacuum_pump_server;
+  ros::ServiceServer _push_air_vacuum_pump_server;
 
-        std::shared_ptr<common::model::ToolState> _toolState;
-        std::map<uint8_t, ToolConfig> _available_tools_map;
-        
-    };
+  std::shared_ptr<common::model::ToolState> _toolState;
+  std::map<uint8_t, ToolConfig> _available_tools_map;
+};
 
-    /**
-     * @brief ToolsInterfaceCore::getToolState
-     * @return
-     */
-    inline std::shared_ptr<common::model::ToolState>
-    ToolsInterfaceCore::getToolState() const
-    {
-        return _toolState;
-    }
+/**
+ * @brief ToolsInterfaceCore::getToolState
+ * @return
+ */
+inline std::shared_ptr<common::model::ToolState> ToolsInterfaceCore::getToolState() const
+{
+  return _toolState;
+}
 
-} // ToolsInterface
+}  // namespace tools_interface
 
 #endif

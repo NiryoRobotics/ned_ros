@@ -38,105 +38,97 @@ namespace model
 class AbstractMotorState : public AbstractHardwareState
 {
 public:
-    AbstractMotorState();
-    AbstractMotorState(EHardwareType type, EComponentType component_type,
-                       EBusProtocol bus_proto, uint8_t id);
+  AbstractMotorState();
+  AbstractMotorState(EHardwareType type, EComponentType component_type, EBusProtocol bus_proto, uint8_t id);
 
-    ~AbstractMotorState() override = default;
+  ~AbstractMotorState() override = default;
 
-    // getters
-    int getPosition() const;
-    int getVelocity() const;
-    int getTorque() const;
+  // getters
+  int getPosition() const;
+  int getVelocity() const;
+  int getTorque() const;
 
-    // setters
-    void setPosition(int pos);
-    void setVelocity(int vel);
-    void setTorque(int torque);
+  // setters
+  void setPosition(int pos);
+  void setVelocity(int vel);
+  void setTorque(int torque);
 
-    // tests
-    bool isStepper() const;
-    bool isDynamixel() const;
-    bool isClosed() const;
+  // tests
+  bool isStepper() const;
+  bool isDynamixel() const;
+  bool isClosed() const;
 
-    // IObject interface
-    void reset() override;
-    std::string str() const override;
-    bool isValid() const override = 0; // not reimplemented to keep this class abstract
-
-protected:
-    // read variables
-    int _position{0};
-    int _velocity{0};
-    int _torque{0};
+  // IObject interface
+  void reset() override;
+  std::string str() const override;
+  bool isValid() const override = 0;  // not reimplemented to keep this class abstract
 
 protected:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractMotorState( const AbstractMotorState& ) = default;
-    AbstractMotorState( AbstractMotorState&& ) = default;
+  // read variables
+  int _position{ 0 };
+  int _velocity{ 0 };
+  int _torque{ 0 };
 
-    AbstractMotorState& operator= ( AbstractMotorState && ) = default;
-    AbstractMotorState& operator= ( const AbstractMotorState& ) = default;
+protected:
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  AbstractMotorState(const AbstractMotorState &) = default;
+  AbstractMotorState(AbstractMotorState &&) = default;
+
+  AbstractMotorState &operator=(AbstractMotorState &&) = default;
+  AbstractMotorState &operator=(const AbstractMotorState &) = default;
 };
 
 /**
  * @brief AbstractMotorState::getPositionState
  * @return
  */
-inline
-int AbstractMotorState::getPosition() const
+inline int AbstractMotorState::getPosition() const
 {
-    return _position;
+  return _position;
 }
 
 /**
  * @brief AbstractMotorState::getVelocityState
  * @return
  */
-inline
-int AbstractMotorState::getVelocity() const
+inline int AbstractMotorState::getVelocity() const
 {
-    return _velocity;
+  return _velocity;
 }
 
 /**
  * @brief AbstractMotorState::getTorqueState
  * @return
  */
-inline
-int AbstractMotorState::getTorque() const
+inline int AbstractMotorState::getTorque() const
 {
-    return _torque;
+  return _torque;
 }
 
 /**
  * @brief AbstractMotorState::isStepper
  * @return
  */
-inline
-bool AbstractMotorState::isStepper() const
+inline bool AbstractMotorState::isStepper() const
 {
-    return (EHardwareType::STEPPER == _hw_type || EHardwareType::NED3PRO_STEPPER == _hw_type ||
-            EHardwareType::FAKE_STEPPER_MOTOR == _hw_type);
+  return (EHardwareType::STEPPER == _hw_type || EHardwareType::NED3PRO_STEPPER == _hw_type ||
+          EHardwareType::FAKE_STEPPER_MOTOR == _hw_type);
 }
 
 /**
  * @brief AbstractMotorState::isDynamixel
  * @return
  */
-inline
-bool AbstractMotorState::isDynamixel() const
+inline bool AbstractMotorState::isDynamixel() const
 {
-    return (EHardwareType::XC430 == _hw_type) ||
-           (EHardwareType::XL320 == _hw_type) ||
-           (EHardwareType::XL330 == _hw_type) ||
-           (EHardwareType::XL430 == _hw_type) ||
-           (EHardwareType::XM430 == _hw_type) ||
-           (EHardwareType::XH430 == _hw_type) ||
-           (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
+  return (EHardwareType::XC430 == _hw_type) || (EHardwareType::XL320 == _hw_type) ||
+         (EHardwareType::XL330 == _hw_type) || (EHardwareType::XL430 == _hw_type) ||
+         (EHardwareType::XM430 == _hw_type) || (EHardwareType::XH430 == _hw_type) ||
+         (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
 }
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // ABSTRACT_MOTOR_STATE_H
+#endif  // ABSTRACT_MOTOR_STATE_H

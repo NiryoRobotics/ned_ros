@@ -33,24 +33,25 @@ namespace model
 class ISynchronizeMotorCmd : public IObject
 {
 public:
-    ~ISynchronizeMotorCmd() override = default;
+  ~ISynchronizeMotorCmd() override = default;
 
-    virtual int getCmdType() const = 0;
+  virtual int getCmdType() const = 0;
 
-    virtual bool isStepperCmd() const = 0;
-    virtual bool isDxlCmd() const = 0;
+  virtual bool isStepperCmd() const = 0;
+  virtual bool isDxlCmd() const = 0;
 
 protected:
-    ISynchronizeMotorCmd() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    ISynchronizeMotorCmd( const ISynchronizeMotorCmd& ) = default;
-    ISynchronizeMotorCmd( ISynchronizeMotorCmd&& ) = default;
+  ISynchronizeMotorCmd() = default;
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  ISynchronizeMotorCmd(const ISynchronizeMotorCmd &) = default;
+  ISynchronizeMotorCmd(ISynchronizeMotorCmd &&) = default;
 
-    ISynchronizeMotorCmd& operator= ( ISynchronizeMotorCmd && ) = default;
-    ISynchronizeMotorCmd& operator= ( const ISynchronizeMotorCmd& ) = default;
+  ISynchronizeMotorCmd &operator=(ISynchronizeMotorCmd &&) = default;
+  ISynchronizeMotorCmd &operator=(const ISynchronizeMotorCmd &) = default;
 };
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
-#endif // I_SYNCHRONIZE_MOTOR_CMD_H
+#endif  // I_SYNCHRONIZE_MOTOR_CMD_H

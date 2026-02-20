@@ -33,90 +33,83 @@ namespace model
  */
 class ConveyorState : public StepperMotorState
 {
-
 public:
-    ConveyorState(EHardwareType type,
-                  EBusProtocol bus_proto, uint8_t id, uint8_t default_id, std::string hardware_id);
+  ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id, std::string hardware_id);
 
-    void updateId(uint8_t id);
+  void updateId(uint8_t id);
 
-    void updateData(const std::tuple<bool, uint8_t, int8_t> &data);
+  void updateData(const std::tuple<bool, uint8_t, int8_t> &data);
 
-    void setState(bool state);
-    void setSpeed(int16_t speed);
-    void setGoalDirection(int8_t direction);
+  void setState(bool state);
+  void setSpeed(int16_t speed);
+  void setGoalDirection(int8_t direction);
 
-    bool getState() const;
-    int16_t getSpeed() const;
-    int8_t getGoalDirection() const;
-    std::string getHardwareId() const;
-    // other getters
+  bool getState() const;
+  int16_t getSpeed() const;
+  int8_t getGoalDirection() const;
+  std::string getHardwareId() const;
+  // other getters
 
-    bool operator==(const ConveyorState& other);
+  bool operator==(const ConveyorState &other);
 
-    // StepperMotorState interface
-    std::string str() const override;
-    void reset() override;
-    bool isValid() const override;
+  // StepperMotorState interface
+  std::string str() const override;
+  void reset() override;
+  bool isValid() const override;
 
 private:
-    int8_t _goal_direction{1};
-    bool _state{false};
-    int16_t _speed{0};
-    uint8_t _default_id{0};
-    std::string _hardware_id;
+  int8_t _goal_direction{ 1 };
+  bool _state{ false };
+  int16_t _speed{ 0 };
+  uint8_t _default_id{ 0 };
+  std::string _hardware_id;
 };
 
 /**
  * @brief ConveyorState::getState
  * @return
  */
-inline
-bool ConveyorState::getState() const
+inline bool ConveyorState::getState() const
 {
-    return _state;
+  return _state;
 }
 
 /**
  * @brief ConveyorState::getSpeed
  * @return
  */
-inline
-int16_t ConveyorState::getSpeed() const
+inline int16_t ConveyorState::getSpeed() const
 {
-    return _speed;
+  return _speed;
 }
 
 /**
  * @brief ConveyorState::getGoalDirection
  * @return
  */
-inline
-int8_t ConveyorState::getGoalDirection() const
+inline int8_t ConveyorState::getGoalDirection() const
 {
-    return _goal_direction;
+  return _goal_direction;
 }
 
 /**
  * @brief Get the hardware id of the conveyor
  */
-inline
-std::string ConveyorState::getHardwareId() const 
-{ 
-    return _hardware_id; 
+inline std::string ConveyorState::getHardwareId() const
+{
+  return _hardware_id;
 }
 
 /**
  * @brief ConveyorState::isValid
  * @return
  */
-inline
-bool ConveyorState::isValid() const
+inline bool ConveyorState::isValid() const
 {
-    return (0 != getId() && _default_id != getId());
+  return (0 != getId() && _default_id != getId());
 }
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
 #endif

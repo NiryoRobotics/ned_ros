@@ -40,46 +40,45 @@ namespace ttl_driver
  */
 class AbstractEndEffectorDriver : public AbstractTtlDriver
 {
+public:
+  AbstractEndEffectorDriver() = default;
+  AbstractEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                            std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
 public:
-    AbstractEndEffectorDriver() = default;
-    AbstractEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                              std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+  virtual int readButton0Status(uint8_t id, common::model::EActionType &action) = 0;
+  virtual int readButton1Status(uint8_t id, common::model::EActionType &action) = 0;
+  virtual int readButton2Status(uint8_t id, common::model::EActionType &action) = 0;
+  virtual int syncReadButtonsStatus(const uint8_t &id, std::vector<common::model::EActionType> &action_list) = 0;
 
-public:
-    virtual int readButton0Status(uint8_t id, common::model::EActionType& action) = 0;
-    virtual int readButton1Status(uint8_t id, common::model::EActionType& action) = 0;
-    virtual int readButton2Status(uint8_t id, common::model::EActionType& action) = 0;
-    virtual int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) = 0;
+  virtual int readAccelerometerXValue(uint8_t id, uint32_t &x_value) = 0;
+  virtual int readAccelerometerYValue(uint8_t id, uint32_t &y_value) = 0;
+  virtual int readAccelerometerZValue(uint8_t id, uint32_t &z_value) = 0;
 
-    virtual int readAccelerometerXValue(uint8_t id, uint32_t& x_value) = 0;
-    virtual int readAccelerometerYValue(uint8_t id, uint32_t& y_value) = 0;
-    virtual int readAccelerometerZValue(uint8_t id, uint32_t& z_value) = 0;
+  virtual int readCollisionStatus(uint8_t id, bool &status) = 0;
 
-    virtual int readCollisionStatus(uint8_t id, bool& status) = 0;
+  virtual int readDigitalInput(uint8_t id, bool &in) = 0;
+  virtual int writeDigitalInput(uint8_t id, bool in) = 0;
+  virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
-    virtual int readDigitalInput(uint8_t id, bool& in) = 0;
-    virtual int writeDigitalInput(uint8_t id, bool in) = 0;
-    virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
+  virtual int writeCollisionThresh(uint8_t id, int thresh) = 0;
+  virtual int writeCollisionThreshAlgo2(uint8_t id, int thresh) = 0;
 
-    virtual int writeCollisionThresh(uint8_t id, int thresh) = 0;
-    virtual int writeCollisionThreshAlgo2(uint8_t id, int thresh) = 0;
+  std::string interpretErrorState(uint32_t hw_state) const override;
 
-    std::string interpretErrorState(uint32_t hw_state) const override;
+  common::model::EActionType interpretActionValue(uint32_t value) const;
 
-    common::model::EActionType interpretActionValue(uint32_t value) const;
-
-    // AbstractTtlDriver interface
+  // AbstractTtlDriver interface
 protected:
-    std::string str() const override;
-    std::string interpretFirmwareVersion(uint32_t fw_version) const override;
+  std::string str() const override;
+  std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
-    // AbstractTtlDriver interface
+  // AbstractTtlDriver interface
 public:
-    int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-    int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
+  int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+  int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 };
 
-} // ttl_driver
+}  // namespace ttl_driver
 
-#endif // ABSTRACT_END_EFFECTOR_DRIVER_HPP
+#endif  // ABSTRACT_END_EFFECTOR_DRIVER_HPP

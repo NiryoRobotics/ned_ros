@@ -37,64 +37,63 @@ namespace can_driver
  */
 class AbstractCanDriver
 {
+public:
+  static constexpr int MAX_MESSAGE_LENGTH = 8;
+  static constexpr int MESSAGE_LENGTH = 4;
+  static constexpr double PING_TIME_OUT = 0.5;  // timeout using if ping fail
+  static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE = 2.0;
 
 public:
-    static constexpr int MAX_MESSAGE_LENGTH                     = 8;
-    static constexpr int MESSAGE_LENGTH                         = 4;
-    static constexpr double PING_TIME_OUT                       = 0.5;  // timeout using if ping fail
-    static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 2.0;
+  AbstractCanDriver() = default;
+  AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
+  virtual ~AbstractCanDriver() = default;
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  AbstractCanDriver(const AbstractCanDriver &) = delete;
+  AbstractCanDriver(AbstractCanDriver &&) = delete;
+  AbstractCanDriver &operator=(AbstractCanDriver &&) = delete;
+  AbstractCanDriver &operator=(const AbstractCanDriver &) = delete;
+
+  virtual bool canReadData() const;
+
+  virtual int ping(uint8_t id);
+  virtual int scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list);
+
+  virtual int writeSingleCmd(const std::unique_ptr<common::model::AbstractCanSingleMotorCmd> &cmd) = 0;
 
 public:
-    AbstractCanDriver() = default;
-    AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
-    virtual ~AbstractCanDriver() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractCanDriver( const AbstractCanDriver& ) = delete;
-    AbstractCanDriver( AbstractCanDriver&& ) = delete;
-    AbstractCanDriver& operator= ( AbstractCanDriver && ) = delete;
-    AbstractCanDriver& operator= ( const AbstractCanDriver& ) = delete;
+  virtual std::string str() const;
 
-    virtual bool canReadData() const;
+  // read
+  virtual uint8_t readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf,
+                           std::string &error_message);
 
-    virtual int ping(uint8_t id);
-    virtual int scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t> &id_list);
-
-    virtual int writeSingleCmd(const std::unique_ptr<common::model::AbstractCanSingleMotorCmd >& cmd) = 0;
-
-public:
-    virtual std::string str() const;
-
-    // read
-    virtual uint8_t readData(uint8_t& id, int& control_byte,
-                             std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
-                             std::string& error_message);
-
-    // Interpret data received
-    virtual int32_t interpretPositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual uint8_t interpretTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::string interpretFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::tuple<bool, uint8_t, uint16_t> interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+  // Interpret data received
+  virtual int32_t interpretPositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+  virtual uint8_t interpretTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+  virtual std::string interpretFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+  virtual std::pair<common::model::EStepperCalibrationStatus, int32_t>
+  interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+  virtual std::tuple<bool, uint8_t, uint16_t>
+  interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
 
 protected:
-    uint8_t read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
-    uint8_t write(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf);
+  uint8_t read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
+  uint8_t write(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf);
 
 private:
-    std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
-
+  std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 };
 
 /**
  * @brief CanManager::canReadData
  * @return
  */
-inline
-bool AbstractCanDriver::canReadData() const
+inline bool AbstractCanDriver::canReadData() const
 {
   return _mcp_can->canReadData();
 }
 
-} // can_driver
+}  // namespace can_driver
 
-#endif // ABSTRACT_CAN_DRIVER_HPP
+#endif  // ABSTRACT_CAN_DRIVER_HPP

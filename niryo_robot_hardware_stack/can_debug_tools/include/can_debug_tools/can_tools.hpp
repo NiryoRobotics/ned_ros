@@ -39,33 +39,33 @@ class CanTools
   static constexpr uint8_t MAX_MESSAGE_LENGTH = 8;
 
 public:
-    CanTools() = default;
-    CanTools(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
+  CanTools() = default;
+  CanTools(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
 
-    virtual ~CanTools();
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    CanTools( const CanTools& ) = delete;
-    CanTools( CanTools&& ) = delete;
-    CanTools& operator= ( CanTools && ) = delete;
-    CanTools& operator= ( const CanTools& ) = delete;
+  virtual ~CanTools();
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  CanTools(const CanTools &) = delete;
+  CanTools(CanTools &&) = delete;
+  CanTools &operator=(CanTools &&) = delete;
+  CanTools &operator=(const CanTools &) = delete;
 
-    int setupCommunication();
+  int setupCommunication();
 
-    void startDump(double check_data_freq = 0.1);
-
-private:
-    void controlLoop();
-
-    std::string dumpData();
-    uint8_t read(unsigned long *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
+  void startDump(double check_data_freq = 0.1);
 
 private:
-    std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
-    std::thread _control_loop_thread;
+  void controlLoop();
 
-    bool _control_loop_ok{true};
-    int _check_data_delay_ms{100};
+  std::string dumpData();
+  uint8_t read(unsigned long *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
 
+private:
+  std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
+  std::thread _control_loop_thread;
+
+  bool _control_loop_ok{ true };
+  int _check_data_delay_ms{ 100 };
 };
 
 }  // namespace can_debug_tools

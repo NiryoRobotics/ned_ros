@@ -36,38 +36,36 @@
 namespace can_driver
 {
 
-template<typename reg_type = StepperReg>
+template <typename reg_type = StepperReg>
 class StepperDriver : public AbstractStepperDriver
 {
+public:
+  StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
 
 public:
-    StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
+  std::string str() const override;
 
+  // AbstractStepperDriver interface
 public:
-    std::string str() const override;
-
-
-    // AbstractStepperDriver interface
-public:
-    uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
-    uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
-    uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
-    uint8_t sendPositionCommand(uint8_t id, int cmd) override;
-    uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) override;
-    uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) override;
-    uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) override;
-    uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) override;
-    uint8_t sendMaxEffortCommand(uint8_t id, int effort) override;
-    uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) override;
+  uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
+  uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
+  uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
+  uint8_t sendPositionCommand(uint8_t id, int cmd) override;
+  uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) override;
+  uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) override;
+  uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) override;
+  uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) override;
+  uint8_t sendMaxEffortCommand(uint8_t id, int effort) override;
+  uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) override;
 };
 
 /**
  * @brief StepperDriver::StepperDriver
  * @param mcp_can
  */
-template<typename reg_type>
-StepperDriver<reg_type>::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-    AbstractStepperDriver(std::move(mcp_can))
+template <typename reg_type>
+StepperDriver<reg_type>::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can)
+  : AbstractStepperDriver(std::move(mcp_can))
 {
 }
 
@@ -75,7 +73,7 @@ StepperDriver<reg_type>::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp
  * @brief StepperDriver::str
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 std::string StepperDriver<reg_type>::str() const
 {
   return "Stepper Driver (" + can_driver::AbstractStepperDriver::str() + ")";
@@ -89,25 +87,26 @@ std::string StepperDriver<reg_type>::str() const
  * @param direction
  * @return
  */
-template<typename reg_type>
-uint8_t StepperDriver<reg_type>::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
+template <typename reg_type>
+uint8_t StepperDriver<reg_type>::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed,
+                                                       uint8_t direction)
 {
-    ROS_DEBUG("StepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
-              id, static_cast<int>(conveyor_on), conveyor_speed, direction);
-    uint8_t data[4] = {0};
-    data[0] = reg_type::CAN_CMD_MODE;
-    if (conveyor_on)
-    {
-        data[1] = reg_type::STEPPER_CONVEYOR_ON;
-    }
-    else
-    {
-        data[1] = reg_type::STEPPER_CONVEYOR_OFF;
-    }
-    data[2] = conveyor_speed;
-    data[3] = direction;
+  ROS_DEBUG("StepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d", id,
+            static_cast<int>(conveyor_on), conveyor_speed, direction);
+  uint8_t data[4] = { 0 };
+  data[0] = reg_type::CAN_CMD_MODE;
+  if (conveyor_on)
+  {
+    data[1] = reg_type::STEPPER_CONVEYOR_ON;
+  }
+  else
+  {
+    data[1] = reg_type::STEPPER_CONVEYOR_OFF;
+  }
+  data[2] = conveyor_speed;
+  data[3] = direction;
 
-    return write(id, 0, 4, data);
+  return write(id, 0, 4, data);
 }
 
 /**
@@ -117,12 +116,12 @@ StepperDriver<reg_type>::sendPositionCommand
  * @param cmd
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendPositionCommand(uint8_t id, int cmd)
 {
-    uint8_t data[4] = {reg_type::CAN_CMD_POSITION, static_cast<uint8_t>((cmd >> 16) & 0xFF),
-                       static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF)};
-    return write(id, 0, 4, data);
+  uint8_t data[4] = { reg_type::CAN_CMD_POSITION, static_cast<uint8_t>((cmd >> 16) & 0xFF),
+                      static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF) };
+  return write(id, 0, 4, data);
 }
 
 /**
@@ -132,17 +131,17 @@ uint8_t StepperDriver<reg_type>::sendPositionCommand(uint8_t id, int cmd)
  * @param delay
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
 {
-    uint8_t data[7] = {reg_type::CAN_CMD_MOVE_REL,
-                       static_cast<uint8_t>((steps >> 16) & 0xFF),
-                       static_cast<uint8_t>((steps >> 8) & 0xFF),
-                       static_cast<uint8_t>(steps & 0XFF),
-                       static_cast<uint8_t>((delay >> 16) & 0xFF),
-                       static_cast<uint8_t>((delay >> 8) & 0xFF),
-                       static_cast<uint8_t>(delay & 0XFF)};
-    return write(id, 0, 7, data);
+  uint8_t data[7] = { reg_type::CAN_CMD_MOVE_REL,
+                      static_cast<uint8_t>((steps >> 16) & 0xFF),
+                      static_cast<uint8_t>((steps >> 8) & 0xFF),
+                      static_cast<uint8_t>(steps & 0XFF),
+                      static_cast<uint8_t>((delay >> 16) & 0xFF),
+                      static_cast<uint8_t>((delay >> 8) & 0xFF),
+                      static_cast<uint8_t>(delay & 0XFF) };
+  return write(id, 0, 7, data);
 }
 
 /**
@@ -151,13 +150,13 @@ uint8_t StepperDriver<reg_type>::sendRelativeMoveCommand(uint8_t id, int steps, 
  * @param torque_on
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendTorqueOnCommand(uint8_t id, int torque_on)
 {
-    uint8_t data[2] = {0};
-    data[0] = reg_type::CAN_CMD_MODE;
-    data[1] = (torque_on) ? reg_type::STEPPER_CONTROL_MODE_STANDARD : reg_type::STEPPER_CONTROL_MODE_RELAX;
-    return write(id, 0, 2, data);
+  uint8_t data[2] = { 0 };
+  data[0] = reg_type::CAN_CMD_MODE;
+  data[1] = (torque_on) ? reg_type::STEPPER_CONTROL_MODE_STANDARD : reg_type::STEPPER_CONTROL_MODE_RELAX;
+  return write(id, 0, 2, data);
 }
 
 /**
@@ -167,14 +166,16 @@ uint8_t StepperDriver<reg_type>::sendTorqueOnCommand(uint8_t id, int torque_on)
  * @param absolute_steps_at_offset_position
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position)
 {
-    uint8_t data[6] = {reg_type::CAN_CMD_OFFSET, static_cast<uint8_t>((cmd >> 16) & 0xFF),
-                       static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF),
-                       static_cast<uint8_t>((absolute_steps_at_offset_position >> 8) & 0xFF),
-                       static_cast<uint8_t>(absolute_steps_at_offset_position & 0xFF)};
-    return write(id, 0, 6, data);
+  uint8_t data[6] = { reg_type::CAN_CMD_OFFSET,
+                      static_cast<uint8_t>((cmd >> 16) & 0xFF),
+                      static_cast<uint8_t>((cmd >> 8) & 0xFF),
+                      static_cast<uint8_t>(cmd & 0XFF),
+                      static_cast<uint8_t>((absolute_steps_at_offset_position >> 8) & 0xFF),
+                      static_cast<uint8_t>(absolute_steps_at_offset_position & 0xFF) };
+  return write(id, 0, 6, data);
 }
 
 /**
@@ -183,11 +184,11 @@ uint8_t StepperDriver<reg_type>::sendPositionOffsetCommand(uint8_t id, int cmd, 
  * @param begin_traj
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendSynchronizePositionCommand(uint8_t id, bool begin_traj)
 {
-    uint8_t data[2] = {reg_type::CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj)};
-    return write(id, 0, 2, data);
+  uint8_t data[2] = { reg_type::CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj) };
+  return write(id, 0, 2, data);
 }
 
 /**
@@ -196,11 +197,11 @@ uint8_t StepperDriver<reg_type>::sendSynchronizePositionCommand(uint8_t id, bool
  * @param micro_steps
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendMicroStepsCommand(uint8_t id, int micro_steps)
 {
-    uint8_t data[2] = {reg_type::CAN_CMD_MICRO_STEPS, static_cast<uint8_t>(micro_steps)};
-    return write(id, 0, 2, data);
+  uint8_t data[2] = { reg_type::CAN_CMD_MICRO_STEPS, static_cast<uint8_t>(micro_steps) };
+  return write(id, 0, 2, data);
 }
 
 /**
@@ -209,11 +210,11 @@ uint8_t StepperDriver<reg_type>::sendMicroStepsCommand(uint8_t id, int micro_ste
  * @param effort
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendMaxEffortCommand(uint8_t id, int effort)
 {
-    uint8_t data[2] = {reg_type::CAN_CMD_MAX_EFFORT, static_cast<uint8_t>(effort)};
-    return write(id, 0, 2, data);
+  uint8_t data[2] = { reg_type::CAN_CMD_MAX_EFFORT, static_cast<uint8_t>(effort) };
+  return write(id, 0, 2, data);
 }
 
 /**
@@ -225,16 +226,20 @@ uint8_t StepperDriver<reg_type>::sendMaxEffortCommand(uint8_t id, int effort)
  * @param timeout
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout)
 {
-    direction = (direction > 0) ? 1 : 0;
+  direction = (direction > 0) ? 1 : 0;
 
-    uint8_t data[8] = {reg_type::CAN_CMD_CALIBRATE, static_cast<uint8_t>((offset >> 16) & 0xFF),
-                       static_cast<uint8_t>((offset >> 8) & 0xFF), static_cast<uint8_t>(offset & 0XFF),
-                       static_cast<uint8_t>((delay >> 8) & 0xFF), static_cast<uint8_t>(delay & 0xFF),
-                       static_cast<uint8_t>(direction), static_cast<uint8_t>(timeout)};
-    return write(id, 0, 8, data);
+  uint8_t data[8] = { reg_type::CAN_CMD_CALIBRATE,
+                      static_cast<uint8_t>((offset >> 16) & 0xFF),
+                      static_cast<uint8_t>((offset >> 8) & 0xFF),
+                      static_cast<uint8_t>(offset & 0XFF),
+                      static_cast<uint8_t>((delay >> 8) & 0xFF),
+                      static_cast<uint8_t>(delay & 0xFF),
+                      static_cast<uint8_t>(direction),
+                      static_cast<uint8_t>(timeout) };
+  return write(id, 0, 8, data);
 }
 
 /**
@@ -243,22 +248,21 @@ uint8_t StepperDriver<reg_type>::sendCalibrationCommand(uint8_t id, int offset, 
  * @param new_id
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 uint8_t StepperDriver<reg_type>::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 {
-    ROS_DEBUG("StepperDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
-    uint8_t data[3] = {0};
-    data[0] = reg_type::CAN_CMD_MODE;
-    data[1] = reg_type::CAN_UPDATE_CONVEYOR_ID;
-    data[2] = new_id;
-    return write(old_id, 0, 3, data);
+  ROS_DEBUG("StepperDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
+  uint8_t data[3] = { 0 };
+  data[0] = reg_type::CAN_CMD_MODE;
+  data[1] = reg_type::CAN_UPDATE_CONVEYOR_ID;
+  data[2] = new_id;
+  return write(old_id, 0, 3, data);
 }
 
 // ***************
 //  Private
 // ***************
 
+}  // namespace can_driver
 
-} // namespace can_driver
-
-#endif // CAN_STEPPER_DRIVER_HPP
+#endif  // CAN_STEPPER_DRIVER_HPP

@@ -34,11 +34,12 @@ namespace model
 /**
  * @brief The EBusProtocol enum
  */
-enum class EBusProtocol {
-                        TTL,
-                        CAN,
-                        UNKNOWN
-                      };
+enum class EBusProtocol
+{
+  TTL,
+  CAN,
+  UNKNOWN
+};
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
@@ -46,15 +47,15 @@ enum class EBusProtocol {
 class BusProtocolEnum : public AbstractEnum<BusProtocolEnum, EBusProtocol>
 {
 public:
-    BusProtocolEnum(EBusProtocol e=EBusProtocol::UNKNOWN);
-    BusProtocolEnum(const char* str);
+  BusProtocolEnum(EBusProtocol e = EBusProtocol::UNKNOWN);
+  BusProtocolEnum(const char *str);
 
 private:
-    friend class AbstractEnum<BusProtocolEnum, EBusProtocol>;
-    static std::map<EBusProtocol, std::string> initialize();
+  friend class AbstractEnum<BusProtocolEnum, EBusProtocol>;
+  static std::map<EBusProtocol, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // BUS_PROTOCOL_ENUM_H
+#endif  // BUS_PROTOCOL_ENUM_H

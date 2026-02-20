@@ -40,80 +40,84 @@ namespace model
 /**
  * @brief The AbstractSynchronizeMotorCmd class
  */
-template<typename ParamType>
+template <typename ParamType>
 class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
 {
 protected:
-    struct MotorParam {
-        MotorParam(uint8_t id, ParamType param) {
-            motors_id.emplace_back(id);
-            params.emplace_back(param);
-        }
+  struct MotorParam
+  {
+    MotorParam(uint8_t id, ParamType param)
+    {
+      motors_id.emplace_back(id);
+      params.emplace_back(param);
+    }
 
-        bool isValid() const {
-            return !motors_id.empty() && motors_id.size() == params.size();
-        }
+    bool isValid() const
+    {
+      return !motors_id.empty() && motors_id.size() == params.size();
+    }
 
-        std::vector<uint8_t> motors_id;
-        std::vector<ParamType> params;
-    };
+    std::vector<uint8_t> motors_id;
+    std::vector<ParamType> params;
+  };
 
 public:
-    AbstractSynchronizeMotorCmd() = default;
-    ~AbstractSynchronizeMotorCmd() override = default;
+  AbstractSynchronizeMotorCmd() = default;
+  ~AbstractSynchronizeMotorCmd() override = default;
 
-    // test
-    bool isValid() const override;
+  // test
+  bool isValid() const override;
 
-    // setters
-    void clear();
-    void addMotorParam(EHardwareType type, uint8_t id, ParamType param);
+  // setters
+  void clear();
+  void addMotorParam(EHardwareType type, uint8_t id, ParamType param);
 
-    // getters
-    std::vector<uint8_t> getMotorsId(EHardwareType type) const;
-    std::vector<ParamType> getParams(EHardwareType type) const;
-    std::set<EHardwareType> getMotorTypes() const;
-
-protected:
-    std::set<EHardwareType> _motor_types;
-    std::map<EHardwareType, MotorParam > _motor_params_map;
+  // getters
+  std::vector<uint8_t> getMotorsId(EHardwareType type) const;
+  std::vector<ParamType> getParams(EHardwareType type) const;
+  std::set<EHardwareType> getMotorTypes() const;
 
 protected:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractSynchronizeMotorCmd( const AbstractSynchronizeMotorCmd& ) = default;
-    AbstractSynchronizeMotorCmd( AbstractSynchronizeMotorCmd&& ) noexcept = default;
+  std::set<EHardwareType> _motor_types;
+  std::map<EHardwareType, MotorParam> _motor_params_map;
 
-    AbstractSynchronizeMotorCmd& operator= ( AbstractSynchronizeMotorCmd && ) noexcept = default;
-    AbstractSynchronizeMotorCmd& operator= ( const AbstractSynchronizeMotorCmd& ) = default;
+protected:
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  AbstractSynchronizeMotorCmd(const AbstractSynchronizeMotorCmd &) = default;
+  AbstractSynchronizeMotorCmd(AbstractSynchronizeMotorCmd &&) noexcept = default;
+
+  AbstractSynchronizeMotorCmd &operator=(AbstractSynchronizeMotorCmd &&) noexcept = default;
+  AbstractSynchronizeMotorCmd &operator=(const AbstractSynchronizeMotorCmd &) = default;
 };
 
 /**
  * @brief AbstractSynchronizeMotorCmd<ParamType>::isValid
  * @return
  */
-template<typename ParamType>
+template <typename ParamType>
 bool AbstractSynchronizeMotorCmd<ParamType>::isValid() const
 {
-    if (_motor_params_map.empty())
-        return false;
-    for (const auto& it : _motor_params_map)
-    {
-        if (it.second.isValid())
-            continue;
-        
-        return false;
-    }
-    return true;
+  if (_motor_params_map.empty())
+    return false;
+  for (const auto &it : _motor_params_map)
+  {
+    if (it.second.isValid())
+      continue;
+
+    return false;
+  }
+  return true;
 }
 
 /**
  * @brief AbstractSynchronizeMotorCmd<ParamType>::clear
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSynchronizeMotorCmd<ParamType>::clear()
 {
-    _motor_params_map.clear();
-    _motor_types.clear();
+  _motor_params_map.clear();
+  _motor_types.clear();
 }
 
 /**
@@ -122,20 +126,20 @@ void AbstractSynchronizeMotorCmd<ParamType>::clear()
  * @param id
  * @param param
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSynchronizeMotorCmd<ParamType>::addMotorParam(EHardwareType type, uint8_t id, ParamType param)
 {
-    // not yet in map
-    if (!_motor_params_map.count(type))
-    {
-        _motor_params_map.insert(std::make_pair(type, MotorParam(id, param)));
-        _motor_types.insert(type);
-    }
-    else
-    {
-        _motor_params_map.at(type).motors_id.emplace_back(id);
-        _motor_params_map.at(type).params.emplace_back(param);
-    }
+  // not yet in map
+  if (!_motor_params_map.count(type))
+  {
+    _motor_params_map.insert(std::make_pair(type, MotorParam(id, param)));
+    _motor_types.insert(type);
+  }
+  else
+  {
+    _motor_params_map.at(type).motors_id.emplace_back(id);
+    _motor_params_map.at(type).params.emplace_back(param);
+  }
 }
 
 /**
@@ -143,14 +147,13 @@ void AbstractSynchronizeMotorCmd<ParamType>::addMotorParam(EHardwareType type, u
  * @param type
  * @return
  */
-template<typename ParamType>
-std::vector<uint8_t> 
-AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EHardwareType type) const
+template <typename ParamType>
+std::vector<uint8_t> AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EHardwareType type) const
 {
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
+  if (!_motor_params_map.count(type))
+    throw std::out_of_range("type not known of synchonized command");
 
-    return _motor_params_map.at(type).motors_id;
+  return _motor_params_map.at(type).motors_id;
 }
 
 /**
@@ -158,31 +161,29 @@ AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EHardwareType type) const
  * @param type
  * @return
  */
-template<typename ParamType>
-std::vector<ParamType>
-AbstractSynchronizeMotorCmd<ParamType>::getParams(EHardwareType type) const
+template <typename ParamType>
+std::vector<ParamType> AbstractSynchronizeMotorCmd<ParamType>::getParams(EHardwareType type) const
 {
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
+  if (!_motor_params_map.count(type))
+    throw std::out_of_range("type not known of synchonized command");
 
-    return _motor_params_map.at(type).params;
+  return _motor_params_map.at(type).params;
 }
 
 /**
  * @brief AbstractSynchronizeMotorCmd::getMotorTypes
  * @return
  */
-template<typename ParamType>
-std::set<EHardwareType> 
-AbstractSynchronizeMotorCmd<ParamType>::getMotorTypes() const
+template <typename ParamType>
+std::set<EHardwareType> AbstractSynchronizeMotorCmd<ParamType>::getMotorTypes() const
 {
-    return _motor_types;
+  return _motor_types;
 }
 
 using AbstractTtlSynchronizeMotorCmd = AbstractSynchronizeMotorCmd<uint32_t>;
 using AbstractCanSynchronizeMotorCmd = AbstractSynchronizeMotorCmd<int32_t>;
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
-#endif // ABSTRACT_SYNCHRONIZE_MOTOR_CMD_H
+#endif  // ABSTRACT_SYNCHRONIZE_MOTOR_CMD_H

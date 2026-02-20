@@ -60,36 +60,30 @@ template <typename T>
 class CNonCopyable
 {
 protected:
-    CNonCopyable () = default;
-    ~CNonCopyable () = default; // / Protected non-virtual destructor
+  CNonCopyable() = default;
+  ~CNonCopyable() = default;  // / Protected non-virtual destructor
 
 public:
-    CNonCopyable( const CNonCopyable& ) = delete;
-    CNonCopyable& operator=( const CNonCopyable& ) = delete;
-    CNonCopyable( CNonCopyable&& ) = delete;
-    CNonCopyable& operator=( CNonCopyable&& ) = delete;
+  CNonCopyable(const CNonCopyable &) = delete;
+  CNonCopyable &operator=(const CNonCopyable &) = delete;
+  CNonCopyable(CNonCopyable &&) = delete;
+  CNonCopyable &operator=(CNonCopyable &&) = delete;
 
-    T& operator= ( const T & ) = delete;
-    T& operator= ( T && ) = delete;
+  T &operator=(const T &) = delete;
+  T &operator=(T &&) = delete;
 };
 
 /**
  * equivalent de std::async mais en certifiant que la tache sera réellement parallelisée
  */
-template<typename F, typename... Ts>
-inline
-std::future<typename std::result_of<F(Ts...)>::type>
-reallyAsync(F&& f, Ts&&... params)      // return future for asynchronous call to f(params...)
+template <typename F, typename... Ts>
+inline std::future<typename std::result_of<F(Ts...)>::type>
+reallyAsync(F &&f, Ts &&...params)  // return future for asynchronous call to f(params...)
 {
-    return std::async(std::launch::async,
-                      std::forward<F>(f),
-                      std::forward<Ts>(params)...);
+  return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
 }
 
-} // util
-} // common
+}  // namespace util
+}  // namespace common
 
-
-#endif // UTIL_DEFS_H
-
-
+#endif  // UTIL_DEFS_H

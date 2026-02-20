@@ -34,13 +34,14 @@ namespace model
 /**
  * @brief The EActionType enum
  */
-enum class EActionType {
-                          HANDLE_HELD_ACTION = 0,
-                          LONG_PUSH_ACTION = 1,
-                          SINGLE_PUSH_ACTION = 2,
-                          DOUBLE_PUSH_ACTION = 3,
-                          NO_ACTION = 100
-                       };
+enum class EActionType
+{
+  HANDLE_HELD_ACTION = 0,
+  LONG_PUSH_ACTION = 1,
+  SINGLE_PUSH_ACTION = 2,
+  DOUBLE_PUSH_ACTION = 3,
+  NO_ACTION = 100
+};
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
@@ -48,15 +49,15 @@ enum class EActionType {
 class ActionTypeEnum : public AbstractEnum<ActionTypeEnum, EActionType>
 {
 public:
-    ActionTypeEnum(EActionType e=EActionType::NO_ACTION);
-    ActionTypeEnum(const char* str);
+  ActionTypeEnum(EActionType e = EActionType::NO_ACTION);
+  ActionTypeEnum(const char *str);
 
 private:
-    friend class AbstractEnum<ActionTypeEnum, EActionType>;
-    static std::map<EActionType, std::string> initialize();
+  friend class AbstractEnum<ActionTypeEnum, EActionType>;
+  static std::map<EActionType, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // ACTION_TYPE_ENUM_H
+#endif  // ACTION_TYPE_ENUM_H

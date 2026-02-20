@@ -33,58 +33,58 @@ namespace model
 /**
  * @brief The AbstractSingleMotorCmd class
  */
-template<typename ParamType>
+template <typename ParamType>
 class AbstractSingleMotorCmd : public ISingleMotorCmd
 {
 public:
-    AbstractSingleMotorCmd() = delete;
-    AbstractSingleMotorCmd(uint8_t id);
+  AbstractSingleMotorCmd() = delete;
+  AbstractSingleMotorCmd(uint8_t id);
 
-    ~AbstractSingleMotorCmd() override = default;
+  ~AbstractSingleMotorCmd() override = default;
 
-    // setters
-    void clear();
+  // setters
+  void clear();
 
-    void setId(uint8_t id);
-    void setParam(ParamType param);
-    void setParams(std::vector<ParamType> params);
+  void setId(uint8_t id);
+  void setParam(ParamType param);
+  void setParams(std::vector<ParamType> params);
 
-    // getters
-    uint8_t getId() const;
-    ParamType getParam() const;
-    std::vector<ParamType> getParams() const;
-
-protected:
-    std::vector<ParamType> _param_list;
-    uint8_t _id{};
+  // getters
+  uint8_t getId() const;
+  ParamType getParam() const;
+  std::vector<ParamType> getParams() const;
 
 protected:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractSingleMotorCmd( const AbstractSingleMotorCmd& ) = default;
-    AbstractSingleMotorCmd( AbstractSingleMotorCmd&& ) noexcept = default;
+  std::vector<ParamType> _param_list;
+  uint8_t _id{};
 
-    AbstractSingleMotorCmd& operator= ( AbstractSingleMotorCmd && ) noexcept = default;
-    AbstractSingleMotorCmd& operator= ( const AbstractSingleMotorCmd& ) = default;
+protected:
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  AbstractSingleMotorCmd(const AbstractSingleMotorCmd &) = default;
+  AbstractSingleMotorCmd(AbstractSingleMotorCmd &&) noexcept = default;
+
+  AbstractSingleMotorCmd &operator=(AbstractSingleMotorCmd &&) noexcept = default;
+  AbstractSingleMotorCmd &operator=(const AbstractSingleMotorCmd &) = default;
 };
-
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd
  * @param id
  */
-template<typename ParamType>
-AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) :
-    _id(id)
-{}
+template <typename ParamType>
+AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) : _id(id)
+{
+}
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::clear
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::clear()
 {
-    _id = 0;
-    _param_list.clear();
+  _id = 0;
+  _param_list.clear();
 }
 
 // ***********************
@@ -95,68 +95,67 @@ void AbstractSingleMotorCmd<ParamType>::clear()
  * @brief AbstractSingleMotorCmd<ParamType>::setId
  * @param id
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::setId(uint8_t id)
 {
-    _id = id;
+  _id = id;
 }
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::setParam
  * @param param
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::setParam(ParamType param)
 {
-    _param_list.clear();
-    _param_list.emplace_back(param);
+  _param_list.clear();
+  _param_list.emplace_back(param);
 }
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::setParams
  * @param params
  */
-template<typename ParamType>
+template <typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::setParams(std::vector<ParamType> params)
 {
-    _param_list = params;
+  _param_list = params;
 }
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::getId
  * @return
  */
-template<typename ParamType>
+template <typename ParamType>
 uint8_t AbstractSingleMotorCmd<ParamType>::getId() const
 {
-    return _id;
+  return _id;
 }
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::getParam
  * @return
  */
-template<typename ParamType>
+template <typename ParamType>
 ParamType AbstractSingleMotorCmd<ParamType>::getParam() const
 {
-    return _param_list.front();
+  return _param_list.front();
 }
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::getParams
  * @return
  */
-template<typename ParamType>
-std::vector<ParamType>
-AbstractSingleMotorCmd<ParamType>::getParams() const
+template <typename ParamType>
+std::vector<ParamType> AbstractSingleMotorCmd<ParamType>::getParams() const
 {
-    return _param_list;
+  return _param_list;
 }
 
 using AbstractTtlSingleMotorCmd = AbstractSingleMotorCmd<uint32_t>;
 using AbstractCanSingleMotorCmd = AbstractSingleMotorCmd<int32_t>;
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
-#endif // ABSTRACT_SINGLE_MOTOR_CMD_H
+#endif  // ABSTRACT_SINGLE_MOTOR_CMD_H

@@ -28,42 +28,41 @@ namespace can_driver
 class FakeCanData
 {
 public:
-    FakeCanData() = default;
+  FakeCanData() = default;
 
-    void updateFullIdList();
+  void updateFullIdList();
 
-    struct FakeStepperRegister
-    {
-        std::string   firmware{};
-        int32_t       position{0};
-        uint8_t       temperature{0};
-        double        voltage{0};
-        uint16_t      model_number{0};
+  struct FakeStepperRegister
+  {
+    std::string firmware{};
+    int32_t position{ 0 };
+    uint8_t temperature{ 0 };
+    double voltage{ 0 };
+    uint16_t model_number{ 0 };
 
-        uint8_t       id{0};
+    uint8_t id{ 0 };
 
-        uint8_t       speed{0};
-        uint8_t       direction{0};
-        bool          state{false};
-    };
+    uint8_t speed{ 0 };
+    uint8_t direction{ 0 };
+    bool state{ false };
+  };
 
-    uint8_t position_spam{30};
+  uint8_t position_spam{ 30 };
 
-    // stepper
-    std::map<uint8_t, FakeStepperRegister> stepper_registers;
+  // stepper
+  std::map<uint8_t, FakeStepperRegister> stepper_registers;
 
-    // all ids
-    std::vector<uint8_t> full_id_list;
+  // all ids
+  std::vector<uint8_t> full_id_list;
 };
 
-inline
-void FakeCanData::updateFullIdList()
+inline void FakeCanData::updateFullIdList()
 {
-    for (const auto& it : stepper_registers)
-    {
-        full_id_list.emplace_back(it.first);
-    }
+  for (const auto &it : stepper_registers)
+  {
+    full_id_list.emplace_back(it.first);
+  }
 }
 
-}
-#endif //FAKE_TTL_DATA_HPP
+}  // namespace can_driver
+#endif  // FAKE_TTL_DATA_HPP

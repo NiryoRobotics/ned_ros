@@ -33,25 +33,26 @@ namespace model
 class ISingleMotorCmd : public IObject
 {
 public:
-    ~ISingleMotorCmd() override = default;
+  ~ISingleMotorCmd() override = default;
 
-    virtual int getCmdType() const = 0;
+  virtual int getCmdType() const = 0;
 
-    //tests
-    virtual bool isStepperCmd() const = 0;
-    virtual bool isDxlCmd() const = 0;
+  // tests
+  virtual bool isStepperCmd() const = 0;
+  virtual bool isDxlCmd() const = 0;
 
 protected:
-    ISingleMotorCmd() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    ISingleMotorCmd( const ISingleMotorCmd& ) = default;
-    ISingleMotorCmd( ISingleMotorCmd&& ) = default;
+  ISingleMotorCmd() = default;
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  ISingleMotorCmd(const ISingleMotorCmd &) = default;
+  ISingleMotorCmd(ISingleMotorCmd &&) = default;
 
-    ISingleMotorCmd& operator= ( ISingleMotorCmd && ) = default;
-    ISingleMotorCmd& operator= ( const ISingleMotorCmd& ) = default;
+  ISingleMotorCmd &operator=(ISingleMotorCmd &&) = default;
+  ISingleMotorCmd &operator=(const ISingleMotorCmd &) = default;
 };
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
-#endif // I_SINGLE_MOTOR_CMD_H
+#endif  // I_SINGLE_MOTOR_CMD_H

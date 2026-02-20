@@ -41,59 +41,59 @@ namespace ttl_driver
  */
 class MockEndEffectorDriver : public AbstractEndEffectorDriver
 {
-    public:
-        MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data);
+public:
+  MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data);
 
-    public:
-        // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
-        // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
-        // have access to reg_type). So it seems like a duplicate of StepperDriver
-        std::string str() const override;
+public:
+  // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
+  // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
+  // have access to reg_type). So it seems like a duplicate of StepperDriver
+  std::string str() const override;
 
-        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
-        int readFirmwareVersion(uint8_t id, std::string &version) override;
-        
-        int readTemperature(uint8_t id, uint8_t &temperature) override;
-        int readVoltage(uint8_t id, double &_voltage) override;
-        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
+  int checkModelNumber(uint8_t id, uint16_t &model_number) override;
+  int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
-        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+  int readTemperature(uint8_t id, uint8_t &temperature) override;
+  int readVoltage(uint8_t id, double &_voltage) override;
+  int readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status) override;
 
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
+  int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+  int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &temperature_list) override;
+  int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+  int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+  int syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                       std::vector<std::pair<double, uint8_t> > &data_list) override;
 
-    public:
-        int ping(uint8_t id) override;
-        int getModelNumber(uint8_t id,
-                            uint16_t& model_number) override;
-        int scan(std::vector<uint8_t> &id_list) override;
-        int reboot(uint8_t id) override;
+  int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
-        // AbstractEndEffectorDriver
-        int readButton0Status(uint8_t id, common::model::EActionType& action) override;
-        int readButton1Status(uint8_t id, common::model::EActionType& action) override;
-        int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) override;
+public:
+  int ping(uint8_t id) override;
+  int getModelNumber(uint8_t id, uint16_t &model_number) override;
+  int scan(std::vector<uint8_t> &id_list) override;
+  int reboot(uint8_t id) override;
 
-        int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
-        int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
-        int readAccelerometerZValue(uint8_t id, uint32_t& z_value) override;
+  // AbstractEndEffectorDriver
+  int readButton0Status(uint8_t id, common::model::EActionType &action) override;
+  int readButton1Status(uint8_t id, common::model::EActionType &action) override;
+  int readButton2Status(uint8_t id, common::model::EActionType &action) override;
+  int syncReadButtonsStatus(const uint8_t &id, std::vector<common::model::EActionType> &action_list) override;
 
-        int readCollisionStatus(uint8_t id, bool& status) override;
-        int writeCollisionThresh(uint8_t id, int thresh) override;
-        int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
+  int readAccelerometerXValue(uint8_t id, uint32_t &x_value) override;
+  int readAccelerometerYValue(uint8_t id, uint32_t &y_value) override;
+  int readAccelerometerZValue(uint8_t id, uint32_t &z_value) override;
 
-        int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalInput(uint8_t id, bool in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;
+  int readCollisionStatus(uint8_t id, bool &status) override;
+  int writeCollisionThresh(uint8_t id, int thresh) override;
+  int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
 
-    private:
-        std::shared_ptr<FakeTtlData> _fake_data;
+  int readDigitalInput(uint8_t id, bool &in) override;
+  int writeDigitalInput(uint8_t id, bool in) override;
+  int writeDigitalOutput(uint8_t id, bool out) override;
+
+private:
+  std::shared_ptr<FakeTtlData> _fake_data;
 };
 
-} // ttl_driver
+}  // namespace ttl_driver
 
-#endif // MockEndEffectorDriver
+#endif  // MockEndEffectorDriver

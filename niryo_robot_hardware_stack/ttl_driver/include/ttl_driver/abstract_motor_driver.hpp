@@ -38,49 +38,53 @@ namespace ttl_driver
 class AbstractMotorDriver : public AbstractTtlDriver
 {
 public:
-    AbstractMotorDriver() = default;
-    AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                        std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+  AbstractMotorDriver() = default;
+  AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                      std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
 public:
-    // AbstractTtlDriver interface
-    std::string str() const override;
+  // AbstractTtlDriver interface
+  std::string str() const override;
 
 public:
-    // here are only common TTL commands found in both Steppers and DXl
+  // here are only common TTL commands found in both Steppers and DXl
 
-    // eeprom write
-    virtual int changeId(uint8_t id, uint8_t new_id) = 0;
+  // eeprom write
+  virtual int changeId(uint8_t id, uint8_t new_id) = 0;
 
-    // eeprom read
-    virtual int readMinPosition(uint8_t id, uint32_t& min_pos) = 0;
-    virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
+  // eeprom read
+  virtual int readMinPosition(uint8_t id, uint32_t &min_pos) = 0;
+  virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) = 0;
 
-    // ram write
-    
-    virtual int writeControlMode(uint8_t id, uint8_t mode) = 0;
-    virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) = 0;
+  // ram write
 
-    virtual int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) = 0;
-    virtual int writePositionGoal(uint8_t id, uint32_t position) = 0;
-    virtual int writeVelocityGoal(uint8_t id, uint32_t velocity) = 0;
+  virtual int writeControlMode(uint8_t id, uint8_t mode) = 0;
+  virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t> &data_list) = 0;
 
-    virtual int syncWriteTorquePercentage(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& torque_percentage_list) = 0;
-    virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;
-    virtual int syncWriteVelocityGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& velocity_list) = 0;
+  virtual int writeTorquePercentage(uint8_t id, uint8_t torque_percentage) = 0;
+  virtual int writePositionGoal(uint8_t id, uint32_t position) = 0;
+  virtual int writeVelocityGoal(uint8_t id, uint32_t velocity) = 0;
 
-    // ram read
-    virtual int readControlMode(uint8_t id, uint8_t& mode) = 0;
-    virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;
+  virtual int syncWriteTorquePercentage(const std::vector<uint8_t> &id_list,
+                                        const std::vector<uint8_t> &torque_percentage_list) = 0;
+  virtual int syncWritePositionGoal(const std::vector<uint8_t> &id_list,
+                                    const std::vector<uint32_t> &position_list) = 0;
+  virtual int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list,
+                                    const std::vector<uint32_t> &velocity_list) = 0;
 
-    virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;
-    virtual int readVelocity(uint8_t id, uint32_t& present_velocity) = 0;
+  // ram read
+  virtual int readControlMode(uint8_t id, uint8_t &mode) = 0;
+  virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list) = 0;
 
-    virtual int syncReadPosition(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& position_list) = 0;
-    virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t>& velocity_list) = 0;
-    virtual int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> >& data_array_list) = 0;
+  virtual int readPosition(uint8_t id, uint32_t &present_position) = 0;
+  virtual int readVelocity(uint8_t id, uint32_t &present_velocity) = 0;
+
+  virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
+  virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
+  virtual int syncReadJointStatus(const std::vector<uint8_t> &id_list,
+                                  std::vector<std::array<uint32_t, 2> > &data_array_list) = 0;
 };
 
-} // ttl_driver
+}  // namespace ttl_driver
 
-#endif // ABSTRACT_MOTOR_DRIVER_HPP
+#endif  // ABSTRACT_MOTOR_DRIVER_HPP

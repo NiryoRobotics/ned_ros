@@ -47,128 +47,126 @@ namespace can_driver
  */
 class CanInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
-    public:
-        CanInterfaceCore(ros::NodeHandle& nh);
-        ~CanInterfaceCore() override;
-        CanInterfaceCore( const CanInterfaceCore& ) = delete;
-        CanInterfaceCore( CanInterfaceCore&& ) = delete;
-        CanInterfaceCore& operator= ( CanInterfaceCore && ) = delete;
-        CanInterfaceCore& operator= ( const CanInterfaceCore& ) = delete;
+public:
+  CanInterfaceCore(ros::NodeHandle &nh);
+  ~CanInterfaceCore() override;
+  CanInterfaceCore(const CanInterfaceCore &) = delete;
+  CanInterfaceCore(CanInterfaceCore &&) = delete;
+  CanInterfaceCore &operator=(CanInterfaceCore &&) = delete;
+  CanInterfaceCore &operator=(const CanInterfaceCore &) = delete;
 
-        bool init(ros::NodeHandle& nh) override;
+  bool init(ros::NodeHandle &nh) override;
 
-        // joints control
-        int addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState);
+  // joints control
+  int addJoint(const std::shared_ptr<common::model::StepperMotorState> &jointState);
 
-        // Tool control
-        // N.A.
+  // Tool control
+  // N.A.
 
-        // end effector panel control
-        // N.A.
+  // end effector panel control
+  // N.A.
 
-        // conveyor control
-        int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
-        void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
-        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
-        
-        void clearSingleCommandQueue();
-        void clearConveyorCommandQueue();
+  // conveyor control
+  int setConveyor(const std::shared_ptr<common::model::ConveyorState> &state) override;
+  void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
+  int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
-        void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
+  void clearSingleCommandQueue();
+  void clearConveyorCommandQueue();
 
-        void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+  void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t>> &&cmd);
 
-        void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
-        void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) override;
+  void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd> &&cmd) override;
 
-        void startCalibration() override;
-        void resetCalibration() override;
+  void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd> &&cmd) override;
+  void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> cmd) override;
 
-        // direct commands
-        bool scanMotorId(uint8_t motor_to_find) override;
-        bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& motor_state) override;
+  void startCalibration() override;
+  void resetCalibration() override;
 
-        // getters
-        int32_t getCalibrationResult(uint8_t id) const override;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
-        void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) override;
+  // direct commands
+  bool scanMotorId(uint8_t motor_to_find) override;
+  bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState> &motor_state) override;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
-        std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
+  // getters
+  int32_t getCalibrationResult(uint8_t id) const override;
+  common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+  void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) override;
 
-        // IDriverCore interface
-        void startControlLoop() override;
+  std::vector<std::shared_ptr<common::model::JointState>> getJointStates() const override;
+  std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
 
-        void activeDebugMode(bool mode) override;
+  // IDriverCore interface
+  void startControlLoop() override;
 
-        bool isConnectionOk() const override;
-        int launchMotorsReport() override;
-        niryo_robot_msgs::BusState getBusState() const override;
-        common::model::EBusProtocol getBusProtocol() const override;
+  void activeDebugMode(bool mode) override;
 
-        std::vector<uint8_t> getRemovedMotorList() const override;
-    private:
-        void initParameters(ros::NodeHandle &nh) override;
-        void startServices(ros::NodeHandle &nh) override;
-        void startPublishers(ros::NodeHandle &nh) override;
-        void startSubscribers(ros::NodeHandle &nh) override;
+  bool isConnectionOk() const override;
+  int launchMotorsReport() override;
+  niryo_robot_msgs::BusState getBusState() const override;
+  common::model::EBusProtocol getBusProtocol() const override;
 
-        void resetHardwareControlLoopRates() override;
-        void controlLoop() override;
-        void _executeCommand() override;
+  std::vector<uint8_t> getRemovedMotorList() const override;
 
-        int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
+private:
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-    private:
-        bool _control_loop_flag{false};
-        bool _debug_flag{false};
+  void resetHardwareControlLoopRates() override;
+  void controlLoop() override;
+  void _executeCommand() override;
 
-        std::mutex  _control_loop_mutex;
-        std::mutex  _joint_trajectory_mutex;
+  int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
 
-        std::thread _control_loop_thread;
+private:
+  bool _control_loop_flag{ false };
+  bool _debug_flag{ false };
 
-        double _control_loop_frequency{0.0};
+  std::mutex _control_loop_mutex;
+  std::mutex _joint_trajectory_mutex;
 
-        double _delta_time_write{0.0};
+  std::thread _control_loop_thread;
 
-        double _time_hw_data_last_read{0.0};
-        double _time_hw_data_last_write{0.0};
+  double _control_loop_frequency{ 0.0 };
 
-        double _time_check_connection_last_read{0.0};
+  double _delta_time_write{ 0.0 };
 
-        // specific to stepper
+  double _time_hw_data_last_read{ 0.0 };
+  double _time_hw_data_last_write{ 0.0 };
 
-        std::unique_ptr<CanManager> _can_manager;
+  double _time_check_connection_last_read{ 0.0 };
 
-        std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
+  // specific to stepper
 
-        // can cmds
-        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
-        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
+  std::unique_ptr<CanManager> _can_manager;
 
-        static constexpr int QUEUE_OVERFLOW = 20;
+  std::vector<std::pair<uint8_t, int32_t>> _joint_trajectory_cmd;
+
+  // can cmds
+  std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
+  std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
+
+  static constexpr int QUEUE_OVERFLOW = 20;
 };
 
 /**
  * @brief CanInterfaceCore::isConnectionOk
  * @return
  */
-inline
-bool CanInterfaceCore::isConnectionOk() const
+inline bool CanInterfaceCore::isConnectionOk() const
 {
-    return _can_manager->isConnectionOk();
+  return _can_manager->isConnectionOk();
 }
 
 /**
  * @brief CanInterfaceCore::getBusProtocol
  * @return
  */
-inline
-common::model::EBusProtocol
-CanInterfaceCore::getBusProtocol() const
+inline common::model::EBusProtocol CanInterfaceCore::getBusProtocol() const
 {
-    return common::model::EBusProtocol::CAN;
+  return common::model::EBusProtocol::CAN;
 }
 
 /**
@@ -176,34 +174,29 @@ CanInterfaceCore::getBusProtocol() const
  * @param id
  * @return
  */
-inline
-int32_t CanInterfaceCore::getCalibrationResult(uint8_t id) const
+inline int32_t CanInterfaceCore::getCalibrationResult(uint8_t id) const
 {
-    return _can_manager->getCalibrationResult(id);
+  return _can_manager->getCalibrationResult(id);
 }
 
 /**
  * @brief CanInterfaceCore::getCalibrationStatus
  * @return
  */
-inline
-common::model::EStepperCalibrationStatus
-CanInterfaceCore::getCalibrationStatus() const
+inline common::model::EStepperCalibrationStatus CanInterfaceCore::getCalibrationStatus() const
 {
-    return _can_manager->getCalibrationStatus();
+  return _can_manager->getCalibrationStatus();
 }
-
 
 /**
  * @brief CanInterfaceCore::setCalibrationStatus
  * @return
  */
-inline
-void CanInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
+inline void CanInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
 {
-    _can_manager->setCalibrationStatus(status);
+  _can_manager->setCalibrationStatus(status);
 }
 
-} // CanManager
+}  // namespace can_driver
 
-#endif // CAN_INTERFACE_CORE_H
+#endif  // CAN_INTERFACE_CORE_H

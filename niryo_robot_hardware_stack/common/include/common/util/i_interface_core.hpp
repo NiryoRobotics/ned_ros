@@ -37,26 +37,27 @@ namespace util
 class IInterfaceCore
 {
 public:
-    virtual ~IInterfaceCore() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    IInterfaceCore( const IInterfaceCore& ) = delete;
-    IInterfaceCore( IInterfaceCore&& ) = delete;
-    IInterfaceCore& operator= ( IInterfaceCore && ) = delete;
-    IInterfaceCore& operator= ( const IInterfaceCore& ) = delete;
+  virtual ~IInterfaceCore() = default;
+  // see
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+  IInterfaceCore(const IInterfaceCore &) = delete;
+  IInterfaceCore(IInterfaceCore &&) = delete;
+  IInterfaceCore &operator=(IInterfaceCore &&) = delete;
+  IInterfaceCore &operator=(const IInterfaceCore &) = delete;
 
-    virtual bool init(ros::NodeHandle& nh) = 0;
+  virtual bool init(ros::NodeHandle &nh) = 0;
 
 protected:
-    IInterfaceCore() = default;
+  IInterfaceCore() = default;
 
 private:
-    virtual void initParameters(ros::NodeHandle& nh) = 0;
-    virtual void startServices(ros::NodeHandle& nh) = 0;
-    virtual void startPublishers(ros::NodeHandle& nh) = 0;
-    virtual void startSubscribers(ros::NodeHandle& nh) = 0;
+  virtual void initParameters(ros::NodeHandle &nh) = 0;
+  virtual void startServices(ros::NodeHandle &nh) = 0;
+  virtual void startPublishers(ros::NodeHandle &nh) = 0;
+  virtual void startSubscribers(ros::NodeHandle &nh) = 0;
 };
 
-} // namespace util
-} // namespace common
+}  // namespace util
+}  // namespace common
 
-#endif // I_INTERFACE_CORE
+#endif  // I_INTERFACE_CORE

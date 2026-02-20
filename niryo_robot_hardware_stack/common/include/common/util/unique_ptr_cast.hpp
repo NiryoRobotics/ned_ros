@@ -27,30 +27,29 @@ namespace common
 namespace util
 {
 
-template<typename Derived, typename Base>
-static std::unique_ptr<Derived> static_unique_ptr_cast(std::unique_ptr<Base>&& p);
+template <typename Derived, typename Base>
+static std::unique_ptr<Derived> static_unique_ptr_cast(std::unique_ptr<Base> &&p);
 
-template<typename Derived, typename Base>
-static std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base>&& p);
+template <typename Derived, typename Base>
+static std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base> &&p);
 
-
-template<typename Derived, typename Base>
-std::unique_ptr<Derived> static_unique_ptr_cast(std::unique_ptr<Base>&& p)
+template <typename Derived, typename Base>
+std::unique_ptr<Derived> static_unique_ptr_cast(std::unique_ptr<Base> &&p)
 {
-    auto d = static_cast<Derived *>(p.release());
-    return std::unique_ptr<Derived>(d);
+  auto d = static_cast<Derived *>(p.release());
+  return std::unique_ptr<Derived>(d);
 }
 
-template<typename Derived, typename Base>
-std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base>&& p)
+template <typename Derived, typename Base>
+std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base> &&p)
 {
-    if (auto *result = dynamic_cast<Derived *>(p.get()))
-    {
-        p.release();
-        return std::unique_ptr<Derived>(result);
-    }
-    return std::unique_ptr<Derived>(nullptr);
+  if (auto *result = dynamic_cast<Derived *>(p.get()))
+  {
+    p.release();
+    return std::unique_ptr<Derived>(result);
+  }
+  return std::unique_ptr<Derived>(nullptr);
 }
-}   // namespace util
-}   // namespace common
+}  // namespace util
+}  // namespace common
 #endif  // UNIQUE_PTR_CAST

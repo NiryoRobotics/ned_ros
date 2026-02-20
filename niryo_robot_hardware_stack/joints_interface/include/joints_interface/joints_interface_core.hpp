@@ -54,135 +54,127 @@ namespace joints_interface
 
 class JointsInterfaceCore : common::util::IInterfaceCore
 {
-    public:
+public:
+  JointsInterfaceCore(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh,
+                      std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                      std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
+  ~JointsInterfaceCore() override;
 
-        JointsInterfaceCore(ros::NodeHandle& rootnh, 
-                            ros::NodeHandle& robot_hwnh,
-                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
-                            std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        ~JointsInterfaceCore() override;
+  // non copyable class
+  JointsInterfaceCore(const JointsInterfaceCore &) = delete;
+  JointsInterfaceCore(JointsInterfaceCore &&) = delete;
 
-        // non copyable class
-        JointsInterfaceCore( const JointsInterfaceCore& ) = delete;
-        JointsInterfaceCore( JointsInterfaceCore&& ) = delete;
+  JointsInterfaceCore &operator=(JointsInterfaceCore &&) = delete;
+  JointsInterfaceCore &operator=(const JointsInterfaceCore &) = delete;
 
-        JointsInterfaceCore& operator= ( JointsInterfaceCore && ) = delete;
-        JointsInterfaceCore& operator= ( const JointsInterfaceCore& ) = delete;
+  bool init(ros::NodeHandle &nh) override;
 
-        bool init(ros::NodeHandle& nh) override;
+  void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
+  bool rebootAll(bool torque_on);
 
-        void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
-        bool rebootAll(bool torque_on);
+  bool needCalibration() const;
+  bool isCalibrationInProgress() const;
+  bool isFreeMotion() const;
 
-        bool needCalibration() const;
-        bool isCalibrationInProgress() const;
-        bool isFreeMotion() const;
+  void setEstopFlag(bool value);
 
-        void setEstopFlag(bool value);
+  const std::vector<std::shared_ptr<common::model::JointState> > &getJointsState() const;
 
-        const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
+private:
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-    private:
-        void initParameters(ros::NodeHandle& nh) override;
-        void startServices(ros::NodeHandle& nh) override;
-        void startPublishers(ros::NodeHandle& nh) override;
-        void startSubscribers(ros::NodeHandle& nh) override;
+  void rosControlLoop();
+  void resetController();
 
-        void rosControlLoop();
-        void resetController();
+  bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+  bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req,
+                                      niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+  bool _callbackFactoryCalibrateMotors(FactoryCalibration::Request &req, FactoryCalibration::Response &res);
 
-        bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
-        bool _callbackFactoryCalibrateMotors(FactoryCalibration::Request &req, FactoryCalibration::Response &res);
+  void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);
 
-        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
+  void _publishLearningMode();
 
-        void _publishLearningMode();
+private:
+  ros::NodeHandle _nh;
 
-    private:
-        ros::NodeHandle _nh;
+  bool _enable_control_loop{ true };
+  bool _previous_state_learning_mode{ true };
+  bool _reset_controller{ true };
+  bool _estop_flag{ false };
 
-        bool _enable_control_loop{true};
-        bool _previous_state_learning_mode{true};
-        bool _reset_controller{true};
-        bool _estop_flag{false};
+  std::string _joint_controller_name;
 
-        std::string _joint_controller_name;
+  std::shared_ptr<JointHardwareInterface> _robot;
+  std::shared_ptr<controller_manager::ControllerManager> _cm;
 
-        std::shared_ptr<JointHardwareInterface> _robot;
-        std::shared_ptr<controller_manager::ControllerManager> _cm;
+  std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+  std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+  std::thread _control_loop_thread;
+  ros::Rate _control_loop_rate{ 1.0 };
 
-        std::thread _control_loop_thread;
-        ros::Rate _control_loop_rate{1.0};
+  ros::Publisher _learning_mode_publisher;
 
-        ros::Publisher _learning_mode_publisher;
+  ros::Subscriber _trajectory_result_subscriber;
 
-        ros::Subscriber _trajectory_result_subscriber;
+  ros::ServiceServer _reset_controller_server;  // workaround to compensate missed steps
+  ros::ServiceServer _calibrate_motors_server;
+  ros::ServiceServer _factory_calibrate_motors_server;
+  ros::ServiceServer _request_new_calibration_server;
+  ros::ServiceServer _activate_learning_mode_server;
 
-        ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
-        ros::ServiceServer _calibrate_motors_server;
-        ros::ServiceServer _factory_calibrate_motors_server;
-        ros::ServiceServer _request_new_calibration_server;
-        ros::ServiceServer _activate_learning_mode_server;
+  std::string _hardware_version;
+  bool _simulation_mode{ false };
 
-        std::string _hardware_version;
-        bool _simulation_mode{false};
-
-        int _lock_write_cnt{-1};
+  int _lock_write_cnt{ -1 };
 };
 
-
-inline
-void JointsInterfaceCore::setEstopFlag(bool value)
+inline void JointsInterfaceCore::setEstopFlag(bool value)
 {
-    _estop_flag = value;
+  _estop_flag = value;
 }
 
 /**
  * @brief JointsInterfaceCore::needCalibration
  * @return
  */
-inline
-bool JointsInterfaceCore::needCalibration() const
+inline bool JointsInterfaceCore::needCalibration() const
 {
-    return _robot->needCalibration();
+  return _robot->needCalibration();
 }
 
 /**
  * @brief JointsInterfaceCore::isCalibrationInProgress
  * @return
  */
-inline
-bool JointsInterfaceCore::isCalibrationInProgress() const
+inline bool JointsInterfaceCore::isCalibrationInProgress() const
 {
-    return _robot->isCalibrationInProgress();
+  return _robot->isCalibrationInProgress();
 }
 
 /**
  * @brief JointsInterfaceCore::isFreeMotion
  * @return
  */
-inline
-bool JointsInterfaceCore::isFreeMotion() const
+inline bool JointsInterfaceCore::isFreeMotion() const
 {
-    return _previous_state_learning_mode;
+  return _previous_state_learning_mode;
 }
 
 /**
  * @brief JointsInterfaceCore::getJointsState
  * @return
  */
-inline
-const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceCore::getJointsState() const
+inline const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceCore::getJointsState() const
 {
-    return _robot->getJointsState();
+  return _robot->getJointsState();
 }
 
-
-} // JointsInterface
+}  // namespace joints_interface
 #endif

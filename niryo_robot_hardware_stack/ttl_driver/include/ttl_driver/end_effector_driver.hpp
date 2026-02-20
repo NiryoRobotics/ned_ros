@@ -38,54 +38,55 @@ namespace ttl_driver
 /**
  * @brief The EndEffectorDriver class
  */
-template<typename reg_type = EndEffectorReg>
+template <typename reg_type = EndEffectorReg>
 class EndEffectorDriver : public AbstractEndEffectorDriver
 {
-    public:
-        EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                          std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+public:
+  EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-    public:
-        // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
-        // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
-        // have access to reg_type). So it seems like a duplicate of StepperDriver
-        std::string str() const override;
+public:
+  // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
+  // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
+  // have access to reg_type). So it seems like a duplicate of StepperDriver
+  std::string str() const override;
 
-        int checkModelNumber(uint8_t id, uint16_t& model_number) override;
-        int readFirmwareVersion(uint8_t id, std::string &version) override;
-        
-        int readTemperature(uint8_t id, uint8_t& temperature) override;
-        int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
+  int checkModelNumber(uint8_t id, uint16_t &model_number) override;
+  int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
-        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+  int readTemperature(uint8_t id, uint8_t &temperature) override;
+  int readVoltage(uint8_t id, double &voltage) override;
+  int readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status) override;
 
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
+  int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+  int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &temperature_list) override;
+  int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+  int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+  int syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                       std::vector<std::pair<double, uint8_t> > &data_list) override;
 
-    public:
-        // AbstractEndEffectorDriver
+  int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
-        int readButton0Status(uint8_t id, common::model::EActionType& action) override;
-        int readButton1Status(uint8_t id, common::model::EActionType& action) override;
-        int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) override;
+public:
+  // AbstractEndEffectorDriver
 
-        int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
-        int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
-        int readAccelerometerZValue(uint8_t id, uint32_t& z_value) override;
+  int readButton0Status(uint8_t id, common::model::EActionType &action) override;
+  int readButton1Status(uint8_t id, common::model::EActionType &action) override;
+  int readButton2Status(uint8_t id, common::model::EActionType &action) override;
+  int syncReadButtonsStatus(const uint8_t &id, std::vector<common::model::EActionType> &action_list) override;
 
-        int readCollisionStatus(uint8_t id, bool& status) override;
+  int readAccelerometerXValue(uint8_t id, uint32_t &x_value) override;
+  int readAccelerometerYValue(uint8_t id, uint32_t &y_value) override;
+  int readAccelerometerZValue(uint8_t id, uint32_t &z_value) override;
 
-        int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalInput(uint8_t id, bool in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;
+  int readCollisionStatus(uint8_t id, bool &status) override;
 
-        int writeCollisionThresh(uint8_t id, int thresh) override;
-        int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
+  int readDigitalInput(uint8_t id, bool &in) override;
+  int writeDigitalInput(uint8_t id, bool in) override;
+  int writeDigitalOutput(uint8_t id, bool out) override;
+
+  int writeCollisionThresh(uint8_t id, int thresh) override;
+  int writeCollisionThreshAlgo2(uint8_t id, int thresh) override;
 };
 
 // definition of methods
@@ -93,12 +94,12 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
 /**
  * @brief EndEffectorDriver<reg_type>::EndEffectorDriver
  */
-template<typename reg_type>
+template <typename reg_type>
 EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                                               std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractEndEffectorDriver(std::move(portHandler),
-                              std::move(packetHandler))
-{}
+                                               std::shared_ptr<dynamixel::PacketHandler> packetHandler)
+  : AbstractEndEffectorDriver(std::move(portHandler), std::move(packetHandler))
+{
+}
 
 //*****************************
 // AbstractTtlDriver interface
@@ -108,10 +109,11 @@ EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHa
  * @brief EndEffectorDriver<reg_type>::str
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 std::string EndEffectorDriver<reg_type>::str() const
 {
-    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
+  return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " +
+         ttl_driver::AbstractEndEffectorDriver::str();
 }
 
 /**
@@ -119,20 +121,20 @@ std::string EndEffectorDriver<reg_type>::str() const
  * @param id
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id, uint16_t& model_number)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id, uint16_t &model_number)
 {
-    int ping_result = getModelNumber(id, model_number);
+  int ping_result = getModelNumber(id, model_number);
 
-    if (ping_result == COMM_SUCCESS)
+  if (ping_result == COMM_SUCCESS)
+  {
+    if (model_number && model_number != reg_type::MODEL_NUMBER)
     {
-        if (model_number && model_number != reg_type::MODEL_NUMBER)
-        {
-            return PING_WRONG_MODEL_NUMBER;
-        }
+      return PING_WRONG_MODEL_NUMBER;
     }
+  }
 
-    return ping_result;
+  return ping_result;
 }
 
 /**
@@ -141,14 +143,14 @@ int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id, uint16_t& model_nu
  * @param version
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    int res = COMM_RX_FAIL;
-    uint32_t data{};
-    res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
-    version = interpretFirmwareVersion(data);
-    return res;
+  int res = COMM_RX_FAIL;
+  uint32_t data{};
+  res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
+  version = interpretFirmwareVersion(data);
+  return res;
 }
 
 // ram read
@@ -159,10 +161,10 @@ int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &ve
  * @param temperature
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperature)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t &temperature)
 {
-    return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
+  return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
 }
 
 /**
@@ -171,8 +173,8 @@ int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperatur
  * @param voltage
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double &voltage)
 {
   uint16_t voltage_mV = 0;
   int res = read<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id, voltage_mV);
@@ -186,11 +188,11 @@ int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
  * @param hardware_error_status
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status)
 {
-    hardware_error_status = 0;
-    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
+  hardware_error_status = 0;
+  return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
 }
 
 /**
@@ -199,16 +201,17 @@ int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware
  * @param firmware_list
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list,
+                                                         std::vector<std::string> &firmware_list)
 {
-    int res = 0;
-    firmware_list.clear();
-    std::vector<uint32_t> data_list{};
-    res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
-    for(auto const& data : data_list)
-      firmware_list.emplace_back(interpretFirmwareVersion(data));
-    return res;
+  int res = 0;
+  firmware_list.clear();
+  std::vector<uint32_t> data_list{};
+  res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
+  for (auto const &data : data_list)
+    firmware_list.emplace_back(interpretFirmwareVersion(data));
+  return res;
 }
 
 /**
@@ -217,10 +220,12 @@ int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8
  * @param temperature_list
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list,
+                                                     std::vector<uint8_t> &temperature_list)
 {
-    return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list, temperature_list);
+  return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list,
+                                                               temperature_list);
 }
 
 /**
@@ -229,15 +234,15 @@ int EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> 
  * @param voltage_list
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    voltage_list.clear();
-    std::vector<uint16_t> v_read;
-    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
-    for(auto const& v : v_read)
-        voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
-    return res;
+  voltage_list.clear();
+  std::vector<uint16_t> v_read;
+  int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
+  for (auto const &v : v_read)
+    voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
+  return res;
 }
 
 /**
@@ -246,15 +251,16 @@ int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_
  * @param voltage_list
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list,
+                                                    std::vector<double> &voltage_list)
 {
-    voltage_list.clear();
-    std::vector<uint16_t> v_read;
-    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
-    for(auto const& v : v_read)
-        voltage_list.emplace_back(static_cast<double>(v));
-    return res;
+  voltage_list.clear();
+  std::vector<uint16_t> v_read;
+  int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
+  for (auto const &v : v_read)
+    voltage_list.emplace_back(static_cast<double>(v));
+  return res;
 }
 
 /**
@@ -263,27 +269,27 @@ int EndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &
  * @param data_list
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
                                                   std::vector<std::pair<double, uint8_t> > &data_list)
 {
-    data_list.clear();
+  data_list.clear();
 
-    std::vector<std::array<uint8_t, 3> > raw_data;
-    int res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
+  std::vector<std::array<uint8_t, 3> > raw_data;
+  int res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
 
-    for (auto const& data : raw_data)
-    {
-        // Voltage is first reg, uint16
-        auto voltage = static_cast<double>((static_cast<uint16_t>(data.at(1)) << 8) | data.at(0));
+  for (auto const &data : raw_data)
+  {
+    // Voltage is first reg, uint16
+    auto voltage = static_cast<double>((static_cast<uint16_t>(data.at(1)) << 8) | data.at(0));
 
-        // Temperature is second reg, uint8
-        uint8_t temperature = data.at(2);
+    // Temperature is second reg, uint8
+    uint8_t temperature = data.at(2);
 
-        data_list.emplace_back(std::make_pair(voltage, temperature));
-    }
+    data_list.emplace_back(std::make_pair(voltage, temperature));
+  }
 
-    return res;
+  return res;
 }
 
 /**
@@ -292,10 +298,11 @@ int EndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id
  * @param hw_error_list
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
+                                                       std::vector<uint8_t> &hw_error_list)
 {
-    return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
+  return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
 }
 
 // buttons status
@@ -306,14 +313,13 @@ int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t
  * @param action
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
-                                                   common::model::EActionType& action)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id, common::model::EActionType &action)
 {
-    uint8_t status;
-    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
-    action = interpretActionValue(status);
-    return res;
+  uint8_t status;
+  int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
+  action = interpretActionValue(status);
+  return res;
 }
 
 /**
@@ -322,13 +328,13 @@ int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
  * @param action
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType& action)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType &action)
 {
-    uint8_t status;
-    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
-    action = interpretActionValue(status);
-    return res;
+  uint8_t status;
+  int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
+  action = interpretActionValue(status);
+  return res;
 }
 
 /**
@@ -337,13 +343,13 @@ int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EA
  * @param action
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType& action)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType &action)
 {
-    uint8_t status;
-    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
-    action = interpretActionValue(status);
-    return res;
+  uint8_t status;
+  int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
+  action = interpretActionValue(status);
+  return res;
 }
 
 /**
@@ -352,21 +358,22 @@ int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EA
  * @param action_list
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
-                                                        std::vector<common::model::EActionType>& action_list)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t &id,
+                                                       std::vector<common::model::EActionType> &action_list)
 {
-    std::vector<std::array<typename reg_type::TYPE_BUTTON_STATUS, 3> > data_array_list;
-    int res;
-    res = syncReadConsecutiveBytes<typename reg_type::TYPE_BUTTON_STATUS, 3>(reg_type::ADDR_BUTTON_0_STATUS, {id}, data_array_list);
-    if (res == COMM_SUCCESS && data_array_list.size() == 1)
+  std::vector<std::array<typename reg_type::TYPE_BUTTON_STATUS, 3> > data_array_list;
+  int res;
+  res = syncReadConsecutiveBytes<typename reg_type::TYPE_BUTTON_STATUS, 3>(reg_type::ADDR_BUTTON_0_STATUS, { id },
+                                                                           data_array_list);
+  if (res == COMM_SUCCESS && data_array_list.size() == 1)
+  {
+    for (auto data : data_array_list.at(0))
     {
-        for (auto data : data_array_list.at(0))
-        {
-            action_list.push_back(interpretActionValue(data));
-        }
+      action_list.push_back(interpretActionValue(data));
     }
-    return res;
+  }
+  return res;
 }
 // accelerometers and collision
 
@@ -376,10 +383,10 @@ int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
  * @param x_value
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t& x_value)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t &x_value)
 {
-    return read<typename reg_type::TYPE_ACCELERO_VALUE_X>(reg_type::ADDR_ACCELERO_VALUE_X, id, x_value);
+  return read<typename reg_type::TYPE_ACCELERO_VALUE_X>(reg_type::ADDR_ACCELERO_VALUE_X, id, x_value);
 }
 
 /**
@@ -388,10 +395,10 @@ int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t& x
  * @param y_value
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t& y_value)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t &y_value)
 {
-    return read<typename reg_type::TYPE_ACCELERO_VALUE_Y>(reg_type::ADDR_ACCELERO_VALUE_Y, id, y_value);
+  return read<typename reg_type::TYPE_ACCELERO_VALUE_Y>(reg_type::ADDR_ACCELERO_VALUE_Y, id, y_value);
 }
 
 /**
@@ -400,10 +407,10 @@ int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t& y
  * @param z_value
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z_value)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t &z_value)
 {
-    return read<typename reg_type::TYPE_ACCELERO_VALUE_Z>(reg_type::ADDR_ACCELERO_VALUE_Z, id, z_value);
+  return read<typename reg_type::TYPE_ACCELERO_VALUE_Z>(reg_type::ADDR_ACCELERO_VALUE_Z, id, z_value);
 }
 
 /**
@@ -412,17 +419,17 @@ int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z
  * @param status
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool &status)
 {
-    uint8_t value = 0;
-    status = false;
-    int res = read<typename reg_type::TYPE_COLLISION_STATUS>(reg_type::ADDR_COLLISION_STATUS, id, value);
-    if (COMM_SUCCESS == res)
-    {
-        status = (value > 0) ? true : false;
-    }
-    return res;
+  uint8_t value = 0;
+  status = false;
+  int res = read<typename reg_type::TYPE_COLLISION_STATUS>(reg_type::ADDR_COLLISION_STATUS, id, value);
+  if (COMM_SUCCESS == res)
+  {
+    status = (value > 0) ? true : false;
+  }
+  return res;
 }
 
 /**
@@ -431,13 +438,13 @@ int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
  * @param in
  * @return
  */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
+template <typename reg_type>
+int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool &in)
 {
-    uint8_t value;
-    int res = read<typename reg_type::TYPE_DIGITAL_IN>(reg_type::ADDR_DIGITAL_IN, id, value);
-    in = (value > 0) ? true : false;
-    return res;
+  uint8_t value;
+  int res = read<typename reg_type::TYPE_DIGITAL_IN>(reg_type::ADDR_DIGITAL_IN, id, value);
+  in = (value > 0) ? true : false;
+  return res;
 }
 
 /**
@@ -446,10 +453,10 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
  * @param out the output value to write
  * @return the result of the operation as a status code
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::writeDigitalInput(uint8_t id, bool in)
 {
-    return COMM_TX_ERROR;
+  return COMM_TX_ERROR;
 }
 
 /**
@@ -458,10 +465,10 @@ int EndEffectorDriver<reg_type>::writeDigitalInput(uint8_t id, bool in)
  * @param out  1 : true, 0: false
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
 {
-    return write<typename reg_type::TYPE_DIGITAL_OUT>(reg_type::ADDR_DIGITAL_OUT, id, static_cast<uint8_t>(out));
+  return write<typename reg_type::TYPE_DIGITAL_OUT>(reg_type::ADDR_DIGITAL_OUT, id, static_cast<uint8_t>(out));
 }
 
 /**
@@ -470,10 +477,11 @@ int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
  * @param thresh
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
 {
-    return write<typename reg_type::TYPE_COLLISION_THRESHOLD>(reg_type::ADDR_COLLISION_THRESHOLD, id, static_cast<uint8_t>(thresh));
+  return write<typename reg_type::TYPE_COLLISION_THRESHOLD>(reg_type::ADDR_COLLISION_THRESHOLD, id,
+                                                            static_cast<uint8_t>(thresh));
 }
 
 /**
@@ -482,14 +490,14 @@ int EndEffectorDriver<reg_type>::writeCollisionThresh(uint8_t id, int thresh)
  * @param thresh
  * @return
  */
-template<typename reg_type>
+template <typename reg_type>
 int EndEffectorDriver<reg_type>::writeCollisionThreshAlgo2(uint8_t id, int thresh)
 {
-    std::cout << "writeCollisionThreshAlgo2 not implemented for end effector" << std::endl;
+  std::cout << "writeCollisionThreshAlgo2 not implemented for end effector" << std::endl;
 
-    return 0;
+  return 0;
 }
 
-} // ttl_driver
+}  // namespace ttl_driver
 
-#endif // EndEffectorDriver
+#endif  // EndEffectorDriver

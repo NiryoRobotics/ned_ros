@@ -41,80 +41,79 @@ namespace model
 /**
  * @brief The SynchronizeMotorCmd class
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
 {
-    public:
-        SynchronizeMotorCmd();
-        SynchronizeMotorCmd(E type);
+public:
+  SynchronizeMotorCmd();
+  SynchronizeMotorCmd(E type);
 
-        // setters
-        void setType(E type);
+  // setters
+  void setType(E type);
 
-        // getters
-        E getType() const;
-        int getCmdType() const override;
+  // getters
+  E getType() const;
+  int getCmdType() const override;
 
-        // AbstractSingleMotorCmd interface
-        bool isStepperCmd() const override;
-        bool isDxlCmd() const override;
+  // AbstractSingleMotorCmd interface
+  bool isStepperCmd() const override;
+  bool isDxlCmd() const override;
 
-        // IObject interface
-        void reset() override;
-        std::string str() const override;
-        bool isValid() const override;
+  // IObject interface
+  void reset() override;
+  std::string str() const override;
+  bool isValid() const override;
 
-    private:
-        E _type{E::CMD_TYPE_UNKNOWN};
+private:
+  E _type{ E::CMD_TYPE_UNKNOWN };
 };
 
 /**
  * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  */
-template<typename E, typename ParamType>
-SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
-    SynchronizeMotorCmd<E, ParamType>(E::CMD_TYPE_UNKNOWN)
-{}
+template <typename E, typename ParamType>
+SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() : SynchronizeMotorCmd<E, ParamType>(E::CMD_TYPE_UNKNOWN)
+{
+}
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
  * @param type
  */
-template<typename E, typename ParamType>
-SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
-    AbstractSynchronizeMotorCmd<ParamType>()
+template <typename E, typename ParamType>
+SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) : AbstractSynchronizeMotorCmd<ParamType>()
 {
-    static_assert(std::is_enum<E>::value, "E must be an enum");
+  static_assert(std::is_enum<E>::value, "E must be an enum");
 
-    this->setType(type);
-    this->clear();
+  this->setType(type);
+  this->clear();
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::setType
  * @param type
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 void SynchronizeMotorCmd<E, ParamType>::setType(E type)
 {
-    _type = type;
+  _type = type;
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::getType
  * @return
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 E SynchronizeMotorCmd<E, ParamType>::getType() const
 {
-    return _type;
+  return _type;
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::getCmdType
  * @return
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 int SynchronizeMotorCmd<E, ParamType>::getCmdType() const
 {
   return static_cast<int>(_type);
@@ -124,58 +123,57 @@ int SynchronizeMotorCmd<E, ParamType>::getCmdType() const
  * @brief SynchronizeMotorCmd<E, ParamType>::isCmdStepper
  * @return
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 bool SynchronizeMotorCmd<E, ParamType>::isStepperCmd() const
 {
-    return typeid(E) == typeid(common::model::EStepperCommandType);
+  return typeid(E) == typeid(common::model::EStepperCommandType);
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::isCmdDxl
  * @return
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 bool SynchronizeMotorCmd<E, ParamType>::isDxlCmd() const
 {
-    return typeid(E) == typeid(common::model::EDxlCommandType);
+  return typeid(E) == typeid(common::model::EDxlCommandType);
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::reset
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 void SynchronizeMotorCmd<E, ParamType>::reset()
 {
-    this->setType(E::CMD_TYPE_UNKNOWN);
-    this->clear();
+  this->setType(E::CMD_TYPE_UNKNOWN);
+  this->clear();
 }
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::isValid
  * @return
  */
-template<typename E, typename ParamType>
+template <typename E, typename ParamType>
 bool SynchronizeMotorCmd<E, ParamType>::isValid() const
 {
-    if (E::CMD_TYPE_UNKNOWN == getType() || this->_motor_params_map.empty())
-    {
-        return false;
-    }
+  if (E::CMD_TYPE_UNKNOWN == getType() || this->_motor_params_map.empty())
+  {
+    return false;
+  }
 
-    for (auto const& it_map : this->_motor_params_map)
-    {
-        if (!it_map.second.isValid())
-            return false;
-    }
+  for (auto const &it_map : this->_motor_params_map)
+  {
+    if (!it_map.second.isValid())
+      return false;
+  }
 
-    return true;
+  return true;
 }
 
 // aliases for all kind of motors
 using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType, uint32_t>;
 using StepperTtlSyncCmd = SynchronizeMotorCmd<EStepperCommandType, uint32_t>;
 using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
-
 
 //********************************
 // specializations for dynamixel
@@ -185,41 +183,40 @@ using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
  * @brief DxlSyncCmd::str
  * @return
  */
-template<>
-inline
-std::string DxlSyncCmd::str() const
+template <>
+inline std::string DxlSyncCmd::str() const
 {
-    std::string string_info;
+  std::string string_info;
 
-    std::ostringstream ss;
-    ss << "Dynamixel Sync motor cmd - ";
-    ss << DxlCommandTypeEnum(_type).toString();
-    ss << ": ";
+  std::ostringstream ss;
+  ss << "Dynamixel Sync motor cmd - ";
+  ss << DxlCommandTypeEnum(_type).toString();
+  ss << ": ";
 
-    if (!isValid())
+  if (!isValid())
+  {
+    ss << "Corrupted command : invalid sync command ";
+    string_info = ss.str();
+  }
+  else
+  {
+    ss << "[";
+
+    for (auto const &param : _motor_params_map)
     {
-        ss << "Corrupted command : invalid sync command ";
-        string_info = ss.str();
-    }
-    else
-    {
-        ss << "[";
-
-        for (auto const& param : _motor_params_map)
-        {
-            ss << HardwareTypeEnum(param.first).toString() << " => ";
-            MotorParam p = param.second;
-            for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
-                ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
-        }
-
-        string_info = ss.str();
-        string_info.pop_back();
-
-        string_info += "]";
+      ss << HardwareTypeEnum(param.first).toString() << " => ";
+      MotorParam p = param.second;
+      for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
+        ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
     }
 
-    return string_info;
+    string_info = ss.str();
+    string_info.pop_back();
+
+    string_info += "]";
+  }
+
+  return string_info;
 }
 
 //********************************
@@ -230,44 +227,41 @@ std::string DxlSyncCmd::str() const
  * @brief StepperTtlSyncCmd::str
  * @return
  */
-template<>
-inline
-std::string StepperTtlSyncCmd::str() const
+template <>
+inline std::string StepperTtlSyncCmd::str() const
 {
-    std::string string_info;
+  std::string string_info;
 
-    std::ostringstream ss;
-    ss << "Stepper TTL Sync motor cmd - ";
-    ss << StepperCommandTypeEnum(_type).toString();
-    ss << ": ";
+  std::ostringstream ss;
+  ss << "Stepper TTL Sync motor cmd - ";
+  ss << StepperCommandTypeEnum(_type).toString();
+  ss << ": ";
 
-    if (!isValid())
+  if (!isValid())
+  {
+    ss << "Corrupted command : invalid sync command ";
+    string_info = ss.str();
+  }
+  else
+  {
+    ss << "[";
+
+    for (auto const &param : _motor_params_map)
     {
-        ss << "Corrupted command : invalid sync command ";
-        string_info = ss.str();
-    }
-    else
-    {
-        ss << "[";
-
-        for (auto const& param : _motor_params_map)
-        {
-            ss << HardwareTypeEnum(param.first).toString() << " => ";
-            MotorParam p = param.second;
-            for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
-                ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
-        }
-
-        string_info = ss.str();
-        string_info.pop_back();
-
-        string_info += "]";
+      ss << HardwareTypeEnum(param.first).toString() << " => ";
+      MotorParam p = param.second;
+      for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
+        ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
     }
 
-    return string_info;
+    string_info = ss.str();
+    string_info.pop_back();
+
+    string_info += "]";
+  }
+
+  return string_info;
 }
-
-
 
 //********************************
 // specializations for steppers CAN
@@ -277,46 +271,43 @@ std::string StepperTtlSyncCmd::str() const
  * @brief StepperSyncCmd::str
  * @return
  */
-template<>
-inline
-std::string StepperSyncCmd::str() const
+template <>
+inline std::string StepperSyncCmd::str() const
 {
-    std::string string_info;
+  std::string string_info;
 
-    std::ostringstream ss;
-    ss << "Stepper CAN Sync motor cmd - ";
-    ss << StepperCommandTypeEnum(_type).toString();
-    ss << ": ";
+  std::ostringstream ss;
+  ss << "Stepper CAN Sync motor cmd - ";
+  ss << StepperCommandTypeEnum(_type).toString();
+  ss << ": ";
 
-    if (!isValid())
+  if (!isValid())
+  {
+    ss << "Corrupted command : invalid sync command ";
+    string_info = ss.str();
+  }
+  else
+  {
+    ss << "[";
+
+    for (auto const &param : _motor_params_map)
     {
-        ss << "Corrupted command : invalid sync command ";
-        string_info = ss.str();
-    }
-    else
-    {
-        ss << "[";
-
-        for (auto const& param : _motor_params_map)
-        {
-            ss << HardwareTypeEnum(param.first).toString() << " => ";
-            MotorParam p = param.second;
-            for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
-                ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
-        }
-
-        string_info = ss.str();
-        string_info.pop_back();
-
-        string_info += "]";
+      ss << HardwareTypeEnum(param.first).toString() << " => ";
+      MotorParam p = param.second;
+      for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
+        ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
     }
 
-    return string_info;
+    string_info = ss.str();
+    string_info.pop_back();
+
+    string_info += "]";
+  }
+
+  return string_info;
 }
 
+}  // namespace model
+}  // namespace common
 
-
-} // namespace model
-} // namespace common
-
-#endif // SYNCHRONIZE_MOTOR_CMD_H
+#endif  // SYNCHRONIZE_MOTOR_CMD_H

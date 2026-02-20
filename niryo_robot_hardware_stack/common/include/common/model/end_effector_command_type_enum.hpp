@@ -34,13 +34,15 @@ namespace model
 /**
  * @brief The EEndEffectorCommandType enum
  */
-enum class EEndEffectorCommandType { CMD_TYPE_DIGITAL_OUTPUT = 4,
-                                     CMD_TYPE_PING=5,
-                                     CMD_TYPE_SET_COLLISION_THRESH = 6,
-                                     CMD_TYPE_SET_COLLISION_THRESH_ALGO_2 = 7,
-                                     CMD_TYPE_DIGITAL_INPUT = 8,
-                                     CMD_TYPE_UNKNOWN=100
-                                   };
+enum class EEndEffectorCommandType
+{
+  CMD_TYPE_DIGITAL_OUTPUT = 4,
+  CMD_TYPE_PING = 5,
+  CMD_TYPE_SET_COLLISION_THRESH = 6,
+  CMD_TYPE_SET_COLLISION_THRESH_ALGO_2 = 7,
+  CMD_TYPE_DIGITAL_INPUT = 8,
+  CMD_TYPE_UNKNOWN = 100
+};
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
@@ -48,15 +50,15 @@ enum class EEndEffectorCommandType { CMD_TYPE_DIGITAL_OUTPUT = 4,
 class EndEffectorCommandTypeEnum : public AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>
 {
 public:
-    EndEffectorCommandTypeEnum(EEndEffectorCommandType e=EEndEffectorCommandType::CMD_TYPE_UNKNOWN);
-    EndEffectorCommandTypeEnum(const char* str);
+  EndEffectorCommandTypeEnum(EEndEffectorCommandType e = EEndEffectorCommandType::CMD_TYPE_UNKNOWN);
+  EndEffectorCommandTypeEnum(const char *str);
 
 private:
-    friend class AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>;
-    static std::map<EEndEffectorCommandType, std::string> initialize();
+  friend class AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>;
+  static std::map<EEndEffectorCommandType, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // END_EFFECTOR_COMMAND_TYPE_ENUM_H
+#endif  // END_EFFECTOR_COMMAND_TYPE_ENUM_H

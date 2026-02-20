@@ -37,52 +37,51 @@ namespace cpu_interface
  */
 class CpuInterfaceCore : public common::util::IInterfaceCore
 {
-    public:
-        CpuInterfaceCore(ros::NodeHandle& nh);
-        ~CpuInterfaceCore() override;
+public:
+  CpuInterfaceCore(ros::NodeHandle &nh);
+  ~CpuInterfaceCore() override;
 
-        // non copyable class
-        CpuInterfaceCore( const CpuInterfaceCore& ) = delete;
-        CpuInterfaceCore( CpuInterfaceCore&& ) = delete;
+  // non copyable class
+  CpuInterfaceCore(const CpuInterfaceCore &) = delete;
+  CpuInterfaceCore(CpuInterfaceCore &&) = delete;
 
-        CpuInterfaceCore& operator= ( CpuInterfaceCore && ) = delete;
-        CpuInterfaceCore& operator= ( const CpuInterfaceCore& ) = delete;
+  CpuInterfaceCore &operator=(CpuInterfaceCore &&) = delete;
+  CpuInterfaceCore &operator=(const CpuInterfaceCore &) = delete;
 
-        bool init(ros::NodeHandle& nh) override;
+  bool init(ros::NodeHandle &nh) override;
 
-        void startReadingData();
-        int getCpuTemperature() const;
+  void startReadingData();
+  int getCpuTemperature() const;
 
-    private:
-        void initParameters(ros::NodeHandle& nh) override;
-        void startServices(ros::NodeHandle& nh) override;
-        void startPublishers(ros::NodeHandle& nh) override;
-        void startSubscribers(ros::NodeHandle& nh) override;
+private:
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-        void _readCpuTemperature();
-        void _readHardwareDataLoop();
+  void _readCpuTemperature();
+  void _readHardwareDataLoop();
 
-    private:
-        std::thread _read_hardware_data_thread;
+private:
+  std::thread _read_hardware_data_thread;
 
-        bool _simulation_mode{false};
-        int _cpu_temperature{0};
+  bool _simulation_mode{ false };
+  int _cpu_temperature{ 0 };
 
-        double _read_cpu_frequency{0.0};
-        int _temperature_warn_threshold{0};
-        int _temperature_shutdown_threshold{0};
+  double _read_cpu_frequency{ 0.0 };
+  int _temperature_warn_threshold{ 0 };
+  int _temperature_shutdown_threshold{ 0 };
 };
 
 /**
  * @brief CpuInterfaceCore::getCpuTemperature
  * @return
  */
-inline
-int CpuInterfaceCore::getCpuTemperature() const
+inline int CpuInterfaceCore::getCpuTemperature() const
 {
-    return _cpu_temperature;
+  return _cpu_temperature;
 }
 
-} // CpuInterface
+}  // namespace cpu_interface
 
 #endif

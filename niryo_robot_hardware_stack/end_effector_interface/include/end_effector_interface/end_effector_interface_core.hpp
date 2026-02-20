@@ -47,72 +47,66 @@ namespace end_effector_interface
  */
 class EndEffectorInterfaceCore : public common::util::IInterfaceCore
 {
+public:
+  EndEffectorInterfaceCore(ros::NodeHandle &nh, std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
+  ~EndEffectorInterfaceCore() override = default;
 
-    public:
-        EndEffectorInterfaceCore(ros::NodeHandle& nh,
-                                 std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        ~EndEffectorInterfaceCore() override = default;
+  // non copyable class
+  EndEffectorInterfaceCore(const EndEffectorInterfaceCore &) = delete;
+  EndEffectorInterfaceCore(EndEffectorInterfaceCore &&) = delete;
 
-        // non copyable class
-        EndEffectorInterfaceCore( const EndEffectorInterfaceCore& ) = delete;
-        EndEffectorInterfaceCore( EndEffectorInterfaceCore&& ) = delete;
+  EndEffectorInterfaceCore &operator=(EndEffectorInterfaceCore &&) = delete;
+  EndEffectorInterfaceCore &operator=(const EndEffectorInterfaceCore &) = delete;
 
-        EndEffectorInterfaceCore& operator= ( EndEffectorInterfaceCore && ) = delete;
-        EndEffectorInterfaceCore& operator= ( const EndEffectorInterfaceCore& ) = delete;
+  bool init(ros::NodeHandle &nh) override;
+  bool rebootHardware();
 
-        bool init(ros::NodeHandle &nh) override;
-        bool rebootHardware();
+  // getters
+  std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
 
-        // getters
-        std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
+private:
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-    private:
-        void initParameters(ros::NodeHandle& nh) override;
-        void startServices(ros::NodeHandle& nh) override;
-        void startPublishers(ros::NodeHandle& nh) override;
-        void startSubscribers(ros::NodeHandle& nh) override;
+  void initEndEffectorHardware();
+  int initHardware();
+  void _publishButtonState(const ros::TimerEvent &);
 
-        void initEndEffectorHardware();
-        int initHardware();
-        void _publishButtonState(const ros::TimerEvent&);
+  bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
+                           end_effector_interface::SetEEDigitalOut::Response &res);
+  bool _callbackSetDIState(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
 
-        bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
-                                 end_effector_interface::SetEEDigitalOut::Response &res);
-        bool _callbackSetDIState(niryo_robot_msgs::SetBool::Request &req,
-                                 niryo_robot_msgs::SetBool::Response &res);
+private:
+  std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
-    private:
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+  ros::Publisher _free_drive_button_state_publisher;
+  ros::Publisher _save_pos_button_state_publisher;
+  ros::Publisher _custom_button_state_publisher;
 
-        ros::Publisher _free_drive_button_state_publisher;
-        ros::Publisher _save_pos_button_state_publisher;
-        ros::Publisher _custom_button_state_publisher;
+  ros::Publisher _digital_out_publisher;
 
-        ros::Publisher _digital_out_publisher;
+  ros::Timer _states_publisher_timer;
+  ros::Duration _states_publisher_duration{ 1.0 };
 
-        ros::Timer _states_publisher_timer;
-        ros::Duration _states_publisher_duration{1.0};
+  ros::ServiceServer _digital_out_server;
+  ros::ServiceServer _digital_in_server;
 
-        ros::ServiceServer _digital_out_server;
-        ros::ServiceServer _digital_in_server;
-
-        std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
-        uint8_t _id{1};
-        bool _simulation{false};
+  std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
+  uint8_t _id{ 1 };
+  bool _simulation{ false };
 };
 
 /**
  * @brief EndEffectorInterfaceCore::getEndEffectorState
  * @return
  */
-inline
-std::shared_ptr<common::model::EndEffectorState>
-EndEffectorInterfaceCore::getEndEffectorState() const
+inline std::shared_ptr<common::model::EndEffectorState> EndEffectorInterfaceCore::getEndEffectorState() const
 {
-    return _end_effector_state;
+  return _end_effector_state;
 }
 
+}  // namespace end_effector_interface
 
-} // EndEffectorInterface
-
-#endif // END_EFFECTOR_INTERFACE_CORE_HPP
+#endif  // END_EFFECTOR_INTERFACE_CORE_HPP

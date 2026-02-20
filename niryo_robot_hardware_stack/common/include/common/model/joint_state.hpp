@@ -45,7 +45,7 @@ public:
 
   ~JointState() override = default;
 
-  void setName(std::string& name);
+  void setName(std::string &name);
   void setDirection(int8_t direction);
   void setOffsetPosition(double offset_position);
   void setDefaultHomePosition(double default_home_position);
@@ -65,7 +65,7 @@ public:
   uint8_t getTorquePercentage() const;
   bool isValidPosition(double position);
 
-  virtual bool operator==(const JointState& other) const;
+  virtual bool operator==(const JointState &other) const;
 
   virtual int to_motor_pos(double rad_pos) = 0;
   virtual double to_rad_pos(int motor_pos) = 0;
@@ -99,11 +99,11 @@ protected:
 protected:
   // see
   // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-  JointState(const JointState&) = default;
-  JointState(JointState&&) = default;
+  JointState(const JointState &) = default;
+  JointState(JointState &&) = default;
 
-  JointState& operator=(JointState&&) = default;
-  JointState& operator=(const JointState&) = default;
+  JointState &operator=(JointState &&) = default;
+  JointState &operator=(const JointState &) = default;
 };
 
 /**

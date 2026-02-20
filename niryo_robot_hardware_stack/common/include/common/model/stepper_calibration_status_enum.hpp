@@ -34,14 +34,15 @@ namespace model
 /**
  * @brief The EStepperCalibrationStatus enum
  */
-enum class EStepperCalibrationStatus {
-    UNINITIALIZED = 0, // means a calibration is expected
-    OK = 1,
-    TIMEOUT = 2,
-    BAD_PARAM = 3,
-    FAIL = 4,
-    WAITING_USER_INPUT = 5,
-    IN_PROGRESS = 6,
+enum class EStepperCalibrationStatus
+{
+  UNINITIALIZED = 0,  // means a calibration is expected
+  OK = 1,
+  TIMEOUT = 2,
+  BAD_PARAM = 3,
+  FAIL = 4,
+  WAITING_USER_INPUT = 5,
+  IN_PROGRESS = 6,
 };
 
 /**
@@ -50,15 +51,15 @@ enum class EStepperCalibrationStatus {
 class StepperCalibrationStatusEnum : public AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>
 {
 public:
-    StepperCalibrationStatusEnum(EStepperCalibrationStatus e=EStepperCalibrationStatus::UNINITIALIZED);
-    StepperCalibrationStatusEnum(const char* str);
+  StepperCalibrationStatusEnum(EStepperCalibrationStatus e = EStepperCalibrationStatus::UNINITIALIZED);
+  StepperCalibrationStatusEnum(const char *str);
 
 private:
-    friend class AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>;
-    static std::map<EStepperCalibrationStatus, std::string> initialize();
+  friend class AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>;
+  static std::map<EStepperCalibrationStatus, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // STEPPER_CALIBRATION_STATUS_ENUM_H
+#endif  // STEPPER_CALIBRATION_STATUS_ENUM_H

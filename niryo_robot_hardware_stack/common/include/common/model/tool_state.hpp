@@ -36,52 +36,51 @@ namespace model
  */
 class ToolState : public DxlMotorState
 {
-    public:
-        ToolState() = default;
-        ToolState(std::string name, EHardwareType type, uint8_t id);
+public:
+  ToolState() = default;
+  ToolState(std::string name, EHardwareType type, uint8_t id);
 
-        void setName(std::string name);
-        void setLedState(int led_state);
+  void setName(std::string name);
+  void setLedState(int led_state);
 
-        std::string getToolName() const;
-        int getLedState() const;
+  std::string getToolName() const;
+  int getLedState() const;
 
-        int getState() const;
-        void setState(int s);
+  int getState() const;
+  void setState(int s);
 
-        bool isConnected() const;
+  bool isConnected() const;
 
-        // DxlMotorState interface
-        void reset() override;
-        std::string str() const override;
+  // DxlMotorState interface
+  void reset() override;
+  std::string str() const override;
 
-    public:
-        static constexpr int TOOL_STATE_PING_OK       = 0x01;
-        static constexpr int TOOL_STATE_PING_ERROR    = 0x02;
-        static constexpr int TOOL_STATE_WRONG_ID      = 0x03;
-        static constexpr int TOOL_STATE_TIMEOUT       = 0x04;
+public:
+  static constexpr int TOOL_STATE_PING_OK = 0x01;
+  static constexpr int TOOL_STATE_PING_ERROR = 0x02;
+  static constexpr int TOOL_STATE_WRONG_ID = 0x03;
+  static constexpr int TOOL_STATE_TIMEOUT = 0x04;
 
-        static constexpr int GRIPPER_STATE_OK         = 0x12;
+  static constexpr int GRIPPER_STATE_OK = 0x12;
 
-        static constexpr int VACUUM_PUMP_STATE_PULLED = 0x20;
-        static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;
+  static constexpr int VACUUM_PUMP_STATE_PULLED = 0x20;
+  static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;
 
-    protected:
-        std::string _tool_name;
+protected:
+  std::string _tool_name;
 
-        // state of the tool (based on public static constexpr state above)
-        int _state{TOOL_STATE_PING_ERROR};
+  // state of the tool (based on public static constexpr state above)
+  int _state{ TOOL_STATE_PING_ERROR };
 
-        bool _connected{false};
-        int _led_state{-1};
+  bool _connected{ false };
+  int _led_state{ -1 };
 };
 
 /**
  * @brief getState
  * @return
  */
-inline
-int ToolState::getState() const
+inline int ToolState::getState() const
 {
   return _state;
 }
@@ -90,8 +89,7 @@ int ToolState::getState() const
  * @brief setState
  * @param s
  */
-inline
-void ToolState::setState(int s)
+inline void ToolState::setState(int s)
 {
   _state = s;
 }
@@ -100,33 +98,30 @@ void ToolState::setState(int s)
  * @brief ToolState::getName
  * @return
  */
-inline
-std::string ToolState::getToolName() const
+inline std::string ToolState::getToolName() const
 {
-    return _tool_name;
+  return _tool_name;
 }
 
 /**
  * @brief ToolState::isConnected
  * @return
  */
-inline
-bool ToolState::isConnected() const
+inline bool ToolState::isConnected() const
 {
-    return _connected;
+  return _connected;
 }
 
 /**
  * @brief TtlManager::getLedState
  * @return
  */
-inline
-int ToolState::getLedState() const
+inline int ToolState::getLedState() const
 {
-    return _led_state;
+  return _led_state;
 }
 
-} // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 
-#endif // TOOL_STATE_H
+#endif  // TOOL_STATE_H

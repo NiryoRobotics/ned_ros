@@ -49,13 +49,13 @@ namespace joints_interface
 class JointHardwareInterface : public hardware_interface::RobotHW
 {
 public:
-  JointHardwareInterface(ros::NodeHandle& rootnh, ros::NodeHandle& robot_hwnh,
+  JointHardwareInterface(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh,
                          std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                          std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-  int calibrateJoints(int mode, std::string& result_message);
+  int calibrateJoints(int mode, std::string &result_message);
   int factoryCalibrateJoints(FactoryCalibration::Request::_command_type command,
-                             FactoryCalibration::Request::_ids_type ids, std::string& result_message);
+                             FactoryCalibration::Request::_ids_type ids, std::string &result_message);
   void setNeedCalibration();
   void activateLearningMode(bool activated);
   void synchronizeMotors(bool synchronize);
@@ -68,28 +68,28 @@ public:
 
   bool rebootAll(bool torque_on);
 
-  const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
+  const std::vector<std::shared_ptr<common::model::JointState> > &getJointsState() const;
 
   // RobotHW interface
 public:
-  bool init(ros::NodeHandle& rootnh, ros::NodeHandle& robot_hwnh) override;
-  int initHardware(const std::shared_ptr<common::model::JointState>& motor_state, bool torque_on);
+  bool init(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh) override;
+  int initHardware(const std::shared_ptr<common::model::JointState> &motor_state, bool torque_on);
 
-  void read(const ros::Time& /*time*/, const ros::Duration& /*period*/) override;
-  void write(const ros::Time& /*time*/, const ros::Duration& /*period*/) override;
+  void read(const ros::Time & /*time*/, const ros::Duration & /*period*/) override;
+  void write(const ros::Time & /*time*/, const ros::Duration & /*period*/) override;
 
 private:
-  bool callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request& req,
-                               niryo_robot_msgs::SetFloatList::Response& res);
-  bool callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request& req,
-                               niryo_robot_msgs::GetFloatList::Response& res);
-  bool callbackResetHomePosition(niryo_robot_msgs::Trigger::Request& req, niryo_robot_msgs::Trigger::Response& res);
+  bool callbackSetHomePosition(niryo_robot_msgs::SetFloatList::Request &req,
+                               niryo_robot_msgs::SetFloatList::Response &res);
+  bool callbackGetHomePosition(niryo_robot_msgs::GetFloatList::Request &req,
+                               niryo_robot_msgs::GetFloatList::Response &res);
+  bool callbackResetHomePosition(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-  bool initStepperState(ros::NodeHandle& robot_hwnh,
-                        const std::shared_ptr<common::model::StepperMotorState>& stepperState,
-                        const std::string& currentNamespace) const;
-  bool initDxlState(ros::NodeHandle& robot_hwnh, const std::shared_ptr<common::model::DxlMotorState>& dxlState,
-                    const std::string& currentNamespace) const;
+  bool initStepperState(ros::NodeHandle &robot_hwnh,
+                        const std::shared_ptr<common::model::StepperMotorState> &stepperState,
+                        const std::string &currentNamespace) const;
+  bool initDxlState(ros::NodeHandle &robot_hwnh, const std::shared_ptr<common::model::DxlMotorState> &dxlState,
+                    const std::string &currentNamespace) const;
 
 private:
   hardware_interface::JointStateInterface _joint_state_interface;
@@ -115,7 +115,7 @@ private:
  * @brief JointHardwareInterface::getJointsState
  * @return
  */
-inline const std::vector<std::shared_ptr<common::model::JointState> >& JointHardwareInterface::getJointsState() const
+inline const std::vector<std::shared_ptr<common::model::JointState> > &JointHardwareInterface::getJointsState() const
 {
   return _joint_state_list;
 }

@@ -48,80 +48,80 @@ namespace niryo_robot_hardware_interface
  */
 class HardwareInterface : common::util::IInterfaceCore
 {
-    public:
-        HardwareInterface(ros::NodeHandle &nh);
-        ~HardwareInterface() override = default;
+public:
+  HardwareInterface(ros::NodeHandle &nh);
+  ~HardwareInterface() override = default;
 
-        // non copyable class
-        HardwareInterface( const HardwareInterface& ) = delete;
-        HardwareInterface( HardwareInterface&& ) = delete;
+  // non copyable class
+  HardwareInterface(const HardwareInterface &) = delete;
+  HardwareInterface(HardwareInterface &&) = delete;
 
-        HardwareInterface& operator= ( HardwareInterface && ) = delete;
-        HardwareInterface& operator= ( const HardwareInterface& ) = delete;
+  HardwareInterface &operator=(HardwareInterface &&) = delete;
+  HardwareInterface &operator=(const HardwareInterface &) = delete;
 
-        bool init(ros::NodeHandle &nh) override;
+  bool init(ros::NodeHandle &nh) override;
 
-    private:
-        void initParameters(ros::NodeHandle &nh) override;
-        void startServices(ros::NodeHandle &nh) override;
-        void startPublishers(ros::NodeHandle &nh) override;
-        void startSubscribers(ros::NodeHandle &nh) override;
+private:
+  void initParameters(ros::NodeHandle &nh) override;
+  void startServices(ros::NodeHandle &nh) override;
+  void startPublishers(ros::NodeHandle &nh) override;
+  void startSubscribers(ros::NodeHandle &nh) override;
 
-        void initNodes(ros::NodeHandle &nh);
+  void initNodes(ros::NodeHandle &nh);
 
-        int rebootMotors(int32_t &status, std::string &message);
+  int rebootMotors(int32_t &status, std::string &message);
 
-        bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+  bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-        void _callbackRobotStatus(const niryo_robot_status::RobotStatus::ConstPtr& msg);
+  void _callbackRobotStatus(const niryo_robot_status::RobotStatus::ConstPtr &msg);
 
-        void _publishHardwareStatus(const ros::TimerEvent&);
-        void _publishSoftwareVersion(const ros::TimerEvent&);
+  void _publishHardwareStatus(const ros::TimerEvent &);
+  void _publishSoftwareVersion(const ros::TimerEvent &);
 
-    private:
-        ros::NodeHandle _nh;
+private:
+  ros::NodeHandle _nh;
 
-        ros::Publisher _hw_status_publisher;
-        ros::Timer _hw_status_publisher_timer;
-        ros::Duration _hw_status_publisher_duration{1.0};
+  ros::Publisher _hw_status_publisher;
+  ros::Timer _hw_status_publisher_timer;
+  ros::Duration _hw_status_publisher_duration{ 1.0 };
 
-        ros::Publisher _sw_version_publisher;
-        ros::Timer _sw_version_publisher_timer;
-        ros::Duration _sw_version_publisher_duration{1.0};
+  ros::Publisher _sw_version_publisher;
+  ros::Timer _sw_version_publisher_timer;
+  ros::Duration _sw_version_publisher_duration{ 1.0 };
 
-        std::vector<ros::Publisher> _cancel_goal_publishers;
+  std::vector<ros::Publisher> _cancel_goal_publishers;
 
-        ros::ServiceServer _motors_report_service;
-        ros::ServiceServer _stop_motors_report_service;
-        ros::ServiceServer _reboot_motors_service;
+  ros::ServiceServer _motors_report_service;
+  ros::ServiceServer _stop_motors_report_service;
+  ros::ServiceServer _reboot_motors_service;
 
-        ros::Subscriber _robot_status_subscriber;
+  ros::Subscriber _robot_status_subscriber;
 
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
-        std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
-        std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;
-        std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
-        std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
-        std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
+  std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+  std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+  std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
+  std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;
+  std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
+  std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
+  std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
 
-        bool _gazebo{false};
+  bool _gazebo{ false };
 
-        bool _can_enabled{false};
-        bool _ttl_enabled{false};
-        bool _end_effector_enabled{false};
-        int8_t _hardware_state{niryo_robot_msgs::HardwareStatus::NORMAL};
+  bool _can_enabled{ false };
+  bool _ttl_enabled{ false };
+  bool _end_effector_enabled{ false };
+  int8_t _hardware_state{ niryo_robot_msgs::HardwareStatus::NORMAL };
 
-        common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
+  common::model::EBusProtocol _conveyor_bus{ common::model::EBusProtocol::CAN };
 
-        std::string _rpi_image_version;
-        std::string _ros_niryo_robot_version;
-        std::string _hardware_version;
+  std::string _rpi_image_version;
+  std::string _ros_niryo_robot_version;
+  std::string _hardware_version;
 
-        int32_t _previous_robot_status{niryo_robot_status::RobotStatus::UNKNOWN};
+  int32_t _previous_robot_status{ niryo_robot_status::RobotStatus::UNKNOWN };
 };
 
-} // namespace niryo_robot_hardware_interface
+}  // namespace niryo_robot_hardware_interface
 #endif

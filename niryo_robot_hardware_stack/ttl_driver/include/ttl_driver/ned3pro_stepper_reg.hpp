@@ -23,125 +23,124 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace ttl_driver
 {
-    /**
-     * @brief Register definitions for Ned3Pro Stepper motor family
-     * 
-     * This hardware family currently has two model number variants:
-     * - 2100: Standard Ned3Pro stepper for robot joints (original bootloader)
-     * - 2104: Ned3Pro stepper for conveyors (different gear ratio, specific firmware)
-     * 
-     * Both variants share the same register layout and communication protocol,
-     * differing only in internal firmware behavior and gear ratios.
-     * The bootloader is factory-set and determines the model number permanently,
-     * meaning motors with old bootloaders (2100) cannot migrate to new model numbers (2104).
-     */
-    struct Ned3ProStepperReg
-    {
-        static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
+/**
+ * @brief Register definitions for Ned3Pro Stepper motor family
+ *
+ * This hardware family currently has two model number variants:
+ * - 2100: Standard Ned3Pro stepper for robot joints (original bootloader)
+ * - 2104: Ned3Pro stepper for conveyors (different gear ratio, specific firmware)
+ *
+ * Both variants share the same register layout and communication protocol,
+ * differing only in internal firmware behavior and gear ratios.
+ * The bootloader is factory-set and determines the model number permanently,
+ * meaning motors with old bootloaders (2100) cannot migrate to new model numbers (2104).
+ */
+struct Ned3ProStepperReg
+{
+  static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
 
-        static constexpr float PROTOCOL_VERSION = 2.0;
-        
-        static constexpr int MODEL_NUMBER = 2100;           // Primary/standard model number (joints)
-        static constexpr int MODEL_NUMBER_CONVEYOR = 2104;  // Conveyor variant (different gear ratio)
-        
-        static constexpr int VOLTAGE_CONVERSION = 1000;
-        
-        static std::unique_ptr<common::model::IModelNumberValidator> createModelNumberValidator()
-        {
-            return std::make_unique<common::model::SetModelNumberValidator>(
-                std::initializer_list<uint16_t>{MODEL_NUMBER, MODEL_NUMBER_CONVEYOR}
-            );
-        }
+  static constexpr float PROTOCOL_VERSION = 2.0;
 
-        // EEPROM
+  static constexpr int MODEL_NUMBER = 2100;           // Primary/standard model number (joints)
+  static constexpr int MODEL_NUMBER_CONVEYOR = 2104;  // Conveyor variant (different gear ratio)
 
-        static constexpr uint16_t ADDR_MODEL_NUMBER = 0;
-        using TYPE_MODEL_NUMBER = uint16_t;
+  static constexpr int VOLTAGE_CONVERSION = 1000;
 
-        static constexpr uint16_t ADDR_ID = 7;
-        using TYPE_ID = uint8_t;
+  static std::unique_ptr<common::model::IModelNumberValidator> createModelNumberValidator()
+  {
+    return std::make_unique<common::model::SetModelNumberValidator>(
+        std::initializer_list<uint16_t>{ MODEL_NUMBER, MODEL_NUMBER_CONVEYOR });
+  }
 
-        static constexpr uint16_t ADDR_BAUDRATE = 8;
-        using TYPE_BAUDRATE = uint8_t;
+  // EEPROM
 
-        static constexpr uint16_t ADDR_OPERATING_MODE = 11;
-        using TYPE_OPERATING_MODE = uint8_t;
+  static constexpr uint16_t ADDR_MODEL_NUMBER = 0;
+  using TYPE_MODEL_NUMBER = uint16_t;
 
-        static constexpr uint16_t ADDR_FIRMWARE_VERSION = 59;
-        using TYPE_FIRMWARE_VERSION = uint32_t;
+  static constexpr uint16_t ADDR_ID = 7;
+  using TYPE_ID = uint8_t;
 
-        // RAM
+  static constexpr uint16_t ADDR_BAUDRATE = 8;
+  using TYPE_BAUDRATE = uint8_t;
 
-        static constexpr uint16_t ADDR_TORQUE_ENABLE = 64;
-        using TYPE_TORQUE_ENABLE = uint8_t;
+  static constexpr uint16_t ADDR_OPERATING_MODE = 11;
+  using TYPE_OPERATING_MODE = uint8_t;
 
-        static constexpr uint16_t ADDR_HW_ERROR_STATUS = 70;
-        using TYPE_HW_ERROR_STATUS = uint8_t;
+  static constexpr uint16_t ADDR_FIRMWARE_VERSION = 59;
+  using TYPE_FIRMWARE_VERSION = uint32_t;
 
-        static constexpr float VELOCITY_UNIT = 0.001;
-        static constexpr uint16_t ADDR_GOAL_VELOCITY = 104;
-        using TYPE_GOAL_VELOCITY = uint32_t;
+  // RAM
 
-        // unit = 214.577 RPM2
-        static constexpr uint16_t ADDR_PROFILE_ACCELERATION = 108;
-        using TYPE_PROFILE_ACCELERATION = uint32_t;
+  static constexpr uint16_t ADDR_TORQUE_ENABLE = 64;
+  using TYPE_TORQUE_ENABLE = uint8_t;
 
-        // unit = 0.001 RPM
-        static constexpr uint16_t ADDR_PROFILE_VELOCITY = 112;
-        using TYPE_PROFILE_VELOCITY = uint32_t;
+  static constexpr uint16_t ADDR_HW_ERROR_STATUS = 70;
+  using TYPE_HW_ERROR_STATUS = uint8_t;
 
-        // unit = 0.001 deg
-        static constexpr uint16_t ADDR_GOAL_POSITION = 116;
-        using TYPE_GOAL_POSITION = uint32_t;
+  static constexpr float VELOCITY_UNIT = 0.001;
+  static constexpr uint16_t ADDR_GOAL_VELOCITY = 104;
+  using TYPE_GOAL_VELOCITY = uint32_t;
 
-        // not used
-        static constexpr uint16_t ADDR_MOVING_STATUS = 123;
-        using TYPE_MOVING_STATUS = uint8_t;
+  // unit = 214.577 RPM2
+  static constexpr uint16_t ADDR_PROFILE_ACCELERATION = 108;
+  using TYPE_PROFILE_ACCELERATION = uint32_t;
 
-        // unit = 0.001 RPM
-        static constexpr uint16_t ADDR_PRESENT_VELOCITY = 128;
-        using TYPE_PRESENT_VELOCITY = uint32_t;
+  // unit = 0.001 RPM
+  static constexpr uint16_t ADDR_PROFILE_VELOCITY = 112;
+  using TYPE_PROFILE_VELOCITY = uint32_t;
 
-        // unit = 0.001 deg
-        static constexpr uint16_t ADDR_PRESENT_POSITION = 132;
-        using TYPE_PRESENT_POSITION = uint32_t;
+  // unit = 0.001 deg
+  static constexpr uint16_t ADDR_GOAL_POSITION = 116;
+  using TYPE_GOAL_POSITION = uint32_t;
 
-        // unit = 1mV
-        static constexpr uint16_t ADDR_PRESENT_VOLTAGE = 144;
-        using TYPE_PRESENT_VOLTAGE = uint16_t;
+  // not used
+  static constexpr uint16_t ADDR_MOVING_STATUS = 123;
+  using TYPE_MOVING_STATUS = uint8_t;
 
-        static constexpr uint16_t ADDR_PRESENT_TEMPERATURE = 146;
-        using TYPE_PRESENT_TEMPERATURE = uint8_t;
+  // unit = 0.001 RPM
+  static constexpr uint16_t ADDR_PRESENT_VELOCITY = 128;
+  using TYPE_PRESENT_VELOCITY = uint32_t;
 
-        static constexpr uint16_t ADDR_CONTROL = 1536;
-        using TYPE_CONTROL = uint32_t;
+  // unit = 0.001 deg
+  static constexpr uint16_t ADDR_PRESENT_POSITION = 132;
+  using TYPE_PRESENT_POSITION = uint32_t;
 
-        static constexpr uint16_t ADDR_STATUS = 1540;
-        using TYPE_STATUS = uint32_t;
+  // unit = 1mV
+  static constexpr uint16_t ADDR_PRESENT_VOLTAGE = 144;
+  using TYPE_PRESENT_VOLTAGE = uint16_t;
 
-        static constexpr uint16_t ADDR_ENC_ANGLE = 1544;
-        using TYPE_ENC_ANGLE = uint32_t;
+  static constexpr uint16_t ADDR_PRESENT_TEMPERATURE = 146;
+  using TYPE_PRESENT_TEMPERATURE = uint8_t;
 
-        // Firmware status
+  static constexpr uint16_t ADDR_CONTROL = 1536;
+  using TYPE_CONTROL = uint32_t;
 
-        static constexpr uint16_t ADDR_FIRMWARE_RUNNING = 8192;
-        using TYPE_FIRMWARE_RUNNING = uint8_t;
+  static constexpr uint16_t ADDR_STATUS = 1540;
+  using TYPE_STATUS = uint32_t;
 
-        static constexpr uint16_t ADDR_ENTER_BOOTLOADER = 8193;
-        using TYPE_ENTER_BOOTLOADER = uint32_t;
+  static constexpr uint16_t ADDR_ENC_ANGLE = 1544;
+  using TYPE_ENC_ANGLE = uint32_t;
 
-        static constexpr uint16_t ADDR_OTA_BEGIN = 8197;
-        using TYPE_OTA_BEGIN = uint8_t;
+  // Firmware status
 
-        static constexpr uint16_t ADDR_OTA_WRITE = 8198;
-        using TYPE_OTA_WRITE = uint8_t[520];
+  static constexpr uint16_t ADDR_FIRMWARE_RUNNING = 8192;
+  using TYPE_FIRMWARE_RUNNING = uint8_t;
 
-        static constexpr uint16_t ADDR_OTA_END = 8718;
-        using TYPE_OTA_END = uint32_t;
+  static constexpr uint16_t ADDR_ENTER_BOOTLOADER = 8193;
+  using TYPE_ENTER_BOOTLOADER = uint32_t;
 
-        static constexpr uint16_t ADDR_OTA_ERASE = 8722;
-        using TYPE_OTA_ERASE = uint32_t;
-    };
-} // ttl_driver
+  static constexpr uint16_t ADDR_OTA_BEGIN = 8197;
+  using TYPE_OTA_BEGIN = uint8_t;
 
-#endif // NED3PRO_STEPPER_REG_HPP
+  static constexpr uint16_t ADDR_OTA_WRITE = 8198;
+  using TYPE_OTA_WRITE = uint8_t[520];
+
+  static constexpr uint16_t ADDR_OTA_END = 8718;
+  using TYPE_OTA_END = uint32_t;
+
+  static constexpr uint16_t ADDR_OTA_ERASE = 8722;
+  using TYPE_OTA_ERASE = uint32_t;
+};
+}  // namespace ttl_driver
+
+#endif  // NED3PRO_STEPPER_REG_HPP

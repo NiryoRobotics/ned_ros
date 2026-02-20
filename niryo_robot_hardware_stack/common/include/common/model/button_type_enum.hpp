@@ -34,27 +34,28 @@ namespace model
 /**
  * @brief The EButtonType enum
  */
-enum class EButtonType {
-                        UNKNOWN = 0,
-                        FREE_DRIVE_BUTTON,
-                        SAVE_POSITION_BUTTON,
-                        CUSTOM_BUTTON,
-                      };
+enum class EButtonType
+{
+  UNKNOWN = 0,
+  FREE_DRIVE_BUTTON,
+  SAVE_POSITION_BUTTON,
+  CUSTOM_BUTTON,
+};
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
  */
 class ButtonTypeEnum : public AbstractEnum<ButtonTypeEnum, EButtonType>
 {
 public:
-    ButtonTypeEnum(EButtonType e=EButtonType::UNKNOWN);
-    ButtonTypeEnum(const char* str);
+  ButtonTypeEnum(EButtonType e = EButtonType::UNKNOWN);
+  ButtonTypeEnum(const char *str);
 
 private:
-    friend class AbstractEnum<ButtonTypeEnum, EButtonType>;
-    static std::map<EButtonType, std::string> initialize();
+  friend class AbstractEnum<ButtonTypeEnum, EButtonType>;
+  static std::map<EButtonType, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // BUTTON_TYPE_ENUM_H
+#endif  // BUTTON_TYPE_ENUM_H

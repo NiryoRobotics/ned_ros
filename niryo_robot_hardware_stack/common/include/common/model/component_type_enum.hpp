@@ -34,13 +34,14 @@ namespace model
 /**
  * @brief The EComponentType enum
  */
-enum class EComponentType {
-                        TOOL,
-                        CONVEYOR,
-                        JOINT,
-                        END_EFFECTOR,
-                        UNKNOWN
-                      };
+enum class EComponentType
+{
+  TOOL,
+  CONVEYOR,
+  JOINT,
+  END_EFFECTOR,
+  UNKNOWN
+};
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
@@ -48,15 +49,15 @@ enum class EComponentType {
 class ComponentTypeEnum : public AbstractEnum<ComponentTypeEnum, EComponentType>
 {
 public:
-    ComponentTypeEnum(EComponentType e=EComponentType::UNKNOWN);
-    ComponentTypeEnum(const char* str);
+  ComponentTypeEnum(EComponentType e = EComponentType::UNKNOWN);
+  ComponentTypeEnum(const char *str);
 
 private:
-    friend class AbstractEnum<ComponentTypeEnum, EComponentType>;
-    static std::map<EComponentType, std::string> initialize();
+  friend class AbstractEnum<ComponentTypeEnum, EComponentType>;
+  static std::map<EComponentType, std::string> initialize();
 };
 
-} // model
-} // common
+}  // namespace model
+}  // namespace common
 
-#endif // COMPONENT_TYPE_ENUM_H
+#endif  // COMPONENT_TYPE_ENUM_H
