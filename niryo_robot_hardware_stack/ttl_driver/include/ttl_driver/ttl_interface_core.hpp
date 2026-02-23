@@ -150,6 +150,8 @@ public:
   void waitSyncQueueFree();
   void waitSingleQueueFree();
 
+  bool changeTool(int value, std::string &message, int &status);
+
   bool readHomingAbsPosition();
   int readMoving(uint8_t id, uint8_t &status);
 

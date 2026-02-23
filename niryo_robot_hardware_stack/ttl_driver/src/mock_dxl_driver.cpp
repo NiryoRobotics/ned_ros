@@ -173,10 +173,36 @@ int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, u
  */
 int MockDxlDriver::changeId(uint8_t id, uint8_t new_id)
 {
-  (void)id;      // unused
-  (void)new_id;  // unused
+  if (id == new_id)
+  {
+    return COMM_SUCCESS;
+  }
 
-  return COMM_TX_FAIL;
+  if (id != 0)
+  {
+    auto it = _fake_data->dxl_registers.find(id);
+
+    if (it == _fake_data->dxl_registers.end())
+    {
+      return COMM_TX_FAIL;
+    }
+
+    if (new_id != 0)
+    {
+      auto node = _fake_data->dxl_registers.extract(it);
+      node.key() = new_id;
+      _fake_data->dxl_registers.insert(std::move(node));
+    }
+    else
+    {
+      _fake_data->dxl_registers.erase(it);
+    }
+  }
+
+  _fake_data->updateFullIdList();
+  scan(_id_list);
+
+  return COMM_SUCCESS;
 }
 
 /**

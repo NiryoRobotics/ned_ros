@@ -2,6 +2,20 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+___________
+
+**Features**
+
+* Added vacuum pump support to simulation.
+* Added the ability to change tools in simulation
+
+**Improvements**
+
+* Set default starting state to "no tool"
+* Added automatic scan after tool changes
+
+
 v5.7.2
 ___________
 

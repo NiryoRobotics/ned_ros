@@ -170,6 +170,7 @@ public:
   bool getCollisionStatus() const;
 
   bool hasEndEffector() const;
+  bool changeTool(int value, std::string &message, int &status);
 
 private:
   // IBusManager Interface
@@ -179,7 +180,8 @@ private:
   // Config params using in fake driver
   void readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor);
   template <typename Reg>
-  void retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params);
+  void retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params,
+                             std::vector<int> hw_ids = {});
 
   // check if hardware is a motor or not
   // this helps get only one driver to use for all motors to get/set on the same address
@@ -225,6 +227,9 @@ private:
   bool _is_connection_ok{ false };
   std::string _debug_error_message;
 
+  // for simulation
+  uint32_t _current_tool_id{ 0 };
+
   uint32_t _hw_fail_counter_read{ 0 };
   uint32_t _end_effector_fail_counter_read{ 0 };
 
@@ -252,6 +257,7 @@ private:
   std::vector<uint32_t> _position_list;
   std::vector<uint8_t> _position_goal_ids;
   std::vector<uint32_t> _position_goal_params;
+  std::vector<int> _available_tools;
 
   class CalibrationMachineState
   {
@@ -390,11 +396,13 @@ inline bool TtlManager::hasEndEffector() const
  * @param fake_params
  */
 template <typename Reg>
-void TtlManager::retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params)
+void TtlManager::retrieveFakeMotorData(const std::string &current_ns, std::map<uint8_t, Reg> &fake_params,
+                                       std::vector<int> hw_ids)
 {
-  std::vector<int> hw_ids;
-  _nh.getParam(current_ns + "id", hw_ids);
-
+  if (hw_ids.size() == 0)
+  {
+    _nh.getParam(current_ns + "id", hw_ids);
+  }
   std::vector<int> hw_positions;
   _nh.getParam(current_ns + "position", hw_positions);
   assert(hw_ids.size() == hw_positions.size());

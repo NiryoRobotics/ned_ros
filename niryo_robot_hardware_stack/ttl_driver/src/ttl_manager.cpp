@@ -42,6 +42,7 @@
 #include "common/model/tool_state.hpp"
 
 #include "dynamixel_sdk/packet_handler.h"
+#include "niryo_robot_msgs/CommandStatus.h"
 #include "ttl_driver/end_effector_reg.hpp"
 #include "ttl_driver/stepper_reg.hpp"
 
@@ -110,6 +111,8 @@ bool TtlManager::init(ros::NodeHandle &nh)
   bool use_simu_gripper{ false };
   bool use_simu_conveyor{ false };
 
+  _nh.getParam("fake_params/available_tools/id", _available_tools);
+
   nh.getParam("bus_params/uart_device_name", _device_name);
   nh.getParam("bus_params/baudrate", _baudrate);
   nh.getParam("led_motor", _led_motor_type_cfg);
@@ -141,6 +144,62 @@ bool TtlManager::init(ros::NodeHandle &nh)
 
   _calibration_status_publisher = nh.advertise<ttl_driver::CalibrationStatus>("calibration_status", 1, true);
 
+  return true;
+}
+
+/**
+ * @brief TtlManager::changeTool
+ * @return
+ */
+bool TtlManager::changeTool(int value, string &message, int &status)
+{
+  std::lock_guard<std::mutex> lck(_sync_mutex);
+  auto it_driver = _driver_map.find(EHardwareType::FAKE_DXL_MOTOR);
+  if (it_driver == _driver_map.end())
+  {
+    status = niryo_robot_msgs::CommandStatus::TOOL_FAILURE;
+    message = "Tool change failed : Real robot mode";
+    return true;
+  }
+
+  auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it_driver->second);
+  if (!driver)
+  {
+    status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+    message = "Tool change failed : Driver not found";
+    return true;
+  }
+
+  if (value != 0)
+  {
+    auto it = std::find(_available_tools.begin(), _available_tools.end(), value);
+
+    if (it == _available_tools.end())
+    {
+      status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+      message = "Tool change failed: Tool ID is invalid";
+      return true;
+    }
+
+    if (_current_tool_id == 0)
+    {
+      retrieveFakeMotorData("fake_params/tool/", _fake_data->dxl_registers, { value });
+    }
+  }
+
+  if (driver->changeId(_current_tool_id, value) == COMM_SUCCESS)
+  {
+    _current_tool_id = value;
+    status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    message = "Tool change succeeded";
+  }
+  else
+  {
+    status = niryo_robot_msgs::CommandStatus::TOOL_NOT_CONNECTED;
+    message = "Tool change failed: Communication error";
+  }
+
+  // return response even request failed
   return true;
 }
 
@@ -2299,12 +2358,6 @@ void TtlManager::readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor)
       _fake_data->end_effector.voltage = static_cast<double>(voltage_list.at(0));
 
       _fake_data->end_effector.firmware = firmware_list.at(0);
-    }
-
-    if (use_simu_gripper && _nh.hasParam("fake_params/tool/"))
-    {
-      std::string current_ns = "fake_params/tool/";
-      retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
     }
 
     if (use_simu_conveyor && _nh.hasParam("fake_params/conveyors/"))

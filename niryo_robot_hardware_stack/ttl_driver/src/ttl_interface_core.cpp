@@ -196,6 +196,15 @@ void TtlInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/)
 // ***************
 
 /**
+ * @brief TtlInterfaceCore::changeTool
+ * @return
+ */
+bool TtlInterfaceCore::changeTool(int value, string &message, int &status)
+{
+  return _ttl_manager->changeTool(value, message, status);
+}
+
+/**
  * @brief TtlInterfaceCore::rebootMotor
  * @return
  */
