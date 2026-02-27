@@ -28,7 +28,7 @@ fake_params:
         voltage: [5000]
         firmware: ["0.0.1"]
     tool:
-        id: []
+        id: [11]
         position: [370]
         velocity: [0]
         temperature: [56]
