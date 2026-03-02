@@ -12,7 +12,7 @@ ___________
 
 **Improvements**
 
-* Set default starting state to "no tool"
+* Set default starting state to standard gripper
 * Added automatic scan after tool changes
 
 

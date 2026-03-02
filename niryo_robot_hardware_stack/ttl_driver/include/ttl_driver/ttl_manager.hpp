@@ -258,6 +258,7 @@ private:
   std::vector<uint8_t> _position_goal_ids;
   std::vector<uint32_t> _position_goal_params;
   std::vector<int> _available_tools;
+  std::vector<int> _current_tool_vector;
 
   class CalibrationMachineState
   {

@@ -120,6 +120,11 @@ bool TtlManager::init(ros::NodeHandle &nh)
   nh.getParam("simulation_mode", _simulation_mode);
   nh.getParam("simu_gripper", use_simu_gripper);
   nh.getParam("simu_conveyor", use_simu_conveyor);
+  nh.getParam("fake_params/tool/id", _current_tool_vector);
+  if (!_current_tool_vector.empty())
+  {
+    _current_tool_id = _current_tool_vector.at(0);
+  }
 
   ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
   ROS_DEBUG("TtlManager::init - led motor type config : %s", _led_motor_type_cfg.c_str());
@@ -2335,6 +2340,12 @@ void TtlManager::readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor)
     if (_nh.hasParam("fake_params/dynamixels/"))
     {
       std::string current_ns = "fake_params/dynamixels/";
+      retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
+    }
+
+    if (use_simu_gripper && _nh.hasParam("fake_params/tool/"))
+    {
+      std::string current_ns = "fake_params/tool/";
       retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
     }
 
