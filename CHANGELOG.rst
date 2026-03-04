@@ -2,7 +2,7 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+v5.8.0
 ___________
 
 **Features**
