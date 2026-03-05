@@ -15,6 +15,9 @@ ___________
 * Set default starting state to standard gripper
 * Added automatic scan after tool changes
 
+**Bugfixes**
+* Fixed: Resolved a negative velocity bug caused by time parameterization failure
+
 
 v5.7.2
 ___________

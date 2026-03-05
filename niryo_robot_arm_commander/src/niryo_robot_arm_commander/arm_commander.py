@@ -49,7 +49,7 @@ class ArmCommander:
         self.__end_effector_link = self.__arm.get_end_effector_link()
 
         # Executor
-        self.__traj_executor = TrajectoriesExecutor(self.__arm)
+        self.__traj_executor = TrajectoriesExecutor(self.__arm_state)
         self.__traj_manager = TrajectoryHandlerNode(self.__arm_state, self.__traj_executor)
 
         # Validation

@@ -14,7 +14,10 @@ from niryo_robot_arm_commander.arm_commander import ArmCommander
 from niryo_robot_arm_commander.arm_state import ArmState
 import moveit_commander
 
-from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException
+from niryo_robot_arm_commander.command_enums import (
+    RobotCommanderException,
+    ArmCommanderException,
+)
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -31,7 +34,11 @@ from niryo_robot_msgs.srv import Trigger, GetBool
 from niryo_robot_arm_commander.srv import ComputeTrajectory
 
 # Action msgs
-from niryo_robot_arm_commander.msg import PausePlanExecution, RobotMoveAction, RobotMoveResult
+from niryo_robot_arm_commander.msg import (
+    PausePlanExecution,
+    RobotMoveAction,
+    RobotMoveResult,
+)
 
 
 class RobotCommanderNode:
@@ -67,12 +74,10 @@ class RobotCommanderNode:
             ArmMoveCommand.LINEAR_POSE: self.__arm_commander.set_linear_trajectory,
             ArmMoveCommand.SHIFT_POSE: self.__arm_commander.set_shift_pose_target,
             ArmMoveCommand.SHIFT_LINEAR_POSE: self.__arm_commander.set_shift_linear_pose_target,
-
             # Trajectory
             ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.compute_and_execute_waypointed_trajectory,
             ArmMoveCommand.EXECUTE_RAW_TRAJ: self.__arm_commander.execute_raw_waypointed_trajectory,
             ArmMoveCommand.EXECUTE_FULL_TRAJ: self.__arm_commander.execute_waypointed_trajectory,
-
             # Add-Ons
             ArmMoveCommand.DRAW_SPIRAL: self.__arm_commander.draw_spiral_trajectory,
             ArmMoveCommand.DRAW_CIRCLE: self.__arm_commander.draw_circle_trajectory,
@@ -80,35 +85,56 @@ class RobotCommanderNode:
 
         # - Subscribers
         self.__learning_mode_on = True
-        rospy.Subscriber('/niryo_robot/learning_mode/state', Bool, self.__callback_learning_mode)
+        rospy.Subscriber(
+            "/niryo_robot/learning_mode/state", Bool, self.__callback_learning_mode
+        )
 
         self.__pause_state = PausePlanExecution.STANDBY
-        rospy.Subscriber('/niryo_robot_rpi/pause_state', PausePlanExecution, self.__callback_pause_movement)
+        rospy.Subscriber(
+            "/niryo_robot_rpi/pause_state",
+            PausePlanExecution,
+            self.__callback_pause_movement,
+        )
 
         # Event which allows to timeout if pause take too long
         self.__pause_finished_event = threading.Event()
         self.__pause_finished_event.set()
         self.__pause_timeout = PausePlanExecution.PAUSE_TIMEOUT
-        self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
+        self.__command_still_active_max_tries = rospy.get_param(
+            "~command_still_active_max_tries"
+        )
         active_publish_rate_sec = rospy.get_param("~active_publish_rate_sec")
 
-        rospy.logdebug("RobotCommanderNode.init - pause_timeout: %s", self.__pause_timeout)
-        rospy.logdebug("RobotCommanderNode.init - command_still_active_max_tries: %s",
-                       self.__command_still_active_max_tries)
-        rospy.logdebug("RobotCommanderNode.init - active_publish_rate_sec: %s", active_publish_rate_sec)
+        rospy.logdebug(
+            "RobotCommanderNode.init - pause_timeout: %s", self.__pause_timeout
+        )
+        rospy.logdebug(
+            "RobotCommanderNode.init - command_still_active_max_tries: %s",
+            self.__command_still_active_max_tries,
+        )
+        rospy.logdebug(
+            "RobotCommanderNode.init - active_publish_rate_sec: %s",
+            active_publish_rate_sec,
+        )
 
         # - Services
-        rospy.Service('~stop_command', Trigger, self.__callback_stop_command)
-        rospy.Service('~is_active', GetBool, self.__callback_is_active)
-        rospy.Service('~compute_waypointed_trajectory', ComputeTrajectory, self.__callback_compute_trajectory)
+        rospy.Service("~stop_command", Trigger, self.__callback_stop_command)
+        rospy.Service("~is_active", GetBool, self.__callback_is_active)
+        rospy.Service(
+            "~compute_waypointed_trajectory",
+            ComputeTrajectory,
+            self.__callback_compute_trajectory,
+        )
 
         # Robot Action Server
         self.__current_goal_handle = actionlib.ServerGoalHandle()
-        self.__action_server = actionlib.ActionServer('~robot_action',
-                                                      RobotMoveAction,
-                                                      goal_cb=self.__callback_goal,
-                                                      cancel_cb=self.__callback_cancel,
-                                                      auto_start=False)
+        self.__action_server = actionlib.ActionServer(
+            "~robot_action",
+            RobotMoveAction,
+            goal_cb=self.__callback_goal,
+            cancel_cb=self.__callback_cancel,
+            auto_start=False,
+        )
         self.__action_server_thread = threading.Thread()
         self.__action_server_lock = threading.Lock()
         # Starting Action server
@@ -117,13 +143,13 @@ class RobotCommanderNode:
         rospy.logdebug("Arm Commander - Services & Actions server are created")
 
         # - Publisher
-        self.__is_active_publisher = rospy.Publisher('~is_active', Bool, queue_size=5)
+        self.__is_active_publisher = rospy.Publisher("~is_active", Bool, queue_size=5)
         rospy.Timer(rospy.Duration(active_publish_rate_sec), self.__publish_is_active)
 
         # Wait for joint_states to be published
         while not rospy.is_shutdown():
             try:
-                rospy.wait_for_message('/joint_states', JointState, timeout=5.0)
+                rospy.wait_for_message("/joint_states", JointState, timeout=5.0)
                 break
             except rospy.ROSException:
                 rospy.logwarn_once(
@@ -131,7 +157,7 @@ class RobotCommanderNode:
                 )
 
         # Set a bool to mention this node is initialized
-        rospy.set_param('~initialized', True)
+        rospy.set_param("~initialized", True)
         rospy.loginfo("Arm Commander - Started")
 
     def __start_action_server(self):
@@ -178,11 +204,17 @@ class RobotCommanderNode:
 
     def __callback_compute_trajectory(self, req):
         try:
-            status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
+            status, message, plan = self.__arm_commander.compute_waypointed_trajectory(
+                req
+            )
         except ArmCommanderException as e:
             return e.status, e.message, None
 
-        return status, message, RobotTrajectory() if plan is None else plan.joint_trajectory
+        return (
+            status,
+            message,
+            RobotTrajectory() if plan is None else plan.joint_trajectory,
+        )
 
     # - Action Server
     def __callback_goal(self, goal_handle):
@@ -195,29 +227,37 @@ class RobotCommanderNode:
 
         # Check if motor connection problem
         if not self.__arm_state.hardware_status.connection_up:
-            result = self.create_result(CommandStatus.HARDWARE_NOT_OK,
-                                        "Motor connection problem, you can't send a command now")
+            result = self.create_result(
+                CommandStatus.HARDWARE_NOT_OK,
+                "Motor connection problem, you can't send a command now",
+            )
             goal_handle.set_rejected(result)
             return
 
         # Check if calibration is needed
         if self.__arm_state.hardware_status.calibration_needed:
-            result = self.create_result(CommandStatus.CALIBRATION_NOT_DONE,
-                                        "You need to calibrate the robot before sending a command")
+            result = self.create_result(
+                CommandStatus.CALIBRATION_NOT_DONE,
+                "You need to calibrate the robot before sending a command",
+            )
             goal_handle.set_rejected(result)
             return
 
         # Check if calibration is in progress
         if self.__arm_state.hardware_status.calibration_in_progress:
-            result = self.create_result(CommandStatus.CALIBRATION_NOT_DONE,
-                                        "Calibration in progress, wait until it ends to send a command")
+            result = self.create_result(
+                CommandStatus.CALIBRATION_NOT_DONE,
+                "Calibration in progress, wait until it ends to send a command",
+            )
             goal_handle.set_rejected(result)
             return
 
         # Check if jog controller enabled
         if self.__arm_commander.jog_controller.is_enabled():
-            result = self.create_result(CommandStatus.JOG_CONTROLLER_ENABLED,
-                                        "You need to deactivate jog controller to execute a new command")
+            result = self.create_result(
+                CommandStatus.JOG_CONTROLLER_ENABLED,
+                "You need to deactivate jog controller to execute a new command",
+            )
             goal_handle.set_rejected(result)
             return
 
@@ -226,20 +266,29 @@ class RobotCommanderNode:
             # If still have a goal, wait a bit to be sure it's not goal is still active
             # due to concurrency issue
             for i in range(self.__command_still_active_max_tries):
-                rospy.logwarn("Commander Action Serv - Current goal seems to be still active, "
-                              "will retry {} time(s)".format(self.__command_still_active_max_tries - i))
+                rospy.logwarn(
+                    "Commander Action Serv - Current goal seems to be still active, "
+                    "will retry {} time(s)".format(
+                        self.__command_still_active_max_tries - i
+                    )
+                )
                 rospy.sleep(0.2)
                 if not self.__current_goal_is_active():
                     break
             else:
-                result = self.create_result(CommandStatus.GOAL_STILL_ACTIVE, "Current command is still active")
+                result = self.create_result(
+                    CommandStatus.GOAL_STILL_ACTIVE, "Current command is still active"
+                )
                 goal_handle.set_rejected(result)
                 return
 
         # Check if learning mode ON
         if self.__learning_mode_on:
             if not self.__arm_state.set_learning_mode(False):
-                result = self.create_result(CommandStatus.LEARNING_MODE_ON, "Learning mode could not be deactivated")
+                result = self.create_result(
+                    CommandStatus.LEARNING_MODE_ON,
+                    "Learning mode could not be deactivated",
+                )
                 goal_handle.set_rejected(result)
                 return
 
@@ -249,8 +298,9 @@ class RobotCommanderNode:
         rospy.loginfo("Commander Action Serv - Goal has been accepted")
 
         # Launch compute + execution in a new thread
-        self.__action_server_thread = threading.Thread(target=self.__execute_goal_action,
-                                                       name="worker_execute_goal_action")
+        self.__action_server_thread = threading.Thread(
+            target=self.__execute_goal_action, name="worker_execute_goal_action"
+        )
         self.__action_server_thread.start()
         rospy.logdebug("Commander Action Serv - Executing command in a new thread")
 
@@ -270,20 +320,27 @@ class RobotCommanderNode:
     def __current_goal_is_active(self):
         if not self.__current_goal_handle.goal:
             return False
-        return self.__current_goal_handle.get_goal_status().status in [GoalStatus.ACTIVE, GoalStatus.PENDING]
+        return self.__current_goal_handle.get_goal_status().status in [
+            GoalStatus.ACTIVE,
+            GoalStatus.PENDING,
+        ]
 
     def __cancel_due_to_pause(self):
         # Check if plan is paused
         if not self.__pause_finished_event.wait(timeout=self.__pause_timeout):
-            result = self.create_result(CommandStatus.PAUSE_TIMEOUT,
-                                        "Goal has been paused since too long, cancelling it")
+            result = self.create_result(
+                CommandStatus.PAUSE_TIMEOUT,
+                "Goal has been paused since too long, cancelling it",
+            )
             self.__current_goal_handle.set_canceled(result=result)
 
             rospy.logwarn("Commander Action Serv - {}".format(result.message))
             return True
 
         if self.__pause_state == PausePlanExecution.CANCEL:
-            result = self.create_result(CommandStatus.CANCEL_PAUSE, "Paused as been canceled")
+            result = self.create_result(
+                CommandStatus.CANCEL_PAUSE, "Paused as been canceled"
+            )
             self.__current_goal_handle.set_canceled(result)
             rospy.loginfo("Commander Action Serv - Goal has been successfully canceled")
             return True
@@ -296,6 +353,7 @@ class RobotCommanderNode:
         It waits until the action finished and set goal_handle according to the result
         :return: None
         """
+        rospy.loginfo("Commander Action Serv - Executing goal action")
         if self.__pause_state == PausePlanExecution.PAUSE:
             while not self.__pause_finished_event.wait(1):
                 pass
@@ -313,8 +371,10 @@ class RobotCommanderNode:
         except (RobotCommanderException, ArmCommanderException) as e:
             result = self.create_result(e.status, e.message)
             response = None
-            rospy.loginfo("Commander Action Serv - An exception was "
-                          "thrown during command execution : {}".format(e.message))
+            rospy.loginfo(
+                "Commander Action Serv - An exception was "
+                "thrown during command execution : {}".format(e.message)
+            )
 
         # Check response
         if not response:
@@ -329,12 +389,17 @@ class RobotCommanderNode:
         elif response.status == CommandStatus.CONTROLLER_PROBLEMS:
             self.__cancel_command()
             self.__current_goal_handle.set_aborted(result)
-            rospy.logwarn("Commander Action Serv - Controller failed during execution : " + "Goal has been aborted.\n" +
-                          "This is due to either a collision, or a motor unable to follow a given command" +
-                          " (overload, extreme positions, ...)")
+            rospy.logwarn(
+                "Commander Action Serv - Controller failed during execution : "
+                + "Goal has been aborted.\n"
+                + "This is due to either a collision, or a motor unable to follow a given command"
+                + " (overload, extreme positions, ...)"
+            )
         else:
             self.__current_goal_handle.set_aborted(result)
-            rospy.logwarn("Commander Action Serv - Unknown result, goal has been set as aborted")
+            rospy.logwarn(
+                "Commander Action Serv - Unknown result, goal has been set as aborted"
+            )
 
     def __interpret_and_execute_command(self, cmd):
         """
@@ -343,6 +408,7 @@ class RobotCommanderNode:
         :return: status, message
         """
         cmd_type = cmd.cmd_type
+        rospy.loginfo("Commander Action Serv - Interpreting command of type {}".format(cmd_type))
         return self.dict_interpreter_move_cmd[cmd_type](cmd)
 
     def __cancel_command(self):
@@ -372,10 +438,10 @@ class RobotCommanderNode:
         return goal_handle.goal.goal.cmd.cmd_type
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sentry_init()
 
-    rospy.init_node('niryo_robot_arm_commander', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node("niryo_robot_arm_commander", anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter
     log_level = rospy.get_param("~log_level")

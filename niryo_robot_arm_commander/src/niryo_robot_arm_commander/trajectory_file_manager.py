@@ -4,6 +4,7 @@ from niryo_robot_poses_handlers.file_manager import PickleFileManager
 
 
 class Trajectory:
+
     def __init__(self, name, description):
         self.name = name
         self.description = description
@@ -53,11 +54,11 @@ class TrajectoryFileManager(PickleFileManager):
 
     :raises NiryoRobotFileException:
     """
+
     object_type = Trajectory
 
     def __init__(self, trajectory_dir):
-        super(TrajectoryFileManager, self).__init__(
-            trajectory_dir, "trajectory")
+        super(TrajectoryFileManager, self).__init__(trajectory_dir, "trajectory")
 
     def create(self, trajectory_name, lists_poses, description=""):
         trajectory = Trajectory(trajectory_name, description)

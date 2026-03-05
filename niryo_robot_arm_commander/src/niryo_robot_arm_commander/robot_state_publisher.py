@@ -10,7 +10,13 @@ import numpy as np
 
 from niryo_robot_msgs.msg import RobotState
 
-from .utils import quaternion_to_list, vector3_to_list, list_to_vector3, get_orientation_from_angles, list_to_rpy
+from .utils import (
+    quaternion_to_list,
+    vector3_to_list,
+    list_to_vector3,
+    get_orientation_from_angles,
+    list_to_rpy,
+)
 
 
 class StatePublisher(object):
@@ -28,7 +34,7 @@ class StatePublisher(object):
         self.__transform_handler = self.__arm_state.transform_handler
 
         # State publisher
-        self.__robot_state_publisher = rospy.Publisher('/niryo_robot/robot_state', RobotState, queue_size=5)
+        self.__robot_state_publisher = rospy.Publisher("/niryo_robot/robot_state", RobotState, queue_size=5)
 
         # Get params from rosparams
         rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
@@ -38,7 +44,7 @@ class StatePublisher(object):
 
     def __get_robot_state(self):
         try:
-            t = self.__transform_handler.lookup_transform('base_link', 'TCP', rospy.Time(0))
+            t = self.__transform_handler.lookup_transform("base_link", "TCP", rospy.Time(0))
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
             if isinstance(e, ExtrapolationException):
                 print(e)
