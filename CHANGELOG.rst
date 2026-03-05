@@ -16,7 +16,9 @@ ___________
 * Added automatic scan after tool changes
 
 **Bugfixes**
-* Fixed: Resolved a negative velocity bug caused by time parameterization failure
+
+* Clamped recorded and existing trajectories to robot's joints limits.
+* Refine the trajectory execution process, whether triggered via the Program Player (Blocky/Python) or directly through the library 
 
 
 v5.7.2

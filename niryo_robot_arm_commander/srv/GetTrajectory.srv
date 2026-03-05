@@ -3,3 +3,4 @@ string name
 int32 status
 string message
 trajectory_msgs/JointTrajectory trajectory
+bool corrected_trajectory
