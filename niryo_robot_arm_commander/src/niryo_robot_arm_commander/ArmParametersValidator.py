@@ -93,15 +93,15 @@ class ArmParametersValidator:
             )
 
         for joint_index, joint_cmd in enumerate(joint_array):
-            if (self.joints_limits[joint_index] and not self.joints_limits[joint_index].lower <= round(joint_cmd, 3) <=
-                    self.joints_limits[joint_index].upper):
+            if (self.joints_limits[joint_index] and
+                    not self.joints_limits[joint_index].lower <= joint_cmd <= self.joints_limits[joint_index].upper):
                 raise ArmCommanderException(
                     CommandStatus.INVALID_PARAMETERS,
                     "joint_{} not in range ({}, {}), {} provided".format(
                         joint_index + 1,
                         self.joints_limits[joint_index].lower,
                         self.joints_limits[joint_index].upper,
-                        round(joint_cmd, 3),
+                        joint_cmd,
                     ),
                 )
 

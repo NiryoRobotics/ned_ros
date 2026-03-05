@@ -29,6 +29,10 @@ class TrajectoryHandlerNode:
     def __init__(self, arm_state, trajectory_executor):
         self.__arm_state = arm_state
         self.__traj_executor = trajectory_executor
+        self.__parameters_validator = self.__arm_state.parameters_validator
+
+        # Validation
+        self.__parameters_validator = self.__arm_state.parameters_validator
 
         self.__frequency = rospy.Rate(rospy.get_param("~trajectory_frequency"))
         self.__lock = Lock()
@@ -82,7 +86,7 @@ class TrajectoryHandlerNode:
             if self.check_trajectory_existence(name):
                 if (not self.check_trajectory_existence(new_name) and name != new_name) or (name == new_name):
                     try:
-                        trajectory = self.get_trajectory(name)
+                        trajectory, _ = self.get_trajectory(name)
                         self.remove_trajectory_file(name)
                         self.create_trajectory_file(new_name, description, trajectory.points)
                     except Exception:
@@ -124,13 +128,20 @@ class TrajectoryHandlerNode:
         :return: The trajectory object
         :rtype: JointTrajectory
         """
+        corrected = False
         traj_read = self.traj_file_manager.read(str(name))
         list_poses_raw = traj_read.list_poses
+        if len(list_poses_raw) > 1:
+            for i in range(len(list_poses_raw)):
+                list_poses_raw[i], is_corrected = self.__limit_params_joints(list_poses_raw[i])
+                corrected = corrected or is_corrected
         return JointTrajectory(
             header=Header(stamp=rospy.Time.now()),
             joint_names=rospy.get_param("~joint_names"),
-            points=[JointTrajectoryPoint(positions=pose_raw) for pose_raw in list_poses_raw],
-        )
+            points=[
+                JointTrajectoryPoint(positions=pose_raw) for pose_raw in list_poses_raw
+            ],
+        ), corrected
 
     def get_trajectory_first_point(self, name):
         """
@@ -142,7 +153,7 @@ class TrajectoryHandlerNode:
         :rtype: Joints
         """
         try:
-            trajectory = self.get_trajectory(name)
+            trajectory, _ = self.get_trajectory(name)
             return trajectory.points[0].positions
         except Exception as e:
             rospy.logwarn(f"TrajectoryHandlerNode::get_trajectory_first_point - {e}")
@@ -213,7 +224,7 @@ class TrajectoryHandlerNode:
             self.save_trajectory(trajectory)
             self.blockly_save_trajectory()
             try:
-                result = self.get_trajectory("last_executed_trajectory")
+                result, _ = self.get_trajectory("last_executed_trajectory")
                 if EXECUTE_AFTER_LEARNED:
                     self.__traj_executor.execute_joint_trajectory(result)
             except Exception:
@@ -223,6 +234,16 @@ class TrajectoryHandlerNode:
 
     def stop_record(self):
         self.__recording = False
+
+    def __limit_params_joints(self, joints):
+        limit_corrected = False
+        joints_limits = self.__parameters_validator.get_joints_limits()
+        for j, joint_value in enumerate(joints):
+            joint = max(joints_limits[j].lower, min(joints_limits[j].upper, joint_value))
+            if joint != joint_value:
+                limit_corrected = True
+            joints[j] = joint
+        return joints, limit_corrected
 
     # - Callbacks
 
@@ -287,7 +308,8 @@ class TrajectoryHandlerNode:
         elif cmd == req.EXECUTE_REGISTERED:
             try:
                 if self.check_trajectory_existence(req.name):
-                    trajectory = self.get_trajectory(req.name)
+                    trajectory, _ = self.get_trajectory(req.name)
+                    self.__parameters_validator.validate_trajectory(trajectory)
                     return self.__traj_executor.execute_joint_trajectory(trajectory)
                 else:
                     return (
@@ -303,7 +325,7 @@ class TrajectoryHandlerNode:
                 return CommandStatus.TRAJECTORY_HANDLER_EXECUTE_FAILURE, str(e)
         elif cmd == req.GO_TO_FIRST_POINT:
             try:
-                trajectory = self.get_trajectory(req.name)
+                trajectory, _ = self.get_trajectory(req.name)
                 trajectory.points = [trajectory.points[0]]
                 return self.__traj_executor.execute_joint_trajectory(trajectory)
             except ArmCommanderException as e:
@@ -330,8 +352,8 @@ class TrajectoryHandlerNode:
 
     def __callback_get_trajectory(self, req):
         try:
-            trajectory = self.get_trajectory(req.name)
-            return CommandStatus.SUCCESS, "Success", trajectory
+            trajectory, trajectory_corrected = self.get_trajectory(req.name)
+            return CommandStatus.SUCCESS, "Success", trajectory, trajectory_corrected
         except NiryoRobotFileException as e:
             return (
                 CommandStatus.TRAJECTORY_HANDLER_GET_TRAJECTORY_FAILURE,
