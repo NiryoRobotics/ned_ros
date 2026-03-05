@@ -113,6 +113,11 @@ class DynamicFrameManager(FileManager):
 
         self._write(name, dynamic_frame)
 
+    def read(self, name):
+        frame = FileManager.read(self, name)
+        frame.static_transform_stamped[1] = normalize_quaterion(frame.static_transform_stamped[1])
+        return frame
+
     def edit_name(self, name, new_name):
         self.check_exist(name)
 
