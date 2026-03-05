@@ -3,8 +3,13 @@
 # Lib
 import copy
 import numpy as np
+import rospy
 
-from tf.transformations import quaternion_from_euler, euler_from_quaternion, quaternion_multiply
+from tf.transformations import (
+    quaternion_from_euler,
+    euler_from_quaternion,
+    quaternion_multiply,
+)
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion, Twist, Vector3
@@ -24,8 +29,8 @@ def pose_to_list(pose):
     """
     x, y, z = pose.position.x, pose.position.y, pose.position.z
     roll, pitch, yaw = euler_from_quaternion(
-        [pose.orientation.x, pose.orientation.y, pose.orientation.z,
-         pose.orientation.w])
+        [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w]
+    )
     return [x, y, z, roll, pitch, yaw]
 
 
@@ -61,7 +66,7 @@ def dist_2_poses(p1, p2):
         p1.orientation.x,
         p1.orientation.y,
         p1.orientation.z,
-        p1.orientation.w
+        p1.orientation.w,
     ])
     np_pose2 = np.array([
         p2.position.x,
@@ -70,7 +75,7 @@ def dist_2_poses(p1, p2):
         p2.orientation.x,
         p2.orientation.y,
         p2.orientation.z,
-        p2.orientation.w
+        p2.orientation.w,
     ])
 
     return np.linalg.norm(np_pose1 - np_pose2)
@@ -123,7 +128,7 @@ def poses_too_close(p1, p2):
         p1.orientation.x,
         p1.orientation.y,
         p1.orientation.z,
-        p1.orientation.w
+        p1.orientation.w,
     ])
     np_pose2 = np.array([
         p2.position.x,
@@ -132,12 +137,24 @@ def poses_too_close(p1, p2):
         p2.orientation.x,
         p2.orientation.y,
         p2.orientation.z,
-        p2.orientation.w
+        p2.orientation.w,
     ])
 
     dist = np.linalg.norm(np_pose1 - np_pose2)
 
     return dist < 0.001
+
+
+def joints_too_close_to_optimize(joints1, joints2, threshold=0.0015 * 3):
+    """
+    Check that distance between joints1 and joints2 is bigger than the minimal required distance for a optimization.
+
+    :param joints1:
+    :type joints1: list[float]
+    :param joints2:
+    :type joints2: list[float]
+    """
+    return all(abs(a - b) <= threshold for a, b in zip(joints1, joints2))
 
 
 def invert_quat(q):

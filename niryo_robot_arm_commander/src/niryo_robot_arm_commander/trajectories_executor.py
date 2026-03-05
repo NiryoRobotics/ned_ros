@@ -6,7 +6,7 @@ import rospy
 import threading
 import random
 
-from .utils import poses_too_close
+from .utils import joints_too_close_to_optimize, poses_too_close
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -36,10 +36,11 @@ class TrajectoriesExecutor:
     Object which execute the Arm trajectories via MoveIt
     """
 
-    def __init__(self, arm_move_group):
-        self.__arm = arm_move_group
-        self.__joints_name = rospy.get_param('~joint_names')
-        self.__hardware_version = rospy.get_param('~hardware_version')
+    def __init__(self, arm_state):
+        self.__arm_state = arm_state
+        self.__arm = self.__arm_state.arm
+        self.__joints_name = rospy.get_param("~joint_names")
+        self.__hardware_version = rospy.get_param("~hardware_version")
 
         # - Direct topic to joint_trajectory_controller
         self.__current_goal_id = None
@@ -47,6 +48,9 @@ class TrajectoriesExecutor:
         self.__current_goal_result = GoalStatus.LOST
         self.__collision_detected = False
         self.__cancel_goal = False
+
+        self.__max_retries = rospy.get_param("~max_optimization_retries")
+        self.__proximity_step = rospy.get_param("~proximity_threshold_step")
 
         # Event which allows to timeout if trajectory take too long
         self.__traj_finished_event = threading.Event()
@@ -58,31 +62,43 @@ class TrajectoriesExecutor:
 
         # - Subscribers
         joint_controller_base_name = rospy.get_param("~joint_controller_name")
-        rospy.Subscriber('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
-                         FollowJointTrajectoryActionGoal,
-                         self.__callback_new_goal)
+        rospy.Subscriber(
+            "{}/follow_joint_trajectory/goal".format(joint_controller_base_name),
+            FollowJointTrajectoryActionGoal,
+            self.__callback_new_goal,
+        )
 
-        rospy.Subscriber('{}/follow_joint_trajectory/result'.format(joint_controller_base_name),
-                         FollowJointTrajectoryActionResult,
-                         self.__callback_goal_result)
+        rospy.Subscriber(
+            "{}/follow_joint_trajectory/result".format(joint_controller_base_name),
+            FollowJointTrajectoryActionResult,
+            self.__callback_goal_result,
+        )
 
         # collision detected by End Effector could be a real or fake collision.
         # In a movement, if a collision detected, that will be a real collision, without a movement, it will be fake
-        rospy.Subscriber('/niryo_robot/hardware_interface/collision_detected', Bool, self.__callback_collision_detected)
+        rospy.Subscriber(
+            "/niryo_robot/hardware_interface/collision_detected",
+            Bool,
+            self.__callback_collision_detected,
+        )
 
         # - Publishers
-        self.__traj_goal_pub = rospy.Publisher('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
-                                               FollowJointTrajectoryActionGoal,
-                                               queue_size=1)
+        self.__traj_goal_pub = rospy.Publisher(
+            "{}/follow_joint_trajectory/goal".format(joint_controller_base_name),
+            FollowJointTrajectoryActionGoal,
+            queue_size=1,
+        )
 
-        self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
-                                                            JointTrajectory,
-                                                            queue_size=10)
+        self.__joint_trajectory_publisher = rospy.Publisher(
+            "{}/command".format(joint_controller_base_name),
+            JointTrajectory,
+            queue_size=10,
+        )
 
-        self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
+        self.__reset_controller_service = rospy.ServiceProxy("/niryo_robot/joints_interface/steppers_reset_controller",
                                                              Trigger)
 
-        self.__collision_detected_publisher = rospy.Publisher('/niryo_robot/collision_detected', Bool, queue_size=10)
+        self.__collision_detected_publisher = rospy.Publisher("/niryo_robot/collision_detected", Bool, queue_size=10)
 
         rospy.on_shutdown(self.cancel_goal)
 
@@ -148,7 +164,7 @@ class TrajectoriesExecutor:
             if not plan:
                 raise ArmCommanderException(CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
-            if self.__hardware_version == 'ned':
+            if self.__hardware_version == "ned":
                 self.__reset_controller()
             rospy.loginfo("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
@@ -157,7 +173,10 @@ class TrajectoriesExecutor:
                 return status, message
             if tries >= self.__compute_plan_max_tries:
                 rospy.logerr("Arm commander - Big failure from the controller. Try to restart the robot")
-                return CommandStatus.SHOULD_RESTART, "Please restart the robot and try again."
+                return (
+                    CommandStatus.SHOULD_RESTART,
+                    "Please restart the robot and try again.",
+                )
             rospy.logwarn("Arm commander - Will retry to compute "
                           "& execute trajectory {} time(s)".format(self.__compute_plan_max_tries - tries))
 
@@ -197,17 +216,23 @@ class TrajectoriesExecutor:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
 
         if plan is None:
-            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
-                                        "The goal cannot be reached with a linear trajectory")
+            raise ArmCommanderException(
+                CommandStatus.NO_PLAN_AVAILABLE,
+                "The goal cannot be reached with a linear trajectory",
+            )
 
         # Apply robot speeds
-        plan = self.retime_plan(plan,
-                                velocity_scaling_factor=velocity_factor,
-                                acceleration_scaling_factor=acceleration_factor,
-                                optimize=False)
+        plan = self.retime_plan(
+            plan,
+            velocity_scaling_factor=velocity_factor,
+            acceleration_scaling_factor=acceleration_factor,
+            optimize=False,
+        )
         if plan is None:
-            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
-                                        "The goal cannot be reached with a linear trajectory")
+            raise ArmCommanderException(
+                CommandStatus.NO_PLAN_AVAILABLE,
+                "The goal cannot be reached with a linear trajectory",
+            )
 
         return self.execute_plan(plan)
 
@@ -228,8 +253,9 @@ class TrajectoriesExecutor:
 
         fraction = 0.0
         for _ in range(compute_max_tries if compute_max_tries else self.__compute_plan_max_tries):  # some tries
-            trajectory_plan, fraction = \
-                self.__arm.compute_cartesian_path(list_poses, eef_step=self.__cartesian_path_eef_steps)
+            trajectory_plan, fraction = self.__arm.compute_cartesian_path(
+                list_poses, eef_step=self.__cartesian_path_eef_steps
+            )
 
             # Check the fraction value : if 1.0, the trajectory can be linear;
             # else, the trajectory followed won't be linear.
@@ -252,8 +278,10 @@ class TrajectoriesExecutor:
         :return: CommandStatus, message
         """
         if not plan:
-            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
-                                        "You are trying to execute a plan which doesn't exist")
+            raise ArmCommanderException(
+                CommandStatus.NO_PLAN_AVAILABLE,
+                "You are trying to execute a plan which doesn't exist",
+            )
         # Reset
         self.__traj_finished_event.clear()
 
@@ -270,7 +298,10 @@ class TrajectoriesExecutor:
                 return CommandStatus.SUCCESS, "Command has been successfully processed"
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__cancel_goal:
-                    return CommandStatus.STOPPED, "Command has been successfully stopped"
+                    return (
+                        CommandStatus.STOPPED,
+                        "Command has been successfully stopped",
+                    )
 
                 self.__collision_detected_publisher.publish(True)
                 self.__set_learning_mode(True)
@@ -333,7 +364,13 @@ class TrajectoriesExecutor:
         self.__cancel_goal = True
         self.stop_current_plan()
 
-    def retime_plan(self, plan, velocity_scaling_factor=1.0, acceleration_scaling_factor=1.0, optimize=False):
+    def retime_plan(
+        self,
+        plan,
+        velocity_scaling_factor=1.0,
+        acceleration_scaling_factor=1.0,
+        optimize=False,
+    ):
         """
         Take a plan and retime it
         """
@@ -347,11 +384,13 @@ class TrajectoriesExecutor:
             else:
                 algorithm = "iterative_time_parameterization"
 
-            plan_out = self.__arm.retime_trajectory(start_state,
-                                                    plan,
-                                                    velocity_scaling_factor=velocity_scaling_factor,
-                                                    acceleration_scaling_factor=acceleration_scaling_factor,
-                                                    algorithm=algorithm)
+            plan_out = self.__arm.retime_trajectory(
+                start_state,
+                plan,
+                velocity_scaling_factor=velocity_scaling_factor,
+                acceleration_scaling_factor=acceleration_scaling_factor,
+                algorithm=algorithm,
+            )
         return plan_out
 
     def __get_plan_start_robot_state(self, plan):
@@ -376,12 +415,39 @@ class TrajectoriesExecutor:
 
     def link_plans(self, *plans):
         # Link plans
+        if len(plans) < 2:
+            raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "Not enough plans to link")
         final_plan = plans[0]
+        combined_plan = RobotTrajectory()
+        combined_plan.joint_trajectory.header = final_plan.joint_trajectory.header
+        combined_plan.joint_trajectory.joint_names = (final_plan.joint_trajectory.joint_names)
+        combined_plan.joint_trajectory.points = []
 
         for plan in plans[1:]:
-            final_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
+            combined_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
 
-        # Retime plan et recompute velocities
+        for attempt in range(1, self.__max_retries + 1):
+            new_plan = self.retime_plan(combined_plan, optimize=True)
+
+            if new_plan != combined_plan:
+                break
+
+            threshold = self.__proximity_step * attempt
+            points = combined_plan.joint_trajectory.points
+
+            if len(points) < 2:
+                break
+
+            filtered_points = [points[0]]
+            for i in range(1, len(points)):
+                if not joints_too_close_to_optimize(points[i].positions, filtered_points[-1].positions, threshold):
+                    filtered_points.append(points[i])
+                else:
+                    rospy.logdebug(f"Removing point {i} - distance < {threshold:.4f}")
+
+            combined_plan.joint_trajectory.points = filtered_points
+
+        final_plan.joint_trajectory.points.extend(combined_plan.joint_trajectory.points)
         final_plan = self.retime_plan(final_plan, optimize=True)
         return self.filtering_plan(final_plan)
 
@@ -396,7 +462,7 @@ class TrajectoriesExecutor:
         new_plan.joint_trajectory.points = []
 
         for i, point in enumerate(plan.joint_trajectory.points[:-1]):
-            if point.time_from_start != plan.joint_trajectory.points[i + 1].time_from_start:
+            if (point.time_from_start != plan.joint_trajectory.points[i + 1].time_from_start):
                 new_plan.joint_trajectory.points.append(point)
         new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[-1])
         return new_plan
@@ -411,12 +477,12 @@ class TrajectoriesExecutor:
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
-        if set_bool and self.__hardware_version in ['ned2', 'ned3pro']:
+        if set_bool and self.__hardware_version in ["ned2", "ned3pro"]:
             return True
 
         try:
-            rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
-            srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
+            rospy.wait_for_service("/niryo_robot/learning_mode/activate", timeout=1)
+            srv = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)
             resp = srv(set_bool)
             return resp.status == CommandStatus.SUCCESS
         except (rospy.ServiceException, rospy.ROSException):
@@ -424,7 +490,7 @@ class TrajectoriesExecutor:
 
     @staticmethod
     def display_traj(point_list, id_=1):
-        topic_display = 'visualization_marker_array'
+        topic_display = "visualization_marker_array"
         if topic_display in rospy.get_published_topics():
             markers_array = rospy.wait_for_message(topic_display, MarkerArray).markers
         else:

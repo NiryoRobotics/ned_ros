@@ -25,3 +25,12 @@ command_still_active_max_tries : 3
 
 # - Trajectory Acquisition Param
 trajectory_frequency: 7
+
+# - Trajectory Optimization Params
+# Maximum number of retries for trajectory optimization.
+# A limit of 24 retries, combined with the proximity step, ensures a maximum 
+# cumulative filtering of ~0.036 rad (~2 deg). This prevents excessive point 
+# removal that would otherwise degrade the intended geometric shape of the trajectory.
+max_optimization_retries: 24
+# Proximity threshold step for trajectory optimization (in radians) (this is the step of the motors)
+proximity_threshold_step: 0.0015

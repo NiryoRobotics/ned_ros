@@ -82,10 +82,12 @@ class ArmTCPTransformHandler:
         return new_roll, new_pitch, new_yaw
 
     def set_empty_tcp_to_ee_link_transform(self, ee_link):
-        ee_link_to_tcp_transform = self.transform_from_pose(Pose(Point(0, 0, 0), Quaternion(0, 0, 0, 1)),
-                                                            ee_link,
-                                                            "TCP",
-                                                            stamp=rospy.Time.now())
+        ee_link_to_tcp_transform = self.transform_from_pose(
+            Pose(Point(0, 0, 0), Quaternion(0, 0, 0, 1)),
+            ee_link,
+            "TCP",
+            stamp=rospy.Time.now(),
+        )
         self.__static_broadcaster.sendTransform(ee_link_to_tcp_transform)
         return ee_link_to_tcp_transform
 

@@ -16,7 +16,11 @@ from threading import Lock
 from .command_enums import ArmCommanderException
 
 # Quaternion
-from tf.transformations import quaternion_from_euler, quaternion_multiply, euler_from_quaternion
+from tf.transformations import (
+    quaternion_from_euler,
+    quaternion_multiply,
+    euler_from_quaternion,
+)
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -80,19 +84,24 @@ class JogController:
         self._enabled = False
         self.__jog_errors_cpt = 0
 
-        self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled', Bool, queue_size=3)
-        self._jog_errors_publisher = rospy.Publisher('/niryo_robot/jog_interface/errors', String, queue_size=3)
+        self._jog_enabled_publisher = rospy.Publisher("/niryo_robot/jog_interface/is_enabled", Bool, queue_size=3)
+        self._jog_errors_publisher = rospy.Publisher("/niryo_robot/jog_interface/errors", String, queue_size=3)
 
-        rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")), self._publish_jog_enabled)
+        rospy.Timer(
+            rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
+            self._publish_jog_enabled,
+        )
 
         self._check_disable_jog_timer = None
         self._last_command_timer = rospy.get_time()
         self._publish_jog_enabled()
 
         # - Direct publisher to joint controller
-        self._joint_trajectory_publisher = rospy.Publisher(rospy.get_param("~joint_controller_name") + '/command',
-                                                           JointTrajectory,
-                                                           queue_size=3)
+        self._joint_trajectory_publisher = rospy.Publisher(
+            rospy.get_param("~joint_controller_name") + "/command",
+            JointTrajectory,
+            queue_size=3,
+        )
 
         # Publishing rate
         self._timer_rate = rospy.get_param("~jog_timer_rate_sec")
@@ -101,27 +110,36 @@ class JogController:
         # - Subscribers
         # - Joint controller state, used to check collisions
         rospy.Subscriber(
-            rospy.get_param("~joint_controller_name") + '/state',
+            rospy.get_param("~joint_controller_name") + "/state",
             JointTrajectoryControllerState,
-            self.__callback_joint_controller_state)
+            self.__callback_joint_controller_state,
+        )
 
         # topic used to jog pose via Niryo Studio, to avoid calling the service
         self._jog_command_ik = None
-        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik',
-                         CommandJog,
-                         self.__callback_send_jog_command_ik,
-                         queue_size=20)
+        rospy.Subscriber(
+            "/niryo_robot_arm_commander/send_jog_command_ik",
+            CommandJog,
+            self.__callback_send_jog_command_ik,
+            queue_size=20,
+        )
 
         # topic used to jog joints via Niryo Studio, to avoid calling the service
-        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command',
-                         CommandJog,
-                         self.__callback_send_jog_joints_command,
-                         queue_size=10)
+        rospy.Subscriber(
+            "/niryo_robot_arm_commander/send_jog_joints_command",
+            CommandJog,
+            self.__callback_send_jog_joints_command,
+            queue_size=10,
+        )
 
         # - Service
         # Service to enable Jog Controller
-        rospy.Service('/niryo_robot/jog_interface/enable', SetBool, self.__callback_enable_jog)
-        rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift, self.__callback_jog_commander)
+        rospy.Service("/niryo_robot/jog_interface/enable", SetBool, self.__callback_enable_jog)
+        rospy.Service(
+            "/niryo_robot/jog_interface/jog_shift_commander",
+            JogShift,
+            self.__callback_jog_commander,
+        )
 
     # - Callbacks
 
@@ -155,12 +173,16 @@ class JogController:
         except ArmCommanderException as e:
             return self.__publish_jog_error(e.status, "Error while validating pose : {}".format(e.message))
         if not success:
-            return self.__publish_jog_error(CommandStatus.NO_PLAN_AVAILABLE,
-                                            "Unable to find an invert kinematics for the target position")
+            return self.__publish_jog_error(
+                CommandStatus.NO_PLAN_AVAILABLE,
+                "Unable to find an invert kinematics for the target position",
+            )
 
         success, message = self.__validate_ik_joints(potential_target_values)
-        return self.__publish_jog_error(CommandStatus.SUCCESS if success else CommandStatus.JOG_CONTROLLER_FAILURE,
-                                        message)
+        return self.__publish_jog_error(
+            CommandStatus.SUCCESS if success else CommandStatus.JOG_CONTROLLER_FAILURE,
+            message,
+        )
 
     def __publish_jog_error(self, status, message):
         if status < CommandStatus.SUCCESS:
@@ -203,12 +225,13 @@ class JogController:
 
             # validate target joints validity, based on collisions checking
             try:
-                valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
+                valid, link_colliding1, link_colliding2 = (self.__check_joint_validity_moveit(target_values))
                 if not valid:
                     return self.__publish_jog_error(
                         CommandStatus.JOG_CONTROLLER_FAILURE,
                         "Joints target unreachable because of collision between {} and {}".format(
-                            link_colliding1, link_colliding2))
+                            link_colliding1, link_colliding2),
+                    )
             except rospy.ServiceException as e:
                 message = "Jog Controller - Error while validating joint : {}".format(e.message)
                 rospy.logwarn_throttle(1, message)
@@ -228,11 +251,11 @@ class JogController:
 
         # this error tolerance is lower than the one in arm_commander bc the jog is much slower
         for error, tolerance in zip(current_joints_error, self.__error_tolerance_joint):
-            if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
+            if (abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT):
                 self.__collision_detected = True
                 self.__arm_state.set_learning_mode(True)
-                abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
+                abort_str = ("Command has been aborted due to a collision or "
+                             "a motor not able to follow the given trajectory")
                 rospy.logwarn(abort_str)
                 self.disable()
                 rospy.sleep(1)  # sleep so if the arrow in NS is still pressed, the jog wont re-start directly.
@@ -262,7 +285,10 @@ class JogController:
             except ArmCommanderException as e:
                 return e.status, "Error while validating pose : {}".format(e.message)
             if not success:
-                return CommandStatus.NO_PLAN_AVAILABLE, "Unable to find on invert kinematics for the target position"
+                return (
+                    CommandStatus.NO_PLAN_AVAILABLE,
+                    "Unable to find on invert kinematics for the target position",
+                )
             else:
                 self.set_target_values(potential_target_values)
         else:
@@ -281,15 +307,19 @@ class JogController:
 
             # validate target joints validity, based on collisions checking
             try:
-                valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
+                valid, link_colliding1, link_colliding2 = (self.__check_joint_validity_moveit(target_values))
                 if not valid:
                     if link_colliding1 is not None and link_colliding2 is not None:
-                        return CommandStatus.JOG_CONTROLLER_FAILURE, \
-                               "Joints target unreachable because of collision between {} and {}".format(
-                                   link_colliding1, link_colliding2)
+                        return (
+                            CommandStatus.JOG_CONTROLLER_FAILURE,
+                            "Joints target unreachable because of collision between {} and {}".format(
+                                link_colliding1, link_colliding2),
+                        )
                     else:
-                        return CommandStatus.JOG_CONTROLLER_FAILURE, \
-                               "Joints target unreachable because of collision between two parts of Ned"
+                        return (
+                            CommandStatus.JOG_CONTROLLER_FAILURE,
+                            "Joints target unreachable because of collision between two parts of Ned",
+                        )
             except rospy.ServiceException as e:
                 return e, "Error while validating joint : {}".format(e.message)
 
@@ -328,7 +358,7 @@ class JogController:
             positions = []
 
             for elem in self._current_jogged_joints:
-                joint_names.append('joint_{}'.format(elem + 1))
+                joint_names.append("joint_{}".format(elem + 1))
                 positions.append(target_values[elem])
 
             msg.joint_names = joint_names
@@ -374,14 +404,14 @@ class JogController:
         :rtype: bool
         """
         try:
-            rospy.wait_for_service('/niryo_robot_arm_commander/is_active', 2)
+            rospy.wait_for_service("/niryo_robot_arm_commander/is_active", 2)
         except rospy.ROSException as e:
             rospy.logerr(
                 f'Jog Controller - Impossible to connect to service "/niryo_robot_arm_commander/is_active" : {e}')
             return False
 
         try:
-            is_active_service = rospy.ServiceProxy('/niryo_robot_arm_commander/is_active', GetBool)
+            is_active_service = rospy.ServiceProxy("/niryo_robot_arm_commander/is_active", GetBool)
             response = is_active_service()
             return not response.value
         except rospy.ServiceException:
@@ -395,7 +425,7 @@ class JogController:
         :rtype: (GoalStatus, str)
         """
         if not self.can_be_enable():
-            msg_str = "Jog Controller - Wait for the end of command to enable Jog Controller"
+            msg_str = ("Jog Controller - Wait for the end of command to enable Jog Controller")
             rospy.logwarn(msg_str)
             return CommandStatus.ABORTED, msg_str
 
@@ -404,8 +434,10 @@ class JogController:
         self._last_command_timer = rospy.get_time()
         self._publisher_joint_trajectory_timer = rospy.Timer(rospy.Duration(self._timer_rate),
                                                              self._publish_joint_trajectory)
-        self._check_disable_jog_timer = rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
-                                                    self._check_for_disable)
+        self._check_disable_jog_timer = rospy.Timer(
+            rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
+            self._check_for_disable,
+        )
         msg_str = "Jog Controller - Enabled"
         rospy.loginfo(msg_str)
         return CommandStatus.SUCCESS, msg_str
@@ -461,26 +493,29 @@ class JogController:
 
     def _get_new_joints_w_ik(self, shift_command):
         quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
-        quat_target = quaternion_multiply(quat_jog,
-                                          [
-                                              self._last_robot_state_published.orientation.x,
-                                              self._last_robot_state_published.orientation.y,
-                                              self._last_robot_state_published.orientation.z,
-                                              self._last_robot_state_published.orientation.w
-                                          ])
+        quat_target = quaternion_multiply(
+            quat_jog,
+            [
+                self._last_robot_state_published.orientation.x,
+                self._last_robot_state_published.orientation.y,
+                self._last_robot_state_published.orientation.z,
+                self._last_robot_state_published.orientation.w,
+            ],
+        )
         rpy_target = RPY(*euler_from_quaternion(quat_target))
 
         self._new_robot_state = RobotState()
-        self._new_robot_state.position.x = self._last_robot_state_published.position.x + shift_command[0]
-        self._new_robot_state.position.y = self._last_robot_state_published.position.y + shift_command[1]
-        self._new_robot_state.position.z = self._last_robot_state_published.position.z + shift_command[2]
+        self._new_robot_state.position.x = (self._last_robot_state_published.position.x + shift_command[0])
+        self._new_robot_state.position.y = (self._last_robot_state_published.position.y + shift_command[1])
+        self._new_robot_state.position.z = (self._last_robot_state_published.position.z + shift_command[2])
         self._new_robot_state.orientation = Quaternion(*quat_target)
         self._new_robot_state.rpy = rpy_target
 
         self.__validate_params_pose(self._new_robot_state)
 
         success, joints = self.__kinematics_handler.get_inverse_kinematics(
-            Pose(self._new_robot_state.position, self._new_robot_state.orientation))
+            Pose(self._new_robot_state.position, self._new_robot_state.orientation)
+        )
         return success, joints
 
     def __validate_params_pose(self, new_robot_state):
@@ -507,15 +542,22 @@ class JogController:
                                                                         null_constraints)
             if not response.valid:
                 if len(response.contacts) > 0:
-                    rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
-                                  response.contacts[0].contact_body_1,
-                                  response.contacts[0].contact_body_2)
-                    return False, response.contacts[0].contact_body_1, response.contacts[0].contact_body_2
+                    rospy.logwarn(
+                        "Jog Controller - Joints target unreachable because of collision between %s and %s",
+                        response.contacts[0].contact_body_1,
+                        response.contacts[0].contact_body_2,
+                    )
+                    return (
+                        False,
+                        response.contacts[0].contact_body_1,
+                        response.contacts[0].contact_body_2,
+                    )
                 else:  # didn't succeed to get the contacts on the real robot
                     rospy.logwarn_throttle(
                         1,
-                        'Jog Controller - Joints target unreachable because of '
-                        'collision between two parts of Ned')
+                        "Jog Controller - Joints target unreachable because of "
+                        "collision between two parts of Ned",
+                    )
                     return False, None, None
             else:
                 return True, None, None
@@ -546,8 +588,11 @@ class JogController:
                 rospy.logwarn_throttle(0.5, error_str)
                 self.set_target_values(None)
                 self._current_jogged_joints = None
-                return False, "Unable to find an invert kinematics for the target position " \
-                              "close enough to the current position"
+                return (
+                    False,
+                    "Unable to find an invert kinematics for the target position "
+                    "close enough to the current position",
+                )
         else:
             self.set_target_values(joints)
         return True, "Success"
@@ -561,21 +606,30 @@ class JogController:
         """
         hdw_st = self.__arm_state.hardware_status
         if hdw_st.calibration_needed or hdw_st.calibration_in_progress:
-            return CommandStatus.ABORTED, "Cannot send command cause Jog because calibration is not done"
+            return (
+                CommandStatus.ABORTED,
+                "Cannot send command cause Jog because calibration is not done",
+            )
 
         if self.__arm_state.learning_mode_on:
             try:
                 self.__arm_state.set_learning_mode(False)
                 rospy.sleep(0.1)
             except (rospy.ROSException, rospy.ServiceException):
-                return CommandStatus.ABORTED, "Error while trying to turn Off learning mode"
+                return (
+                    CommandStatus.ABORTED,
+                    "Error while trying to turn Off learning mode",
+                )
 
         if not self._enabled:
             ret, str_msg = self.enable()
             if ret == CommandStatus.ABORTED:
-                return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
+                return (
+                    CommandStatus.ABORTED,
+                    "Cannot send command cause Jog is not activated and cannot be",
+                )
         self._last_command_timer = rospy.get_time()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

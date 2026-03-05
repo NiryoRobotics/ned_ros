@@ -26,7 +26,7 @@ from .command_enums import ArmCommanderException
 class ArmState(object):
 
     def __init__(self):
-        self.__hardware_version = rospy.get_param('~hardware_version')
+        self.__hardware_version = rospy.get_param("~hardware_version")
 
         self.__joints_name = rospy.get_param("~joint_names")
         rospy.logdebug("ArmCommander.init - joint_controller_name: %s", self.__joints_name)
@@ -42,7 +42,7 @@ class ArmState(object):
         self.__acceleration_percentage_scaling_factor = 100.0
 
         # specific values for ned2
-        if self.__hardware_version in ['ned2', 'ned3pro']:
+        if self.__hardware_version in ["ned2", "ned3pro"]:
             self.__velocity_scaling_factor = 0.5
             self.__acceleration_scaling_factor = 0.5
             self.__velocity_percentage_scaling_factor = 200.0
@@ -55,47 +55,55 @@ class ArmState(object):
         self.__max_acceleration_scaling_percentage = int(self.__acceleration_scaling_factor *
                                                          self.__acceleration_percentage_scaling_factor)
 
-        self.__max_velocity_scaling_factor_pub = rospy.Publisher('/niryo_robot/max_velocity_scaling_factor',
+        self.__max_velocity_scaling_factor_pub = rospy.Publisher("/niryo_robot/max_velocity_scaling_factor",
                                                                  Int32,
                                                                  queue_size=10,
                                                                  latch=True)
 
-        self.__max_acceleration_scaling_factor_pub = rospy.Publisher('/niryo_robot/max_acceleration_scaling_factor',
-                                                                     Int32,
-                                                                     queue_size=10,
-                                                                     latch=True)
+        self.__max_acceleration_scaling_factor_pub = rospy.Publisher(
+            "/niryo_robot/max_acceleration_scaling_factor",
+            Int32,
+            queue_size=10,
+            latch=True,
+        )
 
         self.__publish_velocity_scaling_percentage()
         self.__publish_acceleration_scaling_percentage()
 
-        rospy.Service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor',
-                      SetInt,
-                      self.__callback_set_max_velocity_scaling_factor)
+        rospy.Service(
+            "/niryo_robot_arm_commander/set_max_velocity_scaling_factor",
+            SetInt,
+            self.__callback_set_max_velocity_scaling_factor,
+        )
 
-        rospy.Service('/niryo_robot_arm_commander/set_acceleration_factor',
-                      SetInt,
-                      self.__callback_set_acceleration_factor)
+        rospy.Service(
+            "/niryo_robot_arm_commander/set_acceleration_factor",
+            SetInt,
+            self.__callback_set_acceleration_factor,
+        )
 
         self.__write_custom_value_service = rospy.ServiceProxy("/niryo_robot/ttl_driver/send_custom_value",
                                                                WriteCustomValue)
 
         # Joint State
         self.__joint_states = None
-        rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
+        rospy.Subscriber("/joint_states", JointState, self.__callback_joint_states)
 
         # Check joint validity service (used for self collisions checking)
-        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+        self.check_state_validity = rospy.ServiceProxy("check_state_validity", GetStateValidity)
 
         self.__learning_mode_on = None
-        rospy.Subscriber('/niryo_robot/learning_mode/state', Bool, self.__callback_sub_learning_mode)
+        rospy.Subscriber("/niryo_robot/learning_mode/state", Bool, self.__callback_sub_learning_mode)
         self.__learning_mode_service = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)
 
         self.__hardware_status = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
-                         HardwareStatus,
-                         self.__callback_hardware_status)
+        rospy.Subscriber(
+            "/niryo_robot_hardware_interface/hardware_status",
+            HardwareStatus,
+            self.__callback_hardware_status,
+        )
 
-        rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.__callback_sub_robot_state)
+        rospy.Subscriber("/niryo_robot/robot_state", RobotState, self.__callback_sub_robot_state)
         self.__robot_state = None
 
         # Init move group
@@ -182,13 +190,17 @@ class ArmState(object):
         rospy.logdebug("ArmCommander - __callback_set_max_velocity_scaling_factor: %d", req.value)
 
         if not 0 < req.value <= 200:
-            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 200'}
+            return {
+                "status": CommandStatus.INVALID_PARAMETERS,
+                "message": "Value must be between 1 and 200",
+            }
 
         if 100 < req.value <= 200:
             rospy.logwarn(
                 "ArmCommander - __callback_set_max_velocity_scaling_factor %d is above 100%%."
                 "You are now in the experimental mode of the robot",
-                req.value)
+                req.value,
+            )
 
         try:
             self.__set_max_velocity_scaling_percentage(req.value)
@@ -208,66 +220,78 @@ class ArmState(object):
             # write stepper velocity & acceleration profiles with scaled values
             i = 1
             STEPPER_ID_OFFSET = 1
-            stepper_param_ns = '/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'
-            while rospy.has_param(stepper_param_ns + str(i) + '/v_max') and rospy.get_param(stepper_param_ns + str(i) +
-                                                                                            '/a_max'):
-                default_vmax = rospy.get_param(stepper_param_ns + str(i) + '/v_max')
-                default_amax = rospy.get_param(stepper_param_ns + str(i) + '/a_max')
+            stepper_param_ns = ("/niryo_robot_hardware_interface/joints_interface/steppers/stepper_")
+            while rospy.has_param(stepper_param_ns + str(i) + "/v_max") and rospy.get_param(stepper_param_ns + str(i) +
+                                                                                            "/a_max"):
+                default_vmax = rospy.get_param(stepper_param_ns + str(i) + "/v_max")
+                default_amax = rospy.get_param(stepper_param_ns + str(i) + "/a_max")
 
                 _id = i + STEPPER_ID_OFFSET
                 scaled_velocity = int(default_vmax * self.__velocity_scaling_factor * RADIAN_PER_SECONDS_TO_RPM *
                                       1000)  # rpm to stepper value
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_velocity,
-                                                  reg_address=VEL_PROFILE_ADDR,
-                                                  byte_number=VEL_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_velocity,
+                    reg_address=VEL_PROFILE_ADDR,
+                    byte_number=VEL_PROFILE_BYTE_LEN,
+                )
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor *
                                           RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)  # rpm2 to stepper value
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_acceleration,
-                                                  reg_address=ACC_PROFILE_ADDR,
-                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_acceleration,
+                    reg_address=ACC_PROFILE_ADDR,
+                    byte_number=ACC_PROFILE_BYTE_LEN,
+                )
                 i = i + 1
 
             # write dxl velocity & acceleration profiles with scaled values
             i = 1
             DXL_ID_OFFSET = 4
-            dxl_param_ns = '/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'
+            dxl_param_ns = ("/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_")
             while rospy.has_param(dxl_param_ns + str(i) +
-                                  '/velocity_profile') and rospy.get_param(dxl_param_ns + str(i) +
-                                                                           '/acceleration_profile'):
-                default_vmax = rospy.get_param(dxl_param_ns + str(i) + '/velocity_profile')
-                default_amax = rospy.get_param(dxl_param_ns + str(i) + '/acceleration_profile')
+                                  "/velocity_profile") and rospy.get_param(dxl_param_ns + str(i) +
+                                                                           "/acceleration_profile"):
+                default_vmax = rospy.get_param(dxl_param_ns + str(i) + "/velocity_profile")
+                default_amax = rospy.get_param(dxl_param_ns + str(i) + "/acceleration_profile")
 
                 _id = i + DXL_ID_OFFSET
                 scaled_velocity = int(default_vmax * self.__velocity_scaling_factor)
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_velocity,
-                                                  reg_address=VEL_PROFILE_ADDR,
-                                                  byte_number=VEL_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_velocity,
+                    reg_address=VEL_PROFILE_ADDR,
+                    byte_number=VEL_PROFILE_BYTE_LEN,
+                )
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor)
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_acceleration,
-                                                  reg_address=ACC_PROFILE_ADDR,
-                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_acceleration,
+                    reg_address=ACC_PROFILE_ADDR,
+                    byte_number=ACC_PROFILE_BYTE_LEN,
+                )
                 i = i + 1
 
         except ArmCommanderException as e:
-            return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
+            return {"status": CommandStatus.ARM_COMMANDER_FAILURE, "message": e.message}
 
-        return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
+        return {"status": CommandStatus.SUCCESS, "message": "Success"}
 
     def __callback_set_acceleration_factor(self, req):
         rospy.logdebug("ArmCommander - __callback_set_acceleration_factor: %d", req.value)
 
         if not 0 < req.value <= 200:
-            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 200'}
+            return {
+                "status": CommandStatus.INVALID_PARAMETERS,
+                "message": "Value must be between 1 and 200",
+            }
 
         if 100 < req.value <= 200:
             rospy.logwarn(
                 "ArmCommander - __callback_set_acceleration_factor %d is above 100%%."
                 "You are now in the experimental mode of the robot",
-                req.value)
+                req.value,
+            )
 
         try:
             # if acceleration is lower than 40% motors will not move
@@ -282,38 +306,42 @@ class ArmState(object):
             # write stepper velocity & acceleration profiles with scaled values
             i = 1
             STEPPER_ID_OFFSET = 1
-            stepper_param_ns = '/niryo_robot_hardware_interface/joints_interface/steppers/stepper_'
-            while rospy.has_param(stepper_param_ns + str(i) + '/a_max'):
-                default_amax = rospy.get_param(stepper_param_ns + str(i) + '/a_max')
+            stepper_param_ns = ("/niryo_robot_hardware_interface/joints_interface/steppers/stepper_")
+            while rospy.has_param(stepper_param_ns + str(i) + "/a_max"):
+                default_amax = rospy.get_param(stepper_param_ns + str(i) + "/a_max")
 
                 _id = i + STEPPER_ID_OFFSET
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor *
                                           RADIAN_PER_SECONDS_SQ_TO_RPM_SQ / 214.577)  # rpm2 to stepper value
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_acceleration,
-                                                  reg_address=ACC_PROFILE_ADDR,
-                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_acceleration,
+                    reg_address=ACC_PROFILE_ADDR,
+                    byte_number=ACC_PROFILE_BYTE_LEN,
+                )
                 i = i + 1
 
             # write dxl velocity & acceleration profiles with scaled values
             i = 1
             DXL_ID_OFFSET = 4
-            dxl_param_ns = '/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_'
-            while rospy.has_param(dxl_param_ns + str(i) + '/acceleration_profile'):
-                default_amax = rospy.get_param(dxl_param_ns + str(i) + '/acceleration_profile')
+            dxl_param_ns = ("/niryo_robot_hardware_interface/joints_interface/dynamixels/dxl_")
+            while rospy.has_param(dxl_param_ns + str(i) + "/acceleration_profile"):
+                default_amax = rospy.get_param(dxl_param_ns + str(i) + "/acceleration_profile")
 
                 _id = i + DXL_ID_OFFSET
                 scaled_acceleration = int(default_amax * self.__acceleration_scaling_factor)
-                self.__write_custom_value_service(id=_id,
-                                                  value=scaled_acceleration,
-                                                  reg_address=ACC_PROFILE_ADDR,
-                                                  byte_number=ACC_PROFILE_BYTE_LEN)
+                self.__write_custom_value_service(
+                    id=_id,
+                    value=scaled_acceleration,
+                    reg_address=ACC_PROFILE_ADDR,
+                    byte_number=ACC_PROFILE_BYTE_LEN,
+                )
                 i = i + 1
 
         except ArmCommanderException as e:
-            return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
+            return {"status": CommandStatus.ARM_COMMANDER_FAILURE, "message": e.message}
 
-        return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
+        return {"status": CommandStatus.SUCCESS, "message": "Success"}
 
     # -- Publishers call
     def __publish_velocity_scaling_percentage(self):
@@ -321,7 +349,10 @@ class ArmState(object):
         Publish velocity scaling percentage
         :return: None
         """
-        rospy.logdebug("ArmCommander.init - Velocity_scaling_percentage: %d", self.__max_velocity_scaling_percentage)
+        rospy.logdebug(
+            "ArmCommander.init - Velocity_scaling_percentage: %d",
+            self.__max_velocity_scaling_percentage,
+        )
         msg = Int32(data=self.__max_velocity_scaling_percentage)
         self.__max_velocity_scaling_factor_pub.publish(msg)
 
@@ -330,8 +361,10 @@ class ArmState(object):
         Publish acceleration scaling percentage
         :return: None
         """
-        rospy.logdebug("ArmCommander.init - Acceleration_scaling_percentage: %d",
-                       self.__max_acceleration_scaling_percentage)
+        rospy.logdebug(
+            "ArmCommander.init - Acceleration_scaling_percentage: %d",
+            self.__max_acceleration_scaling_percentage,
+        )
         msg = Int32(data=self.__max_acceleration_scaling_percentage)
         self.__max_acceleration_scaling_factor_pub.publish(msg)
 
@@ -343,7 +376,7 @@ class ArmState(object):
         :return: None
         """
         self.__max_velocity_scaling_percentage = percentage
-        self.__velocity_scaling_factor = percentage / self.__velocity_percentage_scaling_factor
+        self.__velocity_scaling_factor = (percentage / self.__velocity_percentage_scaling_factor)
         self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
         self.__publish_velocity_scaling_percentage()
 
@@ -354,7 +387,7 @@ class ArmState(object):
         :return: None
         """
         self.__max_acceleration_scaling_percentage = percentage
-        self.__acceleration_scaling_factor = percentage / self.__acceleration_percentage_scaling_factor
+        self.__acceleration_scaling_factor = (percentage / self.__acceleration_percentage_scaling_factor)
         self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
         self.__publish_acceleration_scaling_percentage()
 
@@ -368,10 +401,10 @@ class ArmState(object):
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
-        if set_bool and self.__hardware_version in ['ned2', 'ned3pro']:
+        if set_bool and self.__hardware_version in ["ned2", "ned3pro"]:
             return True
         try:
-            return self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS
+            return (self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS)
         except (rospy.ServiceException, rospy.ROSException):
             return False
 
@@ -386,14 +419,17 @@ class ArmState(object):
         :rtype: bool
         """
         try:
-            return self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS
+            return (self.__learning_mode_service(set_bool).status == CommandStatus.SUCCESS)
         except (rospy.ServiceException, rospy.ROSException):
             return False
 
     def __init_move_group_commander(self):
         # Get Arm MoveGroupCommander
         move_group_commander_name = rospy.get_param("~move_group_commander_name")
-        rospy.logdebug("ArmCommander.init - move_group_commander_name: %s", move_group_commander_name)
+        rospy.logdebug(
+            "ArmCommander.init - move_group_commander_name: %s",
+            move_group_commander_name,
+        )
 
         self.__arm = moveit_commander.MoveGroupCommander(move_group_commander_name, wait_for_servers=30.0)
 
