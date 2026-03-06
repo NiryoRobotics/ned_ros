@@ -747,6 +747,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     def set_jog_use_state(self, state):
         """
+        .. deprecated:: 5.5.0
+           Manual switching is obsolete. Jog now activates automatically upon command and deactivates when idle.
         Turns jog controller On or Off
 
         :param state: ``True`` to turn on, else ``False``
@@ -754,6 +756,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: status, message
         :rtype: (int, str)
         """
+        warnings.warn(
+            "Manual switching is obsolete. Jog now activates automatically upon command and deactivates when idle.",
+            DeprecationWarning)
         result = self._call_service('/niryo_robot/jog_interface/enable', SetBool, state)
         return self._classic_return_w_check(result)
 
