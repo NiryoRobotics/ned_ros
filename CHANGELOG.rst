@@ -17,8 +17,10 @@ ___________
 
 **Bugfixes**
 
+* Improves picking stability by using the object's centroid instead of the rectangle center and minimizing yaw rotation for symmetrical shapes
+* Fixed: Resolved a negative velocity bug caused by time parameterization failure in MoveIt
 * Clamped recorded and existing trajectories to robot's joints limits.
-* Refine the trajectory execution process, whether triggered via the Program Player (Blocky/Python) or directly through the library 
+* Refined the trajectory execution process, whether triggered via the Program Player (Blocky or Python) or directly through the library 
 
 
 v5.7.2

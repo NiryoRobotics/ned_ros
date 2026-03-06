@@ -50,10 +50,23 @@ def find_shape(mask: np.ndarray, shape: ObjectShape) -> Optional[Tuple[float, fl
         if found_shape != shape and shape != ObjectShape.ANY:
             continue
 
-        (x, y), _size, angle = cv2.minAreaRect(contour)
+        moment = cv2.moments(contour)
+        if moment["m00"] > 0:
+            x = int(moment["m10"] / moment["m00"])
+            y = int(moment["m01"] / moment["m00"])
+
+            _, _, angle = cv2.minAreaRect(contour)
+        else:
+            (x, y), _size, angle = cv2.minAreaRect(contour)
 
         if found_shape == ObjectShape.CIRCLE:
             angle = 0
+        elif found_shape == ObjectShape.SQUARE:
+            # modulo 90 to get a value between 0 to 90,
+            # then shift (by adding and subtracting 45) to get a value between -45 and 45.
+            # This is done to have the minimal angle of rotation of the square(respectively of the gripper),
+            # since a square rotated by 45 degrees is the same as a square not rotated at all.
+            angle = (angle + 45) % 90 - 45
 
         angle = np.radians(angle)
 
