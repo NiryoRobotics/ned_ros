@@ -158,7 +158,6 @@ class VisionNode:
             return CommandStatus.MARKERS_NOT_FOUND, None, None, None, None
         except image_processing.NoShapeFoundError:
             return CommandStatus.OBJECT_NOT_FOUND, None, None, None, None
-
         return ObjDetectionResponse(
             status=CommandStatus.SUCCESS,
             obj_pose=ObjectPose(x=found_object.x, y=found_object.y, yaw=found_object.yaw),
