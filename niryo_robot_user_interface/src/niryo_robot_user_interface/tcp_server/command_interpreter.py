@@ -175,8 +175,6 @@ class CommandInterpreter:
         for parameter in list_ret_param:
             if isinstance(parameter, Enum):
                 new_param_list.append(parameter.name)
-            elif isinstance(parameter, bool):
-                new_param_list.append(str(parameter))
             else:
                 new_param_list.append(parameter)
 
