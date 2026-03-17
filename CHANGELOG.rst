@@ -11,6 +11,7 @@ ___________
 **Bugfixes**
 
 * Fixed the logic of move to home pose
+* Resolved custom button state type mismatch
 
 
 v5.8.0
