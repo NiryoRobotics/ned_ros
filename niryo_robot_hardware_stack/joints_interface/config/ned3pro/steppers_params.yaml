@@ -21,7 +21,7 @@ steppers:
     stepper_2:
         motor_ratio: 0.001
         offset_position: 0.0
-        default_home_position: 0.44
+        default_home_position: 0.4395
         limit_position_max: 0.44
         limit_position_min: -1.75
         direction: 1
@@ -32,7 +32,7 @@ steppers:
     stepper_3:
         motor_ratio: 0.001
         offset_position: 0.0
-        default_home_position: -1.22
+        default_home_position: -1.2195
         limit_position_min: -1.22
         limit_position_max: 1.57
         direction: 1
