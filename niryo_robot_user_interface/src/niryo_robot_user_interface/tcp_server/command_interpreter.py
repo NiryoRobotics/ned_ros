@@ -390,6 +390,30 @@ class CommandInterpreter:
         self.__niryo_robot.move(robot_position_obj, move_cmd)
         return self.__send_answer()
 
+    @check_nb_args(0)
+    def __move_to_home_pose(self):
+        self.__niryo_robot.move_to_sleep_pose()
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __get_home_pose(self):
+        return self.__send_answer(*self.__niryo_robot.get_sleep_pose())
+
+    @check_nb_args(1)
+    def __set_home_pose(self, robot_position):
+        robot_position_obj = self.__obj_from_dict(robot_position)
+
+        if not isinstance(robot_position_obj, JointsPosition):
+            raise TcpCommandException("The robot can only set a home position with joints position, not with a pose")
+
+        self.__niryo_robot.set_sleep_pose(robot_position_obj)
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __reset_home_pose(self):
+        self.__niryo_robot.reset_sleep_pose()
+        return self.__send_answer()
+
     @check_nb_args(6)
     def __move_joints(self, *param_list):
         joint_list = self.__map_list(param_list, float)

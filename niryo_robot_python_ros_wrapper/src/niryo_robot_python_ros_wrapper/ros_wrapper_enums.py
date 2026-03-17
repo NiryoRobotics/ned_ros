@@ -165,6 +165,9 @@ class CommandEnum(Enum):
     GET_JOINTS = 10
     GET_POSE = 11
     GET_POSE_QUAT = 12
+    GET_HOME_POSE = 13
+    SET_HOME_POSE = 14
+    RESET_HOME_POSE = 15
 
     MOVE_JOINTS = 20
     MOVE_POSE = 21
@@ -181,6 +184,7 @@ class CommandEnum(Enum):
 
     MOVE = 29
     JOG = 30
+    MOVE_TO_HOME_POSE = 31
 
     # Saved Pose
     GET_POSE_SAVED = 50

@@ -2,6 +2,17 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+___________
+
+**Features**
+* Added the possibility to set, reset, and get the home pose using PyNiryo
+
+**Bugfixes**
+
+* Fixed the logic of move to home pose
+
+
 v5.8.0
 ___________
 
