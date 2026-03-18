@@ -29,7 +29,7 @@ steppers:
         offset_position: 0.61
         default_home_position: 0.5
         limit_position_max: 0.61
-        limit_position_min: -2.09
+        limit_position_min: -1.83
         direction: -1
         v_start: 0.0
         a_1: 1.0996
@@ -46,7 +46,7 @@ steppers:
         offset_position: -1.34
         default_home_position: -1.25
         limit_position_min: -1.34
-        limit_position_max: 1.54
+        limit_position_max: 1.49
         direction: 1
         v_start: 0.0
         a_1: 2.199

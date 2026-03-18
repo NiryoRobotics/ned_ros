@@ -449,7 +449,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
             move_goal.rpy.yaw = robot_position.yaw
 
         goal = RobotMoveGoal(cmd=move_goal)
-        return self.__robot_action_nac.execute(goal, wait_for_result=blocking)
+        status, message = self.__robot_action_nac.execute(goal, wait_for_result=blocking)
+        return self._return_w_check(status, message)
 
     @move_command
     def __move_sequence(self, sequence, blocking=True, **kwargs):
@@ -632,7 +633,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         move_cmd = ArmMoveCommand.SHIFT_LINEAR_POSE if linear else ArmMoveCommand.SHIFT_POSE
         cmd = ArmMoveCommand(cmd_type=move_cmd, shift=ShiftPose(axis_number=axis, value=value))
         goal = RobotMoveGoal(cmd=cmd)
-        return self.__robot_action_nac.execute(goal)
+        status, message = self.__robot_action_nac.execute(goal)
+        self._return_w_check(status, message)
 
     @move_command
     def shift_linear_pose(self, axis, value):
@@ -700,7 +702,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.DRAW_SPIRAL, args=[radius, angle_step, nb_steps, plan])
         goal = RobotMoveGoal(cmd=cmd)
-        return self.__robot_action_nac.execute(goal)
+        status, message = self.__robot_action_nac.execute(goal)
+        self._return_w_check(status, message)
 
     def move_without_moveit(self, joints_target, duration):
         goal = self._create_goal(joints_target, duration)
@@ -744,6 +747,11 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         """
         result = self._call_service('/niryo_robot_arm_commander/stop_command', Trigger)
         return self._classic_return_w_check(result)
+
+    def _return_w_check(self, status, message):
+        if status < 0:
+            raise NiryoRosWrapperException("Error Code : {}\nMessage : {}".format(status, message))
+        return status
 
     def set_jog_use_state(self, state):
         """
@@ -1303,7 +1311,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
         goal.cmd.list_poses = self.__ros_poses_from_robot_positions(robot_positions)
         goal.cmd.dist_smoothing = dist_smoothing
-        return self.__robot_action_nac.execute(goal)
+        status, message = self.__robot_action_nac.execute(goal)
+        self._return_w_check(status, message)
 
     def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
         """
