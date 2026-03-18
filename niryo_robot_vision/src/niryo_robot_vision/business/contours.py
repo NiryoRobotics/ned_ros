@@ -26,7 +26,9 @@ def find_biggest_contours(img, nb_contours_max=10, min_area=400):
     return sorted(filtered_contours, key=cv2.contourArea, reverse=True)[:nb_contours_max]
 
 
-def find_shape(mask: np.ndarray, shape: ObjectShape) -> Optional[Tuple[float, float, float, ObjectShape]]:
+def find_shape(mask: np.ndarray,
+               shape: ObjectShape,
+               ratio_threshold=0.85) -> Optional[Tuple[float, float, float, ObjectShape]]:
     """
     Function to extract the biggest shape from a threshed image.
     :param mask: The image to process
@@ -55,18 +57,52 @@ def find_shape(mask: np.ndarray, shape: ObjectShape) -> Optional[Tuple[float, fl
             x = int(moment["m10"] / moment["m00"])
             y = int(moment["m01"] / moment["m00"])
 
-            _, _, angle = cv2.minAreaRect(contour)
+            _, (width, height), angle = cv2.minAreaRect(contour)
         else:
-            (x, y), _size, angle = cv2.minAreaRect(contour)
+            (x, y), (width, height), angle = cv2.minAreaRect(contour)
+        if width < height:
+            width, height = height, width
+            angle += 90
 
-        if found_shape == ObjectShape.CIRCLE:
-            angle = 0
-        elif found_shape == ObjectShape.SQUARE:
-            # modulo 90 to get a value between 0 to 90,
-            # then shift (by adding and subtracting 45) to get a value between -45 and 45.
-            # This is done to have the minimal angle of rotation of the square(respectively of the gripper),
-            # since a square rotated by 45 degrees is the same as a square not rotated at all.
-            angle = (angle + 45) % 90 - 45
+        if height > 0:
+            ratio = height / width
+            nb_squares = np.round(width / height)
+
+            # The Shift logic targets the outermost square of the concatenated block.
+            # Using 'nb_squares >= 2' ensures we only shift if it's not a single square.
+            if ratio < ratio_threshold and nb_squares >= 2:
+                shift_distance = width * (1 - 1 / nb_squares) / 2.0
+
+                rad = np.radians(angle)
+                # Calculate the X and Y components of the shift vector
+                dx = shift_distance * np.cos(rad)
+                dy = shift_distance * np.sin(rad)
+                # Determine the coordinates of both extremities
+                x1, y1 = x + dx, y + dy
+                x2, y2 = x - dx, y - dy
+                # Compute squared distance from the origin (0, 0) for both ends
+                dist1_sq = x1**2 + y1**2
+                dist2_sq = x2**2 + y2**2
+                # Select the extremity that is closest to the origin
+                if dist1_sq < dist2_sq:
+                    x, y = x1, y1
+                else:
+                    x, y = x2, y2
+
+                # Gripper is always perpendicular to the width (the long axis)
+                gripper_angle = angle + 90
+
+                # Normalisation [-90, 90]
+                angle = (gripper_angle + 90) % 180 - 90
+
+            elif found_shape == ObjectShape.CIRCLE:
+                angle = 0
+            elif found_shape == ObjectShape.SQUARE:
+                # modulo 90 to get a value between 0 to 90,
+                # then shift (by adding and subtracting 45) to get a value between -45 and 45.
+                # This is done to have the minimal angle of rotation of the square(respectively of the gripper),
+                # since a square rotated by 45 degrees is the same as a square not rotated at all.
+                angle = (angle + 45) % 90 - 45
 
         angle = np.radians(angle)
 

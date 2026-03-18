@@ -34,6 +34,8 @@ ___________
 * Fixed: Resolved a negative velocity bug caused by time parameterization failure in MoveIt
 * Clamped recorded and existing trajectories to robot's joints limits.
 * Refined the trajectory execution process, whether triggered via the Program Player (Blocky or Python) or directly through the library 
+* Resolved custom button state type mismatch
+* Fixed aligned squares bug
 
 
 v5.7.2
