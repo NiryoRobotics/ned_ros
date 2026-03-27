@@ -13,6 +13,8 @@ ___________
 * Fixed the logic of move to home pose
 * Resolved custom button state type mismatch
 * Converted tuples to lists before saving the trajectory
+* Resolve limits mismatch between the config and URDF file 
+* Update Move command to provide feedback and report valid limits when a joint or pose is out of range or unreachable 
 
 
 v5.8.0
@@ -34,6 +36,8 @@ ___________
 * Fixed: Resolved a negative velocity bug caused by time parameterization failure in MoveIt
 * Clamped recorded and existing trajectories to robot's joints limits.
 * Refined the trajectory execution process, whether triggered via the Program Player (Blocky or Python) or directly through the library 
+* Resolved custom button state type mismatch
+* Fixed aligned squares bug
 
 
 v5.7.2

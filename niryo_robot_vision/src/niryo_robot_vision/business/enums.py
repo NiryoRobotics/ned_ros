@@ -38,10 +38,10 @@ class ObjectShape(Enum):
     CIRCLE = np.inf
 
     @classmethod
-    def from_nb_sides(cls, nb_sides: int):
+    def from_nb_sides(cls, nb_sides: int, tolerance: int = 1):
         if nb_sides < cls.SQUARE.value:
             raise ValueError(f"Invalid number of sides: {nb_sides}")
-        elif nb_sides == cls.SQUARE.value:
+        elif cls.SQUARE.value <= nb_sides <= (cls.SQUARE.value + tolerance):
             return cls.SQUARE
         else:
             return cls.CIRCLE
