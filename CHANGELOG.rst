@@ -12,6 +12,7 @@ ___________
 
 * Fixed the logic of move to home pose
 * Resolved custom button state type mismatch
+* Converted tuples to lists before saving the trajectory
 
 
 v5.8.0
