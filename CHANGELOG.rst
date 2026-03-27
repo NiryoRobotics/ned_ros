@@ -11,6 +11,8 @@ ___________
 **Bugfixes**
 
 * Fixed the logic of move to home pose
+* Resolved custom button state type mismatch
+* Converted tuples to lists before saving the trajectory
 * Resolve limits mismatch between the config and URDF file 
 * Update Move command to provide feedback and report valid limits when a joint or pose is out of range or unreachable 
 
