@@ -269,6 +269,9 @@ class TrajectoryHandlerNode:
                 return CommandStatus.TRAJECTORY_HANDLER_RENAME_FAILURE, str(e)
         elif cmd == req.SAVE:
             try:
+                # We receive tuples because of message serialization, so we reconvert them to lists
+                for point in req.trajectory.points:
+                    point.positions = list(point.positions)
                 _status = self.save_trajectory(req.trajectory, req.name, req.description)
                 if _status:
                     return CommandStatus.SUCCESS, "Saved trajectory '{}'".format(req.name)
