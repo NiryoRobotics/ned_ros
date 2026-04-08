@@ -12,9 +12,12 @@ a mouse to control the robot)
 
 import rospy
 import math
+import tf2_ros
+import tf2_geometry_msgs
 from threading import Lock
-from .command_enums import ArmCommanderException
 
+from .command_enums import ArmCommanderException
+import numpy as np
 # Quaternion
 from tf.transformations import (
     quaternion_from_euler,
@@ -30,7 +33,7 @@ from std_msgs.msg import Bool, String
 
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
-from geometry_msgs.msg import Pose, Quaternion
+from geometry_msgs.msg import Pose, Quaternion, TransformStamped
 from control_msgs.msg import JointTrajectoryControllerState
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from moveit_msgs.msg import Constraints
@@ -169,7 +172,7 @@ class JogController:
             self.__jog_errors_cpt = 0
 
         try:
-            success, potential_target_values = self._get_new_joints_w_ik(shift_command)
+            success, potential_target_values = self._get_new_joints_w_ik(shift_command, msg.reference_frame)
         except ArmCommanderException as e:
             return self.__publish_jog_error(e.status, "Error while validating pose : {}".format(e.message))
         if not success:
@@ -281,7 +284,7 @@ class JogController:
                 min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in shift_command[3:]
             ]
             try:
-                success, potential_target_values = self._get_new_joints_w_ik(shift_command)
+                success, potential_target_values = self._get_new_joints_w_ik(shift_command, msg.reference_frame)
             except ArmCommanderException as e:
                 return e.status, "Error while validating pose : {}".format(e.message)
             if not success:
@@ -491,25 +494,34 @@ class JogController:
         self._last_robot_state_published = self.__arm_state.robot_state
         self.__jog_errors_cpt = 0
 
-    def _get_new_joints_w_ik(self, shift_command):
-        quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
-        quat_target = quaternion_multiply(
-            quat_jog,
-            [
-                self._last_robot_state_published.orientation.x,
-                self._last_robot_state_published.orientation.y,
-                self._last_robot_state_published.orientation.z,
-                self._last_robot_state_published.orientation.w,
-            ],
-        )
-        rpy_target = RPY(*euler_from_quaternion(quat_target))
+    def _get_new_joints_w_ik(self, shift_command, reference_frame="world"):
+        if not reference_frame:
+            reference_frame = "world"
+
+        if not hasattr(self, 'tf_listener') or not hasattr(self, 'tf_buffer'):
+            self.tf_buffer = tf2_ros.Buffer()
+            self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
         self._new_robot_state = RobotState()
-        self._new_robot_state.position.x = (self._last_robot_state_published.position.x + shift_command[0])
-        self._new_robot_state.position.y = (self._last_robot_state_published.position.y + shift_command[1])
-        self._new_robot_state.position.z = (self._last_robot_state_published.position.z + shift_command[2])
-        self._new_robot_state.orientation = Quaternion(*quat_target)
-        self._new_robot_state.rpy = rpy_target
+        last_pose = self._last_robot_state_published.position
+        last_ori = self._last_robot_state_published.orientation
+        current_quat = [last_ori.x, last_ori.y, last_ori.z, last_ori.w]
+
+        if reference_frame == "world":
+            self._new_robot_state.position.x = last_pose.x + shift_command[0]
+            self._new_robot_state.position.y = last_pose.y + shift_command[1]
+            self._new_robot_state.position.z = last_pose.z + shift_command[2]
+        else:
+            self._new_robot_state.position = self._calc_relative_translation(last_pose, shift_command, reference_frame)
+        new_quat = self._calc_new_rotation(current_quat, shift_command, is_world=(reference_frame == "world"))
+
+        if new_quat is not None:
+            self._new_robot_state.orientation = Quaternion(*new_quat)
+            self._new_robot_state.rpy = RPY(*euler_from_quaternion(new_quat))
+        else:
+            # Bypass quaternion math on pure translation to avoid Euler angle wrap-around
+            self._new_robot_state.orientation = last_ori
+            self._new_robot_state.rpy = self._last_robot_state_published.rpy
 
         self.__validate_params_pose(self._new_robot_state)
 
@@ -517,6 +529,53 @@ class JogController:
             Pose(self._new_robot_state.position, self._new_robot_state.orientation)
         )
         return success, joints
+
+    def _calc_relative_translation(self, last_pose, shift_command, reference_frame):
+
+        local_pose = Pose()
+        local_pose.position.x = shift_command[0]
+        local_pose.position.y = shift_command[1]
+        local_pose.position.z = shift_command[2]
+        local_pose.orientation.w = 1.0
+
+        pose_stamped = tf2_geometry_msgs.PoseStamped()
+        pose_stamped.pose = local_pose
+        pose_stamped.header.stamp = rospy.Time.now()
+
+        if reference_frame == "TCP":
+            active_transform = self.tf_buffer.lookup_transform("world", "TCP", rospy.Time(0), rospy.Duration(1.0))
+            pose_stamped.header.frame_id = "TCP"
+        else:
+            custom_transform = self.tf_buffer.lookup_transform("world",
+                                                               reference_frame,
+                                                               rospy.Time(0),
+                                                               rospy.Duration(1.0))
+            active_transform = TransformStamped()
+            active_transform.header.frame_id = "world"
+            active_transform.child_frame_id = "virtual_TCP"
+            active_transform.transform.translation.x = last_pose.x
+            active_transform.transform.translation.y = last_pose.y
+            active_transform.transform.translation.z = last_pose.z
+            active_transform.transform.rotation = custom_transform.transform.rotation
+            pose_stamped.header.frame_id = "virtual_TCP"
+
+        transform_pose = tf2_geometry_msgs.do_transform_pose(pose_stamped, active_transform)
+        return transform_pose.pose.position
+
+    def _calc_new_rotation(self, current_quat, shift_command, is_world):
+
+        is_pure_translation = all(abs(cmd) < 0.0001 for cmd in shift_command[3:6])
+        if is_pure_translation:
+            return None
+
+        quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
+
+        if is_world:
+            quat_target = quaternion_multiply(quat_jog, current_quat)
+        else:
+            quat_target = quaternion_multiply(current_quat, quat_jog)
+
+        return quat_target / np.linalg.norm(quat_target)
 
     def __validate_params_pose(self, new_robot_state):
         self.__parameters_validator.validate_position(new_robot_state.position)

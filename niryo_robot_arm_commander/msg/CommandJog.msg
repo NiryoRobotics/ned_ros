@@ -4,3 +4,4 @@ int32 POSE_SHIFT = 2
 int32 cmd
 
 float32[] shift_values
+string reference_frame
