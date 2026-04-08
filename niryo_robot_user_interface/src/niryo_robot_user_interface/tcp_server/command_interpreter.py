@@ -459,7 +459,7 @@ class CommandInterpreter:
         self.__niryo_robot.jog_pose_shift(shift_values_list)
         return self.__send_answer()
 
-    @check_nb_args(2)
+    @check_nb_args([1, 2])
     def __jog(self, robot_position_dict, reference_frame="world"):
         robot_position = self.__obj_from_dict(robot_position_dict)
         self.__niryo_robot.jog_shift(robot_position, reference_frame)
