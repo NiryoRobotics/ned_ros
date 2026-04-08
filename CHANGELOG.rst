@@ -7,6 +7,7 @@ ___________
 
 **Features**
 * Added the possibility to set, reset, and get the home pose using PyNiryo
+* Added the ability to jog the robot relative to its TCP or any arbitrary frame
 
 **Bugfixes**
 

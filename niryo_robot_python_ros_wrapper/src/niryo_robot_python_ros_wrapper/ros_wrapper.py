@@ -800,7 +800,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         warnings.warn("You should use jog_shift with a Pose object.", DeprecationWarning)
         return self.jog_shift(Pose(*shift_values))
 
-    def jog_shift(self, shift_values: RobotPosition):
+    def jog_shift(self, shift_values: RobotPosition, reference_frame: str = 'world'):
         """
         Makes a Jog oof the robot position
 
@@ -819,7 +819,8 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         result = self._call_service('/niryo_robot/jog_interface/jog_shift_commander',
                                     JogShift,
                                     shift_request,
-                                    list(shift_values))
+                                    list(shift_values),
+                                    reference_frame)
         return self._classic_return_w_check(result)
 
     @staticmethod
