@@ -6,8 +6,13 @@ forthcoming
 ___________
 
 **Features**
+
 * Added the possibility to set, reset, and get the home pose using PyNiryo
 * Added the ability to jog the robot relative to its TCP or any arbitrary frame
+
+**Improvements**
+
+* Improved the TTL Control loop efficiency by removing the useless overclocking of the loop.
 
 **Bugfixes**
 

@@ -208,21 +208,11 @@ private:
 
   double _control_loop_frequency{ 0.0 };
 
-  double _delta_time_data_read{ 0.0 };
   double _delta_time_end_effector_read{ 0.0 };
-  double _delta_time_write{ 0.0 };
-
-  double _time_hw_data_last_read{ 0.0 };
-  double _time_hw_end_effector_last_read{ 0.0 };
-  double _time_hw_data_last_write{ 0.0 };
-
-  double _time_check_connection_last_read{ 0.0 };
-
-  // specific to dxl
   double _delta_time_status_read{ 0.0 };
-  double _time_hw_status_last_read{ 0.0 };
 
-  double _time_check_end_effector_last_read{ 0.0 };
+  double _time_hw_end_effector_last_read{ 0.0 };
+  double _time_hw_status_last_read{ 0.0 };
 
   std::unique_ptr<TtlManager> _ttl_manager;
 

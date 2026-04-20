@@ -1,1 +1,3 @@
-ros_control_loop_frequency:              100.0
+# Set the control loop frequency to be 1/2 of the TTL control loop frequency.
+# This is to avoid jitter and aliasing issues caused by phase drift.
+ros_control_loop_frequency: 60.0
