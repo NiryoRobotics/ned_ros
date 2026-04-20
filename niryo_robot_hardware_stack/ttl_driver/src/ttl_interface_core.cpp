@@ -110,35 +110,22 @@ bool TtlInterfaceCore::init(ros::NodeHandle &nh)
 void TtlInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
   _control_loop_frequency = 0.0;
-  double write_frequency = 0.0;
-  double read_data_frequency = 0.0;
   double read_end_effector_frequency = 0.0;
   double read_status_frequency = 0.0;
 
   nh.getParam("ttl_hardware_control_loop_frequency", _control_loop_frequency);
-
-  nh.getParam("ttl_hardware_write_frequency", write_frequency);
-
-  nh.getParam("ttl_hardware_read_data_frequency", read_data_frequency);
-
   nh.getParam("ttl_hardware_read_end_effector_frequency", read_end_effector_frequency);
-
   nh.getParam("ttl_hardware_read_status_frequency", read_status_frequency);
-
   nh.getParam("hardware_version", _hardware_version);
 
   ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
-  ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", write_frequency);
-  ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", read_data_frequency);
   ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_end_effector_frequency : %f",
             read_end_effector_frequency);
   ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_status_frequency : %f", read_status_frequency);
   ROS_DEBUG("TtlInterfaceCore::initParameters - hardware_version : %s", _hardware_version.c_str());
 
-  _delta_time_data_read = 1.0 / read_data_frequency;
   _delta_time_end_effector_read = 1.0 / read_end_effector_frequency;
   _delta_time_status_read = 1.0 / read_status_frequency;
-  _delta_time_write = 1.0 / write_frequency;
 }
 
 /**
@@ -531,11 +518,8 @@ void TtlInterfaceCore::resetHardwareControlLoopRates()
 {
   ROS_DEBUG("TtlInterfaceCore::resetHardwareControlLoopRates - Reset control loop rates");
   double now = ros::Time::now().toSec();
-  _time_hw_data_last_write = now;
-  _time_hw_data_last_read = now;
   _time_hw_status_last_read = now;
-  _time_check_connection_last_read = now;
-  _time_check_end_effector_last_read = now;
+  _time_hw_end_effector_last_read = now;
 }
 
 /**
@@ -565,6 +549,8 @@ void TtlInterfaceCore::controlLoop()
 {
   ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
   resetHardwareControlLoopRates();
+
+  double now = ros::Time::now().toSec();
 
   while (ros::ok())
   {
@@ -618,26 +604,21 @@ void TtlInterfaceCore::controlLoop()
       if (_control_loop_flag)
       {
         lock_guard<mutex> lck(_control_loop_mutex);
-        if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
-        {
-          _executeCommand();
-          _time_hw_data_last_write = ros::Time::now().toSec();
-        }
-        if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
-        {
-          _ttl_manager->readJointsStatus();
-          _time_hw_data_last_read = ros::Time::now().toSec();
-        }
-        if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
+
+        _executeCommand();
+        _ttl_manager->readJointsStatus();
+
+        now = ros::Time::now().toSec();
+        if (now - _time_hw_status_last_read >= _delta_time_status_read)
         {
           _ttl_manager->readHardwareStatus();
-          _time_hw_status_last_read = ros::Time::now().toSec();
+          _time_hw_status_last_read = now;
         }
         if (_ttl_manager->hasEndEffector() &&
-            ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
+            now - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
         {
           _ttl_manager->readEndEffectorStatus();
-          _time_hw_end_effector_last_read = ros::Time::now().toSec();
+          _time_hw_end_effector_last_read = now;
         }
       }
       else
