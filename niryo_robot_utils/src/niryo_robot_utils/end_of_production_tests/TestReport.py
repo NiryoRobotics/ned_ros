@@ -77,13 +77,15 @@ class TestReport(object):
 
             logs = log_buffer.getvalue()
         self.__report.append({'name': test_inst.name, 'status': int(success), 'report': logs})
+        return success
 
     def run_playbook(self, playbook: List[Type[BaseTest]]):
         """
         Run a series of tests
         """
         for test in playbook:
-            self.run_test(test)
+            if not self.run_test(test):
+                break
 
     def send(self):
         new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=1)

@@ -22,6 +22,7 @@ ___________
 * Converted tuples to lists before saving the trajectory
 * Resolve limits mismatch between the config and URDF file 
 * Update Move command to provide feedback and report valid limits when a joint or pose is out of range or unreachable 
+* Stop the end of production test script if any of the tests fail and report the failure to RFM
 * Added a sleep to respect the ROS control loop rate. This should greatly improve the CPU usage.
 
 v5.8.0
