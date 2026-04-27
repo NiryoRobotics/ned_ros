@@ -751,7 +751,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
     def _return_w_check(self, status, message):
         if status < 0:
             raise NiryoRosWrapperException("Error Code : {}\nMessage : {}".format(status, message))
-        return status
+        return status, message
 
     def set_jog_use_state(self, state):
         """
