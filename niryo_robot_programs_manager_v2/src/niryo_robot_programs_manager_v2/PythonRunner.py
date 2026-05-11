@@ -79,12 +79,10 @@ class PythonRunner:
                                                   stdout=subprocess.PIPE,
                                                   stderr=subprocess.STDOUT,
                                                   encoding='utf-8')
-                while True:
-                    output = self.__process.stdout.read(1)
-                    # Break the loop if the process ended and all the stdout has been read
-                    if self.__process.poll() is not None and output == '':
-                        break
-                    self.__output_queue.put(output)
+
+                for line in self.__process.stdout:
+                    self.__output_queue.put(line)
+                self.__process.wait()
                 self.__output_queue.put(None)
             except Exception as e:
                 rospy.logerr(str(e))

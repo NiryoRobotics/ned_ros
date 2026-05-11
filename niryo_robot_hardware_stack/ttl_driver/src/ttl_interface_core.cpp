@@ -14,6 +14,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include "common/util/steady_rate.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
@@ -517,7 +518,7 @@ inline common::model::EStepperCalibrationStatus TtlInterfaceCore::getCalibration
 void TtlInterfaceCore::resetHardwareControlLoopRates()
 {
   ROS_DEBUG("TtlInterfaceCore::resetHardwareControlLoopRates - Reset control loop rates");
-  double now = ros::Time::now().toSec();
+  double now = ros::SteadyTime::now().toSec();
   _time_hw_status_last_read = now;
   _time_hw_end_effector_last_read = now;
 }
@@ -547,10 +548,9 @@ void TtlInterfaceCore::activeDebugMode(bool mode)
  */
 void TtlInterfaceCore::controlLoop()
 {
-  ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
   resetHardwareControlLoopRates();
 
-  double now = ros::Time::now().toSec();
+  common::SteadyRate steady_rate(_control_loop_frequency);
 
   while (ros::ok())
   {
@@ -608,17 +608,17 @@ void TtlInterfaceCore::controlLoop()
         _executeCommand();
         _ttl_manager->readJointsStatus();
 
-        now = ros::Time::now().toSec();
-        if (now - _time_hw_status_last_read >= _delta_time_status_read)
+        const double now_steady = ros::SteadyTime::now().toSec();
+        if (now_steady - _time_hw_status_last_read >= _delta_time_status_read)
         {
           _ttl_manager->readHardwareStatus();
-          _time_hw_status_last_read = now;
+          _time_hw_status_last_read = now_steady;
         }
         if (_ttl_manager->hasEndEffector() &&
-            now - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
+            now_steady - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
         {
           _ttl_manager->readEndEffectorStatus();
-          _time_hw_end_effector_last_read = now;
+          _time_hw_end_effector_last_read = now_steady;
         }
       }
       else
@@ -626,7 +626,8 @@ void TtlInterfaceCore::controlLoop()
         ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
         resetHardwareControlLoopRates();
       }
-      control_loop_rate.sleep();
+
+      steady_rate.sleep();
     }
     else
     {

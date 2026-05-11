@@ -919,7 +919,7 @@ bool TtlManager::readEndEffectorStatus()
                   // reset the status.
                   _isRealCollision = true;
                   _isWrongAction = true;
-                  _last_collision_detection_activating = ros::Time::now().toSec();
+                  _last_collision_detection_activating = ros::SteadyTime::now().toSec();
                 }
               }
             }
@@ -1026,7 +1026,7 @@ bool TtlManager::checkCollision()
                 _collision_status = false;
               }
               else
-                _last_collision_detection_activating = ros::Time::now().toSec();
+                _last_collision_detection_activating = ros::SteadyTime::now().toSec();
             }
           }
           else
@@ -1034,7 +1034,7 @@ bool TtlManager::checkCollision()
             hw_errors_increment++;
           }
         }
-        else if (ros::Time::now().toSec() - _last_collision_detection_activating >= 1.0)
+        else if (ros::SteadyTime::now().toSec() - _last_collision_detection_activating >= 1.0)
         {
           _last_collision_detection_activating = 0.0;
         }
@@ -1105,7 +1105,7 @@ bool TtlManager::readCollisionStatus()
               }
               else
               {
-                _last_collision_detection_activating = ros::Time::now().toSec();
+                _last_collision_detection_activating = ros::SteadyTime::now().toSec();
               }
             }
           }
@@ -1114,7 +1114,7 @@ bool TtlManager::readCollisionStatus()
             _end_effector_fail_counter_read++;
           }
         }
-        else if (ros::Time::now().toSec() - _last_collision_detection_activating >= 1.0)
+        else if (ros::SteadyTime::now().toSec() - _last_collision_detection_activating >= 1.0)
         {
           _last_collision_detection_activating = 0.0;
         }
@@ -1366,7 +1366,7 @@ uint8_t TtlManager::readSteppersStatus()
               // wrong collision, so we have to read the collision status once time to reset it.
               _isWrongAction = true;
               _isRealCollision = true;
-              _last_collision_detection_activating = ros::Time::now().toSec();
+              _last_collision_detection_activating = ros::SteadyTime::now().toSec();
             }
           }
           else

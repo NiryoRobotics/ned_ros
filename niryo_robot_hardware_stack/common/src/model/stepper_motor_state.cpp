@@ -189,7 +189,7 @@ void StepperMotorState::setGearRatio(double gear_ratio)
  */
 void StepperMotorState::updateLastTimeRead()
 {
-  _last_time_read = ros::Time::now().toSec();
+  _last_time_read = ros::SteadyTime::now().toSec();
 }
 
 /**

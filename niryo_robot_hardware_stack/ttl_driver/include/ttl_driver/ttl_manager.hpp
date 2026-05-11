@@ -279,7 +279,7 @@ private:
     void start()
     {
       s = State::STARTING;
-      _time = ros::Time::now().toSec();  // keep last date updated
+      _time = ros::SteadyTime::now().toSec();
     }
 
     /**
@@ -291,7 +291,7 @@ private:
       if (State::UPDATING != s)
         newState++;
 
-      _time = ros::Time::now().toSec();  // keep last date updated
+      _time = ros::SteadyTime::now().toSec();
       s = static_cast<State>(newState);
     }
 
@@ -302,7 +302,7 @@ private:
 
     bool isTimeout()
     {
-      return (ros::Time::now().toSec() - _time > _calibration_timeout);
+      return (ros::SteadyTime::now().toSec() - _time > _calibration_timeout);
     }
 
   private:

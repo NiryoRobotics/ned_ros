@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+import time
 from threading import Thread, Lock
 
 # Command Status
@@ -185,7 +186,7 @@ class LEDManager(object):
             self._blinker_frequency = rospy.Rate(max(min(100, req.frequency), 1))
             self._blinker_color = req.color
             if req.blinker_duration > 0:
-                self._blinker_stop_time = rospy.Time.now() + rospy.Duration.from_sec(req.blinker_duration)
+                self._blinker_stop_time = time.monotonic() + req.blinker_duration
             else:
                 self._blinker_stop_time = None
             if not self._blinker_thread or not self._blinker_thread.is_alive():
@@ -201,5 +202,5 @@ class LEDManager(object):
             self.set_led_from_state()
             self._blinker_frequency.sleep()
 
-            if self._blinker_stop_time and rospy.Time.now() >= self._blinker_stop_time:
+            if self._blinker_stop_time and time.monotonic() >= self._blinker_stop_time:
                 return

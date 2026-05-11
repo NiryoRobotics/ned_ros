@@ -49,7 +49,6 @@ using ::common::model::StepperTtlSingleCmd;
 
 namespace conveyor_interface
 {
-
 /**
  * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
  * @param nh
@@ -85,6 +84,8 @@ bool ConveyorInterfaceCore::init(ros::NodeHandle &nh)
   ROS_DEBUG("ConveyorInterfaceCore::init - Starting subscribers...");
   startSubscribers(nh);
 
+  ROS_DEBUG("ConveyorInterfaceCore::init - Checking pre-configured conveyors...");
+  checkConveyor();
   return true;
 }
 
@@ -210,6 +211,72 @@ void ConveyorInterfaceCore::startPublishers(ros::NodeHandle &nh)
 void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle & /*nh*/)
 {
   ROS_DEBUG("ConveyorInterfaceCore::startSubscribers - no subscriber to start");
+}
+
+/**
+ * @brief ConveyorInterfaceCore::CheckConveyor
+ * @return
+ * scans hw on its interfaces to try to find configured conveyors
+ */
+void ConveyorInterfaceCore::checkConveyor()
+{
+  auto constexpr CONVEYOR_V2_HWID = "niryo/conveyor2";
+  auto constexpr CONVEYOR_V3_HWID = "niryo/conveyor3";
+
+  for (auto &[protocol, bus] : _bus_config_map)
+  {
+    if (!bus.isValid())
+    {
+      continue;
+    }
+
+    EHardwareType default_hw_type =
+        _use_simu_conveyor ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::NED3PRO_STEPPER;
+
+    for (auto it = bus.pool_id_list.begin(); it != bus.pool_id_list.end();)
+    {
+      uint8_t conveyor_id = *it;
+      auto conveyor_state =
+          std::make_shared<ConveyorState>(default_hw_type, protocol, conveyor_id, bus.default_id, CONVEYOR_V3_HWID);
+
+      int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+      conveyor_state->setStrictModelNumber(true);
+
+      // Try 3 times
+      for (int tries = 0; tries < 3; tries++)
+      {
+        ROS_INFO("ConveyorInterfaceCore::checkConveyor - Try %d for id %d", tries, conveyor_id);
+
+        result = bus.interface->setConveyor(conveyor_state);
+
+        if (result == niryo_robot_msgs::CommandStatus::HARDWARE_NOT_SUPPORTED)
+        {
+          ROS_INFO("ConveyorInterfaceCore::checkConveyor - Retrying with older stepper on id %d", conveyor_id);
+          conveyor_state = std::make_shared<ConveyorState>(EHardwareType::STEPPER, protocol, conveyor_id,
+                                                           bus.default_id, CONVEYOR_V2_HWID);
+
+          bus.type = EHardwareType::STEPPER;
+          result = bus.interface->setConveyor(conveyor_state);
+        }
+
+        if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+        {
+          _conveyor_state_list.emplace_back(conveyor_state);
+          break;
+        }
+      }
+
+      if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+      {
+        it = bus.pool_id_list.erase(it);
+      }
+      else
+      {
+        ++it;
+      }
+    }
+  }
 }
 
 /**

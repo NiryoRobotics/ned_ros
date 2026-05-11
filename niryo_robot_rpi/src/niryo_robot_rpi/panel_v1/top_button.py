@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+import time
 from threading import Thread
 import rosnode
 
@@ -56,7 +57,7 @@ class TopButton(AbstractTopButton):
         self.__program_manager_is_running = False
 
         self.button_mode = ButtonMode.TRIGGER_SEQUENCE_AUTORUN
-        self.last_time_button_mode_changed = rospy.Time.now()
+        self.last_time_button_mode_changed = time.monotonic()
 
         self.__led_state = LedState.OK
         self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker', LedBlinker)
@@ -107,7 +108,7 @@ class TopButton(AbstractTopButton):
 
     def check_button_loop(self):
         self.__button_loop_frequency.sleep()
-        last_press_time = rospy.Time.now()
+        last_press_time = time.monotonic()
         elapsed_seconds = 15
 
         while not rospy.is_shutdown():
@@ -116,8 +117,8 @@ class TopButton(AbstractTopButton):
             self.read_value()
             if self.is_button_pressed():
                 if not button_was_pressed:
-                    last_press_time = rospy.Time.now()
-                elapsed_seconds = (rospy.Time.now() - last_press_time).to_sec()
+                    last_press_time = time.monotonic()
+                elapsed_seconds = (time.monotonic() - last_press_time)
                 self.led_advertiser(elapsed_seconds)
 
             # Was pressed and is not anymore (release)
@@ -146,12 +147,12 @@ class TopButton(AbstractTopButton):
         # Pause the current move
         if self._pause_state in [PausePlanExecution.PLAY]:
             rospy.loginfo("Button Manager - Sequence paused")
-            self.pause_time = rospy.Time.now()
+            self.pause_time = time.monotonic()
             self._send_pause_state(PausePlanExecution.PAUSE)
             # Pause led advertiser
             self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, PausePlanExecution.PAUSE_TIMEOUT)
         # Double press on pause: activate learning mode
-        elif self._pause_state == PausePlanExecution.PAUSE and (rospy.Time.now() - self.pause_time).to_sec() < 1:
+        elif self._pause_state == PausePlanExecution.PAUSE and (time.monotonic() - self.pause_time) < 1:
             activate_learning_mode(True)
             self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, 0)
             rospy.loginfo("Button Manager - Sequence paused with learning mode")
@@ -179,10 +180,10 @@ class TopButton(AbstractTopButton):
                 self._pause_state = PausePlanExecution.PLAY
 
     def double_press(self):
-        start_time = rospy.Time.now()
+        start_time = time.monotonic()
         self.read_value()
         button_pressed = self.is_button_pressed()
-        while not rospy.is_shutdown() and (rospy.Time.now() - start_time).to_sec() < 1:
+        while not rospy.is_shutdown() and (time.monotonic() - start_time) < 1:
             self.read_value()
             if not button_pressed and self.is_button_pressed():
                 return True
@@ -247,5 +248,5 @@ class TopButton(AbstractTopButton):
         else:
             return {"status": CommandStatus.BUTTON_ERROR, "message": "Incorrect button mode."}
         self.button_mode = req.value
-        self.last_time_button_mode_changed = rospy.Time.now()
+        self.last_time_button_mode_changed = time.monotonic()
         return {"status": CommandStatus.SUCCESS, "message": message}

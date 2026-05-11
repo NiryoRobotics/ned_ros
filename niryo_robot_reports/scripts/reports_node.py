@@ -7,7 +7,7 @@ from distutils.dir_util import mkpath
 
 from niryo_robot_utils import sentry_init, async_init
 
-from niryo_robot_reports.CloudAPI import CloudAPI, MicroServiceError
+from niryo_robot_reports.CloudAPI import CloudAPI
 from niryo_robot_reports.AlertReportHandler import AlertReportHandler
 from niryo_robot_reports.DailyReportHandler import DailyReportHandler
 from niryo_robot_reports.TestReportHandler import TestReportHandler
@@ -19,22 +19,31 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_reports.msg import Service
 
 # srv
-from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath, SetSettings
+from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
 from niryo_robot_reports.srv import CheckConnection
 
 
 class ReportsNode:
-
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
-        async_init.PromiseServiceProxy('/niryo_robot_database/settings/get',
-                                       GetSettings,
-                                       self.__on_get_settings_available)
+        self.__lazy_loaded_cloud_api = None
 
-        rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
+        async_init.PromiseServiceProxy(
+            "/niryo_robot_database/settings/get",
+            GetSettings,
+            self.__on_get_settings_available,
+        )
 
-        rospy.Subscriber('/niryo_robot_database/setting_update', Setting, self.__setting_update_callback)
+        rospy.Service(
+            "~check_connection", CheckConnection, self.__check_connection_callback
+        )
+
+        rospy.Subscriber(
+            "/niryo_robot_database/setting_update",
+            Setting,
+            self.__setting_update_callback,
+        )
 
         rospy.logdebug("Reports Node - Node Started")
 
@@ -46,7 +55,7 @@ class ReportsNode:
 
     def __on_get_settings_available(self, get_settings_proxy):
         settings = {}
-        for setting in ['serial_number', 'rasp_id', 'api_key', 'sharing_allowed']:
+        for setting in ["serial_number", "rasp_id", "api_key", "sharing_allowed"]:
             response = get_settings_proxy(setting)
             setting_value = response.value
             if response.status != CommandStatus.SUCCESS:
@@ -54,40 +63,61 @@ class ReportsNode:
                 setting_value = None
             settings[setting] = setting_value
 
-        settings['cloud_domain'] = os.getenv('NED_ROS_CLOUD_DOMAIN')
-        if settings['cloud_domain'] is None:
-            raise EnvironmentError('NED_ROS_CLOUD_DOMAIN is not set')
+        settings["cloud_domain"] = os.getenv("NED_ROS_CLOUD_DOMAIN")
+        if settings["cloud_domain"] is None:
+            raise EnvironmentError("NED_ROS_CLOUD_DOMAIN is not set")
 
         self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
 
-        get_report_path_response = get_settings_proxy('reports_path')
+        get_report_path_response = get_settings_proxy("reports_path")
         if get_report_path_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to retrieve the reports directory path from the database')
+            rospy.logerr(
+                "Unable to retrieve the reports directory path from the database"
+            )
 
         reports_path = os.path.expanduser(get_report_path_response.value)
         if not os.path.isdir(reports_path):
             mkpath(reports_path)
 
-        get_all_files_paths = rospy.ServiceProxy('/niryo_robot_database/file_paths/get_all_by_type', GetAllByType)
-        add_report_db = rospy.ServiceProxy('/niryo_robot_database/file_paths/add', AddFilePath)
-        rm_report_db = rospy.ServiceProxy('/niryo_robot_database/file_paths/rm', RmFilePath)
+        get_all_files_paths = rospy.ServiceProxy(
+            "/niryo_robot_database/file_paths/get_all_by_type", GetAllByType
+        )
+        add_report_db = rospy.ServiceProxy(
+            "/niryo_robot_database/file_paths/add", AddFilePath
+        )
+        rm_report_db = rospy.ServiceProxy(
+            "/niryo_robot_database/file_paths/rm", RmFilePath
+        )
 
-        DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        DailyReportHandler(
+            self.__cloud_api,
+            reports_path,
+            add_report_db,
+            rm_report_db,
+            get_all_files_paths,
+        )
+        TestReportHandler(
+            self.__cloud_api,
+            reports_path,
+            add_report_db,
+            rm_report_db,
+            get_all_files_paths,
+        )
         AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
 
         # Set a bool to mention that this node is initialized
-        rospy.set_param('~initialized', True)
+        rospy.set_param("~initialized", True)
 
     def __check_connection_callback(self, req):
-        rospy.logdebug('service called: ' + str(req.service.to_test))
+        rospy.logdebug("service called: " + str(req.service.to_test))
+
         try:
             {
                 Service.TEST_REPORTS: self.__cloud_api.test_reports.ping,
                 Service.DAILY_REPORTS: self.__cloud_api.daily_reports.ping,
                 Service.ALERT_REPORTS: self.__cloud_api.alert_reports.ping,
-                Service.AUTO_DIAGNOSIS_REPORTS: self.__cloud_api.auto_diagnosis_reports.ping
+                Service.AUTO_DIAGNOSIS_REPORTS: self.__cloud_api.auto_diagnosis_reports.ping,
             }[req.service.to_test]()
         except KeyError:
             return CommandStatus.REPORTS_SERVICE_UNREACHABLE, False
@@ -97,19 +127,24 @@ class ReportsNode:
     def __setting_update_callback(self, req):
         try:
             {
-                'serial_number': self.__cloud_api.set_serial_number,
-                'api_key': self.__cloud_api.set_api_key,
-                'sharing_allowed': lambda v: self.__cloud_api.set_sharing_allowed(v == 'True'),
-                'rasp_id': self.__cloud_api.set_rasp_id
+                "serial_number": self.__cloud_api.set_serial_number,
+                "api_key": self.__cloud_api.set_api_key,
+                "sharing_allowed": lambda v: self.__cloud_api.set_sharing_allowed(
+                    v == "True"
+                ),
+                "rasp_id": self.__cloud_api.set_rasp_id,
             }[req.name](req.value)
         except KeyError:
+            pass
+        except RuntimeError as e:
+            rospy.logwarn(f'Received update for setting "{req.name}" but: {e}')
             pass
 
 
 if __name__ == "__main__":
     sentry_init()
 
-    rospy.init_node('niryo_robot_reports', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node("niryo_robot_reports", anonymous=False, log_level=rospy.INFO)
 
     try:
         node = ReportsNode()
