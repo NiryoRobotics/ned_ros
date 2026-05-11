@@ -159,15 +159,15 @@ bool TtlManager::init(ros::NodeHandle &nh)
 bool TtlManager::changeTool(int value, string &message, int &status)
 {
   std::lock_guard<std::mutex> lck(_sync_mutex);
-  auto it_driver = _driver_map.find(EHardwareType::FAKE_DXL_MOTOR);
-  if (it_driver == _driver_map.end())
+  auto it_driver = _motor_driver_map.find(EHardwareType::FAKE_DXL_MOTOR);
+  if (it_driver == _motor_driver_map.end())
   {
     status = niryo_robot_msgs::CommandStatus::TOOL_FAILURE;
     message = "Tool change failed : Real robot mode";
     return true;
   }
 
-  auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it_driver->second);
+  auto driver = it_driver->second;
   if (!driver)
   {
     status = niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
@@ -332,6 +332,15 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
   // add state to state map
   _state_map[id] = state;
 
+  if (_motor_driver_map.count(hardware_type))
+  {
+    _motor_state_map[id] = std::dynamic_pointer_cast<common::model::AbstractMotorState>(state);
+  }
+  else if (_end_effector_driver_map.count(hardware_type))
+  {
+    _end_effector_state_map[id] = std::dynamic_pointer_cast<common::model::EndEffectorState>(state);
+  }
+
   // add id to ids_map
   _ids_map[hardware_type].emplace_back(id);
 
@@ -380,6 +389,8 @@ void TtlManager::removeHardwareComponent(uint8_t id)
     }
 
     _state_map.erase(id);
+    _motor_state_map.erase(id);
+    _end_effector_state_map.erase(id);
   }
   // remove id from conveyor list if they contains id
   _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), id), _conveyor_list.end());
@@ -419,9 +430,9 @@ int TtlManager::changeId(EHardwareType motor_type, uint8_t old_id, uint8_t new_i
   {
     ret = COMM_SUCCESS;
   }
-  else if (_driver_map.count(motor_type))
+  else if (_motor_driver_map.count(motor_type))
   {
-    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
+    auto driver = _motor_driver_map.at(motor_type);
 
     if (driver)
     {
@@ -430,18 +441,21 @@ int TtlManager::changeId(EHardwareType motor_type, uint8_t old_id, uint8_t new_i
       {
         // update all maps
         auto i_state = _state_map.find(old_id);
+        auto i_motor_state = _motor_state_map.find(old_id);
         // update all maps
-        if (i_state != _state_map.end())
+        if (i_motor_state != _motor_state_map.end())
         {
-          // insert new_id in map, move i_state->second to its new place
-          std::swap(_state_map[new_id], i_state->second);
-          // update all maps
-          _state_map.erase(i_state);
+          auto current_state = i_state->second;
 
-          assert(_state_map.at(new_id));
+          auto motor_node = _motor_state_map.extract(i_motor_state);
+          auto node = _state_map.extract(i_state);
+          motor_node.key() = new_id;
+          node.key() = new_id;
+          _motor_state_map.insert(std::move(motor_node));
+          _state_map.insert(std::move(node));
 
           // update conveyor list if needed
-          if (common::model::EComponentType::CONVEYOR == _state_map.at(new_id)->getComponentType())
+          if (common::model::EComponentType::CONVEYOR == current_state->getComponentType())
           {
             // change old id into new id in vector
             auto iter = std::find(_conveyor_list.begin(), _conveyor_list.end(), old_id);
@@ -605,11 +619,8 @@ int TtlManager::rebootHardware(uint8_t hw_id)
  */
 void TtlManager::resetTorques()
 {
-  for (auto const &it : _driver_map)
+  for (auto const &[hw_type, driver] : _motor_driver_map)
   {
-    auto hw_type = it.first;
-    auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
-
     if (driver && _ids_map.count(hw_type) && !_ids_map.at(hw_type).empty())
     {
       // we retrieve all the associated id for the type of the current driver
@@ -646,9 +657,9 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
 {
   uint32_t position = 0;
   EHardwareType hardware_type = motor_state.getHardwareType();
-  if (_driver_map.count(hardware_type))
+  if (_motor_driver_map.count(hardware_type))
   {
-    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
+    auto driver = _motor_driver_map.at(hardware_type);
     if (driver)
     {
       for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
@@ -757,11 +768,8 @@ bool TtlManager::readJointsStatus()
   // syncread position for all motors.
   // for ned and one -> we need at least one xl430 and one xl320 drivers as they are different
 
-  for (auto const &it : _driver_map)
+  for (auto const &[hw_type, driver] : _motor_driver_map)
   {
-    auto hw_type = it.first;
-    auto driver = std::dynamic_pointer_cast<ttl_driver::AbstractMotorDriver>(it.second);
-
     if (!driver)
     {
       continue;
@@ -771,7 +779,7 @@ bool TtlManager::readJointsStatus()
     {
       continue;
     }
-    auto ids_list = id_list_it->second;
+    const auto &ids_list = id_list_it->second;
 
     if (ids_list.empty())
     {
@@ -790,14 +798,15 @@ bool TtlManager::readJointsStatus()
         // set motors states accordingly
         for (size_t i = 0; i < ids_list.size(); ++i)
         {
-          uint8_t id = ids_list.at(i);
+          uint8_t id = ids_list[i];
 
-          if (_state_map.count(id))
+          auto motor_it = _motor_state_map.find(id);
+          if (motor_it != _motor_state_map.end())
           {
-            auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
+            auto state = motor_it->second;
             if (state)
             {
-              state->setPosition(static_cast<int>((_position_list.at(i))));
+              state->setPosition(static_cast<int>(_position_list[i]));
             }
           }
         }
@@ -873,26 +882,26 @@ bool TtlManager::readEndEffectorStatus()
 
   if (_simulation_mode)
     ee_type = EHardwareType::FAKE_END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::END_EFFECTOR))
     ee_type = EHardwareType::END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
     ee_type = EHardwareType::NED3PRO_END_EFFECTOR;
 
-  if (_driver_map.count(ee_type))
+  if (_end_effector_driver_map.count(ee_type))
   {
     unsigned int hw_errors_increment = 0;
 
-    auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+    auto driver = _end_effector_driver_map.at(ee_type);
     if (driver)
     {
       if (_ids_map.count(ee_type) && !_ids_map.at(ee_type).empty())
       {
         uint8_t id = _ids_map.at(ee_type).front();
 
-        if (_state_map.count(id))
+        if (_end_effector_state_map.count(id))
         {
           // we retrieve the associated id for the end effector
-          auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map[id]);
+          auto state = _end_effector_state_map[id];
 
           if (state)
           {
@@ -941,7 +950,7 @@ bool TtlManager::readEndEffectorStatus()
           }  // if (state)
         }
       }  // if (_ids_map.count(EHardwareType::END_EFFECTOR))
-    }  // if (driver)
+    }    // if (driver)
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
@@ -988,16 +997,16 @@ bool TtlManager::checkCollision()
 
   if (_simulation_mode)
     ee_type = EHardwareType::FAKE_END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::END_EFFECTOR))
     ee_type = EHardwareType::END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
     ee_type = EHardwareType::NED3PRO_END_EFFECTOR;
 
-  if (_driver_map.count(ee_type))
+  if (_end_effector_driver_map.count(ee_type))
   {
     unsigned int hw_errors_increment = 0;
 
-    auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+    auto driver = _end_effector_driver_map.at(ee_type);
     if (driver)
     {
       if (_ids_map.count(ee_type) && !_ids_map.at(ee_type).empty())
@@ -1039,7 +1048,7 @@ bool TtlManager::checkCollision()
           _last_collision_detection_activating = 0.0;
         }
       }  // if (_ids_map.count(EHardwareType::END_EFFECTOR))
-    }  // if (driver)
+    }    // if (driver)
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
@@ -1072,14 +1081,14 @@ bool TtlManager::readCollisionStatus()
 
   if (_simulation_mode)
     ee_type = EHardwareType::FAKE_END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::END_EFFECTOR))
     ee_type = EHardwareType::END_EFFECTOR;
-  else if (_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
+  else if (_end_effector_driver_map.count(EHardwareType::NED3PRO_END_EFFECTOR))
     ee_type = EHardwareType::NED3PRO_END_EFFECTOR;
 
-  if (_driver_map.count(ee_type))
+  if (auto it = _end_effector_driver_map.find(ee_type); it != _end_effector_driver_map.end())
   {
-    auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
+    auto driver = it->second;
 
     if (driver)
     {
@@ -1212,8 +1221,8 @@ bool TtlManager::readHardwareStatus()
           state->setHardwareError(hardware_message);
         }
       }  // for ids_list
-    }  // if driver
-  }  // for (auto it : _hw_status_driver_map)
+    }    // if driver
+  }      // for (auto it : _hw_status_driver_map)
 
   // **********  steppers related informations (conveyor and calibration)
   hw_errors_increment += readSteppersStatus();
@@ -1954,17 +1963,16 @@ int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractT
     {
       ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand: try to sync write (counter %d)", counter);
 
-      for (auto const &it : _driver_map)
+      for (auto const &[hw_type, driver] : _motor_driver_map)
       {
-        if (typesToProcess.count(it.first) != 0)
+        if (typesToProcess.count(hw_type) != 0)
         {
           result = COMM_TX_ERROR;
 
           // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-          auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
           if (driver)
           {
-            result = driver->writeSyncCmd(cmd->getCmdType(), cmd->getMotorsId(it.first), cmd->getParams(it.first));
+            result = driver->writeSyncCmd(cmd->getCmdType(), cmd->getMotorsId(hw_type), cmd->getParams(hw_type));
 
             ros::Duration(0.05).sleep();
           }
@@ -1972,7 +1980,7 @@ int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractT
           // if successful, don't process this driver in the next loop
           if (COMM_SUCCESS == result)
           {
-            typesToProcess.erase(typesToProcess.find(it.first));
+            typesToProcess.erase(typesToProcess.find(hw_type));
           }
           else
           {
@@ -2065,22 +2073,19 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
  */
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t>> cmd_vec)
 {
-  for (auto const &it : _driver_map)
+  for (auto const &[hw_type, driver] : _motor_driver_map)
   {
     // build list of ids and params for this motor
     _position_goal_ids.clear();
     _position_goal_params.clear();
     for (auto const &cmd : cmd_vec)
     {
-      if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
+      if (_state_map.count(cmd.first) && hw_type == _state_map.at(cmd.first)->getHardwareType())
       {
         _position_goal_ids.emplace_back(cmd.first);
         _position_goal_params.emplace_back(cmd.second);
       }
     }
-
-    // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
 
     if (driver)
     {
@@ -2257,61 +2262,94 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
   // if not already instanciated
   if (!_driver_map.count(hardware_type))
   {
+    std::shared_ptr<ttl_driver::AbstractTtlDriver> new_driver = nullptr;
     switch (hardware_type)
     {
-      case EHardwareType::STEPPER:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg>>(_portHandler, _packetHandler)));
+      case EHardwareType::STEPPER: {
+        auto motor = std::make_shared<StepperDriver<StepperReg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::NED3PRO_STEPPER:
-        _driver_map.insert(std::make_pair(
-            hardware_type, std::make_shared<Ned3ProStepperDriver<Ned3ProStepperReg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::NED3PRO_STEPPER: {
+        auto motor = std::make_shared<Ned3ProStepperDriver<Ned3ProStepperReg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::FAKE_STEPPER_MOTOR:
-        _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
+      }
+      case EHardwareType::FAKE_STEPPER_MOTOR: {
+        auto motor = std::make_shared<MockStepperDriver>(_fake_data);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XL430:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XL430: {
+        auto motor = std::make_shared<DxlDriver<XL430Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XC430:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XC430: {
+        auto motor = std::make_shared<DxlDriver<XC430Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XM430:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<DxlDriver<XM430Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XM430: {
+        auto motor = std::make_shared<DxlDriver<XM430Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XL320:
-        _driver_map.insert(
-            make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XL320: {
+        auto motor = std::make_shared<DxlDriver<XL320Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XL330:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XL330: {
+        auto motor = std::make_shared<DxlDriver<XL330Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::XH430:
-        _driver_map.insert(
-            std::make_pair(hardware_type, std::make_shared<DxlDriver<XH430Reg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::XH430: {
+        auto motor = std::make_shared<DxlDriver<XH430Reg>>(_portHandler, _packetHandler);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::FAKE_DXL_MOTOR:
-        _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
+      }
+      case EHardwareType::FAKE_DXL_MOTOR: {
+        auto motor = std::make_shared<MockDxlDriver>(_fake_data);
+        _motor_driver_map.insert({ hardware_type, motor });
+        new_driver = motor;
         break;
-      case EHardwareType::END_EFFECTOR:
-        _driver_map.insert(std::make_pair(
-            hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::END_EFFECTOR: {
+        auto ee = std::make_shared<EndEffectorDriver<EndEffectorReg>>(_portHandler, _packetHandler);
+        _end_effector_driver_map.insert({ hardware_type, ee });
+        new_driver = ee;
         break;
-      case EHardwareType::NED3PRO_END_EFFECTOR:
-        _driver_map.insert(std::make_pair(
-            hardware_type,
-            std::make_shared<Ned3ProEndEffectorDriver<Ned3ProEndEffectorReg>>(_portHandler, _packetHandler)));
+      }
+      case EHardwareType::NED3PRO_END_EFFECTOR: {
+        auto ee = std::make_shared<Ned3ProEndEffectorDriver<Ned3ProEndEffectorReg>>(_portHandler, _packetHandler);
+        _end_effector_driver_map.insert({ hardware_type, ee });
+        new_driver = ee;
         break;
-      case EHardwareType::FAKE_END_EFFECTOR:
-        _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));
+      }
+      case EHardwareType::FAKE_END_EFFECTOR: {
+        auto ee = std::make_shared<MockEndEffectorDriver>(_fake_data);
+        _end_effector_driver_map.insert({ hardware_type, ee });
+        new_driver = ee;
         break;
+      }
       default:
         ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
         break;
+    }
+    if (new_driver != nullptr)
+    {
+      _driver_map.insert({ hardware_type, new_driver });
     }
   }
 }
