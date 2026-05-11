@@ -42,7 +42,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace conveyor_interface
 {
-
 /**
  * @brief The ConveyorInterfaceCore class
  */
@@ -71,6 +70,7 @@ private:
   void startServices(ros::NodeHandle &nh) override;
   void startPublishers(ros::NodeHandle &nh) override;
   void startSubscribers(ros::NodeHandle &nh) override;
+  void checkConveyor();
 
   conveyor_interface::SetConveyor::Response addConveyor();
   conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);

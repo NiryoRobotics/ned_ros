@@ -224,3 +224,9 @@ class ArmSpeedEntry(ABCRegisterEntry):
 class FloatUserStoreEntries(ABCUserStoreEntries):
     data_type = float
     starting_address = 200
+
+
+@slave_context.holding_register
+class IntUserStoreEntries(ABCUserStoreEntries):
+    data_type = int
+    starting_address = 400

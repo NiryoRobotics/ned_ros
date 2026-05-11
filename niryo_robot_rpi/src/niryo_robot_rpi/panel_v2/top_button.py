@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+import time
 
 # Messages
 from niryo_robot_arm_commander.msg import PausePlanExecution
@@ -72,10 +73,10 @@ class TopButton(AbstractTopButton):
             # Get press state
             if not button_was_pressed:
                 self.__button_action_done = False
-                self.last_time_button_pressed = rospy.Time.now()
+                self.last_time_button_pressed = time.monotonic()
 
             # Get long press to cancel program
-            if not self.__button_action_done and (rospy.Time.now() - self.last_time_button_pressed).to_sec() > 2:
+            if not self.__button_action_done and (time.monotonic() - self.last_time_button_pressed) > 2:
                 self.__button_action_done = True
 
                 if self._is_prog_running():
@@ -85,7 +86,7 @@ class TopButton(AbstractTopButton):
 
         # Was pressed and is not anymore (release)
         elif not self.__button_action_done and button_was_pressed:
-            elapsed_seconds = (rospy.Time.now() - self.last_time_button_pressed).to_sec()
+            elapsed_seconds = (time.monotonic() - self.last_time_button_pressed)
 
             # Check if there is an action to do
             if 0.02 < elapsed_seconds < 2:

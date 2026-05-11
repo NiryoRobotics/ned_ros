@@ -18,6 +18,7 @@
 */
 
 // C++
+#include "common/util/steady_rate.hpp"
 #include <functional>
 #include <memory>
 #include <string>
@@ -236,15 +237,21 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
  */
 void JointsInterfaceCore::rosControlLoop()
 {
-  ros::Time last_time = ros::Time::now();
-  ros::Time current_time = ros::Time::now();
+  ros::SteadyTime last_steady = ros::SteadyTime::now();
   ros::Duration elapsed_time;
+  const double expected_period = _control_loop_rate.expectedCycleTime().toSec();
+  const double max_elapsed = 5.0 * expected_period;
+  common::SteadyRate steady_rate(1.0 / expected_period);
+
+  ros::Time cm_time = ros::Time::now();
 
   while (ros::ok())
   {
     if (_enable_control_loop && !_estop_flag)
     {
-      _robot->read(current_time, elapsed_time);
+      const ros::SteadyTime cycle_start = ros::SteadyTime::now();
+
+      _robot->read(cm_time, elapsed_time);
 
       // check if a collision is occurred, reset controller to stop robot
       if (_ttl_interface->getCollisionStatus() && !_previous_state_learning_mode && !_robot->needCalibration())
@@ -255,26 +262,41 @@ void JointsInterfaceCore::rosControlLoop()
       else
         _lock_write_cnt = -1;
 
-      current_time = ros::Time::now();
-      elapsed_time = ros::Duration(current_time - last_time);
-      last_time = current_time;
+      double elapsed_sec = (cycle_start - last_steady).toSec();
+      last_steady = cycle_start;
+
+      if (elapsed_sec < 0.0)
+      {
+        ROS_WARN_THROTTLE(1.0, "JointsInterfaceCore::rosControlLoop - Negative elapsed time detected "
+                                "(%.6f s), clamping to 0", elapsed_sec);
+        elapsed_sec = 0.0;
+      }
+      else if (elapsed_sec > max_elapsed)
+      {
+        ROS_WARN_THROTTLE(1.0, "JointsInterfaceCore::rosControlLoop - Elapsed time too large "
+                                "(%.6f s > %.6f s), clamping to nominal period", elapsed_sec, max_elapsed);
+        elapsed_sec = expected_period;
+      }
+      elapsed_time = ros::Duration(elapsed_sec);
+
+      cm_time += elapsed_time;
 
       if (_reset_controller)
       {
         ROS_DEBUG("JointsInterfaceCore::rosControlLoop - Reset Controller");
         _robot->setCommandToCurrentPosition();
-        _cm->update(ros::Time::now(), elapsed_time, true);
+        _cm->update(cm_time, elapsed_time, true);
         _reset_controller = false;
       }
       else
       {
-        _cm->update(ros::Time::now(), elapsed_time, false);
+        _cm->update(cm_time, elapsed_time, false);
       }
 
       // we just use cmd from moveit only in torque on + calibration finished
       if (!_previous_state_learning_mode && _lock_write_cnt == -1 && !_robot->needCalibration())
       {
-        _robot->write(current_time, elapsed_time);
+        _robot->write(cm_time, elapsed_time);
       }
       else if (_lock_write_cnt > 0)
       {
@@ -285,7 +307,8 @@ void JointsInterfaceCore::rosControlLoop()
         _lock_write_cnt = -1;
         _reset_controller = true;
       }
-      _control_loop_rate.sleep();
+
+      steady_rate.sleep();
     }
   }
 }

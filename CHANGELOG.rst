@@ -2,6 +2,23 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+forthcoming
+___________
+
+**Features**
+
+* Added support for dynamic port changing for modbus 
+* Added integer user store entries
+
+**Improvements**
+
+* Programs output is now published line by line instead of character by character. This reduces the CPU usage and the network load.
+
+**Bugfixes**
+
+* Detect preconfigured conveyors at startup and add them to the conveyor interface
+* Simpler programs output handling in the programs manager
+
 v5.8.1
 ___________
 

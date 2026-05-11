@@ -270,7 +270,7 @@ void EndEffectorState::Button::reset()
  */
 void EndEffectorState::Button::setDelay()
 {
-  _time_last_read_state = ros::Time::now().toSec();
+  _time_last_read_state = ros::SteadyTime::now().toSec();
   _need_delay = true;
 }
 
@@ -280,7 +280,7 @@ void EndEffectorState::Button::setDelay()
  */
 bool EndEffectorState::Button::needsToSkip()
 {
-  if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+  if (_need_delay && (ros::SteadyTime::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
     return true;
 
   _need_delay = false;

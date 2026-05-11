@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
+import time
 from niryo_robot_system_api_client import system_api_client
 
 from niryo_robot_rpi.msg import HotspotButtonStatus
@@ -102,12 +103,12 @@ class HotspotButton:
         play_connected()
 
     def on_press(self):
-        pressed_time = rospy.Time.now()
+        pressed_time = time.monotonic()
         self.__is_released = False
 
         while not rospy.is_shutdown() and not self.__is_released:
             previous_press_mode = self.__press_mode
-            elapsed_time = (rospy.Time.now() - pressed_time).to_sec()
+            elapsed_time = (time.monotonic() - pressed_time)
             self.__set_press_mode(elapsed_time)
             if self.__press_mode != previous_press_mode:
                 hotspot_button_status = HotspotButtonStatus()
