@@ -13,6 +13,7 @@ ___________
 **Improvements**
 
 * Programs output is now published line by line instead of character by character. This reduces the CPU usage and the network load.
+* Removed dynamic casts and memory allocations in control loop
 
 **Bugfixes**
 

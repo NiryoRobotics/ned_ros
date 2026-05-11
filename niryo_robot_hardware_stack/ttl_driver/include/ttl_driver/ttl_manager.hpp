@@ -45,6 +45,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "ttl_driver/abstract_motor_driver.hpp"
 #include "ttl_driver/abstract_stepper_driver.hpp"
+#include "ttl_driver/mock_end_effector_driver.hpp"
 #include "ttl_driver/fake_ttl_data.hpp"
 #include "ttl_driver/MotorCommand.h"
 
@@ -56,7 +57,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace ttl_driver
 {
-
 /**
  * Parameters for DXL
  */
@@ -211,10 +211,15 @@ private:
 
   // state of a component for a given id
   std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState>> _state_map;
+  std::map<uint8_t, std::shared_ptr<common::model::AbstractMotorState>> _motor_state_map;
+  std::map<uint8_t, std::shared_ptr<common::model::EndEffectorState>> _end_effector_state_map;
   // map of associated ids for a given hardware type
   std::map<common::model::EHardwareType, std::vector<uint8_t>> _ids_map;
   // map of drivers for a given hardware type (dxl, stepper, end effector)
   std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver>> _driver_map;
+  std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractMotorDriver>> _motor_driver_map;
+  std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractEndEffectorDriver>>
+      _end_effector_driver_map;
 
   // default ttl driver is always available
   std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
