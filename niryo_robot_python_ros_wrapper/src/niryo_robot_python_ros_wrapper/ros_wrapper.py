@@ -24,7 +24,6 @@ from geometry_msgs.msg import Pose as RosPose, Point, Quaternion
 
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from tools_interface.msg import Tool
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
@@ -114,7 +113,6 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         self.__analog_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/analog_io_state', AnalogIOState)
         self.__max_velocity_scaling_factor_ntv = NiryoTopicValue('/niryo_robot/max_velocity_scaling_factor', Int32)
         self.__storage_status_ntv = NiryoTopicValue('/niryo_robot_rpi/storage_status', StorageStatus)
-        self.__tool_motor_state_ntv = NiryoTopicValue('/niryo_robot_hardware/tools/motor', Tool)
 
         # - Vision
         self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
@@ -1842,7 +1840,16 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: the hardware state
         :rtype: int
         """
-        return self.__tool_motor_state_ntv.value.state
+        return self.__tools.get_current_tool_state()
+
+    def is_tool_open(self):
+        """
+        Naive approach to determine if tool is open by comparing the current position with the open and close positions
+        For vacuum pump, open means air is pushed and close means air is pulled
+        :return: Whether the tool is open
+        :rtype: bool
+        """
+        return self.__tools.is_tool_open()
 
     def update_tool(self):
         """
@@ -1912,7 +1919,18 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: the tool position, in steps.
         :rtype: int
         """
-        return self.__tool_motor_state_ntv.value.position
+        return self.__tools.get_current_tool_position()
+
+    def get_tool_specs(self, tool_id=None):
+        """
+        Get the tool position and torque limits. Positions are in steps, and torque limits are in mA.
+
+        :param tool_id: Tool ID. If None, use the current tool id.
+        :type tool_id: ToolID
+        :return: tool position limits (close, open), tool torque limits (close, open)
+        :rtype: ((int, int), (int, int))
+        """
+        return self.__tools.get_tool_specs(tool_id)
 
     def get_gripper_specs(self, tool_id=None):
         """
@@ -1923,15 +1941,7 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
         :return: gripper position limits (close, open), gripper torque limits (close, open)
         :rtype: ((int, int), (int, int))
         """
-        specs = rospy.get_param('/niryo_robot_tools_commander/tool_list')
-        tool_id = tool_id or self.get_current_tool_id()
-        try:
-            gripper_specs = next(s['specs'] for s in specs if s['type'] == 'gripper' and s['id'] == tool_id)
-        except StopIteration:
-            raise NiryoRosWrapperException(f'No gripper found for id {tool_id}')
-
-        return (gripper_specs['close_position'], gripper_specs['open_position']), (gripper_specs['torque_limit']['min'],
-                                                                                   gripper_specs['torque_limit']['max'])
+        return self.__tools.get_tool_specs(tool_id)
 
     # - Vacuum
     def pull_air_vacuum_pump(self):

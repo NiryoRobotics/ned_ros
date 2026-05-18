@@ -8,9 +8,10 @@ from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
 # Messages
 from geometry_msgs.msg import Point
-from std_msgs.msg import Bool, Int32
+from std_msgs.msg import Int32
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_tools_commander.msg import ToolCommand, TCP
+from tools_interface.msg import Tool
 
 # Services
 from niryo_robot_msgs.srv import SetBool, SetInt, Trigger
@@ -34,6 +35,24 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         # -- Tool action
         self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction, ToolGoal)
 
+        self.__tool_motor_state_ntv = NiryoTopicValue('/niryo_robot_hardware/tools/motor', Tool)
+
+    def get_current_tool_state(self):
+        """
+        Return the hardware state of the tool
+        :return: the hardware state
+        :rtype: int
+        """
+        return self.__tool_motor_state_ntv.value.state
+
+    def get_current_tool_position(self):
+        """
+        Get the tool current position
+        :return: the tool position, in steps.
+        :rtype: int
+        """
+        return self.__tool_motor_state_ntv.value.position
+
     def get_current_tool_id(self):
         """
         Uses /niryo_robot_tools_commander/current_id  topic to get current tool id
@@ -42,6 +61,47 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         :rtype: ToolID
         """
         return self.__current_tool_id_ntv.value.data
+
+    def get_tool_specs(self, tool_id=None):
+        """
+        Get the tool position and torque limits. Positions are in steps, and torque limits are in mA.
+
+        :param tool_id: Tool ID. If None, use the current tool id.
+        :type tool_id: ToolID
+        :return: tool position limits (close, open), tool torque limits (close, open)
+        :rtype: ((int, int), (int, int))
+        """
+        specs = rospy.get_param('/niryo_robot_tools_commander/tool_list')
+        tool_id = tool_id or self.get_current_tool_id()
+        try:
+            tool_type, tool_specs = next((s['type'], s['specs']) for s in specs if s['id'] == tool_id)
+        except StopIteration:
+            raise NiryoRosWrapperException(f'No tool found for id {tool_id}')
+
+        if tool_type == 'gripper':
+            return (
+                (tool_specs['close_position'], tool_specs['open_position']),
+                (tool_specs['torque_limit']['min'], tool_specs['torque_limit']['max']),
+            )
+        elif tool_type == 'vacuum_pump':
+            return (
+                (tool_specs['pull_air_position'], tool_specs['push_air_position']),
+                (tool_specs['pull_air_max_torque'], tool_specs['push_air_max_torque']),
+            )
+        else:
+            raise NiryoRosWrapperException(f'Tool type {tool_type} is not supported')
+
+    def is_tool_open(self):
+        """
+        Naive approach to determine if tool is open by comparing the current position with the open and close positions
+        For vacuum pump, open means air is pushed and close means air is pulled
+        :return: Whether the tool is open
+        :rtype: bool
+        """
+        current = self.get_current_tool_position()
+        close_pos, open_pos = self.get_tool_specs()[0]
+
+        return abs(current - open_pos) < abs(current - close_pos)
 
     def update_tool(self):
         """
@@ -144,7 +204,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         return self.__tool_action_nac.execute(goal)
 
     # - Vacuum
-    def pull_air_vacuum_pump(self, **_kwargs):
+    def pull_air_vacuum_pump(self, *_args, **_kwargs):
         """
         Pulls air
 
@@ -153,7 +213,7 @@ class ToolsRosWrapper(AbstractNiryoRosWrapper):
         """
         return self.__deal_with_vacuum_pump(ToolCommand.PULL_AIR_VACUUM_PUMP)
 
-    def push_air_vacuum_pump(self, **_kwargs):
+    def push_air_vacuum_pump(self, *_args, **_kwargs):
         """
         Pulls air
 

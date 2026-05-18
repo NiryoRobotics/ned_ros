@@ -14,11 +14,17 @@ ___________
 
 * Programs output is now published line by line instead of character by character. This reduces the CPU usage and the network load.
 * Removed dynamic casts and memory allocations in control loop
+* ros_wrapper improvements:
+
+  * new function is_tool_open
+  * get_gripper_specs now works with vacuum pumps and has been renamed to get_tool_specs (get_gripper_specs is still available as an alias to get_tool_specs)
 
 **Bugfixes**
 
 * Detect preconfigured conveyors at startup and add them to the conveyor interface
 * Simpler programs output handling in the programs manager
+* Fixed a bug causing the vacuum pump to not be actuated via the modbus server
+* Fixed the inconsistent value of the tool actuation entry in the modbus server
 
 v5.8.1
 ___________
