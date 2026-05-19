@@ -237,17 +237,24 @@ bool JointsInterfaceCore::rebootAll(bool torque_on)
  */
 void JointsInterfaceCore::rosControlLoop()
 {
-  ros::SteadyTime last_steady = ros::SteadyTime::now();
-  ros::Duration elapsed_time;
   const double expected_period = _control_loop_rate.expectedCycleTime().toSec();
   const double max_elapsed = 5.0 * expected_period;
   common::SteadyRate steady_rate(1.0 / expected_period);
 
-  ros::Time cm_time = ros::Time::now();
-
   while (ros::ok())
   {
-    if (_enable_control_loop && !_estop_flag)
+    while (ros::ok() && (!_enable_control_loop || _estop_flag))
+      steady_rate.sleep();
+
+    if (!ros::ok())
+      break;
+
+    // Re-sync time variables to prevent them from drifting
+    ros::Time cm_time = ros::Time::now();
+    ros::SteadyTime last_steady = ros::SteadyTime::now();
+    ros::Duration elapsed_time;
+
+    while (ros::ok() && _enable_control_loop && !_estop_flag)
     {
       const ros::SteadyTime cycle_start = ros::SteadyTime::now();
 
