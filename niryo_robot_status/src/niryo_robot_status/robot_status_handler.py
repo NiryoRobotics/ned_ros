@@ -1,6 +1,6 @@
 import rospy
 
-from .robot_status_enums import *
+from .robot_status_enums import ROBOT_STATUS_TO_STR, ROBOT_STATUS_TO_MESSAGE, LOG_STATUS_TO_STR
 from .robot_status_observer import RobotStatusObserver
 from .robot_nodes_observer import RobotNodesObserver
 from .robot_logs_observer import RobotLogsObserver
@@ -103,10 +103,9 @@ class RobotStatusHandler(object):
         self.__robot_nodes_observer.start_nodes_check_loop()  # Start nodes checker observer
 
     def get_autonomous_status(self):
-        return self.__robot_nodes_observer.check_user_node or \
+        return self.__robot_nodes_observer.check_user_node() or \
                self.__robot_status_observer.program_is_running or \
-               self.__robot_status_observer.is_tcp_client_connected or \
-               self.__robot_nodes_observer.pyniryo_connected
+               self.__robot_status_observer.is_tcp_client_connected
 
     def advertise_new_state(self):
         if self.__robot_status_pub is not None:
@@ -124,30 +123,25 @@ class RobotStatusHandler(object):
         self.__robot_status = status
         self.__robot_message = ROBOT_STATUS_TO_MESSAGE[status]
         self.__booting = False
-        self.__log_status = RobotStatus.NONE
-        self.__log_msg = ""
         self.__publish()
 
     def __build_robot_status(self):
         try:
 
-            new_robot_status, new_robot_message = self.__check_estop_state()
+            new_robot_status, new_robot_message = RobotStatus.UNKNOWN, ""
 
-            if new_robot_status == RobotStatus.UNKNOWN:
-                # - Ros status -> Booting, Node crash, etc..
-                new_robot_status, new_robot_message = self.__check_ros_state()
+            checks = [
+                self.__check_estop_state,
+                self.__check_ros_state,
+                self.__check_hardware_error,
+                self.__check_motion_errors,
+                self.__check_regular_robot_status
+            ]
 
-            if new_robot_status == RobotStatus.UNKNOWN:
-                # Motor Error
-                new_robot_status, new_robot_message = self.__check_hardware_error()
-
-            if new_robot_status == RobotStatus.UNKNOWN:
-                # - Program or motion errors
-                new_robot_status, new_robot_message = self.__check_motion_errors()
-
-            if new_robot_status == RobotStatus.UNKNOWN:
-                # - Robot status - No errors
-                new_robot_status, new_robot_message = self.__check_regular_robot_status()
+            for check in checks:
+                new_robot_status, new_robot_message = check()
+                if new_robot_status != RobotStatus.UNKNOWN:
+                    break
         except NoChangesException:
             return
 
@@ -197,12 +191,15 @@ class RobotStatusHandler(object):
             new_robot_status = RobotStatus.MOTOR_ERROR
             new_robot_message = self.__robot_status_observer.hardware_status.error_message
         else:
-            for motor_index, motor_error in enumerate(
-                    self.__robot_status_observer.hardware_status.hardware_errors_message):
-                if motor_error and not (motor_index > 5 and motor_error == "Overload"):
-                    new_robot_status = RobotStatus.MOTOR_ERROR
-                    new_robot_message += "{}: {}\n".format(
-                        self.__robot_status_observer.hardware_status.motor_names[motor_index], motor_error)
+            motors = zip(self.__robot_status_observer.hardware_status.motor_names,
+                         self.__robot_status_observer.hardware_status.hardware_errors_message)
+            for motor_name, motor_error in motors:
+                if not motor_name.startswith('joint_'):
+                    continue
+                if motor_error == '' or motor_error == 'Overload':
+                    continue
+                new_robot_status = RobotStatus.MOTOR_ERROR
+                new_robot_message += "{}: {}\n".format(motor_name, motor_error)
 
         return new_robot_status, new_robot_message
 

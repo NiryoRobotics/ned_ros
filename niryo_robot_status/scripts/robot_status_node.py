@@ -7,7 +7,7 @@ from niryo_robot_utils import sentry_init
 from niryo_robot_status.robot_status_handler import RobotStatusHandler
 
 
-class RobotStatus:
+class RobotStatusNode:
 
     def __init__(self):
         self.__robot_status_handler = RobotStatusHandler()
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     logger.setLevel(log_level)
 
     try:
-        node = RobotStatus()
+        node = RobotStatusNode()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

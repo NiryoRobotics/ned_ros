@@ -28,7 +28,6 @@ vital_nodes_common:
  - "/niryo_robot_programs_manager"
  - "/niryo_robot_programs_manager_v2"
  - "/niryo_robot_rpi"
- - "/niryo_robot_status"
  - "/niryo_robot_tools_commander"
  - "/niryo_robot_user_interface"
  - "/robot_state_publisher"

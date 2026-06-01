@@ -114,9 +114,6 @@ class RobotStatusObserver(object):
         program_is_running = last_goal.status == last_goal.ACTIVE
         if self.program_is_running != program_is_running:
             self.program_is_running = program_is_running
-            # if not program_is_running:
-            # self.program_error = True if msg.last_execution_status == msg.EXECUTION_ERROR else False
-            # self.program_error_message = msg.last_execution_msg
             self.__robot_status_handler.advertise_new_state()
 
             # Clean error after
@@ -135,9 +132,6 @@ class RobotStatusObserver(object):
         msg.rpi_temperature = 0
         msg.temperatures = []
         msg.voltages = []
-
-        # Todo remove this
-        msg.error_message = ""
 
         if self.hardware_status != msg:
             self.hardware_status = msg
@@ -195,6 +189,9 @@ class RobotStatusObserver(object):
                     joint_limit.name: joint_limit
                     for joint_limit in joint_limits_service.call().joint_limits
                 }
+                return
             except rospy.ROSException:
                 rospy.logwarn("Waiting for '/niryo_robot_arm_commander/get_joints_limit' service")
+            except rospy.ServiceException as e:
+                rospy.logerr("Service call to get_joints_limit failed: %s" % e)
             tries += 1

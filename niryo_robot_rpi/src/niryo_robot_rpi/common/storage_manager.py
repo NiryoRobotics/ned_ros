@@ -50,7 +50,7 @@ class StorageManager:
 
         # clean log on startup if param is true
         if self.__purge_log_on_startup:
-            rospy.logwarn("Purging ROS log on startup !")
+            rospy.loginfo("Purging ROS log on startup !")
             self.purge_log()
 
         self.__update_run_ids_file()

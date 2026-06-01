@@ -16,7 +16,6 @@ LOG_LEVEL_TO_MSG = {
     Log.ERROR: RobotStatus.ERROR,
     Log.FATAL: RobotStatus.FATAL,
 }
-
 ROBOT_STATUS_TO_STR = {
     RobotStatus.UPDATE: 'Update',
     RobotStatus.REBOOT: 'Reboot',
@@ -42,6 +41,7 @@ ROBOT_STATUS_TO_STR = {
 }
 
 ROBOT_STATUS_TO_MESSAGE = {
+    RobotStatus.UNKNOWN: "Unknown",
     RobotStatus.UPDATE: "Update",
     RobotStatus.REBOOT: "Rebooting one or more motors",
     RobotStatus.SHUTDOWN: 'Shutdown',
@@ -56,10 +56,11 @@ ROBOT_STATUS_TO_MESSAGE = {
     RobotStatus.RUNNING_AUTONOMOUS: "Program is running",
     RobotStatus.RUNNING_DEBUG: "Debug program is running",
     RobotStatus.PAUSE: "Program paused",
-    RobotStatus.LEARNING_TRAJECTORY: "User is leaning the arm a trajectory",
+    RobotStatus.LEARNING_TRAJECTORY: "Robot is learning a trajectory",
     RobotStatus.LEARNING_MODE_AUTONOMOUS: "Program is running and learning_mode active",
     RobotStatus.REBOOT_MOTOR: 'Reboot motor',
-    RobotStatus.ESTOP: 'Emergency stop'
+    RobotStatus.ESTOP: 'Emergency stop',
+    RobotStatus.FATAL_ERROR: 'Fatal error',
 }
 
 LOG_STATUS_TO_STR = {

@@ -3,37 +3,37 @@ import rospy
 # - Services
 from niryo_robot_msgs.srv import AdvertiseShutdown, AdvertiseShutdownRequest
 
-
 # Command Status
-# from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_msgs.msg import CommandStatus
+
 
 class RobotStatusRosWrapperException(Exception):
     pass
 
 
 class RobotStatusRosWrapper(object):
+
     def __init__(self, service_timeout=1):
         self.__service_timeout = service_timeout
 
     def shutdown(self):
-        res = self.__call_service('/niryo_robot_rpi/shutdown_rpi', AdvertiseShutdown,
-                                  AdvertiseShutdownRequest.SHUTDOWN)
+        res = self.__call_service('/niryo_robot_rpi/shutdown_rpi', AdvertiseShutdown, AdvertiseShutdownRequest.SHUTDOWN)
         return self.__classic_return_w_check(res)
 
     def reboot(self):
-        res = self.__call_service('/niryo_robot_rpi/shutdown_rpi', AdvertiseShutdown,
-                                  AdvertiseShutdownRequest.REBOOT)
+        res = self.__call_service('/niryo_robot_rpi/shutdown_rpi', AdvertiseShutdown, AdvertiseShutdownRequest.REBOOT)
         return self.__classic_return_w_check(res)
 
     def prepare_update(self):
         try:
-            res = self.__call_service('/niryo_robot_status/advertise_shutdown', AdvertiseShutdown,
+            res = self.__call_service('/niryo_robot_status/advertise_shutdown',
+                                      AdvertiseShutdown,
                                       AdvertiseShutdownRequest.UPDATE)
 
         except RobotStatusRosWrapperException:
             return False
 
-        return res.status < 0
+        return res.status == CommandStatus.SUCCESS
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):

@@ -63,6 +63,8 @@ class LedRingCommander(object):
             LedRingAnimation.CUSTOM: self.custom_animation,
         }
 
+        self.__acquire_led_ring()
+
         # - Publishers
         self.__led_ring_status_pub = rospy.Publisher('~led_ring_status', LedRingStatus, latch=True, queue_size=10)
         rospy.sleep(1)
@@ -84,8 +86,7 @@ class LedRingCommander(object):
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
                                                         RobotStatus,
-                                                        self.__callback_robot_status,
-                                                        queue_size=1)
+                                                        self.__callback_robot_status)
         rospy.Subscriber("/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
         rospy.Subscriber('/niryo_robot_user_interface/niryo_studio_connection',
                          ConnectionState,
@@ -131,6 +132,14 @@ class LedRingCommander(object):
     def is_shutdown(self):
         return self.__is_shutdown
 
+    def __acquire_led_ring(self):
+        if self.__is_simulation:
+            return
+
+        from niryo_robot_led_ring.led_ring_utils import enable_led_ring
+        enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
+        self.led_ring_anim.init_led_ring()
+
     # - Callbacks
     def __callback_robot_status(self, msg):
         """
@@ -143,13 +152,6 @@ class LedRingCommander(object):
             self.shutdown()
         elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
             self.shutdown(WHITE)
-        elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
-            rospy.sleep(3.5)  # because no fade
-            if not self.__is_simulation:
-                from niryo_robot_led_ring.led_ring_utils import enable_led_ring
-                enable_led_ring(rospy.get_param('~enable_led_ring_bcm_pin'))
-                self.led_ring_anim.init_led_ring()
-            #    self.led_ring_anim.fade(BLUE)
 
         new_robot_status = self.robot_status != msg.robot_status
         new_robot_out_of_bound = self.robot_out_of_bounds != msg.out_of_bounds
@@ -254,12 +256,7 @@ class LedRingCommander(object):
         We use a thread to avoid the blocking effect of the Led ring
         control methods.
         """
-        # print 'get lock'
-        # with self.error_animation_lock:
-        #    pass
-        # print 'retrieve lock'
         self.stop_led_ring_thread()
-        # print 'stopped thread'
         self.led_ring_animation_thread = threading.Thread(
             target=self.dict_led_ring_methods[command.animation_mode.animation], args=[command])
         self.running_status_command = command
