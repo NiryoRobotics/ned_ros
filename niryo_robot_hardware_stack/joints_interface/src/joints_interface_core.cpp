@@ -433,7 +433,7 @@ bool JointsInterfaceCore::_callbackFactoryCalibrateMotors(FactoryCalibration::Re
   if ("ned3pro" != _hardware_version)
   {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
-    res.message = "JointHardwareInterface::factoryCalibrateJoints - Can't be calibratd wrong hardware version: " +
+    res.message = "JointHardwareInterface::factoryCalibrateJoints - Can't be calibrated wrong hardware version: " +
                   _hardware_version;
     return true;
   }

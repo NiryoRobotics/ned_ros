@@ -349,7 +349,7 @@ class JogController:
         if not target_values:
             return
         msg = JointTrajectory()
-        msg.header.stamp = rospy.Time.now()
+        msg.header.stamp = rospy.Time(0)
 
         point = JointTrajectoryPoint()
 

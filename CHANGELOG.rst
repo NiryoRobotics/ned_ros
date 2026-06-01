@@ -25,6 +25,7 @@ ___________
 * Simpler programs output handling in the programs manager
 * Fixed a bug causing the vacuum pump to not be actuated via the modbus server
 * Fixed the inconsistent value of the tool actuation entry in the modbus server
+* Do not time the jog messages commands to the jog commander
 
 v5.8.1
 ___________
