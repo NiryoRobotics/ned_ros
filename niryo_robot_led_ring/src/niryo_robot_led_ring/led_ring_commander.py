@@ -63,8 +63,6 @@ class LedRingCommander(object):
             LedRingAnimation.CUSTOM: self.custom_animation,
         }
 
-        self.__acquire_led_ring()
-
         # - Publishers
         self.__led_ring_status_pub = rospy.Publisher('~led_ring_status', LedRingStatus, latch=True, queue_size=10)
         rospy.sleep(1)
@@ -152,6 +150,10 @@ class LedRingCommander(object):
             self.shutdown()
         elif msg.robot_status in [RobotStatus.REBOOT, RobotStatus.UPDATE]:
             self.shutdown(WHITE)
+        elif self.robot_status == RobotStatus.BOOTING != msg.robot_status:
+            rospy.sleep(3.5)
+            # watchout when modifying the timing of the acquisition: it also controls all the IOs like the power button
+            self.__acquire_led_ring()
 
         new_robot_status = self.robot_status != msg.robot_status
         new_robot_out_of_bound = self.robot_out_of_bounds != msg.out_of_bounds
