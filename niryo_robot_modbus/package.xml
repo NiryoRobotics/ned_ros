@@ -28,6 +28,7 @@
   <!-- Python Dependencies -->
   <exec_depend>python3-pymodbus</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>niryo_robot_system_api_client</exec_depend>
 
   <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>

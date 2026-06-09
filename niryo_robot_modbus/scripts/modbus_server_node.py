@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+import threading
 
 import rospy
 import logging
 from niryo_robot_modbus.ModbusServer import ModbusServer
-from niryo_robot_database.msg import Setting
-from niryo_robot_database.srv import GetSettings, SetSettings
-from niryo_robot_utils import async_init
+from niryo_robot_system_api_client import system_api_client
+from niryo_robot_system_api_client.msg import Setting
 from threading import Lock
 
 from niryo_robot_utils import sentry_init
@@ -17,7 +17,7 @@ class ModbusServerNode:
 
         self.__modbus_server = None
         self._server_lock = Lock()
-        self.name = "modbus_port"
+        self.port_setting_name = "modbus_port"
 
         # Retrieved parameters
         self.__modbus_server_address = rospy.get_param("~server_address")
@@ -25,11 +25,10 @@ class ModbusServerNode:
 
         rospy.logdebug("ModbusServerNode.Init - server_address: %s", self.__modbus_server_address)
 
-        rospy.Subscriber('/niryo_robot_database/setting_update', Setting, self._setting_update_callback)
-        async_init.PromiseServiceProxy('/niryo_robot_database/settings/get',
-                                       GetSettings,
-                                       self._on_get_settings_available)
-        self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        rospy.Subscriber('/niryo_robot_system_api_client/setting_update', Setting, self._setting_update_callback)
+
+        threading.Thread(target=self._on_get_settings_available).start()
+
         # Create Modbus
         with self._server_lock:
             rospy.loginfo("ModbusServerNode.Init - server_port: %s", self.__modbus_server_port)
@@ -51,17 +50,23 @@ class ModbusServerNode:
                 rospy.logerr("Modbus Node - Not Correctly Started")
 
     def _setting_update_callback(self, req):
-        if req.name == self.name:
-            self._update_port(req.value)
+        if req.name == self.port_setting_name:
+            self._update_port(int(req.value))
 
-    def _on_get_settings_available(self, get_settings_proxy):
-        response = get_settings_proxy(self.name)
-        if response.status < 0:
-            self.__set_setting_service(self.name, str(self.__modbus_server_port), 'str')
+    def _on_get_settings_available(self):
+        try:
+            system_api_client.wait_for_api(rospy.is_shutdown, timeout=30)
+        except TimeoutError:
+            rospy.logerr("Modbus Node - timed out waiting for system api")
+            return
+
+        response = system_api_client.get_setting(self.port_setting_name)
+        if not response.success:
+            system_api_client.set_setting(self.port_setting_name, str(self.__modbus_server_port))
             rospy.logwarn(f'The modbus port was not found in the database. Defaulting to "{self.__modbus_server_port}"')
             return
 
-        self._update_port(response.value)
+        self._update_port(int(response.data[self.port_setting_name]))
 
     def _update_port(self, new_port):
         with self._server_lock:

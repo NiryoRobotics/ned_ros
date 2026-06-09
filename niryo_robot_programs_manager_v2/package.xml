@@ -34,6 +34,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>actionlib</exec_depend>
+  <exec_depend>niryo_robot_system_api_client</exec_depend>
 
   <!-- Python Dependencies -->
   <exec_depend>python-yaml</exec_depend>

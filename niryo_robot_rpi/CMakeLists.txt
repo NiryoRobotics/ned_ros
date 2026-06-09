@@ -18,10 +18,10 @@ add_message_files(
   AnalogIOState.msg
   DigitalIO.msg
   DigitalIOState.msg
+  HotspotButtonStatus.msg
   I2CComponent.msg
   LogStatus.msg
   StorageStatus.msg
-  HotspotButtonStatus.msg
 )
 
 add_service_files(

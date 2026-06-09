@@ -32,6 +32,8 @@
   <exec_depend>niryo_robot_msgs</exec_depend>
 
   <!-- Python Dependencies -->
+  <exec_depend>niryo_robot_system_api_client</exec_depend>
+
   <test_depend>python3-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

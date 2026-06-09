@@ -33,15 +33,15 @@ find_package(catkin REQUIRED
     COMPONENTS
       actionlib
       actionlib_msgs
+      common
+      dynamixel_sdk
+      end_effector_interface
       message_generation
+      niryo_robot_msgs
       niryo_robot_programs_manager_v2
+      niryo_robot_system_api_client
       roscpp
       std_msgs
-      niryo_robot_msgs
-      niryo_robot_database
-      dynamixel_sdk
-      common
-      end_effector_interface
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -81,15 +81,15 @@ catkin_package(
         ${PROJECT_NAME}
     CATKIN_DEPENDS
         actionlib_msgs
+        common
+        dynamixel_sdk
+        end_effector_interface
         message_runtime
         niryo_robot_msgs
         niryo_robot_programs_manager_v2
+        niryo_robot_system_api_client
         roscpp
         std_msgs
-        niryo_robot_database
-        dynamixel_sdk
-        common
-        end_effector_interface
 )
 
 ###########

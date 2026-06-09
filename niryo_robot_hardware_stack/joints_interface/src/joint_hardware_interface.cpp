@@ -34,8 +34,8 @@
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/util/util_defs.hpp"
 
-#include "niryo_robot_database/GetSettings.h"
-#include "niryo_robot_database/SetSettings.h"
+#include "niryo_robot_system_api_client/GetSettings.h"
+#include "niryo_robot_system_api_client/SetSettings.h"
 
 using ::std::dynamic_pointer_cast;
 using ::std::shared_ptr;
@@ -75,9 +75,9 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle &rootnh, ros::Nod
 
   // Used to get or initialize motors home position
   _get_settings_client =
-      robot_hwnh.serviceClient<niryo_robot_database::GetSettings>("/niryo_robot_database/settings/get");
+      robot_hwnh.serviceClient<niryo_robot_system_api_client::GetSettings>("/niryo_robot_system_api_client/settings/get");
   _set_settings_client =
-      robot_hwnh.serviceClient<niryo_robot_database::SetSettings>("/niryo_robot_database/settings/set");
+      robot_hwnh.serviceClient<niryo_robot_system_api_client::SetSettings>("/niryo_robot_system_api_client/settings/set");
   _get_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/get_home_position",
                                                            &JointHardwareInterface::callbackGetHomePosition, this);
   _set_home_position_service = robot_hwnh.advertiseService("/niryo_robot_joints_interface/set_home_position",
@@ -304,7 +304,7 @@ void JointHardwareInterface::updateJointsHomePosition()
       std::vector<float> tmp_custom_home_positions;
       for (auto &jState : _joint_state_list)
       {
-        auto get_request = niryo_robot_database::GetSettings();
+        auto get_request = niryo_robot_system_api_client::GetSettings();
         auto setting_name = "custom_home_position_" + jState->getName();
         get_request.request.name = setting_name;
         if (_get_settings_client.call(get_request) &&
@@ -354,7 +354,7 @@ bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatL
 {
   ROS_DEBUG("JointHardwareInterface::callbackSetHomePosition - Set new home position requested");
 
-  niryo_robot_database::SetSettings set_service = niryo_robot_database::SetSettings();
+  niryo_robot_system_api_client::SetSettings set_service = niryo_robot_system_api_client::SetSettings();
 
   // Check if requested home position values match the joints number
   if (req.values.size() != _joint_state_list.size())
@@ -405,7 +405,7 @@ bool JointHardwareInterface::callbackSetHomePosition(niryo_robot_msgs::SetFloatL
     else
     {
       res.status = niryo_robot_msgs::CommandStatus::FAILURE;
-      res.message = "Failed to call service /niryo_robot_database/settings/set";
+      res.message = "Failed to call service /niryo_robot_system_api_client/settings/set";
       return true;
     }
 
@@ -425,7 +425,7 @@ bool JointHardwareInterface::callbackResetHomePosition(niryo_robot_msgs::Trigger
 {
   ROS_DEBUG("JointHardwareInterface::callbackResetHomePosition - Reset home position requested");
 
-  auto set_service = niryo_robot_database::SetSettings();
+  auto set_service = niryo_robot_system_api_client::SetSettings();
 
   for (size_t i = 0; i < _joint_state_list.size(); ++i)
   {

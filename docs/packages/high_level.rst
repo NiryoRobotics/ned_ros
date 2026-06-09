@@ -23,4 +23,4 @@ developed for High Level interfaces.
    high_level/niryo_robot_user_interface
    high_level/niryo_robot_vision
    high_level/niryo_robot_led_ring
-   high_level/niryo_robot_database
+   high_level/niryo_robot_system_api_client

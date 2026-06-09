@@ -1,0 +1,25 @@
+topics:
+  publishers:
+    - name: /niryo_robot_system_api_client/setting_update
+      type: niryo_robot_system_api_client/SettingMsg
+      description: Publish the new setting when it has been changed in the system API
+
+services:
+  - name: /niryo_robot_system_api_client/settings/set
+    type: niryo_robot_system_api_client/SetSettings
+    description: Set a setting in the system API
+  - name: /niryo_robot_system_api_client/settings/get
+    type: niryo_robot_system_api_client/GetSettings
+    description: Get a setting from the system API
+
+parameters:
+  - name: /niryo_robot_system_api_client/hardware_version
+    default_value: "ned"
+    simulation_value: "N/A"
+    unit: "string"
+    description: "Hardware version of the robot"
+  - name: /niryo_robot_system_api_client/initialized
+    default_value: "false"
+    simulation_value: "N/A"
+    unit: "bool"
+    description: "Whether the system_api_client node has been initialized or not"

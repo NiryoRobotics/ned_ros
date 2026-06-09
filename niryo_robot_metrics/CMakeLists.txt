@@ -81,6 +81,10 @@ catkin_install_python(PROGRAMS
     scripts/metrics_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
+install(PROGRAMS
+    pub_new_day.sh
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
 # Mark other files for installation
 install(
   DIRECTORY launch/

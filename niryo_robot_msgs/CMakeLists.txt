@@ -27,15 +27,15 @@ add_service_files(
   FILES
   AdvertiseShutdown.srv
   GetBool.srv
+  GetFloatList.srv
   GetInt.srv
   GetNameDescriptionList.srv
   GetString.srv
   GetStringList.srv
   Ping.srv
   SetBool.srv
-  GetFloatList.srv
-  SetFloatList.srv
   SetFloat.srv
+  SetFloatList.srv
   SetInt.srv
   SetString.srv
   Trigger.srv

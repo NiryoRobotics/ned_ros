@@ -24,8 +24,7 @@ import subprocess
 
 from niryo_robot_rpi.msg import StorageStatus, LogStatus
 from niryo_robot_msgs.srv import SetInt
-
-from niryo_robot_database.srv import GetSettings, SetSettings
+from niryo_robot_system_api_client import system_api_client
 
 #
 # This class will handle storage on Raspberry Pi
@@ -42,9 +41,15 @@ class StorageManager:
         self.__log_path = current_ros_logs_path.parent
         self.__run_id = current_ros_logs_path.stem
 
-        get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
-        get_setting_response = get_setting_service('purge_ros_logs_on_startup')
-        self.__purge_log_on_startup = get_setting_response.value == 'True'
+        self.__purge_log_on_startup = False
+
+        try:
+            system_api_client.wait_for_api(rospy.is_shutdown)
+            response = system_api_client.get_setting('purge_ros_logs_on_startup')
+            if response.success:
+                self.__purge_log_on_startup = response.data['purge_ros_logs_on_startup'] == 'True'
+        except TimeoutError:
+            pass
 
         self.__run_ids_file = self.__log_path.joinpath('run_ids.json')
 
@@ -139,8 +144,9 @@ class StorageManager:
         return self.create_response(400, "Unable to remove ROS logs")
 
     def callback_change_purge_log_on_startup(self, req):
-        set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
-        set_setting_service(name='purge_ros_logs', value=str(req.value == 1), type='bool')
+        resp = system_api_client.set_setting(name='purge_ros_logs_on_startup', value=str(req.value == 1))
+        if not resp.success:
+            return self.create_response(400, "Unable to change purge log on startup value")
         return self.create_response(200, "Purge log on startup value has been changed")
 
     def publish_storage_status(self, _):

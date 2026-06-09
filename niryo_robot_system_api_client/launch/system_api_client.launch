@@ -4,9 +4,7 @@
     <arg name="log_level" default="INFO"/>
     <arg name="hardware_version" default="ned"/>
 
-    <include file="$(find niryo_robot_database)/launch/database_base.launch.xml"/>
-
-    <node name="niryo_robot_database" pkg="niryo_robot_database" type="database_node.py" output="screen">
+    <node name="niryo_robot_system_api_client" pkg="niryo_robot_system_api_client" type="system_api_node.py" output="screen">
         <param name="log_level" value="$(arg log_level)"/>
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
     </node>

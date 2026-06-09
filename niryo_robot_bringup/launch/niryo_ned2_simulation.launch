@@ -11,7 +11,6 @@
     <arg name="vision_enabled" default="true"/>
     <arg name="gazebo" default="false"/>
     <arg name="no_summary" default="false"/>
-    <arg name="database" default="false"/>
     <arg name="hardware_version" default="ned2"/>
 
 
@@ -33,7 +32,6 @@
                   log_level:=$(arg log_level)
                   ttl_enabled:=$(arg ttl_enabled)
                   can_enabled:=false
-                  database:=$(arg database)
                   debug:=$(arg debug)"
               name="robot_launch" output="screen"/>
     </group>
@@ -50,7 +48,6 @@
             <arg name="debug" value="$(arg debug)"/>
             <arg name="vision_enabled" value="$(arg vision_enabled)"/>
             <arg name="gazebo" value="$(arg gazebo)"/>
-            <arg name="database" default="$(arg database)"/>
         </include>
 
         <include file="$(find niryo_robot_bringup)/launch/niryo_robot_sound_and_light.launch.xml">

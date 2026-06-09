@@ -34,7 +34,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 // niryo
 #include "niryo_robot_program_player/program_player_enums.hpp"
-#include "niryo_robot_database/GetSettings.h"
+#include "niryo_robot_system_api_client/GetSettings.h"
 #include "niryo_robot_programs_manager_v2/ExecuteProgramAction.h"
 #include "niryo_robot_programs_manager_v2/ProgramList.h"
 #include "std_msgs/Empty.h"
@@ -142,7 +142,7 @@ private:
   const std::string _stop_program_service_client_name{ "/niryo_robot_programs_manager_v2/stop_execution" };
   ros::ServiceClient _stop_program_service_client;
 
-  const std::string _database_settings_get_service_client_name{ "/niryo_robot_database/settings/get" };
+  const std::string _database_settings_get_service_client_name{ "/niryo_robot_system_api_client/settings/get" };
   ros::ServiceClient _database_settings_get_service_client;
 
   // ROS ACTIONS

@@ -36,13 +36,13 @@ find_package(catkin REQUIRED
       common
       controller_manager
       hardware_interface
+      message_generation
       niryo_robot_msgs
+      niryo_robot_system_api_client
       roscpp
       sensor_msgs
       std_msgs
       ttl_driver
-      niryo_robot_database
-      message_generation
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -86,12 +86,12 @@ catkin_package(
         common
         controller_manager
         hardware_interface
-        niryo_robot_msgs
-        roscpp
-        ttl_driver
-        niryo_robot_database
-        std_msgs
         message_runtime
+        niryo_robot_msgs
+        niryo_robot_system_api_client
+        roscpp
+        std_msgs
+        ttl_driver
 )
 
 ###########

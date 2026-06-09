@@ -85,11 +85,10 @@ catkin_install_python(PROGRAMS
 
 install(PROGRAMS
     pub_new_day.sh
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 install(PROGRAMS
-    pub_new_day.sh
     scripts/auto_diagnosis.py
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/scripts
 )

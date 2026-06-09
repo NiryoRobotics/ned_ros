@@ -19,6 +19,8 @@ ___________
   * new function is_tool_open
   * get_gripper_specs now works with vacuum pumps and has been renamed to get_tool_specs (get_gripper_specs is still available as an alias to get_tool_specs)
 
+* The ROS stack no longer handle the database. All the requests go through the system API. This is to ensure there is only one access point to the database and to prevent some bugs related to the database access at startup.
+
 **Bugfixes**
 
 * Detect preconfigured conveyors at startup and add them to the conveyor interface
@@ -27,6 +29,7 @@ ___________
 * Fixed the inconsistent value of the tool actuation entry in the modbus server
 * Do not time the jog messages commands to the jog commander
 * Attempt to prevent red led ring after successful boot
+* Fixed a name mismatch causing the purge_ros_logs_on_startup setting value to have no effect
 
 v5.8.1
 ___________

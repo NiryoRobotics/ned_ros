@@ -36,6 +36,7 @@
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>niryo_robot_system_api_client</exec_depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>python3-catkin-lint</test_depend>

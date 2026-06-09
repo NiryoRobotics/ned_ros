@@ -148,10 +148,6 @@ Replace <robot_model> with either **ned2** or **ned3pro**, depending on your rob
       - true
       - | Enable or disable the TTL bus usage. 
         | This feature is used for debug mainly and can lead to an unstable stack.
-   *  - database
-      - true
-      - | Launch database related ROS nodes.
-        | This feature is used for debug mainly and can lead to an unstable stack.
    *  - debug
       - false
       - Launch in debug mode. For development and debug only.

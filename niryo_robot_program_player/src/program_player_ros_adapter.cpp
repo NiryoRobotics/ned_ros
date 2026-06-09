@@ -34,7 +34,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_programs_manager_v2/ExecuteProgramAction.h"
 #include "niryo_robot_programs_manager_v2/ProgramList.h"
 #include "niryo_robot_msgs/CommandStatus.h"
-#include "niryo_robot_database/GetSettings.h"
+#include "niryo_robot_system_api_client/GetSettings.h"
 #include "end_effector_interface/EEButtonStatus.h"
 
 #include "common/model/action_type_enum.hpp"
@@ -123,7 +123,7 @@ void ProgramPlayerROSAdapter::startServices(ros::NodeHandle& nh)
   _stop_program_service_client = nh.serviceClient<niryo_robot_msgs::Trigger>(_stop_program_service_client_name);
 
   _database_settings_get_service_client =
-      nh.serviceClient<niryo_robot_database::GetSettings>(_database_settings_get_service_client_name);
+      nh.serviceClient<niryo_robot_system_api_client::GetSettings>(_database_settings_get_service_client_name);
 }
 
 void ProgramPlayerROSAdapter::startActions(ros::NodeHandle& nh)
@@ -221,7 +221,7 @@ std::string ProgramPlayerROSAdapter::getRobotName()
   if (!_database_settings_get_service_client.waitForExistence(ros::Duration(0.1)))
     return "NO NAME";
 
-  niryo_robot_database::GetSettings srv;
+  niryo_robot_system_api_client::GetSettings srv;
   srv.request.name = "robot_name";
   _database_settings_get_service_client.call(srv);
   return srv.response.value;

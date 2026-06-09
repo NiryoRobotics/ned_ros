@@ -45,11 +45,11 @@ For more informations, please refer to: :doc:`../high_level/niryo_robot_tools_co
    :undoc-members:
    :show-inheritance:
 
-Database
+System API Client
 ^^^^^^^^
-For more informations, please refer to: :doc:`../high_level/niryo_robot_database`
+For more informations, please refer to: :doc:`../high_level/niryo_robot_system_api_client`
 
-.. automodule:: niryo_robot_database.api.database_ros_wrapper
+.. automodule:: niryo_robot_system_api_client.api.system_api_client_ros_wrapper
    :members:
    :undoc-members:
    :show-inheritance:

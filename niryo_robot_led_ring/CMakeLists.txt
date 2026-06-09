@@ -20,9 +20,9 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
+    GetLedColors.srv
     LedUser.srv
     SetLedColor.srv
-    GetLedColors.srv
 )
 
 # enable python module support

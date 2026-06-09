@@ -147,9 +147,9 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
         self.__tools = ToolsRosWrapper(self.__service_timeout)
 
-        # database
-        from niryo_robot_database.api import DatabaseRosWrapper
-        self.__database = DatabaseRosWrapper(self.__service_timeout)
+        # system api client
+        from niryo_robot_system_api_client.api import SystemAPIRosWrapper
+        self.__system_api_client = SystemAPIRosWrapper()
 
         from niryo_robot_status.api import RobotStatusRosWrapper
         self.__robot_status = RobotStatusRosWrapper(self.__service_timeout)
@@ -2795,7 +2795,16 @@ class NiryoRosWrapper(AbstractNiryoRosWrapper):
 
     @property
     def database(self):
-        return self.__database
+        """
+            .. deprecated:: 5.5.0
+                You should use :func:`system_api_client` instead.
+        :return:
+        """
+        return self.system_api_client
+
+    @property
+    def system_api_client(self):
+        return self.__system_api_client
 
     # - Ned 2
 

@@ -3,7 +3,7 @@ import requests
 
 class SystemApiResponse:
 
-    def __init__(self, status_code, code, detail, data):
+    def __init__(self, status_code, code=None, detail=None, data=None):
         self._status_code = status_code
         self._code = code
         self._detail = detail

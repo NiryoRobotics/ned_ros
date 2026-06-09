@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-
+import threading
+from tempfile import TemporaryDirectory
 # Libs
 import os
 import rospy
 from distutils.dir_util import mkpath
 
+from niryo_robot_reports.msg import Service
+from niryo_robot_system_api_client import system_api_client
+from niryo_robot_system_api_client.msg import Setting
 from niryo_robot_utils import sentry_init, async_init
 
 from niryo_robot_reports.CloudAPI import CloudAPI
@@ -14,36 +18,24 @@ from niryo_robot_reports.TestReportHandler import TestReportHandler
 from niryo_robot_reports.AutoDiagnosisReportHandler import AutoDiagnosisReportHandler
 
 # msg
-from niryo_robot_database.msg import Setting
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_reports.msg import Service
 
 # srv
-from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
 from niryo_robot_reports.srv import CheckConnection
 
 
 class ReportsNode:
+
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
         self.__lazy_loaded_cloud_api = None
 
-        async_init.PromiseServiceProxy(
-            "/niryo_robot_database/settings/get",
-            GetSettings,
-            self.__on_get_settings_available,
-        )
+        threading.Thread(target=self.__on_get_settings_available).start()
 
-        rospy.Service(
-            "~check_connection", CheckConnection, self.__check_connection_callback
-        )
+        rospy.Service("~check_connection", CheckConnection, self.__check_connection_callback)
 
-        rospy.Subscriber(
-            "/niryo_robot_database/setting_update",
-            Setting,
-            self.__setting_update_callback,
-        )
+        rospy.Subscriber("/niryo_robot_system_api_client/setting_update", Setting, self.__setting_update_callback)
 
         rospy.logdebug("Reports Node - Node Started")
 
@@ -53,15 +45,21 @@ class ReportsNode:
             raise RuntimeError("Cloud API is not initialized yet")
         return self.__lazy_loaded_cloud_api
 
-    def __on_get_settings_available(self, get_settings_proxy):
+    def __on_get_settings_available(self):
+        try:
+            system_api_client.wait_for_api(rospy.is_shutdown, timeout=60)
+        except TimeoutError:
+            rospy.logfatal("System API is not available. Reports node will not be able to start.")
+            return
+
         settings = {}
         for setting in ["serial_number", "rasp_id", "api_key", "sharing_allowed"]:
-            response = get_settings_proxy(setting)
-            setting_value = response.value
-            if response.status != CommandStatus.SUCCESS:
+            response = system_api_client.get_setting(setting)
+            if not response.success:
                 rospy.logerr(f'Unable to get setting "{setting}"')
-                setting_value = None
-            settings[setting] = setting_value
+                settings[setting] = None
+                continue
+            settings[setting] = response.data[setting]
 
         settings["cloud_domain"] = os.getenv("NED_ROS_CLOUD_DOMAIN")
         if settings["cloud_domain"] is None:
@@ -69,40 +67,17 @@ class ReportsNode:
 
         self.__lazy_loaded_cloud_api = CloudAPI(**settings, https=True)
 
-        get_report_path_response = get_settings_proxy("reports_path")
-        if get_report_path_response.status != CommandStatus.SUCCESS:
-            rospy.logerr(
-                "Unable to retrieve the reports directory path from the database"
-            )
+        response = system_api_client.get_setting("reports_path")
+        if response.success:
+            reports_path = os.path.expanduser(response.data["reports_path"])
+            if not os.path.isdir(reports_path):
+                mkpath(reports_path)
+        else:
+            reports_path = TemporaryDirectory().name
+            rospy.logerr("Unable to retrieve the reports directory path from the database")
 
-        reports_path = os.path.expanduser(get_report_path_response.value)
-        if not os.path.isdir(reports_path):
-            mkpath(reports_path)
-
-        get_all_files_paths = rospy.ServiceProxy(
-            "/niryo_robot_database/file_paths/get_all_by_type", GetAllByType
-        )
-        add_report_db = rospy.ServiceProxy(
-            "/niryo_robot_database/file_paths/add", AddFilePath
-        )
-        rm_report_db = rospy.ServiceProxy(
-            "/niryo_robot_database/file_paths/rm", RmFilePath
-        )
-
-        DailyReportHandler(
-            self.__cloud_api,
-            reports_path,
-            add_report_db,
-            rm_report_db,
-            get_all_files_paths,
-        )
-        TestReportHandler(
-            self.__cloud_api,
-            reports_path,
-            add_report_db,
-            rm_report_db,
-            get_all_files_paths,
-        )
+        DailyReportHandler(self.__cloud_api, reports_path)
+        TestReportHandler(self.__cloud_api, reports_path)
         AlertReportHandler(self.__cloud_api)
         AutoDiagnosisReportHandler(self.__cloud_api)
 
@@ -129,9 +104,7 @@ class ReportsNode:
             {
                 "serial_number": self.__cloud_api.set_serial_number,
                 "api_key": self.__cloud_api.set_api_key,
-                "sharing_allowed": lambda v: self.__cloud_api.set_sharing_allowed(
-                    v == "True"
-                ),
+                "sharing_allowed": lambda v: self.__cloud_api.set_sharing_allowed(v == "True"),
                 "rasp_id": self.__cloud_api.set_rasp_id,
             }[req.name](req.value)
         except KeyError:

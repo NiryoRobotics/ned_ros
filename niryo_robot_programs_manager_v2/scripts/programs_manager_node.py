@@ -8,6 +8,7 @@ import rospy
 import logging
 import os
 
+from niryo_robot_system_api_client import system_api_client
 from niryo_robot_utils import sentry_init
 
 from actionlib_msgs.msg import GoalStatus
@@ -22,8 +23,7 @@ from niryo_robot_programs_manager_v2.msg import ExecuteProgramResult, ExecutePro
 from niryo_robot_programs_manager_v2.msg import ExecuteProgramAction
 
 # Services
-from niryo_robot_msgs.srv import Trigger, GetString
-from niryo_robot_database.srv import GetSettings, SetSettings
+from niryo_robot_msgs.srv import Trigger
 
 from niryo_robot_programs_manager_v2.srv import GetProgram, GetProgramList
 from niryo_robot_programs_manager_v2.srv import GetProgramAutorunInfos
@@ -37,10 +37,7 @@ class ProgramManagerNode:
         rospy.logdebug("Programs Manager - Entering in Init")
 
         # Autorun
-        self.__get_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
-        self.__set_setting_service = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
 
-        database_path = os.path.expanduser(rospy.get_param('/niryo_robot_database/database_path'))
         programs_base_dir = os.path.expanduser(rospy.get_param("~programs_dir"))
 
         self.__lazy_loaded_autorun_id = None
@@ -54,7 +51,7 @@ class ProgramManagerNode:
 
         self.__stop_autorun_event = Event()
 
-        self.__programs_manager = ProgramsManager(database_path, programs_base_dir)
+        self.__programs_manager = ProgramsManager(programs_base_dir)
 
         # Action Server
         self.__execute_program_action_server = actionlib.ActionServer('~execute_program',
@@ -91,31 +88,32 @@ class ProgramManagerNode:
 
         rospy.loginfo("Programs Manager - Started")
 
-    def __get_setting_from_db(self, setting_name: str, default_value: str) -> str:
+    def __get_setting(self, setting_name: str, default_value: str) -> str:
         try:
-            self.__get_setting_service.wait_for_service(2)
-        except rospy.ROSException:
-            rospy.logerr("Programs Manager - Impossible to connect to the database get setting service")
-            raise
-
-        response = self.__get_setting_service(setting_name)
-        if response.status < 0:
-            rospy.logwarn(
-                f'The setting "{setting_name}" has not been found in database. Setting it to "{default_value}"')
-            self.__set_setting_service(setting_name, default_value, 'str')
+            system_api_client.wait_for_api(hard_stop=rospy.is_shutdown)
+        except TimeoutError as e:
+            rospy.logerr(f"Failed to get setting {setting_name} from database: {e}")
             return default_value
-        return response.value
+
+        response = system_api_client.get_setting(setting_name)
+        if not response.success:
+            if response.code == "ROW_NOT_FOUND_ERROR":
+                system_api_client.set_setting(setting_name, default_value)
+                return default_value
+            else:
+                raise Exception(f"Failed to get setting {setting_name} from database: {response.detail}")
+        return response.data[setting_name]
 
     @property
     def __autorun_id(self) -> str:
         if self.__lazy_loaded_autorun_id is None:
-            self.__lazy_loaded_autorun_id = self.__get_setting_from_db('autorun_id', '')
+            self.__lazy_loaded_autorun_id = self.__get_setting('autorun_id', '')
         return self.__lazy_loaded_autorun_id
 
     @property
     def __autorun_mode(self) -> str:
         if self.__lazy_loaded_autorun_mode is None:
-            autorun_mode_str = self.__get_setting_from_db('autorun_mode', 'DISABLE')
+            autorun_mode_str = self.__get_setting('autorun_mode', 'DISABLE')
             self.__lazy_loaded_autorun_mode = self.__str_to_autorun_mode[autorun_mode_str]
         return self.__lazy_loaded_autorun_mode
 
@@ -227,12 +225,17 @@ class ProgramManagerNode:
 
     # Autorun
     def __callback_set_program_autorun(self, req):
+        try:
+            system_api_client.wait_for_api(hard_stop=rospy.is_shutdown)
+        except TimeoutError as e:
+            return CommandStatus.SYSTEM_API_CLIENT_COMMAND_FAILED, str(e)
+
         self.__lazy_loaded_autorun_mode = req.mode
         mode_str = self.__autorun_mode_to_str[req.mode]
-        self.__set_setting_service('autorun_mode', mode_str, 'str')
+        system_api_client.set_setting('autorun_mode', mode_str)
 
         self.__lazy_loaded_autorun_id = req.program_id
-        self.__set_setting_service('autorun_id', req.program_id, 'str')
+        system_api_client.set_setting('autorun_id', req.program_id)
 
         return CommandStatus.SUCCESS, 'Successfully set autorun'
 

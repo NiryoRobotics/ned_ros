@@ -11,7 +11,6 @@
     <arg name="simu_conveyor" default="true"/>
     <arg name="vision_enabled" default="true"/>
     <arg name="gazebo" default="false"/>
-    <arg name="database" default="false"/>
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
         <arg name="hardware_version" value="ned"/>
@@ -24,6 +23,5 @@
         <arg name="debug" value="$(arg debug)"/>
         <arg name="vision_enabled" value="$(arg vision_enabled)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
-        <arg name="database" default="$(arg database)"/>
     </include>
 </launch>

@@ -62,8 +62,8 @@ add_service_files(
   DIRECTORY srv
   FILES
   ControlConveyor.srv
-  SetConveyor.srv
   GetHardwareId.srv
+  SetConveyor.srv
 )
 
 generate_messages(

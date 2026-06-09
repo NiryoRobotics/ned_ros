@@ -53,9 +53,9 @@ endif()
 add_message_files(
   FILES
     ArrayMotorHardwareStatus.msg
+    CalibrationStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
-    CalibrationStatus.msg
 )
 
 add_service_files(
