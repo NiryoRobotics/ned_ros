@@ -9,7 +9,7 @@ from niryo_robot_system_api_client import system_api_client
 # msg
 from niryo_robot_msgs.msg import SoftwareVersion, CommandStatus
 from niryo_robot_system_api_client.msg import Setting as SettingMsg
-
+from niryo_robot_database.msg import Setting as DbSettingMsg
 # srv
 from niryo_robot_system_api_client.srv import (SetSettings,
                                                SetSettingsRequest,
@@ -32,6 +32,15 @@ def _set_setting_callback(req: SetSettingsRequest) -> SetSettingsResponse:
     return SetSettingsResponse(status=status, message=resp.detail)
 
 
+def _declare_aliases():
+    # aliases for retro compatibility
+    rospy.Service('/niryo_robot_database/settings/get', GetSettings, _get_setting_callback)
+    rospy.Service('/niryo_robot_database/settings/set', SetSettings, _set_setting_callback)
+
+    pub = rospy.Publisher('/niryo_robot_database/setting_update', DbSettingMsg, queue_size=5)
+    rospy.Subscriber('~setting_update', SettingMsg, lambda x: pub.publish(x), queue_size=5)
+
+
 class SystemApiNode:
 
     def __init__(self):
@@ -42,11 +51,11 @@ class SystemApiNode:
                                                         self.__sw_callback,
                                                         queue_size=1)
 
-        self.__setting_update_publisher = rospy.Publisher('~setting_update', SettingMsg, queue_size=5)
-
         # proxys for CPP nodes
         rospy.Service('~settings/get', GetSettings, _get_setting_callback)
         rospy.Service('~settings/set', SetSettings, _set_setting_callback)
+
+        _declare_aliases()
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
