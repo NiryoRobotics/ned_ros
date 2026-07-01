@@ -1,0 +1,36 @@
+actions: []
+authors: Clement Cocquempot
+brief: ''
+bugtracker: ''
+depends:
+- rostest
+- niryo_robot_msgs
+- catkin
+- roslint
+- message_runtime
+- roscpp
+- python3-catkin-lint
+- dynamixel_sdk
+- message_generation
+- std_msgs
+- common
+- code_coverage
+description: Provides an interface bewteen high level ROS packages and motors on TTL
+  bus
+license: GPLv3
+maintainers: Clement Cocquempot <c.cocquempot@niryo.com>
+msgs:
+- MotorHardwareStatus
+- MotorCommand
+- CalibrationStatus
+- ArrayMotorHardwareStatus
+package_type: package
+repo_url: ''
+srvs:
+- WriteVelocityProfile
+- ReadCustomValue
+- WriteCustomValue
+- WritePIDValue
+- ReadVelocityProfile
+- ReadPIDValue
+url: ''

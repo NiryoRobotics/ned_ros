@@ -1,0 +1,31 @@
+actions: []
+authors: Etienne Rey-Coquais, Edouard Renard
+brief: ''
+bugtracker: ''
+depends:
+- message_generation
+- std_msgs
+- can_driver
+- code_coverage
+- catkin
+- roslint
+- python3-catkin-lint
+- roscpp
+- common
+- rostest
+- niryo_robot_msgs
+- ttl_driver
+- message_runtime
+description: Provides an interface for dealing with conveyors
+license: GPLv3
+maintainers: Etienne Rey-Coquais <e.rey-coquais@niryo.com>
+msgs:
+- ConveyorFeedback
+- ConveyorFeedbackArray
+package_type: package
+repo_url: ''
+srvs:
+- SetConveyor
+- GetHardwareId
+- ControlConveyor
+url: ''

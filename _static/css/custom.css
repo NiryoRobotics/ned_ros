@@ -1,0 +1,27 @@
+/* -- Extra CSS styles for content (RTD theme) ----------------------- */
+
+/* make the page width fill the window */
+/* .wy-nav-content {
+    max-width: 75% !important;
+ } */
+ .wy-nav-content {
+  max-width: none;
+}
+
+ /* Fix for word wrapping with list-table directive and rtd theme */
+ .wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}
+
+
+.red {
+    color: red;
+  }
+  
+.green {
+    color: green;
+  }
+
+.orange {
+    color: orange;
+  }  

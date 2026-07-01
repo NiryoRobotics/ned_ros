@@ -1,0 +1,6 @@
+<map id="src.niryo_robot_programs_manager_v2.ProgramsFileManager.ProgramFileException" name="src.niryo_robot_programs_manager_v2.ProgramsFileManager.ProgramFileException">
+<area shape="rect" id="node1" title=" " alt="" coords="140,45,399,101"/>
+<area shape="rect" id="node3" href="$classsrc_1_1niryo__robot__programs__manager__v2_1_1ProgramsFileManager_1_1FileAlreadyExistException.html" title=" " alt="" coords="447,5,705,61"/>
+<area shape="rect" id="node4" href="$classsrc_1_1niryo__robot__programs__manager__v2_1_1ProgramsFileManager_1_1FileDoesNotExistException.html" title=" " alt="" coords="447,85,705,141"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,60,92,87"/>
+</map>

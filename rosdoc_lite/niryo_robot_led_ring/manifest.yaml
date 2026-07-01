@@ -1,0 +1,29 @@
+actions: []
+authors: "R\xE9mi Lux <p.odet@niryo.com>"
+brief: ''
+bugtracker: ''
+depends:
+- python3-catkin-lint
+- niryo_robot_msgs
+- visualization_msgs
+- message_runtime
+- message_generation
+- rospy
+- std_msgs
+- catkin
+- niryo_robot_arm_commander
+- roslint
+description: Manages the led ring on the robot
+license: GPLv3
+maintainers: podet <v.pitre@niryo.com>
+msgs:
+- LedRingCurrentState
+- LedRingAnimation
+- LedRingStatus
+package_type: package
+repo_url: ''
+srvs:
+- LedUser
+- GetLedColors
+- SetLedColor
+url: ''

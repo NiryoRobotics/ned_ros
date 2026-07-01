@@ -1,0 +1,24 @@
+actions: []
+authors: Justin Mottier <j.mottier@niryo.com>
+brief: ''
+bugtracker: ''
+depends:
+- message_runtime
+- catkin
+- roslint
+- std_msgs
+- message_generation
+- rospy
+- niryo_robot_msgs
+- python3-catkin-lint
+description: Provides a ROS interface to manage the robot wifi hotspot
+license: GPLv3
+maintainers: Justin Mottier <j.mottier@niryo.com>, Corentin Ducatez <c.ducatez@niryo.com>
+msgs:
+- Setting
+package_type: package
+repo_url: ''
+srvs:
+- GetSettings
+- SetSettings
+url: ''

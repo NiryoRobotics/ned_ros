@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,159,68,185"/>
+<area shape="rect" id="node2" href="$classniryo__robot__status_1_1api_1_1robot__status__ros__wrapper_1_1RobotStatusRosWrapper.html" title=" " alt="" coords="122,5,385,61"/>
+<area shape="rect" id="node3" href="$classniryo__robot__status_1_1robot__logs__observer_1_1RobotLogsObserver.html" title=" " alt="" coords="128,86,379,127"/>
+<area shape="rect" id="node4" href="$classniryo__robot__status_1_1robot__nodes__observer_1_1RobotNodesObserver.html" title=" " alt="" coords="117,151,390,193"/>
+<area shape="rect" id="node5" href="$classniryo__robot__status_1_1robot__status__handler_1_1RobotStatusHandler.html" title=" " alt="" coords="124,217,383,258"/>
+<area shape="rect" id="node6" href="$classniryo__robot__status_1_1robot__status__observer_1_1RobotStatusObserver.html" title=" " alt="" coords="116,282,391,323"/>
+</map>

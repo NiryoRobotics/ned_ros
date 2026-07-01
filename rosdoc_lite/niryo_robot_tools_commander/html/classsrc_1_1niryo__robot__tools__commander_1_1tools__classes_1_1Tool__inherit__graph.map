@@ -1,0 +1,8 @@
+<map id="src.niryo_robot_tools_commander.tools_classes.Tool" name="src.niryo_robot_tools_commander.tools_classes.Tool">
+<area shape="rect" id="node1" title=" " alt="" coords="116,104,343,145"/>
+<area shape="rect" id="node3" href="$classsrc_1_1niryo__robot__tools__commander_1_1tools__classes_1_1Electromagnet.html" title=" " alt="" coords="391,5,687,47"/>
+<area shape="rect" id="node4" href="$classsrc_1_1niryo__robot__tools__commander_1_1tools__classes_1_1Gripper.html" title=" " alt="" coords="414,71,663,112"/>
+<area shape="rect" id="node5" href="$classsrc_1_1niryo__robot__tools__commander_1_1tools__classes_1_1NoTool.html" title=" " alt="" coords="416,136,661,177"/>
+<area shape="rect" id="node6" href="$classsrc_1_1niryo__robot__tools__commander_1_1tools__classes_1_1VacuumPump.html" title=" " alt="" coords="393,201,684,243"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,111,68,138"/>
+</map>
