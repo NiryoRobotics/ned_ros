@@ -2,18 +2,11 @@
 Ned ROS stack Changelog
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-v5.8.2
+v5.8.3
 ___________
-
-**Features**
-
-* Added support for dynamic port changing for modbus 
-* Added integer user store entries
 
 **Improvements**
 
-* Programs output is now published line by line instead of character by character. This reduces the CPU usage and the network load.
-* Removed dynamic casts and memory allocations in control loop
 * ros_wrapper improvements:
 
   * new function is_tool_open
@@ -23,13 +16,29 @@ ___________
 
 **Bugfixes**
 
-* Detect preconfigured conveyors at startup and add them to the conveyor interface
-* Simpler programs output handling in the programs manager
 * Fixed a bug causing the vacuum pump to not be actuated via the modbus server
 * Fixed the inconsistent value of the tool actuation entry in the modbus server
 * Do not time the jog messages commands to the jog commander
 * Attempt to prevent red led ring after successful boot
 * Fixed a name mismatch causing the purge_ros_logs_on_startup setting value to have no effect
+
+v5.8.2
+___________
+
+**Features**
+
+* Added support for dynamic port changing for modbus
+* Added integer user store entries
+
+**Improvements**
+
+* Programs output is now published line by line instead of character by character. This reduces the CPU usage and the network load.
+* Removed dynamic casts and memory allocations in control loop
+
+**Bugfixes**
+
+* Detect preconfigured conveyors at startup and add them to the conveyor interface
+* Simpler programs output handling in the programs manager
 
 v5.8.1
 ___________
